@@ -1,0 +1,78 @@
+﻿#include "function_table_stream.h"
+
+#include <sstream>
+
+#include "mini_dump.h"
+#include "system_info_stream.h"
+#include "wide_runtime_error.h"
+
+namespace dlg_help_utils
+{
+    function_table_stream::function_table_stream(mini_dump const& dump, size_t const index)
+    {
+        index_ = index;
+        auto const* entry = dump.find_stream_type(FunctionTableStream, index_);
+        if (entry == nullptr)
+        {
+            return;
+        }
+
+        auto const* data = dump.rva32(entry->Location);
+        function_table_list_ = static_cast<MINIDUMP_FUNCTION_TABLE_STREAM const*>(data);
+        found_ = true;
+
+        if (function_table_list_->SizeOfHeader == sizeof(MINIDUMP_FUNCTION_TABLE_STREAM)
+            && function_table_list_->SizeOfDescriptor >= sizeof(MINIDUMP_FUNCTION_TABLE_DESCRIPTOR))
+        {
+            end_list_ = static_cast<uint8_t const*>(data) + entry->Location.DataSize;
+            list_ = reinterpret_cast<MINIDUMP_FUNCTION_TABLE_DESCRIPTOR const*>(static_cast<uint8_t const*>(data) +
+                sizeof(MINIDUMP_FUNCTION_TABLE_STREAM) + function_table_list_->SizeOfAlignPad);
+            is_valid_ = true;
+
+            system_info_stream const system_info{dump};
+            if (system_info.is_x86() || system_info.is_x64())
+            {
+                if (function_table_list_->SizeOfFunctionEntry == SIZEOF_RFPO_DATA)
+                {
+                    entry_type_ = function_table_entry_type::fpo_data;
+                }
+                else if (function_table_list_->SizeOfFunctionEntry == sizeof(IMAGE_FUNCTION_ENTRY))
+                {
+                    entry_type_ = function_table_entry_type::image_function_entry;
+                }
+                else if (function_table_list_->SizeOfFunctionEntry == sizeof(IMAGE_FUNCTION_ENTRY64))
+                {
+                    entry_type_ = function_table_entry_type::image_function_entry_64;
+                }
+            }
+        }
+    }
+
+    std::experimental::generator<stream_function_descriptor> function_table_stream::list() const
+    {
+        auto const* entry = list_;
+        for (size_t index = 0; index < function_table_list_->NumberOfDescriptors; ++index)
+        {
+            auto const* next_entry = reinterpret_cast<MINIDUMP_FUNCTION_TABLE_DESCRIPTOR const*>(reinterpret_cast<
+                    uint8_t const*>(entry) + sizeof(MINIDUMP_FUNCTION_TABLE_DESCRIPTOR) + function_table_list_->
+                SizeOfNativeDescriptor + (static_cast<size_t>(entry->EntryCount) * function_table_list_->
+                    SizeOfFunctionEntry
+                ) + entry->SizeOfAlignPad);
+            if (next_entry > end_list_)
+            {
+                std::wostringstream ss;
+                ss << L"function table entry [" << index << L"] at [" << entry << L"] end data [" << next_entry <<
+                    L"] out of range from stream data end [" << end_list_ << L"]";
+                throw exceptions::wide_runtime_error{std::move(ss).str()};
+            }
+
+            // ReSharper disable once CppAwaiterTypeIsNotClass
+            co_yield stream_function_descriptor{
+                *entry, function_table_list_->SizeOfNativeDescriptor, function_table_list_->SizeOfFunctionEntry,
+                entry_type()
+            };
+
+            entry = next_entry;
+        }
+    }
+}

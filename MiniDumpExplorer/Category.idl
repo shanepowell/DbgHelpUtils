@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    [bindable]
+    [default_interface]
+    runtimeclass Category 
+    {
+        Category();
+
+        String Name;
+        String CategoryIcon;
+        Windows.Foundation.Collections.IObservableVector<Category> Children;
+        Boolean IsLeaf;
+    }
+}

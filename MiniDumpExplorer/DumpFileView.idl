@@ -1,0 +1,14 @@
+import "Category.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpFileView : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpFileView(String path, String display_name);
+
+        String Path;
+        String DisplayName;
+        Windows.Foundation.Collections.IObservableVector<Category> Categories{ get; };
+    }
+}

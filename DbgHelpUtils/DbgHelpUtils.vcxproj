@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{98f08fd0-52b2-4f66-b212-c6a406c88b37}</ProjectGuid>
+    <RootNamespace>DbgHelpUtils</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="comment_stream_a.cpp" />
+    <ClCompile Include="comment_stream_w.cpp" />
+    <ClCompile Include="cv_info_pdb70.cpp" />
+    <ClCompile Include="exception_stream.cpp" />
+    <ClCompile Include="exception_utils.cpp" />
+    <ClCompile Include="filesystem_utils.cpp" />
+    <ClCompile Include="find_thread_stack.cpp" />
+    <ClCompile Include="function_table_stream.cpp" />
+    <ClCompile Include="guid_utils.cpp" />
+    <ClCompile Include="handle_data_stream.cpp" />
+    <ClCompile Include="handle_operation_list_stream.cpp" />
+    <ClCompile Include="hex_dump.cpp" />
+    <ClCompile Include="memory64_list_stream.cpp" />
+    <ClCompile Include="memory_info_list_stream.cpp" />
+    <ClCompile Include="memory_info_utils.cpp" />
+    <ClCompile Include="memory_list_stream.cpp" />
+    <ClCompile Include="mini_dump.cpp" />
+    <ClCompile Include="mini_dump_stack_walk.cpp" />
+    <ClCompile Include="mini_dump_stream_type.cpp" />
+    <ClCompile Include="mini_dump_type.cpp" />
+    <ClCompile Include="misc_info_stream.cpp" />
+    <ClCompile Include="module_list_stream.cpp" />
+    <ClCompile Include="pe_file.cpp" />
+    <ClCompile Include="pe_file_memory_mapping.cpp" />
+    <ClCompile Include="process_vm_counters_stream.cpp" />
+    <ClCompile Include="size_units.cpp" />
+    <ClCompile Include="stream_function_descriptor.cpp" />
+    <ClCompile Include="stream_function_entry.cpp" />
+    <ClCompile Include="stream_handle.cpp" />
+    <ClCompile Include="stream_handle_object_information.cpp" />
+    <ClCompile Include="stream_module.cpp" />
+    <ClCompile Include="stream_stack_dump.cpp" />
+    <ClCompile Include="stream_thread.cpp" />
+    <ClCompile Include="stream_thread_context.cpp" />
+    <ClCompile Include="stream_thread_ex.cpp" />
+    <ClCompile Include="stream_thread_info.cpp" />
+    <ClCompile Include="stream_thread_name.cpp" />
+    <ClCompile Include="stream_token_info.cpp" />
+    <ClCompile Include="stream_unloaded_module.cpp" />
+    <ClCompile Include="string_conversation.cpp" />
+    <ClCompile Include="string_stream.cpp" />
+    <ClCompile Include="symbol_engine.cpp" />
+    <ClCompile Include="system_info_stream.cpp" />
+    <ClCompile Include="system_info_utils.cpp" />
+    <ClCompile Include="system_memory_info_stream.cpp" />
+    <ClCompile Include="thread_ex_list_stream.cpp" />
+    <ClCompile Include="thread_info_list_stream.cpp" />
+    <ClCompile Include="thread_info_utils.cpp" />
+    <ClCompile Include="thread_list_stream.cpp" />
+    <ClCompile Include="thread_names_list_stream.cpp" />
+    <ClCompile Include="time_units.cpp" />
+    <ClCompile Include="time_utils.cpp" />
+    <ClCompile Include="token_info_list_stream.cpp" />
+    <ClCompile Include="unloaded_module_list_stream.cpp" />
+    <ClCompile Include="windows_error.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="chrono_unit_convert_to_string.h" />
+    <ClInclude Include="comment_stream_a.h" />
+    <ClInclude Include="comment_stream_w.h" />
+    <ClInclude Include="crc.h" />
+    <ClInclude Include="cv_info_pdb70.h" />
+    <ClInclude Include="exception_stream.h" />
+    <ClInclude Include="exception_utils.h" />
+    <ClInclude Include="exit_scope.h" />
+    <ClInclude Include="filesystem_utils.h" />
+    <ClInclude Include="find_thread_stack.h" />
+    <ClInclude Include="flags_string_utils.h" />
+    <ClInclude Include="function_table_entry_type.h" />
+    <ClInclude Include="function_table_stream.h" />
+    <ClInclude Include="guid_utils.h" />
+    <ClInclude Include="handles.h" />
+    <ClInclude Include="handle_data_stream.h" />
+    <ClInclude Include="handle_operation_list_stream.h" />
+    <ClInclude Include="hex_dump.h" />
+    <ClInclude Include="i_stack_walk_callback.h" />
+    <ClInclude Include="i_symbol_load_callback.h" />
+    <ClInclude Include="memory64_list_stream.h" />
+    <ClInclude Include="memory_info_list_stream.h" />
+    <ClInclude Include="memory_info_utils.h" />
+    <ClInclude Include="memory_list_stream.h" />
+    <ClInclude Include="mini_dump.h" />
+    <ClInclude Include="mini_dump_stack_walk.h" />
+    <ClInclude Include="mini_dump_stream_type.h" />
+    <ClInclude Include="mini_dump_type.h" />
+    <ClInclude Include="misc_info_stream.h" />
+    <ClInclude Include="module_list_stream.h" />
+    <ClInclude Include="pe_file.h" />
+    <ClInclude Include="pe_file_memory_mapping.h" />
+    <ClInclude Include="process_vm_counters_stream.h" />
+    <ClInclude Include="range_units.h" />
+    <ClInclude Include="size_units.h" />
+    <ClInclude Include="stream_function_descriptor.h" />
+    <ClInclude Include="stream_function_entry.h" />
+    <ClInclude Include="stream_handle.h" />
+    <ClInclude Include="stream_handle_object_information.h" />
+    <ClInclude Include="stream_hex_dump.h" />
+    <ClInclude Include="stream_module.h" />
+    <ClInclude Include="stream_stack_dump.h" />
+    <ClInclude Include="stream_thread.h" />
+    <ClInclude Include="stream_thread_context.h" />
+    <ClInclude Include="stream_thread_ex.h" />
+    <ClInclude Include="stream_thread_info.h" />
+    <ClInclude Include="stream_thread_name.h" />
+    <ClInclude Include="stream_token_info.h" />
+    <ClInclude Include="stream_unloaded_module.h" />
+    <ClInclude Include="string_conversation.h" />
+    <ClInclude Include="string_stream.h" />
+    <ClInclude Include="symbol_address_info.h" />
+    <ClInclude Include="symbol_engine.h" />
+    <ClInclude Include="system_info_stream.h" />
+    <ClInclude Include="system_info_utils.h" />
+    <ClInclude Include="system_memory_info_stream.h" />
+    <ClInclude Include="system_time_utils.h" />
+    <ClInclude Include="thread_ex_list_stream.h" />
+    <ClInclude Include="thread_info_list_stream.h" />
+    <ClInclude Include="thread_info_utils.h" />
+    <ClInclude Include="thread_list_stream.h" />
+    <ClInclude Include="thread_names_list_stream.h" />
+    <ClInclude Include="time_units.h" />
+    <ClInclude Include="time_utils.h" />
+    <ClInclude Include="token_info_list_stream.h" />
+    <ClInclude Include="unloaded_module_list_stream.h" />
+    <ClInclude Include="vector_to_hash_set.h" />
+    <ClInclude Include="windows_error.h" />
+    <ClInclude Include="wide_runtime_error.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

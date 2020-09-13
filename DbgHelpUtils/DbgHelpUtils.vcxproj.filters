@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Streams">
+      <UniqueIdentifier>{b4b04d9e-8bd5-42e3-9eec-948667913471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MiniDump">
+      <UniqueIdentifier>{691c4579-78eb-4115-a8c5-2b42cf405ba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{409622f7-7645-4241-9760-4e0e2c51cf92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StreamUtilities">
+      <UniqueIdentifier>{062d076b-4c4f-46bb-804d-e7a6cf157490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DbgHelp">
+      <UniqueIdentifier>{52ce0b28-2976-47a9-9e36-5ce95bfa42d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PeUtilities">
+      <UniqueIdentifier>{28335426-c3bb-4853-bcf8-84838f821f6b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="comment_stream_a.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="comment_stream_w.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="memory_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="memory64_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="module_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="unloaded_module_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="string_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_module.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_unloaded_module.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="misc_info_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="system_info_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="mini_dump_type.cpp">
+      <Filter>MiniDump</Filter>
+    </ClCompile>
+    <ClCompile Include="mini_dump.cpp">
+      <Filter>MiniDump</Filter>
+    </ClCompile>
+    <ClCompile Include="mini_dump_stream_type.cpp">
+      <Filter>MiniDump</Filter>
+    </ClCompile>
+    <ClCompile Include="hex_dump.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="guid_utils.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="string_conversation.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="time_utils.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="windows_error.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="size_units.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="time_units.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="exception_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_names_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_thread_name.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="filesystem_utils.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_thread.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_ex_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_thread_ex.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_thread_context.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="memory_info_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="cv_info_pdb70.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="exception_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="system_info_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="memory_info_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_info_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_info_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="system_memory_info_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="process_vm_counters_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_token_info.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="token_info_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_function_descriptor.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="function_table_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_function_entry.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="handle_operation_list_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="handle_data_stream.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_handle.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_handle_object_information.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_thread_info.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_engine.cpp">
+      <Filter>DbgHelp</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_stack_dump.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="mini_dump_stack_walk.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="pe_file.cpp">
+      <Filter>PeUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="pe_file_memory_mapping.cpp">
+      <Filter>PeUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="find_thread_stack.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="comment_stream_a.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="comment_stream_w.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="memory64_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="module_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_module.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="string_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="system_info_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="unloaded_module_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_unloaded_module.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="misc_info_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump.h">
+      <Filter>MiniDump</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_stream_type.h">
+      <Filter>MiniDump</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_type.h">
+      <Filter>MiniDump</Filter>
+    </ClInclude>
+    <ClInclude Include="windows_error.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="wide_runtime_error.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="time_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="string_conversation.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_hex_dump.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="hex_dump.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="handles.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="guid_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="crc.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="size_units.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="chrono_unit_convert_to_string.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="time_units.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="exception_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="system_time_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_names_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_thread_name.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="filesystem_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_thread.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_thread_context.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_ex_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_thread_ex.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_info_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="system_info_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="cv_info_pdb70.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="exception_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_info_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_info_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_info_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="flags_string_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="system_memory_info_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="process_vm_counters_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="token_info_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_token_info.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="function_table_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_function_descriptor.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_function_entry.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="handle_operation_list_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="handle_data_stream.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_handle.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_handle_object_information.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_thread_info.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_engine.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_stack_dump.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="function_table_entry_type.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="i_stack_walk_callback.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_stack_walk.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="pe_file.h">
+      <Filter>PeUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="pe_file_memory_mapping.h">
+      <Filter>PeUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="exit_scope.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="range_units.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="i_symbol_load_callback.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="find_thread_stack.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="vector_to_hash_set.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_address_info.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
