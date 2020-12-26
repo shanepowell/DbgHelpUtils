@@ -35,5 +35,6 @@ testCaseCollection.xml
 *.db
 .vs/
 MiniDumpExplorer/Generated Files/
+MiniDumpExplorerDll/Generated Files/
 packages
 /*.dll

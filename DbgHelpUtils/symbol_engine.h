@@ -1,6 +1,10 @@
 ﻿#pragma once
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <Windows.h>
 #include <DbgHelp.h>
 
@@ -23,11 +27,18 @@ namespace dlg_help_utils::dbg_help
     class i_symbol_callback
     {
     public:
+        i_symbol_callback() = default;
         virtual ~i_symbol_callback() = default;
+
+        i_symbol_callback(i_symbol_callback const&) = default;
+        i_symbol_callback(i_symbol_callback &&) = default;
+
+        i_symbol_callback& operator=(i_symbol_callback const&) = default;
+        i_symbol_callback& operator=(i_symbol_callback &&) = default;
 
         [[nodiscard]] virtual DWORD loading_module_check_sum() const = 0;
         [[nodiscard]] virtual bool loading_module() const = 0;
-        virtual void set_downloading_module(std::wstring module) = 0;
+        virtual void set_downloading_module(std::wstring module_name) = 0;
         [[nodiscard]] virtual std::wstring_view downloading_module() const = 0;
         [[nodiscard]] virtual i_symbol_load_callback& callback() const = 0;
     };
@@ -68,8 +79,8 @@ namespace dlg_help_utils::dbg_help
     private:
         [[nodiscard]] DWORD loading_module_check_sum() const override { return loading_module_check_sum_; }
         [[nodiscard]] bool loading_module() const override { return loading_module_; }
-        void set_downloading_module(std::wstring module) override { downloading_module_ = std::move(module); }
-        [[nodiscard]] std::wstring_view downloading_module() const override { return downloading_module_; }
+        void set_downloading_module(std::wstring module_name) override { downloading_module_name_ = std::move(module_name); }
+        [[nodiscard]] std::wstring_view downloading_module() const override { return downloading_module_name_; }
 
     private:
         struct module_info
@@ -85,8 +96,8 @@ namespace dlg_help_utils::dbg_help
         void dump_loaded_module_information(DWORD64 handle, DWORD64 module_base,
                                             std::wstring const& module_image_path) const;
         std::wstring load_module_image_path(DWORD module_size, DWORD module_time_stamp, DWORD module_check_sum,
-                                            std::wstring const& module, DWORD64 handle);
-        DWORD64 load_module(std::wstring const& module, DWORD64 module_base, DWORD module_size,
+                                            std::wstring const& module_name, DWORD64 handle);
+        DWORD64 load_module(std::wstring const& module_name, DWORD64 module_base, DWORD module_size,
                             MODLOAD_DATA* module_load_info);
 
     private:
@@ -96,6 +107,6 @@ namespace dlg_help_utils::dbg_help
         std::map<std::wstring, module_info> modules_{};
         DWORD loading_module_check_sum_{};
         bool loading_module_{};
-        std::wstring downloading_module_{};
+        std::wstring downloading_module_name_{};
     };
 }

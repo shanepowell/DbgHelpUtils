@@ -15,9 +15,22 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="SymbolEngineUi.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SymbolEngineUi.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="App.base.h" />
+    <ClInclude Include="WindowHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -55,10 +68,14 @@
     <Filter Include="ViewModel">
       <UniqueIdentifier>{7aba2f25-595b-42c7-9126-b683dd772d83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Helpers">
+      <UniqueIdentifier>{2e756462-00cb-4a31-ab43-2f875afe4de2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
+    <None Include="dummy.exe" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml">

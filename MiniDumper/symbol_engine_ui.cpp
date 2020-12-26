@@ -7,7 +7,7 @@ symbol_engine_ui::symbol_engine_ui(dump_file_options const& options)
 {
 }
 
-bool symbol_engine_ui::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module)
+bool symbol_engine_ui::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module_name)
 {
     if ((GetAsyncKeyState(VK_LCONTROL) & 0x8000) == 0x8000 || (GetAsyncKeyState(VK_RCONTROL) & 0x8000) == 0x8000)
     {
@@ -16,14 +16,14 @@ bool symbol_engine_ui::deferred_symbol_load_cancel([[maybe_unused]] std::wstring
     return false;
 }
 
-void symbol_engine_ui::deferred_symbol_load_partial([[maybe_unused]] std::wstring_view const& module)
+void symbol_engine_ui::deferred_symbol_load_partial([[maybe_unused]] std::wstring_view const& module_name)
 {
 }
 
-void symbol_engine_ui::start_download(std::wstring_view const& module)
+void symbol_engine_ui::start_download(std::wstring_view const& module_name)
 {
     std::wstringstream ss;
-    ss << L"downloading " << module << L": ";
+    ss << L"downloading " << module_name << L": ";
     module_ = std::move(ss).str();
     std::wcout << module_;
     last_percent_.clear();

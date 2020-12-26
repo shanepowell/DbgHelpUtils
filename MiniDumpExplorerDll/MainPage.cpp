@@ -1,9 +1,12 @@
 ﻿#include "pch.h"
 #include "MainPage.h"
+#if __has_include("MainPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "MainPage.g.cpp"
+#endif
 
 #include "DumpFileView.h"
+#include "WindowHelper.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -30,6 +33,7 @@ namespace winrt::MiniDumpExplorer::implementation
     IAsyncAction MainPage::TabView_AddTabButtonClick([[maybe_unused]] muxc::TabView const& sender,
                                                      [[maybe_unused]] Windows::Foundation::IInspectable const& args) const {
         FileOpenPicker const picker;
+        WindowHelper::SetupFileOpenPicker(picker);
         picker.ViewMode(PickerViewMode::Thumbnail);
         picker.SuggestedStartLocation(PickerLocationId::DocumentsLibrary);
         picker.FileTypeFilter().Append(L".dmp");

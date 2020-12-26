@@ -1055,14 +1055,14 @@ namespace dlg_help_utils::dbg_help
     }
 
     std::wstring symbol_engine::load_module_image_path(DWORD const module_size, DWORD module_time_stamp,
-                                                       DWORD const module_check_sum, std::wstring const& module,
+                                                       DWORD const module_check_sum, std::wstring const& module_name,
                                                        DWORD64 const handle)
     {
         if (handle != 0)
         {
             loading_module_check_sum_ = module_check_sum;
             std::array<wchar_t, MAX_PATH> buffer{};
-            auto const result = SymFindFileInPathW(fake_process, nullptr, module.c_str(), &module_time_stamp,
+            auto const result = SymFindFileInPathW(fake_process, nullptr, module_name.c_str(), &module_time_stamp,
                                                    module_size, 0, SSRVOPT_DWORDPTR, buffer.data(),
                                                    find_file_in_path_callback, static_cast<i_symbol_callback*>(this));
             loading_module_check_sum_ = 0;
@@ -1074,7 +1074,7 @@ namespace dlg_help_utils::dbg_help
             if (callback().symbol_load_debug())
             {
                 auto const ec = GetLastError();
-                callback().log_stream() << L"Failed to find module image path for [" << module <<
+                callback().log_stream() << L"Failed to find module image path for [" << module_name <<
                     L"] - SymFindFileInPathW: " << ec << L" - " << windows_error::get_windows_error_string(ec) << L'\n';
             }
         }
@@ -1082,7 +1082,7 @@ namespace dlg_help_utils::dbg_help
         return {};
     }
 
-    DWORD64 symbol_engine::load_module(std::wstring const& module, DWORD64 const module_base, DWORD const module_size,
+    DWORD64 symbol_engine::load_module(std::wstring const& module_name, DWORD64 const module_base, DWORD const module_size,
                                        MODLOAD_DATA* module_load_info)
     {
         loading_module_ = true;
@@ -1091,7 +1091,7 @@ namespace dlg_help_utils::dbg_help
             loading_module_ = false;
         });
 
-        return SymLoadModuleExW(fake_process, nullptr, module.c_str(), nullptr, module_base, module_size,
+        return SymLoadModuleExW(fake_process, nullptr, module_name.c_str(), nullptr, module_base, module_size,
                                 module_load_info, 0);
     }
 }

@@ -5,54 +5,65 @@
 #include "DumpFileView.g.cpp"
 #endif
 
+#include <DbgHelp.h>
+
 #include "Category.h"
+/*
+#include "../DbgHelpUtils/wide_runtime_error.h"
+#include "../DbgHelpUtils/mini_dump_stream_type.h"
+*/
 
 using namespace winrt;
 using namespace Windows::UI::Xaml;
+using namespace dlg_help_utils;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     DumpFileView::DumpFileView(hstring path, hstring display_name)
-        : display_name_{std::move(display_name)}
-          , path_{std::move(path)}
+        : display_name_{ std::move(display_name) }
+        , path_{ std::move(path) }
+        /*, dump_file_{ std::wstring{path_} }*/
     {
         InitializeComponent();
 
         categories_ = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
 
-        const auto menuItem10 = winrt::make_self<Category>(L"Menu item 10", L"Icon", nullptr, true);
+        /*
+        try
+        {
+            dump_file_.open_mini_dump();
+        }
+        catch ([[maybe_unused]] exceptions::wide_runtime_error const& e)
+        {
+            SetupInvalidUserModeDump();
+            return;
+        }
 
-        const auto menuItem9 = winrt::make_self<Category>(L"Menu item 9", L"Icon", nullptr, true);
-        const auto menuItem8 = winrt::make_self<Category>(L"Menu item 8", L"Icon", nullptr, true);
-        auto menuItem7Children = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
-        menuItem7Children.Append(*menuItem9);
-        menuItem7Children.Append(*menuItem8);
+        if (dump_file_.header() == nullptr)
+        {
+            SetupInvalidUserModeDump();
+            return;
+        }
 
-        const auto menuItem7 = winrt::make_self<Category>(L"Menu item 7", L"Icon", menuItem7Children);
-        auto menuItem6Children = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
-        menuItem6Children.Append(*menuItem7);
+        switch (dump_file_.type())
+        {
+        case dump_file_type::user_mode_dump:
+            SetupUserModeDump();
+            break;
 
-        const auto menuItem6 = winrt::make_self<Category>(L"Menu item 6", L"Icon", menuItem6Children);
+        case dump_file_type::invalid:
+            SetupInvalidUserModeDump();
+            break;
 
-        const auto menuItem5 = winrt::make_self<Category>(L"Menu item 5", L"Icon", nullptr, true);
-        const auto menuItem4 = winrt::make_self<Category>(L"Menu item 4", L"Icon", nullptr, true);
-        auto menuItem3Children = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
-        menuItem3Children.Append(*menuItem5);
-        menuItem3Children.Append(*menuItem4);
+        case dump_file_type::kernel_mode_dump_x86:
+            SetupX86KernelMemoryDump();
+            break;
 
-        const auto menuItem3 = winrt::make_self<Category>(L"Menu item 3", L"Icon", menuItem3Children);
-        auto menuItem2Children = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
-        menuItem2Children.Append(*menuItem3);
-
-        const auto menuItem2 = winrt::make_self<Category>(L"Menu item 2", L"Icon", menuItem2Children);
-        auto menuItem1Children = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
-        menuItem1Children.Append(*menuItem2);
-
-        const auto menuItem1 = winrt::make_self<Category>(L"Menu item 1", L"Icon", menuItem1Children);
-
-        categories_.Append(*menuItem1);
-        categories_.Append(*menuItem6);
-        categories_.Append(*menuItem10);
+        case dump_file_type::kernel_mode_dump_x64:
+            SetupX64KernelMemoryDump();
+            break;
+        }
+    */
     }
 
     hstring DumpFileView::DisplayName() const
@@ -120,5 +131,52 @@ namespace winrt::MiniDumpExplorer::implementation
                                                      Navigation::NavigationFailedEventArgs const& args)
     {
         throw hresult_error(E_FAIL, hstring(L"Failed to load Page ") + args.SourcePageType().Name);
+    }
+
+    void DumpFileView::SetupInvalidUserModeDump()
+    {
+    }
+
+    void DumpFileView::SetupUserModeDump()
+    {
+        /*
+        auto const* header_data = dump_file_.header();
+        if (header_data == nullptr)
+        {
+            return;
+        }
+
+        const auto header_menu = winrt::make_self<Category>(L"Header", L"Icon", nullptr, true);
+        categories_.Append(*header_menu);
+
+        auto const* directory = dump_file_.directory();
+        if (directory == nullptr)
+        {
+            return;
+        }
+
+        auto stream_types = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
+        for (size_t index = 0; index < header_data->NumberOfStreams; ++index)
+        {
+            auto const& entry = directory[index];
+
+            std::wostringstream ss;
+            ss << L"Stream: [" << index << "] " << mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType));
+
+            const auto stream_menu = winrt::make_self<Category>(ss.str(), L"Icon", nullptr, true);
+            stream_types.Append(*stream_menu);
+        }
+
+        const auto streams_menu = winrt::make_self<Category>(L"Streams", L"Icon", stream_types);
+        categories_.Append(*streams_menu);
+    */
+    }
+
+    void DumpFileView::SetupX86KernelMemoryDump()
+    {
+    }
+
+    void DumpFileView::SetupX64KernelMemoryDump()
+    {
     }
 }
