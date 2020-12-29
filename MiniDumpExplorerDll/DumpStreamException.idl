@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamException : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamException();
+    }
+}

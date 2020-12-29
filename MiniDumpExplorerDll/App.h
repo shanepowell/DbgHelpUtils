@@ -18,3 +18,5 @@ namespace winrt::MiniDumpExplorer::factory_implementation
     };
 }
 
+void* winrt_make_MiniDumpExplorer_App();
+

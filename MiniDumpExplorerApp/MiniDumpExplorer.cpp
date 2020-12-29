@@ -4,6 +4,10 @@
 #include "XamlBridge.h"
 #include <ShellScalingApi.h>
 
+#include "DumpFileFactory.h"
+#include "SymbolEngineUi.h"
+#include "../DbgHelpUtils/symbol_engine.h"
+
 #define MAX_LOAD_STRING 100
 
 // Global Variables:
@@ -49,8 +53,11 @@ public:
 
 private:
 
-    wil::unique_hwnd m_hWndXamlIsland = nullptr;
-    winrt::MiniDumpExplorer::MainPage m_mainUserControl = nullptr;
+    wil::unique_hwnd h_wnd_xaml_island_ = nullptr;
+    winrt::MiniDumpExplorer::MainPage main_user_control_ = nullptr;
+    SymbolEngineUi symbol_engine_ui_;
+    dlg_help_utils::dbg_help::symbol_engine symbol_engine_{ symbol_engine_ui_ };
+    MiniDumpExplorerApp::DumpFileFactory factory_{symbol_engine_};
 
     HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
     {
@@ -75,8 +82,8 @@ private:
 
     bool OnCreate(HWND, LPCREATESTRUCT)
     {
-        m_mainUserControl = winrt::MiniDumpExplorer::MainPage();
-        m_hWndXamlIsland = wil::unique_hwnd(CreateDesktopWindowsXamlSource(WS_TABSTOP, m_mainUserControl));
+        main_user_control_ = winrt::MiniDumpExplorer::MainPage{factory_};
+        h_wnd_xaml_island_ = wil::unique_hwnd(CreateDesktopWindowsXamlSource(WS_TABSTOP, main_user_control_));
         return true;
     }
 
@@ -87,7 +94,7 @@ private:
 
     void OnResize(HWND, [[maybe_unused]] UINT state, int cx, int cy)
     {
-        SetWindowPos(m_hWndXamlIsland.get(), nullptr, 0, 0, cx, cy, SWP_SHOWWINDOW);
+        SetWindowPos(h_wnd_xaml_island_.get(), nullptr, 0, 0, cx, cy, SWP_SHOWWINDOW);
     }
 };
 
@@ -99,7 +106,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    winrt::init_apartment(winrt::apartment_type::single_threaded);
+    init_apartment(winrt::apartment_type::single_threaded);
     winrt::MiniDumpExplorer::App app;
 
     ExplorerWindow myWindow(hInstance, nCmdShow);

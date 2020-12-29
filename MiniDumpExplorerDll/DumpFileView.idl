@@ -1,11 +1,12 @@
 import "Category.idl";
+import "IDumpFile.idl";
 
 namespace MiniDumpExplorer
 {
     [default_interface]
     runtimeclass DumpFileView : Windows.UI.Xaml.Controls.UserControl
     {
-        DumpFileView(String path, String display_name);
+        DumpFileView(String path, String display_name, IDumpFile dump_file);
 
         String Path;
         String DisplayName;

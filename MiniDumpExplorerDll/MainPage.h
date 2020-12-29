@@ -6,17 +6,22 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MainPage : MainPageT<MainPage>
     {
-        MainPage();
+        MainPage(IDumpFileFactory factory);
 
         event_token PropertyChanged(Windows::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(event_token const& token);
 
-        Windows::Foundation::IAsyncAction TabView_AddTabButtonClick(muxc::TabView const& sender,
-                                                                    Windows::Foundation::IInspectable const& args) const;
-        void TabView_TabCloseRequested(muxc::TabView const& sender,
-                                       muxc::TabViewTabCloseRequestedEventArgs const& args);
+        Windows::Foundation::IAsyncAction TabView_AddTabButtonClick(muxc::TabView const& sender, Windows::Foundation::IInspectable const& args) const;
+        static void TabView_TabCloseRequested(muxc::TabView const& sender, muxc::TabViewTabCloseRequestedEventArgs const& args);
+
+        bool DeferredSymbolLoadCancel(hstring module_name);
+        void DeferredSymbolLoadPartial(hstring module_name);
+        void StartDownload(hstring module_name);
+        void DownloadPercent(uint32_t percent);
+        void DownloadComplete();
 
     private:
+        IDumpFileFactory factory_;
         hstring display_name_;
         hstring path_;
         // ReSharper disable once CppRedundantQualifier

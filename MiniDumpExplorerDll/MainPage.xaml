@@ -12,8 +12,9 @@
         <muxc:TabView AddTabButtonClick="TabView_AddTabButtonClick"
                       TabCloseRequested="TabView_TabCloseRequested"
                       HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch">
-            <muxc:TabViewItem Header="Home" IsClosable="False">
+                      VerticalAlignment="Stretch"
+                      CanDragTabs="false">
+            <muxc:TabViewItem Header="Home" IsClosable="False" CanDrag="False">
                 <muxc:TabViewItem.IconSource>
                     <muxc:SymbolIconSource Symbol="Home" />
                 </muxc:TabViewItem.IconSource>

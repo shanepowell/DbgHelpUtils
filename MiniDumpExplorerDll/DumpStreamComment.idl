@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamComment : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamComment();
+    }
+}

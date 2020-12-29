@@ -1,0 +1,19 @@
+import "IDumpFileStream.idl";
+
+namespace MiniDumpExplorer
+{
+    enum DumpFileType
+    {
+        Invalid,
+        UserModeDump,
+        KernelModeDumpX86,
+        KernelModeDumpX64
+    };
+
+    interface IDumpFile
+    {
+        enum DumpFileType Type { get; };
+        Boolean HasHeader { get; };
+        Windows.Foundation.Collections.IVector<IDumpFileStream> Streams { get; };
+    }
+}

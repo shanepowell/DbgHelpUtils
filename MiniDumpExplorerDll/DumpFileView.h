@@ -1,13 +1,12 @@
 ﻿#pragma once
 
 #include "DumpFileView.g.h"
-#include "SymbolEngineUi.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct DumpFileView : DumpFileViewT<DumpFileView>
     {
-        DumpFileView(hstring path, hstring display_name);
+        DumpFileView(hstring path, hstring display_name, IDumpFile dump_file);
 
         hstring DisplayName() const;
         void DisplayName(hstring value);
@@ -21,27 +20,23 @@ namespace winrt::MiniDumpExplorer::implementation
         void PropertyChanged(event_token const& token);
 
         void OnItemInvoked(muxc::NavigationView const& sender, muxc::NavigationViewItemInvokedEventArgs const& args);
-        void ContentFrame_NavigationFailed(Windows::Foundation::IInspectable const& sender,
-                                           Windows::UI::Xaml::Navigation::NavigationFailedEventArgs const& args);
 
     private:
         void SetupInvalidUserModeDump();
         void SetupUserModeDump();
         void SetupX86KernelMemoryDump();
         void SetupX64KernelMemoryDump();
+        Windows::UI::Xaml::Controls::UserControl CreateStreamPage(IDumpFileStream const& stream) const;
 
     private:
         hstring display_name_;
         hstring path_;
-        /*
-        dlg_help_utils::mini_dump dump_file_;
-        SymbolEngineUi symbol_engine_ui_;
-        dlg_help_utils::dbg_help::symbol_engine symbol_engine{ symbol_engine_ui_ };
-        */
+        IDumpFile dump_file_;
 
         // ReSharper disable once CppRedundantQualifier
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Category> categories_;
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Category> categories_{winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>()};
         event<Windows::UI::Xaml::Data::PropertyChangedEventHandler> property_changed_;
+        std::unordered_map<std::wstring, Windows::UI::Xaml::Controls::UserControl> pages_;
     };
 }
 

@@ -11,7 +11,7 @@ namespace winrt::MiniDumpExplorer::implementation
         Initialize();
 
         AddRef();
-        m_inner.as<::IUnknown>()->Release();
+        m_inner.as<IUnknown>()->Release();
     }
 
     App::~App()
@@ -20,3 +20,7 @@ namespace winrt::MiniDumpExplorer::implementation
     }
 }
 
+void* winrt_make_MiniDumpExplorer_App()
+{
+    return detach_abi(winrt::make<MiniDumpExplorer::factory_implementation::App>());
+}

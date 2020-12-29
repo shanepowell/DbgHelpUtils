@@ -1,8 +1,16 @@
+import "IDumpFileFactory.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
     runtimeclass MainPage : Windows.UI.Xaml.Controls.Page, Windows.UI.Xaml.Data.INotifyPropertyChanged
     {
-        MainPage();
+        MainPage(IDumpFileFactory factory);
+
+        Boolean DeferredSymbolLoadCancel(String module_name);
+        void DeferredSymbolLoadPartial(String module_name);
+        void StartDownload(String module_name);
+        void DownloadPercent(UInt32 percent);
+        void DownloadComplete();
     }
 }

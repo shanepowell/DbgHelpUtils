@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamHandleOperationList : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamHandleOperationList();
+    }
+}

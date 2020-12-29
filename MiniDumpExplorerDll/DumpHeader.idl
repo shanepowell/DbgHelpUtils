@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpHeader : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpHeader();
+    }
+}

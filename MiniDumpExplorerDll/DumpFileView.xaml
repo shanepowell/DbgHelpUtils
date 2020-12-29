@@ -11,16 +11,19 @@
     <UserControl.Resources>
         <DataTemplate x:Key="NavigationViewMenuItem" x:DataType="local:Category">
             <muxc:NavigationViewItem Content="{x:Bind Name}"
-                                     MenuItemsSource="{x:Bind Children}"
-                                     SelectsOnInvoked="{x:Bind IsLeaf}" />
+                                     MenuItemsSource="{x:Bind Children, Mode=OneWay}"
+                                     SelectsOnInvoked="{x:Bind IsLeaf}"
+                                     Tag="{x:Bind Name}"/>
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <muxc:NavigationView x:Name="NavView"
                              PaneDisplayMode="Left"
+                             ItemInvoked="OnItemInvoked"
                              MenuItemsSource="{x:Bind Categories, Mode=OneWay}"
                              MenuItemTemplate="{StaticResource NavigationViewMenuItem}"
                              IsSettingsVisible="False">
+            
         </muxc:NavigationView>
     </Grid>
 </UserControl>
