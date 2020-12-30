@@ -9,7 +9,8 @@
     mc:Ignorable="d">
 
     <Grid>
-        <muxc:TabView AddTabButtonClick="TabView_AddTabButtonClick"
+        <muxc:TabView x:Name="DumpFileViews"
+                      AddTabButtonClick="TabView_AddTabButtonClick"
                       TabCloseRequested="TabView_TabCloseRequested"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"

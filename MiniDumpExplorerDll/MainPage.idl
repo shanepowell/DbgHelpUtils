@@ -12,5 +12,7 @@ namespace MiniDumpExplorer
         void StartDownload(String module_name);
         void DownloadPercent(UInt32 percent);
         void DownloadComplete();
+
+        void UnloadAllTabs();
     }
 }

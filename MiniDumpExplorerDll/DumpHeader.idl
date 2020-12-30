@@ -2,7 +2,6 @@ import "IDumpFileHeader.idl";
 
 namespace MiniDumpExplorer
 {
-    [bindable]
     [default_interface]
     runtimeclass DumpHeader : Windows.UI.Xaml.Controls.UserControl
     {

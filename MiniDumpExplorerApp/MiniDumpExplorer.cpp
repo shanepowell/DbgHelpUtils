@@ -89,6 +89,11 @@ private:
 
     void OnDestroy(HWND hwnd)
     {
+        if(main_user_control_)
+        {
+            main_user_control_.UnloadAllTabs();
+        }
+
         base_type::OnDestroy(hwnd);
     }
 

@@ -19,6 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void StartDownload(hstring module_name);
         void DownloadPercent(uint32_t percent);
         void DownloadComplete();
+        void UnloadAllTabs();
 
     private:
         IDumpFileFactory factory_;

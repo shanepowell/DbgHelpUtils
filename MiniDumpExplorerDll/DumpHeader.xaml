@@ -92,12 +92,12 @@
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="- internal version" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind Path=Header.InternalVersion, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
             </Grid>
-            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">NumberOfStreams</TextBlock>
-            <TextBlock Grid.Row="3" Grid.Column="2" Text="{x:Bind Path=Header.NumberOfStreams, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
-            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">CheckSum </TextBlock>
-            <TextBlock Grid.Row="4" Grid.Column="2" Text="{x:Bind Path=Header.CheckSum, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
-            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">Timestamp Local</TextBlock>
-            <Grid Grid.Row="5" Grid.Column="2">
+            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">NumberOfStreams</TextBlock>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="{x:Bind Path=Header.NumberOfStreams, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">CheckSum </TextBlock>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="{x:Bind Path=Header.CheckSum, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">Timestamp Local</TextBlock>
+            <Grid Grid.Row="5" Grid.Column="2" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -110,11 +110,12 @@
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="- UTC" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind Path=Header.TimeDateStamp, Converter={StaticResource UtcDateTimeConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
             </Grid>
-            <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">Flags</TextBlock>
-            <TextBlock Grid.Row="6" Grid.Column="2" Text="{x:Bind Path=Header.Flags, Converter={StaticResource HexConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">Flags</TextBlock>
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="{x:Bind Path=Header.Flags, Converter={StaticResource HexConverter}}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}" />
             <ListView Grid.Row="7" Grid.Column="2"
                       SelectionMode="None" 
-                      ItemsSource="{x:Bind Path=Header.FlagTypes}">
+                      ItemsSource="{x:Bind Path=Header.FlagTypes}" 
+                      Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="x:String">
                         <TextBlock Text="{x:Bind}" Style="{StaticResource CaptionTextBlockStyle}"/>

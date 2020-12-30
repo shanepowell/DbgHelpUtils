@@ -38,6 +38,7 @@ namespace winrt::MiniDumpExplorer::implementation
         picker.ViewMode(PickerViewMode::Thumbnail);
         picker.SuggestedStartLocation(PickerLocationId::DocumentsLibrary);
         picker.FileTypeFilter().Append(L".dmp");
+        picker.FileTypeFilter().Append(L".mdmp");
 
         // save tab view com reference before the co_wait which will invalid the sender object
         auto const tab_view = sender; // NOLINT(performance-unnecessary-copy-initialization)
@@ -101,5 +102,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void MainPage::DownloadComplete()
     {
+    }
+
+    void MainPage::UnloadAllTabs()
+    {
+        while(DumpFileViews().TabItems().Size() > 1)
+        {
+            DumpFileViews().TabItems().RemoveAt(DumpFileViews().TabItems().Size() - 1);
+        }
     }
 }
