@@ -1,6 +1,7 @@
 ﻿#include "Pch.h"
 #include "DumpFile.h"
 
+#include "DumpFileHeader.h"
 #include "DumpFileStream.h"
 #include "../DbgHelpUtils/wide_runtime_error.h"
 
@@ -48,6 +49,13 @@ namespace MiniDumpExplorerApp
     bool DumpFile::HasHeader() const
     {
         return dump_file_.header() != nullptr;
+    }
+
+    winrt::MiniDumpExplorer::IDumpFileHeader DumpFile::Header()
+    {
+        auto const header = winrt::make<DumpFileHeader>(dump_file_, type_);
+        auto rv = header.as<winrt::MiniDumpExplorer::IDumpFileHeader>();
+        return rv;
     }
 
     winrt::Windows::Foundation::Collections::IVector<winrt::MiniDumpExplorer::IDumpFileStream> DumpFile::Streams() const

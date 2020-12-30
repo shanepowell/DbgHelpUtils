@@ -12,9 +12,10 @@ namespace MiniDumpExplorerApp
     {
         DumpFile(winrt::hstring path, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
 
-        winrt::MiniDumpExplorer::DumpFileType Type() const { return type_; }
-        bool HasHeader() const;
-        winrt::Windows::Foundation::Collections::IVector<winrt::MiniDumpExplorer::IDumpFileStream> Streams() const;
+        [[nodiscard]] winrt::MiniDumpExplorer::DumpFileType Type() const { return type_; }
+        [[nodiscard]] bool HasHeader() const;
+        [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileHeader Header();
+        [[nodiscard]] winrt::Windows::Foundation::Collections::IVector<winrt::MiniDumpExplorer::IDumpFileStream> Streams() const;
 
     private:
         void LoadStreams() const;

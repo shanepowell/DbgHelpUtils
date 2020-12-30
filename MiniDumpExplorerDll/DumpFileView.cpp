@@ -5,8 +5,6 @@
 #include "DumpFileView.g.cpp"
 #endif
 
-#include <DbgHelp.h>
-
 #include "Category.h"
 #include "DumpHeader.h"
 #include "DumpStreamComment.h"
@@ -125,50 +123,57 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DumpFileView::SetupInvalidUserModeDump()
     {
+        SetupDumpHeaderPage();
     }
 
     void DumpFileView::SetupUserModeDump()
     {
+        SetupDumpHeaderPage();
+
         if(!dump_file_.HasHeader())
         {
             return;
         }
 
-        const auto header_menu = winrt::make_self<Category>(L"Header", L"Icon", nullptr, true);
-        categories_.Append(*header_menu);
-
-        const auto header_page = winrt::make_self<DumpHeader>();
-        pages_.emplace(std::make_pair(std::wstring{header_menu->Name()}, header_page.as<Controls::UserControl>()));
-
         // for some reason I don't understand yet, adding more than one sub-cat will not display correctly.
-
-//        auto stream_types = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
+        // auto stream_types = winrt::single_threaded_observable_vector<MiniDumpExplorer::Category>();
         for (auto const& stream : dump_file_.Streams())
         {
             std::wostringstream ss;
             ss << L"[" << stream.Index() << "] " << stream.TypeString().c_str();
 
             const auto stream_menu = winrt::make_self<Category>(hstring{ss.str()}, L"Icon", nullptr, true);
-            categories_.Append(*stream_menu);
             pages_.emplace(std::make_pair(ss.str(), CreateStreamPage(stream)));
-//            stream_types.Append(*stream_menu);
+            categories_.Append(*stream_menu);
+            // stream_types.Append(*stream_menu);
         }
 
         /*
         const auto streams_menu = winrt::make_self<Category>(L"Streams", L"Icon", stream_types, false);
         categories_.Append(*streams_menu);
         */
-
-        NavView().SelectedItem(*header_menu);
-        NavView().Content(*header_page);
     }
 
     void DumpFileView::SetupX86KernelMemoryDump()
     {
+        SetupDumpHeaderPage();
     }
 
     void DumpFileView::SetupX64KernelMemoryDump()
     {
+        SetupDumpHeaderPage();
+    }
+
+    void DumpFileView::SetupDumpHeaderPage()
+    {
+        const auto header_menu = winrt::make_self<Category>(L"Header", L"Icon", nullptr, true);
+        categories_.Append(*header_menu);
+
+        const auto header_page = winrt::make_self<DumpHeader>(dump_file_.Header());
+        pages_.emplace(std::make_pair(std::wstring{header_menu->Name()}, header_page.as<Controls::UserControl>()));
+
+        NavView().SelectedItem(*header_menu);
+        NavView().Content(*header_page);
     }
 
     Controls::UserControl DumpFileView::CreateStreamPage(IDumpFileStream const& stream) const

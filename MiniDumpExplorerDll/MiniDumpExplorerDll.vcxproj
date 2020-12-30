@@ -53,6 +53,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\DbgHelpUtils\DbgHelpUtils.vcxproj">
+          <Project>{98f08fd0-52b2-4f66-b212-c6a406c88b37}</Project>
+      </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v140</PlatformToolset>
@@ -140,8 +145,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="App.base.h" />
+    <ClInclude Include="BooleanToVisibilityConverter.h">
+      <DependentUpon>BooleanToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Category.h">
       <DependentUpon>Category.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="DateTimeConverter.h">
+      <DependentUpon>DateTimeConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="DumpFileView.h">
@@ -238,6 +251,14 @@
     </ClInclude>
     <ClInclude Include="DumpStreamUnused.h">
       <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="HexConverter.h">
+      <DependentUpon>HexConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="NumberConverter.h">
+      <DependentUpon>NumberConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="pch.h" />
@@ -344,8 +365,16 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BooleanToVisibilityConverter.cpp">
+      <DependentUpon>BooleanToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Category.cpp">
       <DependentUpon>Category.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="DateTimeConverter.cpp">
+      <DependentUpon>DateTimeConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="DumpFileView.cpp">
@@ -444,6 +473,14 @@
       <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="HexConverter.cpp">
+      <DependentUpon>HexConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="NumberConverter.cpp">
+      <DependentUpon>NumberConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -460,9 +497,16 @@
     <Midl Include="App.idl">
       <DependentUpon>App.xaml</DependentUpon>
     </Midl>
+    <Midl Include="BooleanToVisibilityConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="Category.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="DateTimeConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="DumpFileType.idl" />
     <Midl Include="DumpHeader.idl">
       <DependentUpon>DumpHeader.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -555,15 +599,22 @@
       <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="HexConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="IDumpFile.idl" />
     <Midl Include="DumpFileView.idl">
       <DependentUpon>DumpFileView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="IDumpFileFactory.idl" />
+    <Midl Include="IDumpFileHeader.idl" />
     <Midl Include="IDumpFileStream.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="NumberConverter.idl">
+      <SubType>Designer</SubType>
     </Midl>
   </ItemGroup>
   <ItemGroup>

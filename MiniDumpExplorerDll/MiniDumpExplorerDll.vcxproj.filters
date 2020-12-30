@@ -18,6 +18,24 @@
     <Midl Include="IDumpFileStream.idl">
       <Filter>ViewModel</Filter>
     </Midl>
+    <Midl Include="IDumpFileHeader.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="DumpFileType.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="BooleanToVisibilityConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
+    <Midl Include="HexConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
+    <Midl Include="NumberConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
+    <Midl Include="DateTimeConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -73,6 +91,9 @@
     </Filter>
     <Filter Include="Helpers">
       <UniqueIdentifier>{2e756462-00cb-4a31-ab43-2f875afe4de2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Converters">
+      <UniqueIdentifier>{97d41d1a-9096-4267-a4fb-7356a8186f9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

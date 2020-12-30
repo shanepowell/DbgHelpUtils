@@ -204,6 +204,7 @@
   <ItemGroup>
     <ClInclude Include="DumpFile.h" />
     <ClInclude Include="DumpFileFactory.h" />
+    <ClInclude Include="DumpFileHeader.h" />
     <ClInclude Include="DumpFileStream.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MiniDumpExplorer.h" />
@@ -216,6 +217,7 @@
   <ItemGroup>
     <ClCompile Include="DumpFile.cpp" />
     <ClCompile Include="DumpFileFactory.cpp" />
+    <ClCompile Include="DumpFileHeader.cpp" />
     <ClCompile Include="DumpFileStream.cpp" />
     <ClCompile Include="MiniDumpExplorer.cpp" />
     <ClCompile Include="Pch.cpp">

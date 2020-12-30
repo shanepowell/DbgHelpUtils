@@ -26,6 +26,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void SetupUserModeDump();
         void SetupX86KernelMemoryDump();
         void SetupX64KernelMemoryDump();
+        void SetupDumpHeaderPage();
         Windows::UI::Xaml::Controls::UserControl CreateStreamPage(IDumpFileStream const& stream) const;
 
     private:

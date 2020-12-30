@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ViewModel">
+      <UniqueIdentifier>{c0f674e4-0821-4d1c-931b-69938b0f5a78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -39,20 +42,23 @@
     <ClInclude Include="Pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DumpFileFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DumpFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SymbolEngineUi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DumpFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DumpFile.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFileFactory.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFileHeader.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
     <ClInclude Include="DumpFileStream.h">
-      <Filter>Header Files</Filter>
+      <Filter>ViewModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,20 +71,23 @@
     <ClCompile Include="Pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DumpFileFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DumpFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SymbolEngineUi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DumpFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DumpFile.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileFactory.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileHeader.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
     <ClCompile Include="DumpFileStream.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

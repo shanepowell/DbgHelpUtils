@@ -1,0 +1,9 @@
+namespace MiniDumpExplorer
+{
+    [bindable]
+    [default_interface]
+    runtimeclass HexConverter : Windows.UI.Xaml.Data.IValueConverter
+    {
+        HexConverter();
+    }
+}

@@ -6,17 +6,121 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
+        <local:HexConverter x:Key="HexConverter"/>
+        <local:NumberConverter x:Key="NumberConverter"/>
+        <local:DateTimeConverter x:Key="LocalDateTimeConverter"/>
+        <local:DateTimeConverter x:Key="UtcDateTimeConverter" IsUtc="True"/>
+    </UserControl.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalTextAlignment="Left">Dump Header</TextBlock>
-    </Grid>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                  VerticalScrollBarVisibility="Auto">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">Dump Header</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind Path=HeaderType}" Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">Signature</TextBlock>
+            <Grid Grid.Row="1" Grid.Column="2" Visibility="{x:Bind Path=IsKernelDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Path=Header.VersionString}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text=" - " Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Valid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource TrueToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Invalid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource FalseToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="2" Visibility="{x:Bind Path=IsUserDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Path=Header.VersionString}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="-" Margin="5,0,5,0" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Valid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource TrueToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Invalid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource FalseToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="2" Visibility="{x:Bind Path=IsInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Path=Header.Signature, Converter={StaticResource HexConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="-" Margin="5,0,5,0" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Valid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource TrueToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Invalid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource FalseToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            </Grid>
+            <TextBlock Grid.Row="2" Grid.Column="0" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">Version</TextBlock>
+            <Grid Grid.Row="2" Grid.Column="2" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Path=Header.Version, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="- internal version" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind Path=Header.InternalVersion, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            </Grid>
+            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">NumberOfStreams</TextBlock>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="{x:Bind Path=Header.NumberOfStreams, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">CheckSum </TextBlock>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="{x:Bind Path=Header.CheckSum, Converter={StaticResource NumberConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">Timestamp Local</TextBlock>
+            <Grid Grid.Row="5" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Path=Header.TimeDateStamp, Converter={StaticResource LocalDateTimeConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="- UTC" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind Path=Header.TimeDateStamp, Converter={StaticResource UtcDateTimeConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            </Grid>
+            <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource BaseTextBlockStyle}">Flags</TextBlock>
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="{x:Bind Path=Header.Flags, Converter={StaticResource HexConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+            <ListView Grid.Row="7" Grid.Column="2"
+                      SelectionMode="None" 
+                      ItemsSource="{x:Bind Path=Header.FlagTypes}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{x:Bind}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

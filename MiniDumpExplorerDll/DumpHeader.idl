@@ -1,8 +1,18 @@
+import "IDumpFileHeader.idl";
+
 namespace MiniDumpExplorer
 {
+    [bindable]
     [default_interface]
     runtimeclass DumpHeader : Windows.UI.Xaml.Controls.UserControl
     {
-        DumpHeader();
+        DumpHeader(IDumpFileHeader header);
+
+        IDumpFileHeader Header { get; };
+        String HeaderType { get; };
+        Boolean IsKernelDumpFile { get; };
+        Boolean IsUserDumpFile { get; };
+        Boolean IsInvalidDumpFile { get; };
+        Boolean IsUserOrInvalidDumpFile { get; };
     }
 }

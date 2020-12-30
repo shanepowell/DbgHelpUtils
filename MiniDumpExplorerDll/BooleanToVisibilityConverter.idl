@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    [bindable]
+    [default_interface]
+    runtimeclass BooleanToVisibilityConverter : Windows.UI.Xaml.Data.IValueConverter
+    {
+        BooleanToVisibilityConverter();
+        Boolean IsReversed;
+    }
+}

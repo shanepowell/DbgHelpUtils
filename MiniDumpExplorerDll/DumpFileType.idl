@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    enum DumpFileType
+    {
+        Invalid,
+        UserModeDump,
+        KernelModeDumpX86,
+        KernelModeDumpX64
+    };
+}
