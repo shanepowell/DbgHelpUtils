@@ -6,10 +6,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:NumberConverter x:Key="NumberConverter"/>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="5" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -17,6 +22,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalTextAlignment="Left">Stream Comment</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column = "0" Style="{StaticResource BaseTextBlockStyle}">Stream Comment</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column = "2" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=Stream.IsAscii, Converter={StaticResource TrueToVisibleConverter}}">Ascii</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column = "2" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=Stream.IsUnicode, Converter={StaticResource TrueToVisibleConverter}}">Unicode</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column = "0" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column = "2" Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}" />
+        <TextBlock Grid.Row="2" Grid.Column = "2" Text="{x:Bind Path=Stream.Comment}" Style="{StaticResource BodyTextBlockStyle}" Margin="5,5,5,5"/>
     </Grid>
 </UserControl>

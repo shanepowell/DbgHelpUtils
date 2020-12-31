@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    interface IDumpFileStreamComment
+    {
+        UInt64 Index { get; };
+        Boolean IsAscii { get; };
+        Boolean IsUnicode { get; };
+        String Comment { get; };
+    }
+}

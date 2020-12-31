@@ -94,6 +94,7 @@
     <ClCompile Include="handle_data_stream.cpp" />
     <ClCompile Include="handle_operation_list_stream.cpp" />
     <ClCompile Include="hex_dump.cpp" />
+    <ClCompile Include="locale_number_formatting.cpp" />
     <ClCompile Include="memory64_list_stream.cpp" />
     <ClCompile Include="memory_info_list_stream.cpp" />
     <ClCompile Include="memory_info_utils.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="hex_dump.h" />
     <ClInclude Include="i_stack_walk_callback.h" />
     <ClInclude Include="i_symbol_load_callback.h" />
+    <ClInclude Include="locale_number_formatting.h" />
     <ClInclude Include="memory64_list_stream.h" />
     <ClInclude Include="memory_info_list_stream.h" />
     <ClInclude Include="memory_info_utils.h" />

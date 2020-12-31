@@ -60,6 +60,9 @@
     <ClInclude Include="DumpFileStream.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
+    <ClInclude Include="DumpFileStreamComment.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -87,6 +90,9 @@
       <Filter>ViewModel</Filter>
     </ClCompile>
     <ClCompile Include="DumpFileStream.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamComment.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>

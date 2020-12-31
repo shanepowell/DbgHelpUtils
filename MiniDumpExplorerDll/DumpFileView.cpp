@@ -206,7 +206,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         case StreamType::CommentStreamA:
         case StreamType::CommentStreamW:
-            return winrt::make_self<DumpStreamComment>().as<Controls::UserControl>();
+            return winrt::make_self<DumpStreamComment>(stream.AsComment()).as<Controls::UserControl>();
 
         case StreamType::HandleDataStream:
             return winrt::make_self<DumpStreamHandleData>().as<Controls::UserControl>();

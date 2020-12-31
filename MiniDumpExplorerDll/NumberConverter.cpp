@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "NumberConverter.h"
+
+#include "../DbgHelpUtils/locale_number_formatting.h"
+
 #if __has_include("NumberConverter.g.cpp")
 #include "NumberConverter.g.cpp"
 #endif
@@ -19,7 +22,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 using T = decltype(arg);
                 auto temp = value.try_as<Windows::Foundation::IReference<T>>();
                 if(!temp) return;
-                rv = std::to_wstring(temp.Value());
+                rv = locale_formatting::to_wstring(temp.Value());
             }(Args{}), ...);
             return hstring{rv};
         }

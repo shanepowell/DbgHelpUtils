@@ -80,7 +80,7 @@ namespace MiniDumpExplorerApp
         for (size_t index = 0; index < header_data->NumberOfStreams; ++index)
         {
             auto const& entry = directory[index];
-            const auto stream = winrt::make_self<MiniDumpExplorerApp::DumpFileStream>(index, entry);
+            const auto stream = winrt::make_self<DumpFileStream>(index, entry, dump_file_);
             streams_.Append(*stream);
         }
     }

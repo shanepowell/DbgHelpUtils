@@ -36,6 +36,9 @@
     <Midl Include="DateTimeConverter.idl">
       <Filter>Converters</Filter>
     </Midl>
+    <Midl Include="IDumpFileStreamComment.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />

@@ -206,6 +206,7 @@
     <ClInclude Include="DumpFileFactory.h" />
     <ClInclude Include="DumpFileHeader.h" />
     <ClInclude Include="DumpFileStream.h" />
+    <ClInclude Include="DumpFileStreamComment.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MiniDumpExplorer.h" />
     <ClInclude Include="Pch.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="DumpFileFactory.cpp" />
     <ClCompile Include="DumpFileHeader.cpp" />
     <ClCompile Include="DumpFileStream.cpp" />
+    <ClCompile Include="DumpFileStreamComment.cpp" />
     <ClCompile Include="MiniDumpExplorer.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

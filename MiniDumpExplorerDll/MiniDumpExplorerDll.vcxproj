@@ -54,9 +54,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-      <ProjectReference Include="..\DbgHelpUtils\DbgHelpUtils.vcxproj">
-          <Project>{98f08fd0-52b2-4f66-b212-c6a406c88b37}</Project>
-      </ProjectReference>
+    <ProjectReference Include="..\DbgHelpUtils\DbgHelpUtils.vcxproj">
+      <Project>{98f08fd0-52b2-4f66-b212-c6a406c88b37}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -610,6 +610,7 @@
     <Midl Include="IDumpFileFactory.idl" />
     <Midl Include="IDumpFileHeader.idl" />
     <Midl Include="IDumpFileStream.idl" />
+    <Midl Include="IDumpFileStreamComment.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>

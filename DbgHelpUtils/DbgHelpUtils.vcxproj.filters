@@ -198,6 +198,9 @@
     <ClCompile Include="find_thread_stack.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="locale_number_formatting.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -406,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="symbol_address_info.h">
       <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="locale_number_formatting.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

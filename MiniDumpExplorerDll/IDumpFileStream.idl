@@ -1,3 +1,5 @@
+import "IDumpFileStreamComment.idl";
+
 namespace MiniDumpExplorer
 {
     enum StreamType {
@@ -50,5 +52,7 @@ namespace MiniDumpExplorer
         UInt64 Index { get; };
         StreamType Type { get; };
         String TypeString { get; };
+
+        IDumpFileStreamComment AsComment();
     }
 }
