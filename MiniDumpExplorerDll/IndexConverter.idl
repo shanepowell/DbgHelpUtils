@@ -1,0 +1,9 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass IndexConverter : Windows.UI.Xaml.Data.IValueConverter
+    {
+        IndexConverter();
+        Boolean IsBracketed;
+    }
+}

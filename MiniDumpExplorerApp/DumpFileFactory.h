@@ -8,10 +8,6 @@ namespace MiniDumpExplorerApp
         DumpFileFactory(dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
         [[nodiscard]] winrt::MiniDumpExplorer::IDumpFile Make(winrt::hstring path) const;
 
-        void use_make_function_to_create_this_object() final
-        {
-        }
-
     private:
         dlg_help_utils::dbg_help::symbol_engine& symbol_engine_;
     };

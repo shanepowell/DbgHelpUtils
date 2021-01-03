@@ -221,6 +221,10 @@
       <DependentUpon>DumpStreamSystemMemoryInfo.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DumpStreamThreadContext.h">
+      <DependentUpon>DumpStreamThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="DumpStreamThreadExList.h">
       <DependentUpon>DumpStreamThreadExList.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -253,8 +257,20 @@
       <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DumpStreamX64ThreadContext.h">
+      <DependentUpon>DumpStreamX64ThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="DumpStreamX86ThreadContext.h">
+      <DependentUpon>DumpStreamX86ThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="HexConverter.h">
       <DependentUpon>HexConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="IndexConverter.h">
+      <DependentUpon>IndexConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="NumberConverter.h">
@@ -322,6 +338,9 @@
     <Page Include="DumpStreamSystemMemoryInfo.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="DumpStreamThreadContext.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DumpStreamThreadExList.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -344,6 +363,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="DumpStreamUnused.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DumpStreamX64ThreadContext.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DumpStreamX86ThreadContext.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
@@ -441,6 +466,10 @@
       <DependentUpon>DumpStreamSystemMemoryInfo.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DumpStreamThreadContext.cpp">
+      <DependentUpon>DumpStreamThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="DumpStreamThreadExList.cpp">
       <DependentUpon>DumpStreamThreadExList.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -473,8 +502,20 @@
       <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DumpStreamX64ThreadContext.cpp">
+      <DependentUpon>DumpStreamX64ThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="DumpStreamX86ThreadContext.cpp">
+      <DependentUpon>DumpStreamX86ThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="HexConverter.cpp">
       <DependentUpon>HexConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="IndexConverter.cpp">
+      <DependentUpon>IndexConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="NumberConverter.cpp">
@@ -567,6 +608,10 @@
       <DependentUpon>DumpStreamSystemMemoryInfo.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="DumpStreamThreadContext.idl">
+      <DependentUpon>DumpStreamThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="DumpStreamThreadExList.idl">
       <DependentUpon>DumpStreamThreadExList.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -599,6 +644,14 @@
       <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="DumpStreamX64ThreadContext.idl">
+      <DependentUpon>DumpStreamX64ThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="DumpStreamX86ThreadContext.idl">
+      <DependentUpon>DumpStreamX86ThreadContext.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="HexConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -611,6 +664,15 @@
     <Midl Include="IDumpFileHeader.idl" />
     <Midl Include="IDumpFileStream.idl" />
     <Midl Include="IDumpFileStreamComment.idl" />
+    <Midl Include="IDumpFileStreamException.idl" />
+    <Midl Include="IDumpFileStreamThreadContext.idl" />
+    <Midl Include="IDumpFileStreamX64ThreadContext.idl" />
+    <Midl Include="IDumpFileStreamX86ThreadContext.idl" />
+    <Midl Include="IMiniDumpException.idl" />
+    <Midl Include="IndexConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="IWow64FloatingSaveArea.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>

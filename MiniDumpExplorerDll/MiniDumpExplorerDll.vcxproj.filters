@@ -39,6 +39,27 @@
     <Midl Include="IDumpFileStreamComment.idl">
       <Filter>ViewModel</Filter>
     </Midl>
+    <Midl Include="IDumpFileStreamException.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpException.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IDumpFileStreamThreadContext.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IDumpFileStreamX86ThreadContext.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IDumpFileStreamX64ThreadContext.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IWow64FloatingSaveArea.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IndexConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -178,6 +199,15 @@
       <Filter>Views</Filter>
     </Page>
     <Page Include="DumpStreamThreadNames.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamThreadContext.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamX64ThreadContext.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamX86ThreadContext.xaml">
       <Filter>Views</Filter>
     </Page>
   </ItemGroup>

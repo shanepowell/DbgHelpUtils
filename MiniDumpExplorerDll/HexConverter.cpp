@@ -25,7 +25,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 using T = decltype(arg);
                 auto temp = value.try_as<Windows::Foundation::IReference<T>>();
                 if(!temp) return;
-                rv << dlg_help_utils::stream_hex_dump::to_hex<T>(temp.Value());
+                rv << dlg_help_utils::stream_hex_dump::to_hex_full<T>(temp.Value());
                 found_t = true;
             }(Args{}), ...);
             return hstring{std::move(rv).str()};

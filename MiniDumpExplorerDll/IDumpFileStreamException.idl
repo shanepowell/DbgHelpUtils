@@ -1,0 +1,14 @@
+import "IMiniDumpException.idl";
+import "IDumpFileStreamThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IDumpFileStreamException
+    {
+        UInt64 Index { get; };
+        Boolean IsValid { get; };
+        UInt32 ThreadId { get; };
+        IMiniDumpException ExceptionRecord { get; };
+        IDumpFileStreamThreadContext ThreadContext { get; };
+    }
+}

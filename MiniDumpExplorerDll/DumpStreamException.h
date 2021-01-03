@@ -1,16 +1,17 @@
 ﻿#pragma once
 
-#include "winrt/Windows.UI.Xaml.h"
-#include "winrt/Windows.UI.Xaml.Markup.h"
-#include "winrt/Windows.UI.Xaml.Interop.h"
-#include "winrt/Windows.UI.Xaml.Controls.Primitives.h"
 #include "DumpStreamException.g.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct DumpStreamException : DumpStreamExceptionT<DumpStreamException>
     {
-        DumpStreamException();
+        DumpStreamException(IDumpFileStreamException stream);
+
+        IDumpFileStreamException Stream() const;
+
+    private:
+        IDumpFileStreamException stream_;
     };
 }
 

@@ -193,7 +193,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return winrt::make_self<DumpStreamMemoryList>().as<Controls::UserControl>();
 
         case StreamType::ExceptionStream:
-            return winrt::make_self<DumpStreamException>().as<Controls::UserControl>();
+            return winrt::make_self<DumpStreamException>(stream.AsException()).as<Controls::UserControl>();
 
         case StreamType::SystemInfoStream:
             return winrt::make_self<DumpStreamSystemInfo>().as<Controls::UserControl>();

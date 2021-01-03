@@ -207,12 +207,19 @@
     <ClInclude Include="DumpFileHeader.h" />
     <ClInclude Include="DumpFileStream.h" />
     <ClInclude Include="DumpFileStreamComment.h" />
+    <ClInclude Include="DumpFileStreamException.h" />
+    <ClInclude Include="DumpFileStreamThreadContext.h" />
+    <ClInclude Include="DumpFileStreamX64ThreadContext.h" />
+    <ClInclude Include="DumpFileStreamX86ThreadContext.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="HStringHelper.h" />
+    <ClInclude Include="MiniDumpException.h" />
     <ClInclude Include="MiniDumpExplorer.h" />
-    <ClInclude Include="Pch.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SymbolEngineUi.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Wow64FloatingSaveArea.h" />
     <ClInclude Include="XamlBridge.h" />
   </ItemGroup>
   <ItemGroup>
@@ -221,14 +228,21 @@
     <ClCompile Include="DumpFileHeader.cpp" />
     <ClCompile Include="DumpFileStream.cpp" />
     <ClCompile Include="DumpFileStreamComment.cpp" />
+    <ClCompile Include="DumpFileStreamException.cpp" />
+    <ClCompile Include="DumpFileStreamThreadContext.cpp" />
+    <ClCompile Include="DumpFileStreamX64ThreadContext.cpp" />
+    <ClCompile Include="DumpFileStreamX86ThreadContext.cpp" />
+    <ClCompile Include="HStringHelper.cpp" />
+    <ClCompile Include="MiniDumpException.cpp" />
     <ClCompile Include="MiniDumpExplorer.cpp" />
-    <ClCompile Include="Pch.cpp">
+    <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SymbolEngineUi.cpp" />
+    <ClCompile Include="Wow64FloatingSaveArea.cpp" />
     <ClCompile Include="XamlBridge.cpp" />
   </ItemGroup>
   <ItemGroup>

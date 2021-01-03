@@ -1,0 +1,69 @@
+namespace MiniDumpExplorer
+{
+    interface IDumpFileStreamX64ThreadContext
+    {
+        UInt64 P1Home { get; };
+        UInt64 P2Home { get; };
+        UInt64 P3Home { get; };
+        UInt64 P4Home { get; };
+        UInt64 P5Home { get; };
+        UInt64 P6Home { get; };
+        UInt32 ContextFlags { get; };
+        UInt32 MxCsr { get; };
+        UInt16 SegCs { get; };
+        UInt16 SegDs { get; };
+        UInt16 SegEs { get; };
+        UInt16 SegFs { get; };
+        UInt16 SegGs { get; };
+        UInt16 SegSs { get; };
+        UInt32 EFlags { get; };
+        UInt64 Dr0 { get; };
+        UInt64 Dr1 { get; };
+        UInt64 Dr2 { get; };
+        UInt64 Dr3 { get; };
+        UInt64 Dr6 { get; };
+        UInt64 Dr7 { get; };
+        UInt64 Rax { get; };
+        UInt64 Rcx { get; };
+        UInt64 Rdx { get; };
+        UInt64 Rbx { get; };
+        UInt64 Rsp { get; };
+        UInt64 Rbp { get; };
+        UInt64 Rsi { get; };
+        UInt64 Rdi { get; };
+        UInt64 R8 { get; };
+        UInt64 R9 { get; };
+        UInt64 R10 { get; };
+        UInt64 R11 { get; };
+        UInt64 R12 { get; };
+        UInt64 R13 { get; };
+        UInt64 R14 { get; };
+        UInt64 R15 { get; };
+        UInt64 Rip { get; };
+        Windows.Foundation.Collections.IObservableVector<String> Header { get; };
+        Windows.Foundation.Collections.IObservableVector<String> Legacy { get; };
+        String Xmm0 { get; };
+        String Xmm1 { get; };
+        String Xmm2 { get; };
+        String Xmm3 { get; };
+        String Xmm4 { get; };
+        String Xmm5 { get; };
+        String Xmm6 { get; };
+        String Xmm7 { get; };
+        String Xmm8 { get; };
+        String Xmm9 { get; };
+        String Xmm10 { get; };
+        String Xmm11 { get; };
+        String Xmm12 { get; };
+        String Xmm13 { get; };
+        String Xmm14 { get; };
+        String Xmm15 { get; };
+        Windows.Foundation.Collections.IObservableVector<String> VectorRegister { get; };
+        UInt64 VectorControl { get; };
+        UInt64 DebugControl { get; };
+        UInt64 LastBranchToRip { get; };
+        UInt64 LastBranchFromRip { get; };
+        UInt64 LastExceptionToRip { get; };
+        UInt64 LastExceptionFromRip { get; };
+    }
+}

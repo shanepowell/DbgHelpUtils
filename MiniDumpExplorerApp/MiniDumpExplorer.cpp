@@ -1,4 +1,4 @@
-#include "Pch.h"
+#include "pch.h"
 #include "MiniDumpExplorer.h"
 
 #include "XamlBridge.h"
@@ -19,20 +19,20 @@ class ExplorerWindow : public DesktopWindowT<ExplorerWindow>
 public:
     ExplorerWindow(HINSTANCE hInstance, int nCmdShow) noexcept
     {
-        WNDCLASSEXW wcex = {};
-        wcex.cbSize = sizeof(WNDCLASSEX);
-        wcex.style = CS_HREDRAW | CS_VREDRAW;
-        wcex.lpfnWndProc = WndProc;
-        wcex.cbClsExtra = DLGWINDOWEXTRA;
-        wcex.cbWndExtra = 0;
-        wcex.hInstance = hInstance;
-        wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MINI_DUMP_EXPLORER));
-        wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-        wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-        wcex.lpszMenuName = MAKEINTRESOURCEW(IDI_MINI_DUMP_EXPLORER);
-        wcex.lpszClassName = szWindowClass;
-        wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-        WINRT_VERIFY(RegisterClassEx(&wcex));
+        WNDCLASSEXW windows_class;
+        windows_class.cbSize = sizeof(WNDCLASSEX);
+        windows_class.style = CS_HREDRAW | CS_VREDRAW;
+        windows_class.lpfnWndProc = WndProc;
+        windows_class.cbClsExtra = DLGWINDOWEXTRA;
+        windows_class.cbWndExtra = 0;
+        windows_class.hInstance = hInstance;
+        windows_class.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MINI_DUMP_EXPLORER));
+        windows_class.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        windows_class.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+        windows_class.lpszMenuName = MAKEINTRESOURCEW(IDI_MINI_DUMP_EXPLORER);
+        windows_class.lpszClassName = szWindowClass;
+        windows_class.hIconSm = LoadIcon(windows_class.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+        WINRT_VERIFY(RegisterClassEx(&windows_class));
         WINRT_ASSERT(!GetHandle());
 
         const auto wnd = InitInstance(hInstance, nCmdShow);
@@ -52,55 +52,56 @@ public:
     }
 
 private:
-
-    wil::unique_hwnd h_wnd_xaml_island_ = nullptr;
-    winrt::MiniDumpExplorer::MainPage main_user_control_ = nullptr;
-    SymbolEngineUi symbol_engine_ui_;
-    dlg_help_utils::dbg_help::symbol_engine symbol_engine_{ symbol_engine_ui_ };
-    MiniDumpExplorerApp::DumpFileFactory factory_{symbol_engine_};
-
     HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
     {
         hInst = hInstance; // Store instance handle in our global variable
-        HWND hMainWnd = CreateWindow(
+        auto const main_window = CreateWindow(
             szWindowClass,
             L"MiniDumpExplorer",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, InitialWidth, InitialHeight,
             nullptr, nullptr, hInstance, this);
 
-        if (!hMainWnd)
+        if (!main_window)
         {
             winrt::check_hresult(E_FAIL);
         }
 
-        ShowWindow(hMainWnd, nCmdShow);
-        UpdateWindow(hMainWnd);
-        SetFocus(hMainWnd);
-        return hMainWnd;
+        ShowWindow(main_window, nCmdShow);
+        UpdateWindow(main_window);
+        SetFocus(main_window);
+        return main_window;
     }
 
     bool OnCreate(HWND, LPCREATESTRUCT)
     {
+        factory_ = *winrt::make_self<MiniDumpExplorerApp::DumpFileFactory>(symbol_engine_);
         main_user_control_ = winrt::MiniDumpExplorer::MainPage{factory_};
         h_wnd_xaml_island_ = wil::unique_hwnd(CreateDesktopWindowsXamlSource(WS_TABSTOP, main_user_control_));
         return true;
     }
 
-    void OnDestroy(HWND hwnd)
+    void OnDestroy(HWND window)
     {
         if(main_user_control_)
         {
             main_user_control_.UnloadAllTabs();
         }
 
-        base_type::OnDestroy(hwnd);
+        base_type::OnDestroy(window);
     }
 
-    void OnResize(HWND, [[maybe_unused]] UINT state, int cx, int cy)
+    void OnResize(HWND, [[maybe_unused]] UINT state, int cx, int cy) const
     {
         SetWindowPos(h_wnd_xaml_island_.get(), nullptr, 0, 0, cx, cy, SWP_SHOWWINDOW);
     }
+
+private:
+    wil::unique_hwnd h_wnd_xaml_island_ = nullptr;
+    winrt::MiniDumpExplorer::MainPage main_user_control_ = nullptr;
+    SymbolEngineUi symbol_engine_ui_;
+    dlg_help_utils::dbg_help::symbol_engine symbol_engine_{ symbol_engine_ui_ };
+    winrt::MiniDumpExplorer::IDumpFileFactory factory_;
 };
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -115,7 +116,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     winrt::MiniDumpExplorer::App app;
 
     ExplorerWindow myWindow(hInstance, nCmdShow);
-    int const retValue = myWindow.MessageLoop(nullptr);
+    auto const retValue = myWindow.MessageLoop(nullptr);
 
     app.Close();
     app = nullptr;

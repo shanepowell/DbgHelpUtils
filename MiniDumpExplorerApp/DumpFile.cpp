@@ -1,4 +1,4 @@
-﻿#include "Pch.h"
+﻿#include "pch.h"
 #include "DumpFile.h"
 
 #include "DumpFileHeader.h"
@@ -80,7 +80,7 @@ namespace MiniDumpExplorerApp
         for (size_t index = 0; index < header_data->NumberOfStreams; ++index)
         {
             auto const& entry = directory[index];
-            const auto stream = winrt::make_self<DumpFileStream>(index, entry, dump_file_);
+            const auto stream = winrt::make_self<DumpFileStream>(index, entry, dump_file_, symbol_engine_);
             streams_.Append(*stream);
         }
     }

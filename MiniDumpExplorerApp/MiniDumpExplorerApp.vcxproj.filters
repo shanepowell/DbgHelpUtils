@@ -39,13 +39,10 @@
     <ClInclude Include="XamlBridge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Pch.h">
+    <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SymbolEngineUi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DumpFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DumpFile.h">
@@ -63,6 +60,30 @@
     <ClInclude Include="DumpFileStreamComment.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
+    <ClInclude Include="DumpFileStreamException.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpException.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFileStreamThreadContext.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFileStreamX86ThreadContext.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Wow64FloatingSaveArea.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFileStreamX64ThreadContext.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFile.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="HStringHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -71,13 +92,10 @@
     <ClCompile Include="XamlBridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Pch.cpp">
+    <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SymbolEngineUi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DumpFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DumpFile.cpp">
@@ -94,6 +112,30 @@
     </ClCompile>
     <ClCompile Include="DumpFileStreamComment.cpp">
       <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamException.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpException.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamThreadContext.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamX86ThreadContext.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Wow64FloatingSaveArea.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamX64ThreadContext.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFile.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="HStringHelper.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

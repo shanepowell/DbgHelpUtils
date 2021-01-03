@@ -1,0 +1,18 @@
+import "IDumpFileStreamX86ThreadContext.idl";
+import "IDumpFileStreamX64ThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IDumpFileStreamThreadContext
+    {
+        Boolean X86ThreadContextAvailable { get; };
+        Boolean Wow64ThreadContextAvailable { get; };
+        Boolean X64ThreadContextAvailable { get; };
+        Boolean X86ThreadContextHasExtendedRegisters { get; };
+        Boolean Wow64ThreadContextHasExtendedRegisters { get; };
+
+        IDumpFileStreamX86ThreadContext X86ThreadContext { get; };
+        IDumpFileStreamX86ThreadContext Wow64ThreadContext { get; };
+        IDumpFileStreamX64ThreadContext X64ThreadContext { get; };
+    }
+}

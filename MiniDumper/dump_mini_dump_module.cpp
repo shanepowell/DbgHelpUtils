@@ -39,9 +39,9 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
 
     wcout << L"NumberOfModules: " << module_list.module_list().NumberOfModules << L'\n';
     size_t i = 0;
-    for (auto const& module : module_list.list())
+    for (auto const& stream_module : module_list.list())
     {
-        std::filesystem::path p{module.name()};
+        std::filesystem::path p{stream_module.name()};
         auto const any_match = modules.empty() && module_bases.empty();
         auto const modules_match = !modules.empty() && std::find_if(modules.begin(), modules.end(),
                                                                     [name = p.filename().wstring()](
@@ -51,72 +51,72 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
                                                                             name, name_match);
                                                                     }) != modules.end();
         auto const module_bases_match = !module_bases.empty() && std::find(
-            module_bases.begin(), module_bases.end(), module->BaseOfImage) != module_bases.end();
+            module_bases.begin(), module_bases.end(), stream_module->BaseOfImage) != module_bases.end();
         if (!any_match && !modules_match && !module_bases_match)
         {
             ++i;
             continue;
         }
 
-        wcout << L" [" << i << "]: " << module.name() << L'\n';
-        wcout << L"   Base: " << to_hex_full(module->BaseOfImage) << L'\n';
-        wcout << L"   CheckSum: " << module->CheckSum << L'\n';
-        wcout << L"   Size: " << module->SizeOfImage << L" (" << bytes{module->SizeOfImage} << L")\n";
-        wcout << L"   Timestamp [local: " << time_utils::to_local_time(module->TimeDateStamp) << L"] [UTC: " <<
-            time_utils::to_utc_time(module->TimeDateStamp) << L"]\n";
+        wcout << L" [" << i << "]: " << stream_module.name() << L'\n';
+        wcout << L"   Base: " << to_hex_full(stream_module->BaseOfImage) << L'\n';
+        wcout << L"   CheckSum: " << stream_module->CheckSum << L'\n';
+        wcout << L"   Size: " << stream_module->SizeOfImage << L" (" << bytes{stream_module->SizeOfImage} << L")\n";
+        wcout << L"   Timestamp [local: " << time_utils::to_local_time(stream_module->TimeDateStamp) << L"] [UTC: " <<
+            time_utils::to_utc_time(stream_module->TimeDateStamp) << L"]\n";
         wcout << L"   VersionInfo: \n";
-        wcout << L"     Signature: " << to_hex(module->VersionInfo.dwSignature) << L'\n';
-        wcout << L"     Struct Version: " << module->VersionInfo.dwStrucVersion << L'\n';
-        wcout << L"     File Flags: " << to_hex(module->VersionInfo.dwFileFlags) << L'\n';
-        wcout << L"     File Flags Mask: " << to_hex(module->VersionInfo.dwFileFlagsMask) << L'\n';
-        wcout << L"     File Type: " << to_hex(module->VersionInfo.dwFileType) << L'\n';
-        wcout << L"     File Subtype: " << to_hex(module->VersionInfo.dwFileSubtype) << L'\n';
-        wcout << L"     File OS: " << to_hex(module->VersionInfo.dwFileOS) << L'\n';
+        wcout << L"     Signature: " << to_hex(stream_module->VersionInfo.dwSignature) << L'\n';
+        wcout << L"     Struct Version: " << stream_module->VersionInfo.dwStrucVersion << L'\n';
+        wcout << L"     File Flags: " << to_hex(stream_module->VersionInfo.dwFileFlags) << L'\n';
+        wcout << L"     File Flags Mask: " << to_hex(stream_module->VersionInfo.dwFileFlagsMask) << L'\n';
+        wcout << L"     File Type: " << to_hex(stream_module->VersionInfo.dwFileType) << L'\n';
+        wcout << L"     File Subtype: " << to_hex(stream_module->VersionInfo.dwFileSubtype) << L'\n';
+        wcout << L"     File OS: " << to_hex(stream_module->VersionInfo.dwFileOS) << L'\n';
 
-        wcout << L"     File Date Raw : " << module->VersionInfo.dwFileDateMS << L'.' << module->VersionInfo.
+        wcout << L"     File Date Raw : " << stream_module->VersionInfo.dwFileDateMS << L'.' << stream_module->VersionInfo.
             dwFileDateLS << L'\n';
-        if (module->VersionInfo.dwFileDateMS != 0 && module->VersionInfo.dwFileDateLS != 0)
+        if (stream_module->VersionInfo.dwFileDateMS != 0 && stream_module->VersionInfo.dwFileDateLS != 0)
         {
             FILETIME ft;
-            ft.dwHighDateTime = module->VersionInfo.dwFileDateMS;
-            ft.dwLowDateTime = module->VersionInfo.dwFileDateLS;
+            ft.dwHighDateTime = stream_module->VersionInfo.dwFileDateMS;
+            ft.dwLowDateTime = stream_module->VersionInfo.dwFileDateLS;
             auto const time_stamp = time_utils::filetime_to_time_t(ft);
             wcout << L"     File Date: [local: " << time_utils::to_local_time(time_stamp) << L"] [UTC: " <<
                 time_utils::to_utc_time(time_stamp) << L"]\n";
         }
         wcout << L"     File Version: " << system_info_utils::version_info_to_string(
-            module->VersionInfo.dwFileVersionMS, module->VersionInfo.dwFileVersionLS) << L'\n';
+            stream_module->VersionInfo.dwFileVersionMS, stream_module->VersionInfo.dwFileVersionLS) << L'\n';
         wcout << L"     Product Version: " << system_info_utils::version_info_to_string(
-            module->VersionInfo.dwProductVersionMS, module->VersionInfo.dwProductVersionLS) << L'\n';
-        wcout << L"   CvRecord (size): " << module->CvRecord.DataSize << L" (" << bytes{module->CvRecord.DataSize} <<
+            stream_module->VersionInfo.dwProductVersionMS, stream_module->VersionInfo.dwProductVersionLS) << L'\n';
+        wcout << L"   CvRecord (size): " << stream_module->CvRecord.DataSize << L" (" << bytes{stream_module->CvRecord.DataSize} <<
             L")\n";
 
-        if (module.pdb_info().is_valid())
+        if (stream_module.pdb_info().is_valid())
         {
             wcout << L"     PDB Info:\n";
-            wcout << L"       Signature: " << guid_utils::to_string(module.pdb_info().get_signature()) << L'\n';
-            wcout << L"       Age: " << module.pdb_info().get_age() << L'\n';
-            wcout << L"       Path: " << module.pdb_info().get_pdb_file_name() << L'\n';
+            wcout << L"       Signature: " << guid_utils::to_string(stream_module.pdb_info().get_signature()) << L'\n';
+            wcout << L"       Age: " << stream_module.pdb_info().get_age() << L'\n';
+            wcout << L"       Path: " << stream_module.pdb_info().get_pdb_file_name() << L'\n';
         }
 
-        wcout << L"   MiscRecord (size): " << module->MiscRecord.DataSize << L" (" << bytes{module->MiscRecord.DataSize}
+        wcout << L"   MiscRecord (size): " << stream_module->MiscRecord.DataSize << L" (" << bytes{stream_module->MiscRecord.DataSize}
             << L")\n";
-        wcout << L"   Reserved0: " << module->Reserved0 << L'\n';
-        wcout << L"   Reserved1: " << module->Reserved1 << L'\n';
+        wcout << L"   Reserved0: " << stream_module->Reserved0 << L'\n';
+        wcout << L"   Reserved1: " << stream_module->Reserved1 << L'\n';
 
         if (options.hex_dump_memory_data())
         {
-            if (module->CvRecord.DataSize && !module.pdb_info().is_valid())
+            if (stream_module->CvRecord.DataSize && !stream_module.pdb_info().is_valid())
             {
                 wcout << L"   CvRecord:\n";
-                hex_dump::hex_dump(wcout, module.cv_record(), module->CvRecord.DataSize, 5);
+                hex_dump::hex_dump(wcout, stream_module.cv_record(), stream_module->CvRecord.DataSize, 5);
                 wcout << L'\n';
             }
 
-            if (module->MiscRecord.DataSize)
+            if (stream_module->MiscRecord.DataSize)
             {
                 wcout << L"   MiscRecord:\n";
-                hex_dump::hex_dump(wcout, module.misc_record(), module->MiscRecord.DataSize, 5);
+                hex_dump::hex_dump(wcout, stream_module.misc_record(), stream_module->MiscRecord.DataSize, 5);
                 wcout << L'\n';
             }
         }

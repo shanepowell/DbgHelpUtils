@@ -86,10 +86,21 @@
                          Background="Transparent"
                          BorderThickness="0"
                          Text="{x:Bind Path=Header.Signature, Converter={StaticResource HexConverter}}"
+                         FontFamily="Courier New"
                          IsReadOnly="True"
                          TextWrapping="Wrap" />
-                <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text=" - Valid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource TrueToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
-                <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text=" - Invalid" Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource FalseToVisibleConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Text=" - Valid"
+                           FontFamily="Courier New"
+                           Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource TrueToVisibleConverter}}"
+                           Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Text=" - Invalid"
+                           FontFamily="Courier New"
+                           Visibility="{x:Bind Path=Header.IsValid, Converter={StaticResource FalseToVisibleConverter}}"
+                           Style="{StaticResource BodyTextBlockStyle}" />
             </Grid>
             <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">Version</TextBlock>
             <Grid Grid.Row="2" Grid.Column="1" Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
@@ -107,7 +118,11 @@
                          Text="{x:Bind Path=Header.Version, Converter={StaticResource NumberConverter}}"
                          IsReadOnly="True"
                          TextWrapping="Wrap" />
-                <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text=" - internal version" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" 
+                           VerticalAlignment="Center"
+                           Text=" - internal version"
+                           Margin="5,0,5,0"
+                           Style="{StaticResource BodyTextBlockStyle}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
                          Background="Transparent"
                          BorderThickness="0"
@@ -120,6 +135,7 @@
                      Background="Transparent"
                      BorderThickness="0"
                      Text="{x:Bind Path=Header.NumberOfStreams, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
                      IsReadOnly="True"
                      TextWrapping="Wrap"
                      Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}" />
@@ -128,6 +144,7 @@
                      Background="Transparent"
                      BorderThickness="0"
                      Text="{x:Bind Path=Header.CheckSum, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
                      IsReadOnly="True"
                      TextWrapping="Wrap"
                      Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}" />
@@ -160,6 +177,7 @@
                      Background="Transparent"
                      BorderThickness="0"
                      Text="{x:Bind Path=Header.Flags, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
                      IsReadOnly="True"
                      TextWrapping="Wrap"
                      Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}" />
@@ -169,7 +187,11 @@
                       Visibility="{x:Bind Path=IsUserOrInvalidDumpFile, Converter={StaticResource TrueToVisibleConverter}}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="x:String">
-                        <TextBlock Text="{x:Bind}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock 
+                            Text="{x:Bind}" 
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            FontFamily="Courier New"
+                            />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -1,8 +1,12 @@
+import "IDumpFileStreamException.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
     runtimeclass DumpStreamException : Windows.UI.Xaml.Controls.UserControl
     {
-        DumpStreamException();
+        DumpStreamException(IDumpFileStreamException stream);
+    
+        IDumpFileStreamException Stream { get; };
     }
 }

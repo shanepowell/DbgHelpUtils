@@ -11,31 +11,36 @@
         <local:NumberConverter x:Key="NumberConverter"/>
     </UserControl.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Stream Comment</TextBlock>
-        <TextBlock Grid.Row="0" Grid.Column = "1" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=Stream.IsAscii, Converter={StaticResource TrueToVisibleConverter}}" Margin="5,0,0,0">Ascii</TextBlock>
-        <TextBlock Grid.Row="0" Grid.Column = "1" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=Stream.IsUnicode, Converter={StaticResource TrueToVisibleConverter}}" Margin="5,0,0,0">Unicode</TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
-        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
-                 Background="Transparent"
-                 BorderThickness="0"
-                 Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}"
-                 IsReadOnly="True"
-                 TextWrapping="Wrap" />
-        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
-                 Background="Transparent"
-                 BorderThickness="0"
-                 Text="{x:Bind Path=Stream.Comment}"
-                 IsReadOnly="True"
-                 TextWrapping="Wrap" />
-    </Grid>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                  VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Stream Comment</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column = "1" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=Stream.IsAscii, Converter={StaticResource TrueToVisibleConverter}}" Margin="5,0,0,0">Ascii</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column = "1" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Visibility="{x:Bind Path=Stream.IsUnicode, Converter={StaticResource TrueToVisibleConverter}}" Margin="5,0,0,0">Unicode</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Comment}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+    </ScrollViewer>
 </UserControl>

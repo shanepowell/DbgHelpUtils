@@ -1,4 +1,4 @@
-﻿#include "Pch.h"
+﻿#include "pch.h"
 #include "SymbolEngineUi.h"
 
 SymbolEngineUi::SymbolEngineUi()

@@ -1,4 +1,4 @@
-#include "Pch.h"
+#include "pch.h"
 
 #include "XamlBridge.h"
 #include "Resource.h"
