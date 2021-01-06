@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamIptTrace : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamIptTrace();
-    }
-}

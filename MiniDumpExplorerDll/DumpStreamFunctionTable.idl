@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamFunctionTable : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamFunctionTable();
-    }
-}

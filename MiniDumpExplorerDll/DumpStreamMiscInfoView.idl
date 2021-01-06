@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamMiscInfoView : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamMiscInfoView();
+    }
+}

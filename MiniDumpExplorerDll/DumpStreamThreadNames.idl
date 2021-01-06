@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamThreadNames : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamThreadNames();
-    }
-}

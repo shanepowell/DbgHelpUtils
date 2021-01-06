@@ -1,0 +1,12 @@
+import "IDumpFileStreamThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamThreadContextView : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamThreadContextView();
+
+        IDumpFileStreamThreadContext ThreadContext;
+    }
+}

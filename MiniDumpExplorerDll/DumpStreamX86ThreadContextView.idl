@@ -1,0 +1,13 @@
+import "IDumpFileStreamX86ThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamX86ThreadContextView : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamX86ThreadContextView();
+
+        IDumpFileStreamX86ThreadContext ThreadContext;
+        Boolean HasExtendedRegisters;
+    }
+}

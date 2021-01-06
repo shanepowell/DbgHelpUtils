@@ -161,108 +161,108 @@
       <DependentUpon>DumpFileView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpHeader.h">
-      <DependentUpon>DumpHeader.xaml</DependentUpon>
+    <ClInclude Include="DumpHeaderView.h">
+      <DependentUpon>DumpHeaderView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamComment.h">
-      <DependentUpon>DumpStreamComment.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamCommentView.h">
+      <DependentUpon>DumpStreamCommentView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamException.h">
-      <DependentUpon>DumpStreamException.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamExceptionView.h">
+      <DependentUpon>DumpStreamExceptionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamFunctionTable.h">
-      <DependentUpon>DumpStreamFunctionTable.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamFunctionTableView.h">
+      <DependentUpon>DumpStreamFunctionTableView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamHandleData.h">
-      <DependentUpon>DumpStreamHandleData.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamHandleDataView.h">
+      <DependentUpon>DumpStreamHandleDataView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamHandleOperationList.h">
-      <DependentUpon>DumpStreamHandleOperationList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamHandleOperationListView.h">
+      <DependentUpon>DumpStreamHandleOperationListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamIptTrace.h">
-      <DependentUpon>DumpStreamIptTrace.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamIptTraceView.h">
+      <DependentUpon>DumpStreamIptTraceView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamMemory64List.h">
-      <DependentUpon>DumpStreamMemory64List.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamMemory64ListView.h">
+      <DependentUpon>DumpStreamMemory64ListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamMemoryInfoList.h">
-      <DependentUpon>DumpStreamMemoryInfoList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamMemoryInfoListView.h">
+      <DependentUpon>DumpStreamMemoryInfoListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamMemoryList.h">
-      <DependentUpon>DumpStreamMemoryList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamMemoryListView.h">
+      <DependentUpon>DumpStreamMemoryListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamMiscInfo.h">
-      <DependentUpon>DumpStreamMiscInfo.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamMiscInfoView.h">
+      <DependentUpon>DumpStreamMiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamModuleList.h">
-      <DependentUpon>DumpStreamModuleList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamModuleListView.h">
+      <DependentUpon>DumpStreamModuleListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamProcessVmCounters.h">
-      <DependentUpon>DumpStreamProcessVmCounters.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamProcessVmCountersView.h">
+      <DependentUpon>DumpStreamProcessVmCountersView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamSystemInfo.h">
-      <DependentUpon>DumpStreamSystemInfo.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamSystemInfoView.h">
+      <DependentUpon>DumpStreamSystemInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamSystemMemoryInfo.h">
-      <DependentUpon>DumpStreamSystemMemoryInfo.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamSystemMemoryInfoView.h">
+      <DependentUpon>DumpStreamSystemMemoryInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamThreadContext.h">
-      <DependentUpon>DumpStreamThreadContext.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamThreadContextView.h">
+      <DependentUpon>DumpStreamThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamThreadExList.h">
-      <DependentUpon>DumpStreamThreadExList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamThreadExListView.h">
+      <DependentUpon>DumpStreamThreadExListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamThreadInfoList.h">
-      <DependentUpon>DumpStreamThreadInfoList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamThreadInfoListView.h">
+      <DependentUpon>DumpStreamThreadInfoListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamThreadList.h">
-      <DependentUpon>DumpStreamThreadList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamThreadListView.h">
+      <DependentUpon>DumpStreamThreadListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamThreadNames.h">
-      <DependentUpon>DumpStreamThreadNames.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamThreadNamesView.h">
+      <DependentUpon>DumpStreamThreadNamesView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamToken.h">
-      <DependentUpon>DumpStreamToken.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamTokenView.h">
+      <DependentUpon>DumpStreamTokenView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamUnloadedModuleList.h">
-      <DependentUpon>DumpStreamUnloadedModuleList.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamUnloadedModuleListView.h">
+      <DependentUpon>DumpStreamUnloadedModuleListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamUnsupported.h">
-      <DependentUpon>DumpStreamUnsupported.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamUnsupportedView.h">
+      <DependentUpon>DumpStreamUnsupportedView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamUnused.h">
-      <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamUnusedView.h">
+      <DependentUpon>DumpStreamUnusedView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamX64ThreadContext.h">
-      <DependentUpon>DumpStreamX64ThreadContext.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamX64ThreadContextView.h">
+      <DependentUpon>DumpStreamX64ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DumpStreamX86ThreadContext.h">
-      <DependentUpon>DumpStreamX86ThreadContext.xaml</DependentUpon>
+    <ClInclude Include="DumpStreamX86ThreadContextView.h">
+      <DependentUpon>DumpStreamX86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="HexConverter.h">
@@ -297,82 +297,82 @@
     <Page Include="DumpFileView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpHeader.xaml">
+    <Page Include="DumpHeaderView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamComment.xaml">
+    <Page Include="DumpStreamCommentView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamException.xaml">
+    <Page Include="DumpStreamExceptionView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamFunctionTable.xaml">
+    <Page Include="DumpStreamFunctionTableView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamHandleData.xaml">
+    <Page Include="DumpStreamHandleDataView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamHandleOperationList.xaml">
+    <Page Include="DumpStreamHandleOperationListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamIptTrace.xaml">
+    <Page Include="DumpStreamIptTraceView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamMemory64List.xaml">
+    <Page Include="DumpStreamMemory64ListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamMemoryInfoList.xaml">
+    <Page Include="DumpStreamMemoryInfoListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamMemoryList.xaml">
+    <Page Include="DumpStreamMemoryListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamMiscInfo.xaml">
+    <Page Include="DumpStreamMiscInfoView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamModuleList.xaml">
+    <Page Include="DumpStreamModuleListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamProcessVmCounters.xaml">
+    <Page Include="DumpStreamProcessVmCountersView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamSystemInfo.xaml">
+    <Page Include="DumpStreamSystemInfoView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamSystemMemoryInfo.xaml">
+    <Page Include="DumpStreamSystemMemoryInfoView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamThreadContext.xaml">
+    <Page Include="DumpStreamThreadContextView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamThreadExList.xaml">
+    <Page Include="DumpStreamThreadExListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamThreadInfoList.xaml">
+    <Page Include="DumpStreamThreadInfoListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamThreadList.xaml">
+    <Page Include="DumpStreamThreadListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamThreadNames.xaml">
+    <Page Include="DumpStreamThreadNamesView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamToken.xaml">
+    <Page Include="DumpStreamTokenView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamUnloadedModuleList.xaml">
+    <Page Include="DumpStreamUnloadedModuleListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamUnsupported.xaml">
+    <Page Include="DumpStreamUnsupportedView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamUnused.xaml">
+    <Page Include="DumpStreamUnusedView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamX64ThreadContext.xaml">
+    <Page Include="DumpStreamX64ThreadContextView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DumpStreamX86ThreadContext.xaml">
+    <Page Include="DumpStreamX86ThreadContextView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
@@ -413,108 +413,108 @@
       <DependentUpon>DumpFileView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpHeader.cpp">
-      <DependentUpon>DumpHeader.xaml</DependentUpon>
+    <ClCompile Include="DumpHeaderView.cpp">
+      <DependentUpon>DumpHeaderView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamComment.cpp">
-      <DependentUpon>DumpStreamComment.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamCommentView.cpp">
+      <DependentUpon>DumpStreamCommentView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamException.cpp">
-      <DependentUpon>DumpStreamException.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamExceptionView.cpp">
+      <DependentUpon>DumpStreamExceptionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamFunctionTable.cpp">
-      <DependentUpon>DumpStreamFunctionTable.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamFunctionTableView.cpp">
+      <DependentUpon>DumpStreamFunctionTableView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamHandleData.cpp">
-      <DependentUpon>DumpStreamHandleData.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamHandleDataView.cpp">
+      <DependentUpon>DumpStreamHandleDataView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamHandleOperationList.cpp">
-      <DependentUpon>DumpStreamHandleOperationList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamHandleOperationListView.cpp">
+      <DependentUpon>DumpStreamHandleOperationListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamIptTrace.cpp">
-      <DependentUpon>DumpStreamIptTrace.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamIptTraceView.cpp">
+      <DependentUpon>DumpStreamIptTraceView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamMemory64List.cpp">
-      <DependentUpon>DumpStreamMemory64List.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamMemory64ListView.cpp">
+      <DependentUpon>DumpStreamMemory64ListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamMemoryInfoList.cpp">
-      <DependentUpon>DumpStreamMemoryInfoList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamMemoryInfoListView.cpp">
+      <DependentUpon>DumpStreamMemoryInfoListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamMemoryList.cpp">
-      <DependentUpon>DumpStreamMemoryList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamMemoryListView.cpp">
+      <DependentUpon>DumpStreamMemoryListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamMiscInfo.cpp">
-      <DependentUpon>DumpStreamMiscInfo.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamMiscInfoView.cpp">
+      <DependentUpon>DumpStreamMiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamModuleList.cpp">
-      <DependentUpon>DumpStreamModuleList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamModuleListView.cpp">
+      <DependentUpon>DumpStreamModuleListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamProcessVmCounters.cpp">
-      <DependentUpon>DumpStreamProcessVmCounters.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamProcessVmCountersView.cpp">
+      <DependentUpon>DumpStreamProcessVmCountersView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamSystemInfo.cpp">
-      <DependentUpon>DumpStreamSystemInfo.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamSystemInfoView.cpp">
+      <DependentUpon>DumpStreamSystemInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamSystemMemoryInfo.cpp">
-      <DependentUpon>DumpStreamSystemMemoryInfo.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamSystemMemoryInfoView.cpp">
+      <DependentUpon>DumpStreamSystemMemoryInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamThreadContext.cpp">
-      <DependentUpon>DumpStreamThreadContext.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamThreadContextView.cpp">
+      <DependentUpon>DumpStreamThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamThreadExList.cpp">
-      <DependentUpon>DumpStreamThreadExList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamThreadExListView.cpp">
+      <DependentUpon>DumpStreamThreadExListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamThreadInfoList.cpp">
-      <DependentUpon>DumpStreamThreadInfoList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamThreadInfoListView.cpp">
+      <DependentUpon>DumpStreamThreadInfoListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamThreadList.cpp">
-      <DependentUpon>DumpStreamThreadList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamThreadListView.cpp">
+      <DependentUpon>DumpStreamThreadListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamThreadNames.cpp">
-      <DependentUpon>DumpStreamThreadNames.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamThreadNamesView.cpp">
+      <DependentUpon>DumpStreamThreadNamesView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamToken.cpp">
-      <DependentUpon>DumpStreamToken.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamTokenView.cpp">
+      <DependentUpon>DumpStreamTokenView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamUnloadedModuleList.cpp">
-      <DependentUpon>DumpStreamUnloadedModuleList.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamUnloadedModuleListView.cpp">
+      <DependentUpon>DumpStreamUnloadedModuleListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamUnsupported.cpp">
-      <DependentUpon>DumpStreamUnsupported.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamUnsupportedView.cpp">
+      <DependentUpon>DumpStreamUnsupportedView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamUnused.cpp">
-      <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamUnusedView.cpp">
+      <DependentUpon>DumpStreamUnusedView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamX64ThreadContext.cpp">
-      <DependentUpon>DumpStreamX64ThreadContext.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamX64ThreadContextView.cpp">
+      <DependentUpon>DumpStreamX64ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DumpStreamX86ThreadContext.cpp">
-      <DependentUpon>DumpStreamX86ThreadContext.xaml</DependentUpon>
+    <ClCompile Include="DumpStreamX86ThreadContextView.cpp">
+      <DependentUpon>DumpStreamX86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="HexConverter.cpp">
@@ -559,108 +559,108 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="DumpFileType.idl" />
-    <Midl Include="DumpHeader.idl">
-      <DependentUpon>DumpHeader.xaml</DependentUpon>
+    <Midl Include="DumpHeaderView.idl">
+      <DependentUpon>DumpHeaderView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamComment.idl">
-      <DependentUpon>DumpStreamComment.xaml</DependentUpon>
+    <Midl Include="DumpStreamCommentView.idl">
+      <DependentUpon>DumpStreamCommentView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamException.idl">
-      <DependentUpon>DumpStreamException.xaml</DependentUpon>
+    <Midl Include="DumpStreamExceptionView.idl">
+      <DependentUpon>DumpStreamExceptionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamFunctionTable.idl">
-      <DependentUpon>DumpStreamFunctionTable.xaml</DependentUpon>
+    <Midl Include="DumpStreamFunctionTableView.idl">
+      <DependentUpon>DumpStreamFunctionTableView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamHandleData.idl">
-      <DependentUpon>DumpStreamHandleData.xaml</DependentUpon>
+    <Midl Include="DumpStreamHandleDataView.idl">
+      <DependentUpon>DumpStreamHandleDataView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamHandleOperationList.idl">
-      <DependentUpon>DumpStreamHandleOperationList.xaml</DependentUpon>
+    <Midl Include="DumpStreamHandleOperationListView.idl">
+      <DependentUpon>DumpStreamHandleOperationListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamIptTrace.idl">
-      <DependentUpon>DumpStreamIptTrace.xaml</DependentUpon>
+    <Midl Include="DumpStreamIptTraceView.idl">
+      <DependentUpon>DumpStreamIptTraceView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamMemory64List.idl">
-      <DependentUpon>DumpStreamMemory64List.xaml</DependentUpon>
+    <Midl Include="DumpStreamMemory64ListView.idl">
+      <DependentUpon>DumpStreamMemory64ListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamMemoryInfoList.idl">
-      <DependentUpon>DumpStreamMemoryInfoList.xaml</DependentUpon>
+    <Midl Include="DumpStreamMemoryInfoListView.idl">
+      <DependentUpon>DumpStreamMemoryInfoListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamMemoryList.idl">
-      <DependentUpon>DumpStreamMemoryList.xaml</DependentUpon>
+    <Midl Include="DumpStreamMemoryListView.idl">
+      <DependentUpon>DumpStreamMemoryListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamMiscInfo.idl">
-      <DependentUpon>DumpStreamMiscInfo.xaml</DependentUpon>
+    <Midl Include="DumpStreamMiscInfoView.idl">
+      <DependentUpon>DumpStreamMiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamModuleList.idl">
-      <DependentUpon>DumpStreamModuleList.xaml</DependentUpon>
+    <Midl Include="DumpStreamModuleListView.idl">
+      <DependentUpon>DumpStreamModuleListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamProcessVmCounters.idl">
-      <DependentUpon>DumpStreamProcessVmCounters.xaml</DependentUpon>
+    <Midl Include="DumpStreamProcessVmCountersView.idl">
+      <DependentUpon>DumpStreamProcessVmCountersView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamSystemInfo.idl">
-      <DependentUpon>DumpStreamSystemInfo.xaml</DependentUpon>
+    <Midl Include="DumpStreamSystemInfoView.idl">
+      <DependentUpon>DumpStreamSystemInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamSystemMemoryInfo.idl">
-      <DependentUpon>DumpStreamSystemMemoryInfo.xaml</DependentUpon>
+    <Midl Include="DumpStreamSystemMemoryInfoView.idl">
+      <DependentUpon>DumpStreamSystemMemoryInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamThreadContext.idl">
-      <DependentUpon>DumpStreamThreadContext.xaml</DependentUpon>
+    <Midl Include="DumpStreamThreadContextView.idl">
+      <DependentUpon>DumpStreamThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamThreadExList.idl">
-      <DependentUpon>DumpStreamThreadExList.xaml</DependentUpon>
+    <Midl Include="DumpStreamThreadExListView.idl">
+      <DependentUpon>DumpStreamThreadExListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamThreadInfoList.idl">
-      <DependentUpon>DumpStreamThreadInfoList.xaml</DependentUpon>
+    <Midl Include="DumpStreamThreadInfoListView.idl">
+      <DependentUpon>DumpStreamThreadInfoListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamThreadList.idl">
-      <DependentUpon>DumpStreamThreadList.xaml</DependentUpon>
+    <Midl Include="DumpStreamThreadListView.idl">
+      <DependentUpon>DumpStreamThreadListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamThreadNames.idl">
-      <DependentUpon>DumpStreamThreadNames.xaml</DependentUpon>
+    <Midl Include="DumpStreamThreadNamesView.idl">
+      <DependentUpon>DumpStreamThreadNamesView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamToken.idl">
-      <DependentUpon>DumpStreamToken.xaml</DependentUpon>
+    <Midl Include="DumpStreamTokenView.idl">
+      <DependentUpon>DumpStreamTokenView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamUnloadedModuleList.idl">
-      <DependentUpon>DumpStreamUnloadedModuleList.xaml</DependentUpon>
+    <Midl Include="DumpStreamUnloadedModuleListView.idl">
+      <DependentUpon>DumpStreamUnloadedModuleListView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamUnsupported.idl">
-      <DependentUpon>DumpStreamUnsupported.xaml</DependentUpon>
+    <Midl Include="DumpStreamUnsupportedView.idl">
+      <DependentUpon>DumpStreamUnsupportedView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamUnused.idl">
-      <DependentUpon>DumpStreamUnused.xaml</DependentUpon>
+    <Midl Include="DumpStreamUnusedView.idl">
+      <DependentUpon>DumpStreamUnusedView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamX64ThreadContext.idl">
-      <DependentUpon>DumpStreamX64ThreadContext.xaml</DependentUpon>
+    <Midl Include="DumpStreamX64ThreadContextView.idl">
+      <DependentUpon>DumpStreamX64ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DumpStreamX86ThreadContext.idl">
-      <DependentUpon>DumpStreamX86ThreadContext.xaml</DependentUpon>
+    <Midl Include="DumpStreamX86ThreadContextView.idl">
+      <DependentUpon>DumpStreamX86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="HexConverter.idl">

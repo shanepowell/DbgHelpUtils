@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamSystemInfo : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamSystemInfo();
-    }
-}

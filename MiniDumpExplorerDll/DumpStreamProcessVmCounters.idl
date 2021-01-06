@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamProcessVmCounters : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamProcessVmCounters();
-    }
-}

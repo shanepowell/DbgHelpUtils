@@ -138,85 +138,85 @@
     <Page Include="DumpFileView.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="DumpHeader.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamUnused.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamUnsupported.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamThreadList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamModuleList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamMemoryList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamException.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamSystemInfo.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamThreadExList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamMemory64List.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamComment.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamHandleData.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamFunctionTable.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamUnloadedModuleList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamMiscInfo.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamMemoryInfoList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamThreadInfoList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamHandleOperationList.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamToken.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamSystemMemoryInfo.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamProcessVmCounters.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamIptTrace.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamThreadNames.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamThreadContext.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamX64ThreadContext.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="DumpStreamX86ThreadContext.xaml">
-      <Filter>Views</Filter>
-    </Page>
     <Page Include="StackTraceView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpHeaderView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamCommentView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamExceptionView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamFunctionTableView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamHandleDataView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamHandleOperationListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamIptTraceView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamMemory64ListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamMemoryInfoListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamMemoryListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamMiscInfoView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamModuleListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamProcessVmCountersView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamSystemInfoView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamSystemMemoryInfoView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamThreadContextView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamThreadExListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamThreadInfoListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamThreadListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamThreadNamesView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamTokenView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamUnloadedModuleListView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamUnsupportedView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamUnusedView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamX64ThreadContextView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="DumpStreamX86ThreadContextView.xaml">
       <Filter>Views</Filter>
     </Page>
   </ItemGroup>

@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamMemory64ListView : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamMemory64ListView();
+    }
+}

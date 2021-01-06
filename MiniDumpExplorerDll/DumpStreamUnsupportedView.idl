@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DumpStreamUnsupportedView : Windows.UI.Xaml.Controls.UserControl
+    {
+        DumpStreamUnsupportedView();
+    }
+}
