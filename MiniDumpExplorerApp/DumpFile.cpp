@@ -7,8 +7,9 @@
 
 namespace MiniDumpExplorerApp
 {
-    DumpFile::DumpFile(winrt::hstring path, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
+    DumpFile::DumpFile(winrt::hstring path, DbgHelpDispatcher& dispatcher, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
         : dump_file_{std::wstring{path}}
+        , dispatcher_{dispatcher}
         , symbol_engine_{symbol_engine}
     {
         try
@@ -29,6 +30,7 @@ namespace MiniDumpExplorerApp
         {
         case dlg_help_utils::dump_file_type::user_mode_dump:
             type_ = winrt::MiniDumpExplorer::DumpFileType::UserModeDump;
+            mini_data_data_ = std::make_unique<MiniDumpData>(dump_file_);
             LoadStreams();
             break;
 
@@ -63,7 +65,7 @@ namespace MiniDumpExplorerApp
         return streams_;
     }
 
-    void DumpFile::LoadStreams() const
+    void DumpFile::LoadStreams()
     {
         auto const* header_data = dump_file_.header();
         if (header_data == nullptr)
@@ -80,7 +82,7 @@ namespace MiniDumpExplorerApp
         for (size_t index = 0; index < header_data->NumberOfStreams; ++index)
         {
             auto const& entry = directory[index];
-            const auto stream = winrt::make_self<DumpFileStream>(index, entry, dump_file_, symbol_engine_);
+            const auto stream = winrt::make_self<DumpFileStream>(index, entry, dump_file_, dispatcher_, *mini_data_data_, symbol_engine_);
             streams_.Append(*stream);
         }
     }

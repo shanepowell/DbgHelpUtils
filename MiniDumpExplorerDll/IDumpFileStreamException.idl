@@ -1,5 +1,6 @@
 import "IMiniDumpException.idl";
 import "IDumpFileStreamThreadContext.idl";
+import "IStackTrace.idl";
 
 namespace MiniDumpExplorer
 {
@@ -10,5 +11,7 @@ namespace MiniDumpExplorer
         UInt32 ThreadId { get; };
         IMiniDumpException ExceptionRecord { get; };
         IDumpFileStreamThreadContext ThreadContext { get; };
+        Boolean HasStackTrace { get; };
+        IStackTrace StackTrace { get; };
     }
 }

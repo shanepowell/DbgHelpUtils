@@ -4,6 +4,8 @@
 #include "XamlBridge.h"
 #include <ShellScalingApi.h>
 
+
+#include "DbgHelpDispatcher.h"
 #include "DumpFileFactory.h"
 #include "SymbolEngineUi.h"
 #include "../DbgHelpUtils/symbol_engine.h"
@@ -75,7 +77,7 @@ private:
 
     bool OnCreate(HWND, LPCREATESTRUCT)
     {
-        factory_ = *winrt::make_self<MiniDumpExplorerApp::DumpFileFactory>(symbol_engine_);
+        factory_ = *winrt::make_self<MiniDumpExplorerApp::DumpFileFactory>(dispatcher_, symbol_engine_);
         main_user_control_ = winrt::MiniDumpExplorer::MainPage{factory_};
         h_wnd_xaml_island_ = wil::unique_hwnd(CreateDesktopWindowsXamlSource(WS_TABSTOP, main_user_control_));
         return true;
@@ -99,6 +101,7 @@ private:
 private:
     wil::unique_hwnd h_wnd_xaml_island_ = nullptr;
     winrt::MiniDumpExplorer::MainPage main_user_control_ = nullptr;
+    DbgHelpDispatcher dispatcher_;
     SymbolEngineUi symbol_engine_ui_;
     dlg_help_utils::dbg_help::symbol_engine symbol_engine_{ symbol_engine_ui_ };
     winrt::MiniDumpExplorer::IDumpFileFactory factory_;

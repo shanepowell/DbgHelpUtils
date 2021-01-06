@@ -1,0 +1,10 @@
+import "IStackFrame.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IStackTrace
+    {
+        Boolean Is32BitAddresses { get; };
+        Windows.Foundation.Collections.IObservableVector<IStackFrame> Frames { get; };
+    }
+}

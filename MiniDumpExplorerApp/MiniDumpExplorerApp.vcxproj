@@ -202,6 +202,7 @@
     <Manifest Include="Application.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DbgHelpDispatcher.h" />
     <ClInclude Include="DumpFile.h" />
     <ClInclude Include="DumpFileFactory.h" />
     <ClInclude Include="DumpFileHeader.h" />
@@ -213,16 +214,20 @@
     <ClInclude Include="DumpFileStreamX86ThreadContext.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="HStringHelper.h" />
+    <ClInclude Include="MiniDumpData.h" />
     <ClInclude Include="MiniDumpException.h" />
     <ClInclude Include="MiniDumpExplorer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="StackFrame.h" />
+    <ClInclude Include="StackTrace.h" />
     <ClInclude Include="SymbolEngineUi.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Wow64FloatingSaveArea.h" />
     <ClInclude Include="XamlBridge.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DbgHelpDispatcher.cpp" />
     <ClCompile Include="DumpFile.cpp" />
     <ClCompile Include="DumpFileFactory.cpp" />
     <ClCompile Include="DumpFileHeader.cpp" />
@@ -233,6 +238,7 @@
     <ClCompile Include="DumpFileStreamX64ThreadContext.cpp" />
     <ClCompile Include="DumpFileStreamX86ThreadContext.cpp" />
     <ClCompile Include="HStringHelper.cpp" />
+    <ClCompile Include="MiniDumpData.cpp" />
     <ClCompile Include="MiniDumpException.cpp" />
     <ClCompile Include="MiniDumpExplorer.cpp" />
     <ClCompile Include="pch.cpp">
@@ -241,6 +247,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StackFrame.cpp" />
+    <ClCompile Include="StackTrace.cpp" />
     <ClCompile Include="SymbolEngineUi.cpp" />
     <ClCompile Include="Wow64FloatingSaveArea.cpp" />
     <ClCompile Include="XamlBridge.cpp" />

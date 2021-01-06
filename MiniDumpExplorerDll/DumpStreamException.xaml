@@ -8,6 +8,8 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
         <local:HexConverter x:Key="HexConverter"/>
         <local:NumberConverter x:Key="NumberConverter"/>
         <local:IndexConverter x:Key="IndexConverter" IsBracketed="True"/>
@@ -21,6 +23,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -161,6 +164,9 @@
             </ListView>
             <local:DumpStreamThreadContext Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" 
                                            ThreadContext="{x:Bind Path=Stream.ThreadContext}"/>
+            <local:StackTraceView Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" 
+                                  StackTrace="{x:Bind Path=Stream.StackTrace}"
+                                  Visibility="{x:Bind Path=Stream.HasStackTrace, Converter={StaticResource TrueToVisibleConverter}}"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

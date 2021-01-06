@@ -1,0 +1,49 @@
+﻿<UserControl
+    x:Class="MiniDumpExplorer.StackTraceView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <local:IndexConverter x:Key="IndexConverter" IsBracketed="True"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column = "0" Style="{StaticResource BaseTextBlockStyle}">StackTrace</TextBlock>
+        <ListView Grid.Row="0" Grid.Column="1"
+                  SelectionMode="None" 
+                  ItemsSource="{x:Bind Path=StackTrace.Frames}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:IStackFrame">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource IndexConverter}}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontFamily="Courier New"
+                        />
+                        <TextBlock Grid.Column="1"
+                                   Text="{x:Bind Path=DisplayLine}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontFamily="Courier New"
+                                   Margin="5,0,0,0"
+                        />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

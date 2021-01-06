@@ -162,4 +162,19 @@ namespace dlg_help_utils::stream_stack_dump
 
         os << L'\n';
     }
+
+    std::wstring hex_dump_stack_frame(dbg_help::symbol_address_info const& info, bool const is_x86_address)
+    {
+        std::wstringstream ss;
+        if(is_x86_address)
+        {
+            generate_hex_dump_address(ss, static_cast<uint32_t>(info.stack), static_cast<uint32_t>(info.address), info);
+        }
+        else
+        {
+            generate_hex_dump_address(ss, info.stack, info.address, info);
+        }
+
+        return std::move(ss).str();
+    }
 };

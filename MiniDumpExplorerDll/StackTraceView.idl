@@ -1,0 +1,12 @@
+import "IStackTrace.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass StackTraceView : Windows.UI.Xaml.Controls.UserControl
+    {
+        StackTraceView();
+
+        IStackTrace StackTrace;
+    }
+}

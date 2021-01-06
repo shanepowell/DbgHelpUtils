@@ -284,6 +284,10 @@
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="StackTraceView.h">
+      <DependentUpon>StackTraceView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -372,6 +376,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="StackTraceView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -532,6 +539,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="StackTraceView.cpp">
+      <DependentUpon>StackTraceView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="WindowHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -672,12 +683,18 @@
     <Midl Include="IndexConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="IStackFrame.idl" />
+    <Midl Include="IStackTrace.idl" />
     <Midl Include="IWow64FloatingSaveArea.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>
     <Midl Include="NumberConverter.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="StackTraceView.idl">
+      <DependentUpon>StackTraceView.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
   </ItemGroup>
   <ItemGroup>

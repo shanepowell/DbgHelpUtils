@@ -60,6 +60,12 @@
     <Midl Include="IndexConverter.idl">
       <Filter>Converters</Filter>
     </Midl>
+    <Midl Include="IStackTrace.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IStackFrame.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -208,6 +214,9 @@
       <Filter>Views</Filter>
     </Page>
     <Page Include="DumpStreamX86ThreadContext.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="StackTraceView.xaml">
       <Filter>Views</Filter>
     </Page>
   </ItemGroup>

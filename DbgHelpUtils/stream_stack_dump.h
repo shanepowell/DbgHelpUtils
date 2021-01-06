@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <ostream>
 
+#include "symbol_address_info.h"
+
 namespace dlg_help_utils
 {
     class stream_thread_context;
@@ -25,4 +27,6 @@ namespace dlg_help_utils::stream_stack_dump
     void hex_dump_address(std::wostream& os, mini_dump const& mini_dump, module_list_stream const& module_list,
                           unloaded_module_list_stream const& unloaded_module_list,
                           dbg_help::symbol_engine& symbol_engine, uint64_t address, size_t indent);
+    std::wstring hex_dump_stack_frame(dbg_help::symbol_address_info const& info, bool is_x86_address);
+
 };

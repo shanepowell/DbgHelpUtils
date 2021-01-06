@@ -84,6 +84,18 @@
     <ClInclude Include="HStringHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StackTrace.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DbgHelpDispatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StackFrame.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -136,6 +148,18 @@
     </ClCompile>
     <ClCompile Include="HStringHelper.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StackTrace.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DbgHelpDispatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StackFrame.cpp">
+      <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
