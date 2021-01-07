@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    interface IX86CpuInfo
+    {
+        UInt32 VendorId0 { get; };
+        UInt32 VendorId1 { get; };
+        UInt32 VendorId2 { get; };
+        
+        UInt32 VersionInformation { get; };
+        UInt32 FeatureInformation { get; };
+        
+        UInt32 AMDExtendedCpuFeatures { get; };
+    } ;
+}

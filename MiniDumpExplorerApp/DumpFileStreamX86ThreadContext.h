@@ -36,5 +36,7 @@ namespace MiniDumpExplorerApp
 
     private:
         WOW64_CONTEXT const& thread_context_;
+        winrt::MiniDumpExplorer::IWow64FloatingSaveArea float_save_;
+        winrt::hstring extended_registers_hex_dump_;
     };
 }

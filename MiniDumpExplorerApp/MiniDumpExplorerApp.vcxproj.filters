@@ -96,6 +96,21 @@
     <ClInclude Include="StackFrame.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
+    <ClInclude Include="DumpFileStreamSystemInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpSystemInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="CpuInformation.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="X86CpuInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="OtherCpuInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -159,6 +174,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StackFrame.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamSystemInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpSystemInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="CpuInformation.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="X86CpuInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="OtherCpuInfo.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>

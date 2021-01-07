@@ -66,6 +66,21 @@
     <Midl Include="IStackFrame.idl">
       <Filter>ViewModel</Filter>
     </Midl>
+    <Midl Include="IDumpFileStreamSystemInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpSystemInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="ICpuInformation.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IX86CpuInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IOtherCpuInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />

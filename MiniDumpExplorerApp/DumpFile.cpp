@@ -21,11 +21,12 @@ namespace MiniDumpExplorerApp
             return;
         }
 
-        if (dump_file_.header() == nullptr)
+        if (!HasHeader())
         {
             return;
         }
 
+        header_ = *winrt::make_self<DumpFileHeader>(dump_file_, type_);
         switch (dump_file_.type())
         {
         case dlg_help_utils::dump_file_type::user_mode_dump:
@@ -53,11 +54,9 @@ namespace MiniDumpExplorerApp
         return dump_file_.header() != nullptr;
     }
 
-    winrt::MiniDumpExplorer::IDumpFileHeader DumpFile::Header()
+    winrt::MiniDumpExplorer::IDumpFileHeader DumpFile::Header() const
     {
-        auto const header = winrt::make<DumpFileHeader>(dump_file_, type_);
-        auto rv = header.as<winrt::MiniDumpExplorer::IDumpFileHeader>();
-        return rv;
+        return header_;
     }
 
     winrt::Windows::Foundation::Collections::IVector<winrt::MiniDumpExplorer::IDumpFileStream> DumpFile::Streams() const

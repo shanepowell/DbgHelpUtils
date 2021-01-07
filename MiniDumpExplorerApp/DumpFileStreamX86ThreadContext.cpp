@@ -8,7 +8,11 @@ namespace MiniDumpExplorerApp
 {
     DumpFileStreamX86ThreadContext::DumpFileStreamX86ThreadContext(WOW64_CONTEXT const& thread_context)
         : thread_context_{thread_context}
+        , float_save_{*winrt::make_self<Wow64FloatingSaveArea>(thread_context_.FloatSave)}
     {
+        std::wstringstream ss;
+        dlg_help_utils::hex_dump::hex_dump(ss, thread_context_.ExtendedRegisters, sizeof(thread_context_.ExtendedRegisters), 0);
+        extended_registers_hex_dump_ = std::move(ss).str();
     }
 
     uint32_t DumpFileStreamX86ThreadContext::ContextFlags() const
@@ -48,7 +52,7 @@ namespace MiniDumpExplorerApp
 
     winrt::MiniDumpExplorer::IWow64FloatingSaveArea DumpFileStreamX86ThreadContext::FloatSave() const
     {
-        return *winrt::make_self<Wow64FloatingSaveArea>(thread_context_.FloatSave);
+        return float_save_;
     }
 
     uint32_t DumpFileStreamX86ThreadContext::SegGs() const

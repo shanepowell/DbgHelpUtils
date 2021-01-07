@@ -12,6 +12,20 @@ namespace MiniDumpExplorerApp
     DumpFileStreamThreadContext::DumpFileStreamThreadContext(dlg_help_utils::exception_stream const& exception)
         : exception_{exception}
     {
+        if(X86ThreadContextAvailable())
+        {
+            x86_thread_context_ = *winrt::make_self<DumpFileStreamX86ThreadContext>(exception_.thread_context().x86_thread_context());
+        }
+
+        if(Wow64ThreadContextAvailable())
+        {
+            wow64_thread_context_ = *winrt::make_self<DumpFileStreamX86ThreadContext>(exception_.thread_context().wow64_thread_context());
+        }
+
+        if(X64ThreadContextAvailable())
+        {
+            x64_thread_context_ = *winrt::make_self<DumpFileStreamX64ThreadContext>(exception_.thread_context().x64_thread_context());
+        }
     }
 
     bool DumpFileStreamThreadContext::X86ThreadContextAvailable() const
@@ -41,31 +55,31 @@ namespace MiniDumpExplorerApp
 
     winrt::MiniDumpExplorer::IDumpFileStreamX86ThreadContext DumpFileStreamThreadContext::X86ThreadContext() const
     {
-        if(X86ThreadContextAvailable())
+        if(x86_thread_context_)
         {
-            return *winrt::make_self<DumpFileStreamX86ThreadContext>(exception_.thread_context().x86_thread_context());
+            return x86_thread_context_;
         }
 
-        return {};
+        throw winrt::hresult_illegal_method_call();
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamX86ThreadContext DumpFileStreamThreadContext::Wow64ThreadContext() const
     {
-        if(Wow64ThreadContextAvailable())
+        if(wow64_thread_context_)
         {
-            return *winrt::make_self<DumpFileStreamX86ThreadContext>(exception_.thread_context().wow64_thread_context());
+            return wow64_thread_context_;
         }
 
-        return {};
+        throw winrt::hresult_illegal_method_call();
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamX64ThreadContext DumpFileStreamThreadContext::X64ThreadContext() const
     {
-        if(X64ThreadContextAvailable())
+        if(x64_thread_context_)
         {
-            return *winrt::make_self<DumpFileStreamX64ThreadContext>(exception_.thread_context().x64_thread_context());
+            return x64_thread_context_;
         }
 
-        return {};
+        throw winrt::hresult_illegal_method_call();
     }
 }

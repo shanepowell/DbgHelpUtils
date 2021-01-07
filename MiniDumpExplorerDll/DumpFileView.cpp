@@ -181,68 +181,68 @@ namespace winrt::MiniDumpExplorer::implementation
         switch(stream.Type())
         {
         case StreamType::UnusedStream:
-            return winrt::make_self<DumpStreamUnusedView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamUnusedView>();
 
         case StreamType::ThreadListStream:
-            return winrt::make_self<DumpStreamThreadListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamThreadListView>();
 
         case StreamType::ModuleListStream:
-            return winrt::make_self<DumpStreamModuleListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamModuleListView>();
 
         case StreamType::MemoryListStream:
-            return winrt::make_self<DumpStreamMemoryListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamMemoryListView>();
 
         case StreamType::ExceptionStream:
-            return winrt::make_self<DumpStreamExceptionView>(stream.AsException()).as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamExceptionView>(stream.AsException());
 
         case StreamType::SystemInfoStream:
-            return winrt::make_self<DumpStreamSystemInfoView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamSystemInfoView>(stream.AsSystemInfo());
 
         case StreamType::ThreadExListStream:
-            return winrt::make_self<DumpStreamThreadExListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamThreadExListView>();
 
         case StreamType::Memory64ListStream:
-            return winrt::make_self<DumpStreamMemory64ListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamMemory64ListView>();
 
         case StreamType::CommentStreamA:
         case StreamType::CommentStreamW:
-            return winrt::make_self<DumpStreamCommentView>(stream.AsComment()).as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamCommentView>(stream.AsComment());
 
         case StreamType::HandleDataStream:
-            return winrt::make_self<DumpStreamHandleDataView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamHandleDataView>();
 
         case StreamType::FunctionTableStream:
-            return winrt::make_self<DumpStreamFunctionTableView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamFunctionTableView>();
 
         case StreamType::UnloadedModuleListStream:
-            return winrt::make_self<DumpStreamUnloadedModuleListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamUnloadedModuleListView>();
 
         case StreamType::MiscInfoStream:
-            return winrt::make_self<DumpStreamMiscInfoView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamMiscInfoView>();
 
         case StreamType::MemoryInfoListStream:
-            return winrt::make_self<DumpStreamMemoryInfoListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamMemoryInfoListView>();
 
         case StreamType::ThreadInfoListStream:
-            return winrt::make_self<DumpStreamThreadInfoListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamThreadInfoListView>();
 
         case StreamType::HandleOperationListStream:
-            return winrt::make_self<DumpStreamHandleOperationListView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamHandleOperationListView>();
 
         case StreamType::TokenStream:
-            return winrt::make_self<DumpStreamTokenView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamTokenView>();
 
         case StreamType::SystemMemoryInfoStream:
-            return winrt::make_self<DumpStreamSystemMemoryInfoView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamSystemMemoryInfoView>();
 
         case StreamType::ProcessVmCountersStream:
-            return winrt::make_self<DumpStreamProcessVmCountersView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamProcessVmCountersView>();
 
         case StreamType::IptTraceStream:
-            return winrt::make_self<DumpStreamIptTraceView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamIptTraceView>();
 
         case StreamType::ThreadNamesStream:
-            return winrt::make_self<DumpStreamThreadNamesView>().as<Controls::UserControl>();
+            return *winrt::make_self<DumpStreamThreadNamesView>();
 
         case StreamType::ReservedStream0:
         case StreamType::ReservedStream1:
@@ -263,8 +263,7 @@ namespace winrt::MiniDumpExplorer::implementation
         case StreamType::LastReservedStream:
         default:
             {
-                auto const page = winrt::make_self<DumpStreamUnsupportedView>();
-                return page.as<Controls::UserControl>();
+                return *winrt::make_self<DumpStreamUnsupportedView>();
             }
         }
     }

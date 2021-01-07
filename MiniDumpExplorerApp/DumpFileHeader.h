@@ -1,5 +1,9 @@
 ﻿#pragma once
-#include "../DbgHelpUtils/mini_dump.h"
+
+namespace dlg_help_utils
+{
+    class mini_dump;
+}
 
 namespace MiniDumpExplorerApp
 {

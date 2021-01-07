@@ -11,8 +11,6 @@ namespace MiniDumpExplorerApp
 
     winrt::MiniDumpExplorer::IDumpFile DumpFileFactory::Make(winrt::hstring path) const
     {
-        auto const dump = winrt::make<DumpFile>(std::move(path), dispatcher_, symbol_engine_);
-        auto file = dump.as<winrt::MiniDumpExplorer::IDumpFile>();
-        return file;
+        return *winrt::make_self<DumpFile>(std::move(path), dispatcher_, symbol_engine_);
     }
 }

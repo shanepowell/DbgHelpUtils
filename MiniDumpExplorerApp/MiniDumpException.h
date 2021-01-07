@@ -23,6 +23,8 @@ namespace MiniDumpExplorerApp
 
     private:
         dlg_help_utils::exception_stream const& exception_;
+        winrt::hstring exception_code_;
+        winrt::hstring exception_flags_;
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> parameters_{winrt::single_threaded_observable_vector<winrt::hstring>()};
     };
 }

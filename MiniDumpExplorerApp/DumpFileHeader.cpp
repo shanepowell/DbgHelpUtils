@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "DumpFileHeader.h"
 
+
+#include "../DbgHelpUtils/mini_dump.h"
 #include "../DbgHelpUtils/mini_dump_type.h"
 #include "../DbgHelpUtils/system_info_utils.h"
 

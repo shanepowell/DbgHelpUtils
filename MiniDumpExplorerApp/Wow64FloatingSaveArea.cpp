@@ -8,6 +8,9 @@ namespace MiniDumpExplorerApp
     Wow64FloatingSaveArea::Wow64FloatingSaveArea(WOW64_FLOATING_SAVE_AREA const& float_save)
         : float_save_{float_save}
     {
+        std::wstringstream ss;
+        dlg_help_utils::hex_dump::hex_dump(ss, float_save_.RegisterArea, sizeof(float_save_.RegisterArea), 0);
+        register_area_hex_dump_ = std::move(ss).str();
     }
 
     uint32_t Wow64FloatingSaveArea::ControlWord() const
@@ -57,8 +60,6 @@ namespace MiniDumpExplorerApp
 
     winrt::hstring Wow64FloatingSaveArea::RegisterAreaHexDump() const
     {
-        std::wstringstream ss;
-        dlg_help_utils::hex_dump::hex_dump(ss, float_save_.RegisterArea, sizeof(float_save_.RegisterArea), 0);
-        return winrt::hstring{std::move(ss).str()};
+        return register_area_hex_dump_;
     }
 }

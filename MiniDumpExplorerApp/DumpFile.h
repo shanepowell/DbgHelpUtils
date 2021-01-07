@@ -17,7 +17,7 @@ namespace MiniDumpExplorerApp
 
         [[nodiscard]] winrt::MiniDumpExplorer::DumpFileType Type() const { return type_; }
         [[nodiscard]] bool HasHeader() const;
-        [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileHeader Header();
+        [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileHeader Header() const;
         [[nodiscard]] winrt::Windows::Foundation::Collections::IVector<winrt::MiniDumpExplorer::IDumpFileStream> Streams() const;
 
     private:
@@ -30,5 +30,6 @@ namespace MiniDumpExplorerApp
         dlg_help_utils::dbg_help::symbol_engine& symbol_engine_;
         winrt::MiniDumpExplorer::DumpFileType type_{winrt::MiniDumpExplorer::DumpFileType::Invalid};
         winrt::Windows::Foundation::Collections::IVector<winrt::MiniDumpExplorer::IDumpFileStream> streams_{winrt::single_threaded_vector<winrt::MiniDumpExplorer::IDumpFileStream>()};
+        winrt::MiniDumpExplorer::IDumpFileHeader header_;
     };
 }

@@ -9,11 +9,9 @@ namespace MiniDumpExplorerApp
 {
     MiniDumpException::MiniDumpException(dlg_help_utils::exception_stream const& exception)
         : exception_{exception}
+        , exception_code_{dlg_help_utils::exception_utils::exception_code_to_string(ExceptionCode())}
+        , exception_flags_{dlg_help_utils::exception_utils::exception_flags_to_string(ExceptionFlags())}
     {
-        if(!exception_.found())
-        {
-            return;
-        }
         for(size_t index = 0; index < NumberParameters(); ++index)
         {
             parameters_.Append(to_hex_string(exception_.exception().ExceptionRecord.ExceptionInformation[index]));
@@ -27,7 +25,7 @@ namespace MiniDumpExplorerApp
 
     winrt::hstring MiniDumpException::ExceptionCodeString() const
     {
-        return winrt::hstring{dlg_help_utils::exception_utils::exception_code_to_string(ExceptionCode())};
+        return exception_code_;
     }
 
     uint32_t MiniDumpException::ExceptionFlags() const
@@ -37,7 +35,7 @@ namespace MiniDumpExplorerApp
 
     winrt::hstring MiniDumpException::ExceptionFlagsString() const
     {
-        return winrt::hstring{dlg_help_utils::exception_utils::exception_flags_to_string(ExceptionFlags())};
+        return exception_flags_;
     }
 
     uint64_t MiniDumpException::ExceptionRecord() const

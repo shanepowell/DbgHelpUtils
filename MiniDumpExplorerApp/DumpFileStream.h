@@ -17,6 +17,19 @@ namespace MiniDumpExplorerApp
 
         [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamComment AsComment() const;
         [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamException AsException() const;
+        [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamSystemInfo AsSystemInfo() const;
+
+    private:
+        template<typename T>
+        [[nodiscard]] static T GetResult(T stream)
+        {
+            if(stream)
+            {
+                return stream;
+            }
+
+            throw winrt::hresult_illegal_method_call();
+        }
 
     private:
         size_t index_;
@@ -25,5 +38,9 @@ namespace MiniDumpExplorerApp
         DbgHelpDispatcher& dispatcher_;
         MiniDumpData& mini_data_data_;
         dlg_help_utils::dbg_help::symbol_engine& symbol_engine_;
+        winrt::hstring type_;
+        winrt::MiniDumpExplorer::IDumpFileStreamComment comment_;
+        winrt::MiniDumpExplorer::IDumpFileStreamException exception_;
+        winrt::MiniDumpExplorer::IDumpFileStreamSystemInfo system_info_;
     };
 }

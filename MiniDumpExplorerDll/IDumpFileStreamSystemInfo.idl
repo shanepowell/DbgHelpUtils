@@ -1,0 +1,18 @@
+import "IMiniDumpSystemInfo.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IDumpFileStreamSystemInfo
+    {
+        UInt64 Index { get; };
+        IMiniDumpSystemInfo SystemInfo { get; };
+        String CsdVersion { get; };
+        String VendorId { get; };
+        Boolean IsIntel { get; };
+        Boolean IsAmd { get; };
+        Boolean IsX86 { get; };
+        Boolean IsX64 { get; };
+        UInt16 ProcessorModel { get; };
+        UInt16 ProcessorStepping { get; };
+    }
+}

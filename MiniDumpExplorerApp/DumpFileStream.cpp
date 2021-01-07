@@ -4,6 +4,7 @@
 #include "../DbgHelpUtils/mini_dump_stream_type.h"
 #include "DumpFileStreamComment.h"
 #include "DumpFileStreamException.h"
+#include "DumpFileStreamSystemInfo.h"
 
 namespace MiniDumpExplorerApp
 {
@@ -15,7 +16,64 @@ namespace MiniDumpExplorerApp
     , dispatcher_{dispatcher}
     , mini_data_data_{mini_data_data}
     , symbol_engine_{symbol_engine}
+    , type_{dlg_help_utils::mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(directory_entry_.StreamType))}
     {
+        switch(static_cast<MINIDUMP_STREAM_TYPE>(directory_entry_.StreamType))
+        {
+        case CommentStreamA:
+            comment_ = *winrt::make_self<DumpFileStreamComment>(index_, mini_dump_, CommentType::Ascii);
+            break;
+
+        case CommentStreamW:
+            comment_ =  *winrt::make_self<DumpFileStreamComment>(index_, mini_dump_, CommentType::Unicode);
+            break;
+
+        case ExceptionStream:
+            exception_ = *winrt::make_self<DumpFileStreamException>(index_, mini_dump_, dispatcher_, mini_data_data_, symbol_engine_);
+            break;
+
+        case SystemInfoStream:
+            system_info_ = *winrt::make_self<DumpFileStreamSystemInfo>(index_, mini_dump_);
+            break;
+
+        case UnusedStream:
+        case ReservedStream0:
+        case ReservedStream1:
+        case ThreadListStream:
+        case ModuleListStream:
+        case MemoryListStream:
+        case ThreadExListStream:
+        case Memory64ListStream:
+        case HandleDataStream:
+        case FunctionTableStream:
+        case UnloadedModuleListStream:
+        case MiscInfoStream:
+        case MemoryInfoListStream:
+        case ThreadInfoListStream:
+        case HandleOperationListStream:
+        case TokenStream:
+        case JavaScriptDataStream:
+        case SystemMemoryInfoStream:
+        case ProcessVmCountersStream:
+        case IptTraceStream:
+        case ThreadNamesStream:
+        case ceStreamNull:
+        case ceStreamSystemInfo:
+        case ceStreamException:
+        case ceStreamModuleList:
+        case ceStreamProcessList:
+        case ceStreamThreadList:
+        case ceStreamThreadContextList:
+        case ceStreamThreadCallStackList:
+        case ceStreamMemoryVirtualList:
+        case ceStreamMemoryPhysicalList:
+        case ceStreamBucketParameters:
+        case ceStreamProcessModuleMap:
+        case ceStreamDiagnosisList:
+        case LastReservedStream:
+        default:
+            break;
+        }
     }
 
     uint64_t DumpFileStream::Index() const
@@ -30,26 +88,21 @@ namespace MiniDumpExplorerApp
 
     winrt::hstring DumpFileStream::TypeString() const
     {
-        return winrt::hstring{dlg_help_utils::mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(directory_entry_.StreamType))};
+        return type_;
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamComment DumpFileStream::AsComment() const
     {
-        switch(static_cast<MINIDUMP_STREAM_TYPE>(directory_entry_.StreamType))
-        {
-        case CommentStreamA:
-            return *winrt::make_self<DumpFileStreamComment>(index_, mini_dump_, CommentType::Ascii);
-
-        case CommentStreamW:
-            return *winrt::make_self<DumpFileStreamComment>(index_, mini_dump_, CommentType::Unicode);
-
-        default:
-            throw winrt::hresult_illegal_method_call();
-        }
+        return GetResult(comment_);
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamException DumpFileStream::AsException() const
     {
-        return *winrt::make_self<DumpFileStreamException>(index_, mini_dump_, dispatcher_, mini_data_data_, symbol_engine_);
+        return GetResult(exception_);
+    }
+
+    winrt::MiniDumpExplorer::IDumpFileStreamSystemInfo DumpFileStream::AsSystemInfo() const
+    {
+        return GetResult(system_info_);
     }
 }

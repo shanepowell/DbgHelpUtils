@@ -20,5 +20,6 @@ namespace MiniDumpExplorerApp
 
     private:
         WOW64_FLOATING_SAVE_AREA const& float_save_;
+        winrt::hstring register_area_hex_dump_;
     };
 }

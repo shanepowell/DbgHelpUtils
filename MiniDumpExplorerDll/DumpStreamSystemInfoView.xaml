@@ -7,19 +7,243 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
+        <local:HexConverter x:Key="HexConverter"/>
+        <local:NumberConverter x:Key="NumberConverter"/>
+        <local:IndexConverter x:Key="IndexConverter" IsBracketed="True"/>
+    </UserControl.Resources>
+
     <ScrollViewer HorizontalScrollBarVisibility="Auto" 
                   VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalTextAlignment="Left">Stream System Info</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Stream System Info</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="2" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Processor Architecture</TextBlock>
+            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.ProcessorArchitectureString}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="3" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Processor Level</TextBlock>
+            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.ProcessorLevel, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="4" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Processor Revision</TextBlock>
+            <Grid Grid.Row="4" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Model " Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Text="{x:Bind Path=Stream.ProcessorModel}"
+                         IsReadOnly="True"
+                         TextWrapping="Wrap" />
+                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text=" Stepping " Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource BodyTextBlockStyle}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Text="{x:Bind Path=Stream.ProcessorStepping}"
+                         IsReadOnly="True"
+                         TextWrapping="Wrap" />
+                <TextBlock Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Text=" (" Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBox Grid.Row="0" Grid.Column="5" Style="{StaticResource BodyTextBlockStyle}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Text="{x:Bind Path=Stream.SystemInfo.ProcessorRevision, Converter={StaticResource HexConverter}}"
+                         IsReadOnly="True"
+                         TextWrapping="Wrap" />
+                <TextBlock Grid.Row="0" Grid.Column="6" VerticalAlignment="Center" Text=")" Style="{StaticResource BodyTextBlockStyle}" />
+            </Grid>
+            <TextBlock Grid.Row="5" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Number Of Processors</TextBlock>
+            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.NumberOfProcessors, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="6" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Product Type</TextBlock>
+            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.ProductTypeString}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="7" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">OS Version</TextBlock>
+            <Grid Grid.Row="7" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Text="{x:Bind Path=Stream.SystemInfo.OsVersionString}"
+                         IsReadOnly="True"
+                         TextWrapping="Wrap" />
+                <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text=" - " Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Text="{x:Bind Path=Stream.SystemInfo.WindowsOsVersionString}"
+                         IsReadOnly="True"
+                         TextWrapping="Wrap" />
+            </Grid>
+            <TextBlock Grid.Row="8" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Platform Id</TextBlock>
+            <TextBox Grid.Row="8" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.PlatformString}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="9" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">CSD Version</TextBlock>
+            <TextBox Grid.Row="9" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.CsdVersion}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="10" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Suite Mask</TextBlock>
+            <TextBox Grid.Row="10" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.SuiteMask, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="11" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Suites</TextBlock>
+            <ListView Grid.Row="11" Grid.Column="1"
+                      SelectionMode="None" 
+                      ItemsSource="{x:Bind Path=Stream.SystemInfo.Suites}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock 
+                            Text="{x:Bind}" 
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            FontFamily="Courier New"
+                        />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <TextBlock Grid.Row="12" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Reserved2</TextBlock>
+            <TextBox Grid.Row="12" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.Reserved2, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="13" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">X86 CPU Info</TextBlock>
+            <TextBlock Grid.Row="14" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Vendor Id</TextBlock>
+            <TextBox Grid.Row="14" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.VendorId}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="15" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Version Information</TextBlock>
+            <TextBox Grid.Row="15" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.Cpu.X86CpuInfo.VersionInformation, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="16" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Feature Information</TextBlock>
+            <TextBox Grid.Row="16" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.Cpu.X86CpuInfo.FeatureInformation, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="17" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">AMD Extended CPU Features</TextBlock>
+            <TextBox Grid.Row="17" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.Cpu.X86CpuInfo.AMDExtendedCpuFeatures, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="18" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Other CPU Info</TextBlock>
+            <TextBlock Grid.Row="19" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Processor Features</TextBlock>
+            <TextBox Grid.Row="19" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.Cpu.OtherCpuInfo.ProcessorFeatures0, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBox Grid.Row="20" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.SystemInfo.Cpu.OtherCpuInfo.ProcessorFeatures1, Converter={StaticResource HexConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
         </Grid>
     </ScrollViewer>
 </UserControl>

@@ -1,8 +1,12 @@
+import "IDumpFileStreamSystemInfo.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
     runtimeclass DumpStreamSystemInfoView : Windows.UI.Xaml.Controls.UserControl
     {
-        DumpStreamSystemInfoView();
+        DumpStreamSystemInfoView(IDumpFileStreamSystemInfo stream);
+
+        IDumpFileStreamSystemInfo Stream { get; };
     }
 }

@@ -22,6 +22,8 @@ namespace MiniDumpExplorerApp
     private:
         dlg_help_utils::dbg_help::symbol_engine& symbol_engine_;
         dlg_help_utils::exception_stream exception_;
+        winrt::MiniDumpExplorer::IMiniDumpException mini_dump_exception_;
+        winrt::MiniDumpExplorer::IDumpFileStreamThreadContext thread_context_;
         winrt::MiniDumpExplorer::IStackTrace stack_trace_;
     };
 }

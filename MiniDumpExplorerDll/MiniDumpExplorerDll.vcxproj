@@ -666,6 +666,7 @@
     <Midl Include="HexConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="ICpuInformation.idl" />
     <Midl Include="IDumpFile.idl" />
     <Midl Include="DumpFileView.idl">
       <DependentUpon>DumpFileView.xaml</DependentUpon>
@@ -676,16 +677,20 @@
     <Midl Include="IDumpFileStream.idl" />
     <Midl Include="IDumpFileStreamComment.idl" />
     <Midl Include="IDumpFileStreamException.idl" />
+    <Midl Include="IDumpFileStreamSystemInfo.idl" />
     <Midl Include="IDumpFileStreamThreadContext.idl" />
     <Midl Include="IDumpFileStreamX64ThreadContext.idl" />
     <Midl Include="IDumpFileStreamX86ThreadContext.idl" />
     <Midl Include="IMiniDumpException.idl" />
+    <Midl Include="IMiniDumpSystemInfo.idl" />
     <Midl Include="IndexConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="IOtherCpuInfo.idl" />
     <Midl Include="IStackFrame.idl" />
     <Midl Include="IStackTrace.idl" />
     <Midl Include="IWow64FloatingSaveArea.idl" />
+    <Midl Include="IX86CpuInfo.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>

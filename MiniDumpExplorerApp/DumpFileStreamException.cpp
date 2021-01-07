@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "DumpFileStreamException.h"
 
-
 #include "DumpFileStreamThreadContext.h"
 #include "MiniDumpException.h"
 #include "StackTrace.h"
@@ -12,6 +11,8 @@ namespace MiniDumpExplorerApp
     DumpFileStreamException::DumpFileStreamException(size_t const index, dlg_help_utils::mini_dump const& mini_dump, DbgHelpDispatcher& dispatcher, MiniDumpData& mini_data_data, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
         : symbol_engine_{symbol_engine}
         , exception_{mini_dump, index}
+        , mini_dump_exception_{*winrt::make_self<MiniDumpException>(exception_)}
+        , thread_context_{*winrt::make_self<DumpFileStreamThreadContext>(exception_)}
     {
         auto const stack_info = find_thread_stack(mini_dump, exception_.exception().ThreadId);
         if (stack_info)
@@ -37,12 +38,12 @@ namespace MiniDumpExplorerApp
 
     winrt::MiniDumpExplorer::IMiniDumpException DumpFileStreamException::ExceptionRecord() const
     {
-        return *winrt::make_self<MiniDumpException>(exception_);
+        return mini_dump_exception_;
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamThreadContext DumpFileStreamException::ThreadContext() const
     {
-        return *winrt::make_self<DumpFileStreamThreadContext>(exception_);
+        return thread_context_;
     }
 
     bool DumpFileStreamException::HasStackTrace() const

@@ -22,5 +22,8 @@ namespace MiniDumpExplorerApp
 
     private:
         dlg_help_utils::exception_stream const& exception_;
+        winrt::MiniDumpExplorer::IDumpFileStreamX86ThreadContext x86_thread_context_;
+        winrt::MiniDumpExplorer::IDumpFileStreamX86ThreadContext wow64_thread_context_;
+        winrt::MiniDumpExplorer::IDumpFileStreamX64ThreadContext x64_thread_context_;
     };
 }

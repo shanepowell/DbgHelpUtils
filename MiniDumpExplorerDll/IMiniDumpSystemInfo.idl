@@ -1,0 +1,33 @@
+import "ICpuInformation.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IMiniDumpSystemInfo
+    {
+        UInt16 ProcessorArchitecture { get; };
+        String ProcessorArchitectureString { get; };
+        UInt16 ProcessorLevel { get; };
+        UInt16 ProcessorRevision { get; };
+
+        UInt8 NumberOfProcessors { get; };
+        UInt8 ProductType { get; };
+        String ProductTypeString { get; };
+
+        UInt32 MajorVersion { get; };
+        UInt32 MinorVersion { get; };
+        UInt32 BuildNumber { get; };
+        String OsVersionString { get; };
+        String WindowsOsVersionString { get; };
+        UInt32 PlatformId { get; };
+        String PlatformString { get; };
+
+        UInt32 CSDVersionRva { get; };
+
+        UInt16 SuiteMask { get; };
+        UInt16 Reserved2 { get; };
+
+        Windows.Foundation.Collections.IObservableVector<String> Suites { get; };
+
+        ICpuInformation Cpu { get; };
+    }
+}
