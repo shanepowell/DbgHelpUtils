@@ -137,6 +137,10 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
     if (info.Flags1 & MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS)
     {
         wcout << L"  ProcessExecuteFlags: " << to_hex(info_3.ProcessExecuteFlags) << L'\n';
+        for (auto const& value : system_info_utils::process_execute_flags_to_strings(info_3.ProcessExecuteFlags))
+        {
+            wcout << L"    " << value << L'\n';
+        }
     }
 
     if (info.Flags1 & MINIDUMP_MISC3_PROTECTED_PROCESS)

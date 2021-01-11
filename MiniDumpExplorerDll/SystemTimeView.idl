@@ -1,0 +1,12 @@
+import "ISystemTime.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SystemTimeView : Windows.UI.Xaml.Controls.UserControl
+    {
+        SystemTimeView();
+
+        ISystemTime SystemTime;
+    }
+}

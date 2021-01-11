@@ -6,7 +6,12 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct DumpStreamMiscInfoView : DumpStreamMiscInfoViewT<DumpStreamMiscInfoView>
     {
-        DumpStreamMiscInfoView();
+        DumpStreamMiscInfoView(IDumpFileStreamMiscInfo system);
+
+        [[nodiscard]] IDumpFileStreamMiscInfo Stream() const;
+
+    private:
+        IDumpFileStreamMiscInfo stream_;
     };
 }
 

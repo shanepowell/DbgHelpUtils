@@ -7,19 +7,34 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
+        <local:NumberConverter x:Key="NumberConverter"/>
+    </UserControl.Resources>
+
     <ScrollViewer HorizontalScrollBarVisibility="Auto" 
                   VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalTextAlignment="Left">Stream Misc Info</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Stream Misc Info</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <local:MiscInfoView Stream="{x:Bind Path=Stream}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{x:Bind Path=Stream.IsValid, Converter={StaticResource TrueToVisibleConverter}}" />
         </Grid>
     </ScrollViewer>
 </UserControl>

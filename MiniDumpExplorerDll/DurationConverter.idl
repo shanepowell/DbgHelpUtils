@@ -1,0 +1,16 @@
+namespace MiniDumpExplorer
+{
+    enum DurationSourceType
+    {
+        Milliseconds,
+        Seconds
+    };
+
+    [default_interface]
+    runtimeclass DurationConverter : Windows.UI.Xaml.Data.IValueConverter
+    {
+        DurationConverter();
+
+        DurationSourceType Source;
+    }
+}

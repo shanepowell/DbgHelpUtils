@@ -79,6 +79,7 @@ private:
     {
         factory_ = *winrt::make_self<MiniDumpExplorerApp::DumpFileFactory>(dispatcher_, symbol_engine_);
         main_user_control_ = winrt::MiniDumpExplorer::MainPage{factory_};
+        symbol_engine_ui_.SetUi(main_user_control_);
         h_wnd_xaml_island_ = wil::unique_hwnd(CreateDesktopWindowsXamlSource(WS_TABSTOP, main_user_control_));
         return true;
     }

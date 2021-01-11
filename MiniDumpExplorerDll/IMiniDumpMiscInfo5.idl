@@ -1,0 +1,11 @@
+import "IXStateConfigFeatureMscInfo.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IMiniDumpMiscInfo5
+    {
+        IXStateConfigFeatureMscInfo XStateData{ get; };
+        Boolean HasProcessCookie{ get; };
+        UInt32 ProcessCookie{ get; };
+    }
+}

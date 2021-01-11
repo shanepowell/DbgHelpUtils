@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    interface ISystemTime
+    {
+        UInt16 Year { get; };
+        UInt16 Month { get; };
+        UInt16 DayOfWeek { get; };
+        UInt16 Day { get; };
+        UInt16 Hour { get; };
+        UInt16 Minute { get; };
+        UInt16 Second { get; };
+        UInt16 Milliseconds { get; };
+    }
+}

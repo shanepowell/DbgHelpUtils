@@ -210,15 +210,22 @@
     <ClInclude Include="DumpFileStream.h" />
     <ClInclude Include="DumpFileStreamComment.h" />
     <ClInclude Include="DumpFileStreamException.h" />
+    <ClInclude Include="DumpFileStreamMiscInfo.h" />
     <ClInclude Include="DumpFileStreamSystemInfo.h" />
     <ClInclude Include="DumpFileStreamThreadContext.h" />
     <ClInclude Include="DumpFileStreamX64ThreadContext.h" />
     <ClInclude Include="DumpFileStreamX86ThreadContext.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GetResult.h" />
     <ClInclude Include="HStringHelper.h" />
     <ClInclude Include="MiniDumpData.h" />
     <ClInclude Include="MiniDumpException.h" />
     <ClInclude Include="MiniDumpExplorer.h" />
+    <ClInclude Include="MiniDumpMiscInfo.h" />
+    <ClInclude Include="MiniDumpMiscInfo2.h" />
+    <ClInclude Include="MiniDumpMiscInfo3.h" />
+    <ClInclude Include="MiniDumpMiscInfo4.h" />
+    <ClInclude Include="MiniDumpMiscInfo5.h" />
     <ClInclude Include="MiniDumpSystemInfo.h" />
     <ClInclude Include="OtherCpuInfo.h" />
     <ClInclude Include="pch.h" />
@@ -226,10 +233,14 @@
     <ClInclude Include="StackFrame.h" />
     <ClInclude Include="StackTrace.h" />
     <ClInclude Include="SymbolEngineUi.h" />
+    <ClInclude Include="SystemTime.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TimeZoneInformation.h" />
     <ClInclude Include="Wow64FloatingSaveArea.h" />
     <ClInclude Include="X86CpuInfo.h" />
     <ClInclude Include="XamlBridge.h" />
+    <ClInclude Include="XStateConfigFeatureMscInfo.h" />
+    <ClInclude Include="XStateFeature.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CpuInformation.cpp" />
@@ -240,6 +251,7 @@
     <ClCompile Include="DumpFileStream.cpp" />
     <ClCompile Include="DumpFileStreamComment.cpp" />
     <ClCompile Include="DumpFileStreamException.cpp" />
+    <ClCompile Include="DumpFileStreamMiscInfo.cpp" />
     <ClCompile Include="DumpFileStreamSystemInfo.cpp" />
     <ClCompile Include="DumpFileStreamThreadContext.cpp" />
     <ClCompile Include="DumpFileStreamX64ThreadContext.cpp" />
@@ -248,6 +260,11 @@
     <ClCompile Include="MiniDumpData.cpp" />
     <ClCompile Include="MiniDumpException.cpp" />
     <ClCompile Include="MiniDumpExplorer.cpp" />
+    <ClCompile Include="MiniDumpMiscInfo.cpp" />
+    <ClCompile Include="MiniDumpMiscInfo2.cpp" />
+    <ClCompile Include="MiniDumpMiscInfo3.cpp" />
+    <ClCompile Include="MiniDumpMiscInfo4.cpp" />
+    <ClCompile Include="MiniDumpMiscInfo5.cpp" />
     <ClCompile Include="MiniDumpSystemInfo.cpp" />
     <ClCompile Include="OtherCpuInfo.cpp" />
     <ClCompile Include="pch.cpp">
@@ -259,9 +276,13 @@
     <ClCompile Include="StackFrame.cpp" />
     <ClCompile Include="StackTrace.cpp" />
     <ClCompile Include="SymbolEngineUi.cpp" />
+    <ClCompile Include="SystemTime.cpp" />
+    <ClCompile Include="TimeZoneInformation.cpp" />
     <ClCompile Include="Wow64FloatingSaveArea.cpp" />
     <ClCompile Include="X86CpuInfo.cpp" />
     <ClCompile Include="XamlBridge.cpp" />
+    <ClCompile Include="XStateConfigFeatureMscInfo.cpp" />
+    <ClCompile Include="XStateFeature.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="MiniDumpExplorer.ico" />

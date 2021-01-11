@@ -2,8 +2,10 @@
 #include "DumpFileStream.h"
 
 #include "../DbgHelpUtils/mini_dump_stream_type.h"
+#include "GetResult.h"
 #include "DumpFileStreamComment.h"
 #include "DumpFileStreamException.h"
+#include "DumpFileStreamMiscInfo.h"
 #include "DumpFileStreamSystemInfo.h"
 
 namespace MiniDumpExplorerApp
@@ -36,6 +38,10 @@ namespace MiniDumpExplorerApp
             system_info_ = *winrt::make_self<DumpFileStreamSystemInfo>(index_, mini_dump_);
             break;
 
+        case MiscInfoStream:
+            misc_info_ = *winrt::make_self<DumpFileStreamMiscInfo>(index_, mini_dump_);
+            break;
+
         case UnusedStream:
         case ReservedStream0:
         case ReservedStream1:
@@ -47,7 +53,6 @@ namespace MiniDumpExplorerApp
         case HandleDataStream:
         case FunctionTableStream:
         case UnloadedModuleListStream:
-        case MiscInfoStream:
         case MemoryInfoListStream:
         case ThreadInfoListStream:
         case HandleOperationListStream:
@@ -104,5 +109,10 @@ namespace MiniDumpExplorerApp
     winrt::MiniDumpExplorer::IDumpFileStreamSystemInfo DumpFileStream::AsSystemInfo() const
     {
         return GetResult(system_info_);
+    }
+
+    winrt::MiniDumpExplorer::IDumpFileStreamMiscInfo DumpFileStream::AsMiscInfo() const
+    {
+        return GetResult(misc_info_);
     }
 }

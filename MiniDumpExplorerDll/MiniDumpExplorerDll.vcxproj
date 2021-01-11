@@ -145,8 +145,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="App.base.h" />
+    <ClInclude Include="AtLeastToVisibilityConverter.h">
+      <DependentUpon>AtLeastToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="BooleanToVisibilityConverter.h">
       <DependentUpon>BooleanToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ByteSizeConverter.h">
+      <DependentUpon>ByteSizeConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Category.h">
@@ -265,12 +273,36 @@
       <DependentUpon>DumpStreamX86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DurationConverter.h">
+      <DependentUpon>DurationConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="HexConverter.h">
       <DependentUpon>HexConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="IndexConverter.h">
       <DependentUpon>IndexConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="MiscInfo2View.h">
+      <DependentUpon>MiscInfo2View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="MiscInfo3View.h">
+      <DependentUpon>MiscInfo3View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="MiscInfo4View.h">
+      <DependentUpon>MiscInfo4View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="MiscInfo5View.h">
+      <DependentUpon>MiscInfo5View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="MiscInfoView.h">
+      <DependentUpon>MiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="NumberConverter.h">
@@ -288,7 +320,15 @@
       <DependentUpon>StackTraceView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="SystemTimeView.h">
+      <DependentUpon>SystemTimeView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="WindowHelper.h" />
+    <ClInclude Include="XStateFeatureView.h">
+      <DependentUpon>XStateFeatureView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -378,7 +418,28 @@
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MiscInfo2View.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MiscInfo3View.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MiscInfo4View.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MiscInfo5View.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MiscInfoView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="StackTraceView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SystemTimeView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XStateFeatureView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -397,8 +458,16 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AtLeastToVisibilityConverter.cpp">
+      <DependentUpon>AtLeastToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="BooleanToVisibilityConverter.cpp">
       <DependentUpon>BooleanToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ByteSizeConverter.cpp">
+      <DependentUpon>ByteSizeConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Category.cpp">
@@ -517,12 +586,36 @@
       <DependentUpon>DumpStreamX86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DurationConverter.cpp">
+      <DependentUpon>DurationConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="HexConverter.cpp">
       <DependentUpon>HexConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="IndexConverter.cpp">
       <DependentUpon>IndexConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="MiscInfo2View.cpp">
+      <DependentUpon>MiscInfo2View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="MiscInfo3View.cpp">
+      <DependentUpon>MiscInfo3View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="MiscInfo4View.cpp">
+      <DependentUpon>MiscInfo4View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="MiscInfo5View.cpp">
+      <DependentUpon>MiscInfo5View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="MiscInfoView.cpp">
+      <DependentUpon>MiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="NumberConverter.cpp">
@@ -543,13 +636,27 @@
       <DependentUpon>StackTraceView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="SystemTimeView.cpp">
+      <DependentUpon>SystemTimeView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="WindowHelper.cpp" />
+    <ClCompile Include="XStateFeatureView.cpp">
+      <DependentUpon>XStateFeatureView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
       <DependentUpon>App.xaml</DependentUpon>
     </Midl>
+    <Midl Include="AtLeastToVisibilityConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="BooleanToVisibilityConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="ByteSizeConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="Category.idl">
@@ -663,6 +770,9 @@
       <DependentUpon>DumpStreamX86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="DurationConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="HexConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -677,11 +787,17 @@
     <Midl Include="IDumpFileStream.idl" />
     <Midl Include="IDumpFileStreamComment.idl" />
     <Midl Include="IDumpFileStreamException.idl" />
+    <Midl Include="IDumpFileStreamMiscInfo.idl" />
     <Midl Include="IDumpFileStreamSystemInfo.idl" />
     <Midl Include="IDumpFileStreamThreadContext.idl" />
     <Midl Include="IDumpFileStreamX64ThreadContext.idl" />
     <Midl Include="IDumpFileStreamX86ThreadContext.idl" />
     <Midl Include="IMiniDumpException.idl" />
+    <Midl Include="IMiniDumpMiscInfo.idl" />
+    <Midl Include="IMiniDumpMiscInfo2.idl" />
+    <Midl Include="IMiniDumpMiscInfo3.idl" />
+    <Midl Include="IMiniDumpMiscInfo4.idl" />
+    <Midl Include="IMiniDumpMiscInfo5.idl" />
     <Midl Include="IMiniDumpSystemInfo.idl" />
     <Midl Include="IndexConverter.idl">
       <SubType>Designer</SubType>
@@ -689,16 +805,48 @@
     <Midl Include="IOtherCpuInfo.idl" />
     <Midl Include="IStackFrame.idl" />
     <Midl Include="IStackTrace.idl" />
+    <Midl Include="ISystemTime.idl" />
+    <Midl Include="ITimeZoneInformation.idl" />
     <Midl Include="IWow64FloatingSaveArea.idl" />
     <Midl Include="IX86CpuInfo.idl" />
+    <Midl Include="IXStateConfigFeatureMscInfo.idl" />
+    <Midl Include="IXStateFeature.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="MiscInfo2View.idl">
+      <DependentUpon>MiscInfo2View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="MiscInfo3View.idl">
+      <DependentUpon>MiscInfo3View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="MiscInfo4View.idl">
+      <DependentUpon>MiscInfo4View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="MiscInfo5View.idl">
+      <DependentUpon>MiscInfo5View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="MiscInfoView.idl">
+      <DependentUpon>MiscInfoView.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="NumberConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="StackTraceView.idl">
       <DependentUpon>StackTraceView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="SystemTimeView.idl">
+      <DependentUpon>SystemTimeView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="XStateFeatureView.idl">
+      <DependentUpon>XStateFeatureView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
   </ItemGroup>

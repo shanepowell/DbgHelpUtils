@@ -1,0 +1,32 @@
+import "IXStateFeature.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IXStateConfigFeatureMscInfo
+    {
+        UInt32 ContextSize{ get; };
+        UInt64 EnabledFeatures{ get; };
+        Boolean HasXStateLegacyFloatingPoint{ get; };
+        IXStateFeature XStateLegacyFloatingPoint { get; };
+        Boolean HasXStateLegacySSE{ get; };
+        IXStateFeature XStateLegacySSE { get; };
+        Boolean HasXStateAvx{ get; };
+        IXStateFeature XStateAvx{ get; };
+        Boolean HasXStateMpxBndregs{ get; };
+        IXStateFeature XStateMpxBndregs{ get; };
+        Boolean HasXStateMpxBndcsr{ get; };
+        IXStateFeature XStateMpxBndcsr{ get; };
+        Boolean HasXStateAvx512KMask{ get; };
+        IXStateFeature XStateAvx512KMask{ get; };
+        Boolean HasXStateAvx512ZmmH{ get; };
+        IXStateFeature XStateAvx512ZmmH{ get; };
+        Boolean HasXStateAvx512Zmm{ get; };
+        IXStateFeature XStateAvx512Zmm{ get; };
+        Boolean HasXStateIpt{ get; };
+        IXStateFeature XStateIpt{ get; };
+        Boolean HasXStateCetU{ get; };
+        IXStateFeature XStateCetU{ get; };
+        Boolean HasXStateLwp{ get; };
+        IXStateFeature XStateLwp{ get; };
+    }
+}

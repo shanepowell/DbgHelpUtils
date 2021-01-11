@@ -1,0 +1,12 @@
+import "IDumpFileStreamMiscInfo.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass MiscInfo2View : Windows.UI.Xaml.Controls.UserControl
+    {
+        MiscInfo2View();
+
+        IDumpFileStreamMiscInfo Stream;
+    }
+}

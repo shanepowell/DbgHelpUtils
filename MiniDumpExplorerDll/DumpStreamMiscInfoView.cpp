@@ -9,8 +9,14 @@ using namespace Windows::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    DumpStreamMiscInfoView::DumpStreamMiscInfoView()
+    DumpStreamMiscInfoView::DumpStreamMiscInfoView(IDumpFileStreamMiscInfo stream)
+        : stream_{stream}
     {
         InitializeComponent();
+    }
+
+    IDumpFileStreamMiscInfo DumpStreamMiscInfoView::Stream() const
+    {
+        return stream_;
     }
 }

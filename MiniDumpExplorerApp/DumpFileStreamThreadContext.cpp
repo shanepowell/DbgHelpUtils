@@ -1,8 +1,7 @@
 ﻿#include "pch.h"
 #include "DumpFileStreamThreadContext.h"
 
-
-
+#include "GetResult.h"
 #include "DumpFileStreamX64ThreadContext.h"
 #include "DumpFileStreamX86ThreadContext.h"
 #include "../DbgHelpUtils/exception_stream.h"
@@ -55,31 +54,16 @@ namespace MiniDumpExplorerApp
 
     winrt::MiniDumpExplorer::IDumpFileStreamX86ThreadContext DumpFileStreamThreadContext::X86ThreadContext() const
     {
-        if(x86_thread_context_)
-        {
-            return x86_thread_context_;
-        }
-
-        throw winrt::hresult_illegal_method_call();
+        return GetResult(x86_thread_context_);
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamX86ThreadContext DumpFileStreamThreadContext::Wow64ThreadContext() const
     {
-        if(wow64_thread_context_)
-        {
-            return wow64_thread_context_;
-        }
-
-        throw winrt::hresult_illegal_method_call();
+        return GetResult(wow64_thread_context_);
     }
 
     winrt::MiniDumpExplorer::IDumpFileStreamX64ThreadContext DumpFileStreamThreadContext::X64ThreadContext() const
     {
-        if(x64_thread_context_)
-        {
-            return x64_thread_context_;
-        }
-
-        throw winrt::hresult_illegal_method_call();
+        return GetResult(x64_thread_context_);
     }
 }

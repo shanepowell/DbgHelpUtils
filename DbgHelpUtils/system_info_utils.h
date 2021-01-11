@@ -24,6 +24,7 @@ namespace dlg_help_utils::system_info_utils
     std::wstring_view handle_trace_operation_to_string(uint32_t type);
     std::wstring_view handle_object_information_type_to_string(uint32_t type);
     std::wstring version_info_to_string(uint32_t version_ms, uint32_t version_ls);
+    std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t process_execute_flags);
 
     std::filesystem::path const& get_running_application_path();
     std::filesystem::path const& get_run_from_directory();

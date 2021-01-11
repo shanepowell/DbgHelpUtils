@@ -18,6 +18,14 @@
 
 #pragma comment(lib, "Version.lib")
 
+#define MEM_EXECUTE_OPTION_DISABLE 0x1
+#define MEM_EXECUTE_OPTION_ENABLE 0x2
+#define MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION 0x4
+#define MEM_EXECUTE_OPTION_PERMANENT 0x8
+#define MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE 0x10
+#define MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE 0x20
+#define MEM_EXECUTE_OPTION_VALID_FLAGS 0x3f
+
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
@@ -520,6 +528,43 @@ namespace dlg_help_utils::system_info_utils
         ss << HIWORD(version_ms) << L'.' << LOWORD(version_ms) << L'.' << HIWORD(version_ls) << L'.' <<
             LOWORD(version_ls);
         return std::move(ss).str();
+    }
+
+    std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t const process_execute_flags)
+    {
+        std::vector<std::wstring_view> rv;
+
+        if(process_execute_flags & MEM_EXECUTE_OPTION_DISABLE)
+        {
+            rv.emplace_back(L"MEM_EXECUTE_OPTION_DISABLE"sv);
+        }
+
+        if(process_execute_flags & MEM_EXECUTE_OPTION_ENABLE)
+        {
+            rv.emplace_back(L"MEM_EXECUTE_OPTION_ENABLE"sv);
+        }
+
+        if(process_execute_flags & MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION)
+        {
+            rv.emplace_back(L"MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION"sv);
+        }
+
+        if(process_execute_flags & MEM_EXECUTE_OPTION_PERMANENT)
+        {
+            rv.emplace_back(L"MEM_EXECUTE_OPTION_PERMANENT"sv);
+        }
+
+        if(process_execute_flags & MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE)
+        {
+            rv.emplace_back(L"MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE"sv);
+        }
+
+        if(process_execute_flags & MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE)
+        {
+            rv.emplace_back(L"MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE"sv);
+        }
+
+        return rv;
     }
 
     std::filesystem::path const& get_running_application_path()

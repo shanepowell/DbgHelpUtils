@@ -1,6 +1,7 @@
 import "IDumpFileStreamComment.idl";
 import "IDumpFileStreamException.idl";
 import "IDumpFileStreamSystemInfo.idl";
+import "IDumpFileStreamMiscInfo.idl";
 
 namespace MiniDumpExplorer
 {
@@ -58,5 +59,6 @@ namespace MiniDumpExplorer
         IDumpFileStreamComment AsComment();
         IDumpFileStreamException AsException();
         IDumpFileStreamSystemInfo AsSystemInfo();
+        IDumpFileStreamMiscInfo AsMiscInfo();
     }
 }

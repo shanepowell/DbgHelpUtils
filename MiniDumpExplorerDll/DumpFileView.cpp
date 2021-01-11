@@ -218,7 +218,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return *winrt::make_self<DumpStreamUnloadedModuleListView>();
 
         case StreamType::MiscInfoStream:
-            return *winrt::make_self<DumpStreamMiscInfoView>();
+            return *winrt::make_self<DumpStreamMiscInfoView>(stream.AsMiscInfo());
 
         case StreamType::MemoryInfoListStream:
             return *winrt::make_self<DumpStreamMemoryInfoListView>();

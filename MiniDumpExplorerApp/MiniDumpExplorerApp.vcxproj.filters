@@ -111,6 +111,39 @@
     <ClInclude Include="OtherCpuInfo.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
+    <ClInclude Include="DumpFileStreamMiscInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="GetResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpMiscInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpMiscInfo2.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpMiscInfo3.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeZoneInformation.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpMiscInfo4.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpMiscInfo5.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="XStateConfigFeatureMscInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="XStateFeature.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemTime.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -189,6 +222,36 @@
       <Filter>ViewModel</Filter>
     </ClCompile>
     <ClCompile Include="OtherCpuInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamMiscInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpMiscInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpMiscInfo2.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpMiscInfo3.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeZoneInformation.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpMiscInfo4.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpMiscInfo5.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="XStateConfigFeatureMscInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="XStateFeature.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemTime.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>

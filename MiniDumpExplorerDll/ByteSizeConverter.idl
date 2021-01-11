@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ByteSizeConverter : Windows.UI.Xaml.Data.IValueConverter
+    {
+        ByteSizeConverter();
+    }
+}

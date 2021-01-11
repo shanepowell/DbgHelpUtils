@@ -81,6 +81,45 @@
     <Midl Include="IOtherCpuInfo.idl">
       <Filter>ViewModel</Filter>
     </Midl>
+    <Midl Include="IDumpFileStreamMiscInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpMiscInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpMiscInfo2.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpMiscInfo3.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="ITimeZoneInformation.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpMiscInfo4.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpMiscInfo5.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IXStateConfigFeatureMscInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IXStateFeature.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="DurationConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
+    <Midl Include="AtLeastToVisibilityConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
+    <Midl Include="ByteSizeConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
+    <Midl Include="ISystemTime.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -232,6 +271,27 @@
       <Filter>Views</Filter>
     </Page>
     <Page Include="DumpStreamX86ThreadContextView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="MiscInfoView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="MiscInfo2View.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="MiscInfo3View.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="MiscInfo4View.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="MiscInfo5View.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="XStateFeatureView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="SystemTimeView.xaml">
       <Filter>Views</Filter>
     </Page>
   </ItemGroup>
