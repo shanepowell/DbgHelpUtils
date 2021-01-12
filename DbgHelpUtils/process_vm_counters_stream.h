@@ -35,7 +35,7 @@ namespace dlg_help_utils
         bool found_{false};
         bool is_valid_{false};
         size_t index_{};
-        size_t process_vm_counters_version_{};
+        size_t process_vm_counters_version_{0};
         MINIDUMP_PROCESS_VM_COUNTERS_1 const* process_vm_counters_{nullptr};
         MINIDUMP_PROCESS_VM_COUNTERS_2 const* process_vm_counters_2_{nullptr};
     };

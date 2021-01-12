@@ -213,6 +213,7 @@
     <ClInclude Include="DumpFileStreamMiscInfo.h" />
     <ClInclude Include="DumpFileStreamSystemInfo.h" />
     <ClInclude Include="DumpFileStreamThreadContext.h" />
+    <ClInclude Include="DumpFileStreamProcessVmCounters.h" />
     <ClInclude Include="DumpFileStreamX64ThreadContext.h" />
     <ClInclude Include="DumpFileStreamX86ThreadContext.h" />
     <ClInclude Include="framework.h" />
@@ -226,6 +227,8 @@
     <ClInclude Include="MiniDumpMiscInfo3.h" />
     <ClInclude Include="MiniDumpMiscInfo4.h" />
     <ClInclude Include="MiniDumpMiscInfo5.h" />
+    <ClInclude Include="MiniDumpProcessVmCounters1.h" />
+    <ClInclude Include="MiniDumpProcessVmCounters2.h" />
     <ClInclude Include="MiniDumpSystemInfo.h" />
     <ClInclude Include="OtherCpuInfo.h" />
     <ClInclude Include="pch.h" />
@@ -254,6 +257,7 @@
     <ClCompile Include="DumpFileStreamMiscInfo.cpp" />
     <ClCompile Include="DumpFileStreamSystemInfo.cpp" />
     <ClCompile Include="DumpFileStreamThreadContext.cpp" />
+    <ClCompile Include="DumpFileStreamProcessVmCounters.cpp" />
     <ClCompile Include="DumpFileStreamX64ThreadContext.cpp" />
     <ClCompile Include="DumpFileStreamX86ThreadContext.cpp" />
     <ClCompile Include="HStringHelper.cpp" />
@@ -265,6 +269,8 @@
     <ClCompile Include="MiniDumpMiscInfo3.cpp" />
     <ClCompile Include="MiniDumpMiscInfo4.cpp" />
     <ClCompile Include="MiniDumpMiscInfo5.cpp" />
+    <ClCompile Include="MiniDumpProcessVmCounters1.cpp" />
+    <ClCompile Include="MiniDumpProcessVmCounters2.cpp" />
     <ClCompile Include="MiniDumpSystemInfo.cpp" />
     <ClCompile Include="OtherCpuInfo.cpp" />
     <ClCompile Include="pch.cpp">

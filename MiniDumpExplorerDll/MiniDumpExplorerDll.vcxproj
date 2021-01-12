@@ -285,6 +285,10 @@
       <DependentUpon>IndexConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="IsEqualToVisibilityConverter.h">
+      <DependentUpon>IsEqualToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="MiscInfo2View.h">
       <DependentUpon>MiscInfo2View.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -315,6 +319,14 @@
     </ClInclude>
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="ProcessVmCounters1View.h">
+      <DependentUpon>ProcessVmCounters1View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ProcessVmCounters2View.h">
+      <DependentUpon>ProcessVmCounters2View.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="StackTraceView.h">
       <DependentUpon>StackTraceView.xaml</DependentUpon>
@@ -431,6 +443,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MiscInfoView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProcessVmCounters1View.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProcessVmCounters2View.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="StackTraceView.xaml">
@@ -598,6 +616,10 @@
       <DependentUpon>IndexConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="IsEqualToVisibilityConverter.cpp">
+      <DependentUpon>IsEqualToVisibilityConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="MiscInfo2View.cpp">
       <DependentUpon>MiscInfo2View.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -632,6 +654,14 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="ProcessVmCounters1View.cpp">
+      <DependentUpon>ProcessVmCounters1View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ProcessVmCounters2View.cpp">
+      <DependentUpon>ProcessVmCounters2View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="StackTraceView.cpp">
       <DependentUpon>StackTraceView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -790,6 +820,7 @@
     <Midl Include="IDumpFileStreamMiscInfo.idl" />
     <Midl Include="IDumpFileStreamSystemInfo.idl" />
     <Midl Include="IDumpFileStreamThreadContext.idl" />
+    <Midl Include="IDumpFileStreamProcessVmCounters.idl" />
     <Midl Include="IDumpFileStreamX64ThreadContext.idl" />
     <Midl Include="IDumpFileStreamX86ThreadContext.idl" />
     <Midl Include="IMiniDumpException.idl" />
@@ -798,11 +829,16 @@
     <Midl Include="IMiniDumpMiscInfo3.idl" />
     <Midl Include="IMiniDumpMiscInfo4.idl" />
     <Midl Include="IMiniDumpMiscInfo5.idl" />
+    <Midl Include="IMiniDumpProcessVmCounters1.idl" />
+    <Midl Include="IMiniDumpProcessVmCounters2.idl" />
     <Midl Include="IMiniDumpSystemInfo.idl" />
     <Midl Include="IndexConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="IOtherCpuInfo.idl" />
+    <Midl Include="IsEqualToVisibilityConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="IStackFrame.idl" />
     <Midl Include="IStackTrace.idl" />
     <Midl Include="ISystemTime.idl" />
@@ -836,6 +872,14 @@
     </Midl>
     <Midl Include="NumberConverter.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="ProcessVmCounters1View.idl">
+      <DependentUpon>ProcessVmCounters1View.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ProcessVmCounters2View.idl">
+      <DependentUpon>ProcessVmCounters2View.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="StackTraceView.idl">
       <DependentUpon>StackTraceView.xaml</DependentUpon>

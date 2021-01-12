@@ -57,7 +57,7 @@
                    VerticalAlignment="Center" 
                    Style="{StaticResource BaseTextBlockStyle}"
                    Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">Process Create Time</TextBlock>
-        <Grid Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+        <Grid Grid.Row="2" Grid.Column="1"
                  Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -85,7 +85,7 @@
                    VerticalAlignment="Center" 
                    Style="{StaticResource BaseTextBlockStyle}"
                    Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">Process User Time</TextBlock>
-        <Grid Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+        <Grid Grid.Row="3" Grid.Column="1"
               Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -113,7 +113,7 @@
                    VerticalAlignment="Center" 
                    Style="{StaticResource BaseTextBlockStyle}"
                    Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">Process Kernel Time</TextBlock>
-        <Grid Grid.Row="4" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+        <Grid Grid.Row="4" Grid.Column="1"
               Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

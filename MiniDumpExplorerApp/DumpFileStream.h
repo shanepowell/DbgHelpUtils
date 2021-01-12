@@ -19,6 +19,7 @@ namespace MiniDumpExplorerApp
         [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamException AsException() const;
         [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamSystemInfo AsSystemInfo() const;
         [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamMiscInfo AsMiscInfo() const;
+        [[nodiscard]] winrt::MiniDumpExplorer::IDumpFileStreamProcessVmCounters AsProcessVmCounters() const;
 
     private:
         size_t index_;
@@ -32,5 +33,6 @@ namespace MiniDumpExplorerApp
         winrt::MiniDumpExplorer::IDumpFileStreamException exception_;
         winrt::MiniDumpExplorer::IDumpFileStreamSystemInfo system_info_;
         winrt::MiniDumpExplorer::IDumpFileStreamMiscInfo misc_info_;
+        winrt::MiniDumpExplorer::IDumpFileStreamProcessVmCounters process_vm_counters_;
     };
 }

@@ -6,7 +6,12 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct DumpStreamProcessVmCountersView : DumpStreamProcessVmCountersViewT<DumpStreamProcessVmCountersView>
     {
-        DumpStreamProcessVmCountersView();
+        DumpStreamProcessVmCountersView(IDumpFileStreamProcessVmCounters stream);
+
+        [[nodiscard]] IDumpFileStreamProcessVmCounters Stream() const;
+
+    private:
+        IDumpFileStreamProcessVmCounters stream_;
     };
 }
 

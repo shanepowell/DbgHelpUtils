@@ -1,0 +1,33 @@
+namespace MiniDumpExplorer
+{
+    interface IMiniDumpProcessVmCounters2
+    {
+        UInt16 Revision { get; };
+        UInt16 Flags { get; };
+        Windows.Foundation.Collections.IObservableVector<String> FlagTypes { get; };
+        Boolean HasProcessVmCounters { get; };
+        UInt32 PageFaultCount { get; };
+        UInt64 PeakWorkingSetSize { get; };
+        UInt64 WorkingSetSize { get; };
+        UInt64 QuotaPeakPagedPoolUsage { get; };
+        UInt64 QuotaPagedPoolUsage { get; };
+        UInt64 QuotaPeakNonPagedPoolUsage { get; };
+        UInt64 QuotaNonPagedPoolUsage { get; };
+        UInt64 PagefileUsage { get; };
+        UInt64 PeakPagefileUsage { get; };
+        Boolean HasProcessVmCountersVirtualSize { get; };
+        UInt64 PeakVirtualSize { get; };
+        UInt64 VirtualSize { get; };
+        Boolean HasProcessVmCountersPrivateUsage { get; };
+        UInt64 PrivateUsage { get; };
+        Boolean HasProcessVmCountersEx2 { get; };
+        UInt64 PrivateWorkingSetSize { get; };
+        UInt64 SharedCommitUsage { get; };
+        Boolean HasProcessVmCountersJob { get; };
+        UInt64 JobSharedCommitUsage { get; };
+        UInt64 JobPrivateCommitUsage { get; };
+        UInt64 JobPeakPrivateCommitUsage { get; };
+        UInt64 JobPrivateCommitLimit { get; };
+        UInt64 JobTotalCommitLimit { get; };
+    }
+}

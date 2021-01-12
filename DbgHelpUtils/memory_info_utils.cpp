@@ -67,6 +67,11 @@ namespace dlg_help_utils::memory_info_utils
         return flags_string_utils::generate_flags_string(memory_protection_options, memory_protection_option_masks);
     }
 
+    std::vector<std::wstring_view> memory_protection_options_to_strings(uint32_t const memory_protection_options)
+    {
+        return flags_string_utils::generate_flags_strings(memory_protection_options, memory_protection_option_masks);
+    }
+
     std::wstring_view memory_state_to_string(uint32_t const state)
     {
         switch (state)
@@ -116,5 +121,10 @@ namespace dlg_help_utils::memory_info_utils
     std::wstring system_memory_info_flags_to_string(uint16_t const flags)
     {
         return flags_string_utils::generate_flags_string(flags, system_memory_info_flag_masks);
+    }
+
+    std::vector<std::wstring_view> system_memory_info_flags_to_strings(uint16_t const flags)
+    {
+        return flags_string_utils::generate_flags_strings(flags, system_memory_info_flag_masks);
     }
 }

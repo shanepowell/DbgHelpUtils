@@ -7,6 +7,7 @@
 #include "DumpFileStreamException.h"
 #include "DumpFileStreamMiscInfo.h"
 #include "DumpFileStreamSystemInfo.h"
+#include "DumpFileStreamProcessVmCounters.h"
 
 namespace MiniDumpExplorerApp
 {
@@ -42,6 +43,10 @@ namespace MiniDumpExplorerApp
             misc_info_ = *winrt::make_self<DumpFileStreamMiscInfo>(index_, mini_dump_);
             break;
 
+        case ProcessVmCountersStream:
+            process_vm_counters_ = *winrt::make_self<DumpFileStreamProcessVmCounters>(index_, mini_dump_);
+            break;
+
         case UnusedStream:
         case ReservedStream0:
         case ReservedStream1:
@@ -59,7 +64,6 @@ namespace MiniDumpExplorerApp
         case TokenStream:
         case JavaScriptDataStream:
         case SystemMemoryInfoStream:
-        case ProcessVmCountersStream:
         case IptTraceStream:
         case ThreadNamesStream:
         case ceStreamNull:
@@ -114,5 +118,10 @@ namespace MiniDumpExplorerApp
     winrt::MiniDumpExplorer::IDumpFileStreamMiscInfo DumpFileStream::AsMiscInfo() const
     {
         return GetResult(misc_info_);
+    }
+
+    winrt::MiniDumpExplorer::IDumpFileStreamProcessVmCounters DumpFileStream::AsProcessVmCounters() const
+    {
+        return GetResult(process_vm_counters_);
     }
 }

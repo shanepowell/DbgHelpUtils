@@ -120,6 +120,18 @@
     <Midl Include="ISystemTime.idl">
       <Filter>ViewModel</Filter>
     </Midl>
+    <Midl Include="IMiniDumpProcessVmCounters1.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpProcessVmCounters2.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IDumpFileStreamProcessVmCounters.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IsEqualToVisibilityConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -292,6 +304,12 @@
       <Filter>Views</Filter>
     </Page>
     <Page Include="SystemTimeView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="ProcessVmCounters1View.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="ProcessVmCounters2View.xaml">
       <Filter>Views</Filter>
     </Page>
   </ItemGroup>

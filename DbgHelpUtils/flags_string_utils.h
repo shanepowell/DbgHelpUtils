@@ -52,4 +52,25 @@ namespace dlg_help_utils::flags_string_utils
 
         return std::move(ss).str();
     }
+
+    template <typename T>
+    std::vector<std::wstring_view> generate_flags_strings(T dump_flags, std::map<T, std::wstring_view> const& flag_masks)
+    {
+        std::vector<std::wstring_view> rv;
+
+        for (auto const& [option, title] : flag_masks)
+        {
+            if (option == 0 && dump_flags == option)
+            {
+                rv.emplace_back(title);
+            }
+            else if ((dump_flags & option) == option)
+            {
+                dump_flags &= ~option;
+                rv.emplace_back(title);
+            }
+        }
+
+        return rv;
+    }
 }

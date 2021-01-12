@@ -32,4 +32,9 @@ namespace dlg_help_utils::thread_info_utils
     {
         return flags_string_utils::generate_flags_string(dump_flags, dump_flag_masks);
     }
+
+    std::vector<std::wstring_view> dump_flags_to_strings(uint32_t const dump_flags)
+    {
+        return flags_string_utils::generate_flags_strings(dump_flags, dump_flag_masks);
+    }
 }

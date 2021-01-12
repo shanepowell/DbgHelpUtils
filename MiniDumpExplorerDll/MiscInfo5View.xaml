@@ -58,7 +58,7 @@
         <TextBlock Grid.Row="1" Grid.Column = "0" 
                    VerticalAlignment="Center" 
                    Style="{StaticResource BaseTextBlockStyle}">XData Context Size</TextBlock>
-        <Grid Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+        <Grid Grid.Row="3" Grid.Column="1"
               Visibility="{x:Bind Path=Stream.MiscInfo.HasProcessTimes, Converter={StaticResource TrueToVisibleConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

@@ -144,6 +144,15 @@
     <ClInclude Include="SystemTime.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
+    <ClInclude Include="MiniDumpProcessVmCounters1.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpProcessVmCounters2.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DumpFileStreamProcessVmCounters.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -252,6 +261,15 @@
       <Filter>ViewModel</Filter>
     </ClCompile>
     <ClCompile Include="SystemTime.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpProcessVmCounters1.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpProcessVmCounters2.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamProcessVmCounters.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>

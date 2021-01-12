@@ -478,6 +478,11 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags, vm_counters_2_flag_masks);
     }
 
+    std::vector<std::wstring_view> vm_counters_2_flags_to_strings(uint16_t const flags)
+    {
+        return flags_string_utils::generate_flags_strings(flags, vm_counters_2_flag_masks);
+    }
+
     std::wstring_view handle_trace_operation_to_string(uint32_t const type)
     {
         switch (static_cast<eHANDLE_TRACE_OPERATIONS>(type))

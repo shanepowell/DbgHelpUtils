@@ -21,6 +21,7 @@ namespace dlg_help_utils::system_info_utils
     std::wstring get_product_version(std::wstring const& filename);
     std::wstring_view process_integrity_level_to_string(uint32_t process_integrity_level);
     std::wstring vm_counters_2_flags_to_string(uint16_t flags);
+    std::vector<std::wstring_view> vm_counters_2_flags_to_strings(uint16_t flags);
     std::wstring_view handle_trace_operation_to_string(uint32_t type);
     std::wstring_view handle_object_information_type_to_string(uint32_t type);
     std::wstring version_info_to_string(uint32_t version_ms, uint32_t version_ls);

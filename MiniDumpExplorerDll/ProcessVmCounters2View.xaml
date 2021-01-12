@@ -1,0 +1,597 @@
+﻿<UserControl
+    x:Class="MiniDumpExplorer.ProcessVmCounters2View"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
+        <local:HexConverter x:Key="HexConverter"/>
+        <local:NumberConverter x:Key="NumberConverter"/>
+        <local:IndexConverter x:Key="IndexConverter" IsBracketed="True"/>
+        <local:ByteSizeConverter x:Key="ByteSizeConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}">Revision</TextBlock>
+        <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Text="{x:Bind Path=VmCounters.Revision, Converter={StaticResource NumberConverter}}"
+                 FontFamily="Courier New"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="1" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}">Flags</TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Text="{x:Bind Path=VmCounters.Flags, Converter={StaticResource HexConverter}}"
+                 FontFamily="Courier New"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"/>
+        <ListView Grid.Row="2" Grid.Column="1"
+                  SelectionMode="None" 
+                  ItemsSource="{x:Bind Path=VmCounters.FlagTypes}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock 
+                        Text="{x:Bind}" 
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        FontFamily="Courier New"
+                    />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <TextBlock Grid.Row="3" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Page Fault Count</TextBlock>
+        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Text="{x:Bind Path=VmCounters.PageFaultCount, Converter={StaticResource NumberConverter}}"
+                 FontFamily="Courier New"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="4" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Peak Working Set Size</TextBlock>
+        <Grid Grid.Row="4" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PeakWorkingSetSize, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PeakWorkingSetSize, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="5" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Working Set Size</TextBlock>
+        <Grid Grid.Row="5" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.WorkingSetSize, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.WorkingSetSize, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="6" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Quota Peak Paged Pool Usage</TextBlock>
+        <Grid Grid.Row="6" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaPeakPagedPoolUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaPeakPagedPoolUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="7" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Quota Paged Pool Usage</TextBlock>
+        <Grid Grid.Row="7" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaPagedPoolUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaPagedPoolUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="8" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Quota Peak Non Paged Pool Usage</TextBlock>
+        <Grid Grid.Row="8" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaPeakNonPagedPoolUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaPeakNonPagedPoolUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="9" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Quota Non Paged Pool Usage</TextBlock>
+        <Grid Grid.Row="9" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaNonPagedPoolUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.QuotaNonPagedPoolUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="10" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Pagefile Usage</TextBlock>
+        <Grid Grid.Row="10" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PagefileUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PagefileUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="11" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">Peak Pagefile Usage</TextBlock>
+        <Grid Grid.Row="11" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCounters, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PeakPagefileUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PeakPagefileUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="12" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersVirtualSize, Converter={StaticResource TrueToVisibleConverter}}">Peak Virtual Size</TextBlock>
+        <Grid Grid.Row="12" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersVirtualSize, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PeakVirtualSize, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PeakVirtualSize, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="13" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersVirtualSize, Converter={StaticResource TrueToVisibleConverter}}">Virtual Size</TextBlock>
+        <Grid Grid.Row="13" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersVirtualSize, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.VirtualSize, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.VirtualSize, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="14" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersPrivateUsage, Converter={StaticResource TrueToVisibleConverter}}">Private Usage</TextBlock>
+        <Grid Grid.Row="14" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersPrivateUsage, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PrivateUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PrivateUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="15" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersEx2, Converter={StaticResource TrueToVisibleConverter}}">Private Working Set Size</TextBlock>
+        <Grid Grid.Row="15" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersEx2, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PrivateWorkingSetSize, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.PrivateWorkingSetSize, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="16" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersEx2, Converter={StaticResource TrueToVisibleConverter}}">Shared Commit Usage</TextBlock>
+        <Grid Grid.Row="16" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersEx2, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.SharedCommitUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.SharedCommitUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="17" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">Job Shared Commit Usage</TextBlock>
+        <Grid Grid.Row="17" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobSharedCommitUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobSharedCommitUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="18" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">Job Private Commit Usage</TextBlock>
+        <Grid Grid.Row="18" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobPrivateCommitUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobPrivateCommitUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="19" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">Job Peak Private Commit Usage</TextBlock>
+        <Grid Grid.Row="19" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobPeakPrivateCommitUsage, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobPeakPrivateCommitUsage, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="20" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">Job Private Commit Limit</TextBlock>
+        <Grid Grid.Row="20" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobPrivateCommitLimit, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobPrivateCommitLimit, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+        <TextBlock Grid.Row="21" Grid.Column = "0" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">Job Total Commit Limit</TextBlock>
+        <Grid Grid.Row="21" Grid.Column="1"
+              Visibility="{x:Bind Path=VmCounters.HasProcessVmCountersJob, Converter={StaticResource TrueToVisibleConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobTotalCommitLimit, Converter={StaticResource NumberConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="-" Margin="5,0,5,0" Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBox Grid.Row="0" Grid.Column="2" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=VmCounters.JobTotalCommitLimit, Converter={StaticResource ByteSizeConverter}}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+        </Grid>
+    </Grid>
+</UserControl>

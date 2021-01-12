@@ -1,8 +1,12 @@
+import "IDumpFileStreamProcessVmCounters.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
     runtimeclass DumpStreamProcessVmCountersView : Windows.UI.Xaml.Controls.UserControl
     {
-        DumpStreamProcessVmCountersView();
+        DumpStreamProcessVmCountersView(IDumpFileStreamProcessVmCounters stream);
+
+        IDumpFileStreamProcessVmCounters Stream { get; };
     }
 }

@@ -1,0 +1,14 @@
+import "IMiniDumpProcessVmCounters1.idl";
+import "IMiniDumpProcessVmCounters2.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IDumpFileStreamProcessVmCounters
+    {
+        UInt64 Index { get; };
+        Boolean IsValid { get; };
+        UInt64 ProcessVmCountersVersion { get; };
+        IMiniDumpProcessVmCounters1 ProcessVmCounters1 { get; };
+        IMiniDumpProcessVmCounters2 ProcessVmCounters2 { get; };
+    }
+}

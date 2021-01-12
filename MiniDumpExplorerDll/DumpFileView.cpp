@@ -236,7 +236,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return *winrt::make_self<DumpStreamSystemMemoryInfoView>();
 
         case StreamType::ProcessVmCountersStream:
-            return *winrt::make_self<DumpStreamProcessVmCountersView>();
+            return *winrt::make_self<DumpStreamProcessVmCountersView>(stream.AsProcessVmCounters());
 
         case StreamType::IptTraceStream:
             return *winrt::make_self<DumpStreamIptTraceView>();

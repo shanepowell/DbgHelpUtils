@@ -7,6 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
+        <local:NumberConverter x:Key="NumberConverter"/>
+        <local:IsEqualToVisibilityConverter x:Key="VersionOneConverter" Value="1"/>
+        <local:IsEqualToVisibilityConverter x:Key="VersionTwoConverter" Value="2"/>
+    </UserControl.Resources>
+
     <ScrollViewer HorizontalScrollBarVisibility="Auto" 
                   VerticalScrollBarVisibility="Auto">
         <Grid>
@@ -20,6 +28,16 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalTextAlignment="Left">Stream Process VM Counters</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <local:ProcessVmCounters1View VmCounters="{x:Bind Path=Stream.ProcessVmCounters1}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{x:Bind Path=Stream.ProcessVmCountersVersion, Converter={StaticResource VersionOneConverter}}" />
+            <local:ProcessVmCounters2View VmCounters="{x:Bind Path=Stream.ProcessVmCounters2}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{x:Bind Path=Stream.ProcessVmCountersVersion, Converter={StaticResource VersionTwoConverter}}" />
         </Grid>
     </ScrollViewer>
 </UserControl>
