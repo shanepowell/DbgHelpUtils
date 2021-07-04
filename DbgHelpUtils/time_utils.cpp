@@ -35,7 +35,7 @@ namespace dlg_help_utils::time_utils
 
     time_t filetime_to_time_t(uint64_t const ft)
     {
-        return ft / 10000000ULL - 11644473600ULL;
+        return static_cast<time_t>(ft / 10000000ULL - 11644473600ULL);
     }
 
     std::chrono::milliseconds duration_to_ms(uint64_t const duration)

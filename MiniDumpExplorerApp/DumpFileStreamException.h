@@ -20,7 +20,6 @@ namespace MiniDumpExplorerApp
         [[nodiscard]] winrt::MiniDumpExplorer::IStackTrace StackTrace() const;
 
     private:
-        dlg_help_utils::dbg_help::symbol_engine& symbol_engine_;
         dlg_help_utils::exception_stream exception_;
         winrt::MiniDumpExplorer::IMiniDumpException mini_dump_exception_;
         winrt::MiniDumpExplorer::IDumpFileStreamThreadContext thread_context_;

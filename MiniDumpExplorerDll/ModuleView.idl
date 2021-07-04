@@ -1,0 +1,13 @@
+import "IMiniDumpModule.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ModuleView : Windows.UI.Xaml.Controls.UserControl
+    {
+        ModuleView();
+
+        IMiniDumpModule Module;
+        String Test;
+    }
+}

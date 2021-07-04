@@ -153,6 +153,18 @@
     <ClInclude Include="DumpFileStreamProcessVmCounters.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
+    <ClInclude Include="DumpFileStreamModuleList.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDumpModule.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="VsFixedFileInfo.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="CvInfoPdb70.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniDumpExplorer.cpp">
@@ -270,6 +282,18 @@
       <Filter>ViewModel</Filter>
     </ClCompile>
     <ClCompile Include="DumpFileStreamProcessVmCounters.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpFileStreamModuleList.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDumpModule.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="VsFixedFileInfo.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="CvInfoPdb70.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
   </ItemGroup>

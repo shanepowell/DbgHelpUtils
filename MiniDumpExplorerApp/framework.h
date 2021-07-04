@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unknwn.h> // To enable support for non-WinRT interfaces, unknwn.h must be included before any C++/WinRT headers.
+#include <Unknwn.h> // To enable support for non-WinRT interfaces, unknwn.h must be included before any C++/WinRT headers.
 
 #ifdef GetCurrentTime
 #undef GetCurrentTime
@@ -22,10 +22,10 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files
-#include <windows.h>
+#include <Windows.h>
 
 // C RunTime Header Files
-#include <stdlib.h>
+#include <cstdlib>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>

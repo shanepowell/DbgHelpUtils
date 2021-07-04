@@ -187,6 +187,29 @@ namespace
         {static_cast<uint16_t>(MINIDUMP_PROCESS_VM_COUNTERS_EX2), L"ex2"sv},
         {static_cast<uint16_t>(MINIDUMP_PROCESS_VM_COUNTERS_JOB), L"job"sv},
     };
+
+    std::map<uint32_t, std::wstring_view> const version_file_flag_masks =
+    {
+        {static_cast<uint32_t>(VS_FF_DEBUG), L"debug build"sv},
+        {static_cast<uint32_t>(VS_FF_INFOINFERRED), L"info inferred build"sv},
+        {static_cast<uint32_t>(VS_FF_PATCHED), L"patched build"sv},
+        {static_cast<uint32_t>(VS_FF_PATCHED), L"prerelease build"sv},
+        {static_cast<uint32_t>(VS_FF_PRIVATEBUILD), L"private build"sv},
+        {static_cast<uint32_t>(VS_FF_SPECIALBUILD), L"special build"sv},
+    };
+
+    std::map<uint32_t, std::wstring_view> const version_file_os_masks =
+    {
+        {static_cast<uint32_t>(VOS__WINDOWS16), L"16bit Windows"sv},
+        {static_cast<uint32_t>(VOS__WINDOWS32), L"32bit Windows"sv},
+        {static_cast<uint32_t>(VOS__PM16), L"16bit Presentation Manager"sv},
+        {static_cast<uint32_t>(VOS__PM32), L"32bit Presentation Manager"sv},
+        {static_cast<uint32_t>(VOS_DOS), L"MS-DOS"sv},
+        {static_cast<uint32_t>(VOS_NT), L"Windows NT"sv},
+        {static_cast<uint32_t>(VOS_OS216), L"16bit OS/2"sv},
+        {static_cast<uint32_t>(VOS_OS232), L"32bit OS/2"sv},
+        {static_cast<uint32_t>(VOS_WINCE), L"Windows CE"sv},
+    };
 }
 
 
@@ -527,11 +550,17 @@ namespace dlg_help_utils::system_info_utils
         return L"unknown"sv;
     }
 
+    std::wstring version_info_to_string(uint32_t const version)
+    {
+        std::wostringstream ss;
+        ss << stream_hex_dump::to_hex_raw(HIWORD(version)) << L'.' << stream_hex_dump::to_hex_raw(LOWORD(version));
+        return std::move(ss).str();
+    }
+
     std::wstring version_info_to_string(uint32_t const version_ms, uint32_t const version_ls)
     {
         std::wostringstream ss;
-        ss << HIWORD(version_ms) << L'.' << LOWORD(version_ms) << L'.' << HIWORD(version_ls) << L'.' <<
-            LOWORD(version_ls);
+        ss << stream_hex_dump::to_hex_raw(HIWORD(version_ms)) << L'.' << stream_hex_dump::to_hex_raw(LOWORD(version_ms)) << L'.' << stream_hex_dump::to_hex_raw(HIWORD(version_ls)) << L'.' << stream_hex_dump::to_hex_raw(LOWORD(version_ls));
         return std::move(ss).str();
     }
 
@@ -570,6 +599,115 @@ namespace dlg_help_utils::system_info_utils
         }
 
         return rv;
+    }
+
+    std::wstring version_file_flags_to_string(uint32_t flags, uint32_t mask)
+    {
+        return flags_string_utils::generate_flags_string(flags & mask, version_file_flag_masks);
+    }
+
+    std::vector<std::wstring_view> version_file_flags_to_strings(uint32_t flags, uint32_t mask)
+    {
+        return flags_string_utils::generate_flags_strings(flags & mask, version_file_flag_masks);
+    }
+
+    std::wstring version_file_os_to_string(uint32_t file_os)
+    {
+        return flags_string_utils::generate_flags_string(file_os, version_file_os_masks);
+    }
+
+    std::vector<std::wstring_view> version_file_os_to_strings(uint32_t file_os)
+    {
+        return flags_string_utils::generate_flags_strings(file_os, version_file_os_masks);
+    }
+
+    std::wstring_view version_file_type_to_string(uint32_t file_type, uint32_t file_sub_type)
+    {
+        switch(file_type)
+        {
+        case VFT_APP:
+            return L"Application"sv;
+
+        case VFT_DLL:
+            return L"DLL"sv;
+
+        case VFT_DRV:
+            switch(file_sub_type)
+            {
+            case VFT2_DRV_COMM:
+                return L"Communications Driver"sv;
+
+            case VFT2_DRV_DISPLAY:
+                return L"Display Driver"sv;
+
+            case VFT2_DRV_INSTALLABLE:
+                return L"Installable Driver"sv;
+
+            case VFT2_DRV_KEYBOARD:
+                return L"Keyboard Driver"sv;
+
+            case VFT2_DRV_LANGUAGE:
+                return L"Language Driver"sv;
+
+            case VFT2_DRV_MOUSE:
+                return L"Mouse Driver"sv;
+
+            case VFT2_DRV_NETWORK:
+                return L"Network Driver"sv;
+
+            case VFT2_DRV_PRINTER:
+                return L"Printer Driver"sv;
+
+            case VFT2_DRV_SOUND:
+                return L"Sound Driver"sv;
+
+            case VFT2_DRV_SYSTEM:
+                return L"System Driver"sv;
+
+            case VFT2_DRV_VERSIONED_PRINTER:
+                return L"Versioned Printer Driver"sv;
+
+            case VFT2_DRV_INPUTMETHOD:
+                return L"Input Method Driver"sv;
+
+            case VFT2_UNKNOWN:
+                return L"Unknown Driver"sv;
+
+            default:
+                return L"Driver"sv;
+            }
+
+        case VFT_FONT:
+            switch(file_sub_type)
+            {
+            case VFT2_FONT_RASTER:
+                return L"Raster Font"sv;
+
+            case VFT2_FONT_TRUETYPE:
+                return L"Truetype Font"sv;
+
+            case VFT2_FONT_VECTOR:
+                return L"Vector Font"sv;
+
+            case VFT2_UNKNOWN:
+                return L"Unknown Font"sv;
+
+            default:
+                return L"Font"sv;
+            }
+
+        case VFT_STATIC_LIB:
+            return L"Static-Link Library"sv;
+
+        case VFT_UNKNOWN:
+            return L"Unknown"sv;
+
+        case VFT_VXD:
+            return L"Virtual Device"sv;
+
+        default:
+            return L"invalid"sv;
+        }
     }
 
     std::filesystem::path const& get_running_application_path()

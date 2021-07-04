@@ -6,6 +6,8 @@
 
 #include <winrt/Windows.UI.Xaml.Media.h>
 
+#include <sstream>
+
 namespace winrt::MiniDumpExplorer::implementation
 {
     bool IndexConverter::IsBracketed() const

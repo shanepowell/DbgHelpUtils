@@ -289,6 +289,10 @@
       <DependentUpon>IsEqualToVisibilityConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="MiniDumpModuleProxy.h">
+      <DependentUpon>MiniDumpModuleProxy.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="MiscInfo2View.h">
       <DependentUpon>MiscInfo2View.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -309,6 +313,10 @@
       <DependentUpon>MiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ModuleView.h">
+      <DependentUpon>ModuleView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="NumberConverter.h">
       <DependentUpon>NumberConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -319,6 +327,10 @@
     </ClInclude>
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="PdbView.h">
+      <DependentUpon>PdbView.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ProcessVmCounters1View.h">
       <DependentUpon>ProcessVmCounters1View.xaml</DependentUpon>
@@ -334,6 +346,10 @@
     </ClInclude>
     <ClInclude Include="SystemTimeView.h">
       <DependentUpon>SystemTimeView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="VersionInfoView.h">
+      <DependentUpon>VersionInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="WindowHelper.h" />
@@ -445,6 +461,12 @@
     <Page Include="MiscInfoView.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ModuleView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PdbView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ProcessVmCounters1View.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -455,6 +477,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SystemTimeView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="VersionInfoView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XStateFeatureView.xaml">
@@ -620,6 +645,10 @@
       <DependentUpon>IsEqualToVisibilityConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="MiniDumpModuleProxy.cpp">
+      <DependentUpon>MiniDumpModuleProxy.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="MiscInfo2View.cpp">
       <DependentUpon>MiscInfo2View.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -640,6 +669,10 @@
       <DependentUpon>MiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ModuleView.cpp">
+      <DependentUpon>ModuleView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="NumberConverter.cpp">
       <DependentUpon>NumberConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -654,6 +687,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="PdbView.cpp">
+      <DependentUpon>PdbView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ProcessVmCounters1View.cpp">
       <DependentUpon>ProcessVmCounters1View.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -668,6 +705,10 @@
     </ClCompile>
     <ClCompile Include="SystemTimeView.cpp">
       <DependentUpon>SystemTimeView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="VersionInfoView.cpp">
+      <DependentUpon>VersionInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="WindowHelper.cpp" />
@@ -807,6 +848,7 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ICpuInformation.idl" />
+    <Midl Include="ICvInfoPdb70.idl" />
     <Midl Include="IDumpFile.idl" />
     <Midl Include="DumpFileView.idl">
       <DependentUpon>DumpFileView.xaml</DependentUpon>
@@ -818,6 +860,7 @@
     <Midl Include="IDumpFileStreamComment.idl" />
     <Midl Include="IDumpFileStreamException.idl" />
     <Midl Include="IDumpFileStreamMiscInfo.idl" />
+    <Midl Include="IDumpFileStreamModuleList.idl" />
     <Midl Include="IDumpFileStreamSystemInfo.idl" />
     <Midl Include="IDumpFileStreamThreadContext.idl" />
     <Midl Include="IDumpFileStreamProcessVmCounters.idl" />
@@ -829,6 +872,7 @@
     <Midl Include="IMiniDumpMiscInfo3.idl" />
     <Midl Include="IMiniDumpMiscInfo4.idl" />
     <Midl Include="IMiniDumpMiscInfo5.idl" />
+    <Midl Include="IMiniDumpModule.idl" />
     <Midl Include="IMiniDumpProcessVmCounters1.idl" />
     <Midl Include="IMiniDumpProcessVmCounters2.idl" />
     <Midl Include="IMiniDumpSystemInfo.idl" />
@@ -843,12 +887,16 @@
     <Midl Include="IStackTrace.idl" />
     <Midl Include="ISystemTime.idl" />
     <Midl Include="ITimeZoneInformation.idl" />
+    <Midl Include="IVsFixedFileInfo.idl" />
     <Midl Include="IWow64FloatingSaveArea.idl" />
     <Midl Include="IX86CpuInfo.idl" />
     <Midl Include="IXStateConfigFeatureMscInfo.idl" />
     <Midl Include="IXStateFeature.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="MiniDumpModuleProxy.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="MiscInfo2View.idl">
       <DependentUpon>MiscInfo2View.xaml</DependentUpon>
@@ -870,8 +918,16 @@
       <DependentUpon>MiscInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ModuleView.idl">
+      <DependentUpon>ModuleView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="NumberConverter.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="PdbView.idl">
+      <DependentUpon>PdbView.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="ProcessVmCounters1View.idl">
       <DependentUpon>ProcessVmCounters1View.xaml</DependentUpon>
@@ -887,6 +943,10 @@
     </Midl>
     <Midl Include="SystemTimeView.idl">
       <DependentUpon>SystemTimeView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="VersionInfoView.idl">
+      <DependentUpon>VersionInfoView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="XStateFeatureView.idl">

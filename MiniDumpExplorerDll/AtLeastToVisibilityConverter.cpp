@@ -1,8 +1,11 @@
 ﻿#include "pch.h"
 #include "AtLeastToVisibilityConverter.h"
 #if __has_include("AtLeastToVisibilityConverter.g.cpp")
+// ReSharper disable once CppUnusedIncludeDirective
 #include "AtLeastToVisibilityConverter.g.cpp"
 #endif
+
+#include <sstream>
 
 namespace winrt::MiniDumpExplorer::implementation
 {
@@ -21,9 +24,9 @@ namespace winrt::MiniDumpExplorer::implementation
         return test_value_;
     }
 
-    void AtLeastToVisibilityConverter::Value(hstring const value)
+    void AtLeastToVisibilityConverter::Value(hstring value)
     {
-        test_value_ = value;
+        test_value_ = std::move(value);
     }
 
     namespace

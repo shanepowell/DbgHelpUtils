@@ -8,7 +8,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         DurationConverter() = default;
 
-        [[nodiscard]] DurationSourceType Source();
+        [[nodiscard]] DurationSourceType Source() const;
         void Source(DurationSourceType value);
 
         [[nodiscard]] Windows::Foundation::IInspectable Convert(Windows::Foundation::IInspectable const& value, Windows::UI::Xaml::Interop::TypeName const& type_name, Windows::Foundation::IInspectable const& parameter, hstring language) const;

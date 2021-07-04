@@ -1,7 +1,9 @@
 #pragma once
 
+// ReSharper disable CppUnusedIncludeDirective
 #include <string_view>
 #include <ostream>
+// ReSharper restore CppUnusedIncludeDirective
 
 namespace dlg_help_utils::dbg_help
 {

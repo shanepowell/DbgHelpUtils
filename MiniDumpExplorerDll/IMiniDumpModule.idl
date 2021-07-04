@@ -1,0 +1,24 @@
+import "ICvInfoPdb70.idl";
+import "IVsFixedFileInfo.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IMiniDumpModule requires Windows.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        String Name { get; };
+        UInt64 BaseOfImage { get; };
+        UInt32 SizeOfImage { get; };
+        UInt32 CheckSum { get; };
+        Windows.Foundation.DateTime TimeDateStamp { get; };
+        IVsFixedFileInfo VersionInfo { get; };
+        UInt32 CvRecordSize { get; };
+        Boolean HasCvRecordHexDump { get; };
+        String CvRecordHexDump { get; };
+        ICvInfoPdb70 PdbInfo { get; };
+        UInt32 MiscRecordSize { get; };
+        Boolean HasMiscRecordHexDump { get; };
+        String MiscRecordHexDump { get; };
+        UInt64 Reserved0 { get; };
+        UInt64 Reserved1 { get; };
+    }
+}

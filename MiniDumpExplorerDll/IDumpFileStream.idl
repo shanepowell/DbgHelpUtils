@@ -3,6 +3,7 @@ import "IDumpFileStreamException.idl";
 import "IDumpFileStreamSystemInfo.idl";
 import "IDumpFileStreamMiscInfo.idl";
 import "IDumpFileStreamProcessVmCounters.idl";
+import "IDumpFileStreamModuleList.idl";
 
 namespace MiniDumpExplorer
 {
@@ -62,5 +63,6 @@ namespace MiniDumpExplorer
         IDumpFileStreamSystemInfo AsSystemInfo();
         IDumpFileStreamMiscInfo AsMiscInfo();
         IDumpFileStreamProcessVmCounters AsProcessVmCounters();
+        IDumpFileStreamModuleList AsModuleList();
     }
 }

@@ -132,6 +132,21 @@
     <Midl Include="IsEqualToVisibilityConverter.idl">
       <Filter>Converters</Filter>
     </Midl>
+    <Midl Include="IDumpFileStreamModuleList.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IMiniDumpModule.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="ICvInfoPdb70.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="IVsFixedFileInfo.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="MiniDumpModuleProxy.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -310,6 +325,15 @@
       <Filter>Views</Filter>
     </Page>
     <Page Include="ProcessVmCounters2View.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="ModuleView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="VersionInfoView.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="PdbView.xaml">
       <Filter>Views</Filter>
     </Page>
   </ItemGroup>

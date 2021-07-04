@@ -1,7 +1,6 @@
 ﻿#include "process_vm_counters_stream.h"
 
 #include "mini_dump.h"
-#include "string_conversation.h"
 #include "string_stream.h"
 
 using namespace std::string_view_literals;

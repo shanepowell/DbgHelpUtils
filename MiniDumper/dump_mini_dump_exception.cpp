@@ -48,8 +48,7 @@ void dump_mini_dump_exception_stream_data(mini_dump const& mini_dump, size_t con
 
     if (options.load_symbols())
     {
-        auto const stack_info = find_thread_stack(mini_dump, exception.ThreadId);
-        if (stack_info)
+        if (auto const stack_info = find_thread_stack(mini_dump, exception.ThreadId))
         {
             wcout << L"  Stack:\n";
             stream_stack_dump::hex_dump_stack(wcout, mini_dump, symbol_engine, stack_info->stack_start_address,

@@ -1,7 +1,6 @@
 #include "pch.h"
 
 #include "XamlBridge.h"
-#include "Resource.h"
 
 bool DesktopWindow::FilterMessage(const MSG* msg)
 {
@@ -10,9 +9,9 @@ bool DesktopWindow::FilterMessage(const MSG* msg)
     // keyboard focus work correctly.
     BOOL xamlSourceProcessedMessage = FALSE;
     {
-        for (auto xamlSource : m_xamlSources)
+        for (auto const& xamlSource : m_xamlSources)
         {
-            auto xamlSourceNative2 = xamlSource.as<IDesktopWindowXamlSourceNative2>();
+            const auto xamlSourceNative2 = xamlSource.as<IDesktopWindowXamlSourceNative2>();
             const auto hr = xamlSourceNative2->PreTranslateMessage(msg, &xamlSourceProcessedMessage);
             winrt::check_hresult(hr);
             if (xamlSourceProcessedMessage)
@@ -62,7 +61,7 @@ winrt::Windows::UI::Xaml::Hosting::DesktopWindowXamlSource DesktopWindow::GetNex
     if (msg->message == WM_KEYDOWN)
     {
         const auto key = msg->wParam;
-        auto reason = GetReasonFromKey(key);
+        const auto reason = GetReasonFromKey(key);
         if (reason != invalidReason)
         {
             const BOOL previous =
@@ -115,7 +114,7 @@ bool DesktopWindow::NavigateFocus(MSG* msg)
         HWND islandWnd = nullptr;
         winrt::check_hresult(nativeIsland->get_WindowHandle(&islandWnd));
         POINT pt = { rect.left, rect.top };
-        SIZE size = { rect.right - rect.left, rect.bottom - rect.top };
+        const SIZE size = { rect.right - rect.left, rect.bottom - rect.top };
         ::ScreenToClient(islandWnd, &pt);
         const auto hintRect = winrt::Windows::Foundation::Rect({ static_cast<float>(pt.x), static_cast<float>(pt.y), static_cast<float>(size.cx), static_cast<float>(size.cy) });
         const auto reason = GetReasonFromKey(msg->wParam);
@@ -139,7 +138,7 @@ bool DesktopWindow::NavigateFocus(MSG* msg)
     }
 }
 
-int DesktopWindow::MessageLoop(HACCEL hAccelTable)
+int DesktopWindow::MessageLoop(const HACCEL hAccelTable)
 {
     MSG msg = {};
     while (GetMessage(&msg, nullptr, 0, 0))
@@ -155,10 +154,10 @@ int DesktopWindow::MessageLoop(HACCEL hAccelTable)
         }
     }
 
-    return (int)msg.wParam;
+    return static_cast<int>(msg.wParam);
 }
 
-static const WPARAM invalidKey = (WPARAM)-1;
+static const WPARAM invalidKey = static_cast<WPARAM>(-1);
 
 WPARAM GetKeyFromReason(winrt::Windows::UI::Xaml::Hosting::XamlSourceFocusNavigationReason reason)
 {
@@ -220,13 +219,11 @@ void DesktopWindow::OnTakeFocusRequested(winrt::Windows::UI::Xaml::Hosting::Desk
 
 HWND DesktopWindow::CreateDesktopWindowsXamlSource(DWORD dwStyle, winrt::Windows::UI::Xaml::UIElement content)
 {
-    HRESULT hr = S_OK;
+    const winrt::Windows::UI::Xaml::Hosting::DesktopWindowXamlSource desktopSource;
 
-    winrt::Windows::UI::Xaml::Hosting::DesktopWindowXamlSource desktopSource;
-
-    auto interop = desktopSource.as<IDesktopWindowXamlSourceNative>();
+    const auto interop = desktopSource.as<IDesktopWindowXamlSourceNative>();
     // Parent the DesktopWindowXamlSource object to current window
-    hr = interop->AttachToWindow(m_hMainWnd.get());
+    auto hr = interop->AttachToWindow(m_hMainWnd.get());
     winrt::check_hresult(hr);
 
     // Get the new child window's hwnd 

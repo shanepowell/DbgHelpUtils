@@ -6,7 +6,12 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct DumpStreamModuleListView : DumpStreamModuleListViewT<DumpStreamModuleListView>
     {
-        DumpStreamModuleListView();
+        DumpStreamModuleListView(IDumpFileStreamModuleList stream);
+
+        IDumpFileStreamModuleList Stream() const;
+
+    private:
+        IDumpFileStreamModuleList stream_;
     };
 }
 

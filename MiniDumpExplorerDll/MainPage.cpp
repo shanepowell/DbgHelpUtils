@@ -43,8 +43,7 @@ namespace winrt::MiniDumpExplorer::implementation
         // save tab view com reference before the co_wait which will invalid the sender object
         auto const tab_view = sender; // NOLINT(performance-unnecessary-copy-initialization)
 
-        auto const file = co_await picker.PickSingleFileAsync();
-        if (file)
+        if (auto const file = co_await picker.PickSingleFileAsync())
         {
             uint32_t index{0};
             auto tabs = tab_view.TabItems();

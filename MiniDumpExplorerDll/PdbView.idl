@@ -1,0 +1,12 @@
+import "ICvInfoPdb70.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass PdbView : Windows.UI.Xaml.Controls.UserControl
+    {
+        PdbView();
+
+        ICvInfoPdb70 Pdb;
+    }
+}

@@ -1,8 +1,10 @@
-﻿#include "symbol_engine.h"
+﻿// ReSharper disable CppClangTidyPerformanceNoIntToPtr
+#include "symbol_engine.h"
 
 #include <array>
 #include <charconv>
 #include <filesystem>
+#include <ranges>
 #include <sstream>
 
 #include "cv_info_pdb70.h"
@@ -583,7 +585,7 @@ namespace dlg_help_utils::dbg_help
 
     void symbol_engine::clear_modules()
     {
-        for (auto const& [name, info] : modules_)
+        for (const auto& info : modules_ | std::views::values)
         {
             if (info.handle != 0 && !SymUnloadModule64(fake_process, info.handle))
             {

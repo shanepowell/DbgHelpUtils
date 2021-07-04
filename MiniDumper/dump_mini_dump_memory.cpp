@@ -40,18 +40,18 @@ void dump_mini_dump_memory_list_stream_data(mini_dump const& mini_dump, size_t c
     for (auto const* entry : memory_list.list())
     {
         auto const any_match = memory_areas.empty() && memory_ranges.empty();
-        auto const memory_areas_match = !memory_areas.empty() && std::find_if(
-            memory_areas.begin(), memory_areas.end(), [entry](auto area)
-            {
-                return range_utils::range_contains(entry->StartOfMemoryRange, entry->Memory.DataSize, area, 1);
-            }) != memory_areas.end();
-        auto const memory_ranges_match = std::find_if(memory_ranges.begin(), memory_ranges.end(),
-                                                      [entry](auto const& area)
-                                                      {
-                                                          return range_utils::range_contains(
-                                                              entry->StartOfMemoryRange, entry->Memory.DataSize,
-                                                              area.start, 1);
-                                                      });
+        auto const memory_areas_match = !memory_areas.empty() && ranges::find_if(memory_areas
+                                                                                 , [entry](auto area)
+                                                                                 {
+                                                                                     return range_utils::range_contains(entry->StartOfMemoryRange, entry->Memory.DataSize, area, 1);
+                                                                                 }) != memory_areas.end();
+        auto const memory_ranges_match = ranges::find_if(memory_ranges,
+                                                         [entry](auto const& area)
+                                                         {
+                                                             return range_utils::range_contains(
+                                                                 entry->StartOfMemoryRange, entry->Memory.DataSize,
+                                                                 area.start, 1);
+                                                         });
         if (!any_match && !memory_areas_match && memory_ranges_match == memory_ranges.end())
         {
             ++i;
@@ -104,18 +104,18 @@ void dump_mini_dump_memory64_list_stream_data(mini_dump const& mini_dump, size_t
     for (auto const& entry : memory_list.list())
     {
         auto const any_match = memory_areas.empty() && memory_ranges.empty();
-        auto const memory_areas_match = !memory_areas.empty() && std::find_if(
-            memory_areas.begin(), memory_areas.end(), [entry](auto area)
-            {
-                return range_utils::range_contains(entry.start_of_memory_range, entry.location.DataSize, area, 1);
-            }) != memory_areas.end();
-        auto const memory_ranges_match = std::find_if(memory_ranges.begin(), memory_ranges.end(),
-                                                      [entry](auto const& area)
-                                                      {
-                                                          return range_utils::range_contains(
-                                                              entry.start_of_memory_range, entry.location.DataSize,
-                                                              area.start, 1);
-                                                      });
+        auto const memory_areas_match = !memory_areas.empty() && ranges::find_if(memory_areas
+                                                                                 , [entry](auto area)
+                                                                                 {
+                                                                                     return range_utils::range_contains(entry.start_of_memory_range, entry.location.DataSize, area, 1);
+                                                                                 }) != memory_areas.end();
+        auto const memory_ranges_match = ranges::find_if(memory_ranges,
+                                                         [entry](auto const& area)
+                                                         {
+                                                             return range_utils::range_contains(
+                                                                 entry.start_of_memory_range, entry.location.DataSize,
+                                                                 area.start, 1);
+                                                         });
         if (!any_match && !memory_areas_match && memory_ranges_match == memory_ranges.end())
         {
             ++i;

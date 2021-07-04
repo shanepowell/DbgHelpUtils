@@ -7,19 +7,63 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <local:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True"/>
+        <local:HexConverter x:Key="HexConverter"/>
+        <local:NumberConverter x:Key="NumberConverter"/>
+        <local:IndexConverter x:Key="IndexConverter" IsBracketed="True"/>
+    </UserControl.Resources>
+
     <ScrollViewer HorizontalScrollBarVisibility="Auto" 
                   VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalTextAlignment="Left">Stream Module List</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Index</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Index, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <TextBlock Grid.Row="2" Grid.Column = "0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}">Number Of Modules</TextBlock>
+            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Text="{x:Bind Path=Stream.Modules.Size, Converter={StaticResource NumberConverter}}"
+                     FontFamily="Courier New"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap" />
+            <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                      SelectionMode="None" 
+                      ItemsSource="{x:Bind Path=Stream.Modules}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:IMiniDumpModule">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource IndexConverter}}"/>
+                            <local:ModuleView Grid.Column="1"
+                                       Module="{Binding}"
+                                       Margin="5,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </ScrollViewer>
 </UserControl>

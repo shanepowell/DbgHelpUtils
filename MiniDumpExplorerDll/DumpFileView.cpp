@@ -30,6 +30,8 @@
 #include "DumpStreamUnsupportedView.h"
 #include "DumpStreamUnusedView.h"
 
+#include <sstream>
+
 using namespace winrt;
 using namespace Windows::UI::Xaml;
 
@@ -187,7 +189,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return *winrt::make_self<DumpStreamThreadListView>();
 
         case StreamType::ModuleListStream:
-            return *winrt::make_self<DumpStreamModuleListView>();
+            return *winrt::make_self<DumpStreamModuleListView>(stream.AsModuleList());
 
         case StreamType::MemoryListStream:
             return *winrt::make_self<DumpStreamMemoryListView>();

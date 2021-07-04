@@ -9,13 +9,11 @@
 namespace MiniDumpExplorerApp
 {
     DumpFileStreamException::DumpFileStreamException(size_t const index, dlg_help_utils::mini_dump const& mini_dump, DbgHelpDispatcher& dispatcher, MiniDumpData& mini_data_data, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
-        : symbol_engine_{symbol_engine}
-        , exception_{mini_dump, index}
+        : exception_{mini_dump, index}
         , mini_dump_exception_{*winrt::make_self<MiniDumpException>(exception_)}
         , thread_context_{*winrt::make_self<DumpFileStreamThreadContext>(exception_)}
     {
-        auto const stack_info = find_thread_stack(mini_dump, exception_.exception().ThreadId);
-        if (stack_info)
+        if (auto const stack_info = find_thread_stack(mini_dump, exception_.exception().ThreadId))
         {
             stack_trace_ = *winrt::make_self<MiniDumpExplorerApp::StackTrace>(dispatcher, mini_data_data, symbol_engine, stack_info->stack_start_address, stack_info->stack, stack_info->stack_size, exception_.thread_context());
         }

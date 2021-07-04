@@ -24,8 +24,14 @@ namespace dlg_help_utils::system_info_utils
     std::vector<std::wstring_view> vm_counters_2_flags_to_strings(uint16_t flags);
     std::wstring_view handle_trace_operation_to_string(uint32_t type);
     std::wstring_view handle_object_information_type_to_string(uint32_t type);
+    std::wstring version_info_to_string(uint32_t version);
     std::wstring version_info_to_string(uint32_t version_ms, uint32_t version_ls);
     std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t process_execute_flags);
+    std::wstring version_file_flags_to_string(uint32_t flags, uint32_t mask);
+    std::vector<std::wstring_view> version_file_flags_to_strings(uint32_t flags, uint32_t mask);
+    std::wstring version_file_os_to_string(uint32_t file_os);
+    std::vector<std::wstring_view> version_file_os_to_strings(uint32_t file_os);
+    std::wstring_view version_file_type_to_string(uint32_t file_type, uint32_t file_sub_type);
 
     std::filesystem::path const& get_running_application_path();
     std::filesystem::path const& get_run_from_directory();

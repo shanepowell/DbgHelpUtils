@@ -242,11 +242,11 @@ void dump_mini_dump_handle_data_stream_data(mini_dump const& mini_dump, size_t c
     size_t i{0};
     for (auto const& entry : handle_data.list())
     {
-        if (!types.empty() && std::find_if(types.begin(), types.end(),
-                                           [name = get_type_name(entry.type_name())](auto const& type_match)
-                                           {
-                                               return filesystem_utils::wildcard_match(name, type_match);
-                                           }) == types.end())
+        if (!types.empty() && ranges::find_if(types,
+                                              [name = get_type_name(entry.type_name())](auto const& type_match)
+                                              {
+                                                  return filesystem_utils::wildcard_match(name, type_match);
+                                              }) == types.end())
         {
             ++i;
             continue;

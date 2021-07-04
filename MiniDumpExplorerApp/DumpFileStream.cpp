@@ -6,8 +6,9 @@
 #include "DumpFileStreamComment.h"
 #include "DumpFileStreamException.h"
 #include "DumpFileStreamMiscInfo.h"
-#include "DumpFileStreamSystemInfo.h"
+#include "DumpFileStreamModuleList.h"
 #include "DumpFileStreamProcessVmCounters.h"
+#include "DumpFileStreamSystemInfo.h"
 
 namespace MiniDumpExplorerApp
 {
@@ -47,11 +48,14 @@ namespace MiniDumpExplorerApp
             process_vm_counters_ = *winrt::make_self<DumpFileStreamProcessVmCounters>(index_, mini_dump_);
             break;
 
+        case ModuleListStream:
+            module_list_ = *winrt::make_self<DumpFileStreamModuleList>(index_, mini_dump_);
+            break;
+
         case UnusedStream:
         case ReservedStream0:
         case ReservedStream1:
         case ThreadListStream:
-        case ModuleListStream:
         case MemoryListStream:
         case ThreadExListStream:
         case Memory64ListStream:
@@ -123,5 +127,10 @@ namespace MiniDumpExplorerApp
     winrt::MiniDumpExplorer::IDumpFileStreamProcessVmCounters DumpFileStream::AsProcessVmCounters() const
     {
         return GetResult(process_vm_counters_);
+    }
+
+    winrt::MiniDumpExplorer::IDumpFileStreamModuleList DumpFileStream::AsModuleList() const
+    {
+        return GetResult(module_list_);
     }
 }

@@ -43,15 +43,14 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
     {
         std::filesystem::path p{stream_module.name()};
         auto const any_match = modules.empty() && module_bases.empty();
-        auto const modules_match = !modules.empty() && std::find_if(modules.begin(), modules.end(),
-                                                                    [name = p.filename().wstring()](
-                                                                    auto const& name_match)
-                                                                    {
-                                                                        return filesystem_utils::wildcard_match(
-                                                                            name, name_match);
-                                                                    }) != modules.end();
-        auto const module_bases_match = !module_bases.empty() && std::find(
-            module_bases.begin(), module_bases.end(), stream_module->BaseOfImage) != module_bases.end();
+        auto const modules_match = !modules.empty() && ranges::find_if(modules,
+                                                                       [name = p.filename().wstring()](
+                                                                       auto const& name_match)
+                                                                       {
+                                                                           return filesystem_utils::wildcard_match(
+                                                                               name, name_match);
+                                                                       }) != modules.end();
+        auto const module_bases_match = !module_bases.empty() && ranges::find(module_bases, stream_module->BaseOfImage) != module_bases.end();
         if (!any_match && !modules_match && !module_bases_match)
         {
             ++i;
@@ -60,18 +59,18 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
 
         wcout << L" [" << i << "]: " << stream_module.name() << L'\n';
         wcout << L"   Base: " << to_hex_full(stream_module->BaseOfImage) << L'\n';
-        wcout << L"   CheckSum: " << stream_module->CheckSum << L'\n';
+        wcout << L"   CheckSum: " << to_hex(stream_module->CheckSum) << L'\n';
         wcout << L"   Size: " << stream_module->SizeOfImage << L" (" << bytes{stream_module->SizeOfImage} << L")\n";
         wcout << L"   Timestamp [local: " << time_utils::to_local_time(stream_module->TimeDateStamp) << L"] [UTC: " <<
             time_utils::to_utc_time(stream_module->TimeDateStamp) << L"]\n";
         wcout << L"   VersionInfo: \n";
         wcout << L"     Signature: " << to_hex(stream_module->VersionInfo.dwSignature) << L'\n';
-        wcout << L"     Struct Version: " << stream_module->VersionInfo.dwStrucVersion << L'\n';
-        wcout << L"     File Flags: " << to_hex(stream_module->VersionInfo.dwFileFlags) << L'\n';
+        wcout << L"     Struct Version: " << system_info_utils::version_info_to_string(stream_module->VersionInfo.dwStrucVersion) << L'\n';
+        wcout << L"     File Flags: " << to_hex(stream_module->VersionInfo.dwFileFlags) << L" - " << system_info_utils::version_file_flags_to_string(stream_module->VersionInfo.dwFileFlags, stream_module->VersionInfo.dwFileFlagsMask) << L'\n';
         wcout << L"     File Flags Mask: " << to_hex(stream_module->VersionInfo.dwFileFlagsMask) << L'\n';
-        wcout << L"     File Type: " << to_hex(stream_module->VersionInfo.dwFileType) << L'\n';
+        wcout << L"     File Type: " << to_hex(stream_module->VersionInfo.dwFileType) << L" - " << system_info_utils::version_file_type_to_string(stream_module->VersionInfo.dwFileType, stream_module->VersionInfo.dwFileSubtype) << L'\n';
         wcout << L"     File Subtype: " << to_hex(stream_module->VersionInfo.dwFileSubtype) << L'\n';
-        wcout << L"     File OS: " << to_hex(stream_module->VersionInfo.dwFileOS) << L'\n';
+        wcout << L"     File OS: " << to_hex(stream_module->VersionInfo.dwFileOS) << L" - " << system_info_utils::version_file_os_to_string(stream_module->VersionInfo.dwFileOS) << L'\n';
 
         wcout << L"     File Date Raw : " << stream_module->VersionInfo.dwFileDateMS << L'.' << stream_module->VersionInfo.
             dwFileDateLS << L'\n';

@@ -10,8 +10,6 @@
 #include "SymbolEngineUi.h"
 #include "../DbgHelpUtils/symbol_engine.h"
 
-#define MAX_LOAD_STRING 100
-
 // Global Variables:
 HINSTANCE hInst = nullptr; // current instance
 auto szWindowClass = L"MiniDumpExplorer";

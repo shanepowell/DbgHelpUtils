@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    interface ICvInfoPdb70
+    {
+        Boolean IsValid { get; };
+        Guid Signature { get; };
+        UInt32 Age { get; };
+        String PdbFileName { get; };
+    }
+}

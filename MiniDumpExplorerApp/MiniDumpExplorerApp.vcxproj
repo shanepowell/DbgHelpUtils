@@ -203,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CpuInformation.h" />
+    <ClInclude Include="CvInfoPdb70.h" />
     <ClInclude Include="DbgHelpDispatcher.h" />
     <ClInclude Include="DumpFile.h" />
     <ClInclude Include="DumpFileFactory.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="DumpFileStreamComment.h" />
     <ClInclude Include="DumpFileStreamException.h" />
     <ClInclude Include="DumpFileStreamMiscInfo.h" />
+    <ClInclude Include="DumpFileStreamModuleList.h" />
     <ClInclude Include="DumpFileStreamSystemInfo.h" />
     <ClInclude Include="DumpFileStreamThreadContext.h" />
     <ClInclude Include="DumpFileStreamProcessVmCounters.h" />
@@ -227,6 +229,7 @@
     <ClInclude Include="MiniDumpMiscInfo3.h" />
     <ClInclude Include="MiniDumpMiscInfo4.h" />
     <ClInclude Include="MiniDumpMiscInfo5.h" />
+    <ClInclude Include="MiniDumpModule.h" />
     <ClInclude Include="MiniDumpProcessVmCounters1.h" />
     <ClInclude Include="MiniDumpProcessVmCounters2.h" />
     <ClInclude Include="MiniDumpSystemInfo.h" />
@@ -239,6 +242,7 @@
     <ClInclude Include="SystemTime.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TimeZoneInformation.h" />
+    <ClInclude Include="VsFixedFileInfo.h" />
     <ClInclude Include="Wow64FloatingSaveArea.h" />
     <ClInclude Include="X86CpuInfo.h" />
     <ClInclude Include="XamlBridge.h" />
@@ -247,6 +251,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CpuInformation.cpp" />
+    <ClCompile Include="CvInfoPdb70.cpp" />
     <ClCompile Include="DbgHelpDispatcher.cpp" />
     <ClCompile Include="DumpFile.cpp" />
     <ClCompile Include="DumpFileFactory.cpp" />
@@ -255,6 +260,7 @@
     <ClCompile Include="DumpFileStreamComment.cpp" />
     <ClCompile Include="DumpFileStreamException.cpp" />
     <ClCompile Include="DumpFileStreamMiscInfo.cpp" />
+    <ClCompile Include="DumpFileStreamModuleList.cpp" />
     <ClCompile Include="DumpFileStreamSystemInfo.cpp" />
     <ClCompile Include="DumpFileStreamThreadContext.cpp" />
     <ClCompile Include="DumpFileStreamProcessVmCounters.cpp" />
@@ -269,6 +275,7 @@
     <ClCompile Include="MiniDumpMiscInfo3.cpp" />
     <ClCompile Include="MiniDumpMiscInfo4.cpp" />
     <ClCompile Include="MiniDumpMiscInfo5.cpp" />
+    <ClCompile Include="MiniDumpModule.cpp" />
     <ClCompile Include="MiniDumpProcessVmCounters1.cpp" />
     <ClCompile Include="MiniDumpProcessVmCounters2.cpp" />
     <ClCompile Include="MiniDumpSystemInfo.cpp" />
@@ -284,6 +291,7 @@
     <ClCompile Include="SymbolEngineUi.cpp" />
     <ClCompile Include="SystemTime.cpp" />
     <ClCompile Include="TimeZoneInformation.cpp" />
+    <ClCompile Include="VsFixedFileInfo.cpp" />
     <ClCompile Include="Wow64FloatingSaveArea.cpp" />
     <ClCompile Include="X86CpuInfo.cpp" />
     <ClCompile Include="XamlBridge.cpp" />

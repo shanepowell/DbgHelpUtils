@@ -4,6 +4,8 @@
 #include "IsEqualToVisibilityConverter.g.cpp"
 #endif
 
+#include <sstream>
+
 namespace winrt::MiniDumpExplorer::implementation
 {
     bool IsEqualToVisibilityConverter::IsReversed() const

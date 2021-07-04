@@ -13,7 +13,7 @@ namespace MiniDumpExplorerApp
 {
     struct DumpFile : winrt::implements<DumpFile, winrt::MiniDumpExplorer::IDumpFile>
     {
-        DumpFile(winrt::hstring path, DbgHelpDispatcher& dispatcher, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+        DumpFile(winrt::hstring const& path, DbgHelpDispatcher& dispatcher, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
 
         [[nodiscard]] winrt::MiniDumpExplorer::DumpFileType Type() const { return type_; }
         [[nodiscard]] bool HasHeader() const;

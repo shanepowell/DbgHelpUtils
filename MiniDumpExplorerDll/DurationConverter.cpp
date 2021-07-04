@@ -1,14 +1,17 @@
 ﻿#include "pch.h"
 #include "DurationConverter.h"
 #if __has_include("DurationConverter.g.cpp")
+// ReSharper disable once CppUnusedIncludeDirective
 #include "DurationConverter.g.cpp"
 #endif
 
 #include "../DbgHelpUtils/time_units.h"
 
+#include <sstream>
+
 namespace winrt::MiniDumpExplorer::implementation
 {
-    DurationSourceType DurationConverter::Source()
+    DurationSourceType DurationConverter::Source() const
     {
         return source_;
     }

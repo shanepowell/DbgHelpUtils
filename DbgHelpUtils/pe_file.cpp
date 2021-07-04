@@ -106,8 +106,7 @@ namespace dlg_help_utils
 
         if (nt_header_->SizeOfOptionalHeader > 0)
         {
-            auto const magic = *reinterpret_cast<WORD const*>(current);
-            switch (magic)
+            switch (auto const magic = *reinterpret_cast<WORD const*>(current))
             {
             case IMAGE_NT_OPTIONAL_HDR32_MAGIC:
                 if (!is_x86_header() || nt_header_->SizeOfOptionalHeader != sizeof(IMAGE_OPTIONAL_HEADER32) || current +

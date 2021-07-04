@@ -1,7 +1,6 @@
 ﻿#include "system_memory_info_stream.h"
 
 #include "mini_dump.h"
-#include "string_conversation.h"
 #include "string_stream.h"
 
 using namespace std::string_view_literals;

@@ -125,6 +125,12 @@ namespace dlg_help_utils::stream_hex_dump
     }
 
     template <typename T>
+    details::hex_converter<T> to_hex_raw(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0')
+    {
+        return details::hex_converter<T>{value, width, fill_char, false};
+    }
+
+    template <typename T>
     details::hex_converter<T> to_hex_full(T value, bool const write_header = true)
     {
         return details::hex_converter<T>{value, sizeof(T) * 2, L'0', write_header};

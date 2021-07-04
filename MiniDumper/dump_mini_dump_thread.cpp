@@ -101,7 +101,7 @@ void dump_mini_dump_x64_thread_context(CONTEXT const& context)
     wcout << L"    XMM:\n";
     wcout << L"      Header: " << to_hex_full(context.Header[0]) << L'-' << to_hex_full(context.Header[1]) << L'\n';
     wcout << L"      Legacy: " << to_hex_full(context.Legacy[0]) << L'-' << to_hex_full(context.Legacy[1]) << L'\n';
-    for (size_t index = 0; index < sizeof(context.Legacy) / sizeof(context.Legacy[0]); index += 2)
+    for (size_t index = 0; index < std::size(context.Legacy); index += 2)
     {
         wcout << L"      Legacy[" << index << L'/' << index + 1 << L"]: " << to_hex_full(context.Legacy[index]) << L'-'
             << to_hex_full(context.Legacy[index + 1]) << L'\n';
@@ -122,7 +122,7 @@ void dump_mini_dump_x64_thread_context(CONTEXT const& context)
     wcout << L"      Xmm13: " << to_hex_full(context.Xmm13) << L'\n';
     wcout << L"      Xmm14: " << to_hex_full(context.Xmm14) << L'\n';
     wcout << L"      Xmm15: " << to_hex_full(context.Xmm15) << L'\n';
-    for (size_t index = 0; index < sizeof(context.VectorRegister) / sizeof(context.VectorRegister[0]); index += 2)
+    for (size_t index = 0; index < std::size(context.VectorRegister); index += 2)
     {
         wcout << L"    VectorRegister[" << index << L'/' << index + 1 << L"]: " <<
             to_hex_full(context.VectorRegister[index]) << L'-' << to_hex_full(context.VectorRegister[index + 1]) <<

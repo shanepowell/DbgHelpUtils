@@ -7,7 +7,7 @@
 
 namespace MiniDumpExplorerApp
 {
-    DumpFile::DumpFile(winrt::hstring path, DbgHelpDispatcher& dispatcher, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
+    DumpFile::DumpFile(winrt::hstring const& path, DbgHelpDispatcher& dispatcher, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
         : dump_file_{std::wstring{path}}
         , dispatcher_{dispatcher}
         , symbol_engine_{symbol_engine}

@@ -142,8 +142,6 @@ namespace MiniDumpExplorerApp
 
     winrt::hstring DumpFileStreamX86ThreadContext::ExtendedRegistersHexDump() const
     {
-        std::wstringstream ss;
-        dlg_help_utils::hex_dump::hex_dump(ss, thread_context_.ExtendedRegisters, sizeof(thread_context_.ExtendedRegisters), 0);
-        return winrt::hstring{std::move(ss).str()};
+        return extended_registers_hex_dump_;
     }
 }

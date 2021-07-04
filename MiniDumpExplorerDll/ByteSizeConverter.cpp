@@ -6,6 +6,8 @@
 
 #include "../DbgHelpUtils/size_units.h"
 
+#include <sstream>
+
 namespace winrt::MiniDumpExplorer::implementation
 {
     namespace

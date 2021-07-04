@@ -1,13 +1,11 @@
 ﻿#include "pch.h"
 #include "SymbolEngineUi.h"
 
-SymbolEngineUi::SymbolEngineUi()
-{
-}
+SymbolEngineUi::SymbolEngineUi() = default;
 
 void SymbolEngineUi::SetUi(winrt::MiniDumpExplorer::MainPage ui)
 {
-    ui_ = ui;
+    ui_ = std::move(ui);
 }
 
 bool SymbolEngineUi::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module_name)
