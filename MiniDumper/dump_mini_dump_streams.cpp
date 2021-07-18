@@ -15,6 +15,7 @@
 #include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
+#include "DbgHelpUtils/stream_utils.h"
 #include "DbgHelpUtils/system_info_utils.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 
@@ -76,31 +77,16 @@ void dump_mini_dump_stream_index(mini_dump const& dump_file, size_t const index,
 void dump_mini_dump_stream_type(mini_dump const& dump_file, MINIDUMP_STREAM_TYPE const type,
                                 dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    auto const* header = dump_file.header();
-    if (header == nullptr)
+    auto const stream = stream_utils::find_stream_for_type(dump_file, type);
+    if(!stream.has_value())
     {
-        return;
+        throw wide_runtime_error{
+            (std::wostringstream{} << "stream type [" << mini_dump_stream_type::to_string(type) << "] not found").str()
+        };
     }
 
-    auto const* directory = dump_file.directory();
-    if (directory == nullptr)
-    {
-        return;
-    }
-
-    for (size_t index = 0; index < header->NumberOfStreams; ++index)
-    {
-        auto const& entry = directory[index];
-        if (static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType) == type)
-        {
-            dump_mini_dump_stream_data(dump_file, index, entry, options, symbol_engine);
-            return;
-        }
-    }
-
-    throw wide_runtime_error{
-        (std::wostringstream{} << "stream type [" << mini_dump_stream_type::to_string(type) << "] not found").str()
-    };
+    auto const& [index, entry] = stream.value();
+    dump_mini_dump_stream_data(dump_file, index, entry, options, symbol_engine);
 }
 
 

@@ -51,6 +51,9 @@
     <ClCompile Include="symbol_engine_ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dump_mini_dump_symbols.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dump_file_options.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="symbol_engine_ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dump_mini_dump_symbols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

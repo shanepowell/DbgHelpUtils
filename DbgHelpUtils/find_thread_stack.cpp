@@ -18,8 +18,7 @@ namespace dlg_help_utils
         {
             memory_list_stream const memory_list{mini_dump};
             memory64_list_stream const memory64_list{mini_dump};
-            auto const thread = thread_list.find_thread(thread_id, names_list, memory_list, memory64_list);
-            if (thread.has_value())
+            if (auto const thread = thread_list.find_thread(thread_id, names_list, memory_list, memory64_list); thread.has_value())
             {
                 return thread_stack{
                     thread->stack(), (*thread)->Stack.Memory.DataSize, (*thread)->Stack.StartOfMemoryRange
@@ -29,8 +28,7 @@ namespace dlg_help_utils
 
         if (thread_ex_list.found())
         {
-            auto const thread = thread_ex_list.find_thread(thread_id, names_list);
-            if (thread.has_value())
+            if (auto const thread = thread_ex_list.find_thread(thread_id, names_list); thread.has_value())
             {
                 return thread_stack{
                     thread->stack(), (*thread)->Stack.Memory.DataSize, (*thread)->Stack.StartOfMemoryRange

@@ -1,12 +1,6 @@
 ﻿#pragma once
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 // ReSharper disable once CppUnusedIncludeDirective
-#include <Windows.h>
+#include "DbgHelpUtils/windows_setup.h"
 
 class dump_file_options;
 
@@ -33,3 +27,6 @@ void dump_mini_dump_thread_list_ex_stream_data(dlg_help_utils::mini_dump const& 
                                                dump_file_options const& options,
                                                dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
 void dump_mini_dump_thread_info_list_stream_data(dlg_help_utils::mini_dump const& mini_dump, size_t index);
+void load_and_dump_teb(dlg_help_utils::mini_dump const& mini_dump,
+    dlg_help_utils::dbg_help::symbol_engine& symbol_engine,
+    ULONG64 teb_address);

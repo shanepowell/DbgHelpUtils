@@ -24,17 +24,18 @@ namespace dlg_help_utils::stream_stack_dump
                                                unloaded_module_list_stream const& unloaded_module_list,
                                                pe_file_memory_mapping& pe_file_memory_mappings,
                                                dbg_help::symbol_engine& symbol_engine)
-        : stack_start_range_{stack_start_range}
-          , stack_{static_cast<uint8_t const*>(stack)}
-          , stack_size_{stack_size}
-          , memory_list_{memory_list}
-          , memory64_list_{memory64_list}
-          , function_table_{function_table}
-          , module_list_{module_list}
-          , unloaded_module_list_{unloaded_module_list}
-          , pe_file_memory_mappings_{pe_file_memory_mappings}
-          , symbol_engine_{symbol_engine}
-          , callback_{symbol_engine.callback()}
+        : stack_start_range_{ stack_start_range }
+        , stack_{ static_cast<uint8_t const*>(stack) }
+        , stack_size_{ stack_size }
+        , memory_list_{ memory_list }
+        , memory64_list_{ memory64_list }
+        , function_table_{ function_table }
+        , module_list_{ module_list }
+        , unloaded_module_list_{ unloaded_module_list }
+        , pe_file_memory_mappings_{ pe_file_memory_mappings }
+        , symbol_engine_{ symbol_engine }
+        , callback_{ symbol_engine.callback() }
+        , handle_{ dbg_help::symbol_engine::set_callback(*this) }
     {
     }
 
@@ -101,8 +102,7 @@ namespace dlg_help_utils::stream_stack_dump
         {
             callback_.log_stream() << L"get_module_base_routine " << stream_hex_dump::to_hex(address) << '\n';
         }
-        auto const base_address = get_loaded_module_base_routine(address);
-        if (base_address != 0) return base_address;
+        if (auto const base_address = get_loaded_module_base_routine(address); base_address != 0) return base_address;
         return get_unloaded_module_base_routine(address);
     }
 
@@ -110,6 +110,170 @@ namespace dlg_help_utils::stream_stack_dump
     {
         if (lp_address == nullptr) return 0;
         return lp_address->Offset;
+    }
+
+    void const* mini_dump_stack_walk::get_process_memory(DWORD64 base_address, DWORD64 size, bool const enable_module_loading) const
+    {
+        auto const* rv = get_stack_memory(base_address, size, true);
+        if (rv != nullptr)
+        {
+            return rv;
+        }
+
+        rv = get_memory_list_memory(base_address, size, true);
+        if (rv != nullptr)
+        {
+            return rv;
+        }
+
+        rv = get_memory64_list_memory(base_address, size, true);
+        if (rv != nullptr)
+        {
+            return rv;
+        }
+
+        rv = get_memory_from_pe_file(base_address, size, true);
+        if (rv != nullptr)
+        {
+            return rv;
+        }
+
+        if (enable_module_loading && load_pe_file(base_address))
+        {
+            rv = get_memory_from_pe_file(base_address, size, true);
+            if (rv != nullptr)
+            {
+                return rv;
+            }
+        }
+
+        return nullptr;
+    }
+
+    void const* mini_dump_stack_walk::get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const
+    {
+        size_t max_size = size;
+        auto const* memory = get_stack_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            size = max_size;
+            return memory;
+        }
+
+        max_size = size;
+        memory = get_memory_list_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            size = max_size;
+            return memory;
+        }
+
+        max_size = size;
+        memory = get_memory64_list_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            size = max_size;
+            return memory;
+        }
+
+        max_size = size;
+        memory = get_memory_from_pe_file(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            size = max_size;
+            return memory;
+        }
+
+        if (enable_module_loading && load_pe_file(base_address))
+        {
+            max_size = size;
+            memory = get_memory_from_pe_file(base_address, max_size, false);
+            if (memory != nullptr)
+            {
+                size = max_size;
+                return memory;
+            }
+        }
+
+        return nullptr;
+    }
+
+    DWORD64 mini_dump_stack_walk::find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, bool enable_module_loading) const
+    {
+        DWORD64 max_size = element_size * max_elements;
+        auto const* memory = get_stack_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return max_size;
+        }
+
+        memory = get_memory_list_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return max_size;
+        }
+
+        memory = get_memory64_list_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return max_size;
+        }
+
+        memory = get_memory_from_pe_file(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return max_size;
+        }
+
+        if (enable_module_loading && load_pe_file(base_address))
+        {
+            memory = get_memory_from_pe_file(base_address, max_size, false);
+            if (memory != nullptr)
+            {
+                return max_size;
+            }
+        }
+
+        return 0;
+    }
+
+    DWORD64 mini_dump_stack_walk::find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool const enable_module_loading) const
+    {
+        DWORD64 max_size = element_size * max_elements;
+        auto const* memory = get_stack_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return find_max_element_size(memory, element_size, max_size, pred);
+        }
+
+        memory = get_memory_list_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return find_max_element_size(memory, element_size, max_size, pred);
+        }
+
+        memory = get_memory64_list_memory(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return find_max_element_size(memory, element_size, max_size, pred);
+        }
+
+        memory = get_memory_from_pe_file(base_address, max_size, false);
+        if (memory != nullptr)
+        {
+            return find_max_element_size(memory, element_size, max_size, pred);
+        }
+
+        if (enable_module_loading && load_pe_file(base_address))
+        {
+            memory = get_memory_from_pe_file(base_address, max_size, false);
+            if (memory != nullptr)
+            {
+                return find_max_element_size(memory, element_size, max_size, pred);
+            }
+        }
+
+        return 0;
     }
 
     bool mini_dump_stack_walk::do_read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
@@ -154,6 +318,7 @@ namespace dlg_help_utils::stream_stack_dump
     bool mini_dump_stack_walk::read_stack_memory(DWORD64 const base_address, PVOID buffer, DWORD size,
                                                  LPDWORD number_of_bytes_read) const
     {
+        if(stack_size_ == 0) return false;
         size_t length = size;
         if (!range_utils::range_union(stack_start_range_, stack_size_, base_address, length)) return false;
         *number_of_bytes_read = static_cast<DWORD>(length);
@@ -165,7 +330,7 @@ namespace dlg_help_utils::stream_stack_dump
     bool mini_dump_stack_walk::read_memory_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
                                                        LPDWORD number_of_bytes_read) const
     {
-        size_t length = size;
+        DWORD64 length = size;
         auto const* memory = memory_list_.find_any_address_range(base_address, length);
         if (memory == nullptr) return false;
         *number_of_bytes_read = static_cast<DWORD>(length);
@@ -176,7 +341,7 @@ namespace dlg_help_utils::stream_stack_dump
     bool mini_dump_stack_walk::read_memory64_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
                                                          LPDWORD number_of_bytes_read) const
     {
-        size_t length = size;
+        DWORD64 length = size;
         auto const* memory = memory64_list_.find_any_address_range(base_address, length);
         if (memory == nullptr) return false;
         *number_of_bytes_read = static_cast<DWORD>(length);
@@ -187,12 +352,75 @@ namespace dlg_help_utils::stream_stack_dump
     bool mini_dump_stack_walk::read_memory_from_pe_file(DWORD64 base_address, PVOID buffer, DWORD size,
                                                         LPDWORD number_of_bytes_read) const
     {
-        size_t length = size;
+        DWORD64 length = size;
         auto const* memory = pe_file_memory_mappings_.find_any_address_range(base_address, length);
         if (memory == nullptr) return false;
         *number_of_bytes_read = static_cast<DWORD>(length);
         memcpy(buffer, memory, *number_of_bytes_read);
         return true;
+    }
+
+    void const* mini_dump_stack_walk::get_stack_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    {
+        if(stack_size_ == 0) return nullptr;
+        if (DWORD64 length = size; range_utils::range_union(stack_start_range_, stack_size_, base_address, length) && (!limit_size || length == size))
+        {
+            if(!limit_size)
+            {
+                size = length;
+            }
+            return stack_ + (base_address - stack_start_range_);
+        }
+
+        return nullptr;
+    }
+
+    void const* mini_dump_stack_walk::get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    {
+        if (memory_list_.found())
+        {
+            DWORD64 length = size;
+            if (auto const* memory = memory_list_.find_any_address_range(base_address, length); memory != nullptr && (!limit_size || length == size))
+            {
+                if(!limit_size)
+                {
+                    size = length;
+                }
+                return memory;
+            }
+        }
+
+        return nullptr;
+    }
+
+    void const* mini_dump_stack_walk::get_memory64_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    {
+        if (memory64_list_.found())
+        {
+            DWORD64 length = size;
+            if (auto const* memory = memory64_list_.find_any_address_range(base_address, length); memory != nullptr && (!limit_size || length == size))
+            {
+                if(!limit_size)
+                {
+                    size = length;
+                }
+                return memory;
+            }
+        }
+
+        return nullptr;
+    }
+
+    void const* mini_dump_stack_walk::get_memory_from_pe_file(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    {
+        DWORD64 length = size;
+        auto const* memory = pe_file_memory_mappings_.find_any_address_range(base_address, length);
+        if (memory == nullptr || (limit_size && length != size)) return nullptr;
+        if(!limit_size)
+        {
+            size = length;
+        }
+        return memory;
     }
 
     bool mini_dump_stack_walk::load_pe_file(DWORD64 base_address) const
@@ -213,14 +441,9 @@ namespace dlg_help_utils::stream_stack_dump
             return false;
         }
 
-        std::wstring const name{module->name()};
-        if (!symbol_engine_.is_module_loaded(name))
-        {
-            symbol_engine_.load_module(name, (*module)->BaseOfImage, (*module)->SizeOfImage, (*module)->TimeDateStamp,
-                                       (*module)->CheckSum, module->cv_record(), (*module)->CvRecord.DataSize,
-                                       module->misc_record(), (*module)->MiscRecord.DataSize, (*module)->VersionInfo);
-        }
+        load_module(*module);
 
+        std::wstring const name{module->name()};
         auto const& image_path = symbol_engine_.get_module_image_path(name);
         if (image_path.empty() || !std::filesystem::exists(image_path) || !std::filesystem::is_regular_file(image_path))
         {
@@ -239,15 +462,10 @@ namespace dlg_help_utils::stream_stack_dump
             return false;
         }
 
-        std::wstring const name{module->name()};
-        if (!symbol_engine_.is_module_loaded(name))
-        {
-            symbol_engine_.load_module(name, (*module)->BaseOfImage, (*module)->SizeOfImage, (*module)->TimeDateStamp,
-                                       (*module)->CheckSum);
-        }
+        load_module(*module);
 
-        auto const& image_path = symbol_engine_.get_module_image_path(name);
-        if (image_path.empty() && std::filesystem::exists(image_path) && std::filesystem::is_regular_file(image_path))
+        std::wstring const name{module->name()};
+        if (auto const & image_path = symbol_engine_.get_module_image_path(name); image_path.empty() && std::filesystem::exists(image_path) && std::filesystem::is_regular_file(image_path))
         {
             pe_file_memory_mappings_.load_pe_file(image_path, (*module)->BaseOfImage);
             return true;
@@ -278,19 +496,12 @@ namespace dlg_help_utils::stream_stack_dump
         auto const module = module_list_.find_module(address);
         if (!module) return 0;
 
-        std::wstring const module_name{module->name()};
-        if (!symbol_engine_.is_module_loaded(module_name))
-        {
-            symbol_engine_.load_module(module_name, (*module)->BaseOfImage, (*module)->SizeOfImage,
-                                       (*module)->TimeDateStamp, (*module)->CheckSum, module->cv_record(),
-                                       (*module)->CvRecord.DataSize, module->misc_record(),
-                                       (*module)->MiscRecord.DataSize, (*module)->VersionInfo);
-        }
+        load_module(*module);
 
         if (callback_.symbol_load_debug())
         {
             callback_.log_stream() << L"get_module_base_routine " << stream_hex_dump::to_hex(address) << " is in " <<
-                module_name << " : " << stream_hex_dump::to_hex((*module)->BaseOfImage) << '\n';
+                module->name() << " : " << stream_hex_dump::to_hex((*module)->BaseOfImage) << '\n';
         }
         return (*module)->BaseOfImage;
     }
@@ -302,17 +513,12 @@ namespace dlg_help_utils::stream_stack_dump
         auto const module = unloaded_module_list_.find_module(address);
         if (!module) return 0;
 
-        std::wstring const module_name{module->name()};
-        if (!symbol_engine_.is_module_loaded(module_name))
-        {
-            symbol_engine_.load_module(module_name, (*module)->BaseOfImage, (*module)->SizeOfImage,
-                                       (*module)->TimeDateStamp, (*module)->CheckSum);
-        }
+        load_module(*module);
 
         if (callback_.symbol_load_debug())
         {
             callback_.log_stream() << L"get_module_base_routine " << stream_hex_dump::to_hex(address) << " is in " <<
-                module_name << " : " << stream_hex_dump::to_hex((*module)->BaseOfImage) << '\n';
+                module->name() << " : " << stream_hex_dump::to_hex((*module)->BaseOfImage) << '\n';
         }
         return (*module)->BaseOfImage;
     }
@@ -324,16 +530,7 @@ namespace dlg_help_utils::stream_stack_dump
         if (!it_module) return find_unloaded_module_symbol_info(frame.AddrPC.Offset, unloaded_module_list_,
                                                                 symbol_engine_);
 
-        auto const& module{it_module.value()};
-        std::wstring const module_name{module.name()};
-
-        if (!symbol_engine_.is_module_loaded(module_name))
-        {
-            symbol_engine_.load_module(module_name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
-                                       module->CheckSum, module.cv_record(), module->CvRecord.DataSize,
-                                       module.misc_record(), module->MiscRecord.DataSize, module->VersionInfo);
-        }
-
+        load_module(it_module.value());
         return symbol_engine_.address_to_info(frame);
     }
 
@@ -345,9 +542,8 @@ namespace dlg_help_utils::stream_stack_dump
         if (!it_module) return find_unloaded_module_symbol_info(address, unloaded_module_list, symbol_engine);
 
         auto const& module{it_module.value()};
-        std::wstring const module_name{module.name()};
 
-        if (!symbol_engine.is_module_loaded(module_name))
+        if (std::wstring const module_name{module.name()}; !symbol_engine.is_module_loaded(module_name))
         {
             symbol_engine.load_module(module_name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
                                       module->CheckSum, module.cv_record(), module->CvRecord.DataSize,
@@ -367,9 +563,8 @@ namespace dlg_help_utils::stream_stack_dump
         if (!it_module) return std::nullopt;
 
         auto const& module{it_module.value()};
-        std::wstring const module_name{it_module->name()};
 
-        if (!symbol_engine.is_module_loaded(module_name))
+        if (std::wstring const module_name{it_module->name()}; !symbol_engine.is_module_loaded(module_name))
         {
             symbol_engine.load_module(module_name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
                                       module->CheckSum);
@@ -378,5 +573,86 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine.address_to_info(address);
     }
 
+    DWORD64 mini_dump_stack_walk::find_max_element_size(void const* memory, DWORD64 element_size, DWORD64 max_size, std::function<bool(void const*)> const& pred)
+    {
+        auto const element_max = max_size / element_size;
+        DWORD64 index = 0;
+        for(; index < element_max; ++ index, memory = static_cast<char const*>(memory) + element_size)
+        {
+            if(pred(memory))
+            {
+                break;
+            }
+        }
+
+        return index;
+    }
+
     // ReSharper restore CppParameterMayBeConst
+
+    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_type_info(std::wstring const& type_name) const
+    {
+        auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(type_name);
+
+        if(type_name.empty())
+        {
+            return std::nullopt;
+        }
+
+        if(module_name.empty())
+        {
+            // load all loaded modules...
+            for (auto const& module : module_list_.list())
+            {
+                load_module(module);
+            }
+        }
+        else
+        {
+            load_module(module_name);
+        }
+
+        return symbol_engine_.get_type_info(module_name, specific_type_name);
+    }
+
+    std::experimental::generator<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
+    {
+        load_module(module_name);
+        return symbol_engine_.module_types(module_name);
+    }
+
+    void mini_dump_stack_walk::load_module(std::wstring const& module_name) const
+    {
+        if(auto const & module = module_list_.find_module(module_name); module.has_value())
+        {
+            load_module(module.value());
+        }
+        else
+        {
+            if(auto const & unloaded_module = unloaded_module_list_.find_module(module_name); unloaded_module.has_value())
+            {
+                load_module(unloaded_module.value());
+            }
+        }
+    }
+
+    void mini_dump_stack_walk::load_module(stream_module const& module) const
+    {
+        if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
+        {
+            symbol_engine_.load_module(name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
+                                       module->CheckSum, module.cv_record(), module->CvRecord.DataSize,
+                                       module.misc_record(), module->MiscRecord.DataSize, module->VersionInfo);
+        }
+    }
+
+    void mini_dump_stack_walk::load_module(stream_unloaded_module const& module) const
+    {
+        if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
+        {
+            symbol_engine_.load_module(name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
+                                       module->CheckSum);
+        }
+    }
+
 }

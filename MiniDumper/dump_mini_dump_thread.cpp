@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "dump_file_options.h"
+#include "DbgHelpUtils/common_symbol_names.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/size_units.h"
@@ -13,6 +14,7 @@
 #include "DbgHelpUtils/stream_thread_context.h"
 #include "DbgHelpUtils/stream_thread_ex.h"
 #include "DbgHelpUtils/stream_thread_name.h"
+#include "DbgHelpUtils/symbol_type_utils.h"
 #include "DbgHelpUtils/thread_list_stream.h"
 #include "DbgHelpUtils/thread_ex_list_stream.h"
 #include "DbgHelpUtils/thread_info_list_stream.h"
@@ -194,8 +196,7 @@ void dump_mini_dump_thread_names_stream_data(mini_dump const& mini_dump, size_t 
     }
 
     wcout << L"NumberOfThreadNames: " << thread_names_list.thread_names_list().NumberOfThreadNames << L'\n';
-    size_t i = 0;
-    for (auto const& entry : thread_names_list.list())
+    for (size_t i = 0; auto const& entry : thread_names_list.list())
     {
         wcout << L" [" << i << "]: " << entry.name() << L'\n';
         wcout << L"   ThreadId: " << entry->ThreadId << L'\n';
@@ -219,8 +220,7 @@ void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t c
     auto const thread_ids = get_filtered_thread_ids(options);
 
     wcout << L"NumberOfThreads: " << thread_list.thread_list().NumberOfThreads << L'\n';
-    size_t i = 0;
-    for (auto const& thread : thread_list.list())
+    for (size_t i = 0; auto const& thread : thread_list.list())
     {
         if (!thread_ids.empty() && !thread_ids.contains(thread->ThreadId))
         {
@@ -238,6 +238,8 @@ void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t c
         wcout << L"   PriorityClass: " << thread->PriorityClass << L'\n';
         wcout << L"   SuspendCount: " << thread->SuspendCount << L'\n';
         wcout << L"   TEB: " << to_hex_full(thread->Teb) << L'\n';
+
+        load_and_dump_teb(mini_dump, symbol_engine, thread->Teb);
 
         dump_mini_dump_thread_context(thread.thread_context(), options);
 
@@ -282,8 +284,7 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
     auto const thread_ids = get_filtered_thread_ids(options);
 
     wcout << L"NumberOfThreads: " << thread_ex_list.thread_list().NumberOfThreads << L'\n';
-    size_t i = 0;
-    for (auto const& thread : thread_ex_list.list())
+    for (size_t i = 0; auto const& thread : thread_ex_list.list())
     {
         if (!thread_ids.empty() && !thread_ids.contains(thread->ThreadId))
         {
@@ -301,6 +302,8 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
         wcout << L"   PriorityClass: " << thread->PriorityClass << L'\n';
         wcout << L"   SuspendCount: " << thread->SuspendCount << L'\n';
         wcout << L"   TEB: " << to_hex_full(thread->Teb) << L'\n';
+
+        load_and_dump_teb(mini_dump, symbol_engine, thread->Teb);
 
         using namespace size_units::base_10;
         wcout << L"   Stack: " << to_hex_full(thread->Stack.StartOfMemoryRange) << L" - " <<
@@ -360,8 +363,7 @@ void dump_mini_dump_thread_info_list_stream_data(mini_dump const& mini_dump, siz
     }
 
     wcout << L"NumberOfEntries: " << thread_info_list.size() << L'\n';
-    size_t i = 0;
-    for (auto const& thread : thread_info_list.list())
+    for (size_t i = 0; auto const& thread : thread_info_list.list())
     {
         using namespace time_units;
         wcout << L" [" << i << "]: ThreadId: " << thread->ThreadId << L" (" << to_hex(thread->ThreadId) << L')';
@@ -396,4 +398,9 @@ void dump_mini_dump_thread_info_list_stream_data(mini_dump const& mini_dump, siz
         ++i;
     }
     wcout << L'\n';
+}
+
+void load_and_dump_teb(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, ULONG64 const teb_address)
+{
+    symbol_type_utils::dump_variable_type_at(wcout, mini_dump, symbol_engine, common_symbol_names::teb_structure_symbol_name, teb_address);
 }

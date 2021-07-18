@@ -60,7 +60,7 @@ std::wostream& symbol_engine_ui::log_stream() const
 
 bool symbol_engine_ui::symbol_load_debug() const
 {
-    return options_.debug_load_symbols();
+    return options_.debug_symbols();
 }
 
 bool symbol_engine_ui::symbol_load_debug_memory() const

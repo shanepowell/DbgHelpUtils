@@ -45,8 +45,7 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 std::filesystem::path const p{info->module_name};
                 auto filename = p.filename().wstring();
-                auto const last_index = filename.find_last_of(L'.');
-                if (last_index != std::wstring::npos)
+                if (auto const last_index = filename.find_last_of(L'.'); last_index != std::wstring::npos)
                 {
                     filename = filename.substr(0, last_index);
                 }
@@ -108,9 +107,7 @@ namespace dlg_help_utils::stream_stack_dump
             unloaded_module_list, pe_file_memory_mappings, symbol_engine
         };
 
-        size_t index = 0;
-
-        for (auto const& entry : dbg_help::symbol_engine::stack_walk(thread_context, walk_callback))
+        for (size_t index = 0; auto const& entry : dbg_help::symbol_engine::stack_walk(thread_context))
         {
             os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', false) << L' ';
 
@@ -146,8 +143,7 @@ namespace dlg_help_utils::stream_stack_dump
         const std::wstring indent_str(indent, L' ');
         os << indent_str;
 
-        system_info_stream const system_info{mini_dump};
-        if (system_info.is_x86())
+        if (system_info_stream const system_info{mini_dump}; system_info.is_x86())
         {
             generate_hex_dump_address(os, static_cast<uint32_t>(0), static_cast<uint32_t>(address),
                                       mini_dump_stack_walk::find_symbol_info(

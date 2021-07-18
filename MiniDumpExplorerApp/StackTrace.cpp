@@ -24,7 +24,7 @@ StackTrace::StackTrace(DbgHelpDispatcher& dispatcher, MiniDumpData& mini_data_da
 
         auto const is_x86_address = Is32BitAddresses();
 
-        for (auto const& entry : dlg_help_utils::dbg_help::symbol_engine::stack_walk(thread_context_, walk_callback))
+        for (auto const& entry : dlg_help_utils::dbg_help::symbol_engine::stack_walk(thread_context_))
         {
             frames_.Append(*winrt::make_self<StackFrame>(entry, is_x86_address));
         }

@@ -26,7 +26,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::experimental::generator<AVRF_HANDLE_OPERATION const*> handle_operation_list_stream::list() const
+    std::experimental::generator<AVRF_HANDLE_OPERATION const*> handle_operation_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         for (size_t index = 0; index < handle_operation_list_->NumberOfEntries; ++index)
         {

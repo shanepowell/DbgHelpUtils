@@ -201,6 +201,24 @@
     <ClCompile Include="locale_number_formatting.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="symbol_type_info.cpp">
+      <Filter>DbgHelp</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_info_buffer.cpp">
+      <Filter>DbgHelp</Filter>
+    </ClCompile>
+    <ClCompile Include="module_match.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_type_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="common_symbol_names.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -412,6 +430,45 @@
     </ClInclude>
     <ClInclude Include="locale_number_formatting.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_info.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="sym_tag_enum.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_info_buffer.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="module_match.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_type.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="windows_setup.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="udt_kind_type.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="call_convention.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="data_kind.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="print_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="common_symbol_names.h">
+      <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 
 #include "dump_file_options.h"
 #include "dump_mini_dump_streams.h"
+#include "dump_mini_dump_symbols.h"
 #include "symbol_engine_ui.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/mini_dump.h"
@@ -93,14 +94,34 @@ void process_user_mode_dump(mini_dump const& dump_file, dump_file_options const&
         dump_mini_dump_streams(dump_file);
     }
 
-    for (auto index : options.dump_stream_indexes())
+    for (auto const index : options.dump_stream_indexes())
     {
         dump_mini_dump_stream_index(dump_file, index, options, symbol_engine);
     }
 
-    for (auto type : options.dump_stream_types())
+    for (auto const& type : options.dump_stream_types())
     {
         dump_mini_dump_stream_type(dump_file, type, options, symbol_engine);
+    }
+
+    if(options.display_peb())
+    {
+        dump_mini_dump_peb(dump_file, options, symbol_engine);
+    }
+
+    for (auto const& module_name : options.dump_types_modules())
+    {
+        dump_mini_dump_module_symbol_types(dump_file, module_name, options, symbol_engine);
+    }
+
+    for (auto const& type : options.symbol_types())
+    {
+        dump_mini_dump_symbol_type(dump_file, type, options, symbol_engine);
+    }
+
+    for (auto const& address_type : options.dump_address_types())
+    {
+        dump_mini_dump_address(dump_file, address_type, options, symbol_engine);
     }
 }
 

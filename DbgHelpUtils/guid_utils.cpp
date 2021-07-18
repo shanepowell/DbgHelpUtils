@@ -13,8 +13,7 @@ namespace dlg_help_utils::guid_utils
     std::wstring to_string(GUID const& guid)
     {
         RPC_WSTR rpc_string;
-        auto const status = UuidToStringW(const_cast<UUID*>(&guid), &rpc_string);
-        if (status != RPC_S_OK)
+        if (auto const status = UuidToStringW(&guid, &rpc_string); status != RPC_S_OK)
         {
             auto const ec = GetLastError();
 

@@ -19,8 +19,7 @@ namespace dlg_help_utils
 
     void pe_file_memory_mapping::load_pe_file(std::wstring const& path, uint64_t const module_base)
     {
-        auto const it = find_loaded_pe_file(module_base);
-        if (it != loaded_pe_files_.end())
+        if (auto const it = find_loaded_pe_file(module_base); it != loaded_pe_files_.end())
         {
             throw wide_runtime_error{
                 (wostringstream{} << L"Error: module " << path << L" base : " << stream_hex_dump::to_hex(module_base) <<
@@ -88,8 +87,7 @@ namespace dlg_help_utils
         if (it != loaded_pe_files_.end() && it->first == address) return it;
         if (it == loaded_pe_files_.begin()) return loaded_pe_files_.end();
         --it;
-        auto const end_range = it->first + it->second.file_length();
-        if (address < it->first || address >= end_range) return loaded_pe_files_.end();
+        if (auto const end_range = it->first + it->second.file_length(); address < it->first || address >= end_range) return loaded_pe_files_.end();
         return it;
     }
 }

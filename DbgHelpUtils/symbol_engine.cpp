@@ -8,14 +8,18 @@
 #include <sstream>
 
 #include "cv_info_pdb70.h"
+#include "exit_scope.h"
 #include "guid_utils.h"
+#include "hex_dump.h"
+#include "module_match.h"
 #include "pe_file.h"
 #include "stream_hex_dump.h"
 #include "stream_thread_context.h"
+#include "symbol_info_buffer.h"
+#include "symbol_type_info.h"
+#include "sym_tag_enum.h"
 #include "wide_runtime_error.h"
 #include "windows_error.h"
-#include "exit_scope.h"
-#include "hex_dump.h"
 
 #pragma comment(lib, "dbghelp.lib")
 
@@ -24,52 +28,8 @@ auto const cba_start_op_maybe = 0xA0000000;
 using namespace std::string_view_literals;
 using namespace dlg_help_utils::stream_hex_dump;
 
-// ReSharper disable CppInconsistentNaming
-// ReSharper disable IdentifierTypo
-enum SymTagEnum
-{
-    SymTagNull = 0x00,
-    SymTagExe = 0x01,
-    SymTagCompiland = 0x02,
-    SymTagCompilandDetails = 0x03,
-    SymTagCompilandEnv = 0x04,
-    SymTagFunction = 0x05,
-    SymTagBlock = 0x06,
-    SymTagData = 0x07,
-    SymTagAnnotation = 0x08,
-    SymTagLabel = 0x09,
-    SymTagPublicSymbol = 0x0a,
-    SymTagUDT = 0x0b,
-    SymTagEnum = 0x0c,
-    SymTagFunctionType = 0x0d,
-    SymTagPointerType = 0x0e,
-    SymTagArrayType = 0x0f,
-    SymTagBaseType = 0x10,
-    SymTagTypedef = 0x11,
-    SymTagBaseClass = 0x12,
-    SymTagFriend = 0x13,
-    SymTagFunctionArgType = 0x14,
-    SymTagFuncDebugStart = 0x15,
-    SymTagFuncDebugEnd = 0x16,
-    SymTagUsingNamespace = 0x17,
-    SymTagVTableShape = 0x18,
-    SymTagVTable = 0x19,
-    SymTagCustom = 0x1a,
-    SymTagThunk = 0x1b,
-    SymTagCustomType = 0x1c,
-    SymTagManagedType = 0x1d,
-    SymTagDimension = 0x1e,
-    SymTagUnknown1 = 0x1f,
-    SymTagInlineFunction = 0x20
-};
-
-// ReSharper restore IdentifierTypo
-// ReSharper restore CppInconsistentNaming
-
 namespace
 {
-    HANDLE fake_process{reinterpret_cast<HANDLE>(1)};
-    HANDLE fake_thread{reinterpret_cast<HANDLE>(2)};
     size_t const trace_max_function_name_length{1000};
     size_t const max_buffer_size = sizeof(SYMBOL_INFOW) + (trace_max_function_name_length * sizeof(wchar_t));
     auto const progress_xml_start = L"<Progress percent=\""sv;
@@ -311,8 +271,7 @@ namespace
         case CBA_DEFERRED_SYMBOL_LOAD_FAILURE:
             if (callback.symbol_load_debug() && callback_data != 0)
             {
-                auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data);
-                if (size_of_struct == sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64))
+                if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64))
                 {
                     auto const* evt = reinterpret_cast<IMAGEHLP_DEFERRED_SYMBOL_LOADW64 const*>(callback_data);
                     callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":BaseOfImage[" <<
@@ -342,8 +301,7 @@ namespace
 
         case CBA_DEFERRED_SYMBOL_LOAD_PARTIAL:
             {
-                auto const filename = get_symbol_load_filename(callback_data, symbol_engine.downloading_module());
-                if (!filename.empty())
+                if (auto const filename = get_symbol_load_filename(callback_data, symbol_engine.downloading_module()); !filename.empty())
                 {
                     callback.deferred_symbol_load_partial(filename);
                 }
@@ -354,8 +312,7 @@ namespace
 
         case CBA_DEFERRED_SYMBOL_LOAD_CANCEL:
             {
-                auto const filename = get_symbol_load_filename(callback_data, symbol_engine.downloading_module());
-                if (!filename.empty())
+                if (auto const filename = get_symbol_load_filename(callback_data, symbol_engine.downloading_module()); !filename.empty())
                 {
                     if (callback.deferred_symbol_load_cancel(filename))
                     {
@@ -387,8 +344,7 @@ namespace
         case CBA_DUPLICATE_SYMBOL:
             if (callback.symbol_load_debug() && callback_data != 0)
             {
-                auto const* evt = reinterpret_cast<IMAGEHLP_DUPLICATE_SYMBOL64 const*>(callback_data);
-                if (evt->SizeOfStruct == sizeof(IMAGEHLP_DUPLICATE_SYMBOL64))
+                if (auto const * evt = reinterpret_cast<IMAGEHLP_DUPLICATE_SYMBOL64 const*>(callback_data); evt->SizeOfStruct == sizeof(IMAGEHLP_DUPLICATE_SYMBOL64))
                 {
                     // ReSharper disable once StringLiteralTypo
                     callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":NumberOfDups[" <<
@@ -422,13 +378,11 @@ namespace
                     }
                 }
 
-                auto const download_file = symbol_engine.downloading_module();
-                if (!download_file.empty())
+                if (auto const download_file = symbol_engine.downloading_module(); !download_file.empty())
                 {
                     if (xml.starts_with(progress_xml_start))
                     {
-                        auto const end_pos = xml.find(progress_xml_end, progress_xml_start.size());
-                        if (end_pos != std::wstring_view::npos)
+                        if (auto const end_pos = xml.find(progress_xml_end, progress_xml_start.size()); end_pos != std::wstring_view::npos)
                         {
                             auto const percent_str = std::wstring{
                                 xml.substr(progress_xml_start.size(), end_pos - progress_xml_start.size())
@@ -445,8 +399,7 @@ namespace
                 }
                 else if (xml.starts_with(downloading_xml_start))
                 {
-                    auto const end_pos = xml.find(downloading_xml_end, downloading_xml_start.size());
-                    if (end_pos != std::wstring_view::npos)
+                    if (auto const end_pos = xml.find(downloading_xml_end, downloading_xml_start.size()); end_pos != std::wstring_view::npos)
                     {
                         auto const module = xml.substr(downloading_xml_start.size(),
                                                        end_pos - downloading_xml_start.size());
@@ -482,8 +435,7 @@ namespace
         case cba_start_op_maybe:
             if (callback.symbol_load_debug() && callback_data != 0)
             {
-                auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data);
-                if (size_of_struct == sizeof(symbol_load))
+                if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(symbol_load))
                 {
                     auto const* evt = reinterpret_cast<symbol_load const*>(callback_data);
                     callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L"[c]:BaseOfImage["
@@ -541,8 +493,7 @@ namespace
             }
         }
 
-        auto& callback = symbol_engine.callback();
-        if (callback.symbol_load_debug())
+        if (auto const & callback = symbol_engine.callback(); callback.symbol_load_debug())
         {
             callback.log_stream() << L"DlgHelp: FindFile: " << filename << L" checksum check failure\n";
         }
@@ -555,6 +506,9 @@ namespace
 
 namespace dlg_help_utils::dbg_help
 {
+    HANDLE fake_process{reinterpret_cast<HANDLE>(1)};
+    HANDLE fake_thread{reinterpret_cast<HANDLE>(2)};
+
     symbol_engine::symbol_engine(i_symbol_load_callback& callback)
         : callback_{&callback}
           , symbol_(static_cast<SYMBOL_INFOW*>(malloc(max_buffer_size)))
@@ -573,7 +527,7 @@ namespace dlg_help_utils::dbg_help
             };
         }
 
-        SymSetOptions(SYMOPT_LOAD_LINES | (callback.symbol_load_debug() ? SYMOPT_DEBUG : 0));
+        SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | (callback.symbol_load_debug() ? SYMOPT_DEBUG : 0));
         SymRegisterCallbackW64(fake_process, sym_register_callback_proc64,
                                reinterpret_cast<ULONG64>(static_cast<i_symbol_callback*>(this)));
     }
@@ -768,8 +722,7 @@ namespace dlg_help_utils::dbg_help
 
     void symbol_engine::unload_module(std::wstring const& module_name)
     {
-        auto const it = modules_.find(module_name);
-        if (it != modules_.end())
+        if (auto const it = modules_.find(module_name); it != modules_.end())
         {
             if (it->second.handle != 0 && !SymUnloadModule64(fake_process, it->second.handle))
             {
@@ -906,7 +859,7 @@ namespace dlg_help_utils::dbg_help
             }
             info.frame_content_found = true;
             info.symbol_name = symbol_->Name;
-            info.in_line = symbol_->Tag == SymTagInlineFunction;
+            info.in_line = static_cast<sym_tag_enum>(symbol_->Tag) == sym_tag_enum::Inlinee;
 
             if (SymGetLineFromInlineContextW(fake_process, address, frame.InlineFrameContext, it->second.base,
                                              &info.line_displacement, &line_))
@@ -933,11 +886,89 @@ namespace dlg_help_utils::dbg_help
         return std::move(info);
     }
 
-    std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(
-        stream_thread_context const& thread_context, i_stack_walk_callback& callback)
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name) const
     {
-        g_callback = &callback;
+        auto [module_name, specific_type_name] = parse_type_info(type_name);
+        return get_type_info(module_name, specific_type_name);
+    }
 
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name) const
+    {
+        if(type_name.empty())
+        {
+            return std::nullopt;
+        }
+
+        if(module_name.empty())
+        {
+            // search all currently loaded symbols....
+            for (const auto& module : modules_ | std::views::values)
+            {
+                if(auto rv = load_type_info(module.base, type_name); rv.has_value())
+                {
+                    return rv;
+                }
+            }
+
+            return std::nullopt;
+        }
+
+        auto it = modules_.find(module_name);
+        if(it == modules_.end())
+        {
+            it = std::ranges::find_if(modules_, [&module_name](std::pair<std::wstring, module_info> const& entry){ return module_match::module_name_match(entry.first, module_name); });
+        }
+
+        if(it == modules_.end())
+        {
+            return std::nullopt;
+        }
+
+        return load_type_info(it->second.base, type_name);
+    }
+
+    std::experimental::generator<symbol_type_info> symbol_engine::module_types(std::wstring const& module_name)
+    {
+        if(module_name.empty())
+        {
+            co_return;
+        }
+
+        auto it = modules_.find(module_name);
+        if(it == modules_.end())
+        {
+            it = std::ranges::find_if(modules_, [&module_name](std::pair<std::wstring, module_info> const& entry){ return module_match::module_name_match(entry.first, module_name); });
+        }
+
+        if(it == modules_.end())
+        {
+            co_return;
+        }
+
+        std::vector<symbol_type_info> types;
+        // ReSharper disable once CppParameterMayBeConst
+        if(!SymEnumTypesW(fake_process, it->second.base, [](PSYMBOL_INFOW symbol_info, [[maybe_unused]] ULONG symbol_size, PVOID user_context)
+        {
+            std::vector<symbol_type_info>& rv = *static_cast<std::vector<symbol_type_info>*>(user_context);
+            rv.emplace_back(symbol_info->ModBase, symbol_info->Index);
+            return TRUE;
+        }, &types))
+        {
+            auto const ec = GetLastError();
+            throw exceptions::wide_runtime_error{
+                (std::wostringstream{} << L"SymEnumTypesW failed. Error: " << ec << L" - " <<
+                    windows_error::get_windows_error_string(ec)).str()
+            };
+        }
+
+        for (auto const& type : types)
+        {
+            co_yield type;
+        }
+    }
+
+    std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context)
+    {
         DWORD machine_type;
         STACKFRAME_EX frame{};
         frame.StackFrameSize = sizeof(STACKFRAME_EX);
@@ -981,7 +1012,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         // force the loading of the IP module
-        [[maybe_unused]] auto const base_address = callback.get_module_base_routine(frame.AddrPC.Offset);
+        [[maybe_unused]] auto const base_address = g_callback->get_module_base_routine(frame.AddrPC.Offset);
 
         // StackWalkEx modifies the thread context passed in so always take a copy for it to work with
         auto const thread_context_copy = std::make_unique<uint8_t[]>(thread_context.size());
@@ -998,7 +1029,7 @@ namespace dlg_help_utils::dbg_help
                 break;
             }
 
-            auto info = callback.find_symbol_info(frame);
+            auto info = g_callback->find_symbol_info(frame);
             if (!info)
             {
                 symbol_address_info rv{};
@@ -1015,8 +1046,6 @@ namespace dlg_help_utils::dbg_help
                         ? SYM_STKWALK_DEFAULT | SYM_STKWALK_FORCE_FRAMEPTR
                         : SYM_STKWALK_DEFAULT;
         }
-
-        g_callback = nullptr;
     }
 
     std::map<std::wstring, symbol_engine::module_info>::const_iterator symbol_engine::find_module_name(
@@ -1038,7 +1067,8 @@ namespace dlg_help_utils::dbg_help
     {
         if (handle != 0 && callback().symbol_load_debug())
         {
-            auto info = get_module_information(module_base);
+            // ReSharper disable once CppUseStructuredBinding
+            const auto info = get_module_information(module_base);
             callback().log_stream() << L"Loaded:\n";
             callback().log_stream() << L" SymType:" << info.SymType << L'\n';
             callback().log_stream() << L" ModuleName:" << info.ModuleName << L'\n';
@@ -1095,5 +1125,33 @@ namespace dlg_help_utils::dbg_help
 
         return SymLoadModuleExW(fake_process, nullptr, module_name.c_str(), nullptr, module_base, module_size,
                                 module_load_info, 0);
+    }
+
+    std::optional<symbol_type_info> symbol_engine::load_type_info(DWORD64 const module_base, std::wstring const& type_name)
+    {
+        auto const info = symbol_info_buffer::make();
+        if(!SymGetTypeFromNameW(fake_process, module_base, type_name.c_str(), &info->info))
+        {
+            return std::nullopt;
+        }
+
+        return symbol_type_info{module_base, info->info.TypeIndex};
+    }
+
+    std::tuple<std::wstring, std::wstring> symbol_engine::parse_type_info(std::wstring const& type_name)
+    {
+        auto const pos = type_name.find_first_of(L'!');
+        if(pos == std::wstring::npos)
+        {
+            return std::make_tuple(std::wstring{}, type_name);
+        }
+
+        return std::make_tuple(type_name.substr(0, pos), type_name.substr(pos+1));
+    }
+
+    callback_handle symbol_engine::set_callback(i_stack_walk_callback& callback)
+    {
+        g_callback = &callback;
+        return callback_handle{[]() { g_callback = nullptr; }};
     }
 }

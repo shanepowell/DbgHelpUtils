@@ -93,6 +93,7 @@
     <ClCompile Include="dump_mini_dump_memory.cpp" />
     <ClCompile Include="dump_mini_dump_module.cpp" />
     <ClCompile Include="dump_mini_dump_streams.cpp" />
+    <ClCompile Include="dump_mini_dump_symbols.cpp" />
     <ClCompile Include="dump_mini_dump_thread.cpp" />
     <ClCompile Include="MiniDumper.cpp" />
     <ClCompile Include="symbol_engine_ui.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="dump_mini_dump_memory.h" />
     <ClInclude Include="dump_mini_dump_module.h" />
     <ClInclude Include="dump_mini_dump_streams.h" />
+    <ClInclude Include="dump_mini_dump_symbols.h" />
     <ClInclude Include="dump_mini_dump_thread.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="symbol_engine_ui.h" />

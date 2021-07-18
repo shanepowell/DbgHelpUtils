@@ -36,8 +36,7 @@ void dump_mini_dump_memory_list_stream_data(mini_dump const& mini_dump, size_t c
     auto const memory_ranges = vector_to_hash_set<range>(options.filter_values(L"memory_range"s));
 
     wcout << L"NumberOfMemoryRanges: " << memory_list.memory_list().NumberOfMemoryRanges << L'\n';
-    size_t i = 0;
-    for (auto const* entry : memory_list.list())
+    for (size_t i = 0; auto const* entry : memory_list.list())
     {
         auto const any_match = memory_areas.empty() && memory_ranges.empty();
         auto const memory_areas_match = !memory_areas.empty() && ranges::find_if(memory_areas
@@ -100,8 +99,7 @@ void dump_mini_dump_memory64_list_stream_data(mini_dump const& mini_dump, size_t
     auto const memory_ranges = vector_to_hash_set<range>(options.filter_values(L"memory_range"s));
 
     wcout << L"NumberOfMemoryRanges: " << memory_list.memory_list().NumberOfMemoryRanges << L'\n';
-    size_t i = 0;
-    for (auto const& entry : memory_list.list())
+    for (size_t i = 0; auto const& entry : memory_list.list())
     {
         auto const any_match = memory_areas.empty() && memory_ranges.empty();
         auto const memory_areas_match = !memory_areas.empty() && ranges::find_if(memory_areas
@@ -166,8 +164,7 @@ void dump_mini_dump_memory_info_list_stream_data(mini_dump const& mini_dump, siz
     }
 
     wcout << L"NumberOfEntries: " << memory_info_list.size() << L'\n';
-    size_t i = 0;
-    for (auto const* entry : memory_info_list.list())
+    for (size_t i = 0; auto const* entry : memory_info_list.list())
     {
         using namespace size_units::base_10;
         wcout << L" [" << i << "]:\n";

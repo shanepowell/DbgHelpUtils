@@ -1,9 +1,6 @@
 ﻿#pragma once
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
 // ReSharper disable once CppUnusedIncludeDirective
-#include <Windows.h>
+#include "windows_setup.h"
 #include <DbgHelp.h>
 #include <optional>
 #include <experimental/generator>
@@ -27,6 +24,7 @@ namespace dlg_help_utils
         [[nodiscard]] std::experimental::generator<stream_unloaded_module> list() const;
 
         [[nodiscard]] std::optional<stream_unloaded_module> find_module(uint64_t address) const;
+        [[nodiscard]] std::optional<stream_unloaded_module> find_module(std::wstring_view const& module_name) const;
 
     private:
         mini_dump const& dump_;

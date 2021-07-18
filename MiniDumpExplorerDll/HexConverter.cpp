@@ -3,6 +3,7 @@
 
 #include "HexConverter.h"
 
+using char8_t = char;
 #include "../DbgHelpUtils/stream_hex_dump.h"
 
 #if __has_include("HexConverter.g.cpp")

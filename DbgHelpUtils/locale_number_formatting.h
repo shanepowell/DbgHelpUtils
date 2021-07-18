@@ -1,11 +1,7 @@
 ﻿#pragma once
 #include <string>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#endif
-#include <Windows.h>
+#include "windows_setup.h"
 #include <WinNls.h>
 
 namespace locale_formatting
@@ -28,9 +24,7 @@ namespace locale_formatting
         }
 
         // ReSharper disable once CppZeroConstantCanBeReplacedWithNullptr
-        auto size = GetNumberFormatEx(LOCALE_NAME_USER_DEFAULT, 0, v.c_str(), &fmt, nullptr, 0);
-
-        if (size > 0)
+        if (auto size = GetNumberFormatEx(LOCALE_NAME_USER_DEFAULT, 0, v.c_str(), &fmt, nullptr, 0); size > 0)
         {
             rv.resize(size - 1);
             GetNumberFormatEx(LOCALE_NAME_USER_DEFAULT, 0, v.c_str(), &fmt, &rv[0], size);

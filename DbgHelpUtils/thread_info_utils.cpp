@@ -1,9 +1,7 @@
 ﻿#include "thread_info_utils.h"
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 // ReSharper disable once CppUnusedIncludeDirective
-#include <Windows.h>
+#include "windows_setup.h"
 #include <DbgHelp.h>
 
 #include <map>

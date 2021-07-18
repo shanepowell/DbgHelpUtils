@@ -111,8 +111,7 @@ namespace dlg_help_utils::mini_dump_stream_type
 
         for (size_t i = 0; i <= LastReservedStream; ++i)
         {
-            auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i);
-            if (boost::iequals(type, to_string(enum_type)) || boost::iequals(type, to_enum_string(enum_type)))
+            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); boost::iequals(type, to_string(enum_type)) || boost::iequals(type, to_enum_string(enum_type)))
             {
                 return enum_type;
             }

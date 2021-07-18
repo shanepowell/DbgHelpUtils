@@ -23,13 +23,13 @@ namespace dlg_help_utils::range_utils
     }
 
     template <typename T>
-    bool range_contains(T start_range, size_t range_length, T start, size_t length)
+    bool range_contains(T start_range, uint64_t range_length, T start, uint64_t length)
     {
         return start >= start_range && start + length <= start_range + range_length;
     }
 
     template <typename T>
-    bool range_union(T start_range, size_t range_length, T start, size_t& length)
+    bool range_union(T start_range, uint64_t range_length, T start, uint64_t& length)
     {
         if (!range_contains(start_range, range_length, start, 1))
         {

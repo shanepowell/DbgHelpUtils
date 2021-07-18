@@ -20,7 +20,7 @@ namespace dlg_help_utils
         found_ = true;
     }
 
-    std::experimental::generator<MINIDUMP_MEMORY_DESCRIPTOR const*> memory_list_stream::list() const
+    std::experimental::generator<MINIDUMP_MEMORY_DESCRIPTOR const*> memory_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         for (size_t index = 0; index < memory_list_->NumberOfMemoryRanges; ++index)
         {
@@ -29,7 +29,7 @@ namespace dlg_help_utils
         }
     }
 
-    void const* memory_list_stream::find_address_range(uint64_t const address, size_t const length) const
+    void const* memory_list_stream::find_address_range(uint64_t const address, uint64_t const length) const
     {
         if (!range_utils::validate_range(address, length)) return nullptr;
 
@@ -44,7 +44,7 @@ namespace dlg_help_utils
         return nullptr;
     }
 
-    void const* memory_list_stream::find_any_address_range(uint64_t const address, size_t& length) const
+    void const* memory_list_stream::find_any_address_range(uint64_t const address, uint64_t& length) const
     {
         range_utils::limit_range(address, length);
         if (length == 0) return nullptr;

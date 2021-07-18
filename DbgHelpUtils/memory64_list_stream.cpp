@@ -19,7 +19,7 @@ namespace dlg_help_utils
         found_ = true;
     }
 
-    std::experimental::generator<memory64_entry> memory64_list_stream::list() const
+    std::experimental::generator<memory64_entry> memory64_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         // ReSharper disable once CppInitializedValueIsAlwaysRewritten
         memory64_entry result{};
@@ -36,7 +36,7 @@ namespace dlg_help_utils
         }
     }
 
-    void const* memory64_list_stream::find_address_range(uint64_t const address, size_t const length) const
+    void const* memory64_list_stream::find_address_range(uint64_t const address, uint64_t const length) const
     {
         if (!range_utils::validate_range(address, length)) return nullptr;
 
@@ -52,7 +52,7 @@ namespace dlg_help_utils
         return nullptr;
     }
 
-    void const* memory64_list_stream::find_any_address_range(const uint64_t address, size_t& length) const
+    void const* memory64_list_stream::find_any_address_range(const uint64_t address, uint64_t& length) const
     {
         range_utils::limit_range(address, length);
         if (length == 0) return nullptr;

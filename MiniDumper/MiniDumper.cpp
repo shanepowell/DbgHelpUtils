@@ -40,7 +40,13 @@ int wmain(int const argc, wchar_t* argv[])
             ("filter", po::wvalue<vector<wstring>>(), "filter by supported values")
             ("symboldebug", "debug load symbols")
             ("symboldebugmemory", "debug load symbols memory loading")
-            ("crc32", "generate crc32");
+            ("crc32", "generate crc32")
+            ("type,p", po::wvalue<vector<wstring>>(), "dump symbol type information")
+            ("moduletypes", po::wvalue<vector<wstring>>(), "dump module symbol types")
+            ("address", po::wvalue<vector<wstring>>(), "dump address with type")
+            ("typedebug", "debug type data")
+            ("peb", "process environment block")
+            ;
 
         po::variables_map vm;
         store(parse_command_line(argc, argv, options), vm);

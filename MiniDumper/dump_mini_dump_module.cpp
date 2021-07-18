@@ -38,8 +38,7 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
     auto const module_bases = vector_to_hash_set<uint64_t>(options.filter_values(L"module_base"s));
 
     wcout << L"NumberOfModules: " << module_list.module_list().NumberOfModules << L'\n';
-    size_t i = 0;
-    for (auto const& stream_module : module_list.list())
+    for (size_t i = 0; auto const& stream_module : module_list.list())
     {
         std::filesystem::path p{stream_module.name()};
         auto const any_match = modules.empty() && module_bases.empty();
@@ -50,8 +49,7 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
                                                                            return filesystem_utils::wildcard_match(
                                                                                name, name_match);
                                                                        }) != modules.end();
-        auto const module_bases_match = !module_bases.empty() && ranges::find(module_bases, stream_module->BaseOfImage) != module_bases.end();
-        if (!any_match && !modules_match && !module_bases_match)
+        if (auto const module_bases_match = !module_bases.empty() && ranges::find(module_bases, stream_module->BaseOfImage) != module_bases.end(); !any_match && !modules_match && !module_bases_match)
         {
             ++i;
             continue;
@@ -142,8 +140,7 @@ void dump_mini_dump_unloaded_module_list_stream_data(mini_dump const& mini_dump,
     }
 
     wcout << L"NumberOfUnloadedModules: " << module_list.size() << L'\n';
-    size_t i = 0;
-    for (auto const& module : module_list.list())
+    for (size_t i = 0; auto const& module : module_list.list())
     {
         wcout << L" [" << i << "]: " << module.name() << L'\n';
         wcout << L"   Base: " << to_hex_full(module->BaseOfImage) << L'\n';

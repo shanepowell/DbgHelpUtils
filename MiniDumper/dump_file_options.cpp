@@ -11,15 +11,17 @@ namespace
 }
 
 dump_file_options::dump_file_options(boost::program_options::variables_map const& vm)
-    : dump_header_{vm.count("header") > 0}
-      , dump_streams_{vm.count("streams") > 0}
-      , generate_crc32_{vm.count("crc32") > 0}
-      , hex_dump_stream_data_{vm.count("hexdump") > 0}
-      , hex_dump_memory_data_{vm.count("memoryhexdump") > 0}
-      , continue_on_errors_{vm.count("continue") > 0}
-      , load_symbols_{vm.count("symbols") > 0}
-      , debug_load_symbols_{vm.count("symboldebug") > 0 || vm.count("symboldebugmemory") > 0}
-      , debug_load_symbols_memory_{vm.count("symboldebugmemory") > 0}
+    : dump_header_{ vm.count("header") > 0 }
+    , dump_streams_{ vm.count("streams") > 0 }
+    , generate_crc32_{ vm.count("crc32") > 0 }
+    , hex_dump_stream_data_{ vm.count("hexdump") > 0 }
+    , hex_dump_memory_data_{ vm.count("memoryhexdump") > 0 }
+    , continue_on_errors_{ vm.count("continue") > 0 }
+    , load_symbols_{ vm.count("symbols") > 0 }
+    , debug_symbols_{ vm.count("symboldebug") > 0 || vm.count("symboldebugmemory") > 0 }
+    , debug_load_symbols_memory_{ vm.count("symboldebugmemory") > 0 }
+    , debug_type_data_{ vm.count("typedebug") > 0 }
+    , display_peb_{ vm.count("peb") > 0 }
 {
     if (vm.count("streamindex") > 0)
     {
@@ -28,9 +30,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
 
     if (vm.count("streamtype") > 0)
     {
-        auto stream_types = vm["streamtype"].as<vector<wstring>>();
-
-        for (auto const& stream_type : stream_types)
+        for (auto stream_types = vm["streamtype"].as<vector<wstring>>(); auto const& stream_type : stream_types)
         {
             dump_stream_types_.emplace_back(dlg_help_utils::mini_dump_stream_type::from_string(stream_type));
         }
@@ -38,8 +38,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
 
     if (vm.count("filter") > 0)
     {
-        auto filter_values = vm["filter"].as<vector<wstring>>();
-        for (auto const& filter_value : filter_values)
+        for (auto filter_values = vm["filter"].as<vector<wstring>>(); auto const& filter_value : filter_values)
         {
             auto const pos = filter_value.find_first_of('=');
             if (pos == std::wstring::npos)
@@ -62,12 +61,26 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
             filter_values_[name].emplace_back(std::move(value));
         }
     }
+
+    if(vm.count("type"))
+    {
+        symbol_types_ = vm["type"].as<vector<wstring>>();
+    }
+
+    if(vm.count("moduletypes"))
+    {
+        dump_types_modules_ = vm["moduletypes"].as<vector<wstring>>();
+    }
+
+    if(vm.count("address"))
+    {
+        dump_address_types_ = vm["address"].as<vector<wstring>>();
+    }
 }
 
 std::vector<std::wstring> const& dump_file_options::filter_values(std::wstring const& option) const
 {
-    auto const it = filter_values_.find(option);
-    if (it != filter_values_.end())
+    if (auto const it = filter_values_.find(option); it != filter_values_.end())
     {
         return it->second;
     }

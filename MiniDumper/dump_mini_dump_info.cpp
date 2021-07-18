@@ -220,8 +220,7 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
 void dump_mini_dump_xstate_config_feature(XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t const index,
                                           std::wstring_view const& name)
 {
-    auto const mask = 1ui64 << index;
-    if ((xstate.EnabledFeatures & mask) == mask)
+    if (auto const mask = 1ui64 << index; (xstate.EnabledFeatures & mask) == mask)
     {
         using namespace size_units::base_10;
         wcout << L"      " << name << L'\n';

@@ -1,9 +1,6 @@
 ﻿#pragma once
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
 // ReSharper disable once CppUnusedIncludeDirective
-#include <Windows.h>
+#include "windows_setup.h"
 #include <DbgHelp.h>
 #include <map>
 #include <experimental/generator>

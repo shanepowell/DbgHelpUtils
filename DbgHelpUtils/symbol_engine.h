@@ -1,13 +1,9 @@
 ﻿#pragma once
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <Windows.h>
+// ReSharper disable once CppUnusedIncludeDirective
+#include "windows_setup.h"
 #include <DbgHelp.h>
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
@@ -16,6 +12,7 @@
 
 #include "i_stack_walk_callback.h"
 #include "i_symbol_load_callback.h"
+#include "symbol_type_info.h"
 
 namespace dlg_help_utils
 {
@@ -24,6 +21,9 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::dbg_help
 {
+    extern HANDLE fake_process;
+    extern HANDLE fake_thread;
+
     class i_symbol_callback
     {
     public:
@@ -41,6 +41,33 @@ namespace dlg_help_utils::dbg_help
         virtual void set_downloading_module(std::wstring module_name) = 0;
         [[nodiscard]] virtual std::wstring_view downloading_module() const = 0;
         [[nodiscard]] virtual i_symbol_load_callback& callback() const = 0;
+    };
+
+    class symbol_engine;
+    class callback_handle
+    {
+    private:
+        callback_handle(std::function<void()> on_complete)
+        : on_complete_{std::move(on_complete)}
+        {
+        }
+
+    public:
+        ~callback_handle()
+        {
+            on_complete_();
+        }
+
+        callback_handle(callback_handle const&) = delete;
+        callback_handle(callback_handle &&) = default;
+
+        callback_handle& operator=(callback_handle const&) = delete;
+        callback_handle& operator=(callback_handle &&) = default;
+
+    private:
+        std::function<void()> on_complete_;
+
+        friend class symbol_engine;
     };
 
     class symbol_engine
@@ -71,10 +98,17 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(DWORD64 address);
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(STACKFRAME_EX const& frame);
 
-        [[nodiscard]] static std::experimental::generator<symbol_address_info> stack_walk(
-            stream_thread_context const& thread_context, i_stack_walk_callback& callback);
+        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name) const;
+        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name) const;
+        [[nodiscard]] std::experimental::generator<symbol_type_info> module_types(std::wstring const& module_name);
+
+        [[nodiscard]] static std::experimental::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context);
 
         [[nodiscard]] i_symbol_load_callback& callback() const override { return *callback_; }
+
+        [[nodiscard]] static std::tuple<std::wstring, std::wstring> parse_type_info(std::wstring const& type_name);
+
+        static callback_handle set_callback(i_stack_walk_callback& callback);
 
     private:
         [[nodiscard]] DWORD loading_module_check_sum() const override { return loading_module_check_sum_; }
@@ -95,10 +129,12 @@ namespace dlg_help_utils::dbg_help
 
         void dump_loaded_module_information(DWORD64 handle, DWORD64 module_base,
                                             std::wstring const& module_image_path) const;
-        std::wstring load_module_image_path(DWORD module_size, DWORD module_time_stamp, DWORD module_check_sum,
+        [[nodiscard]] std::wstring load_module_image_path(DWORD module_size, DWORD module_time_stamp, DWORD module_check_sum,
                                             std::wstring const& module_name, DWORD64 handle);
-        DWORD64 load_module(std::wstring const& module_name, DWORD64 module_base, DWORD module_size,
+        [[nodiscard]] DWORD64 load_module(std::wstring const& module_name, DWORD64 module_base, DWORD module_size,
                             MODLOAD_DATA* module_load_info);
+
+        [[nodiscard]] static std::optional<symbol_type_info> load_type_info(DWORD64 module_base, std::wstring const& type_name);
 
     private:
         i_symbol_load_callback* callback_;

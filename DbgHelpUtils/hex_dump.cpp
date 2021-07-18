@@ -86,8 +86,7 @@ namespace dlg_help_utils::hex_dump
             //and now write the actual bytes themselves
             for (size_t column = 0; column < num_bytes; ++column)
             {
-                auto const c = values[bytes_per_row * row + column];
-                if (isprint(c))
+                if (auto const c = values[bytes_per_row * row + column]; isprint(c))
                 {
                     os << static_cast<char>(c);
                 }

@@ -1,8 +1,6 @@
 ﻿#include "exception_utils.h"
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <Windows.h>
+#include "windows_setup.h"
 #include <sstream>
 #include <unordered_map>
 
@@ -457,8 +455,7 @@ namespace dlg_help_utils::exception_utils
 {
     std::wstring_view exception_code_to_string(uint32_t const exception_code)
     {
-        auto const it = g_exception_code_descriptions.find(exception_code);
-        if (it != g_exception_code_descriptions.end())
+        if (auto const it = g_exception_code_descriptions.find(exception_code); it != g_exception_code_descriptions.end())
         {
             return it->second;
         }

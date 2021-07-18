@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp" />
     <ClCompile Include="comment_stream_w.cpp" />
+    <ClCompile Include="common_symbol_names.cpp" />
     <ClCompile Include="cv_info_pdb70.cpp" />
     <ClCompile Include="exception_stream.cpp" />
     <ClCompile Include="exception_utils.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="mini_dump_type.cpp" />
     <ClCompile Include="misc_info_stream.cpp" />
     <ClCompile Include="module_list_stream.cpp" />
+    <ClCompile Include="module_match.cpp" />
     <ClCompile Include="pe_file.cpp" />
     <ClCompile Include="pe_file_memory_mapping.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
@@ -122,9 +124,12 @@
     <ClCompile Include="stream_thread_name.cpp" />
     <ClCompile Include="stream_token_info.cpp" />
     <ClCompile Include="stream_unloaded_module.cpp" />
+    <ClCompile Include="stream_utils.cpp" />
     <ClCompile Include="string_conversation.cpp" />
     <ClCompile Include="string_stream.cpp" />
     <ClCompile Include="symbol_engine.cpp" />
+    <ClCompile Include="symbol_info_buffer.cpp" />
+    <ClCompile Include="symbol_type_utils.cpp" />
     <ClCompile Include="system_info_stream.cpp" />
     <ClCompile Include="system_info_utils.cpp" />
     <ClCompile Include="system_memory_info_stream.cpp" />
@@ -136,15 +141,20 @@
     <ClCompile Include="time_units.cpp" />
     <ClCompile Include="time_utils.cpp" />
     <ClCompile Include="token_info_list_stream.cpp" />
+    <ClCompile Include="symbol_type_info.cpp" />
     <ClCompile Include="unloaded_module_list_stream.cpp" />
     <ClCompile Include="windows_error.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="call_convention.h" />
+    <ClInclude Include="common_symbol_names.h" />
+    <ClInclude Include="print_utils.h" />
     <ClInclude Include="chrono_unit_convert_to_string.h" />
     <ClInclude Include="comment_stream_a.h" />
     <ClInclude Include="comment_stream_w.h" />
     <ClInclude Include="crc.h" />
     <ClInclude Include="cv_info_pdb70.h" />
+    <ClInclude Include="data_kind.h" />
     <ClInclude Include="exception_stream.h" />
     <ClInclude Include="exception_utils.h" />
     <ClInclude Include="exit_scope.h" />
@@ -171,6 +181,7 @@
     <ClInclude Include="mini_dump_type.h" />
     <ClInclude Include="misc_info_stream.h" />
     <ClInclude Include="module_list_stream.h" />
+    <ClInclude Include="module_match.h" />
     <ClInclude Include="pe_file.h" />
     <ClInclude Include="pe_file_memory_mapping.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
@@ -190,10 +201,15 @@
     <ClInclude Include="stream_thread_name.h" />
     <ClInclude Include="stream_token_info.h" />
     <ClInclude Include="stream_unloaded_module.h" />
+    <ClInclude Include="stream_utils.h" />
     <ClInclude Include="string_conversation.h" />
     <ClInclude Include="string_stream.h" />
     <ClInclude Include="symbol_address_info.h" />
+    <ClInclude Include="basic_type.h" />
     <ClInclude Include="symbol_engine.h" />
+    <ClInclude Include="symbol_info_buffer.h" />
+    <ClInclude Include="symbol_type_utils.h" />
+    <ClInclude Include="sym_tag_enum.h" />
     <ClInclude Include="system_info_stream.h" />
     <ClInclude Include="system_info_utils.h" />
     <ClInclude Include="system_memory_info_stream.h" />
@@ -206,10 +222,13 @@
     <ClInclude Include="time_units.h" />
     <ClInclude Include="time_utils.h" />
     <ClInclude Include="token_info_list_stream.h" />
+    <ClInclude Include="symbol_type_info.h" />
+    <ClInclude Include="udt_kind_type.h" />
     <ClInclude Include="unloaded_module_list_stream.h" />
     <ClInclude Include="vector_to_hash_set.h" />
     <ClInclude Include="windows_error.h" />
     <ClInclude Include="wide_runtime_error.h" />
+    <ClInclude Include="windows_setup.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

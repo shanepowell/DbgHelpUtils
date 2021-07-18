@@ -43,7 +43,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::experimental::generator<stream_handle> handle_data_stream::list() const
+    std::experimental::generator<stream_handle> handle_data_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         if (!is_valid()) co_return;
 

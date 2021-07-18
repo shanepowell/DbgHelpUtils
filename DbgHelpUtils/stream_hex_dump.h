@@ -1,8 +1,5 @@
 ﻿#pragma once
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <Windows.h>
+#include "windows_setup.h"
 
 #include <ostream>
 #include <sstream>
@@ -36,7 +33,7 @@ namespace dlg_help_utils::stream_hex_dump
                 {
                     os << std::setw(width_) << std::setfill(fill_char_);
                 }
-                os << std::hex << value_ << std::dec;
+                os << std::hex << to_printable_value() << std::dec;
             }
 
             friend std::wostream& operator<<(std::wostream& os, hex_converter<T> raw_value)
@@ -49,6 +46,27 @@ namespace dlg_help_utils::stream_hex_dump
             {
                 raw_value.write_to_stream(os);
                 return std::move(os);
+            }
+
+        private:
+            [[nodiscard]] auto to_printable_value() const
+            {
+                if constexpr (std::is_same_v<T, char> || std::is_same_v<T, int8_t> || std::is_same_v<T, char8_t> || std::is_same_v<T, char16_t> || std::is_same_v<T, wchar_t>)
+                {
+                    return static_cast<int16_t>(value_);
+                }
+                else if constexpr (std::is_same_v<T, unsigned char> || std::is_same_v<T, uint8_t>)
+                {
+                    return static_cast<uint16_t>(value_);
+                }
+                else if constexpr (std::is_same_v<T, char32_t>)
+                {
+                    return static_cast<int32_t>(value_);
+                }
+                else
+                {
+                    return value_;
+                }
             }
 
         private:

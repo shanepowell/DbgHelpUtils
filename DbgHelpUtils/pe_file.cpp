@@ -89,8 +89,7 @@ namespace dlg_help_utils
         }
 
         current += dos_header_->e_lfanew;
-        auto const nt_magic = *reinterpret_cast<DWORD const*>(current);
-        if (nt_magic != IMAGE_NT_SIGNATURE)
+        if (auto const nt_magic = *reinterpret_cast<DWORD const*>(current); nt_magic != IMAGE_NT_SIGNATURE)
         {
             return;
         }
@@ -106,7 +105,7 @@ namespace dlg_help_utils
 
         if (nt_header_->SizeOfOptionalHeader > 0)
         {
-            switch (auto const magic = *reinterpret_cast<WORD const*>(current))
+            switch (*reinterpret_cast<WORD const*>(current))
             {
             case IMAGE_NT_OPTIONAL_HDR32_MAGIC:
                 if (!is_x86_header() || nt_header_->SizeOfOptionalHeader != sizeof(IMAGE_OPTIONAL_HEADER32) || current +

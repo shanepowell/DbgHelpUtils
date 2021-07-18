@@ -50,8 +50,7 @@ void dump_mini_dump_token_stream_data(mini_dump const& mini_dump, size_t const i
     }
 
     wcout << L"TokenListEntries: " << token_list.size() << L'\n';
-    size_t i = 0;
-    for (auto const& entry : token_list.list())
+    for (size_t i = 0; auto const& entry : token_list.list())
     {
         using namespace size_units::base_10;
         wcout << L" [" << i << L"]:\n";
@@ -90,8 +89,7 @@ void dump_mini_dump_function_table_stream_data(mini_dump const& mini_dump, size_
 
     using namespace size_units::base_10;
     wcout << L"NumberOfDescriptors: " << function_table.size() << L'\n';
-    size_t i = 0;
-    for (auto const& table : function_table.list())
+    for (size_t i = 0; auto const& table : function_table.list())
     {
         wcout << L" Function[" << i << L"]:\n";
         wcout << L"   MinimumAddress: " << to_hex_full(table->MinimumAddress) << L'\n';
@@ -182,8 +180,7 @@ void dump_mini_dump_handle_operation_list_stream_data(mini_dump const& mini_dump
 
     using namespace size_units::base_10;
     wcout << L"NumberOfEntries: " << handle_operation_list.size() << L'\n';
-    size_t i = 0;
-    for (auto const& entry : handle_operation_list.list())
+    for (size_t i = 0; auto const& entry : handle_operation_list.list())
     {
         wcout << L" Handle[" << i << L"]:\n";
         wcout << L"   Handle: " << to_hex_full(entry->Handle) << L'\n';
@@ -239,8 +236,7 @@ void dump_mini_dump_handle_data_stream_data(mini_dump const& mini_dump, size_t c
 
     auto const types = options.filter_values(L"type");
 
-    size_t i{0};
-    for (auto const& entry : handle_data.list())
+    for (size_t i{0}; auto const& entry : handle_data.list())
     {
         if (!types.empty() && ranges::find_if(types,
                                               [name = get_type_name(entry.type_name())](auto const& type_match)
@@ -265,8 +261,7 @@ void dump_mini_dump_handle_data_stream_data(mini_dump const& mini_dump, size_t c
 
         if (entry.handle_descriptor_version() >= 2)
         {
-            size_t object_i{0};
-            for (auto const& handle_object_info : entry.list())
+            for (size_t object_i{0}; auto const& handle_object_info : entry.list())
             {
                 wcout << L"   Object[" << object_i << L"]:\n";
                 wcout << L"     InfoType: " <<

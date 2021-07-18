@@ -1,6 +1,7 @@
 ﻿#include "unloaded_module_list_stream.h"
 
 #include "mini_dump.h"
+#include "module_match.h"
 
 namespace dlg_help_utils
 {
@@ -27,7 +28,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::experimental::generator<stream_unloaded_module> unloaded_module_list_stream::list() const
+    std::experimental::generator<stream_unloaded_module> unloaded_module_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         if (!is_valid()) co_return;
 
@@ -44,6 +45,21 @@ namespace dlg_help_utils
         for (auto&& module : list())
         {
             if (module->BaseOfImage >= address && address < module->BaseOfImage + module->SizeOfImage)
+            {
+                return module;
+            }
+        }
+
+        return std::nullopt;
+    }
+
+    std::optional<stream_unloaded_module> unloaded_module_list_stream::find_module(std::wstring_view const& module_name) const
+    {
+        if (!is_valid()) return std::nullopt;
+
+        for (auto&& module : list())
+        {
+            if (module_match::module_name_match(module.name(), module_name))
             {
                 return module;
             }
