@@ -19,7 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return module_;
     }
 
-    void ModuleView::Module(IMiniDumpModule value)
+    void ModuleView::Module(IMiniDumpModule const value)
     {
         module_ = value;
     }
@@ -29,7 +29,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return test_;
     }
 
-    void ModuleView::Test(hstring value)
+    void ModuleView::Test(hstring const value)
     {
         test_ = value;
     }

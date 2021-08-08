@@ -14,12 +14,12 @@ namespace winrt::MiniDumpExplorer::implementation
         InitializeComponent();
     }
 
-    ISystemTime SystemTimeView::SystemTime()
+    ISystemTime SystemTimeView::SystemTime() const
     {
         return system_time_;
     }
 
-    void SystemTimeView::SystemTime(ISystemTime value)
+    void SystemTimeView::SystemTime(ISystemTime const value)
     {
         system_time_ = value;
     }

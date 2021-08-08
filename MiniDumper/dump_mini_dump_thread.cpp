@@ -250,7 +250,7 @@ void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t c
 
         if (thread.stack() != nullptr)
         {
-            if (options.load_symbols())
+            if (options.display_symbols())
             {
                 stream_stack_dump::hex_dump_stack(wcout, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,
@@ -311,7 +311,7 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
             to_hex(thread->Stack.Memory.DataSize) << L") (" << bytes{thread->Stack.Memory.DataSize} << L")\n";
         if (thread.stack() != nullptr)
         {
-            if (options.load_symbols())
+            if (options.display_symbols())
             {
                 stream_stack_dump::hex_dump_stack(wcout, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,

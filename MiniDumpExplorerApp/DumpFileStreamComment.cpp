@@ -7,7 +7,7 @@
 namespace MiniDumpExplorerApp
 {
 
-    DumpFileStreamComment::DumpFileStreamComment(size_t index, dlg_help_utils::mini_dump const& mini_dump, CommentType const type)
+    DumpFileStreamComment::DumpFileStreamComment(size_t const index, dlg_help_utils::mini_dump const& mini_dump, CommentType const type)
         : index_{index}
         , type_{type}
     {
@@ -42,7 +42,7 @@ namespace MiniDumpExplorerApp
         return comment_;
     }
 
-    void DumpFileStreamComment::InitAsciiComment(size_t index, dlg_help_utils::mini_dump const& mini_dump)
+    void DumpFileStreamComment::InitAsciiComment(size_t const index, dlg_help_utils::mini_dump const& mini_dump)
     {
         dlg_help_utils::comment_stream_a const comment{mini_dump, index};
 
@@ -54,7 +54,7 @@ namespace MiniDumpExplorerApp
         comment_ = winrt::hstring{comment.comment()};
     }
 
-    void DumpFileStreamComment::InitUnicodeComment(size_t index, dlg_help_utils::mini_dump const& mini_dump)
+    void DumpFileStreamComment::InitUnicodeComment(size_t const index, dlg_help_utils::mini_dump const& mini_dump)
     {
         dlg_help_utils::comment_stream_w const comment{mini_dump, index};
 

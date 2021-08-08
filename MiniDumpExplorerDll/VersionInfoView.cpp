@@ -14,12 +14,12 @@ namespace winrt::MiniDumpExplorer::implementation
         InitializeComponent();
     }
 
-    IVsFixedFileInfo VersionInfoView::VersionInfo()
+    IVsFixedFileInfo VersionInfoView::VersionInfo() const
     {
         return version_info_;
     }
 
-    void VersionInfoView::VersionInfo(IVsFixedFileInfo value)
+    void VersionInfoView::VersionInfo(IVsFixedFileInfo const value)
     {
         version_info_ = value;
     }

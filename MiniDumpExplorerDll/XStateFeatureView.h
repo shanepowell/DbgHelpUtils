@@ -8,7 +8,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         XStateFeatureView();
 
-        IXStateFeature Feature();
+        IXStateFeature Feature() const;
         void Feature(IXStateFeature value);
 
     private:

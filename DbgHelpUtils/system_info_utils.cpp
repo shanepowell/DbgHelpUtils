@@ -4,21 +4,23 @@
 #include "windows_setup.h"
 #include <avrfsdk.h>
 #include <unordered_map>
-#include <boost/container_hash/hash.hpp>
 
 #include "flags_string_utils.h"
+#include "hash_combine.h"
 #include "stream_hex_dump.h"
 #include "mini_dump.h"
 
 #pragma comment(lib, "Version.lib")
 
+// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
 #define MEM_EXECUTE_OPTION_DISABLE 0x1
 #define MEM_EXECUTE_OPTION_ENABLE 0x2
 #define MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION 0x4
 #define MEM_EXECUTE_OPTION_PERMANENT 0x8
 #define MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE 0x10
 #define MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE 0x20
-#define MEM_EXECUTE_OPTION_VALID_FLAGS 0x3f
+// #define MEM_EXECUTE_OPTION_VALID_FLAGS 0x3f
+// ReSharper enable CppClangTidyCppcoreguidelinesMacroUsage
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -103,9 +105,9 @@ namespace
         [[nodiscard]] std::size_t hash() const
         {
             std::size_t hash{0};
-            boost::hash_combine(hash, std::hash<platform_type>{}(type_));
-            boost::hash_combine(hash, std::hash<uint32_t>{}(major_version_));
-            boost::hash_combine(hash, std::hash<uint32_t>{}(minor_version_));
+            dlg_help_utils::hash_combine(hash, std::hash<platform_type>{}(type_));
+            dlg_help_utils::hash_combine(hash, std::hash<uint32_t>{}(major_version_));
+            dlg_help_utils::hash_combine(hash, std::hash<uint32_t>{}(minor_version_));
             return hash;
         }
 
@@ -117,8 +119,7 @@ namespace
 
     std::filesystem::path init_running_application_path()
     {
-        wchar_t tmp_buffer[MAX_PATH];
-        if (::GetModuleFileName(nullptr, tmp_buffer, MAX_PATH) > 0)
+        if (wchar_t tmp_buffer[MAX_PATH]; ::GetModuleFileName(nullptr, tmp_buffer, MAX_PATH) > 0)
         {
             return {tmp_buffer};
         }
@@ -128,8 +129,7 @@ namespace
 
     std::filesystem::path init_temp_directory()
     {
-        wchar_t tmp_buffer[MAX_PATH + 2];
-        if (GetTempPathW(MAX_PATH + 2, tmp_buffer) > 0)
+        if (wchar_t tmp_buffer[MAX_PATH + 2]; GetTempPathW(MAX_PATH + 2, tmp_buffer) > 0)
         {
             return {tmp_buffer};
         }
@@ -313,12 +313,10 @@ namespace dlg_help_utils::system_info_utils
                                                 unsigned short const processor_architecture,
                                                 unsigned short const suite_mask)
     {
-        windows_version const key{
-            major_version, minor_version, build_number, product_type, processor_architecture, suite_mask
-        };
-        if (version_strings.contains(key))
+        windows_version const key{major_version, minor_version, build_number, product_type, processor_architecture, suite_mask};
+        if (auto const it = version_strings.find(key); it != version_strings.end())
         {
-            return version_strings.at(key);
+            return it->second;
         }
 
         return {};
@@ -595,27 +593,27 @@ namespace dlg_help_utils::system_info_utils
         return rv;
     }
 
-    std::wstring version_file_flags_to_string(uint32_t flags, uint32_t mask)
+    std::wstring version_file_flags_to_string(uint32_t const flags, uint32_t const mask)
     {
         return flags_string_utils::generate_flags_string(flags & mask, version_file_flag_masks);
     }
 
-    std::vector<std::wstring_view> version_file_flags_to_strings(uint32_t flags, uint32_t mask)
+    std::vector<std::wstring_view> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)
     {
         return flags_string_utils::generate_flags_strings(flags & mask, version_file_flag_masks);
     }
 
-    std::wstring version_file_os_to_string(uint32_t file_os)
+    std::wstring version_file_os_to_string(uint32_t const file_os)
     {
         return flags_string_utils::generate_flags_string(file_os, version_file_os_masks);
     }
 
-    std::vector<std::wstring_view> version_file_os_to_strings(uint32_t file_os)
+    std::vector<std::wstring_view> version_file_os_to_strings(uint32_t const file_os)
     {
         return flags_string_utils::generate_flags_strings(file_os, version_file_os_masks);
     }
 
-    std::wstring_view version_file_type_to_string(uint32_t file_type, uint32_t file_sub_type)
+    std::wstring_view version_file_type_to_string(uint32_t const file_type, uint32_t const file_sub_type)
     {
         switch(file_type)
         {

@@ -10,7 +10,7 @@
 
 namespace MiniDumpExplorerApp
 {
-    DumpFileStreamMiscInfo::DumpFileStreamMiscInfo(size_t index, dlg_help_utils::mini_dump const& mini_dump)
+    DumpFileStreamMiscInfo::DumpFileStreamMiscInfo(size_t const index, dlg_help_utils::mini_dump const& mini_dump)
         : misc_info_{mini_dump, index}
     {
         if(!IsValid())

@@ -14,12 +14,12 @@ namespace winrt::MiniDumpExplorer::implementation
         InitializeComponent();
     }
 
-    IXStateFeature XStateFeatureView::Feature()
+    IXStateFeature XStateFeatureView::Feature() const
     {
         return feature_;
     }
 
-    void XStateFeatureView::Feature(IXStateFeature value)
+    void XStateFeatureView::Feature(IXStateFeature const value)
     {
         feature_ = value;
     }

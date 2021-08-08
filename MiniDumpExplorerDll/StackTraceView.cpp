@@ -19,7 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return stack_trace_;
     }
 
-    void StackTraceView::StackTrace(IStackTrace value)
+    void StackTraceView::StackTrace(IStackTrace const value)
     {
         stack_trace_ = value;
     }

@@ -31,7 +31,7 @@ protected:
 
     static void OnNCCreate(HWND const window, LPARAM const lparam) noexcept
     {
-        auto cs = reinterpret_cast<CREATESTRUCT*>(lparam);
+        auto const cs = reinterpret_cast<CREATESTRUCT*>(lparam);
         auto that = static_cast<DesktopWindow*>(cs->lpCreateParams);
         WINRT_ASSERT(that);
         WINRT_ASSERT(!that->GetHandle());
@@ -41,7 +41,7 @@ protected:
 
 private:
     wil::unique_hwnd m_hMainWnd = nullptr;
-    winrt::guid lastFocusRequestId;
+    winrt::guid lastFocusRequestId{};
     std::vector<winrt::Windows::UI::Xaml::Hosting::DesktopWindowXamlSource::TakeFocusRequested_revoker> m_takeFocusEventRevokers;
     std::vector<winrt::Windows::UI::Xaml::Hosting::DesktopWindowXamlSource> m_xamlSources;
 };
@@ -58,7 +58,7 @@ protected:
 
         if (WM_NCCREATE == message)
         {
-            DesktopWindow::OnNCCreate(window, lparam);
+            OnNCCreate(window, lparam);
         }
         else if (T * that = GetThisFromHandle(window))
         {
@@ -87,7 +87,7 @@ protected:
 
 private:
 
-    void OnActivate(HWND, UINT state, [[maybe_unused]] HWND hwndActDeact, [[maybe_unused]] BOOL fMinimized)
+    void OnActivate(HWND, UINT const state, [[maybe_unused]] HWND hwndActDeact, [[maybe_unused]] BOOL fMinimized)
     {
         if (state == WA_INACTIVE)
         {
@@ -95,7 +95,7 @@ private:
         }
     }
 
-    void OnSetFocus(HWND, [[maybe_unused]] HWND hwndOldFocus)
+    void OnSetFocus(HWND, [[maybe_unused]] HWND hwndOldFocus) const
     {
         if (m_hwndLastFocus) {
             SetFocus(m_hwndLastFocus);

@@ -49,8 +49,7 @@ namespace winrt::MiniDumpExplorer::implementation
             auto tabs = tab_view.TabItems();
             for (auto tab : tabs)
             {
-                auto const view = tab.as<muxc::TabViewItem>().Content().as<DumpFileView>();
-                if(view && file.Path() == view->Path())
+                if(auto const view = tab.as<muxc::TabViewItem>().Content().as<DumpFileView>(); view && file.Path() == view->Path())
                 {
                     tab_view.SelectedIndex(index);
                     co_return;

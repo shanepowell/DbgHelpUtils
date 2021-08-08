@@ -22,12 +22,11 @@ namespace dlg_help_utils::stream_stack_dump
     namespace
     {
         template <typename T>
-        void generate_hex_dump_address(std::wostream& os, T const stack_address, T address,
-                                       std::optional<dbg_help::symbol_address_info> info)
+        void generate_hex_dump_address(std::wostream& os, T const stack_address, T address, std::optional<dbg_help::symbol_address_info> const& info, size_t const hex_length = sizeof(T) * 2)
         {
             if (info && info->in_line)
             {
-                auto const digit_print_size = (sizeof(T) * 2) + 2;
+                auto const digit_print_size = hex_length + 2;
                 os << std::setw(digit_print_size + (stack_address > 0 ? digit_print_size + 2 : 0)) << std::setfill(L' ')
                     << L"(Inline)";
             }
@@ -35,10 +34,10 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 if (stack_address > 0)
                 {
-                    os << stream_hex_dump::to_hex_full(stack_address) << L": ";
+                    os << stream_hex_dump::to_hex(stack_address, hex_length) << L": ";
                 }
 
-                os << stream_hex_dump::to_hex_full(address);
+                os << stream_hex_dump::to_hex_full(address, hex_length);
             }
 
             if (info && info->found)
@@ -74,18 +73,31 @@ namespace dlg_help_utils::stream_stack_dump
         void generate_hex_dump_stack_raw(std::wostream& os, dbg_help::symbol_engine& symbol_engine,
                                          uint64_t const stack_start_address, T const* stack, size_t const stack_size,
                                          size_t const indent, module_list_stream const& module_list,
-                                         unloaded_module_list_stream const& unloaded_module_list)
+                                         unloaded_module_list_stream const& unloaded_module_list, 
+                                         size_t const hex_length)
         {
             const std::wstring indent_str(indent, L' ');
 
             for (size_t index = 0; index < stack_size; ++index)
             {
                 os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', false) << L' ';
-                generate_hex_dump_address(os, stack_start_address + (index * sizeof(T)), stack[index],
-                                          mini_dump_stack_walk::find_symbol_info(
-                                              stack[index], module_list, unloaded_module_list, symbol_engine));
+                generate_hex_dump_address(os
+                    , stack_start_address == 0 ? 0 : stack_start_address + (index * sizeof(T))
+                    , stack[index]
+                    , mini_dump_stack_walk::find_symbol_info(stack[index], module_list, unloaded_module_list, symbol_engine)
+                    , hex_length);
                 os << L'\n';
             }
+        }
+
+        size_t get_hex_length(bool const is_x86_target)
+        {
+            if(is_x86_target)
+            {
+                return sizeof(uint32_t) * 2;
+            }
+
+            return sizeof(uint64_t) * 2;
         }
     }
 
@@ -126,14 +138,34 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
+    void hex_dump_stack(std::wostream& os, mini_dump_stack_walk const& walker, std::vector<uint64_t> const& stack, bool const is_x86_target, size_t const indent)
+    {
+        generate_hex_dump_stack_raw(os
+            , walker.symbol_engine()
+            , 0
+            , stack.data()
+            , stack.size()
+            , indent
+            , walker.module_list()
+            , walker.unloaded_module_list()
+            , get_hex_length(is_x86_target));
+    }
+
     void hex_dump_stack_raw(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine,
                             uint64_t const stack_start_address, uint64_t const* stack, size_t const stack_size,
-                            size_t const indent)
+                            bool const is_x86_target, size_t const indent)
     {
         module_list_stream const module_list{mini_dump};
         unloaded_module_list_stream const unloaded_module_list{mini_dump};
-        generate_hex_dump_stack_raw(os, symbol_engine, stack_start_address, stack, stack_size, indent, module_list,
-                                    unloaded_module_list);
+        generate_hex_dump_stack_raw(os
+            , symbol_engine
+            , stack_start_address
+            , stack
+            , stack_size
+            , indent
+            , module_list
+            , unloaded_module_list
+            , get_hex_length(is_x86_target));
     }
 
     void hex_dump_address(std::wostream& os, mini_dump const& mini_dump, module_list_stream const& module_list,

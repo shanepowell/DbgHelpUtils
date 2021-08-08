@@ -8,7 +8,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         VersionInfoView();
 
-        IVsFixedFileInfo VersionInfo();
+        IVsFixedFileInfo VersionInfo() const;
         void VersionInfo(IVsFixedFileInfo value);
 
     private:

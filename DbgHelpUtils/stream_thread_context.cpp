@@ -14,8 +14,7 @@ namespace dlg_help_utils
         context_ = dump.rva32(location);
         size_ = location.DataSize;
 
-        system_info_stream const system_info{dump};
-        if (system_info.found())
+        if (system_info_stream const system_info{dump}; system_info.found())
         {
             switch (system_info.system_info().ProcessorArchitecture)
             {

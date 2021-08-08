@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "dump_file_options.h"
+#include "dump_mini_dump_heap.h"
 #include "dump_mini_dump_streams.h"
 #include "dump_mini_dump_symbols.h"
 #include "symbol_engine_ui.h"
@@ -109,6 +110,11 @@ void process_user_mode_dump(mini_dump const& dump_file, dump_file_options const&
         dump_mini_dump_peb(dump_file, options, symbol_engine);
     }
 
+    if(options.display_heap())
+    {
+        dump_mini_dump_heap(dump_file, options, symbol_engine);
+    }
+
     for (auto const& module_name : options.dump_types_modules())
     {
         dump_mini_dump_module_symbol_types(dump_file, module_name, options, symbol_engine);
@@ -117,6 +123,11 @@ void process_user_mode_dump(mini_dump const& dump_file, dump_file_options const&
     for (auto const& type : options.symbol_types())
     {
         dump_mini_dump_symbol_type(dump_file, type, options, symbol_engine);
+    }
+
+    for (auto const& symbol_name : options.symbol_names())
+    {
+        dump_mini_dump_symbol_name(dump_file, symbol_name, options, symbol_engine);
     }
 
     for (auto const& address_type : options.dump_address_types())

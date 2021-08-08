@@ -31,6 +31,9 @@
     <Filter Include="PeUtilities">
       <UniqueIdentifier>{28335426-c3bb-4853-bcf8-84838f821f6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Heap">
+      <UniqueIdentifier>{e616095c-6b7e-4f68-b982-40b698b3dfad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -218,6 +221,36 @@
     </ClCompile>
     <ClCompile Include="common_symbol_names.cpp">
       <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="gflags_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="common_symbol_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="nt_heap.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_segment.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_entry.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_ucr_descriptor.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_virtual_block.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="lfh_segment.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="lfh_heap.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_subsegment.cpp">
+      <Filter>Heap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -469,6 +502,42 @@
     </ClInclude>
     <ClInclude Include="common_symbol_names.h">
       <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="gflags_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="common_symbol_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_segment.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="nt_heap.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_entry.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_ucr_descriptor.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_virtual_block.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="hash_combine.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="string_compare.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="lfh_segment.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_subsegment.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="lfh_heap.h">
+      <Filter>Heap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

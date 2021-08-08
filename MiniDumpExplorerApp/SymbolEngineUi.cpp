@@ -23,7 +23,7 @@ void SymbolEngineUi::start_download([[maybe_unused]] std::wstring_view const& mo
     ui_.StartDownload(module_name);
 }
 
-void SymbolEngineUi::download_percent([[maybe_unused]] unsigned percent)
+void SymbolEngineUi::download_percent([[maybe_unused]] unsigned const percent)
 {
     ui_.DownloadPercent(percent);
 }

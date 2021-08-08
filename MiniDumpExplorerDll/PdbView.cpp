@@ -19,7 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return pdb_;
     }
 
-    void PdbView::Pdb(ICvInfoPdb70 value)
+    void PdbView::Pdb(ICvInfoPdb70 const value)
     {
         pdb_ = value;
     }

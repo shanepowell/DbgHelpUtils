@@ -23,15 +23,15 @@
 
 #pragma comment(lib, "dbghelp.lib")
 
-auto const cba_start_op_maybe = 0xA0000000;
+auto constexpr cba_start_op_maybe = 0xA0000000;
 
 using namespace std::string_view_literals;
 using namespace dlg_help_utils::stream_hex_dump;
 
 namespace
 {
-    size_t const trace_max_function_name_length{1000};
-    size_t const max_buffer_size = sizeof(SYMBOL_INFOW) + (trace_max_function_name_length * sizeof(wchar_t));
+    size_t constexpr trace_max_function_name_length{1000};
+    size_t constexpr max_buffer_size = sizeof(SYMBOL_INFOW) + (trace_max_function_name_length * sizeof(wchar_t));
     auto const progress_xml_start = L"<Progress percent=\""sv;
     auto const progress_xml_end = L"\"/>\n"sv;
     auto const downloading_xml_start = L"<Activity name=\"Downloading file "sv;
@@ -225,7 +225,7 @@ namespace
     }
 
     void dump_sizeof_struct_data(ULONG64 const callback_data,
-                                 dlg_help_utils::dbg_help::i_symbol_load_callback& callback)
+                                 dlg_help_utils::dbg_help::i_symbol_load_callback const& callback)
     {
         if (callback.symbol_load_debug_memory() && callback_data != 0)
         {
@@ -946,13 +946,14 @@ namespace dlg_help_utils::dbg_help
         }
 
         std::vector<symbol_type_info> types;
-        // ReSharper disable once CppParameterMayBeConst
+        // ReSharper disable CppParameterMayBeConst
         if(!SymEnumTypesW(fake_process, it->second.base, [](PSYMBOL_INFOW symbol_info, [[maybe_unused]] ULONG symbol_size, PVOID user_context)
-        {
-            std::vector<symbol_type_info>& rv = *static_cast<std::vector<symbol_type_info>*>(user_context);
-            rv.emplace_back(symbol_info->ModBase, symbol_info->Index);
-            return TRUE;
-        }, &types))
+        // ReSharper restore CppParameterMayBeConst
+                          {
+                              std::vector<symbol_type_info>& rv = *static_cast<std::vector<symbol_type_info>*>(user_context);
+                              rv.emplace_back(symbol_info->ModBase, symbol_info->Index);
+                              return TRUE;
+                          }, &types))
         {
             auto const ec = GetLastError();
             throw exceptions::wide_runtime_error{
@@ -965,6 +966,22 @@ namespace dlg_help_utils::dbg_help
         {
             co_yield type;
         }
+    }
+
+    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name)
+    {
+        if(symbol_name.empty())
+        {
+            return std::nullopt;
+        }
+
+        auto const info = symbol_info_buffer::make();
+        if(!SymFromNameW(fake_process, symbol_name.c_str(), &info->info))
+        {
+            return std::nullopt;
+        }
+
+        return symbol_type_info{info->info.ModBase, info->info.Index};
     }
 
     std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context)

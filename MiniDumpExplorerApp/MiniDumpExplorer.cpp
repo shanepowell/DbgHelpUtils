@@ -17,7 +17,7 @@ auto szWindowClass = L"MiniDumpExplorer";
 class ExplorerWindow : public DesktopWindowT<ExplorerWindow>
 {
 public:
-    ExplorerWindow(HINSTANCE hInstance, int nCmdShow) noexcept
+    ExplorerWindow(HINSTANCE const hInstance, int const nCmdShow) noexcept
     {
         WNDCLASSEXW windows_class;
         windows_class.cbSize = sizeof(WNDCLASSEX);
@@ -35,7 +35,7 @@ public:
         WINRT_VERIFY(RegisterClassEx(&windows_class));
         WINRT_ASSERT(!GetHandle());
 
-        const auto wnd = InitInstance(hInstance, nCmdShow);
+        [[maybe_unused]] const auto wnd = InitInstance(hInstance, nCmdShow);
         WINRT_ASSERT(wnd);
     }
 
@@ -52,7 +52,7 @@ public:
     }
 
 private:
-    HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
+    HWND InitInstance(HINSTANCE const hInstance, int const nCmdShow)
     {
         hInst = hInstance; // Store instance handle in our global variable
         auto const main_window = CreateWindow(
@@ -82,7 +82,7 @@ private:
         return true;
     }
 
-    void OnDestroy(HWND window)
+    void OnDestroy(HWND const window)
     {
         if(main_user_control_)
         {
@@ -92,7 +92,7 @@ private:
         base_type::OnDestroy(window);
     }
 
-    void OnResize(HWND, [[maybe_unused]] UINT state, int cx, int cy) const
+    void OnResize(HWND, [[maybe_unused]] UINT state, int const cx, int const cy) const
     {
         SetWindowPos(h_wnd_xaml_island_.get(), nullptr, 0, 0, cx, cy, SWP_SHOWWINDOW);
     }
@@ -106,10 +106,10 @@ private:
     winrt::MiniDumpExplorer::IDumpFileFactory factory_;
 };
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY wWinMain(_In_ HINSTANCE const hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
+    _In_ int       const nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);

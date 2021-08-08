@@ -5,7 +5,7 @@
 
 namespace MiniDumpExplorerApp
 {
-    DumpFileStreamSystemInfo::DumpFileStreamSystemInfo(size_t index, dlg_help_utils::mini_dump const& mini_dump)
+    DumpFileStreamSystemInfo::DumpFileStreamSystemInfo(size_t const index, dlg_help_utils::mini_dump const& mini_dump)
         : system_info_{mini_dump, index}
         , info_{*winrt::make_self<MiniDumpSystemInfo>(system_info_)}
         , csd_version_{system_info_.csd_version()}

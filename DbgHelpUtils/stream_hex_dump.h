@@ -24,16 +24,18 @@ namespace dlg_help_utils::stream_hex_dump
             template <typename Ts>
             void write_to_stream(Ts& os)
             {
+                std::basic_stringstream<typename Ts::char_type, typename Ts::traits_type, std::allocator<typename Ts::char_type>> oss;
                 if (write_header_)
                 {
-                    os << L"0x";
+                    oss << "0x";
                 }
 
                 if (width_ > 0)
                 {
-                    os << std::setw(width_) << std::setfill(fill_char_);
+                    oss << std::setw(width_) << std::setfill(fill_char_);
                 }
-                os << std::hex << to_printable_value() << std::dec;
+                oss << std::hex << to_printable_value() << std::dec;
+                os << std::move(oss).str();
             }
 
             friend std::wostream& operator<<(std::wostream& os, hex_converter<T> raw_value)

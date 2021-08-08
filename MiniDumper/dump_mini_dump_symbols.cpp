@@ -1,13 +1,15 @@
 ﻿#include "dump_mini_dump_symbols.h"
 
-#include <boost/algorithm/string.hpp>
 #include <iomanip>
 #include <iostream>
 
+#include "common_symbol_lookup_utils.h"
 #include "dump_file_options.h"
 #include "DbgHelpUtils/common_symbol_names.h"
+#include "DbgHelpUtils/common_symbol_utils.h"
 #include "DbgHelpUtils/print_utils.h"
 #include "DbgHelpUtils/function_table_stream.h"
+#include "DbgHelpUtils/gflags_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/memory64_list_stream.h"
 #include "DbgHelpUtils/memory_list_stream.h"
@@ -16,10 +18,9 @@
 #include "DbgHelpUtils/pe_file_memory_mapping.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_utils.h"
+#include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/symbol_type_info.h"
 #include "DbgHelpUtils/symbol_type_utils.h"
-#include "DbgHelpUtils/thread_ex_list_stream.h"
-#include "DbgHelpUtils/thread_list_stream.h"
 #include "DbgHelpUtils/thread_names_list_stream.h"
 #include "DbgHelpUtils/unloaded_module_list_stream.h"
 
@@ -47,6 +48,30 @@ void dump_mini_dump_symbol_type(mini_dump const& mini_dump, std::wstring const& 
     else
     {
         wcout << "Symbol Type [" << type_name << "] not found\n";
+    }
+}
+
+void dump_mini_dump_symbol_name(mini_dump const& mini_dump, std::wstring const& symbol_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+{
+    memory_list_stream const memory_list{mini_dump};
+    memory64_list_stream const memory64_list{ mini_dump };
+    function_table_stream const function_table{ mini_dump };
+    module_list_stream const module_list{ mini_dump };
+    unloaded_module_list_stream const unloaded_module_list{ mini_dump };
+    pe_file_memory_mapping pe_file_memory_mappings{};
+    stream_stack_dump::mini_dump_stack_walk const walker{
+        0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
+        unloaded_module_list, pe_file_memory_mappings, symbol_engine
+    };
+
+    if(auto const symbol_info = walker.get_symbol_info(symbol_name); symbol_info.has_value())
+    {
+        wcout << "Symbol Name [" << symbol_name << "] found:\n";
+        dump_symbol_type(symbol_info.value(), options);
+    }
+    else
+    {
+        wcout << "Symbol Name [" << symbol_name << "] not found\n";
     }
 }
 
@@ -121,25 +146,25 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
         {
             hex_dump::hex_dump(wcout, memory, memory_size);
         }
-        else if(boost::iequals(dt, L"str"s))
+        else if(string_compare::iequals(dt, L"str"sv))
         {
             wcout << "string @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
             print_utils::print_str(wcout, static_cast<char const*>(memory), memory_size, find_limit);
             wcout << '\n';
         }
-        else if(boost::iequals(dt, L"wstr"s))
+        else if(string_compare::iequals(dt, L"wstr"sv))
         {
             wcout << "unicode string @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
             print_utils::print_str(wcout, static_cast<wchar_t const*>(memory), memory_size / sizeof(wchar_t), find_limit);
             wcout << '\n';
         }
-        else if(boost::iequals(dt, L"astr"s))
+        else if(string_compare::iequals(dt, L"astr"sv))
         {
             wcout << "string array @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
             print_utils::print_array_str(wcout, static_cast<char const*>(memory), memory_size, 2);
             wcout << '\n';
         }
-        else if(boost::iequals(dt, L"awstr"s))
+        else if(string_compare::iequals(dt, L"awstr"sv))
         {
             wcout << "unicode string array @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
             print_utils::print_array_str(wcout, static_cast<wchar_t const*>(memory), memory_size / sizeof(wchar_t), 2);
@@ -153,43 +178,43 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
                 dt = dt.substr(0, dt.size() - 2);
                 display_hex = true;
             }
-            if(boost::iequals(dt, L"uint8"s))
+            if(string_compare::iequals(dt, L"uint8"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<uint8_t const*>(memory), memory_size, 16, 6, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"int8"s))
+            else if(string_compare::iequals(dt, L"int8"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<int8_t const*>(memory), memory_size, 16, 6, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"uint16"s))
+            else if(string_compare::iequals(dt, L"uint16"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<uint16_t const*>(memory), memory_size, 8, 8, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"int16"s))
+            else if(string_compare::iequals(dt, L"int16"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<int16_t const*>(memory), memory_size, 8, 8, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"uint32"s))
+            else if(string_compare::iequals(dt, L"uint32"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<uint32_t const*>(memory), memory_size, 4, 14, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"int32"s))
+            else if(string_compare::iequals(dt, L"int32"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<int32_t const*>(memory), memory_size, 4, 14, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"uint64"s))
+            else if(string_compare::iequals(dt, L"uint64"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<uint64_t const*>(memory), memory_size, 2, 24, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"int64"s))
+            else if(string_compare::iequals(dt, L"int64"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<int64_t const*>(memory), memory_size, 2, 24, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"float"s))
+            else if(string_compare::iequals(dt, L"float"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<float const*>(memory), memory_size, 2, 24, 2, display_hex);
             }
-            else if(boost::iequals(dt, L"double"s))
+            else if(string_compare::iequals(dt, L"double"sv))
             {
                 dump_address_type_array(wcout, dt, static_cast<double const*>(memory), memory_size, 2, 24, 2, display_hex);
             }
@@ -407,93 +432,7 @@ void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] 
     }
 }
 
-std::optional<DWORD64> get_teb_address(mini_dump const& mini_dump, thread_names_list_stream const names_list, memory_list_stream const memory_list, memory64_list_stream const memory64_list)
-{
-    if(auto const stream = stream_utils::find_stream_for_type(mini_dump, ThreadListStream); stream.has_value())
-    {
-        if(thread_list_stream const thread_list{mini_dump, std::get<size_t>(stream.value())}; thread_list.found() && thread_list.thread_list().NumberOfThreads > 0)
-        {
-            if(stream_thread const thread{mini_dump, thread_list.thread_list().Threads[0], names_list, memory_list, memory64_list}; thread->Teb != 0)
-            {
-                return thread->Teb;
-            }
-        }
-    }
-
-    if(auto const stream = stream_utils::find_stream_for_type(mini_dump, ThreadExListStream); stream.has_value())
-    {
-        if(thread_ex_list_stream const thread_ex_list{mini_dump, std::get<size_t>(stream.value())}; thread_ex_list.found() && thread_ex_list.thread_list().NumberOfThreads > 0)
-        {
-            if(stream_thread_ex const thread{mini_dump, thread_ex_list.thread_list().Threads[0], names_list}; thread->Teb != 0)
-            {
-                return thread->Teb;
-            }
-        }
-    }
-
-    return std::nullopt;
-}
-
-std::optional<dbg_help::symbol_type_info> get_type_info(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name)
-{
-    auto const type_symbol_info = walker.get_type_info(symbol_type_name);
-    if(!type_symbol_info.has_value())
-    {
-        wcout << "Failed to find symbol type: " << symbol_type_name << "\n";
-    }
-
-    return type_symbol_info;
-}
-
-std::optional<DWORD64> find_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type_symbol_info, std::wstring const& symbol_type_name, DWORD64 const address, std::wstring const& field_name)
-{
-    auto address_value = stream_utils::find_field_pointer_value_in_type(walker, type_symbol_info, field_name, address);
-    if(!address_value.has_value() || address_value.value() == 0)
-    {
-        wcout << "Failed to find field " << field_name << " in " << symbol_type_name << '\n';
-        return std::nullopt;
-    }
-
-    return address_value.value();
-}
-
-std::optional<DWORD64> find_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name, DWORD64 const address, std::wstring const& field_name)
-{
-    auto const type_symbol_info = get_type_info(walker, symbol_type_name);
-    if(!type_symbol_info.has_value())
-    {
-        return std::nullopt;
-    }
-
-    return find_field_pointer(walker, type_symbol_info.value(), symbol_type_name, address, field_name);
-}
-
-std::optional<dbg_help::symbol_type_info> dump_field(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name, DWORD64 const address)
-{
-    auto const type_symbol_info = get_type_info(walker, symbol_type_name);
-    if(!type_symbol_info.has_value())
-    {
-        return std::nullopt;
-    }
-
-    auto const data_length = type_symbol_info.value().length();
-    if(!data_length.has_value() || data_length.value() == 0)
-    {
-        wcout << "Symbol " << symbol_type_name << " is zero length\n";
-        return std::nullopt;
-    }
-
-    auto const* memory = walker.get_process_memory(address, data_length.value());
-    if(memory == nullptr)
-    {
-        wcout << "Failed to find " << symbol_type_name << " address [" << stream_hex_dump::to_hex_full(address) << "] in dump file\n";
-        return std::nullopt;
-    }
-    symbol_type_utils::dump_variable_symbol_at(wcout, walker, type_symbol_info.value(), type_symbol_info.value(), address, memory);
-    return type_symbol_info;
-}
-
-void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, [[maybe_unused]] dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     thread_names_list_stream const names_list{mini_dump};
     memory_list_stream const memory_list{mini_dump};
@@ -508,7 +447,7 @@ void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_o
     };
 
     // Find TEB address
-    auto const teb_address = get_teb_address(mini_dump, names_list, memory_list, memory64_list);
+    auto const teb_address = common_symbol_utils::get_teb_address(mini_dump, names_list, memory_list, memory64_list);
     if(!teb_address.has_value())
     {
         wcout << "No TEB address found\n";
@@ -527,7 +466,17 @@ void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_o
         return;
     }
 
-    
+    if(auto const nt_global_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_nt_global_flag_field_symbol_name, peb_address.value()); nt_global_flag.has_value())
+    {
+        wcout << '\n';
+        auto values = dump_gflags_to_strings(static_cast<gflags_utils::gflags>(nt_global_flag.value()));
+        wcout << "NtGlobalFlag: (" << stream_hex_dump::to_hex_full(nt_global_flag.value()) << ")\n";
+        for (auto const& value : values)
+        {
+            wcout << "  " << value << '\n';
+        }
+    }
+
     if(auto const ldr_address = find_field_pointer(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_symbol_name, peb_address.value(), common_symbol_names::peb_structure_ldr_field_symbol_name); ldr_address .has_value())
     {
         wcout << '\n';
@@ -539,9 +488,9 @@ void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_o
         wcout << '\n';
         if(auto user_process_parameters_symbol_info = dump_field(walker, common_symbol_names::rtl_user_process_parameters_structure_symbol_name, peb_address.value()); user_process_parameters_symbol_info.has_value())
         {
-            
-            if(auto const environment_address = find_field_pointer(walker,  user_process_parameters_symbol_info.value(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters_address.value(), common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name); environment_address.has_value())
+            if(auto const environment_address = find_field_pointer(walker, user_process_parameters_symbol_info.value(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters_address.value(), common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name); environment_address.has_value())
             {
+                wcout << '\n';
                 DWORD64 environment_size = std::numeric_limits<uint64_t>::max();;
                 auto const* environment_variable = walker.get_process_memory_range(environment_address.value(), environment_size);
                 if(environment_variable == nullptr)

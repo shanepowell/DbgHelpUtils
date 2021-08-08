@@ -115,8 +115,7 @@ namespace winrt::MiniDumpExplorer::implementation
         else if (args.InvokedItemContainer())
         {
             auto const name = std::wstring{winrt::unbox_value_or<hstring>(args.InvokedItemContainer().Tag(), L"")};
-            auto const it = pages_.find(name);
-            if (it != pages_.end())
+            if (auto const it = pages_.find(name); it != pages_.end())
             {
                 sender.Content(it->second);
             }

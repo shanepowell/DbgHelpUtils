@@ -8,7 +8,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         SystemTimeView();
 
-        ISystemTime SystemTime();
+        ISystemTime SystemTime() const;
         void SystemTime(ISystemTime value);
 
     private:

@@ -17,11 +17,12 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     , hex_dump_stream_data_{ vm.count("hexdump") > 0 }
     , hex_dump_memory_data_{ vm.count("memoryhexdump") > 0 }
     , continue_on_errors_{ vm.count("continue") > 0 }
-    , load_symbols_{ vm.count("symbols") > 0 }
+    , display_symbols_{ vm.count("symbols") > 0 }
     , debug_symbols_{ vm.count("symboldebug") > 0 || vm.count("symboldebugmemory") > 0 }
     , debug_load_symbols_memory_{ vm.count("symboldebugmemory") > 0 }
     , debug_type_data_{ vm.count("typedebug") > 0 }
     , display_peb_{ vm.count("peb") > 0 }
+    , display_heap_{ vm.count("heap") > 0 }
 {
     if (vm.count("streamindex") > 0)
     {
@@ -75,6 +76,11 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     if(vm.count("address"))
     {
         dump_address_types_ = vm["address"].as<vector<wstring>>();
+    }
+
+    if(vm.count("symbol"))
+    {
+        symbol_names_ = vm["symbol"].as<vector<wstring>>();
     }
 }
 

@@ -1,11 +1,12 @@
 ﻿#include "mini_dump_stream_type.h"
 #include <sstream>
-#include <boost/algorithm/string.hpp>
+#include <unordered_map>
 
 #include "stream_hex_dump.h"
+#include "string_compare.h"
 #include "wide_runtime_error.h"
 
-using namespace std;
+using namespace std::string_literals;
 using namespace dlg_help_utils::stream_hex_dump;
 
 namespace
@@ -56,33 +57,33 @@ namespace
 
 namespace dlg_help_utils::mini_dump_stream_type
 {
-    wstring to_string(MINIDUMP_STREAM_TYPE const type)
+    std::wstring to_string(MINIDUMP_STREAM_TYPE const type)
     {
         if (type > LastReservedStream)
         {
-            return (wostringstream{} << L"User Stream Type [" << to_hex(type) << L"]").str();
+            return (std::wostringstream{} << L"User Stream Type [" << to_hex(type) << L"]").str();
         }
 
         auto const it = type_map.find(type);
         if (it == type_map.end())
         {
-            return (wostringstream{} << L"Unknown Stream Type [" << to_hex(type) << L"]").str();
+            return (std::wostringstream{} << L"Unknown Stream Type [" << to_hex(type) << L"]").str();
         }
 
         return std::get<0>(it->second);
     }
 
-    wstring to_enum_string(MINIDUMP_STREAM_TYPE const type)
+    std::wstring to_enum_string(MINIDUMP_STREAM_TYPE const type)
     {
         if (type > LastReservedStream)
         {
-            return (wostringstream{} << to_hex(type)).str();
+            return (std::wostringstream{} << to_hex(type)).str();
         }
 
         auto const it = type_map.find(type);
         if (it == type_map.end())
         {
-            return (wostringstream{} << L"unknown stream type [" << to_hex(type) << L"]").str();
+            return (std::wostringstream{} << L"unknown stream type [" << to_hex(type) << L"]").str();
         }
 
         return std::get<1>(it->second);
@@ -111,7 +112,7 @@ namespace dlg_help_utils::mini_dump_stream_type
 
         for (size_t i = 0; i <= LastReservedStream; ++i)
         {
-            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); boost::iequals(type, to_string(enum_type)) || boost::iequals(type, to_enum_string(enum_type)))
+            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); string_compare::iequals(type, to_string(enum_type)) || string_compare::iequals(type, to_enum_string(enum_type)))
             {
                 return enum_type;
             }
@@ -119,7 +120,7 @@ namespace dlg_help_utils::mini_dump_stream_type
 
         // ReSharper disable once StringLiteralTypo
         throw exceptions::wide_runtime_error{
-            (wostringstream{} << "invalid MINIDUMP_STREAM_TYPE : [" << type << "]").str()
+            (std::wostringstream{} << "invalid MINIDUMP_STREAM_TYPE : [" << type << "]").str()
         };
     }
 }

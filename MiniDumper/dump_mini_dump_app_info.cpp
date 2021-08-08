@@ -12,6 +12,7 @@
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
+#include "DbgHelpUtils/system_info_stream.h"
 #include "DbgHelpUtils/system_info_utils.h"
 #include "DbgHelpUtils/time_utils.h"
 #include "DbgHelpUtils/token_info_list_stream.h"
@@ -178,6 +179,8 @@ void dump_mini_dump_handle_operation_list_stream_data(mini_dump const& mini_dump
         return;
     }
 
+    system_info_stream const system_info{mini_dump};
+
     using namespace size_units::base_10;
     wcout << L"NumberOfEntries: " << handle_operation_list.size() << L'\n';
     for (size_t i = 0; auto const& entry : handle_operation_list.list())
@@ -190,11 +193,16 @@ void dump_mini_dump_handle_operation_list_stream_data(mini_dump const& mini_dump
         wcout << L"   BackTraceInformation:\n";
         wcout << L"     Index: " << entry->BackTraceInformation.Index << L'\n';
 
-        if (options.load_symbols())
+        if (options.display_symbols())
         {
-            stream_stack_dump::hex_dump_stack_raw(wcout, mini_dump, symbol_engine, 0,
-                                                  entry->BackTraceInformation.ReturnAddresses,
-                                                  entry->BackTraceInformation.Depth, 6);
+            stream_stack_dump::hex_dump_stack_raw(wcout
+                , mini_dump
+                , symbol_engine
+                , 0
+                , entry->BackTraceInformation.ReturnAddresses
+                , entry->BackTraceInformation.Depth
+                , system_info.is_x86()
+                , 6);
         }
         else
         {

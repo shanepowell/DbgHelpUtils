@@ -3,7 +3,7 @@
 
 namespace MiniDumpExplorerApp
 {
-    XStateFeature::XStateFeature(XSTATE_FEATURE const& xstate_feature, std::wstring_view name)
+    XStateFeature::XStateFeature(XSTATE_FEATURE const& xstate_feature, std::wstring_view const name)
         : xstate_feature_{xstate_feature}
         , name_{name}
     {

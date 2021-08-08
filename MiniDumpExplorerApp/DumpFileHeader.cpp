@@ -8,7 +8,7 @@
 
 namespace MiniDumpExplorerApp
 {
-    DumpFileHeader::DumpFileHeader(dlg_help_utils::mini_dump& dump_file, winrt::MiniDumpExplorer::DumpFileType type)
+    DumpFileHeader::DumpFileHeader(dlg_help_utils::mini_dump& dump_file, winrt::MiniDumpExplorer::DumpFileType const type)
         : dump_file_{dump_file}
         , type_{type}
     {

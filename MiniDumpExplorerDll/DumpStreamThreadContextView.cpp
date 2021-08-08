@@ -19,7 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return thread_context_;
     }
 
-    void DumpStreamThreadContextView::ThreadContext(IDumpFileStreamThreadContext value)
+    void DumpStreamThreadContextView::ThreadContext(IDumpFileStreamThreadContext const value)
     {
         thread_context_ = value;
     }

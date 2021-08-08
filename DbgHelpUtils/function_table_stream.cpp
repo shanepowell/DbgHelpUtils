@@ -29,8 +29,7 @@ namespace dlg_help_utils
                 sizeof(MINIDUMP_FUNCTION_TABLE_STREAM) + function_table_list_->SizeOfAlignPad);
             is_valid_ = true;
 
-            system_info_stream const system_info{dump};
-            if (system_info.is_x86() || system_info.is_x64())
+            if (system_info_stream const system_info{dump}; system_info.is_x86() || system_info.is_x64())
             {
                 if (function_table_list_->SizeOfFunctionEntry == SIZEOF_RFPO_DATA)
                 {

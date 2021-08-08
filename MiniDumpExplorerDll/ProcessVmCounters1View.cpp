@@ -19,7 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return vm_counters_;
     }
 
-    void ProcessVmCounters1View::VmCounters(IMiniDumpProcessVmCounters1 value)
+    void ProcessVmCounters1View::VmCounters(IMiniDumpProcessVmCounters1 const value)
     {
         vm_counters_ = value;
     }

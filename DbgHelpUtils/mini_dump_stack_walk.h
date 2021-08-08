@@ -51,7 +51,12 @@ namespace dlg_help_utils::stream_stack_dump
             unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
 
         [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_type_info(std::wstring const& type_name) const;
+        [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_symbol_info(std::wstring const& symbol_name) const;
         [[nodiscard]] std::experimental::generator<dbg_help::symbol_type_info> module_types(std::wstring const& module_name) const;
+
+        [[nodiscard]] dbg_help::symbol_engine& symbol_engine() const { return symbol_engine_; }
+        [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }
+        [[nodiscard]] unloaded_module_list_stream const& unloaded_module_list() const { return unloaded_module_list_; }
 
     private:
         [[nodiscard]] bool do_read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size,

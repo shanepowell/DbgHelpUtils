@@ -46,7 +46,7 @@ void dump_mini_dump_exception_stream_data(mini_dump const& mini_dump, size_t con
 
     dump_mini_dump_thread_context(exception_stream.thread_context(), options);
 
-    if (options.load_symbols())
+    if (options.display_symbols())
     {
         if (auto const stack_info = find_thread_stack(mini_dump, exception.ThreadId))
         {

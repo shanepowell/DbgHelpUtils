@@ -16,6 +16,8 @@ namespace dlg_help_utils
 
 void dump_mini_dump_symbol_type(dlg_help_utils::mini_dump const& mini_dump, std::wstring const& type_name, dump_file_options const& options,
                                 dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+void dump_mini_dump_symbol_name(dlg_help_utils::mini_dump const& mini_dump, std::wstring const& symbol_name, dump_file_options const& options,
+                                dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
 void dump_mini_dump_module_symbol_types(dlg_help_utils::mini_dump const& mini_dump, std::wstring const& module_name, dump_file_options const& options,
                                 dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
 void dump_mini_dump_address(dlg_help_utils::mini_dump const& mini_dump, std::wstring const& address, dump_file_options const& options,

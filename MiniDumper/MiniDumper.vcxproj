@@ -84,11 +84,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="common_symbol_lookup_utils.cpp" />
     <ClCompile Include="dump_file_options.cpp" />
     <ClCompile Include="dump_mini_dump.cpp" />
     <ClCompile Include="dump_mini_dump_app_info.cpp" />
     <ClCompile Include="dump_mini_dump_comment.cpp" />
     <ClCompile Include="dump_mini_dump_exception.cpp" />
+    <ClCompile Include="dump_mini_dump_heap.cpp" />
     <ClCompile Include="dump_mini_dump_info.cpp" />
     <ClCompile Include="dump_mini_dump_memory.cpp" />
     <ClCompile Include="dump_mini_dump_module.cpp" />
@@ -104,11 +106,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common_symbol_lookup_utils.h" />
     <ClInclude Include="dump_file_options.h" />
     <ClInclude Include="dump_mini_dump.h" />
     <ClInclude Include="dump_mini_dump_app_info.h" />
     <ClInclude Include="dump_mini_dump_comment.h" />
     <ClInclude Include="dump_mini_dump_exception.h" />
+    <ClInclude Include="dump_mini_dump_heap.h" />
     <ClInclude Include="dump_mini_dump_info.h" />
     <ClInclude Include="dump_mini_dump_memory.h" />
     <ClInclude Include="dump_mini_dump_module.h" />

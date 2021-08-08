@@ -13,7 +13,7 @@
 namespace MiniDumpExplorerApp
 {
 
-    DumpFileStream::DumpFileStream(size_t index, MINIDUMP_DIRECTORY const& directory_entry, dlg_help_utils::mini_dump const& mini_dump, DbgHelpDispatcher& dispatcher, MiniDumpData& mini_data_data, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
+    DumpFileStream::DumpFileStream(size_t const index, MINIDUMP_DIRECTORY const& directory_entry, dlg_help_utils::mini_dump const& mini_dump, DbgHelpDispatcher& dispatcher, MiniDumpData& mini_data_data, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
     : index_{index}
     , directory_entry_{directory_entry}
     , mini_dump_{mini_dump}

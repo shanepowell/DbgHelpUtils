@@ -4,7 +4,7 @@
 
 namespace MiniDumpExplorerApp
 {
-    DumpFileStreamModuleList::DumpFileStreamModuleList(size_t index, dlg_help_utils::mini_dump const& mini_dump)
+    DumpFileStreamModuleList::DumpFileStreamModuleList(size_t const index, dlg_help_utils::mini_dump const& mini_dump)
         : module_list_{mini_dump, index}
     {
         for (auto const& stream_module : module_list_.list())

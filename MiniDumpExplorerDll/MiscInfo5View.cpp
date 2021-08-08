@@ -19,7 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return stream_;
     }
 
-    void MiscInfo5View::Stream(IDumpFileStreamMiscInfo value)
+    void MiscInfo5View::Stream(IDumpFileStreamMiscInfo const value)
     {
         stream_ = value;
     }

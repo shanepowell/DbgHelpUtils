@@ -615,6 +615,31 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine_.get_type_info(module_name, specific_type_name);
     }
 
+    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_symbol_info(std::wstring const& symbol_name) const
+    {
+        auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(symbol_name);
+
+        if(specific_type_name.empty())
+        {
+            return std::nullopt;
+        }
+
+        if(module_name.empty())
+        {
+            // load all loaded modules...
+            for (auto const& module : module_list_.list())
+            {
+                load_module(module);
+            }
+        }
+        else
+        {
+            load_module(module_name);
+        }
+
+        return dbg_help::symbol_engine::get_symbol_info(symbol_name);
+    }
+
     std::experimental::generator<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
     {
         load_module(module_name);
