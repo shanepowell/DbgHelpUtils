@@ -19,6 +19,7 @@ namespace dlg_help_utils::heap
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
+    , is_valid_ust_area_{is_valid_ust_area()}
     , unused_bytes_{get_unused_bytes()}
     , requested_size_{get_requested_size()}
     , user_address_{get_user_address()}
@@ -39,11 +40,33 @@ namespace dlg_help_utils::heap
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
+    , is_valid_ust_area_{is_valid_ust_area()}
     , unused_bytes_{get_unused_bytes()}
     , requested_size_{get_requested_size()}
     , user_address_{get_user_address()}
     , end_unused_bytes_{get_end_unused_bytes()}
     , ust_address_{get_ust_address()}
+    , allocation_stack_trace_{get_allocation_stack_trace()}
+    {
+    }
+
+    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, uint64_t const end_address, std::shared_ptr<char[]> buffer, uint64_t const size, uint16_t const unused_bytes, VirtualAllocType)
+    : heap_{heap}
+    , heap_entry_address_{heap_entry_address}
+    , buffer_{std::move(buffer)}
+    , small_tag_index_offset_{get_small_tag_index_offset() }
+    , flags_{get_flags()}
+    , size_{size}
+    , previous_size_{get_previous_size()}
+    , segment_offset_{get_segment_offset()}
+    , is_valid_ust_area_{is_valid_ust_area()}
+    , unused_bytes_{unused_bytes}
+    , requested_size_{get_virtual_alloc_requested_size(size, unused_bytes)}
+    , user_address_{get_user_address()}
+    , end_unused_bytes_{get_virtual_alloc_end_unused_bytes(end_address)}
+    , ust_address_{get_ust_address()}
+    , is_valid_{get_is_valid(size_units::base_10::bytes{-1})}
+    , is_virtual_alloc_{true}
     , allocation_stack_trace_{get_allocation_stack_trace()}
     {
     }
@@ -58,6 +81,7 @@ namespace dlg_help_utils::heap
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
+    , is_valid_ust_area_{is_valid_ust_area()}
     , unused_bytes_{get_unused_bytes()}
     , requested_size_{get_requested_size()}
     , user_address_{get_user_address()}
@@ -158,9 +182,8 @@ namespace dlg_help_utils::heap
         return get_field_value<uint8_t>(common_symbol_names::heap_entry_unused_bytes_field_symbol_name);
     }
 
-    size_units::base_10::bytes heap_entry::get_unused_bytes() const
+    bool heap_entry::is_valid_ust_area() const
     {
-        size_units::base_10::bytes unused_bytes_data;
         if(heap().user_stack_db_enabled() && is_busy())
         {
             const auto extra = stream_utils::read_field_value<uint16_t>(heap().walker(), heap_entry_address_ + heap_entry_length_ + get_ust_extra_offset());
@@ -169,6 +192,19 @@ namespace dlg_help_utils::heap
                 throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << common_symbol_names::heap_entry_structure_symbol_name << " can't get ust extra field data").str()};
             }
 
+            auto const unused_bytes_data = size_units::base_10::bytes{extra.value()};
+            return unused_bytes_data <= size();
+        }
+
+        return false;
+    }
+
+    size_units::base_10::bytes heap_entry::get_unused_bytes() const
+    {
+        size_units::base_10::bytes unused_bytes_data;
+        if(is_valid_ust_area_)
+        {
+            const auto extra = stream_utils::read_field_value<uint16_t>(heap().walker(), heap_entry_address_ + heap_entry_length_ + get_ust_extra_offset());
             unused_bytes_data = size_units::base_10::bytes{extra.value()};
         }
         else
@@ -176,9 +212,9 @@ namespace dlg_help_utils::heap
             unused_bytes_data = size_units::base_10::bytes{unused_bytes_raw()};
         }
 
-        if(unused_bytes_data > size_)
+        if(unused_bytes_data > size())
         {
-            return size_ - unused_bytes_data;
+            return size() - unused_bytes_data;
         }
 
         return unused_bytes_data;
@@ -187,28 +223,28 @@ namespace dlg_help_utils::heap
     size_units::base_10::bytes heap_entry::get_requested_size() const
     {
         size_units::base_10::bytes unused_bytes_data;
-        if(heap().user_stack_db_enabled() && is_busy())
+        if(is_valid_ust_area_)
         {
-            unused_bytes_data = unused_bytes_;
+            unused_bytes_data = unused_bytes();
         }
         else
         {
             unused_bytes_data = size_units::base_10::bytes{unused_bytes_raw()};
         }
 
-        if(unused_bytes_data > size_)
+        if(unused_bytes_data > size())
         {
-            return unused_bytes_data - size_;
+            return unused_bytes_data - size();
         }
 
-        return size_ - unused_bytes_data;
+        return size() - unused_bytes_data;
     }
 
     uint64_t heap_entry::get_user_address() const
     {
         if(is_busy() && !is_heap_allocation())
         {
-            if(heap().user_stack_db_enabled())
+            if(is_valid_ust_area_)
             {
                 return heap_entry_address_ + heap_entry_length_ + get_ust_data_size();
             }
@@ -230,7 +266,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_entry::get_ust_address() const
     {
-        if(!heap().user_stack_db_enabled() || is_heap_allocation() || !is_busy())
+        if(!is_valid_ust_area_ || is_heap_allocation() || !is_busy())
         {
             return 0;
         }
@@ -345,6 +381,16 @@ namespace dlg_help_utils::heap
         }
 
         return trace;
+    }
+
+    size_units::base_10::bytes heap_entry::get_virtual_alloc_requested_size(uint64_t const size, uint16_t const unused_bytes)
+    {
+        return size_units::base_10::bytes{size - unused_bytes};
+    }
+
+    size_units::base_10::bytes heap_entry::get_virtual_alloc_end_unused_bytes(uint64_t const end_address) const
+    {
+        return size_units::base_10::bytes{end_address - (user_address() + requested_size().count())};
     }
 
     dbg_help::symbol_type_info heap_entry::get_heap_entry_symbol_type() const

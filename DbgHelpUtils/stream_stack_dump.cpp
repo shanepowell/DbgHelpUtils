@@ -37,7 +37,7 @@ namespace dlg_help_utils::stream_stack_dump
                     os << stream_hex_dump::to_hex(stack_address, hex_length) << L": ";
                 }
 
-                os << stream_hex_dump::to_hex_full(address, hex_length);
+                os << stream_hex_dump::to_hex(address, hex_length);
             }
 
             if (info && info->found)

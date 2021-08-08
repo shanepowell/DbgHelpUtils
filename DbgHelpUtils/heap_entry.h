@@ -19,8 +19,13 @@ namespace dlg_help_utils::heap
         {
         };
 
+        struct VirtualAllocType
+        {
+        };
+
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<char[]> buffer);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<char[]> buffer, uint16_t block_size, LfhEntryType);
+        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t end_address, std::shared_ptr<char[]> buffer, uint64_t size, uint16_t unused_bytes, VirtualAllocType);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<char[]> buffer, size_units::base_10::bytes previous_size);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t uncommitted_size);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t unknown_size, UnknownSizeType);
@@ -41,6 +46,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint8_t segment_offset() const { return segment_offset_; }
         [[nodiscard]] bool is_uncommitted() const { return buffer_ == nullptr && flags_ == 0; }
         [[nodiscard]] bool is_unknown() const { return buffer_ == nullptr && flags_ == FlagBusy; }
+        [[nodiscard]] bool is_virtual_alloc() const { return is_virtual_alloc_ || buffer_ == nullptr && flags_ == FlagBusy; }
         [[nodiscard]] bool is_front_padded() const { return size_units::base_10::bytes{unused_bytes_raw()} > size_; }
         [[nodiscard]] bool is_lfh_entry() const { return (raw_unused_bytes_ & FlagLFHMarker) == FlagLFHMarker; }
         [[nodiscard]] bool is_lfh_busy() const;
@@ -75,6 +81,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_previous_size() const;
         [[nodiscard]] uint8_t get_segment_offset() const;
         [[nodiscard]] uint8_t get_raw_unused_bytes() const;
+        [[nodiscard]] bool is_valid_ust_area() const;
         [[nodiscard]] size_units::base_10::bytes get_unused_bytes() const;
         [[nodiscard]] size_units::base_10::bytes get_requested_size() const;
         [[nodiscard]] uint64_t get_user_address() const;
@@ -85,6 +92,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_ust_address_depth_offset() const;
         [[nodiscard]] uint64_t get_ust_address_stack_offset() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
+        [[nodiscard]] static size_units::base_10::bytes get_virtual_alloc_requested_size(uint64_t size, uint16_t unused_bytes);
+        [[nodiscard]] size_units::base_10::bytes get_virtual_alloc_end_unused_bytes(uint64_t end_address) const;
 
         [[nodiscard]] dbg_help::symbol_type_info get_heap_entry_symbol_type() const;
         [[nodiscard]] uint64_t get_heap_entry_length() const;
@@ -102,12 +111,14 @@ namespace dlg_help_utils::heap
         size_units::base_10::bytes const previous_size_{0};
         uint8_t const segment_offset_{0};
         uint8_t const raw_unused_bytes_{0};
+        bool const is_valid_ust_area_{false};
         size_units::base_10::bytes unused_bytes_{0};
         size_units::base_10::bytes requested_size_{0};
         uint64_t const user_address_{0};
         size_units::base_10::bytes end_unused_bytes_{0};
         uint64_t const ust_address_{0};
         bool const is_valid_{true};
+        bool const is_virtual_alloc_{false};
         std::vector<uint64_t> const allocation_stack_trace_{};
     };
 

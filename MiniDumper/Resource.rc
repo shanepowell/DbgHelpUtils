@@ -71,7 +71,7 @@ BEGIN
             VALUE "FileDescription", "MiniDumper"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "MiniDump.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2020"
+            VALUE "LegalCopyright", "Copyright (C) 2021"
             VALUE "OriginalFilename", "MiniDump.exe"
             VALUE "ProductName", "MinDump Utlities"
             VALUE "ProductVersion", "1.0.0.1"

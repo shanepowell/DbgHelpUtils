@@ -228,7 +228,7 @@ namespace
                 }
                 if ((entry.flags() & heap::heap_entry::FlagExtraPresent) == heap::heap_entry::FlagExtraPresent)
                 {
-                    wcout << ", extra";
+                    wcout << ", tail fill";
                 }
                 if ((entry.flags() & heap::heap_entry::FlagFillPattern) == heap::heap_entry::FlagFillPattern)
                 {

@@ -42,7 +42,7 @@ namespace dlg_help_utils::heap
         auto const committed_size = committed();
         if(auto const reserved_size = reserved(); committed_size > size_units::base_10::bytes{0})
         {
-            auto entry_address = descriptor_address() + busy_block_offset_;
+            auto const entry_address = descriptor_address() + busy_block_offset_;
             auto const last_address = address() + committed_size.count();
             auto const last_committed_address = address() + reserved_size.count();
 
@@ -54,13 +54,24 @@ namespace dlg_help_utils::heap
             else
             {
                 heap_.decode_heap_entry(entry_data, buffer.get());
-                heap_entry const entry{heap_, entry_address, std::move(buffer)};
-                co_yield entry;
-                entry_address += entry.size().count();
 
-                if(entry_address < last_address)
+                uint16_t unused_bytes{0};
+                if(heap_.is_x86_target())
+                {
+                    memcpy(&unused_bytes, buffer.get(), sizeof(uint16_t));
+                }
+                if(heap_.is_x64_target())
+                {
+                    memcpy(&unused_bytes, buffer.get() + 8, sizeof(uint16_t));
+                }
+
+                if(unused_bytes > committed_size.count())
                 {
                     co_yield heap_entry{heap_, entry_address, last_address -  entry_address, heap_entry::UnknownSizeType{}};
+                }
+                else
+                {
+                    co_yield heap_entry{heap_, entry_address, last_address, std::move(buffer), static_cast<uint64_t>(committed_size.count()), unused_bytes, heap_entry::VirtualAllocType{} };
                 }
             }
 
