@@ -27,6 +27,17 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
+    bool is_printable_char(T ch)
+    {
+        if(static_cast<int>(ch) < -1 || static_cast<int>(ch) > 255)
+        {
+            return false;
+        }
+
+        return std::isprint(ch) != 0;
+    }
+
+    template<typename T>
     void print_str(std::wostream& os, T const* str, size_t const max_size, bool const stop_at_null)
     {
         for(size_t i = 0; i < max_size; ++i)
@@ -36,7 +47,7 @@ namespace dlg_help_utils::print_utils
                 return;
             }
 
-            if(std::isprint(str[i]))
+            if(is_printable_char(str[i]))
             {
                 os << print_utils::to_printable_char(str[i]);
             }
@@ -76,7 +87,7 @@ namespace dlg_help_utils::print_utils
             }
 
             null_found = false;
-            if(std::isprint(str[i]))
+            if(is_printable_char(str[i]))
             {
                 os << print_utils::to_printable_char(str[i]);
             }
@@ -169,7 +180,7 @@ namespace dlg_help_utils::print_utils
                 ss << std::to_wstring(values[i]);
             }
 
-            os << std::setw(element_width) << std::setfill(L' ') << std::move(ss).str();
+            os << std::setw(static_cast<std::streamsize>(element_width)) << std::setfill(L' ') << std::move(ss).str();
         }
     }
 }

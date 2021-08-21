@@ -3,7 +3,8 @@
 #include <sstream>
 
 #include "mini_dump.h"
-#include "nt_heap.h"
+#include "process_environment_block.h"
+#include "stream_hex_dump.h"
 #include "string_compare.h"
 #include "symbol_type_info.h"
 #include "sym_tag_enum.h"
@@ -95,6 +96,73 @@ namespace dlg_help_utils::stream_utils
 
         auto const data_type = pointer_type.type();
         if(!data_type.has_value())
+        {
+            return std::nullopt;
+        }
+
+        memory_address += (index * data_type_length.value());
+
+        std::optional<uint64_t> value;
+        switch(data_type_length.value())
+        {
+        case 4:
+            value = read_field_value<uint32_t, uint64_t>(walker, memory_address);
+            break;
+
+        case 8:
+            value = read_field_value<uint64_t, uint64_t>(walker, memory_address);
+            break;
+
+        default:
+            return std::nullopt;
+        }
+
+        if(!value.has_value())
+        {
+            return std::nullopt;
+        }
+
+        return std::make_pair(data_type.value(), value.value());
+    }
+
+    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> get_field_pointer_array_type_and_value(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& array_type, uint64_t memory_address, size_t const index)
+    {
+        if(auto const type_tag_data = array_type.sym_tag(); type_tag_data.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::ArrayType)
+        {
+            return std::nullopt;
+        }
+
+        auto const pointer_type = array_type.type();
+        if(!pointer_type.has_value())
+        {
+            return std::nullopt;
+        }
+
+        if(auto const type_tag_data = pointer_type.value().sym_tag(); type_tag_data.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::PointerType)
+        {
+            return std::nullopt;
+        }
+
+
+        auto const array_count = array_type.array_count();
+        if(!array_count.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const data_type_length = pointer_type.value().length();
+        if(!data_type_length.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const data_type = pointer_type.value().type();
+        if(!data_type.has_value())
+        {
+            return std::nullopt;
+        }
+
+        if(index < 0 || index > array_count.value())
         {
             return std::nullopt;
         }
@@ -261,14 +329,14 @@ namespace dlg_help_utils::stream_utils
         return std::make_tuple(std::move(buffer), data_type_length.value(), memory_address + offset);
     }
 
-    uint32_t machine_field_size(heap::nt_heap const& heap)
+    uint32_t machine_field_size(process::process_environment_block const& peb)
     {
-        if(heap.is_x86_target())
+        if(peb.is_x86_target())
         {
             return sizeof(uint32_t);
         }
 
-        if(heap.is_x64_target())
+        if(peb.is_x64_target())
         {
             return sizeof(uint64_t);
         }
@@ -276,31 +344,31 @@ namespace dlg_help_utils::stream_utils
         return 0;
     }
 
-    std::optional<uint64_t> read_machine_size_field_value(heap::nt_heap const& heap, uint64_t const memory_address)
+    std::optional<uint64_t> read_machine_size_field_value(process::process_environment_block const& peb, uint64_t const memory_address)
     {
-        if(heap.is_x86_target())
+        if(peb.is_x86_target())
         {
-            return read_field_value<uint32_t, uint64_t>(heap.walker(), memory_address);
+            return read_field_value<uint32_t, uint64_t>(peb.walker(), memory_address);
         }
 
-        if(heap.is_x64_target())
+        if(peb.is_x64_target())
         {
-            return read_field_value<uint64_t>(heap.walker(), memory_address);
+            return read_field_value<uint64_t>(peb.walker(), memory_address);
         }
 
         return std::nullopt;
     }
 
-    std::optional<uint64_t> find_machine_size_field_value(heap::nt_heap const& heap, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
+    std::optional<uint64_t> find_machine_size_field_value(process::process_environment_block const& peb, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
     {
-        if(heap.is_x86_target())
+        if(peb.is_x86_target())
         {
-            return find_basic_type_field_value_in_type<uint32_t>(heap.walker(), type, field_name, memory_address);
+            return find_basic_type_field_value_in_type<uint32_t>(peb.walker(), type, field_name, memory_address);
         }
 
-        if(heap.is_x64_target())
+        if(peb.is_x64_target())
         {
-            return find_basic_type_field_value_in_type<uint64_t>(heap.walker(), type, field_name, memory_address);
+            return find_basic_type_field_value_in_type<uint64_t>(peb.walker(), type, field_name, memory_address);
         }
 
         return std::nullopt;
@@ -327,7 +395,7 @@ namespace dlg_help_utils::stream_utils
         throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " length not found").str()};
     }
 
-    uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name)
+    uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name)
     {
         auto const address_value = find_field_pointer_type_and_value_in_type(walker, type, field_name, address);
         if(!address_value.has_value())
@@ -335,7 +403,12 @@ namespace dlg_help_utils::stream_utils
             throw_cant_get_field_data(type_name, field_name);
         }
 
-        auto const pointer_value = std::get<1>(address_value.value());
+        return std::get<1>(address_value.value());
+    }
+
+    uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name)
+    {
+        auto const pointer_value = get_field_pointer_raw(walker, address, type, type_name, field_name);
         if(pointer_value == 0)
         {
             throw_cant_get_field_is_null(type_name, field_name);
@@ -357,6 +430,47 @@ namespace dlg_help_utils::stream_utils
         throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " has no " << field_name << " field").str()};
     }
 
+    std::optional<uint64_t> read_static_variable_value(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
+    {
+        auto const symbol = walker.get_symbol_info(symbol_name);
+        if(!symbol.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const address = symbol.value().address();
+        if(!address.has_value())
+        {
+            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read address").str()};
+        }
+
+        auto const length = symbol.value().length();
+        if(!length.has_value())
+        {
+            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read length").str()};
+        }
+
+        switch(length.value())
+        {
+        case 4:
+            if(auto const data = read_field_value<uint32_t>(walker, address.value()); data.has_value())
+            {
+                return data.value();
+            }
+            throw_failed_to_read_from_address(symbol_name, address.value());
+
+        case 8:
+            if(auto const data = read_field_value<uint64_t>(walker, address.value()); data.has_value())
+            {
+                return data.value();
+            }
+            throw_failed_to_read_from_address(symbol_name, address.value());
+
+        default:
+            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " <<symbol_name << " can't length [" << length.value() << "] not supported").str()};
+        }
+    }
+
     void throw_cant_get_field_is_null(std::wstring const& type_name, std::wstring const& field_name)
     {
         throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " field " << field_name << " is nullptr").str()};
@@ -365,6 +479,16 @@ namespace dlg_help_utils::stream_utils
     void throw_cant_get_field_data(std::wstring const& type_name, std::wstring const& field_name)
     {
         throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " can't get " << field_name << " field data").str()};
+    }
+
+    void throw_failed_to_read_from_address(std::wstring const& symbol_name, uint64_t const address)
+    {
+        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: Failed to read " << symbol_name << " from address " << stream_hex_dump::to_hex(address)).str()};
+    }
+
+    void throw_cant_get_symbol_field(std::wstring const& symbol_name)
+    {
+        throw exceptions::wide_runtime_error{(std::wostringstream{} <<  "Error: No " << symbol_name << " symbol field found").str()};
     }
 }
 

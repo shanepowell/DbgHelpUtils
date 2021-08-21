@@ -24,7 +24,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_lfh_block_zone_size() const;
 
     private:
-        lfh_heap const& heap_;
+        lfh_heap const& lfh_heap_;
         uint64_t const lfh_segment_address_;
         dbg_help::symbol_type_info const lfh_block_zone_symbol_type_;
         uint64_t const lfh_block_zone_size_;

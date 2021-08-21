@@ -2,11 +2,9 @@
 
 #include <iostream>
 
-#include "common_symbol_lookup_utils.h"
 #include "dump_file_options.h"
-#include "DbgHelpUtils/common_symbol_names.h"
-#include "DbgHelpUtils/common_symbol_utils.h"
-#include "DbgHelpUtils/function_table_stream.h"
+#include "DbgHelpUtils/dph_entry.h"
+#include "DbgHelpUtils/dph_heap.h"
 #include "DbgHelpUtils/heap_entry.h"
 #include "DbgHelpUtils/heap_segment.h"
 #include "DbgHelpUtils/heap_subsegment.h"
@@ -15,18 +13,11 @@
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/lfh_heap.h"
 #include "DbgHelpUtils/lfh_segment.h"
-#include "DbgHelpUtils/memory64_list_stream.h"
-#include "DbgHelpUtils/memory_list_stream.h"
 #include "DbgHelpUtils/mini_dump_stack_walk.h"
-#include "DbgHelpUtils/module_list_stream.h"
 #include "DbgHelpUtils/nt_heap.h"
-#include "DbgHelpUtils/pe_file_memory_mapping.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
-#include "DbgHelpUtils/stream_utils.h"
-#include "DbgHelpUtils/thread_names_list_stream.h"
-#include "DbgHelpUtils/unloaded_module_list_stream.h"
 
 using namespace std;
 using namespace dlg_help_utils;
@@ -83,6 +74,10 @@ namespace
         if (nt_heap.is_low_fragment_heap_enabled())
         {
             wcout << " (LFH)";
+        }
+        if(nt_heap.debug_page_heap().has_value())
+        {
+            wcout << " (DPH)";
         }
         wcout << process_heap_marker << '\n';
     }
@@ -259,7 +254,7 @@ namespace
             if(options.display_symbols() && entry.is_busy() && !entry.allocation_stack_trace().empty())
             {
                 wcout << std::wstring(indent + 2, L' ') << "allocation stack trace:\n";
-                hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().is_x86_target(), indent + 2);
+                hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 2);
                 wcout << '\n';
             }
 
@@ -327,9 +322,9 @@ namespace
         wcout << '\n';
     }
 
-    char const* get_process_marker(std::optional<uint64_t> const process_heap, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const heap)
+    char const* get_process_marker(bool const is_process_heap)
     {
-        return heap.value().second == process_heap.value() ? " (process heap)" : "";
+        return is_process_heap ? " (process heap)" : "";
     }
 
     void print_nt_heap_uncommitted_ranges(heap::nt_heap const& nt_heap, size_t const indent)
@@ -370,82 +365,83 @@ namespace
         }
         wcout << '\n';
     }
+
+    void print_debug_page_heap_entry(streamsize const hex_length, size_t const index, heap::dph_entry const& entry, dump_file_options const& options, size_t const indent)
+    {
+        using namespace size_units::base_10;
+        std::wstring const indent_str(indent, L' ');
+        wcout << indent_str << index << " @ " << stream_hex_dump::to_hex(entry.entry_address(), hex_length) << '\n';
+        wcout << indent_str << "  Is Allocated: " << std::boolalpha << entry.is_allocated() << '\n';
+        wcout << indent_str << "  Virtual Block: " << stream_hex_dump::to_hex(entry.virtual_block_address(), hex_length) << '\n';
+        wcout << indent_str << "  Virtual Block Size: " << entry.virtual_block_size() << " (" << entry.virtual_block_size().count() << ")" << '\n';
+        wcout << indent_str << "  User Allocation: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
+        wcout << indent_str << "  User Requested Size: " << entry.user_requested_size() << " (" << entry.user_requested_size().count() << ")" << '\n';
+        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+
+        if(options.display_symbols() && entry.is_allocated() && !entry.allocation_stack_trace().empty())
+        {
+            wcout << std::wstring(indent + 2, L' ') << "allocation stack trace:\n";
+            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            wcout << '\n';
+        }
+
+        if(options.hex_dump_memory_data() && entry.is_allocated() && entry.user_address() != 0)
+        {
+            uint64_t size = entry.user_requested_size().count();
+            auto const* data = entry.heap().walker().get_process_memory_range(entry.user_address(), size);
+            hex_dump::hex_dump(wcout, data, size, indent + 4);
+            wcout << L'\n';
+        }
+    }
+
+    void print_debug_page_heap(streamsize const hex_length, heap::dph_heap const& heap, dump_file_options const& options, size_t const indent)
+    {
+        std::wstring const indent_str(indent, L' ');
+        using namespace size_units::base_10;
+        wcout << indent_str << "Debug Page Heap: " << stream_hex_dump::to_hex(heap.address(), hex_length) << '\n';
+        wcout << indent_str << "  Flags: " << stream_hex_dump::to_hex(heap.flags()) << '\n';
+        wcout << indent_str << "  Extra Flags: " << stream_hex_dump::to_hex(heap.extra_flags()) << '\n';
+        wcout << indent_str << "  Seed: " << stream_hex_dump::to_hex(heap.seed()) << '\n';
+        wcout << indent_str << "  Busy Allocations: " << heap.busy_allocations() << '\n';
+        wcout << indent_str << "  Busy Allocations Committed Total: " << heap.busy_allocations_committed() << " (" << stream_hex_dump::to_hex(heap.busy_allocations_committed().count()) << ")" << '\n';
+        wcout << indent_str << "  Virtual Ranges: " << heap.virtual_storage_ranges() << '\n';
+        wcout << indent_str << "  Virtual Ranges Total: " << heap.virtual_storage_total() << " (" << stream_hex_dump::to_hex(heap.virtual_storage_total().count()) << ")" << '\n';
+        wcout << indent_str << "  Free Allocations: " << heap.free_allocations() << '\n';
+        wcout << indent_str << "  Free Allocations Committed Total: " << heap.free_allocations_committed() << " (" << stream_hex_dump::to_hex(heap.free_allocations_committed().count()) << ")" << '\n';
+        wcout << indent_str << "  Busy Entries: (" << heap.busy_allocations() << ")\n";
+
+        size_t index = 1;
+        for(auto const& entry : heap.busy_entries())
+        {
+            print_debug_page_heap_entry(hex_length, index, entry, options, indent + 4);
+            ++index;
+        }
+
+        wcout << indent_str << "  Virtual Ranges: (" << heap.virtual_storage_ranges() << ")\n";
+
+        index = 1;
+        for(auto const& entry : heap.virtual_ranges())
+        {
+            print_debug_page_heap_entry(hex_length, index, entry, options, indent + 4);
+            ++index;
+        }
+
+        wcout << indent_str << "  Free Allocations: (" << heap.free_allocations() << ")\n";
+
+        index = 1;
+        for(auto const& entry : heap.free_entries())
+        {
+            print_debug_page_heap_entry(hex_length, index, entry, options, indent + 4);
+            ++index;
+        }
+        wcout << '\n';
+    }
 }
 
 void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    thread_names_list_stream const names_list{mini_dump};
-    memory_list_stream const memory_list{mini_dump};
-    memory64_list_stream const memory64_list{mini_dump};
-    function_table_stream const function_table{ mini_dump };
-    module_list_stream const module_list{ mini_dump };
-    unloaded_module_list_stream const unloaded_module_list{ mini_dump };
-    pe_file_memory_mapping pe_file_memory_mappings{};
-    stream_stack_dump::mini_dump_stack_walk const walker{
-        0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
-        unloaded_module_list, pe_file_memory_mappings, symbol_engine
-    };
-
-    // Find TEB address
-    auto const teb_address = common_symbol_utils::get_teb_address(mini_dump, names_list, memory_list, memory64_list);
-    if(!teb_address.has_value())
-    {
-        wcout << "No TEB address found\n";
-        return;
-    }
-
-    auto const heap_symbol_info = walker.get_type_info(common_symbol_names::heap_structure_symbol_name);
-    if(!heap_symbol_info.has_value())
-    {
-        wcout << "No _HEAP symbol found\n";
-        return;
-    }
-
-    auto const peb_address = find_field_pointer(walker, common_symbol_names::teb_structure_symbol_name, teb_address.value(), common_symbol_names::teb_structure_process_environment_block_field_symbol_name);
-    if(!peb_address.has_value())
-    {
-        return;
-    }
-
-    auto const peb_symbol_info = get_type_info(walker, common_symbol_names::peb_structure_symbol_name);
-    if(!peb_symbol_info.has_value())
-    {
-        return;
-    }
-
-    auto const nt_global_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_nt_global_flag_field_symbol_name, peb_address.value());
-    if(!nt_global_flag.has_value())
-    {
-        return;
-    }
-
-    auto const process_heaps = find_field_pointer_and_type(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_symbol_name, peb_address.value(), common_symbol_names::peb_structure_process_heaps_field_symbol_name);
-    if(!process_heaps.has_value())
-    {
-        return;
-    }
-
-    auto const number_of_heaps = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_number_of_heaps_field_symbol_name, peb_address.value());
-    if(!number_of_heaps.has_value())
-    {
-        return;
-    }
-
-    auto const process_heap = find_field_pointer(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_symbol_name, peb_address.value(), common_symbol_names::peb_structure_process_heap_field_symbol_name);
-    if(!process_heap.has_value())
-    {
-        return;
-    }
-
-    std::streamsize hex_length;
-    if(auto const pointer_length = process_heaps.value().first.length(); pointer_length.has_value())
-    {
-        hex_length = static_cast<std::streamsize>(pointer_length.value()) * 2;
-    }
-    else
-    {
-        return;
-    }
+    process::process_environment_block const peb{mini_dump, symbol_engine};
+    auto const hex_length = peb.machine_hex_printable_length();
 
     wcout << "Heaps:\n";
     wcout << ' ' << std::left << std::setw(hex_length + 2) << "Address" << " NT/Segment   Flags      "
@@ -457,99 +453,84 @@ void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& op
         << std::left << std::setw(8) << "Segments" << ' '
         << std::left << std::setw(4) << "UCRs" << ' '
         << '\n';
-    for(uint32_t heap_index = 0; heap_index < number_of_heaps.value(); ++heap_index)
+    for(uint32_t heap_index = 0; heap_index < peb.number_of_heaps(); ++heap_index)
     {
-        if(auto const heap = stream_utils::get_field_pointer_type_and_value(walker, process_heaps.value().first, process_heaps.value().second, heap_index); heap.has_value())
+        auto const heap_address = peb.heap_address(heap_index);
+        wcout << ' ' << stream_hex_dump::to_hex(heap_address, hex_length);
+
+        if(auto const segment_signature = peb.segment_signature(heap_index); segment_signature == heap::SegmentSignatureNtHeap)
         {
-            wcout << ' ' << stream_hex_dump::to_hex(heap.value().second, hex_length);
-            auto const segment_signature = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, heap_symbol_info.value(), common_symbol_names::heap_segment_signature_field_symbol_name, heap.value().second);
-            if(!segment_signature.has_value())
+            if(auto const nt_heap = peb.nt_heap(heap_index); nt_heap.has_value())
             {
-                return;
+                print_nt_heap_line(get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value());
+                print_nt_heap_segments_list(hex_length, nt_heap.value(), 2);
+                print_nt_heap_lfh_segments_list(hex_length, nt_heap.value(), 2);
             }
-
-            if(segment_signature.value() == heap::SegmentSignatureNtHeap)
-            {
-
-                heap::nt_heap nt_heap{walker, heap.value().second, static_cast<gflags_utils::gflags>(nt_global_flag.value())};
-                print_nt_heap_line(get_process_marker(process_heap, heap), nt_heap);
-                print_nt_heap_segments_list(hex_length, nt_heap, 2);
-                print_nt_heap_lfh_segments_list(hex_length, nt_heap, 2);
-            }
-            else if(segment_signature.value() == heap::SegmentSignatureSegmentHeap)
-            {
-                wcout << " Segment Heap" << get_process_marker(process_heap, heap) << '\n';
-            }
-            else
-            {
-                wcout << " Unknown Heap Type (" << stream_hex_dump::to_hex(segment_signature.value()) << ")\n";
-            }
+        }
+        else if(segment_signature == heap::SegmentSignatureSegmentHeap)
+        {
+            wcout << " Segment Heap" << get_process_marker(peb.process_heap() == heap_address) << '\n';
         }
         else
         {
-            wcout << "Failed to find heap index " << heap_index << "\n";
+            wcout << " Unknown Heap Type (" << stream_hex_dump::to_hex(segment_signature) << ")\n";
         }
     }
 
     wcout << '\n';
 
-    for(uint32_t heap_index = 0; heap_index < number_of_heaps.value(); ++heap_index)
+    for(uint32_t heap_index = 0; heap_index < peb.number_of_heaps(); ++heap_index)
     {
-        if(auto const heap = stream_utils::get_field_pointer_type_and_value(walker, process_heaps.value().first, process_heaps.value().second, heap_index); heap.has_value())
+        if(auto const nt_heap = peb.nt_heap(heap_index); nt_heap.has_value())
         {
-            auto const segment_signature = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, heap_symbol_info.value(), common_symbol_names::heap_segment_signature_field_symbol_name, heap.value().second);
-            if(!segment_signature.has_value())
+            print_nt_heap(hex_length, get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value(), 0);
+
+            vector<LfhSubsegmentData> lfh_data;
+            if(auto const lfh_heap = nt_heap.value().lfh_heap(); lfh_heap.has_value())
             {
-                return;
-            }
-
-            if(segment_signature.value() == heap::SegmentSignatureNtHeap)
-            {
-
-                heap::nt_heap nt_heap{walker, heap.value().second, static_cast<gflags_utils::gflags>(nt_global_flag.value())};
-                print_nt_heap(hex_length, get_process_marker(process_heap, heap), nt_heap, 0);
-
-                vector<LfhSubsegmentData> lfh_data;
-                if(auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())
+                for(size_t segment_index = 0; auto const& segment : lfh_heap.value().lfh_segments())
                 {
-                    for(size_t segment_index = 0; auto const& segment : lfh_heap.value().lfh_segments())
+                    auto segment_data = std::make_shared<LfhSegmentData>(segment_index, segment);
+
+                    for(auto const& subsegment : segment.subsegments())
                     {
-                        auto segment_data = std::make_shared<LfhSegmentData>(segment_index, segment);
-
-                        for(auto const& subsegment : segment.subsegments())
-                        {
-                            lfh_data.emplace_back(segment_data, subsegment);
-                        }
-                        ++segment_index;
+                        lfh_data.emplace_back(segment_data, subsegment);
                     }
-                }
-
-                for(size_t segment_index = 0; auto const& segment : nt_heap.segments())
-                {
-                    print_heap_segment(hex_length, segment_index, segment, lfh_data, options, 4);
                     ++segment_index;
                 }
+            }
 
-                auto printed_lfh_output{false};
-                for(auto& data : lfh_data)
+            for(size_t segment_index = 0; auto const& segment : nt_heap.value().segments())
+            {
+                print_heap_segment(hex_length, segment_index, segment, lfh_data, options, 4);
+                ++segment_index;
+            }
+
+            auto printed_lfh_output{false};
+            for(auto& data : lfh_data)
+            {
+                if(!data.printed_subsegment)
                 {
-                    if(!data.printed_subsegment)
-                    {
-                        print_lfh_heap_segment(hex_length, data, options, 4);
-                        printed_lfh_output = true;
-                    }
+                    print_lfh_heap_segment(hex_length, data, options, 4);
+                    printed_lfh_output = true;
                 }
+            }
 
-                if(printed_lfh_output)
-                {
-                    wcout << '\n';
-                }
+            if(printed_lfh_output)
+            {
+                wcout << '\n';
+            }
 
-                print_nt_heap_uncommitted_ranges(nt_heap, 2);
+            print_nt_heap_uncommitted_ranges(nt_heap.value(), 2);
 
-                print_nt_heap_virtual_allocated_blocks(hex_length, nt_heap, options, 2);
+            print_nt_heap_virtual_allocated_blocks(hex_length, nt_heap.value(), options, 2);
 
-                print_nt_heap_free_list(hex_length, nt_heap, options, 2);
+            print_nt_heap_free_list(hex_length, nt_heap.value(), options, 2);
+
+            if(auto const debug_page_heap = nt_heap.value().debug_page_heap();
+                debug_page_heap.has_value())
+            {
+                print_debug_page_heap(hex_length, debug_page_heap.value(), options, 2);
             }
         }
     }

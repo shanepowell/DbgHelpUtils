@@ -20,9 +20,14 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const heap_subsegment_structure_symbol_name = L"ntdll!_HEAP_SUBSEGMENT"s;
     std::wstring const heap_user_data_header_structure_symbol_name = L"ntdll!_HEAP_USERDATA_HEADER"s;
     std::wstring const heap_user_data_offsets_structure_symbol_name = L"ntdll!_HEAP_USERDATA_OFFSETS"s;
+    std::wstring const dph_heap_root_structure_symbol_name = L"ntdll!_DPH_HEAP_ROOT"s;
+    std::wstring const rtl_balanced_links_structure_symbol_name = L"ntdll!_RTL_BALANCED_LINKS"s;
+    std::wstring const dph_heap_block_structure_symbol_name = L"ntdll!_DPH_HEAP_BLOCK"s;
+    std::wstring const rtl_stack_trace_entry_structure_symbol_name = L"ntdll!_RTL_STACK_TRACE_ENTRY"s;
+    std::wstring const dph_block_information_structure_symbol_name = L"ntdll!_DPH_BLOCK_INFORMATION"s;
 
-    // ReSharper disable once IdentifierTypo
-    std::wstring const rtlp_lfh_key_global_symbol_name = L"ntdll!RtlpLFHKey"s;
+    std::wstring const rt_lp_lfh_key_global_symbol_name = L"ntdll!RtlpLFHKey"s;
+    std::wstring const av_rfp_dph_page_heap_list_global_symbol_name = L"verifier!AVrfpDphPageHeapList"s;
 
     std::wstring const peb_structure_ldr_field_symbol_name = L"ldr"s;
     std::wstring const peb_structure_process_parameters_field_symbol_name = L"ProcessParameters"s;
@@ -64,6 +69,7 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const heap_entry_flags_field_symbol_name = L"Flags"s;
     std::wstring const heap_entry_segment_offset_field_symbol_name = L"SegmentOffset"s;
     std::wstring const heap_entry_unused_bytes_field_symbol_name = L"UnusedBytes"s;
+    std::wstring const heap_entry_unused_bytes_length_field_symbol_name = L"UnusedBytesLength"s;
     std::wstring const heap_entry_previous_size_field_symbol_name = L"PreviousSize"s;
     std::wstring const heap_segment_segment_flags_field_symbol_name = L"SegmentFlags"s;
     std::wstring const heap_segment_number_of_pages_field_symbol_name = L"NumberOfPages"s;
@@ -91,4 +97,32 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const heap_subsegment_user_blocks_field_symbol_name = L"UserBlocks"s;
     std::wstring const heap_user_data_encoded_offsets_field_symbol_name = L"EncodedOffsets"s;
     std::wstring const heap_user_data_first_allocation_offset_field_symbol_name = L"FirstAllocationOffset"s;
+    std::wstring const dph_heap_root_next_heap_field_symbol_name = L"NextHeap"s;
+    std::wstring const dph_heap_root_flags_field_symbol_name = L"HeapFlags"s;
+    std::wstring const dph_heap_root_extra_flags_field_symbol_name = L"ExtraFlags"s;
+    std::wstring const dph_heap_root_seed_field_symbol_name = L"Seed"s;
+    std::wstring const dph_heap_root_normal_heap_field_symbol_name = L"NormalHeap"s;
+    std::wstring const dph_heap_root_busy_nodes_table_field_symbol_name = L"BusyNodesTable"s;
+    std::wstring const dph_heap_root_virtual_storage_list_head_field_symbol_name = L"pVirtualStorageListHead"s;
+    std::wstring const dph_heap_root_virtual_storage_list_tail_field_symbol_name = L"pVirtualStorageListTail"s;
+    std::wstring const dph_heap_root_virtual_storage_ranges_field_symbol_name = L"nVirtualStorageRanges"s;
+    std::wstring const dph_heap_root_virtual_storage_bytes_field_symbol_name = L"nVirtualStorageBytes"s;
+    std::wstring const dph_heap_root_busy_allocations_field_symbol_name = L"nBusyAllocations"s;
+    std::wstring const dph_heap_root_busy_allocations_bytes_committed_field_symbol_name = L"nBusyAllocationBytesCommitted"s;
+    std::wstring const dph_heap_root_free_allocations_list_head_field_symbol_name = L"pFreeAllocationListHead"s;
+    std::wstring const dph_heap_root_free_allocations_list_tail_field_symbol_name = L"pFreeAllocationListTail"s;
+    std::wstring const dph_heap_root_free_allocations_field_symbol_name = L"nFreeAllocations"s;
+    std::wstring const dph_heap_root_free_allocations_bytes_committed_field_symbol_name = L"nFreeAllocationBytesCommitted"s;
+    std::wstring const rtl_balanced_links_left_child_field_symbol_name = L"LeftChild"s;
+    std::wstring const rtl_balanced_links_right_child_field_symbol_name = L"RightChild"s;
+    std::wstring const dph_heap_block_virtual_block_field_symbol_name = L"pVirtualBlock"s;
+    std::wstring const dph_heap_block_virtual_block_size_field_symbol_name = L"nVirtualBlockSize"s;
+    std::wstring const dph_heap_block_user_allocation_field_symbol_name = L"pUserAllocation"s;
+    std::wstring const dph_heap_block_user_requested_size_field_symbol_name = L"nUserRequestedSize"s;
+    std::wstring const dph_heap_block_stack_trace_field_symbol_name = L"StackTrace"s;
+    std::wstring const dph_heap_block_next_alloc_field_symbol_name = L"pNextAlloc"s;
+    std::wstring const rtl_stack_trace_entry_index_field_symbol_name = L"Index"s;
+    std::wstring const rtl_stack_trace_entry_depth_field_symbol_name = L"Depth"s;
+    std::wstring const rtl_stack_trace_entry_back_trace_field_symbol_name = L"BackTrace"s;
+    std::wstring const dph_block_information_start_stamp_field_symbol_name = L"StartStamp"s;
 }

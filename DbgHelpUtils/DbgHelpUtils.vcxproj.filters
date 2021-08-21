@@ -34,6 +34,9 @@
     <Filter Include="Heap">
       <UniqueIdentifier>{e616095c-6b7e-4f68-b982-40b698b3dfad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Process">
+      <UniqueIdentifier>{3bc23df8-67b5-4325-aabb-4ee585e117d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -251,6 +254,21 @@
     </ClCompile>
     <ClCompile Include="heap_subsegment.cpp">
       <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="dph_heap.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="dph_entry.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="ust_address_stack_trace.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
+    <ClCompile Include="process_environment_block.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="process_parameters.cpp">
+      <Filter>Process</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -538,6 +556,21 @@
     </ClInclude>
     <ClInclude Include="lfh_heap.h">
       <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="dph_heap.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="dph_entry.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="ust_address_stack_trace.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="process_environment_block.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="process_parameters.h">
+      <Filter>Process</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

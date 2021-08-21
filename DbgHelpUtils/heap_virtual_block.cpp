@@ -18,7 +18,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_virtual_block::get_machine_size_field_value(std::wstring const& field_name) const
     {
-        auto const value = stream_utils::find_machine_size_field_value(heap_, heap_virtual_block_symbol_type_, field_name, heap_virtual_block_address_);
+        auto const value = stream_utils::find_machine_size_field_value(heap_.peb(), heap_virtual_block_symbol_type_, field_name, heap_virtual_block_address_);
         if(!value.has_value())
         {
             stream_utils::throw_cant_get_field_data(common_symbol_names::heap_virtual_alloc_entry_structure_symbol_name, field_name);
@@ -56,11 +56,11 @@ namespace dlg_help_utils::heap
                 heap_.decode_heap_entry(entry_data, buffer.get());
 
                 uint16_t unused_bytes{0};
-                if(heap_.is_x86_target())
+                if(heap_.peb().is_x86_target())
                 {
                     memcpy(&unused_bytes, buffer.get(), sizeof(uint16_t));
                 }
-                if(heap_.is_x64_target())
+                if(heap_.peb().is_x64_target())
                 {
                     memcpy(&unused_bytes, buffer.get() + 8, sizeof(uint16_t));
                 }

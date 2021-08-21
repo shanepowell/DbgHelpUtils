@@ -9,7 +9,7 @@
 namespace dlg_help_utils::heap
 {
     lfh_segment::lfh_segment(lfh_heap const& heap, uint64_t const lfh_segment_address)
-    : heap_{heap}
+    : lfh_heap_{heap}
     , lfh_segment_address_{lfh_segment_address}
     , lfh_block_zone_symbol_type_{stream_utils::get_type(heap.walker(), common_symbol_names::lfh_block_zone_structure_symbol_name)}
     , lfh_block_zone_size_{get_lfh_block_zone_size()}
@@ -29,7 +29,7 @@ namespace dlg_help_utils::heap
 
         while(subsegment_address + heap_subsegment_size_ <= end_subsegment_address)
         {
-            heap_subsegment subsegment{heap_, subsegment_address, lfh_block_zone_size_};
+            heap_subsegment subsegment{lfh_heap_, subsegment_address, lfh_block_zone_size_};
 
             co_yield subsegment;
 
@@ -42,16 +42,16 @@ namespace dlg_help_utils::heap
         auto start_subsegment_address = lfh_segment_address_ + lfh_block_zone_size_;
         auto end_subsegment_address{start_subsegment_address};
 
-        if(auto const next_index = stream_utils::find_basic_type_field_value_in_type<uint32_t>(heap_.walker(), lfh_block_zone_symbol_type_, common_symbol_names::lfh_block_zone_next_index_field_symbol_name, lfh_segment_address_); next_index.has_value())
+        if(auto const next_index = stream_utils::find_basic_type_field_value_in_type<uint32_t>(lfh_heap_.walker(), lfh_block_zone_symbol_type_, common_symbol_names::lfh_block_zone_next_index_field_symbol_name, lfh_segment_address_); next_index.has_value())
         {
-            if(heap_.heap().is_x64_target())
+            if(lfh_heap_.heap().peb().is_x64_target())
             {
                 end_subsegment_address = start_subsegment_address = lfh_segment_address_ + 0x20;
             }
 
             end_subsegment_address += heap_subsegment_size_ * next_index.value();
         }
-        else if(auto const free_pointer = stream_utils::find_field_pointer_value_in_type(heap_.walker(), lfh_block_zone_symbol_type_, common_symbol_names::lfh_block_zone_free_pointer_field_symbol_name, lfh_segment_address_); free_pointer.has_value())
+        else if(auto const free_pointer = stream_utils::find_field_pointer_value_in_type(lfh_heap_.walker(), lfh_block_zone_symbol_type_, common_symbol_names::lfh_block_zone_free_pointer_field_symbol_name, lfh_segment_address_); free_pointer.has_value())
         {
             end_subsegment_address = free_pointer.value();
         }
@@ -61,7 +61,7 @@ namespace dlg_help_utils::heap
 
     uint64_t lfh_segment::get_lfh_block_zone_size() const
     {
-        if(heap_.heap().is_x86_target())
+        if(lfh_heap_.heap().peb().is_x86_target())
         {
             return 0x10;
         }

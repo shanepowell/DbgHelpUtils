@@ -16,12 +16,11 @@
 #include "DbgHelpUtils/mini_dump_stack_walk.h"
 #include "DbgHelpUtils/module_list_stream.h"
 #include "DbgHelpUtils/pe_file_memory_mapping.h"
+#include "DbgHelpUtils/process_environment_block.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
-#include "DbgHelpUtils/stream_utils.h"
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/symbol_type_info.h"
 #include "DbgHelpUtils/symbol_type_utils.h"
-#include "DbgHelpUtils/thread_names_list_stream.h"
 #include "DbgHelpUtils/unloaded_module_list_stream.h"
 
 using namespace std;
@@ -434,73 +433,35 @@ void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] 
 
 void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    thread_names_list_stream const names_list{mini_dump};
-    memory_list_stream const memory_list{mini_dump};
-    memory64_list_stream const memory64_list{mini_dump};
-    function_table_stream const function_table{ mini_dump };
-    module_list_stream const module_list{ mini_dump };
-    unloaded_module_list_stream const unloaded_module_list{ mini_dump };
-    pe_file_memory_mapping pe_file_memory_mappings{};
-    stream_stack_dump::mini_dump_stack_walk const walker{
-        0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
-        unloaded_module_list, pe_file_memory_mappings, symbol_engine
-    };
+    process::process_environment_block const peb{mini_dump, symbol_engine};
 
-    // Find TEB address
-    auto const teb_address = common_symbol_utils::get_teb_address(mini_dump, names_list, memory_list, memory64_list);
-    if(!teb_address.has_value())
+    [[maybe_unused]] auto const peb_symbol_info = dump_field(peb.walker(), common_symbol_names::peb_structure_symbol_name, peb.peb_address());
+
+    wcout << '\n';
+    const auto values = dump_gflags_to_strings(peb.nt_global_flag());
+    wcout << "NtGlobalFlag: (" << stream_hex_dump::to_hex_full(static_cast<uint32_t>(peb.nt_global_flag())) << ")\n";
+    for (auto const& value : values)
     {
-        wcout << "No TEB address found\n";
-        return;
+        wcout << "  " << value << '\n';
     }
 
-    auto const peb_address = find_field_pointer(walker, common_symbol_names::teb_structure_symbol_name, teb_address.value(), common_symbol_names::teb_structure_process_environment_block_field_symbol_name);
-    if(!peb_address.has_value())
-    {
-        return;
-    }
-
-    auto peb_symbol_info = dump_field(walker, common_symbol_names::peb_structure_symbol_name, peb_address.value());
-    if(!peb_symbol_info.has_value())
-    {
-        return;
-    }
-
-    if(auto const nt_global_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_nt_global_flag_field_symbol_name, peb_address.value()); nt_global_flag.has_value())
+    if(auto const ldr_address = peb.ldr_address(); ldr_address != 0)
     {
         wcout << '\n';
-        auto values = dump_gflags_to_strings(static_cast<gflags_utils::gflags>(nt_global_flag.value()));
-        wcout << "NtGlobalFlag: (" << stream_hex_dump::to_hex_full(nt_global_flag.value()) << ")\n";
-        for (auto const& value : values)
+        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(peb.walker(), common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
+    }
+
+    if(auto const process_parameters = peb.process_parameters(); process_parameters.has_value())
+    {
+        wcout << '\n';
+        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(peb.walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters.value().process_parameters_address());
+
+        wcout << "\nProcess Environment Variables:\n";
+        for(auto const& value : process_parameters.value().environment())
         {
-            wcout << "  " << value << '\n';
-        }
-    }
-
-    if(auto const ldr_address = find_field_pointer(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_symbol_name, peb_address.value(), common_symbol_names::peb_structure_ldr_field_symbol_name); ldr_address .has_value())
-    {
-        wcout << '\n';
-        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(walker, common_symbol_names::peb_ldr_structure_symbol_name, peb_address.value());
-    }
-
-    if(auto const process_parameters_address = find_field_pointer(walker, peb_symbol_info.value(), common_symbol_names::peb_structure_symbol_name, peb_address.value(), common_symbol_names::peb_structure_process_parameters_field_symbol_name); process_parameters_address.has_value())
-    {
-        wcout << '\n';
-        if(auto user_process_parameters_symbol_info = dump_field(walker, common_symbol_names::rtl_user_process_parameters_structure_symbol_name, peb_address.value()); user_process_parameters_symbol_info.has_value())
-        {
-            if(auto const environment_address = find_field_pointer(walker, user_process_parameters_symbol_info.value(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters_address.value(), common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name); environment_address.has_value())
-            {
-                wcout << '\n';
-                DWORD64 environment_size = std::numeric_limits<uint64_t>::max();;
-                auto const* environment_variable = walker.get_process_memory_range(environment_address.value(), environment_size);
-                if(environment_variable == nullptr)
-                {
-                    wcout << "Can't find process Environment memory address [" << stream_hex_dump::to_hex_full(environment_address.value()) << "]\n";
-                }
-
-                wcout << "\nProcess Environment Variables:\n";
-                print_utils::print_array_str(wcout, static_cast<wchar_t const*>(environment_variable), environment_size / sizeof(wchar_t), 2);
-            }
+            wcout << "  ";
+            print_utils::print_str(wcout, value.data(), value.size(), false);
+            wcout << '\n';
         }
     }
 }

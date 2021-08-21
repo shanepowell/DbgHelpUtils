@@ -57,6 +57,8 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] dbg_help::symbol_engine& symbol_engine() const { return symbol_engine_; }
         [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }
         [[nodiscard]] unloaded_module_list_stream const& unloaded_module_list() const { return unloaded_module_list_; }
+        [[nodiscard]] memory_list_stream const& memory_list() const { return memory_list_; }
+        [[nodiscard]] memory64_list_stream const& memory64_list() const { return memory64_list_; }
 
     private:
         [[nodiscard]] bool do_read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size,

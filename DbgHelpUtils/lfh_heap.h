@@ -22,7 +22,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] nt_heap const& heap() const { return heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
 
-        [[nodiscard]] uint64_t address() const { return lfh_heap_address_; }
+        [[nodiscard]] uint64_t address() const { return dph_heap_address_; }
 
         [[nodiscard]] std::optional<uint64_t> lfh_key() const { return lfh_key_; }
         [[nodiscard]] std::experimental::generator<lfh_segment> lfh_segments() const;
@@ -32,12 +32,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_field_address(std::wstring const& field_name) const;
         [[nodiscard]] std::optional<uint64_t> get_lfh_key() const;
 
-        template<typename T>
-        [[nodiscard]] T read_lfh_key(uint64_t address) const;
-
     private:
         nt_heap const& heap_;
-        uint64_t const lfh_heap_address_;
+        uint64_t const dph_heap_address_;
         dbg_help::symbol_type_info const lfh_heap_symbol_type_;
         dbg_help::symbol_type_info const list_entry_symbol_type_;
         std::optional<uint64_t> lfh_key_;

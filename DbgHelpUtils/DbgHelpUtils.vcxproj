@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -87,6 +87,8 @@
     <ClCompile Include="common_symbol_names.cpp" />
     <ClCompile Include="common_symbol_utils.cpp" />
     <ClCompile Include="cv_info_pdb70.cpp" />
+    <ClCompile Include="dph_entry.cpp" />
+    <ClCompile Include="dph_heap.cpp" />
     <ClCompile Include="exception_stream.cpp" />
     <ClCompile Include="exception_utils.cpp" />
     <ClCompile Include="filesystem_utils.cpp" />
@@ -119,6 +121,8 @@
     <ClCompile Include="nt_heap.cpp" />
     <ClCompile Include="pe_file.cpp" />
     <ClCompile Include="pe_file_memory_mapping.cpp" />
+    <ClCompile Include="process_environment_block.cpp" />
+    <ClCompile Include="process_parameters.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
     <ClCompile Include="size_units.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
@@ -153,12 +157,15 @@
     <ClCompile Include="token_info_list_stream.cpp" />
     <ClCompile Include="symbol_type_info.cpp" />
     <ClCompile Include="unloaded_module_list_stream.cpp" />
+    <ClCompile Include="ust_address_stack_trace.cpp" />
     <ClCompile Include="windows_error.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="call_convention.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
+    <ClInclude Include="dph_entry.h" />
+    <ClInclude Include="dph_heap.h" />
     <ClInclude Include="gflags_utils.h" />
     <ClInclude Include="hash_combine.h" />
     <ClInclude Include="heap_entry.h" />
@@ -205,6 +212,8 @@
     <ClInclude Include="module_match.h" />
     <ClInclude Include="pe_file.h" />
     <ClInclude Include="pe_file_memory_mapping.h" />
+    <ClInclude Include="process_environment_block.h" />
+    <ClInclude Include="process_parameters.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
     <ClInclude Include="range_units.h" />
     <ClInclude Include="size_units.h" />
@@ -247,6 +256,7 @@
     <ClInclude Include="symbol_type_info.h" />
     <ClInclude Include="udt_kind_type.h" />
     <ClInclude Include="unloaded_module_list_stream.h" />
+    <ClInclude Include="ust_address_stack_trace.h" />
     <ClInclude Include="vector_to_hash_set.h" />
     <ClInclude Include="windows_error.h" />
     <ClInclude Include="wide_runtime_error.h" />

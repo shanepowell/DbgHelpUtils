@@ -3,19 +3,19 @@
 #include <experimental/generator>
 
 #include "gflags_utils.h"
+#include "process_environment_block.h"
 #include "size_units.h"
 #include "symbol_type_info.h"
+#include "ust_address_stack_trace.h"
 
-namespace dlg_help_utils
+namespace dlg_help_utils::stream_stack_dump
 {
-    namespace stream_stack_dump
-    {
-        class mini_dump_stack_walk;
-    }
+    class mini_dump_stack_walk;
 }
 
 namespace dlg_help_utils::heap
 {
+    class dph_heap;
     class lfh_heap;
     class heap_ucr_descriptor;
     class heap_segment;
@@ -29,9 +29,12 @@ namespace dlg_help_utils::heap
     {
     public:
 
-        nt_heap(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t nt_heap_address, gflags_utils::gflags nt_global_flag);
+        nt_heap(process::process_environment_block const& peb, uint64_t nt_heap_address);
+
+        [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
 
         [[nodiscard]] uint64_t nt_heap_address() const { return nt_heap_address_; }
+        [[nodiscard]] uint32_t segment_signature() const;
         [[nodiscard]] uint32_t flags() const;
         [[nodiscard]] size_units::base_10::bytes reserved() const;
         [[nodiscard]] size_units::base_10::bytes committed() const;
@@ -46,24 +49,22 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] bool is_encoded() const { return encoding_ != nullptr; }
         [[nodiscard]] uint32_t granularity() const { return granularity_; }
-        [[nodiscard]] gflags_utils::gflags nt_global_flag() const { return nt_global_flag_; }
 
         [[nodiscard]] std::experimental::generator<heap_segment> segments() const;
         [[nodiscard]] std::experimental::generator<heap_ucr_descriptor> uncommitted_ranges() const;
         [[nodiscard]] std::experimental::generator<heap_virtual_block> heap_virtual_blocks() const;
         [[nodiscard]] std::experimental::generator<heap_entry> free_entries() const;
+        [[nodiscard]] std::optional<dph_heap> debug_page_heap() const;
 
         [[nodiscard]] std::optional<lfh_heap> lfh_heap() const;
 
-        [[nodiscard]] bool heap_page_alloc_enabled() const;
-        [[nodiscard]] bool user_stack_db_enabled() const;
+        [[nodiscard]] bool is_process_heap(uint64_t process_heap_address) const;
 
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return walker_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return peb_.walker(); }
 
         bool decode_heap_entry(void const* src, void* dst) const;
 
-        [[nodiscard]] bool is_x86_target() const { return granularity() == 8; }
-        [[nodiscard]] bool is_x64_target() const { return granularity() == 16; }
+        [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
     private:
         [[nodiscard]] uint64_t get_field_pointer(std::wstring const& field_name) const;
@@ -80,9 +81,8 @@ namespace dlg_help_utils::heap
         [[noreturn]] static void throw_cant_get_field_is_null(std::wstring const& field_name);
 
     private:
-        stream_stack_dump::mini_dump_stack_walk const& walker_;
         uint64_t const nt_heap_address_;
-        gflags_utils::gflags const nt_global_flag_;
+        process::process_environment_block const& peb_;
         dbg_help::symbol_type_info const heap_symbol_type_;
         dbg_help::symbol_type_info const list_entry_symbol_type_;
         dbg_help::symbol_type_info const heap_free_entry_symbol_type_;
@@ -90,5 +90,6 @@ namespace dlg_help_utils::heap
         uint64_t const segment_entry_offset_;
         uint64_t const free_entry_free_list_offset_;
         std::unique_ptr<char[]> encoding_;
+        ust_address_stack_trace stack_trace_;
     };
 }

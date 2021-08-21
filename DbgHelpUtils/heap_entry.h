@@ -87,10 +87,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_user_address() const;
         [[nodiscard]] size_units::base_10::bytes get_end_unused_bytes() const;
         [[nodiscard]] uint64_t get_ust_address() const;
-        [[nodiscard]] uint64_t get_ust_extra_offset() const;
         [[nodiscard]] uint64_t get_ust_data_size() const;
-        [[nodiscard]] uint64_t get_ust_address_depth_offset() const;
-        [[nodiscard]] uint64_t get_ust_address_stack_offset() const;
+        [[nodiscard]] uint64_t get_ust_data_heap_entry_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
         [[nodiscard]] static size_units::base_10::bytes get_virtual_alloc_requested_size(uint64_t size, uint16_t unused_bytes);
         [[nodiscard]] size_units::base_10::bytes get_virtual_alloc_end_unused_bytes(uint64_t end_address) const;

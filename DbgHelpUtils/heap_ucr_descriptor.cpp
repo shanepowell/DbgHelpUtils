@@ -15,7 +15,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_ucr_descriptor::get_machine_size_field_value(std::wstring const& field_name) const
     {
-        auto const value = stream_utils::find_machine_size_field_value(heap_, heap_ucr_descriptor_symbol_type_, field_name, heap_ucr_descriptor_address_);
+        auto const value = stream_utils::find_machine_size_field_value(heap_.peb(), heap_ucr_descriptor_symbol_type_, field_name, heap_ucr_descriptor_address_);
         if(!value.has_value())
         {
             throw_cant_get_field_data(field_name);

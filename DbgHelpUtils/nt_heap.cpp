@@ -2,7 +2,7 @@
 
 #include <sstream>
 #include "common_symbol_names.h"
-#include "gflags_utils.h"
+#include "dph_heap.h"
 #include "heap_entry.h"
 #include "heap_segment.h"
 #include "heap_ucr_descriptor.h"
@@ -15,20 +15,20 @@
 
 namespace dlg_help_utils::heap
 {
-    nt_heap::nt_heap(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const nt_heap_address, gflags_utils::gflags const nt_global_flag)
-    : walker_{walker}
-    , nt_heap_address_{nt_heap_address}
-    , nt_global_flag_{nt_global_flag}
-    , heap_symbol_type_{stream_utils::get_type(walker, common_symbol_names::heap_structure_symbol_name)}
-    , list_entry_symbol_type_{stream_utils::get_type(walker, common_symbol_names::list_entry_structure_symbol_name)}
-    , heap_free_entry_symbol_type_{stream_utils::get_type(walker, common_symbol_names::heap_free_entry_structure_symbol_name)}
-    , granularity_{get_granularity(walker)}
+    nt_heap::nt_heap(process::process_environment_block const& peb, uint64_t const nt_heap_address)
+    : nt_heap_address_{nt_heap_address}
+    , peb_{peb}
+    , heap_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::heap_structure_symbol_name)}
+    , list_entry_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::list_entry_structure_symbol_name)}
+    , heap_free_entry_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::heap_free_entry_structure_symbol_name)}
+    , granularity_{get_granularity(walker())}
     , segment_entry_offset_{get_segment_entry_offset(heap_symbol_type_)}
     , free_entry_free_list_offset_{get_free_entry_free_list_offset(heap_free_entry_symbol_type_)}
+    , stack_trace_{walker()}
     {
-        if(auto const encode_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker, heap_symbol_type_, common_symbol_names::heap_encode_flag_mask_field_symbol_name, nt_heap_address_); (encode_flag.value_or(0x0) & HeapEncodeFlagMakeEncodingEnabled) == HeapEncodeFlagMakeEncodingEnabled)
+        if(auto const encode_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), heap_symbol_type_, common_symbol_names::heap_encode_flag_mask_field_symbol_name, nt_heap_address_); (encode_flag.value_or(0x0) & HeapEncodeFlagMakeEncodingEnabled) == HeapEncodeFlagMakeEncodingEnabled)
         {
-            if(auto encoding_data = stream_utils::read_udt_value_in_type(walker, heap_symbol_type_, common_symbol_names::heap_encoding_field_symbol_name, nt_heap_address_); encoding_data.has_value())
+            if(auto encoding_data = stream_utils::read_udt_value_in_type(walker(), heap_symbol_type_, common_symbol_names::heap_encoding_field_symbol_name, nt_heap_address_); encoding_data.has_value())
             {
                 encoding_ = std::move(std::get<0>(encoding_data.value()));
             }
@@ -38,7 +38,7 @@ namespace dlg_help_utils::heap
     template <typename T>
     T nt_heap::get_field_value(std::wstring const& field_name) const
     {
-        auto const value = stream_utils::find_basic_type_field_value_in_type<T>(walker_, heap_symbol_type_, field_name, nt_heap_address_);
+        auto const value = stream_utils::find_basic_type_field_value_in_type<T>(walker(), heap_symbol_type_, field_name, nt_heap_address_);
         if(!value.has_value())
         {
             throw_cant_get_field_data(field_name);
@@ -49,13 +49,18 @@ namespace dlg_help_utils::heap
 
     uint64_t nt_heap::get_machine_size_field_value(std::wstring const& field_name) const
     {
-        auto const value = stream_utils::find_machine_size_field_value(*this, heap_symbol_type_, field_name, nt_heap_address_);
+        auto const value = stream_utils::find_machine_size_field_value(peb(), heap_symbol_type_, field_name, nt_heap_address_);
         if(!value.has_value())
         {
             throw_cant_get_field_data(field_name);
         }
 
         return value.value();
+    }
+
+    uint32_t nt_heap::segment_signature() const
+    {
+        return get_field_value<uint32_t>(common_symbol_names::heap_segment_signature_field_symbol_name);
     }
 
     uint32_t nt_heap::flags() const
@@ -117,7 +122,7 @@ namespace dlg_help_utils::heap
         {
             co_yield heap_segment{*this, flink - segment_entry_offset_};
 
-            flink = stream_utils::get_field_pointer(walker_, flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
+            flink = stream_utils::get_field_pointer(walker(), flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
         }
     }
 
@@ -129,7 +134,7 @@ namespace dlg_help_utils::heap
         while(flink != start)
         {
             co_yield heap_ucr_descriptor{*this, flink};
-            flink = stream_utils::get_field_pointer(walker_, flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
+            flink = stream_utils::get_field_pointer(walker(), flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
         }
     }
 
@@ -142,7 +147,7 @@ namespace dlg_help_utils::heap
         {
             co_yield heap_virtual_block{*this, flink};
 
-            flink = stream_utils::get_field_pointer(walker_, flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
+            flink = stream_utils::get_field_pointer(walker(), flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
         }
     }
 
@@ -155,15 +160,33 @@ namespace dlg_help_utils::heap
         {
             auto const entry_address = flink - free_entry_free_list_offset_;
             auto buffer = std::make_shared<char[]>(granularity());
-            if(auto const* entry_data = walker_.get_process_memory(entry_address, granularity()); entry_data != nullptr)
+            if(auto const* entry_data = walker().get_process_memory(entry_address, granularity()); entry_data != nullptr)
             {
 
                 decode_heap_entry(entry_data, buffer.get());
                 co_yield heap_entry{*this, entry_address, std::move(buffer)};;
             }
 
-            flink = stream_utils::get_field_pointer(walker_, flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
+            flink = stream_utils::get_field_pointer(walker(), flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
         }
+    }
+
+    std::optional<dph_heap> nt_heap::debug_page_heap() const
+    {
+        if(!peb().heap_page_alloc_enabled())
+        {
+            return std::nullopt;
+        }
+
+        for(auto const& heap : dph_heap::dph_heaps(peb()))
+        {
+            if(heap.normal_heap() == nt_heap_address())
+            {
+                return heap;
+            }
+        }
+
+        return std::nullopt;
     }
 
     std::optional<lfh_heap> nt_heap::lfh_heap() const
@@ -182,14 +205,16 @@ namespace dlg_help_utils::heap
         return heap::lfh_heap{*this, address};
     }
 
-    bool nt_heap::heap_page_alloc_enabled() const
+    bool nt_heap::is_process_heap(uint64_t const process_heap_address) const
     {
-        return (static_cast<uint32_t>(nt_global_flag_) & static_cast<uint32_t>(gflags_utils::gflags::FLG_HEAP_PAGE_ALLOCS)) == static_cast<uint32_t>(gflags_utils::gflags::FLG_HEAP_PAGE_ALLOCS);
-    }
+        auto is_process_heap = nt_heap_address() == process_heap_address;
+        if(!is_process_heap)
+        {
+            auto const dph_heap = debug_page_heap();
+            is_process_heap = dph_heap.has_value() && (dph_heap.value().address() - 0x1000) == process_heap_address;
+        }
 
-    bool nt_heap::user_stack_db_enabled() const
-    {
-        return (static_cast<uint32_t>(nt_global_flag_) & static_cast<uint32_t>(gflags_utils::gflags::FLG_USER_STACK_TRACE_DB)) == static_cast<uint32_t>(gflags_utils::gflags::FLG_USER_STACK_TRACE_DB);
+        return is_process_heap;
     }
 
     bool nt_heap::decode_heap_entry(void const* src, void* dst) const
@@ -213,7 +238,7 @@ namespace dlg_help_utils::heap
 
     uint64_t nt_heap::get_field_pointer(std::wstring const& field_name) const
     {
-        return stream_utils::get_field_pointer(walker_, nt_heap_address_, heap_symbol_type_, common_symbol_names::heap_entry_structure_symbol_name, field_name);
+        return stream_utils::get_field_pointer(walker(), nt_heap_address_, heap_symbol_type_, common_symbol_names::heap_entry_structure_symbol_name, field_name);
     }
 
     uint64_t nt_heap::get_field_address(std::wstring const& field_name) const

@@ -3,6 +3,7 @@
 #include "common_symbol_names.h"
 #include "nt_heap.h"
 #include "stream_utils.h"
+#include "ust_address_stack_trace.h"
 #include "wide_runtime_error.h"
 
 using namespace std::string_literals;
@@ -121,7 +122,7 @@ namespace dlg_help_utils::heap
 
     bool heap_entry::is_lfh_busy() const
     {
-        if(heap().user_stack_db_enabled())
+        if(heap().peb().user_stack_db_enabled())
         {
             return raw_unused_bytes_ == LfhFlagUstBusy;
         }
@@ -136,7 +137,7 @@ namespace dlg_help_utils::heap
 
     bool heap_entry::get_is_valid(size_units::base_10::bytes const previous_size) const
     {
-        if(heap().is_x86_target())
+        if(heap().peb().is_x86_target())
         {
             if(auto const* data = reinterpret_cast<uint8_t const*>(buffer_.get()); 
                 (data[0] ^ data[1] ^ data[2] ^ data[3]) != 0x00)
@@ -145,7 +146,7 @@ namespace dlg_help_utils::heap
             }
         }
 
-        if(heap().is_x64_target())
+        if(heap().peb().is_x64_target())
         {
             if(auto const* data = reinterpret_cast<uint8_t const*>(buffer_.get());
                 (data[0x08] ^ data[0x09] ^ data[0x0a] ^ data[0x0b]) != 0x00)
@@ -184,15 +185,15 @@ namespace dlg_help_utils::heap
 
     bool heap_entry::is_valid_ust_area() const
     {
-        if(heap().user_stack_db_enabled() && is_busy())
+        if(heap().peb().user_stack_db_enabled() && is_busy())
         {
-            const auto extra = stream_utils::read_field_value<uint16_t>(heap().walker(), heap_entry_address_ + heap_entry_length_ + get_ust_extra_offset());
-            if(!extra.has_value())
+            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(heap().walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
+            if(!unused_bytes_value.has_value())
             {
                 throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << common_symbol_names::heap_entry_structure_symbol_name << " can't get ust extra field data").str()};
             }
 
-            auto const unused_bytes_data = size_units::base_10::bytes{extra.value()};
+            auto const unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
             return unused_bytes_data <= size();
         }
 
@@ -204,8 +205,8 @@ namespace dlg_help_utils::heap
         size_units::base_10::bytes unused_bytes_data;
         if(is_valid_ust_area_)
         {
-            const auto extra = stream_utils::read_field_value<uint16_t>(heap().walker(), heap_entry_address_ + heap_entry_length_ + get_ust_extra_offset());
-            unused_bytes_data = size_units::base_10::bytes{extra.value()};
+            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(heap().walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
+            unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
         }
         else
         {
@@ -271,7 +272,7 @@ namespace dlg_help_utils::heap
             return 0;
         }
 
-        auto const value = stream_utils::read_machine_size_field_value(heap_, heap_entry_address_ + heap_entry_length_);
+        auto const value = stream_utils::read_machine_size_field_value(heap_.peb(), heap_entry_address_ + heap_entry_length_);
         if(!value.has_value())
         {
             throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << common_symbol_names::heap_entry_structure_symbol_name << " can't get ust address field data").str()};
@@ -280,107 +281,28 @@ namespace dlg_help_utils::heap
         return value.value();
     }
 
-    uint64_t heap_entry::get_ust_extra_offset() const
-    {
-        if(heap().is_x86_target())
-        {
-            return 0x0c;
-        }
-        if(heap().is_x64_target())
-        {
-            return 0x1c;
-        }
-
-        return 0;
-    }
-
     uint64_t heap_entry::get_ust_data_size() const
     {
-        if(heap().is_x86_target())
+        if(heap().peb().is_x86_target())
         {
-            return 0x10;
+            return heap_entry_length_ + 0x02;
         }
-        if(heap().is_x64_target())
+        if(heap().peb().is_x64_target())
         {
-            return 0x20;
+            return heap_entry_length_ + 0x10;
         }
 
         return 0;
     }
 
-    uint64_t heap_entry::get_ust_address_depth_offset() const
+    uint64_t heap_entry::get_ust_data_heap_entry_address() const
     {
-        if(heap().heap_page_alloc_enabled())
-        {
-            if(heap().is_x86_target())
-            {
-                return 0x0a;
-            }
-            if(heap().is_x64_target())
-            {
-                return 0x0e;
-            }
-        }
-
-        if(heap().user_stack_db_enabled())
-        {
-            if(heap().is_x86_target())
-            {
-                return 0x08;
-            }
-            if(heap().is_x64_target())
-            {
-                return 0x0c;
-            }
-        }
-
-        throw exceptions::wide_runtime_error{L"Error: ust or hpa not enabled"s};
-    }
-
-    uint64_t heap_entry::get_ust_address_stack_offset() const
-    {
-        if(heap().is_x86_target())
-        {
-            return 0x0c;
-        }
-        if(heap().is_x64_target())
-        {
-            return 0x10;
-        }
-
-        throw exceptions::wide_runtime_error{L"Error: ust or hpa not enabled"s};
+        return heap_entry_address_ + heap_entry_length_ + get_ust_data_size() - heap_entry_length_;
     }
 
     std::vector<uint64_t> heap_entry::get_allocation_stack_trace() const
     {
-        std::vector<uint64_t> trace;
-        if(ust_address() == 0)
-        {
-            return trace;
-        }
-
-        auto const depth = stream_utils::read_field_value<uint16_t>(heap().walker(), ust_address() + get_ust_address_depth_offset());
-        if(!depth.has_value())
-        {
-            return trace;
-        }
-
-        trace.reserve(depth.value());
-        auto address = ust_address() + get_ust_address_stack_offset();
-        auto const address_length = stream_utils::machine_field_size(heap());
-
-        for(uint16_t index = 0; index < depth.value(); ++index, address += address_length)
-        {
-            auto const sp = stream_utils::read_machine_size_field_value(heap(), address);
-            if(!sp.has_value())
-            {
-                break;
-            }
-
-            trace.push_back(sp.value());
-        }
-
-        return trace;
+        return heap().stack_trace().read_allocation_stack_trace(heap().peb(), ust_address());
     }
 
     size_units::base_10::bytes heap_entry::get_virtual_alloc_requested_size(uint64_t const size, uint16_t const unused_bytes)

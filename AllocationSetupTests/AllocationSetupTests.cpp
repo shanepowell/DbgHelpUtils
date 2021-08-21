@@ -3,11 +3,14 @@
 
 #include <array>
 #include <iostream>
+#include <sstream>
 #include <Windows.h>
 #include <boost/program_options.hpp>
 
-int LfhAllocations();
-int VirtualAllocations();
+int LfhAllocations(std::wstring const& alloc_dump_filename, std::wstring const& free_dump_filename);
+int VirtualAllocations(std::wstring const& alloc_dump_filename, std::wstring const& free_dump_filename);
+void GenerateDumpFile(std::wstring const& dump_filename);
+
 
 int main(int const argc, char* argv[])
 {
@@ -21,6 +24,8 @@ int main(int const argc, char* argv[])
                 ("help,h", "produce help message")
                 ("lfh", "generate lfh allocations")
                 ("virtual", "generate virtual allocations")
+                ("alloc", po::wvalue<std::wstring>(), "dump post allocate filename")
+                ("free", po::wvalue<std::wstring>(), "dump post free filename")
                 ;
 
             po::variables_map vm;
@@ -29,6 +34,8 @@ int main(int const argc, char* argv[])
 
             auto const do_lfh_allocations = vm.count("lfh") != 0;
             auto const do_virtual_allocations = vm.count("virtual") != 0;
+            auto const alloc_dump_filename = vm["alloc"].as<std::wstring>();
+            auto const free_dump_filename = vm["free"].as<std::wstring>();
 
             if (vm.count("help") || (!do_lfh_allocations && !do_virtual_allocations))
             {
@@ -38,12 +45,12 @@ int main(int const argc, char* argv[])
 
             if(do_lfh_allocations)
             {
-                return LfhAllocations();
+                return LfhAllocations(alloc_dump_filename, free_dump_filename);
             }
 
             if(do_virtual_allocations)
             {
-                return VirtualAllocations();
+                return VirtualAllocations(alloc_dump_filename, free_dump_filename);
             }
 
             return EXIT_SUCCESS;
@@ -63,7 +70,7 @@ int main(int const argc, char* argv[])
     return EXIT_FAILURE;
 }
 
-int LfhAllocations()
+int LfhAllocations(std::wstring const& alloc_dump_filename, std::wstring const& free_dump_filename)
 {
     auto const heap = GetProcessHeap();
 
@@ -98,19 +105,34 @@ int LfhAllocations()
         ++fill_value;
     }
 
-    std::cout << "press enter to free\n";
-    [[maybe_unused]] auto const ch1 = getchar();
+    if(alloc_dump_filename.empty())
+    {
+        std::cout << "press enter to free\n";
+        [[maybe_unused]] auto const ch1 = getchar();
+    }
+    else
+    {
+        GenerateDumpFile(alloc_dump_filename);
+    }
 
     HeapFree(heap, 0x0, backend_allocations[0]);
     HeapFree(heap, 0x0, frontend_allocations[0]);
-    std::cout << "press enter to exit\n";
-    [[maybe_unused]] auto const ch2 = getchar();
+
+    if(free_dump_filename.empty())
+    {
+        std::cout << "press enter to exit\n";
+        [[maybe_unused]] auto const ch2 = getchar();
+    }
+    else
+    {
+        GenerateDumpFile(free_dump_filename);
+    }
 
     return EXIT_SUCCESS;
 }
 
 
-int VirtualAllocations()
+int VirtualAllocations(std::wstring const& alloc_dump_filename, std::wstring const& free_dump_filename)
 {
     auto const heap = GetProcessHeap();
 
@@ -133,12 +155,70 @@ int VirtualAllocations()
     }
 
 
-    std::cout << "press enter to free\n";
-    [[maybe_unused]] auto const ch1 = getchar();
+    if(alloc_dump_filename.empty())
+    {
+        std::cout << "press enter to free\n";
+        [[maybe_unused]] auto const ch1 = getchar();
+    }
+    else
+    {
+        GenerateDumpFile(alloc_dump_filename);
+    }
 
     HeapFree(heap, 0x0, virtual_allocations[0]);
-    std::cout << "press enter to exit\n";
-    [[maybe_unused]] auto const ch2 = getchar();
+    HeapFree(heap, 0x0, virtual_allocations[3]);
+
+    if(free_dump_filename.empty())
+    {
+        std::cout << "press enter to exit\n";
+        [[maybe_unused]] auto const ch2 = getchar();
+    }
+    else
+    {
+        GenerateDumpFile(free_dump_filename);
+    }
 
     return EXIT_SUCCESS;
+}
+
+void GenerateDumpFile(std::wstring const& dump_filename)
+{
+    std::wostringstream ss;
+
+    // ReSharper disable once StringLiteralTypo
+    ss << "procdump -ma " << GetCurrentProcessId() << " \"" << dump_filename << "\"";
+    auto const command = std::move(ss).str();
+
+
+    STARTUPINFOW startup_info;
+    PROCESS_INFORMATION process_info;
+    memset(&startup_info, 0, sizeof(startup_info));
+    memset(&process_info, 0, sizeof(process_info));
+    startup_info.cb = sizeof(startup_info);
+
+    if(command.size() >= MAX_PATH)
+    {
+        std::wcout << "Command line [" << command << "] to long : " << command.size() << " >= " << MAX_PATH << '\n';
+        return;
+    }
+
+    wchar_t temp[MAX_PATH];
+    wcsncpy_s(temp, command.c_str(), command.size());
+    temp[command.size()] = 0;
+
+    std::wcout << "Run: [" << command << "]";
+    if (!CreateProcessW(nullptr, temp, nullptr, nullptr, false, 0, nullptr, nullptr, &startup_info, &process_info))
+    {
+        std::wcout << "CreateProcessW [" << command << "] failed " << GetLastError() << '\n';
+        return;
+    }
+
+    //Close thread handle. 
+    CloseHandle(process_info.hThread);
+
+    // Wait for dump to complete...
+    WaitForSingleObject(process_info.hProcess, INFINITE);
+
+    // Close process handle.
+    CloseHandle(process_info.hProcess);
 }
