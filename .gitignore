@@ -38,3 +38,4 @@ MiniDumpExplorer/Generated Files/
 MiniDumpExplorerDll/Generated Files/
 packages
 /*.dll
+/GenerateDumps.ps1
