@@ -5,6 +5,16 @@
 
 #include "symbol_type_info.h"
 
+namespace dlg_help_utils::process
+{
+    class process_environment_block;
+}
+
+namespace dlg_help_utils::stream_stack_dump
+{
+    class mini_dump_stack_walk;
+}
+
 namespace dlg_help_utils::heap
 {
     class nt_heap;
@@ -19,6 +29,11 @@ namespace dlg_help_utils::heap
     public:
         heap_segment(nt_heap const& heap, uint64_t heap_segment_address);
 
+        [[nodiscard]] nt_heap const& heap() const { return heap_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
+        [[nodiscard]] process::process_environment_block const& peb() const;
+        [[nodiscard]] uint64_t heap_segment_address() const { return heap_segment_address_; }
+
         [[nodiscard]] uint32_t segment_flags() const;
         [[nodiscard]] uint64_t base_address() const;
         [[nodiscard]] uint32_t number_of_pages() const;
@@ -32,25 +47,17 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] std::experimental::generator<heap_ucr_descriptor> uncommitted_ranges() const;
 
+        [[nodiscard]] uint64_t symbol_address() const { return heap_segment_address(); }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_segment_symbol_type_; }
+
+        static std::wstring const& symbol_name;
+
     private:
         [[nodiscard]] static std::optional<heap_ucr_descriptor> is_uncommitted_range(std::vector<heap_ucr_descriptor> const& ranges, uint64_t heap_entry_address);
-
-        [[nodiscard]] uint64_t get_field_pointer(std::wstring const& field_name) const;
-        [[nodiscard]] uint64_t get_field_address(std::wstring const& field_name) const;
-
-        template<typename T>
-        [[nodiscard]] T get_field_value(std::wstring const& field_name) const;
-
-        [[nodiscard]] static uint64_t get_segment_entry_offset(dbg_help::symbol_type_info const& heap_ucr_descriptor_symbol_type);
-        [[noreturn]] static void throw_cant_get_field_data(std::wstring const& field_name);
 
     private:
         nt_heap const& heap_;
         uint64_t const heap_segment_address_;
         dbg_help::symbol_type_info const heap_segment_symbol_type_;
-        dbg_help::symbol_type_info const heap_entry_symbol_type_;
-        dbg_help::symbol_type_info const heap_ucr_descriptor_symbol_type_;
-        dbg_help::symbol_type_info const list_entry_symbol_type_;
-        uint64_t const segment_entry_offset_;
     };
 }

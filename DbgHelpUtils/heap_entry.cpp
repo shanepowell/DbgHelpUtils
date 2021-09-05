@@ -10,11 +10,13 @@ using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
-    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<char[]> buffer)
+    std::wstring const& heap_entry::symbol_name = common_symbol_names::heap_entry_structure_symbol_name;
+
+    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer)
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
-    , small_tag_index_offset_{get_small_tag_index_offset() }
+    , small_tag_index_offset_{get_small_tag_index_offset()}
     , flags_{get_flags()}
     , size_{get_size()}
     , previous_size_{get_previous_size()}
@@ -31,13 +33,13 @@ namespace dlg_help_utils::heap
     {
     }
 
-    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<char[]> buffer, uint16_t const block_size, LfhEntryType)
+    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer, uint16_t const block_size, LfhEntryType)
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
     , small_tag_index_offset_{get_small_tag_index_offset() }
     , flags_{get_flags()}
-    , size_{block_size * heap_.granularity()}
+    , size_{block_size * heap.granularity()}
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
@@ -51,7 +53,7 @@ namespace dlg_help_utils::heap
     {
     }
 
-    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, uint64_t const end_address, std::shared_ptr<char[]> buffer, uint64_t const size, uint16_t const unused_bytes, VirtualAllocType)
+    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, uint64_t const end_address, std::shared_ptr<uint8_t[]> buffer, uint64_t const size, uint16_t const unused_bytes, VirtualAllocType)
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
@@ -72,7 +74,7 @@ namespace dlg_help_utils::heap
     {
     }
 
-    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<char[]> buffer, size_units::base_10::bytes const previous_size)
+    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer, size_units::base_10::bytes const previous_size)
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
@@ -108,21 +110,19 @@ namespace dlg_help_utils::heap
     {
     }
 
-    template <typename T>
-    T heap_entry::get_field_value(std::wstring const& field_name) const
+    stream_stack_dump::mini_dump_stack_walk const& heap_entry::walker() const
     {
-        auto const value = stream_utils::find_basic_type_field_value_in_type<T>(heap_entry_symbol_type_, field_name, buffer_.get());
-        if(!value.has_value())
-        {
-            stream_utils::throw_cant_get_field_data(common_symbol_names::heap_entry_structure_symbol_name, field_name);
-        }
+        return heap().walker();
+    }
 
-        return value.value();
+    process::process_environment_block const& heap_entry::peb() const
+    {
+        return heap().peb();
     }
 
     bool heap_entry::is_lfh_busy() const
     {
-        if(heap().peb().user_stack_db_enabled())
+        if(peb().user_stack_db_enabled())
         {
             return raw_unused_bytes_ == LfhFlagUstBusy;
         }
@@ -137,7 +137,7 @@ namespace dlg_help_utils::heap
 
     bool heap_entry::get_is_valid(size_units::base_10::bytes const previous_size) const
     {
-        if(heap().peb().is_x86_target())
+        if(peb().is_x86_target())
         {
             if(auto const* data = reinterpret_cast<uint8_t const*>(buffer_.get()); 
                 (data[0] ^ data[1] ^ data[2] ^ data[3]) != 0x00)
@@ -146,7 +146,7 @@ namespace dlg_help_utils::heap
             }
         }
 
-        if(heap().peb().is_x64_target())
+        if(peb().is_x64_target())
         {
             if(auto const* data = reinterpret_cast<uint8_t const*>(buffer_.get());
                 (data[0x08] ^ data[0x09] ^ data[0x0a] ^ data[0x0b]) != 0x00)
@@ -160,37 +160,37 @@ namespace dlg_help_utils::heap
 
     uint8_t heap_entry::get_flags()  const
     {
-        return get_field_value<uint8_t>(common_symbol_names::heap_entry_flags_field_symbol_name);
+        return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_flags_field_symbol_name, buffer_.get());
     }
 
     uint64_t heap_entry::get_size()  const
     {
-        return static_cast<uint64_t>(get_field_value<uint16_t>(common_symbol_names::heap_entry_size_field_symbol_name)) * heap().granularity();
+        return static_cast<uint64_t>(stream_utils::get_field_value_from_buffer<uint16_t>(*this, common_symbol_names::heap_entry_size_field_symbol_name, buffer_.get())) * heap().granularity();
     }
 
     uint64_t heap_entry::get_previous_size() const
     {
-        return static_cast<uint64_t>(get_field_value<uint16_t>(common_symbol_names::heap_entry_previous_size_field_symbol_name)) * heap().granularity();
+        return static_cast<uint64_t>(stream_utils::get_field_value_from_buffer<uint16_t>(*this, common_symbol_names::heap_entry_previous_size_field_symbol_name, buffer_.get())) * heap().granularity();
     }
 
     uint8_t heap_entry::get_segment_offset() const
     {
-        return get_field_value<uint8_t>(common_symbol_names::heap_entry_segment_offset_field_symbol_name);
+        return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_segment_offset_field_symbol_name, buffer_.get());
     }
 
     uint8_t heap_entry::get_raw_unused_bytes()  const
     {
-        return get_field_value<uint8_t>(common_symbol_names::heap_entry_unused_bytes_field_symbol_name);
+        return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, buffer_.get());
     }
 
     bool heap_entry::is_valid_ust_area() const
     {
-        if(heap().peb().user_stack_db_enabled() && is_busy())
+        if(peb().user_stack_db_enabled() && is_busy())
         {
-            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(heap().walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
+            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
             if(!unused_bytes_value.has_value())
             {
-                throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << common_symbol_names::heap_entry_structure_symbol_name << " can't get ust extra field data").str()};
+                throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " can't get ust extra field data").str()};
             }
 
             auto const unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
@@ -205,7 +205,7 @@ namespace dlg_help_utils::heap
         size_units::base_10::bytes unused_bytes_data;
         if(is_valid_ust_area_)
         {
-            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(heap().walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
+            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
             unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
         }
         else
@@ -272,10 +272,10 @@ namespace dlg_help_utils::heap
             return 0;
         }
 
-        auto const value = stream_utils::read_machine_size_field_value(heap_.peb(), heap_entry_address_ + heap_entry_length_);
+        auto const value = stream_utils::read_machine_size_field_value(peb(), heap_entry_address_ + heap_entry_length_);
         if(!value.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << common_symbol_names::heap_entry_structure_symbol_name << " can't get ust address field data").str()};
+            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " can't get ust address field data").str()};
         }
 
         return value.value();
@@ -283,11 +283,11 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_entry::get_ust_data_size() const
     {
-        if(heap().peb().is_x86_target())
+        if(peb().is_x86_target())
         {
             return heap_entry_length_ + 0x02;
         }
-        if(heap().peb().is_x64_target())
+        if(peb().is_x64_target())
         {
             return heap_entry_length_ + 0x10;
         }
@@ -302,7 +302,7 @@ namespace dlg_help_utils::heap
 
     std::vector<uint64_t> heap_entry::get_allocation_stack_trace() const
     {
-        return heap().stack_trace().read_allocation_stack_trace(heap().peb(), ust_address());
+        return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
     }
 
     size_units::base_10::bytes heap_entry::get_virtual_alloc_requested_size(uint64_t const size, uint16_t const unused_bytes)
@@ -317,16 +317,16 @@ namespace dlg_help_utils::heap
 
     dbg_help::symbol_type_info heap_entry::get_heap_entry_symbol_type() const
     {
-        return stream_utils::get_type(heap().walker(), common_symbol_names::heap_entry_structure_symbol_name);
+        return stream_utils::get_type(walker(), symbol_name);
     }
 
     uint64_t heap_entry::get_heap_entry_length() const
     {
-        return stream_utils::get_type_length(heap_entry_symbol_type_, common_symbol_names::heap_entry_structure_symbol_name);
+        return stream_utils::get_type_length(heap_entry_symbol_type_, symbol_name);
     }
 
     uint64_t heap_entry::get_small_tag_index_offset() const
     {
-        return stream_utils::get_field_offset(heap_entry_symbol_type_, common_symbol_names::heap_entry_structure_symbol_name, common_symbol_names::heap_entry_small_tag_index_field_symbol_name);
+        return stream_utils::get_field_offset(heap_entry_symbol_type_, symbol_name, common_symbol_names::heap_entry_small_tag_index_field_symbol_name);
     }
 }

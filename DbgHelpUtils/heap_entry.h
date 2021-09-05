@@ -4,8 +4,19 @@
 #include "size_units.h"
 #include "symbol_type_info.h"
 
+namespace dlg_help_utils::process
+{
+    class process_environment_block;
+}
+
+namespace dlg_help_utils::stream_stack_dump
+{
+    class mini_dump_stack_walk;
+}
+
 namespace dlg_help_utils::heap
 {
+    class ust_address_stack_trace;
     class nt_heap;
 
     class heap_entry
@@ -23,14 +34,16 @@ namespace dlg_help_utils::heap
         {
         };
 
-        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<char[]> buffer);
-        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<char[]> buffer, uint16_t block_size, LfhEntryType);
-        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t end_address, std::shared_ptr<char[]> buffer, uint64_t size, uint16_t unused_bytes, VirtualAllocType);
-        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<char[]> buffer, size_units::base_10::bytes previous_size);
+        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<uint8_t[]> buffer);
+        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<uint8_t[]> buffer, uint16_t block_size, LfhEntryType);
+        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t end_address, std::shared_ptr<uint8_t[]> buffer, uint64_t size, uint16_t unused_bytes, VirtualAllocType);
+        heap_entry(nt_heap const& heap, uint64_t heap_entry_address, std::shared_ptr<uint8_t[]> buffer, size_units::base_10::bytes previous_size);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t uncommitted_size);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t unknown_size, UnknownSizeType);
 
         [[nodiscard]] nt_heap const& heap() const { return heap_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
+        [[nodiscard]] process::process_environment_block const& peb() const;
         [[nodiscard]] bool is_valid() const { return is_valid_; }
         [[nodiscard]] uint64_t address() const { return heap_entry_address_; }
         [[nodiscard]] uint64_t user_address() const { return user_address_; }
@@ -51,7 +64,6 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_lfh_entry() const { return (raw_unused_bytes_ & FlagLFHMarker) == FlagLFHMarker; }
         [[nodiscard]] bool is_lfh_busy() const;
         [[nodiscard]] bool is_busy() const { return !is_uncommitted() && !is_unknown() && (is_lfh_entry() ? is_lfh_busy() : (flags() & FlagBusy) == FlagBusy); }
-        [[nodiscard]] bool is_heap_allocation() const;
 
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
         
@@ -66,15 +78,17 @@ namespace dlg_help_utils::heap
         static uint8_t constexpr FlagLFHMarker = 0x80;
         static uint8_t constexpr LfhFlagUstBusy = 0xc2;
 
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_entry_symbol_type_; }
+
+        static std::wstring const& symbol_name;
+
     private:
         [[nodiscard]] uint8_t unused_bytes_raw() const
         {
             return raw_unused_bytes_ & ~FlagLFHMarker;
         }
 
-        template <typename T>
-        [[nodiscard]] T get_field_value(std::wstring const& field_name) const;
-
+        [[nodiscard]] bool is_heap_allocation() const;
         [[nodiscard]] bool get_is_valid(size_units::base_10::bytes previous_size) const;
         [[nodiscard]] uint8_t get_flags() const;
         [[nodiscard]] uint64_t get_size() const;
@@ -102,7 +116,7 @@ namespace dlg_help_utils::heap
         uint64_t const heap_entry_address_;
         dbg_help::symbol_type_info const heap_entry_symbol_type_{get_heap_entry_symbol_type()};
         uint64_t const heap_entry_length_{get_heap_entry_length()};
-        std::shared_ptr<char[]> buffer_;
+        std::shared_ptr<uint8_t[]> buffer_;
         uint64_t const small_tag_index_offset_{0};
         uint8_t const flags_{0};
         size_units::base_10::bytes const size_;

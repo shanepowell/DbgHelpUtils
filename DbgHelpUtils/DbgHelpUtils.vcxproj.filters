@@ -37,6 +37,18 @@
     <Filter Include="Process">
       <UniqueIdentifier>{3bc23df8-67b5-4325-aabb-4ee585e117d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NtdllUtilities">
+      <UniqueIdentifier>{cc69d50d-9c5d-4f26-b491-694fc0bb28c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Heap\NtHeap">
+      <UniqueIdentifier>{c78c3947-6d6e-418e-b348-fb0c4dd8d83b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Heap\DebugHeap">
+      <UniqueIdentifier>{4a092b50-b94a-4077-a260-ba483cc7840b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Heap\SegmentHeap">
+      <UniqueIdentifier>{6a4b9615-9f65-462a-b277-d877ed6297ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -231,36 +243,6 @@
     <ClCompile Include="common_symbol_utils.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="nt_heap.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="heap_segment.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="heap_entry.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="heap_ucr_descriptor.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="heap_virtual_block.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="lfh_segment.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="lfh_heap.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="heap_subsegment.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="dph_heap.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="dph_entry.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
     <ClCompile Include="ust_address_stack_trace.cpp">
       <Filter>Heap</Filter>
     </ClCompile>
@@ -269,6 +251,90 @@
     </ClCompile>
     <ClCompile Include="process_parameters.cpp">
       <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="page_range_flags_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="list_entry_walker.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="rtl_balanced_links_walker.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="rtl_rb_tree_walker.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_entry.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="dph_entry.cpp">
+      <Filter>Heap\DebugHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="dph_heap.cpp">
+      <Filter>Heap\DebugHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_lfh_context.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_page_segment.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_segment.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_segment_context.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_subsegment.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_ucr_descriptor.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_virtual_block.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_vs_context.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_vs_entry.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_vs_subsegment.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="large_alloc_entry.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="lfh_heap.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="lfh_segment.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="nt_heap.cpp">
+      <Filter>Heap\NtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="page_range_descriptor.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="segment_heap.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_lfh_bucket.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_lfh_affinity_slot.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_lfh_subsegment.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="lfh_subsegment_location_utils.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="heap_lfh_entry.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -527,41 +593,11 @@
     <ClInclude Include="common_symbol_utils.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
-    <ClInclude Include="heap_segment.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="nt_heap.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="heap_entry.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="heap_ucr_descriptor.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="heap_virtual_block.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
     <ClInclude Include="hash_combine.h">
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="string_compare.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="lfh_segment.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="heap_subsegment.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="lfh_heap.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="dph_heap.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="dph_entry.h">
-      <Filter>Heap</Filter>
     </ClInclude>
     <ClInclude Include="ust_address_stack_trace.h">
       <Filter>Heap</Filter>
@@ -571,6 +607,90 @@
     </ClInclude>
     <ClInclude Include="process_parameters.h">
       <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="page_range_flags_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="list_entry_walker.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="rtl_balanced_links_walker.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="rtl_rb_tree_walker.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_entry.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="dph_entry.h">
+      <Filter>Heap\DebugHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="dph_heap.h">
+      <Filter>Heap\DebugHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_lfh_context.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_page_segment.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_segment.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_segment_context.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_subsegment.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_ucr_descriptor.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_virtual_block.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_vs_context.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_vs_entry.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_vs_subsegment.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="large_alloc_entry.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="lfh_heap.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="lfh_segment.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="nt_heap.h">
+      <Filter>Heap\NtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="page_range_descriptor.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="segment_heap.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_lfh_bucket.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_lfh_affinity_slot.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_lfh_subsegment.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="lfh_subsegment_location_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_lfh_entry.h">
+      <Filter>Heap\SegmentHeap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -286,6 +286,14 @@ void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] 
 
     if(options.debug_type_data())
     {
+        if(bit_position_data.has_value())
+        {
+            if(auto const data = value.length(); data.has_value())
+            {
+                wcout << ", Length: " << data.value();
+            }
+        }
+
         wcout << ", SymIndex: " << value.sym_index();
 
         if(tag_data.has_value())

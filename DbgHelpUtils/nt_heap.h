@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <experimental/generator>
 
-#include "gflags_utils.h"
 #include "process_environment_block.h"
 #include "size_units.h"
 #include "symbol_type_info.h"
@@ -32,6 +31,7 @@ namespace dlg_help_utils::heap
         nt_heap(process::process_environment_block const& peb, uint64_t nt_heap_address);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return peb_.walker(); }
 
         [[nodiscard]] uint64_t nt_heap_address() const { return nt_heap_address_; }
         [[nodiscard]] uint32_t segment_signature() const;
@@ -60,36 +60,21 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] bool is_process_heap(uint64_t process_heap_address) const;
 
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return peb_.walker(); }
-
-        bool decode_heap_entry(void const* src, void* dst) const;
+        void decode_heap_entry(void const* src, void* dst) const;
 
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
-    private:
-        [[nodiscard]] uint64_t get_field_pointer(std::wstring const& field_name) const;
-        [[nodiscard]] uint64_t get_field_address(std::wstring const& field_name) const;
+        [[nodiscard]] uint64_t symbol_address() const { return nt_heap_address(); }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_symbol_type_; }
 
-        template<typename T>
-        [[nodiscard]] T get_field_value(std::wstring const& field_name) const;
-        [[nodiscard]] uint64_t get_machine_size_field_value(std::wstring const& field_name) const;
-
-        [[nodiscard]] static uint64_t get_segment_entry_offset(dbg_help::symbol_type_info const& heap_symbol_type);
-        [[nodiscard]] static uint64_t get_free_entry_free_list_offset(dbg_help::symbol_type_info const& heap_free_entry_symbol_type);
-        [[nodiscard]] static uint32_t get_granularity(stream_stack_dump::mini_dump_stack_walk const& walker);
-        [[noreturn]] static void throw_cant_get_field_data(std::wstring const& field_name);
-        [[noreturn]] static void throw_cant_get_field_is_null(std::wstring const& field_name);
+        static std::wstring const& symbol_name;
 
     private:
         uint64_t const nt_heap_address_;
         process::process_environment_block const& peb_;
         dbg_help::symbol_type_info const heap_symbol_type_;
-        dbg_help::symbol_type_info const list_entry_symbol_type_;
-        dbg_help::symbol_type_info const heap_free_entry_symbol_type_;
         uint32_t const granularity_;
-        uint64_t const segment_entry_offset_;
-        uint64_t const free_entry_free_list_offset_;
-        std::unique_ptr<char[]> encoding_;
-        ust_address_stack_trace stack_trace_;
+        std::unique_ptr<uint8_t[]> encoding_;
+        ust_address_stack_trace stack_trace_{walker()};
     };
 }

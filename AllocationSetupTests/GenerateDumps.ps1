@@ -1,47 +1,88 @@
 # generate all the dump files used in testing heap layouts
+# gflags:
+# HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AllocationSetupTests.exe
+# 
+# +ust       = GlobalFlag    REG_DWORD 0x1000
+# +ust +hpa  = GlobalFlag    REG_DWORD 0x2001000
+#            = PageHeapFlags REG_DWORD 0x3
+# 
+# Enable Segment Heap = FrontEndHeapDebugOptions REG_DWORD 0x08
+#
 
 Param
 (
-    [string] $DumpFolder = "G:\temp\crashdumps",
-    [string] $GFlags = "G:\utils\gflags\gflags.exe"
+    [Parameter(Mandatory=$true)][string] $DumpFolder
 )
 
 Function Run-AllAllocationApplicationArgs($options)
 {
-    Run-AllocationX86X64Application "lfh" $options
-    Run-AllocationX86X64Application "virtual" $options
+    Run-AllocationAllocationTypesApplication "lfh" $options
+    Run-AllocationAllocationTypesApplication "virtual" $options
+    Run-AllocationAllocationTypesApplication "sizes" $options
 }
 
-Function Run-AllocationX86X64Application($arg, $options)
+Function Run-AllocationAllocationTypesApplication($arg, $options)
 {
-    Run-AllocationReleaseDebugApplication $arg "." "x86" $options
-    Run-AllocationReleaseDebugApplication $arg "x64" "x64" $options
+    Run-AllocationX86X64Application $arg "heapalloc" $options 
+    Run-AllocationX86X64Application $arg "malloc" $options
+    Run-AllocationX86X64Application $arg "new" $options
 }
 
-Function Run-AllocationReleaseDebugApplication($arg, $arch_dir, $arch, $options)
+Function Run-AllocationX86X64Application($arg, $alloc, $options)
 {
-    Run-AllocationApplication $arg "debug" $arch_dir $arch $options
-    Run-AllocationApplication $arg "release" $arch_dir $arch $options
+    Run-AllocationReleaseDebugApplication $arg "." "x86" $alloc $options
+    Run-AllocationReleaseDebugApplication $arg "x64" "x64" $alloc $options
 }
 
-Function Run-AllocationApplication($arg, $config, $arch_dir, $arch, $options)
+Function Run-AllocationReleaseDebugApplication($arg, $arch_dir, $arch, $alloc, $options)
 {
-    $alloc_dmp = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($options)alloc.dmp"
-    remove-item $alloc_dmp -ErrorAction:SilentlyContinue
-    $free_dmp = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($options)free.dmp"
-    remove-item $free_dmp -ErrorAction:SilentlyContinue
-    . "$PSScriptRoot\..\$arch_dir\$config\$app_name" "--$arg" "--alloc" $alloc_dmp "--free" $free_dmp
+    Run-AllocationApplication $arg "debug" $arch_dir $arch $alloc $options
+    Run-AllocationApplication $arg "release" $arch_dir $arch $alloc $options
+}
+
+Function Run-AllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $options)
+{
+    $dmp = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).dmp"
+    remove-item $dmp -ErrorAction:SilentlyContinue
+    $log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).log"
+    remove-item $log -ErrorAction:SilentlyContinue
+    . "$PSScriptRoot\..\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log
 }
 
 $app_name = "AllocationSetupTests.exe"
+$app_image_options = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AllocationSetupTests.exe"
+$global_flag = "GlobalFlag"
+$page_heap_flags = "PageHeapFlags"
+$front_end_heap = "FrontEndHeapDebugOptions"
 
-. $GFlags /i $app_name -ust -hpa
+#. $GFlags /i $app_name -ust -hpa
+Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue
 Run-AllAllocationApplicationArgs ""
 
-. $GFlags /i $app_name +ust -hpa
-Run-AllAllocationApplicationArgs "ust_"
+#. $GFlags /i $app_name +ust -hpa
+New-Item $app_image_options
+New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000
+Run-AllAllocationApplicationArgs "_ust"
 
-. $GFlags /i $app_name +ust +hpa
-Run-AllAllocationApplicationArgs "ust_hpa_"
+#. $GFlags /i $app_name +ust +hpa
+Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000
+New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3
+Run-AllAllocationApplicationArgs "_ust_hpa"
 
-. $GFlags /i $app_name -ust -hpa
+# enable segment heap type
+Remove-ItemProperty -Path $app_image_options -Name $global_flag
+Remove-ItemProperty -Path $app_image_options -Name $page_heap_flags
+New-ItemProperty -Path $app_image_options -Name $front_end_heap -PropertyType DWord -Value 0x08
+Run-AllAllocationApplicationArgs "_segment"
+
+#. $GFlags /i $app_name +ust -hpa
+New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000
+Run-AllAllocationApplicationArgs "_segment_ust"
+
+#. $GFlags /i $app_name +ust +hpa
+Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000
+New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3
+Run-AllAllocationApplicationArgs "_segment_ust_hpa"
+
+#. $GFlags /i $app_name -ust -hpa
+Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue

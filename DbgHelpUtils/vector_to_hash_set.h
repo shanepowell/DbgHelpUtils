@@ -23,7 +23,7 @@ namespace dlg_help_utils
         template <typename T>
         T string_converter([[maybe_unused]] std::wstring const& value)
         {
-            auto const unsupported_string_convert_type = false;
+            auto constexpr unsupported_string_convert_type = false;
             // ReSharper disable once CppStaticAssertFailure
             static_assert(unsupported_string_convert_type);
             return T{};

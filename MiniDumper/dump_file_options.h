@@ -4,7 +4,11 @@
 #include "DbgHelpUtils/windows_setup.h"
 #include <DbgHelp.h>
 #include <vector>
+
+#pragma warning(push)
+#pragma warning(disable : 26812 26495)
 #include <boost/program_options.hpp>
+#pragma warning(pop)
 
 class dump_file_options
 {
@@ -25,6 +29,7 @@ public:
     [[nodiscard]] bool debug_type_data() const { return debug_type_data_; }
     [[nodiscard]] bool display_peb() const { return display_peb_; }
     [[nodiscard]] bool display_heap() const { return display_heap_; }
+    [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> symbol_types() const { return symbol_types_; }
     [[nodiscard]] std::vector<std::wstring> symbol_names() const { return symbol_names_; }
@@ -46,6 +51,7 @@ private:
     bool debug_type_data_;
     bool display_peb_;
     bool display_heap_;
+    bool debug_heap_data_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
     std::vector<std::wstring> symbol_names_;
     std::vector<std::wstring> symbol_types_;

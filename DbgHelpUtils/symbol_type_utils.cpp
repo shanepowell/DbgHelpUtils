@@ -147,7 +147,7 @@ namespace dlg_help_utils::symbol_type_utils
             { data_kind::data_is_constant, L"constant"sv },
         };
 
-        auto const all_bits = std::numeric_limits<uint64_t>::max();
+        auto constexpr all_bits = std::numeric_limits<uint64_t>::max();
     }
 
     std::wstring_view sym_tag_to_string(sym_tag_enum const type)

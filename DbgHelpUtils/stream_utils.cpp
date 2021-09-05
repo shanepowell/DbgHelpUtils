@@ -296,7 +296,57 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    std::optional<std::tuple<std::unique_ptr<char[]>, uint64_t, uint64_t>> read_udt_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
+    std::optional<std::tuple<uint64_t, uint32_t, uint32_t>> find_bit_type_field_address_in_type(dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address, size_t const field_size)
+    {
+        auto const field_data = find_field_in_type(type, field_name);
+        if(!field_data.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const [field, base_offset] = field_data.value();
+
+        auto const data_type = field.type(); 
+        if(!data_type.has_value())
+        {
+            return std::nullopt;
+        }
+
+        if(auto const data_type_tag = data_type.value().sym_tag(); data_type_tag.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::BaseType)
+        {
+            return std::nullopt;
+        }
+
+        auto const offset_data = field.offset();
+        if(!offset_data.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const field_bit_length = field.length();
+        if(!field_bit_length.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const data_type_length = data_type.value().length();
+        if(!data_type_length.has_value())
+        {
+            return std::nullopt;
+        }
+
+        if(data_type_length.value() <= field_size)
+        {
+            if(auto const bit_position_data = field.bit_position(); bit_position_data.has_value())
+            {
+                return std::make_tuple(memory_address + offset_data.value(), bit_position_data.value(), static_cast<uint32_t>(field_bit_length.value()));
+            }
+        }
+
+        return std::nullopt;
+    }
+
+    std::optional<std::tuple<std::unique_ptr<uint8_t[]>, uint64_t, uint64_t>> read_udt_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
     {
         auto const type_and_offset = find_field_type_and_offset_in_type(type, field_name, dbg_help::sym_tag_enum::UDT);
         if(!type_and_offset.has_value())
@@ -317,7 +367,7 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        auto buffer = std::make_unique<char[]>(data_type_length.value());
+        auto buffer = std::make_unique<uint8_t[]>(data_type_length.value());
         auto const *value = walker.get_process_memory(memory_address + offset, data_type_length.value());
 
         if(value == nullptr)
@@ -430,7 +480,7 @@ namespace dlg_help_utils::stream_utils
         throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " has no " << field_name << " field").str()};
     }
 
-    std::optional<uint64_t> read_static_variable_value(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
+    std::optional<uint64_t> read_static_variable_machine_size_value(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
     {
         auto const symbol = walker.get_symbol_info(symbol_name);
         if(!symbol.has_value())
@@ -469,6 +519,29 @@ namespace dlg_help_utils::stream_utils
         default:
             throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " <<symbol_name << " can't length [" << length.value() << "] not supported").str()};
         }
+    }
+
+    std::optional<std::pair<uint64_t, uint64_t>> get_static_variable_address_and_size(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
+    {
+        auto const symbol = walker.get_symbol_info(symbol_name);
+        if(!symbol.has_value())
+        {
+            return std::nullopt;
+        }
+
+        auto const address = symbol.value().address();
+        if(!address.has_value())
+        {
+            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read address").str()};
+        }
+
+        auto const length = symbol.value().length();
+        if(!length.has_value())
+        {
+            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read length").str()};
+        }
+
+        return std::make_pair(address.value(), length.value());
     }
 
     void throw_cant_get_field_is_null(std::wstring const& type_name, std::wstring const& field_name)

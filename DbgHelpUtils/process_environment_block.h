@@ -8,6 +8,7 @@
 #include "pe_file_memory_mapping.h"
 #include "process_parameters.h"
 #include "symbol_type_info.h"
+#include "system_memory_info_stream.h"
 #include "thread_names_list_stream.h"
 #include "unloaded_module_list_stream.h"
 
@@ -15,6 +16,7 @@ namespace dlg_help_utils
 {
     namespace heap
     {
+        class segment_heap;
         class nt_heap;
     }
 
@@ -43,12 +45,15 @@ namespace dlg_help_utils::process
         [[nodiscard]] uint64_t heap_address(uint32_t heap_index) const;
         [[nodiscard]] uint32_t segment_signature(uint32_t heap_index) const;
         [[nodiscard]] std::optional<heap::nt_heap> nt_heap(uint32_t heap_index) const;
+        [[nodiscard]] std::optional<heap::segment_heap> segment_heap(uint32_t heap_index) const;
 
         [[nodiscard]] bool is_x86_target() const;
         [[nodiscard]] bool is_x64_target() const;
 
         [[nodiscard]] bool user_stack_db_enabled() const;
         [[nodiscard]] bool heap_page_alloc_enabled() const;
+
+        [[nodiscard]] uint64_t page_size() const { return system_memory_info_.system_memory_misc_info().BasicInfo.PageSize; }
 
     private:
         [[nodiscard]] static uint64_t get_teb_address(dlg_help_utils::mini_dump const& mini_dump, stream_stack_dump::mini_dump_stack_walk const& walker, thread_names_list_stream const& names_list);
@@ -66,6 +71,7 @@ namespace dlg_help_utils::process
         function_table_stream function_table_;
         module_list_stream module_list_;
         unloaded_module_list_stream unloaded_module_list_;
+        system_memory_info_stream system_memory_info_;
         pe_file_memory_mapping pe_file_memory_mappings_{};
         stream_stack_dump::mini_dump_stack_walk const walker_;
         dbg_help::symbol_type_info const heap_symbol_type_;

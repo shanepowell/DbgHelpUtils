@@ -23,6 +23,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     , debug_type_data_{ vm.count("typedebug") > 0 }
     , display_peb_{ vm.count("peb") > 0 }
     , display_heap_{ vm.count("heap") > 0 }
+    , debug_heap_data_{ vm.count("heapdebug") > 0 }
 {
     if (vm.count("streamindex") > 0)
     {

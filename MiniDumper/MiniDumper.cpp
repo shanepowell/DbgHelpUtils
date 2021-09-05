@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <iostream>
 
-#include <boost/program_options.hpp>
-
 #include "dump_file_options.h"
 #include "dump_mini_dump.h"
 #include "DbgHelpUtils/filesystem_utils.h"
@@ -46,6 +44,7 @@ int wmain(int const argc, wchar_t* argv[])
             ("moduletypes", po::wvalue<vector<wstring>>(), "dump module symbol types")
             ("address", po::wvalue<vector<wstring>>(), "dump address with type")
             ("typedebug", "debug type data")
+            ("heapdebug", "debug heap data")
             ("peb", "process environment block")
             ("heap", "heap data information")
             ;

@@ -2,17 +2,18 @@
 
 #include "common_symbol_names.h"
 #include "lfh_segment.h"
+#include "list_entry_walker.h"
 #include "nt_heap.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::heap
 {
+    std::wstring const& lfh_heap::symbol_name = common_symbol_names::lfh_heap_structure_symbol_name;
+
     lfh_heap::lfh_heap(nt_heap const& heap, uint64_t const lfh_heap_address)
     : heap_{heap}
-    , dph_heap_address_{lfh_heap_address}
-    , lfh_heap_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::lfh_heap_structure_symbol_name)}
-    , list_entry_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::list_entry_structure_symbol_name)}
-    , lfh_key_{get_lfh_key()}
+    , lfh_heap_address_{lfh_heap_address}
+    , lfh_heap_symbol_type_{stream_utils::get_type(walker(), symbol_name)}
     {
     }
 
@@ -21,31 +22,22 @@ namespace dlg_help_utils::heap
         return heap().walker();
     }
 
+    process::process_environment_block const& lfh_heap::peb() const
+    {
+        return heap().peb();
+    }
+
     std::experimental::generator<lfh_segment> lfh_heap::lfh_segments() const
     {
-        auto const start = get_field_address(common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name);
-        auto flink = get_field_pointer(common_symbol_names::lfh_heap_sub_segment_zones_flink_field_symbol_name);
-
-        while(flink != start)
+        for (ntdll_utilities::list_entry_walker const list_walker{walker(), stream_utils::get_field_address(*this, common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name), lfh_segment::symbol_name, common_symbol_names::lfh_block_zone_list_entry_field_symbol_name}; 
+            auto const entry_address : list_walker.entries())
         {
-            co_yield lfh_segment{*this, flink};
-
-            flink = stream_utils::get_field_pointer(walker(), flink, list_entry_symbol_type_, common_symbol_names::list_entry_structure_symbol_name, common_symbol_names::list_entry_flink_field_symbol_name);
+            co_yield lfh_segment{*this, entry_address};
         }
-    }
-
-    uint64_t lfh_heap::get_field_pointer(std::wstring const& field_name) const
-    {
-        return stream_utils::get_field_pointer(walker(), dph_heap_address_, lfh_heap_symbol_type_, common_symbol_names::lfh_heap_structure_symbol_name, field_name);
-    }
-
-    uint64_t lfh_heap::get_field_address(std::wstring const& field_name) const
-    {
-        return dph_heap_address_ + stream_utils::get_field_offset(lfh_heap_symbol_type_, common_symbol_names::lfh_heap_structure_symbol_name, field_name);
     }
 
     std::optional<uint64_t> lfh_heap::get_lfh_key() const
     {
-        return stream_utils::read_static_variable_value(walker(), common_symbol_names::rt_lp_lfh_key_global_symbol_name);
+        return stream_utils::read_static_variable_machine_size_value(walker(), common_symbol_names::rtl_p_lfh_key_global_symbol_name);
     }
 }

@@ -7,6 +7,7 @@
 #include "heap_segment.h"
 #include "nt_heap.h"
 #include "process_parameters.h"
+#include "segment_heap.h"
 #include "stream_utils.h"
 #include "wide_runtime_error.h"
 
@@ -22,6 +23,7 @@ namespace dlg_help_utils::process
     , function_table_{mini_dump}
     , module_list_{mini_dump}
     , unloaded_module_list_{mini_dump}
+    , system_memory_info_{mini_dump}
     , walker_{0, nullptr, 0, memory_list_, memory64_list_, function_table_, module_list_, unloaded_module_list_, pe_file_memory_mappings_, symbol_engine}
     , heap_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::heap_structure_symbol_name)}
     , peb_symbol_info_{stream_utils::get_type(walker(), common_symbol_names::peb_structure_symbol_name)}
@@ -83,12 +85,22 @@ namespace dlg_help_utils::process
 
     std::optional<heap::nt_heap> process_environment_block::nt_heap(uint32_t const heap_index) const
     {
-        heap::nt_heap nt_heap{*this, heap_address(heap_index)};
-        if(nt_heap.segment_signature() != heap::SegmentSignatureNtHeap)
+        heap::nt_heap heap{*this, heap_address(heap_index)};
+        if(heap.segment_signature() != heap::SegmentSignatureNtHeap)
         {
             return std::nullopt;
         }
-        return std::move(nt_heap);
+        return std::move(heap);
+    }
+
+    std::optional<heap::segment_heap> process_environment_block::segment_heap(uint32_t const heap_index) const
+    {
+        heap::segment_heap heap{*this, heap_address(heap_index)};
+        if(heap.segment_signature() != heap::SegmentSignatureSegmentHeap)
+        {
+            return std::nullopt;
+        }
+        return std::move(heap);
     }
 
     bool process_environment_block::is_x86_target() const

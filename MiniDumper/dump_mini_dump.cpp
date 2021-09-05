@@ -218,7 +218,7 @@ void display_version_information()
     OSVERSIONINFOEXW info{};
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW);
 #pragma warning(push)
-#pragma warning(disable: 4996)
+#pragma warning(disable: 4996 28159)
     // ReSharper disable CppDeprecatedEntity
     if (!GetVersionExW(reinterpret_cast<OSVERSIONINFOW*>(&info))) // NOLINT(clang-diagnostic-deprecated-declarations)
     {

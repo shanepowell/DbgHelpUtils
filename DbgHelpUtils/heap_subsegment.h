@@ -3,6 +3,16 @@
 
 #include "symbol_type_info.h"
 
+namespace dlg_help_utils::process
+{
+    class process_environment_block;
+}
+
+namespace dlg_help_utils::stream_stack_dump
+{
+    class mini_dump_stack_walk;
+}
+
 namespace dlg_help_utils::heap
 {
     class heap_entry;
@@ -12,6 +22,10 @@ namespace dlg_help_utils::heap
     {
     public:
         heap_subsegment(lfh_heap const& heap, uint64_t heap_subsegment_address, uint64_t lfh_block_zone_size);
+
+        [[nodiscard]] lfh_heap const& lfh_heap() const { return lfh_heap_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
+        [[nodiscard]] process::process_environment_block const& peb() const;
 
         [[nodiscard]] uint64_t address() const { return heap_subsegment_address_; }
         [[nodiscard]] uint16_t block_size() const;
@@ -23,17 +37,17 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] std::experimental::generator<heap_entry> entries() const;
 
+        [[nodiscard]] uint64_t symbol_address() const { return address(); }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_subsegment_symbol_type_; }
+
+        static std::wstring const& symbol_name;
+        static std::wstring const& user_data_header_symbol_name;
+
     private:
         [[nodiscard]] std::tuple<uint64_t, uint16_t> get_entry_data() const;
 
-        template<typename T>
-        [[nodiscard]] T get_field_value(std::wstring const& field_name) const;
-
-        [[noreturn]] static void throw_cant_get_field_data(std::wstring const& field_name);
-        [[noreturn]] static void throw_cant_get_user_data_field_data(std::wstring const& field_name);
-
     private:
-        lfh_heap const& lfh_heap_;
+        heap::lfh_heap const& lfh_heap_;
         uint64_t const heap_subsegment_address_;
         uint64_t const lfh_block_zone_size_;
         dbg_help::symbol_type_info const heap_subsegment_symbol_type_;
