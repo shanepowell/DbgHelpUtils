@@ -37,20 +37,23 @@ namespace dlg_help_utils::heap
         auto ust_field_address = end_address - unused_bytes;
 
         // this can cut across memory boundaries in the memory list, so support breaking the search up into chunks
-        auto length = end_address - ust_field_address;
-        auto const* memory = static_cast<uint8_t const*>(peb.walker().get_process_memory_range(ust_field_address, length));
-        if(memory == nullptr)
+        auto stream = peb.walker().get_process_memory_stream(ust_field_address, end_address - ust_field_address);
+        if(stream.eof())
         {
             return 0;
         }
-
-        auto* end_memory = memory + length;
 
         // search for 0x01 0x01 0x00 0x00 0x00 0x00 sequence that seems to be the start of the UST data area
         size_t found_marker = 0;
         while(ust_field_address < end_address && found_marker < 6)
         {
-            if(*memory == (found_marker < 2 ? 0x01 : 0x0))
+            uint8_t data;
+            if(stream.read(&data, 1) != 1)
+            {
+                return 0;
+            }
+
+            if(data == (found_marker < 2 ? 0x01 : 0x0))
             {
                 ++found_marker;
             }
@@ -58,21 +61,7 @@ namespace dlg_help_utils::heap
             {
                 found_marker = 0;
             }
-            ++memory;
             ++ust_field_address;
-
-            if(memory == end_memory)
-            {
-                // get next memory range
-                length = end_address - ust_field_address;
-                memory = static_cast<uint8_t const*>(peb.walker().get_process_memory_range(ust_field_address, length));
-                if(memory == nullptr)
-                {
-                    return 0;
-                }
-
-                end_memory = memory + length;
-            }
         }
 
         if(found_marker != 6)

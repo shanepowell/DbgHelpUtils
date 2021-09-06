@@ -61,13 +61,12 @@ namespace dlg_help_utils::heap
         for(uint16_t index = 0; index < block_count_value; ++index)
         {
             auto buffer = std::make_shared<uint8_t[]>(lfh_heap().heap().granularity());
-            auto const* entry_data = walker().get_process_memory(address, lfh_heap().heap().granularity());
-            if(entry_data == nullptr)
+            
+            if(auto stream = walker().get_process_memory_stream(address, lfh_heap().heap().granularity());
+                stream.eof() || stream.read(buffer.get(), lfh_heap().heap().granularity()) != lfh_heap().heap().granularity())
             {
                 break;
             }
-
-            memcpy(buffer.get(), entry_data, lfh_heap().heap().granularity());
 
             heap_entry entry{lfh_heap().heap(), address, std::move(buffer), block_size_value, heap_entry::LfhEntryType{}};
             co_yield entry;

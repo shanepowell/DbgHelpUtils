@@ -368,14 +368,17 @@ namespace dlg_help_utils::stream_utils
         }
 
         auto buffer = std::make_unique<uint8_t[]>(data_type_length.value());
-        auto const *value = walker.get_process_memory(memory_address + offset, data_type_length.value());
+        auto stream = walker.get_process_memory_stream(memory_address + offset, data_type_length.value());
 
-        if(value == nullptr)
+        if(stream.eof())
         {
             return std::nullopt;
         }
 
-        memcpy(buffer.get(), value, data_type_length.value());
+        if(stream.read(buffer.get(), data_type_length.value()) != data_type_length.value())
+        {
+            return std::nullopt;
+        }
         return std::make_tuple(std::move(buffer), data_type_length.value(), memory_address + offset);
     }
 

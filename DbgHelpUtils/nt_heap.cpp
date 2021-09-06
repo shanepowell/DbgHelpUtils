@@ -119,9 +119,10 @@ namespace dlg_help_utils::heap
             auto const entry_address : list_walker.entries())
         {
             auto buffer = std::make_shared<uint8_t[]>(granularity());
-            if(auto const* entry_data = walker().get_process_memory(entry_address, granularity()); entry_data != nullptr)
+            if(auto stream = walker().get_process_memory_stream(entry_address, granularity()); 
+                !stream.eof() && stream.read(buffer.get(), granularity()) == granularity())
             {
-                decode_heap_entry(entry_data, buffer.get());
+                decode_heap_entry(buffer.get());
                 co_yield heap_entry{*this, entry_address, std::move(buffer)};;
             }
         }
@@ -172,21 +173,16 @@ namespace dlg_help_utils::heap
 
         return is_process_heap;
     }
-    void nt_heap::decode_heap_entry(void const* src, void* dst) const
+    void nt_heap::decode_heap_entry(void* buffer) const
     {
         if(is_encoded())
         {
             auto const* encoding = reinterpret_cast<uint8_t const*>(encoding_.get());
-            auto * dst_data = static_cast<uint8_t*>(dst);
-            auto const* src_data = static_cast<uint8_t const*>(src);
-            for(auto const* src_data_end = src_data + granularity(); src_data < src_data_end; ++src_data, ++dst_data, ++encoding)
+            auto * data = static_cast<uint8_t*>(buffer);
+            for(auto const* data_end = data + granularity(); data < data_end; ++data, ++encoding)
             {
-                *dst_data = *src_data ^ *encoding;
+                *data ^= *encoding;
             }
-        }
-        else
-        {
-            memcpy(dst, src, granularity());
         }
     }
 }

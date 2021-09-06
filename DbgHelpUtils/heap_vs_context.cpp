@@ -64,13 +64,11 @@ namespace dlg_help_utils::heap
             auto const entry_address : rb_tree_walker.entries())
         {
             auto buffer = std::make_unique<uint8_t[]>(heap_vs_chunk_header_length_);
-            auto const* entry_data = walker().get_process_memory(entry_address, heap_vs_chunk_header_length_);
-            if(entry_data == nullptr)
+            if(auto stream = walker().get_process_memory_stream(entry_address, heap_vs_chunk_header_length_);
+                stream.eof() || stream.read(buffer.get(), heap_vs_chunk_header_length_) != heap_vs_chunk_header_length_)
             {
                 continue;
             }
-
-            memcpy(buffer.get(), entry_data, heap_vs_chunk_header_length_);
 
             heap().decode_vs_check_header(entry_address, buffer.get());
 

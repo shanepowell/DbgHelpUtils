@@ -8,13 +8,13 @@
 #include <DbgHelp.h>
 #include <experimental/generator>
 
+#include "mini_dump_memory_stream.h"
 #include "symbol_engine.h"
 
 namespace dlg_help_utils
 {
     class stream_unloaded_module;
     class stream_module;
-
     class pe_file_memory_mapping;
     class unloaded_module_list_stream;
     class module_list_stream;
@@ -40,8 +40,7 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] DWORD64 get_module_base_routine(DWORD64 address) override;
         [[nodiscard]] DWORD64 translate_address(HANDLE h_thread, LPADDRESS64 lp_address) override;
 
-        [[nodiscard]] void const* get_process_memory(DWORD64 base_address, DWORD64 size, bool enable_module_loading = true) const;
-        [[nodiscard]] void const* get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading = true) const;
+        [[nodiscard]] mini_dump_memory_stream get_process_memory_stream(DWORD64 base_address, DWORD64 size, bool enable_module_loading = true) const;
         [[nodiscard]] DWORD64 find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, bool enable_module_loading = true) const;
         [[nodiscard]] DWORD64 find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool enable_module_loading = true) const;
 
@@ -61,6 +60,8 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] memory64_list_stream const& memory64_list() const { return memory64_list_; }
 
     private:
+        [[nodiscard]] void const* get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const;
+
         [[nodiscard]] bool do_read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size,
                                                   LPDWORD number_of_bytes_read, bool enable_module_loading) const;
         [[nodiscard]] bool read_stack_memory(DWORD64 base_address, PVOID buffer, DWORD size,

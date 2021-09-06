@@ -112,42 +112,9 @@ namespace dlg_help_utils::stream_stack_dump
         return lp_address->Offset;
     }
 
-    void const* mini_dump_stack_walk::get_process_memory(DWORD64 base_address, DWORD64 size, bool const enable_module_loading) const
+    mini_dump_memory_stream mini_dump_stack_walk::get_process_memory_stream(DWORD64 base_address, DWORD64 size, bool enable_module_loading) const
     {
-        auto const* rv = get_stack_memory(base_address, size, true);
-        if (rv != nullptr)
-        {
-            return rv;
-        }
-
-        rv = get_memory_list_memory(base_address, size, true);
-        if (rv != nullptr)
-        {
-            return rv;
-        }
-
-        rv = get_memory64_list_memory(base_address, size, true);
-        if (rv != nullptr)
-        {
-            return rv;
-        }
-
-        rv = get_memory_from_pe_file(base_address, size, true);
-        if (rv != nullptr)
-        {
-            return rv;
-        }
-
-        if (enable_module_loading && load_pe_file(base_address))
-        {
-            rv = get_memory_from_pe_file(base_address, size, true);
-            if (rv != nullptr)
-            {
-                return rv;
-            }
-        }
-
-        return nullptr;
+        return mini_dump_memory_stream{[this](uint64_t base_address, uint64_t& size, bool enable_module_loading) { return get_process_memory_range(base_address, size, enable_module_loading); }, base_address, size, enable_module_loading};
     }
 
     void const* mini_dump_stack_walk::get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const

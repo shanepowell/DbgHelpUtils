@@ -19,7 +19,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return walker_; }
         [[nodiscard]] uint64_t process_parameters_address() const { return process_parameters_address_; }
 
-        [[nodiscard]] std::experimental::generator<std::wstring_view> environment() const;
+        [[nodiscard]] std::experimental::generator<std::wstring> environment() const;
 
     private:
         stream_stack_dump::mini_dump_stack_walk const& walker_;

@@ -16,7 +16,7 @@ namespace dlg_help_utils::process
     {
     }
 
-    std::experimental::generator<std::wstring_view> process_parameters::environment() const
+    std::experimental::generator<std::wstring> process_parameters::environment() const
     {
         const auto environment_address = stream_utils::find_field_pointer_type_and_value_in_type(walker(), process_parameters_symbol_info_, common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name, process_parameters_address());
         if(!environment_address.has_value() || environment_address.value().second == 0)
@@ -24,31 +24,47 @@ namespace dlg_help_utils::process
             co_return;
         }
 
-        DWORD64 environment_size = std::numeric_limits<uint64_t>::max();
-        auto const* environment_variable = walker().get_process_memory_range(environment_address.value().second, environment_size);
-        if(environment_variable == nullptr)
+        auto stream = walker().get_process_memory_stream(environment_address.value().second, std::numeric_limits<uint64_t>::max());
+        if(stream.eof())
         {
             throw exceptions::wide_runtime_error{(std::wostringstream{} << "Can't find process Environment memory address [" << stream_hex_dump::to_hex_full(environment_address.value().second) << "]").str()};
         }
 
         auto null_found = false;
-        auto const* start = static_cast<wchar_t const*>(environment_variable);
-        auto const* str = start;
+        std::wstring value;
 
-        for(DWORD64 i = 0; i < environment_size; ++i, ++str)
+        while(!stream.eof())
         {
-            if(*str == NULL)
+            wchar_t ch;
+            if(stream.read(&ch, sizeof ch) != sizeof ch)
+            {
+                if(!value.empty())
+                {
+                    co_yield value;
+                }
+
+                break;
+            }
+
+            if(ch == NULL)
             {
                 if(null_found)
                 {
                     // double null found, that's the end of the array
-                    co_return;
+                    break;
                 }
 
                 null_found = true;
-                co_yield std::wstring_view{start, static_cast<size_t>(str - start)};
-                start = str + 1;
+                if(!value.empty())
+                {
+                    co_yield value;
+                    value.clear();
+                }
                 continue;
+            }
+            else
+            {
+                value += ch;
             }
 
             null_found = false;

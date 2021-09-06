@@ -505,123 +505,131 @@ namespace dlg_help_utils::symbol_type_utils
             return;
         }
 
-        auto const* variable = walker.get_process_memory(variable_address, length.value());
-        if(variable == nullptr)
+        auto stream = walker.get_process_memory_stream(variable_address, length.value());
+        if(stream.eof())
         {
             os << "failed to find [" << variable_address << "] in dump file\n";
             return;
         }
 
-        dump_variable_symbol_at(os, walker, symbol_info.value(), symbol_info.value(), variable_address, variable, indent);
+        dump_variable_symbol_at(os, walker, symbol_info.value(), symbol_info.value(), variable_address, stream, indent);
     }
 
-    void dump_unsupported_variable_symbol_at(std::wostream& os, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] void const* variable_memory)
+    void dump_unsupported_variable_symbol_at(std::wostream& os, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
     {
         os << L" : unsupported type [" << sym_tag_to_string(type.sym_tag().value()) << L"]";
     }
 
-    void dump_enum_variable_symbol_at(std::wostream& os, [[maybe_unused]] symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] void const* variable_memory)
+    void dump_enum_variable_symbol_at(std::wostream& os, [[maybe_unused]] symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
     {
         os << " : enum value tbd";
     }
 
     template<typename T>
-    void dump_array_inline(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, T const* variable_memory, size_t max_size, bool const dump_hex = false)
+    void dump_array_inline(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, size_t max_size, bool const dump_hex = false)
     {
         if(max_size == 0)
         {
             max_size = walker.find_memory_range(variable_address, sizeof(T), 1);
         }
 
-        print_utils::print_array_inline(os, variable_memory, max_size, dump_hex);
+        print_utils::print_stream_array_inline<T>(os, variable_stream, max_size, dump_hex);
     }
 
     template<typename T>
-    void dump_number_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, T const* variable_memory, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, bool const dump_hex, size_t const indent)
+    void dump_number_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, bool const dump_hex, size_t const indent)
     {
         if(is_pointer)
         {
             if(max_size <= 5)
             {
                 os << L": [";
-                dump_array_inline(os, walker, variable_address, variable_memory, max_size, dump_hex);
+                dump_array_inline<T>(os, walker, variable_address, variable_stream, max_size, dump_hex);
                 os << L"]";
             }
             else
             {
                 os << L":\n";
-                print_utils::print_array_lines(os, variable_memory, max_size, 5, 14, indent, dump_hex);
+                print_utils::print_stream_array_lines<T>(os, variable_stream, max_size, 5, 14, indent, dump_hex);
             }
         }
         else 
         {
-            auto const value = (*variable_memory) & static_cast<T>(bit_mask);
-            os << L": " << std::to_wstring(value) << L" (" << stream_hex_dump::to_hex(value) << ")";
+            T value;
+            if(variable_stream.read(&value, sizeof T) == sizeof T)
+            {
+                value &= static_cast<T>(bit_mask);
+                os << L": " << std::to_wstring(value) << L" (" << stream_hex_dump::to_hex(value) << ")";
+            }
         }
     }
 
     template<typename T>
-    void dump_float_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, T const* variable_memory, bool const is_pointer, size_t const max_size, size_t const indent)
+    void dump_float_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, bool const is_pointer, size_t const max_size, size_t const indent)
     {
         if(is_pointer)
         {
             if(max_size <= 2)
             {
                 os << L": [";
-                dump_array_inline(os, walker, variable_address, variable_memory, max_size);
+                dump_array_inline<T>(os, walker, variable_address, variable_stream, max_size);
                 os << L"]";
             }
             else
             {
                 os << L":\n";
-                print_utils::print_array_lines(os, variable_memory, max_size, 2, 24, indent);
+                print_utils::print_stream_array_lines<T>(os, variable_stream, max_size, 2, 24, indent);
             }
         }
-        else 
+        else if(T value; variable_stream.read(&value, sizeof T) == sizeof T)
         {
-            os << L": " << std::to_wstring(*variable_memory);
+            os << L": " << std::to_wstring(value);
         }
     }
 
     template<typename T>
-    void dump_string(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, T const* variable_memory, size_t max_size, size_t const limit_size = 256)
+    void dump_string(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t max_size, size_t const limit_size = 256)
     {
         if(max_size == 0)
         {
             max_size = walker.find_memory_range_if(variable_address, sizeof(T), limit_size, [](void const* ptr) { return *static_cast<T const*>(ptr) == NULL; });
         }
 
-        print_utils::print_str(os, variable_memory, max_size, false);
+        print_utils::print_stream_str<T>(os, variable_stream, max_size, false);
     }
 
 
     template<typename T>
-    void dump_char_variable(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, T const* variable_memory, bool const is_pointer, size_t const max_size)
+    void dump_char_variable(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, bool const is_pointer, size_t const max_size)
     {
         if(is_pointer)
         {
             os << L": \"";
-            dump_string(os, walker, variable_address, variable_memory, max_size);
+            dump_string<T>(os, walker, variable_address, variable_stream, max_size);
             os << L"\"";
         }
         else
         {
-            os << L": " << print_utils::to_printable_char(*variable_memory) << L" (" << stream_hex_dump::to_hex(*variable_memory) << ")";
+            T ch;
+            if(variable_stream.read(&ch, sizeof ch) == sizeof ch)
+            {
+                os << L": " << print_utils::to_printable_char(ch) << L" (" << stream_hex_dump::to_hex(ch) << ")";
+            }
         }
     }
 
-    void dump_base_type_variable_symbol_at(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, void const* variable_memory, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, size_t const indent)
+    void dump_base_type_variable_symbol_at(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, size_t const indent)
     {
         if(auto const base_type_data = type.base_type(); base_type_data.has_value())
         {
             switch(base_type_data.value())
             {
             case basic_type::Char:
-                dump_char_variable(os, walker, variable_address, static_cast<char const*>(variable_memory), is_pointer, max_size);
+                dump_char_variable<char>(os, walker, variable_address, variable_stream, is_pointer, max_size);
                 break;
 
             case basic_type::WChar:
-                dump_char_variable(os, walker, variable_address, static_cast<wchar_t const*>(variable_memory), is_pointer, max_size);
+                dump_char_variable<wchar_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
                 break;
 
             case basic_type::Int:
@@ -631,19 +639,19 @@ namespace dlg_help_utils::symbol_type_utils
                     switch(length.value())
                     {
                     case 1:
-                        dump_number_variable(os, walker, variable_address, static_cast<int8_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<int8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     case 2:
-                        dump_number_variable(os, walker, variable_address, static_cast<int16_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<int16_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     case 4:
-                        dump_number_variable(os, walker, variable_address, static_cast<int32_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<int32_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     case 8:
-                        dump_number_variable(os, walker, variable_address, static_cast<int64_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<int64_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     default:
@@ -659,19 +667,19 @@ namespace dlg_help_utils::symbol_type_utils
                     switch(length.value())
                     {
                     case 1:
-                        dump_number_variable(os, walker, variable_address, static_cast<uint8_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     case 2:
-                        dump_number_variable(os, walker, variable_address, static_cast<uint16_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<uint16_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     case 4:
-                        dump_number_variable(os, walker, variable_address, static_cast<uint32_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     case 8:
-                        dump_number_variable(os, walker, variable_address, static_cast<uint64_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                        dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                         break;
 
                     default:
@@ -686,11 +694,11 @@ namespace dlg_help_utils::symbol_type_utils
                     switch(length.value())
                     {
                     case 4:
-                        dump_float_variable(os, walker, variable_address, static_cast<float const*>(variable_memory), is_pointer, max_size, indent);
+                        dump_float_variable<float>(os, walker, variable_address, variable_stream, is_pointer, max_size, indent);
                         break;
 
                     case 8:
-                        dump_float_variable(os, walker, variable_address, static_cast<double const*>(variable_memory), is_pointer, max_size, indent);
+                        dump_float_variable<double>(os, walker, variable_address, variable_stream, is_pointer, max_size, indent);
                         break;
 
                     default:
@@ -704,7 +712,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::Bool:
-                dump_number_variable(os, walker, variable_address, static_cast<uint8_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                 break;
 
             case basic_type::Currency:
@@ -724,7 +732,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::Bit:
-                dump_number_variable(os, walker, variable_address, static_cast<uint8_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                 break;
 
             case basic_type::BSTR:
@@ -733,19 +741,19 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::HResult:
-                dump_number_variable(os, walker, variable_address, static_cast<uint32_t const*>(variable_memory), bit_mask, is_pointer, max_size, false, indent);
+                dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, false, indent);
                 break;
 
             case basic_type::Char16:
-                dump_char_variable(os, walker, variable_address, static_cast<char16_t const*>(variable_memory), is_pointer, max_size);
+                dump_char_variable<char16_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
                 break;
 
             case basic_type::Char32:
-                dump_char_variable(os, walker, variable_address, static_cast<char32_t const*>(variable_memory), is_pointer, max_size);
+                dump_char_variable<char32_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
                 break;
 
             case basic_type::Char8:
-                dump_char_variable(os, walker, variable_address, static_cast<char8_t const*>(variable_memory), is_pointer, max_size);
+                dump_char_variable<char8_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
                 break;
 
             case basic_type::NoType:
@@ -756,7 +764,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_udt_array(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t variable_address, void const* variable_memory, size_t const max_size, size_t const indent)
+    void dump_udt_array(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t const max_size, size_t const indent)
     {
         if(auto const length_data = type.length(); length_data.value_or(0) > 0)
         {
@@ -764,9 +772,11 @@ namespace dlg_help_utils::symbol_type_utils
             for(size_t index = 0; index < max_size; ++index)
             {
                 os << indent_str << '[' << index << "]\n";
-                dump_variable_symbol_at(os, walker, type, type, variable_address, variable_memory, indent, false);
+                mini_dump_memory_stream copy_stream = variable_stream;
+                dump_variable_symbol_at(os, walker, type, type, variable_address, copy_stream, indent, false);
                 variable_address += length_data.value();
-                variable_memory = static_cast<uint8_t const*>(variable_memory) + length_data.value();
+
+                variable_stream.skip(length_data.value());
             }
         }
     }
@@ -778,14 +788,14 @@ namespace dlg_help_utils::symbol_type_utils
         if(auto const pointer_type = type.type(); pointer_type.has_value())
         {
             // lookup memory for pointer_value to see if it's in the memory list...
-            if(auto const* variable_memory = walker.get_process_memory(pointer_value, 1); variable_memory != nullptr)
+            if(auto variable_stream = walker.get_process_memory_stream(pointer_value, 1); !variable_stream.eof())
             {
                 if(auto const data_type_tag = pointer_type.value().sym_tag(); data_type_tag.has_value())
                 {
                     switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
                     {
                         case sym_tag_enum::BaseType:
-                            dump_base_type_variable_symbol_at(os, walker, pointer_type.value(), pointer_value, variable_memory, all_bits, true, 0, indent);
+                            dump_base_type_variable_symbol_at(os, walker, pointer_type.value(), pointer_value, variable_stream, all_bits, true, 0, indent);
                             break;
 
                         case sym_tag_enum::PointerType:
@@ -794,7 +804,7 @@ namespace dlg_help_utils::symbol_type_utils
                                 switch(length.value())
                                 {
                                 case 4:
-                                    dump_number_variable(os, walker, pointer_value, static_cast<uint32_t const*>(variable_memory), 0, true, 0, true, indent);
+                                    dump_number_variable<uint32_t>(os, walker, pointer_value, variable_stream, 0, true, 0, true, indent);
                                     /*
                                     os << L": [";
                                     dump_array_inline(os, walker, pointer_value, static_cast<uint32_t const*>(variable_memory), 0, true);
@@ -803,7 +813,7 @@ namespace dlg_help_utils::symbol_type_utils
                                     break;
 
                                 case 8:
-                                    dump_number_variable(os, walker, pointer_value, static_cast<uint64_t const*>(variable_memory), 0, true, 0, true, indent);
+                                    dump_number_variable<uint64_t>(os, walker, pointer_value, variable_stream, 0, true, 0, true, indent);
                                     /*
                                     os << L": [";
                                     dump_array_inline(os, walker, pointer_value, static_cast<uint64_t const*>(variable_memory), 0, true);
@@ -825,18 +835,24 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_pointer_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, void const* variable_memory, size_t const indent)
+    void dump_pointer_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t const indent)
     {
         if(auto const length = type.length(); length.has_value())
         {
             switch(length.value())
             {
             case 4:
-                dump_pointer_memory_value(os, walker, type, *static_cast<uint32_t const*>(variable_memory), indent);
+                if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                {
+                    dump_pointer_memory_value(os, walker, type, value, indent);
+                }
                 break;
 
             case 8:
-                dump_pointer_memory_value(os, walker, type, *static_cast<uint64_t const*>(variable_memory), indent);
+                if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                {
+                    dump_pointer_memory_value(os, walker, type, value, indent);
+                }
                 break;
 
             default:
@@ -846,7 +862,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
 
-    bool dump_array_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, [[maybe_unused]] void const* variable_memory, size_t const indent)
+    bool dump_array_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent)
     {
         if(auto const data_type = type.type(); data_type.has_value())
         {
@@ -855,7 +871,7 @@ namespace dlg_help_utils::symbol_type_utils
                 switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
                 {
                     case sym_tag_enum::BaseType:
-                        dump_base_type_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_memory, all_bits, true, static_cast<size_t>(type.array_count().value_or(0)), indent);
+                        dump_base_type_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream, all_bits, true, static_cast<size_t>(type.array_count().value_or(0)), indent);
                         break;
 
                     case sym_tag_enum::PointerType:
@@ -864,7 +880,7 @@ namespace dlg_help_utils::symbol_type_utils
                             switch(length.value())
                             {
                             case 4:
-                                dump_number_variable(os, walker, variable_address, static_cast<uint32_t const*>(variable_memory), 0, true, static_cast<size_t>(type.array_count().value_or(0)), true, indent);
+                                dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, 0, true, static_cast<size_t>(type.array_count().value_or(0)), true, indent);
                                 /*
                                 os << L": [";
                                 dump_array_inline(os, walker, variable_address, static_cast<uint32_t const*>(variable_memory), static_cast<size_t>(type.array_count().value_or(0)), true);
@@ -873,7 +889,7 @@ namespace dlg_help_utils::symbol_type_utils
                                 break;
 
                             case 8:
-                                dump_number_variable(os, walker, variable_address, static_cast<uint64_t const*>(variable_memory), 0, true, static_cast<size_t>(type.array_count().value_or(0)), true, indent);
+                                dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, 0, true, static_cast<size_t>(type.array_count().value_or(0)), true, indent);
                                 /*
                                 os << L": [";
                                 dump_array_inline(os, walker, variable_address, static_cast<uint64_t const*>(variable_memory), static_cast<size_t>(type.array_count().value_or(0)), true);
@@ -889,7 +905,7 @@ namespace dlg_help_utils::symbol_type_utils
 
                     case sym_tag_enum::UDT:
                         os << '\n';
-                        dump_udt_array(os, walker, data_type.value(), variable_address, static_cast<uint64_t const*>(variable_memory), static_cast<size_t>(type.array_count().value_or(0)), indent);
+                        dump_udt_array(os, walker, data_type.value(), variable_address, variable_stream, static_cast<size_t>(type.array_count().value_or(0)), indent);
                         return true;
 
                     default:
@@ -900,7 +916,7 @@ namespace dlg_help_utils::symbol_type_utils
         return false;
     }
 
-    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, symbol_type_info const& display_type, uint64_t const variable_address, [[maybe_unused]] void const* variable_memory, size_t const indent, bool const first)
+    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, symbol_type_info const& display_type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, bool const first)
     {
         auto const data_type = type.type();
         auto const data_type_tag = data_type.has_value() ? data_type.value().sym_tag() : std::nullopt;
@@ -939,6 +955,7 @@ namespace dlg_help_utils::symbol_type_utils
             // data member, type the data member type and print based on that type
             if(data_type.has_value())
             {
+                mini_dump_memory_stream copy_stream{variable_stream};
                 switch(data_type_tag.value_or(sym_tag_enum::Null))  // NOLINT(clang-diagnostic-switch-enum)
                 {
                     case sym_tag_enum::UDT:
@@ -947,30 +964,30 @@ namespace dlg_help_utils::symbol_type_utils
                             os << L'\n';
                             print_header = false;
                         }
-                        dump_variable_symbol_at(os, walker, data_type.value(), type, variable_address, variable_memory, indent, false);
+                        dump_variable_symbol_at(os, walker, data_type.value(), type, variable_address, copy_stream, indent, false);
                         break;
 
                     case sym_tag_enum::Enum:
-                        dump_enum_variable_symbol_at(os, data_type.value(), variable_address, variable_memory);
+                        dump_enum_variable_symbol_at(os, data_type.value(), variable_address, copy_stream);
                         break;
 
                     case sym_tag_enum::PointerType:
-                        dump_pointer_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_memory, indent);
+                        dump_pointer_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_stream, indent);
                         break;
 
                     case sym_tag_enum::ArrayType:
-                        if(dump_array_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_memory, indent + 1))
+                        if(dump_array_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_stream, indent + 1))
                         {
                             print_header = false;
                         }
                         break;
 
                     case sym_tag_enum::BaseType:
-                        dump_base_type_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_memory, bit_mask, false, 0, indent);
+                        dump_base_type_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_stream, bit_mask, false, 0, indent);
                         break;
 
                     default:
-                        dump_unsupported_variable_symbol_at(os, data_type.value(), variable_address, variable_memory);
+                        dump_unsupported_variable_symbol_at(os, data_type.value(), variable_address, copy_stream);
                         break;
                 }
             }
@@ -984,7 +1001,9 @@ namespace dlg_help_utils::symbol_type_utils
         {
             if(auto const offset_data = child.offset(); offset_data.has_value())
             {
-                dump_variable_symbol_at(os, walker, child, child, variable_address + offset_data.value(), static_cast<uint8_t const*>(variable_memory) + offset_data.value(), indent + 1, false);
+                mini_dump_memory_stream copy_stream{variable_stream};
+                copy_stream.skip(offset_data.value());
+                dump_variable_symbol_at(os, walker, child, child, variable_address + offset_data.value(), copy_stream, indent + 1, false);
             }
         }
     }

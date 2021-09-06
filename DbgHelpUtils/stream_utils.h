@@ -44,14 +44,17 @@ namespace dlg_help_utils::stream_utils
     template<typename T, typename Rt = T>
     [[nodiscard]] std::optional<Rt> read_field_value(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const memory_address)
     {
-        auto const* memory = walker.get_process_memory(memory_address, sizeof(T));
-        if(memory == nullptr)
+        auto stream = walker.get_process_memory_stream(memory_address, sizeof(T));
+        if(stream.eof())
         {
             return std::nullopt;
         }
 
         T value;
-        memcpy(&value, memory, sizeof T);
+        if(stream.read(&value, sizeof T) != sizeof T)
+        {
+            return std::nullopt;
+        }
         return static_cast<Rt>(value);
     }
 

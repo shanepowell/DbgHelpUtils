@@ -103,10 +103,10 @@ void dump_mini_dump_module_symbol_types(mini_dump const& mini_dump, std::wstring
 }
 
 template<typename T>
-void dump_address_type_array(std::wostream& os, std::wstring const& dt, T const* values, size_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
+void dump_address_type_array(std::wostream& os, std::wstring const& dt, mini_dump_memory_stream& variable_stream, size_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
 {
-    os << dt << " array @ [" << stream_hex_dump::to_hex_full(values) << "] for [" << memory_size / sizeof(T) << "] elements:\n";
-    print_utils::print_array_lines(wcout, values, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);
+    os << dt << " array @ [" << stream_hex_dump::to_hex_full(variable_stream.current_address()) << "] for [" << memory_size / sizeof(T) << "] elements:\n";
+    print_utils::print_stream_array_lines<T>(wcout, variable_stream, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);
     os << '\n';
 }
 
@@ -135,38 +135,38 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
             memory_size = std::numeric_limits<uint64_t>::max();
         }
 
-        auto const* memory = walker.get_process_memory_range(memory_pointer, memory_size);
-        if(memory == nullptr)
+        auto stream = walker.get_process_memory_stream(memory_pointer, memory_size);
+        if(stream.eof())
         {
             wcout << "Can't find memory address [" << stream_hex_dump::to_hex_full(memory_pointer) << "]\n";
         }
 
         if(dt.empty())
         {
-            hex_dump::hex_dump(wcout, memory, memory_size);
+            hex_dump::hex_dump(wcout, stream, memory_size);
         }
         else if(string_compare::iequals(dt, L"str"sv))
         {
             wcout << "string @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_str(wcout, static_cast<char const*>(memory), memory_size, find_limit);
+            print_utils::print_stream_str<char>(wcout, stream, memory_size, find_limit);
             wcout << '\n';
         }
         else if(string_compare::iequals(dt, L"wstr"sv))
         {
             wcout << "unicode string @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_str(wcout, static_cast<wchar_t const*>(memory), memory_size / sizeof(wchar_t), find_limit);
+            print_utils::print_stream_str<wchar_t>(wcout, stream, memory_size / sizeof(wchar_t), find_limit);
             wcout << '\n';
         }
         else if(string_compare::iequals(dt, L"astr"sv))
         {
             wcout << "string array @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_array_str(wcout, static_cast<char const*>(memory), memory_size, 2);
+            print_utils::print_stream_array_str<char>(wcout, stream, memory_size, 2);
             wcout << '\n';
         }
         else if(string_compare::iequals(dt, L"awstr"sv))
         {
             wcout << "unicode string array @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_array_str(wcout, static_cast<wchar_t const*>(memory), memory_size / sizeof(wchar_t), 2);
+            print_utils::print_stream_array_str<wchar_t>(wcout, stream, memory_size / sizeof(wchar_t), 2);
             wcout << '\n';
         }
         else
@@ -179,43 +179,43 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
             }
             if(string_compare::iequals(dt, L"uint8"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<uint8_t const*>(memory), memory_size, 16, 6, 2, display_hex);
+                dump_address_type_array<uint8_t>(wcout, dt, stream, memory_size, 16, 6, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int8"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<int8_t const*>(memory), memory_size, 16, 6, 2, display_hex);
+                dump_address_type_array<int8_t>(wcout, dt, stream, memory_size, 16, 6, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"uint16"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<uint16_t const*>(memory), memory_size, 8, 8, 2, display_hex);
+                dump_address_type_array<uint16_t>(wcout, dt, stream, memory_size, 8, 8, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int16"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<int16_t const*>(memory), memory_size, 8, 8, 2, display_hex);
+                dump_address_type_array<int16_t>(wcout, dt, stream, memory_size, 8, 8, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"uint32"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<uint32_t const*>(memory), memory_size, 4, 14, 2, display_hex);
+                dump_address_type_array<uint32_t>(wcout, dt, stream, memory_size, 4, 14, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int32"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<int32_t const*>(memory), memory_size, 4, 14, 2, display_hex);
+                dump_address_type_array<int32_t>(wcout, dt, stream, memory_size, 4, 14, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"uint64"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<uint64_t const*>(memory), memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<uint64_t>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int64"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<int64_t const*>(memory), memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<int64_t>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"float"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<float const*>(memory), memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<float>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"double"sv))
             {
-                dump_address_type_array(wcout, dt, static_cast<double const*>(memory), memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<double>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else
             {

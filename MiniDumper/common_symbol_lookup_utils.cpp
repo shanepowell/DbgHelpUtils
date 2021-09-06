@@ -77,12 +77,12 @@ std::optional<dbg_help::symbol_type_info> dump_field(stream_stack_dump::mini_dum
         return std::nullopt;
     }
 
-    auto const* memory = walker.get_process_memory(address, data_length.value());
-    if(memory == nullptr)
+    auto stream = walker.get_process_memory_stream(address, data_length.value());
+    if(stream.eof())
     {
         std::wcout << "Failed to find " << symbol_type_name << " address [" << stream_hex_dump::to_hex_full(address) << "] in dump file\n";
         return std::nullopt;
     }
-    symbol_type_utils::dump_variable_symbol_at(std::wcout, walker, type_symbol_info.value(), type_symbol_info.value(), address, memory);
+    symbol_type_utils::dump_variable_symbol_at(std::wcout, walker, type_symbol_info.value(), type_symbol_info.value(), address, stream);
     return type_symbol_info;
 }

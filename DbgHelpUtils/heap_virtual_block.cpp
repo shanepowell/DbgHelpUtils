@@ -48,13 +48,14 @@ namespace dlg_help_utils::heap
             auto const last_committed_address = address() + reserved_size.count();
 
             auto buffer = std::make_shared<uint8_t[]>(heap().granularity());
-            if(auto const* entry_data = walker().get_process_memory(entry_address, heap().granularity()); entry_data == nullptr)
+            if(auto stream = walker().get_process_memory_stream(entry_address, heap().granularity()); 
+                stream.eof() || stream.read(buffer.get(), heap().granularity()) != heap().granularity())
             {
                 co_yield heap_entry{heap(), entry_address, last_address - entry_address};
             }
             else
             {
-                heap().decode_heap_entry(entry_data, buffer.get());
+                heap().decode_heap_entry(buffer.get());
 
                 uint16_t unused_bytes{0};
                 if(heap().peb().is_x86_target())

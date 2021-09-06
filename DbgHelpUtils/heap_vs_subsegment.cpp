@@ -57,14 +57,12 @@ namespace dlg_help_utils::heap
         while(chunk_header_address < last_entry_address)
         {
             auto buffer = std::make_unique<uint8_t[]>(heap_vs_chunk_header_length_);
-            auto const* entry_data = walker().get_process_memory(chunk_header_address, heap_vs_chunk_header_length_);
-            if(entry_data == nullptr)
+            if(auto stream = walker().get_process_memory_stream(chunk_header_address, heap_vs_chunk_header_length_);
+                stream.eof() || stream.read(buffer.get(), heap_vs_chunk_header_length_) != heap_vs_chunk_header_length_)
             {
                 co_yield heap_vs_entry{heap(), chunk_header_address, last_entry_address - chunk_header_address};
                 break;
             }
-
-            memcpy(buffer.get(), entry_data, heap_vs_chunk_header_length_);
 
             heap().decode_vs_check_header(chunk_header_address, buffer.get());
 

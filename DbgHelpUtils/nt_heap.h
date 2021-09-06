@@ -60,7 +60,7 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] bool is_process_heap(uint64_t process_heap_address) const;
 
-        void decode_heap_entry(void const* src, void* dst) const;
+        void decode_heap_entry(void* buffer) const;
 
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 

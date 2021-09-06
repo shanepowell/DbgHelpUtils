@@ -189,10 +189,10 @@ namespace
 
             if(options.hex_dump_memory_data())
             {
-                uint64_t size = entry.size().count();
-                if(auto const* data = entry.walker().get_process_memory_range(entry.address(), size); data != nullptr)
+                const uint64_t size = entry.size().count();
+                if(auto stream = entry.walker().get_process_memory_stream(entry.address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, data, size, indent + 2);
+                    hex_dump::hex_dump(wcout, stream, size, indent + 2);
                     wcout << L'\n';
                 }
             }
@@ -276,10 +276,10 @@ namespace
 
             if(options.hex_dump_memory_data() && entry.is_busy() && entry.user_address() != 0 && ((entry.flags() & heap::heap_entry::FlagVirtualAlloc) != heap::heap_entry::FlagVirtualAlloc || !entry_contains_lfh_subsegments))
             {
-                uint64_t size = entry.requested_size().count();
-                if(auto const* data = entry.walker().get_process_memory_range(entry.user_address(), size); data != nullptr)
+                uint64_t const size = entry.requested_size().count();
+                if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, data, size, indent + 2);
+                    hex_dump::hex_dump(wcout, stream, size, indent + 2);
                     wcout << L'\n';
                 }
             }
@@ -405,10 +405,10 @@ namespace
 
         if(options.hex_dump_memory_data() && entry.is_allocated() && entry.user_address() != 0)
         {
-            uint64_t size = entry.user_requested_size().count();
-            if(auto const* data = entry.heap().walker().get_process_memory_range(entry.user_address(), size); data != nullptr)
+            uint64_t const size = entry.user_requested_size().count();
+            if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, data, size, indent + 4);
+                hex_dump::hex_dump(wcout, stream, size, indent + 4);
                 wcout << L'\n';
             }
         }
@@ -500,10 +500,10 @@ namespace
 
         if(options.hex_dump_memory_data() && range_flags == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT && entry.user_address() != 0)
         {
-            uint64_t size = entry.user_size().count();
-            if(auto const* data = entry.heap().walker().get_process_memory_range(entry.user_address(), size); data != nullptr)
+            uint64_t const size = entry.user_size().count();
+            if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, data, size, indent + 4);
+                hex_dump::hex_dump(wcout, stream, size, indent + 4);
                 wcout << L'\n';
             }
         }
@@ -597,10 +597,10 @@ namespace
 
             if(options.hex_dump_memory_data() && entry.allocated())
             {
-                uint64_t size = entry.user_size().count();
-                if(auto const* data = entry.heap().walker().get_process_memory_range(entry.user_address(), size); data != nullptr)
+                uint64_t const size = entry.user_size().count();
+                if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, data, size, indent + 2);
+                    hex_dump::hex_dump(wcout, stream, size, indent + 2);
                     wcout << L'\n';
                 }
             }
@@ -667,10 +667,10 @@ namespace
 
         if(options.hex_dump_memory_data())
         {
-            uint64_t size = entry.user_size().count();
-            if(auto const* data = entry.heap().walker().get_process_memory_range(entry.user_address(), size); data != nullptr)
+            uint64_t const size = entry.user_size().count();
+            if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, data, size, indent + 2);
+                hex_dump::hex_dump(wcout, stream, size, indent + 2);
                 wcout << L'\n';
             }
         }
@@ -701,10 +701,10 @@ namespace
 
         if(options.hex_dump_memory_data() && entry.allocated() && entry.user_address() != 0)
         {
-            uint64_t size = entry.user_size().count();
-            if(auto const* data = entry.heap().walker().get_process_memory_range(entry.user_address(), size); data != nullptr)
+            uint64_t const size = entry.user_size().count();
+            if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, data, size, indent + 2);
+                hex_dump::hex_dump(wcout, stream, size, indent + 2);
                 wcout << L'\n';
             }
         }

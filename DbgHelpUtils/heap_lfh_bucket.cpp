@@ -59,16 +59,14 @@ namespace dlg_help_utils::heap
     {
         auto const proc_affinity_mapping_address = stream_utils::get_field_pointer(*this, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
 
-        auto const proc_affinity_mapping = walker().get_process_memory(proc_affinity_mapping_address, heap().max_affinity());
-        if(proc_affinity_mapping == nullptr)
+        std::vector<uint8_t> rv;
+        rv.resize(heap().max_affinity());
+        
+        if(auto stream = walker().get_process_memory_stream(proc_affinity_mapping_address, heap().max_affinity());
+            stream.eof() || stream.read(rv.data(), rv.size()) != rv.size())
         {
             stream_utils::throw_cant_get_field_is_null(symbol_name, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
         }
-
-        std::vector<uint8_t> rv;
-        rv.resize(heap().max_affinity());
-
-        memcpy(rv.data(), proc_affinity_mapping, rv.size());
         return rv;
     }
 

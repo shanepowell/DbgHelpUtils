@@ -94,14 +94,14 @@ namespace dlg_help_utils::heap
             else
             {
                 auto buffer = std::make_shared<uint8_t[]>(heap().granularity());
-                auto const* entry_data = walker().get_process_memory(entry_address, heap().granularity());
-                if(entry_data == nullptr)
+                if(auto stream = walker().get_process_memory_stream(entry_address, heap().granularity());
+                    stream.eof() || stream.read(buffer.get(), heap().granularity()) != heap().granularity())
                 {
                     co_yield heap_entry{heap(), entry_address, last_entry_address - entry_address};
                     break;
                 }
 
-                heap().decode_heap_entry(entry_data, buffer.get());
+                heap().decode_heap_entry(buffer.get());
 
                 heap_entry entry{heap(), entry_address, std::move(buffer), previous_size};
                 co_yield entry;

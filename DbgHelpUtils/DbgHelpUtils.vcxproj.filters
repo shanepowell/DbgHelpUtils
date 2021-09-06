@@ -339,6 +339,9 @@
     <ClCompile Include="segment_heap_utils.cpp">
       <Filter>Heap\SegmentHeap</Filter>
     </ClCompile>
+    <ClCompile Include="mini_dump_memory_stream.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -697,6 +700,9 @@
     </ClInclude>
     <ClInclude Include="segment_heap_utils.h">
       <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_memory_stream.h">
+      <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
