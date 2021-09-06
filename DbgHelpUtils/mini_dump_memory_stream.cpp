@@ -17,16 +17,16 @@ namespace dlg_help_utils
         return memory_ == nullptr || current_address_ == end_address_;
     }
 
-    size_t mini_dump_memory_stream::read(void* buffer, size_t length)
+    template <typename T>
+    size_t mini_dump_memory_stream::process_data(size_t length, T op)
     {
         if(eof()) return 0;
 
         size_t read_length{0};
-        auto* destination = static_cast<uint8_t*>(buffer);
         while(length > 0 && !eof())
         {
             auto const copy_length = std::min(length, static_cast<size_t>(end_memory_ - memory_));
-            memcpy(destination, memory_, copy_length);
+            op(memory_, copy_length);
 
             length -= copy_length;
             current_address_ += copy_length;
@@ -44,28 +44,19 @@ namespace dlg_help_utils
         return read_length;
     }
 
-    size_t mini_dump_memory_stream::skip(size_t length)
+    size_t mini_dump_memory_stream::read(void* buffer, size_t const length)
     {
-        if(eof()) return 0;
-
-        size_t read_length{0};
-        while(length > 0 && !eof())
-        {
-            auto const skip_length = std::min(length, static_cast<size_t>(end_memory_ - memory_));
-
-            length -= skip_length;
-            current_address_ += skip_length;
-            memory_ += skip_length;
-            read_length += skip_length;
-
-            if(!eof() && memory_ == end_memory_)
+        return process_data(length, [destination = static_cast<uint8_t*>(buffer)](uint8_t const* memory, uint64_t const amount) mutable
             {
-                uint64_t size = end_address_ - current_address_;
-                memory_ = static_cast<uint8_t const*>(get_process_memory_range_(current_address_, size, enable_module_loading_));
-                end_memory_ = memory_ + size;
-            }
-        }
+                memcpy(destination, memory, amount);
+                destination += amount;
+            });
+    }
 
-        return read_length;
+    size_t mini_dump_memory_stream::skip(size_t const length)
+    {
+        return process_data(length, []([[maybe_unused]] uint8_t const* memory, [[maybe_unused]] uint64_t const amount)
+            {
+            });
     }
 }

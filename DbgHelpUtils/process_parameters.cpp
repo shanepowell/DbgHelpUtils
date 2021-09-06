@@ -38,11 +38,6 @@ namespace dlg_help_utils::process
             wchar_t ch;
             if(stream.read(&ch, sizeof ch) != sizeof ch)
             {
-                if(!value.empty())
-                {
-                    co_yield value;
-                }
-
                 break;
             }
 
@@ -62,12 +57,14 @@ namespace dlg_help_utils::process
                 }
                 continue;
             }
-            else
-            {
-                value += ch;
-            }
 
+            value += ch;
             null_found = false;
+        }
+
+        if(!value.empty())
+        {
+            co_yield value;
         }
     }
 }

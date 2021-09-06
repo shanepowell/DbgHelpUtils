@@ -15,6 +15,10 @@ namespace dlg_help_utils
         [[nodiscard]] uint64_t current_address() const { return current_address_; }
 
     private:
+        template<typename T>
+        [[nodiscard]] size_t process_data(size_t length, T op);
+
+    private:
         std::function<void const*(uint64_t base_address, uint64_t& size, bool enable_module_loading)> get_process_memory_range_;
         bool const enable_module_loading_;
         uint64_t current_address_;
