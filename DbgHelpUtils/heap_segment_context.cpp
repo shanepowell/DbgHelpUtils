@@ -54,12 +54,22 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::segment_heap_seg_context_pages_per_unit_shift_field_symbol_name);
     }
 
+    uint64_t heap_segment_context::heap_key() const
+    {
+        return heap().heap_key();
+    }
+
+    ust_address_stack_trace const& heap_segment_context::stack_trace() const
+    {
+        return heap().stack_trace();
+    }
+
     std::experimental::generator<heap_page_segment> heap_segment_context::pages() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{walker(), stream_utils::get_field_address(*this, common_symbol_names::segment_heap_seg_context_segment_list_head_field_symbol_name), heap_page_segment::symbol_name, common_symbol_names::heap_page_segment_list_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
         {
-            co_yield heap_page_segment{heap(), entry_address, heap_segment_context_address()};
+            co_yield heap_page_segment{*this, entry_address, heap_segment_context_address()};
         }
     }
 
@@ -76,7 +86,7 @@ namespace dlg_help_utils::heap
         {
             auto const page_segment_address = entry_address & segment_address_mask;
             auto const index = (entry_address - page_segment_address) / heap_page_range_descriptor_length;
-            co_yield page_range_descriptor{heap(), entry_address, index, page_segment_address};
+            co_yield page_range_descriptor{*this, entry_address, index, page_segment_address};
         }
     }
 }

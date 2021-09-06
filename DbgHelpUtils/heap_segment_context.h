@@ -16,6 +16,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class ust_address_stack_trace;
     class page_range_descriptor;
     class segment_heap;
     class heap_page_segment;
@@ -36,6 +37,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t segment_mask() const;
         [[nodiscard]] uint8_t unit_shift() const;
         [[nodiscard]] uint8_t pages_per_unit_shift() const;
+
+        [[nodiscard]] uint64_t heap_key() const;
+        [[nodiscard]] ust_address_stack_trace const& stack_trace() const;
 
         [[nodiscard]] std::experimental::generator<heap_page_segment> pages() const;
         [[nodiscard]] std::experimental::generator<page_range_descriptor> free_page_ranges() const;

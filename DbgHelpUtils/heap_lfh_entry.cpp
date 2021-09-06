@@ -1,7 +1,10 @@
 ﻿#include "heap_lfh_entry.h"
 
 #include "heap_lfh_context.h"
+#include "process_environment_block.h"
+#include "segment_heap_utils.h"
 #include "stream_utils.h"
+#include "ust_address_stack_trace.h"
 
 namespace dlg_help_utils::heap
 {
@@ -12,6 +15,8 @@ namespace dlg_help_utils::heap
     , allocated_{allocated}
     , has_unused_bytes_{has_unused_bytes}
     , unused_bytes_{get_unused_bytes()}
+    , ust_address_{get_ust_address()}
+    , allocation_stack_trace_{get_allocation_stack_trace()}
     {
     }
 
@@ -42,28 +47,31 @@ namespace dlg_help_utils::heap
             return size_units::base_10::bytes{0};
         }
 
-        auto const unused_bytes_address = heap_lfh_entry_address() + block_size().count() - 0x02;
-        auto const unused_bytes_value = stream_utils::read_field_value<uint16_t>(walker(), unused_bytes_address);
-        if(!unused_bytes_value.has_value())
-        {
-            return size_units::base_10::bytes{0};
-        }
-        if((unused_bytes_value.value() & 0x8000) == 0x8000)
-        {
-            // high bit set means 1 byte length...
-            return size_units::base_10::bytes{1};
-        }
-
-        return size_units::base_10::bytes{unused_bytes_value.value()};
+        return size_units::base_10::bytes{segment_heap_utils::read_extra_data(peb(), block_address(), block_size().count()).unused_bytes};
     }
 
-    int64_t heap_lfh_entry::read_front_padding_size() const
+    uint64_t heap_lfh_entry::read_front_padding_size() const
     {
         if(!allocated())
         {
             return 0;
         }
 
-        return stream_utils::read_field_value<uint32_t>(walker(), heap_lfh_entry_address()).value_or(0);
+        return segment_heap_utils::read_front_padding_size(peb(), block_address());
+    }
+
+    uint64_t heap_lfh_entry::get_ust_address() const
+    {
+        if(!peb().user_stack_db_enabled() || !allocated())
+        {
+            return 0;
+        }
+
+        return segment_heap_utils::read_extra_data(peb(), block_address(), block_size().count()).ust_address;
+    }
+
+    std::vector<uint64_t> heap_lfh_entry::get_allocation_stack_trace() const
+    {
+        return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
     }
 }

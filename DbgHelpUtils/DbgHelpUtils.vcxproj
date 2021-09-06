@@ -142,6 +142,7 @@
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
     <ClCompile Include="rtl_rb_tree_walker.cpp" />
     <ClCompile Include="segment_heap.cpp" />
+    <ClCompile Include="segment_heap_utils.cpp" />
     <ClCompile Include="size_units.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
     <ClCompile Include="stream_function_entry.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="rtl_balanced_links_walker.h" />
     <ClInclude Include="rtl_rb_tree_walker.h" />
     <ClInclude Include="segment_heap.h" />
+    <ClInclude Include="segment_heap_utils.h" />
     <ClInclude Include="size_units.h" />
     <ClInclude Include="stream_function_descriptor.h" />
     <ClInclude Include="stream_function_entry.h" />

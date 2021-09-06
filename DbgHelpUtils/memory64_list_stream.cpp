@@ -61,8 +61,7 @@ namespace dlg_help_utils
         {
             if (range_utils::range_union(entry.start_of_memory_range, entry.location.DataSize, address, length))
             {
-                return static_cast<uint8_t const*>(dump_.rva64(entry.location)) + (address - entry.start_of_memory_range
-                );
+                return static_cast<uint8_t const*>(dump_.rva64(entry.location)) + (address - entry.start_of_memory_range);
             }
         }
 

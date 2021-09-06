@@ -336,6 +336,9 @@
     <ClCompile Include="heap_lfh_entry.cpp">
       <Filter>Heap\SegmentHeap</Filter>
     </ClCompile>
+    <ClCompile Include="segment_heap_utils.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -690,6 +693,9 @@
       <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="heap_lfh_entry.h">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="segment_heap_utils.h">
       <Filter>Heap\SegmentHeap</Filter>
     </ClInclude>
   </ItemGroup>

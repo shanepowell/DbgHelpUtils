@@ -33,12 +33,18 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool has_unused_bytes() const { return has_unused_bytes_; }
         [[nodiscard]] size_units::base_10::bytes unused_bytes() const { return unused_bytes_; }
 
+        [[nodiscard]] uint64_t block_address() const { return heap_lfh_entry_address(); }
         [[nodiscard]] uint64_t user_address() const;
         [[nodiscard]] size_units::base_10::bytes user_size() const;
 
+        [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
+        [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
+
     private:
         [[nodiscard]] size_units::base_10::bytes get_unused_bytes() const;
-        [[nodiscard]] int64_t read_front_padding_size() const;
+        [[nodiscard]] uint64_t read_front_padding_size() const;
+        [[nodiscard]] uint64_t get_ust_address() const;
+        [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 
     private:
         heap_lfh_context const& heap_;
@@ -47,7 +53,8 @@ namespace dlg_help_utils::heap
         bool const allocated_;
         bool const has_unused_bytes_;
         size_units::base_10::bytes const unused_bytes_;
-
+        uint64_t const ust_address_{0};
+        std::vector<uint64_t> const allocation_stack_trace_{};
     };
 }
 

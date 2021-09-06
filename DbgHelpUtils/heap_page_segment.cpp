@@ -1,15 +1,16 @@
 ﻿#include "heap_page_segment.h"
 
 #include "common_symbol_names.h"
+#include "heap_segment_context.h"
 #include "page_range_descriptor.h"
-#include "segment_heap.h"
+#include "process_environment_block.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::heap
 {
     std::wstring const& heap_page_segment::symbol_name = common_symbol_names::heap_page_segment_structure_symbol_name;
 
-    heap_page_segment::heap_page_segment(segment_heap const& heap, uint64_t const heap_page_segment_address, uint64_t const heap_segment_context_address)
+    heap_page_segment::heap_page_segment(heap_segment_context const& heap, uint64_t const heap_page_segment_address, uint64_t const heap_segment_context_address)
     : heap_{heap}
     , heap_page_segment_address_{heap_page_segment_address}
     , heap_segment_context_address_{heap_segment_context_address}
@@ -37,11 +38,11 @@ namespace dlg_help_utils::heap
     {
         auto const s = signature();
         auto const part = heap_page_segment_address() ^ heap_segment_context_address_ ^ heap().heap_key();
-        if(heap().peb().is_x64_target())
+        if(peb().is_x64_target())
         {
             return s == (part ^ 0xA2E64EADA2E64EADULL);
         }
-        if(heap().peb().is_x86_target())
+        if(peb().is_x86_target())
         {
             return s == (part ^ 0xA2E64EADUL);
         }

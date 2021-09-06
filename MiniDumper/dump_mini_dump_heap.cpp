@@ -398,7 +398,7 @@ namespace
 
         if(options.display_symbols() && entry.is_allocated() && !entry.allocation_stack_trace().empty())
         {
-            wcout << std::wstring(indent + 2, L' ') << "allocation stack trace:\n";
+            wcout << indent_str << "  allocation stack trace:\n";
             hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
             wcout << '\n';
         }
@@ -489,6 +489,14 @@ namespace
         wcout << indent_str << "  Block Size: " << entry.block_size() << " (" << stream_hex_dump::to_hex(entry.block_size().count()) << ")" << '\n';
         wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
         wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+
+        if(options.display_symbols() && !entry.allocation_stack_trace().empty())
+        {
+            wcout << indent_str << "  allocation stack trace:\n";
+            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            wcout << '\n';
+        }
 
         if(options.hex_dump_memory_data() && range_flags == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT && entry.user_address() != 0)
         {
@@ -578,6 +586,14 @@ namespace
             wcout << indent_str << "  Allocated Chunk Bits: " << stream_hex_dump::to_hex(entry.allocated_chunk_bits()) << '\n';
             wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
             wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+            wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+
+            if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
+            {
+                wcout << indent_str << "  allocation stack trace:\n";
+                hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+                wcout << '\n';
+            }
 
             if(options.hex_dump_memory_data() && entry.allocated())
             {
@@ -640,6 +656,14 @@ namespace
         wcout << indent_str << "  Allocated Pages: " << entry.allocated_pages() << '\n';
         wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
         wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+
+        if(options.display_symbols() && !entry.allocation_stack_trace().empty())
+        {
+            wcout << indent_str << "  allocation stack trace:\n";
+            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            wcout << '\n';
+        }
 
         if(options.hex_dump_memory_data())
         {
@@ -666,6 +690,14 @@ namespace
         }
         wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
         wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+
+        if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
+        {
+            wcout << indent_str << "  allocation stack trace:\n";
+            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            wcout << '\n';
+        }
 
         if(options.hex_dump_memory_data() && entry.allocated() && entry.user_address() != 0)
         {

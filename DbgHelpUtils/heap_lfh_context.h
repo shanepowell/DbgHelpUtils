@@ -16,6 +16,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class ust_address_stack_trace;
     class heap_lfh_bucket;
     class segment_heap;
 
@@ -27,6 +28,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] segment_heap const& heap() const { return heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
+        [[nodiscard]] ust_address_stack_trace const& stack_trace() const;
 
         [[nodiscard]] uint64_t heap_lfh_context_address() const { return heap_lfh_context_address_; }
 

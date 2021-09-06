@@ -40,8 +40,13 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint32_t spare() const;
         [[nodiscard]] uint64_t allocated_pages() const;
 
+        [[nodiscard]] uint64_t block_address() const;
+        [[nodiscard]] uint64_t block_size() const;
         [[nodiscard]] uint64_t user_address() const;
         [[nodiscard]] size_units::base_10::bytes user_size() const;
+
+        [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
+        [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return large_alloc_entry_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_large_alloc_symbol_type_; }
@@ -51,6 +56,8 @@ namespace dlg_help_utils::heap
     private:
         [[nodiscard]] size_units::base_10::bytes get_size() const;
         [[nodiscard]] uint64_t read_front_padding() const;
+        [[nodiscard]] uint64_t get_ust_address() const;
+        [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 
     private:
         segment_heap const& heap_;
@@ -58,5 +65,7 @@ namespace dlg_help_utils::heap
         dbg_help::symbol_type_info const heap_large_alloc_symbol_type_;
         uint64_t const heap_large_alloc_length_;
         size_units::base_10::bytes const size_;
+        uint64_t const ust_address_{0};
+        std::vector<uint64_t> const allocation_stack_trace_{};
    };
 }

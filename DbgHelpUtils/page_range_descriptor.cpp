@@ -1,20 +1,26 @@
 ﻿#include "page_range_descriptor.h"
 
 #include "common_symbol_names.h"
+#include "heap_segment_context.h"
 #include "page_range_flags_utils.h"
-#include "segment_heap.h"
+#include "process_environment_block.h"
+#include "segment_heap_utils.h"
 #include "stream_utils.h"
+#include "ust_address_stack_trace.h"
 
 namespace dlg_help_utils::heap
 {
     std::wstring const& page_range_descriptor::symbol_name = common_symbol_names::heap_page_range_descriptor_structure_symbol_name;
 
-    page_range_descriptor::page_range_descriptor(segment_heap const& heap, uint64_t const page_range_descriptor_address, size_t const index, uint64_t const heap_page_segment_address)
+    page_range_descriptor::page_range_descriptor(heap_segment_context const& heap, uint64_t const page_range_descriptor_address, size_t const index, uint64_t const heap_page_segment_address)
     : heap_{heap}
     , page_range_descriptor_address_{page_range_descriptor_address}
     , index_{index}
     , heap_page_segment_address_{heap_page_segment_address}
     , heap_page_range_descriptor_symbol_type_{stream_utils::get_type(walker(), symbol_name)}
+    , unit_shift_{heap.unit_shift()}
+    , ust_address_{get_ust_address()}
+    , allocation_stack_trace_{get_allocation_stack_trace()}
     {
     }
 
@@ -40,11 +46,11 @@ namespace dlg_help_utils::heap
 
     page_range_flags_utils::page_range_flags page_range_descriptor::range_flags() const
     {
-        if(heap().peb().is_x64_target())
+        if(peb().is_x64_target())
         {
             return static_cast<page_range_flags_utils::page_range_flags>(stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name));
         }
-        if(heap().peb().is_x86_target())
+        if(peb().is_x86_target())
         {
             return static_cast<page_range_flags_utils::page_range_flags>(stream_utils::get_bit_field_value<uint8_t>(*this, common_symbol_names::heap_page_range_descriptor_range_flags_bits_field_symbol_name));
         }
@@ -88,7 +94,7 @@ namespace dlg_help_utils::heap
 
     uint64_t page_range_descriptor::block_address() const
     {
-        return heap_page_segment_address_ + (index_ * get_unit_block_size());
+        return heap_page_segment_address_ + (index_ * (0x01ULL << unit_shift_));
     }
 
     uint64_t page_range_descriptor::user_address() const
@@ -98,12 +104,12 @@ namespace dlg_help_utils::heap
 
     size_units::base_10::bytes page_range_descriptor::block_size() const
     {
-        return size_units::base_10::bytes{(unit_size() * get_unit_block_size())};
+        return size_units::base_10::bytes{(unit_size().count() << unit_shift_)};
     }
 
     size_units::base_10::bytes page_range_descriptor::user_size() const
     {
-        auto const size = (unit_size().count() * get_unit_block_size()) - read_front_padding_size();
+        auto const size = (unit_size().count() << unit_shift_) - read_front_padding_size();
         auto const extra = extra_bytes().count();
 
         if(extra >= size)
@@ -130,17 +136,18 @@ namespace dlg_help_utils::heap
         return stream_utils::read_field_value<uint32_t>(walker(), block_address()).value_or(0);
     }
 
-    int64_t page_range_descriptor::get_unit_block_size() const
+    uint64_t page_range_descriptor::get_ust_address() const
     {
-        if(peb().is_x64_target())
+        if(!peb().user_stack_db_enabled() || !extra_present())
         {
-            return 0x10000;
-        }
-        if(peb().is_x86_target())
-        {
-            return 0x1000;
+            return 0;
         }
 
-        return 0x1000;
+        return segment_heap_utils::read_ust_address(peb(), block_address(), block_size().count(), extra_bytes().count());
+    }
+
+    std::vector<uint64_t> page_range_descriptor::get_allocation_stack_trace() const
+    {
+        return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
     }
 }

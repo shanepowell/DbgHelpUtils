@@ -15,15 +15,15 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
-    class segment_heap;
+    class heap_segment_context;
     class page_range_descriptor;
 
     class heap_page_segment
     {
     public:
-        heap_page_segment(segment_heap const& heap, uint64_t heap_page_segment_address, uint64_t heap_segment_context_address);
+        heap_page_segment(heap_segment_context const& heap, uint64_t heap_page_segment_address, uint64_t heap_segment_context_address);
 
-        [[nodiscard]] segment_heap const& heap() const { return heap_; }
+        [[nodiscard]] heap_segment_context const& heap() const { return heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -45,7 +45,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_desc_array_field_offset() const;
 
     private:
-        segment_heap const& heap_;
+        heap_segment_context const& heap_;
         uint64_t const heap_page_segment_address_;
         uint64_t const heap_segment_context_address_;
         dbg_help::symbol_type_info const heap_page_segment_symbol_type_;

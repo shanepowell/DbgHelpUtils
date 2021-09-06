@@ -2,6 +2,7 @@
 
 #include "common_symbol_names.h"
 #include "segment_heap.h"
+#include "segment_heap_utils.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::heap
@@ -14,6 +15,8 @@ namespace dlg_help_utils::heap
     , heap_large_alloc_symbol_type_{stream_utils::get_type(walker(), symbol_name)}
     , heap_large_alloc_length_{stream_utils::get_type_length(heap_large_alloc_symbol_type_, symbol_name)}
     , size_{get_size()}
+    , ust_address_{get_ust_address()}
+    , allocation_stack_trace_{get_allocation_stack_trace()}
     {
     }
 
@@ -62,14 +65,24 @@ namespace dlg_help_utils::heap
         return stream_utils::get_bit_field_value<uint64_t>(*this, common_symbol_names::heap_large_alloc_allocated_pages_field_symbol_name);
     }
 
+    uint64_t large_alloc_entry::block_address() const
+    {
+        return virtual_address() - unused_bytes().count();
+    }
+
+    uint64_t large_alloc_entry::block_size() const
+    {
+        return size().count();
+    }
+
     uint64_t large_alloc_entry::user_address() const
     {
-        return virtual_address() - unused_bytes().count() + read_front_padding();
+        return block_address() + read_front_padding();
     }
 
     size_units::base_10::bytes large_alloc_entry::user_size() const
     {
-        return size_units::base_10::bytes{size().count() - unused_bytes().count() - read_front_padding()};
+        return size_units::base_10::bytes{block_size() - unused_bytes().count() - read_front_padding()};
     }
 
     size_units::base_10::bytes large_alloc_entry::get_size() const
@@ -79,6 +92,21 @@ namespace dlg_help_utils::heap
 
     uint64_t large_alloc_entry::read_front_padding() const
     {
-        return stream_utils::read_field_value<uint32_t>(walker(), virtual_address()).value_or(0);
+        return segment_heap_utils::read_front_padding_size(peb(), block_address());
+    }
+
+    uint64_t large_alloc_entry::get_ust_address() const
+    {
+        if(!peb().user_stack_db_enabled() || !extra_present())
+        {
+            return 0;
+        }
+
+        return segment_heap_utils::read_ust_address(peb(), block_address(), block_size(), unused_bytes().count());
+    }
+
+    std::vector<uint64_t> large_alloc_entry::get_allocation_stack_trace() const
+    {
+        return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
     }
 }

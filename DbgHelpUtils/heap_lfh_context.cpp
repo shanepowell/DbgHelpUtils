@@ -28,6 +28,11 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
+    ust_address_stack_trace const& heap_lfh_context::stack_trace() const
+    {
+        return heap().stack_trace();
+    }
+
     uint8_t heap_lfh_context::max_affinity() const
     {
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_lfh_context_max_affinity_field_symbol_name);
