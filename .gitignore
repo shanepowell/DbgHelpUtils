@@ -35,6 +35,6 @@ testCaseCollection.xml
 *.db
 .vs/
 /packages
-/AllocationSetupTests/vcpkg_installed
+vcpkg_installed
 /*.dll
 /GenerateDumps.ps1
