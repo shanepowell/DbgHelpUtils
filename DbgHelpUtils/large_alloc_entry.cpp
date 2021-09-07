@@ -80,7 +80,7 @@ namespace dlg_help_utils::heap
         return block_address() + read_front_padding();
     }
 
-    size_units::base_10::bytes large_alloc_entry::user_size() const
+    size_units::base_10::bytes large_alloc_entry::user_requested_size() const
     {
         return size_units::base_10::bytes{block_size() - unused_bytes().count() - read_front_padding()};
     }

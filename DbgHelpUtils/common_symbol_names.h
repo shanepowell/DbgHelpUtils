@@ -40,6 +40,7 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const heap_lfh_affinity_slot_structure_symbol_name;
     extern std::wstring const heap_lfh_subsegment_structure_symbol_name;
     extern std::wstring const heap_lfh_subsegment_encoded_offsets_structure_symbol_name;
+    extern std::wstring const heap_lfh_ondemand_pointer_structure_symbol_name;
 
     extern std::wstring const rtl_p_lfh_key_global_symbol_name;
     extern std::wstring const av_rfp_dph_page_heap_list_global_symbol_name;
@@ -229,4 +230,5 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const heap_lfh_subsegment_block_bitmap_field_symbol_name;
     extern std::wstring const heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name;
     extern std::wstring const heap_lfh_subsegment_encoded_offsets_first_block_offset_field_symbol_name;
+    extern std::wstring const heap_lfh_ondemand_pointer_usage_data_field_symbol_name;
 }

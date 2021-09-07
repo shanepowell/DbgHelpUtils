@@ -78,11 +78,7 @@ namespace dlg_help_utils::heap
                             break;
                         }
 
-                        // is enabled?
-                        if((bucket_address.value_or(0x01) & 0x01) == 0x0)
-                        {
-                            co_yield heap_lfh_bucket{*this, bucket_address.value()};
-                        }
+                        co_yield heap_lfh_bucket{*this, bucket_address.value(), static_cast<int16_t>(index)};
                     }
                 }
             }

@@ -46,7 +46,9 @@ Function Run-AllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opt
     remove-item $dmp -ErrorAction:SilentlyContinue
     $log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).log"
     remove-item $log -ErrorAction:SilentlyContinue
-    . "$PSScriptRoot\..\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log
+    $json = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).json"
+    remove-item $json -ErrorAction:SilentlyContinue
+    . "$PSScriptRoot\..\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log "--json" $json
 }
 
 $app_name = "AllocationSetupTests.exe"

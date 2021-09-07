@@ -21,5 +21,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GenerateDumps.ps1" />
+    <None Include="vcpkg.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ResultSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

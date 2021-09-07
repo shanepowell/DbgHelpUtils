@@ -52,7 +52,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint8_t flags() const { return flags_; }
         [[nodiscard]] size_units::base_10::bytes size() const { return size_; }
         [[nodiscard]] size_units::base_10::bytes previous_size() const { return previous_size_; }
-        [[nodiscard]] size_units::base_10::bytes requested_size() const { return requested_size_; }
+        [[nodiscard]] size_units::base_10::bytes user_requested_size() const { return requested_size_; }
         [[nodiscard]] size_units::base_10::bytes end_unused_bytes() const { return end_unused_bytes_; }
         [[nodiscard]] size_units::base_10::bytes unused_bytes() const { return unused_bytes_; }
 

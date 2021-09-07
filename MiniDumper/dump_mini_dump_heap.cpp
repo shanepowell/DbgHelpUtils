@@ -28,6 +28,8 @@
 #include "DbgHelpUtils/nt_heap.h"
 #include "DbgHelpUtils/page_range_descriptor.h"
 #include "DbgHelpUtils/page_range_flags_utils.h"
+#include "DbgHelpUtils/process_heaps.h"
+#include "DbgHelpUtils/process_heap_entry.h"
 #include "DbgHelpUtils/segment_heap.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
@@ -192,7 +194,7 @@ namespace
                 const uint64_t size = entry.size().count();
                 if(auto stream = entry.walker().get_process_memory_stream(entry.address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, stream, size, indent + 2);
+                    hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
                     wcout << L'\n';
                 }
             }
@@ -201,7 +203,7 @@ namespace
         {
             if (entry.is_busy())
             {
-                wcout << " req(" << stream_hex_dump::to_hex(entry.requested_size().count()) << " - " << entry.requested_size() << ")";
+                wcout << " req(" << stream_hex_dump::to_hex(entry.user_requested_size().count()) << " - " << entry.user_requested_size() << ")";
                 wcout << " u(" << entry.unused_bytes() << ")";
                 if (entry.end_unused_bytes() > bytes{ 0 })
                 {
@@ -276,10 +278,10 @@ namespace
 
             if(options.hex_dump_memory_data() && entry.is_busy() && entry.user_address() != 0 && ((entry.flags() & heap::heap_entry::FlagVirtualAlloc) != heap::heap_entry::FlagVirtualAlloc || !entry_contains_lfh_subsegments))
             {
-                uint64_t const size = entry.requested_size().count();
+                uint64_t const size = entry.user_requested_size().count();
                 if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, stream, size, indent + 2);
+                    hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
                     wcout << L'\n';
                 }
             }
@@ -408,7 +410,7 @@ namespace
             uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, size, indent + 4);
+                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 4);
                 wcout << L'\n';
             }
         }
@@ -488,7 +490,7 @@ namespace
         wcout << indent_str << "  Block Address: " << stream_hex_dump::to_hex(entry.block_address(), hex_length) << '\n';
         wcout << indent_str << "  Block Size: " << entry.block_size() << " (" << stream_hex_dump::to_hex(entry.block_size().count()) << ")" << '\n';
         wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+        wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size().count()) << ")" << '\n';
         wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
 
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
@@ -500,10 +502,10 @@ namespace
 
         if(options.hex_dump_memory_data() && range_flags == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT && entry.user_address() != 0)
         {
-            uint64_t const size = entry.user_size().count();
+            uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, size, indent + 4);
+                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 4);
                 wcout << L'\n';
             }
         }
@@ -585,7 +587,7 @@ namespace
             wcout << indent_str << "  Spare: " << stream_hex_dump::to_hex(entry.spare()) << '\n';
             wcout << indent_str << "  Allocated Chunk Bits: " << stream_hex_dump::to_hex(entry.allocated_chunk_bits()) << '\n';
             wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-            wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+            wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size().count()) << ")" << '\n';
             wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
 
             if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
@@ -597,10 +599,10 @@ namespace
 
             if(options.hex_dump_memory_data() && entry.allocated())
             {
-                uint64_t const size = entry.user_size().count();
+                uint64_t const size = entry.user_requested_size().count();
                 if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, stream, size, indent + 2);
+                    hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
                     wcout << L'\n';
                 }
             }
@@ -655,7 +657,7 @@ namespace
         wcout << indent_str << "  Guard Page Alignment: " << entry.guard_page_alignment() << '\n';
         wcout << indent_str << "  Allocated Pages: " << entry.allocated_pages() << '\n';
         wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+        wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size().count()) << ")" << '\n';
         wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
 
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
@@ -667,10 +669,10 @@ namespace
 
         if(options.hex_dump_memory_data())
         {
-            uint64_t const size = entry.user_size().count();
+            uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, size, indent + 2);
+                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
                 wcout << L'\n';
             }
         }
@@ -689,7 +691,7 @@ namespace
             wcout << indent_str << "  Unused Bytes: " << entry.unused_bytes() << " (" << stream_hex_dump::to_hex(entry.unused_bytes().count()) << ")"  << '\n';
         }
         wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  Requested User Size: " << entry.user_size() << " (" << stream_hex_dump::to_hex(entry.user_size().count()) << ")" << '\n';
+        wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size().count()) << ")" << '\n';
         wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
 
         if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
@@ -701,10 +703,10 @@ namespace
 
         if(options.hex_dump_memory_data() && entry.allocated() && entry.user_address() != 0)
         {
-            uint64_t const size = entry.user_size().count();
+            uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, size, indent + 2);
+                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
                 wcout << L'\n';
             }
         }
@@ -751,23 +753,32 @@ namespace
         using namespace size_units::base_10;
         wcout << indent_str << "LFH Bucket: " << stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length) << '\n';
         wcout << indent_str << "  Bucket Index: " << lfh_bucket.bucket_index() << '\n';
+        wcout << indent_str << "  Bucket Enabled: " << std::boolalpha << lfh_bucket.is_enabled() << '\n';
         wcout << indent_str << "  Granularity: " << lfh_bucket.bucket_granularity() << " (" << stream_hex_dump::to_hex(lfh_bucket.bucket_granularity().count()) << ")" << '\n';
         wcout << indent_str << "  Max Allocation Size: " << lfh_bucket.max_allocation_size() << " (" << stream_hex_dump::to_hex(lfh_bucket.max_allocation_size().count()) << ")" << '\n';
-        wcout << indent_str << "  Slot Count: " << lfh_bucket.slot_count() << '\n';
-        wcout << indent_str << "  Total Block Count: " << lfh_bucket.total_block_count() << '\n';
-        wcout << indent_str << "  Total Subsegment Count: " << lfh_bucket.total_subsegment_count() << '\n';
-        wcout << indent_str << "  Reciprocal Block Size: " << lfh_bucket.reciprocal_block_size() << " (" << stream_hex_dump::to_hex(lfh_bucket.reciprocal_block_size()) << ")"  << '\n';
-        wcout << indent_str << "  Shift: " << static_cast<uint16_t>(lfh_bucket.shift()) << '\n';
-        auto const processor_affinity_mapping = lfh_bucket.processor_affinity_mapping();
-        wcout << indent_str << "  Processor Affinity Mapping:\n";
-        for(size_t index = 0; index < processor_affinity_mapping.size(); ++index)
-        {
-            wcout << indent_str << "    { CPU:" << index << " -> Slot:" << processor_affinity_mapping[index] << " }\n";
-        }
 
-        for(auto const& affinity_slot : lfh_bucket.affinity_slots())
+        if(lfh_bucket.is_enabled())
         {
-            print_lfh_affinity_slot(hex_length, affinity_slot, options, indent + 2);
+            wcout << indent_str << "  Slot Count: " << lfh_bucket.slot_count() << '\n';
+            wcout << indent_str << "  Total Block Count: " << lfh_bucket.total_block_count() << '\n';
+            wcout << indent_str << "  Total Subsegment Count: " << lfh_bucket.total_subsegment_count() << '\n';
+            wcout << indent_str << "  Reciprocal Block Size: " << lfh_bucket.reciprocal_block_size() << " (" << stream_hex_dump::to_hex(lfh_bucket.reciprocal_block_size()) << ")"  << '\n';
+            wcout << indent_str << "  Shift: " << static_cast<uint16_t>(lfh_bucket.shift()) << '\n';
+            auto const processor_affinity_mapping = lfh_bucket.processor_affinity_mapping();
+            wcout << indent_str << "  Processor Affinity Mapping:\n";
+            for(size_t index = 0; index < processor_affinity_mapping.size(); ++index)
+            {
+                wcout << indent_str << "    { CPU:" << index << " -> Slot:" << processor_affinity_mapping[index] << " }\n";
+            }
+
+            for(auto const& affinity_slot : lfh_bucket.affinity_slots())
+            {
+                print_lfh_affinity_slot(hex_length, affinity_slot, options, indent + 2);
+            }
+        }
+        else
+        {
+            wcout << indent_str << "  Usage Count: " << lfh_bucket.usage_count() << '\n';
         }
     }
 
@@ -917,15 +928,52 @@ void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& op
 
             print_nt_heap_free_list(hex_length, nt_heap.value(), options, 2);
 
+            /*
             if(auto const debug_page_heap = nt_heap.value().debug_page_heap();
                 debug_page_heap.has_value())
             {
                 print_debug_page_heap(hex_length, debug_page_heap.value(), options, 2);
             }
+            */
         }
         else if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
         {
             print_segment_heap(hex_length, get_process_marker(peb.process_heap() == segment_heap.value().segment_heap_address()), segment_heap.value(), options, 0);
+        }
+    }
+
+    for(auto const& heap : heap::dph_heap::dph_heaps(peb))
+    {
+        print_debug_page_heap(hex_length, heap, options, 2);
+    }
+
+    wcout << '\n';
+}
+
+void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+{
+    heap::process_heaps const heaps{mini_dump, symbol_engine};
+    auto const hex_length = heaps.peb().machine_hex_printable_length();
+
+    for(auto const& entry : heaps.entries())
+    {
+        using namespace size_units::base_10;
+        wcout << "  " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " " << entry.user_requested_size() << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
+
+        if(options.display_symbols() && !entry.allocation_stack_trace().empty())
+        {
+            wcout << "    allocation stack trace:\n";
+            hex_dump_stack(wcout, heaps.peb().walker(), entry.allocation_stack_trace(), heaps.peb().is_x86_target(), 6);
+            wcout << '\n';
+        }
+
+        if(options.hex_dump_memory_data())
+        {
+            if(auto stream = entry.user_data(); !stream.eof())
+            {
+                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), 6);
+                wcout << L'\n';
+            }
         }
     }
 

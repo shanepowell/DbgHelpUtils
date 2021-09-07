@@ -14,7 +14,6 @@
 #include "DbgHelpUtils/stream_stack_dump.h"
 #include "DbgHelpUtils/system_info_stream.h"
 #include "DbgHelpUtils/system_info_utils.h"
-#include "DbgHelpUtils/time_utils.h"
 #include "DbgHelpUtils/token_info_list_stream.h"
 
 using namespace std;
@@ -62,7 +61,7 @@ void dump_mini_dump_token_stream_data(mini_dump const& mini_dump, size_t const i
 
         if (options.hex_dump_memory_data())
         {
-            hex_dump::hex_dump(wcout, entry.data(), entry.size(), 3);
+            hex_dump::hex_dump(wcout, entry.data(), options.hex_dump_memory_size(entry.size()), 3);
             wcout << L'\n';
         }
 
@@ -110,7 +109,7 @@ void dump_mini_dump_function_table_stream_data(mini_dump const& mini_dump, size_
                 for (auto const& entry : table.list())
                 {
                     wcout << L"     Entry[" << entry.index() << L"]:\n";
-                    hex_dump::hex_dump(wcout, entry.data(), entry.size(), 7);
+                    hex_dump::hex_dump(wcout, entry.data(), options.hex_dump_memory_size(entry.size()), 7);
                     wcout << L'\n';
                 }
             }

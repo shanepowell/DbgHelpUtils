@@ -74,7 +74,7 @@ void dump_mini_dump_memory_list_stream_data(mini_dump const& mini_dump, size_t c
         }
         else if (options.hex_dump_memory_data())
         {
-            hex_dump::hex_dump(wcout, mini_dump.rva32(entry->Memory), entry->Memory.DataSize, 3, true, 16,
+            hex_dump::hex_dump(wcout, mini_dump.rva32(entry->Memory), options.hex_dump_memory_size(entry->Memory.DataSize), 3, true, 16,
                                entry->StartOfMemoryRange);
             wcout << L'\n';
         }
@@ -137,7 +137,7 @@ void dump_mini_dump_memory64_list_stream_data(mini_dump const& mini_dump, size_t
         }
         else if (options.hex_dump_memory_data())
         {
-            hex_dump::hex_dump(wcout, mini_dump.rva64(entry.location), entry.location.DataSize, 3, true, 16,
+            hex_dump::hex_dump(wcout, mini_dump.rva64(entry.location), options.hex_dump_memory_size(entry.location.DataSize), 3, true, 16,
                                entry.start_of_memory_range);
             wcout << L'\n';
         }

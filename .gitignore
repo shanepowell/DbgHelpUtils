@@ -34,8 +34,7 @@ testCaseCollection.xml
 *.opendb
 *.db
 .vs/
-MiniDumpExplorer/Generated Files/
-MiniDumpExplorerDll/Generated Files/
-packages
+/packages
+/AllocationSetupTests/vcpkg_installed
 /*.dll
 /GenerateDumps.ps1

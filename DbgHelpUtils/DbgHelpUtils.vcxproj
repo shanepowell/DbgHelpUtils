@@ -138,6 +138,8 @@
     <ClCompile Include="pe_file.cpp" />
     <ClCompile Include="pe_file_memory_mapping.cpp" />
     <ClCompile Include="process_environment_block.cpp" />
+    <ClCompile Include="process_heaps.cpp" />
+    <ClCompile Include="process_heap_entry.cpp" />
     <ClCompile Include="process_parameters.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
@@ -249,6 +251,8 @@
     <ClInclude Include="pe_file.h" />
     <ClInclude Include="pe_file_memory_mapping.h" />
     <ClInclude Include="process_environment_block.h" />
+    <ClInclude Include="process_heaps.h" />
+    <ClInclude Include="process_heap_entry.h" />
     <ClInclude Include="process_parameters.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
     <ClInclude Include="range_units.h" />

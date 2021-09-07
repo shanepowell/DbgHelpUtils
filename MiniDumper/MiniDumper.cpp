@@ -32,6 +32,7 @@ int wmain(int const argc, wchar_t* argv[])
             ("streams,s", "dump streams")
             ("hexdump,x", "hex dump stream data")
             ("memoryhexdump,m", "hex dump memory data")
+            ("limitmemoryhexdump", po::wvalue<size_t>(), "limit hex dump memory data to size")
             ("streamindex,i", po::wvalue<vector<size_t>>(), "dump stream indexes")
             ("streamtype,t", po::wvalue<vector<wstring>>(), "dump stream types")
             ("symbols,y", "display stack trace symbols")
@@ -47,6 +48,7 @@ int wmain(int const argc, wchar_t* argv[])
             ("heapdebug", "debug heap data")
             ("peb", "process environment block")
             ("heap", "heap data information")
+            ("heapentries", "heap entries only")
             ;
 
         po::variables_map vm;

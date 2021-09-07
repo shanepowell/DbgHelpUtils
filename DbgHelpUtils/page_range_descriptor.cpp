@@ -107,7 +107,7 @@ namespace dlg_help_utils::heap
         return size_units::base_10::bytes{(unit_size().count() << unit_shift_)};
     }
 
-    size_units::base_10::bytes page_range_descriptor::user_size() const
+    size_units::base_10::bytes page_range_descriptor::user_requested_size() const
     {
         auto const size = (unit_size().count() << unit_shift_) - read_front_padding_size();
         auto const extra = extra_bytes().count();

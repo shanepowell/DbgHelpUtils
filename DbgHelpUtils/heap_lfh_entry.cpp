@@ -35,7 +35,7 @@ namespace dlg_help_utils::heap
         return heap_lfh_entry_address() + read_front_padding_size();
     }
 
-    size_units::base_10::bytes heap_lfh_entry::user_size() const
+    size_units::base_10::bytes heap_lfh_entry::user_requested_size() const
     {
         return size_units::base_10::bytes{block_size().count() - unused_bytes_.count() - read_front_padding_size()};
     }

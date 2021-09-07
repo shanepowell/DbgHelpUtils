@@ -23,6 +23,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     , debug_type_data_{ vm.count("typedebug") > 0 }
     , display_peb_{ vm.count("peb") > 0 }
     , display_heap_{ vm.count("heap") > 0 }
+    , display_heap_entries_{ vm.count("heapentries") > 0 }
     , debug_heap_data_{ vm.count("heapdebug") > 0 }
 {
     if (vm.count("streamindex") > 0)
@@ -64,6 +65,11 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
         }
     }
 
+    if(vm.count("limitmemoryhexdump") > 0)
+    {
+        limit_hex_dump_memory_size_ = vm["limitmemoryhexdump"].as<size_t>();
+    }
+
     if(vm.count("type"))
     {
         symbol_types_ = vm["type"].as<vector<wstring>>();
@@ -83,6 +89,15 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     {
         symbol_names_ = vm["symbol"].as<vector<wstring>>();
     }
+}
+
+size_t dump_file_options::hex_dump_memory_size(size_t const size) const
+{
+    if(limit_hex_dump_memory_size() > 0)
+    {
+        return std::min(limit_hex_dump_memory_size(), size);
+    }
+    return size;
 }
 
 std::vector<std::wstring> const& dump_file_options::filter_values(std::wstring const& option) const

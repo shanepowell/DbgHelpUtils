@@ -106,14 +106,14 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
             if (stream_module->CvRecord.DataSize && !stream_module.pdb_info().is_valid())
             {
                 wcout << L"   CvRecord:\n";
-                hex_dump::hex_dump(wcout, stream_module.cv_record(), stream_module->CvRecord.DataSize, 5);
+                hex_dump::hex_dump(wcout, stream_module.cv_record(), options.hex_dump_memory_size(stream_module->CvRecord.DataSize), 5);
                 wcout << L'\n';
             }
 
             if (stream_module->MiscRecord.DataSize)
             {
                 wcout << L"   MiscRecord:\n";
-                hex_dump::hex_dump(wcout, stream_module.misc_record(), stream_module->MiscRecord.DataSize, 5);
+                hex_dump::hex_dump(wcout, stream_module.misc_record(), options.hex_dump_memory_size(stream_module->MiscRecord.DataSize), 5);
                 wcout << L'\n';
             }
         }

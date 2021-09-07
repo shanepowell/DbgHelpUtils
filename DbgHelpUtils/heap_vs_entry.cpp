@@ -4,6 +4,9 @@
 #include "segment_heap.h"
 #include "segment_heap_utils.h"
 #include "stream_utils.h"
+#include "wide_runtime_error.h"
+
+using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
@@ -58,21 +61,25 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_vs_entry::memory_cost() const
     {
+        validate_buffer();
         return static_cast<uint16_t>(stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_sizes_memory_cost_field_symbol_name, buffer_.get()));
     }
 
     bool heap_vs_entry::allocated() const
     {
+        validate_buffer();
         return stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_sizes_allocated_field_symbol_name, buffer_.get()) != 0;
     }
 
     uint8_t heap_vs_entry::segment_page_offset() const
     {
+        validate_buffer();
         return static_cast<uint8_t>(stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_encoded_segment_page_offset_field_symbol_name, buffer_.get()));
     }
 
     bool heap_vs_entry::has_unused_bytes() const
     {
+        validate_buffer();
         return stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_unused_bytes_field_symbol_name, buffer_.get()) != 0x0;
     }
 
@@ -88,16 +95,19 @@ namespace dlg_help_utils::heap
 
     bool heap_vs_entry::skip_during_walk() const
     {
+        validate_buffer();
         return stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_skip_during_walk_field_symbol_name, buffer_.get()) != 0x0;
     }
 
     uint32_t heap_vs_entry::spare() const
     {
+        validate_buffer();
         return stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_spare_field_symbol_name, buffer_.get());
     }
 
     uint32_t heap_vs_entry::allocated_chunk_bits() const
     {
+        validate_buffer();
         return stream_utils::get_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_allocated_chunk_bits_field_symbol_name, buffer_.get());
     }
 
@@ -116,7 +126,7 @@ namespace dlg_help_utils::heap
         return block_address() + read_front_padding_size();
     }
 
-    size_units::base_10::bytes heap_vs_entry::user_size() const
+    size_units::base_10::bytes heap_vs_entry::user_requested_size() const
     {
         auto requested_user_size = block_size() - read_front_padding_size();
         if(has_unused_bytes())
@@ -129,6 +139,7 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_vs_entry::raw_size() const
     {
+        validate_buffer();
         return static_cast<uint16_t>(stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_sizes_unsafe_size_field_symbol_name, buffer_.get()));
     }
 
@@ -144,6 +155,7 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_vs_entry::get_previous_size_raw() const
     {
+        validate_buffer();
         return static_cast<uint16_t>(stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_sizes_unsafe_prev_size_field_symbol_name, buffer_.get()));
     }
 
@@ -175,5 +187,13 @@ namespace dlg_help_utils::heap
     std::vector<uint64_t> heap_vs_entry::get_allocation_stack_trace() const
     {
         return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
+    }
+
+    void heap_vs_entry::validate_buffer() const
+    {
+        if(!buffer_)
+        {
+            throw exceptions::wide_runtime_error{L"heap vs entry buffer is null"s};
+        }
     }
 }

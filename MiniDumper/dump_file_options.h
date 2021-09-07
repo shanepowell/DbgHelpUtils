@@ -10,6 +10,8 @@
 #include <boost/program_options.hpp>
 #pragma warning(pop)
 
+#include "DbgHelpUtils/size_units.h"
+
 class dump_file_options
 {
 public:
@@ -20,6 +22,8 @@ public:
     [[nodiscard]] bool generate_crc32() const { return generate_crc32_; }
     [[nodiscard]] bool hex_dump_stream_data() const { return hex_dump_stream_data_; }
     [[nodiscard]] bool hex_dump_memory_data() const { return hex_dump_memory_data_; }
+    [[nodiscard]] size_t limit_hex_dump_memory_size() const { return limit_hex_dump_memory_size_; }
+    [[nodiscard]] size_t hex_dump_memory_size(size_t size) const;
     [[nodiscard]] std::vector<size_t> const& dump_stream_indexes() const { return dump_stream_indexes_; }
     [[nodiscard]] std::vector<MINIDUMP_STREAM_TYPE> const& dump_stream_types() const { return dump_stream_types_; }
     [[nodiscard]] bool continue_on_errors() const { return continue_on_errors_; }
@@ -29,6 +33,7 @@ public:
     [[nodiscard]] bool debug_type_data() const { return debug_type_data_; }
     [[nodiscard]] bool display_peb() const { return display_peb_; }
     [[nodiscard]] bool display_heap() const { return display_heap_; }
+    [[nodiscard]] bool display_heap_entries() const { return display_heap_entries_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> symbol_types() const { return symbol_types_; }
@@ -42,6 +47,7 @@ private:
     bool generate_crc32_;
     bool hex_dump_stream_data_;
     bool hex_dump_memory_data_;
+    size_t limit_hex_dump_memory_size_{0};
     std::vector<size_t> dump_stream_indexes_;
     std::vector<MINIDUMP_STREAM_TYPE> dump_stream_types_;
     bool continue_on_errors_;
@@ -51,6 +57,7 @@ private:
     bool debug_type_data_;
     bool display_peb_;
     bool display_heap_;
+    bool display_heap_entries_;
     bool debug_heap_data_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
     std::vector<std::wstring> symbol_names_;

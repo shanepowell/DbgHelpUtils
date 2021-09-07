@@ -5,16 +5,21 @@
 #include "heap_lfh_context.h"
 #include "process_environment_block.h"
 #include "stream_utils.h"
+#include "wide_runtime_error.h"
+
+using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
     std::wstring const& heap_lfh_bucket::symbol_name = common_symbol_names::heap_lfh_bucket_structure_symbol_name;
 
-    heap_lfh_bucket::heap_lfh_bucket(heap_lfh_context const& heap, uint64_t const heap_lfh_bucket_address)
+    heap_lfh_bucket::heap_lfh_bucket(heap_lfh_context const& heap, uint64_t const heap_lfh_bucket_address, int16_t const bucket_index)
     : heap_{heap}
     , heap_lfh_bucket_address_{heap_lfh_bucket_address}
+    , is_enabled_{(heap_lfh_bucket_address_ & 0x01) == 0x0}
     , heap_lfh_bucket_symbol_type_{stream_utils::get_type(walker(), symbol_name)}
-    , bucket_index_{get_bucket_index()}
+    , heap_lfh_ondemand_pointer_symbol_type_{stream_utils::get_type(walker(), common_symbol_names::heap_lfh_ondemand_pointer_structure_symbol_name)}
+    , bucket_index_{bucket_index == -1 ? get_bucket_index() : bucket_index}
     , bucket_granularity_{get_bucket_granularity()}
     , max_allocation_size_{get_max_allocation_size()}
     {
@@ -30,33 +35,71 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
+    uint16_t heap_lfh_bucket::usage_count() const
+    {
+        if(is_enabled())
+        {
+            throw exceptions::wide_runtime_error{L"LFH Bucket is enabled"s};
+        }
+
+        uint32_t value;
+        void const* buffer;
+        if(peb().is_x64_target())
+        {
+            buffer = &heap_lfh_bucket_address_;
+        }
+        else if(peb().is_x86_target())
+        {
+            value = static_cast<uint32_t>(heap_lfh_bucket_address_);
+            buffer = &value;
+        }
+        else
+        {
+            throw exceptions::wide_runtime_error{L"Unsupported platform"s};
+        }
+
+        auto const usage_data = stream_utils::find_basic_type_field_value_in_type<uint16_t>(heap_lfh_ondemand_pointer_symbol_type_, common_symbol_names::heap_lfh_ondemand_pointer_usage_data_field_symbol_name, buffer);
+        if(!usage_data.has_value())
+        {
+            stream_utils::throw_cant_get_field_data(common_symbol_names::heap_lfh_ondemand_pointer_structure_symbol_name, common_symbol_names::heap_lfh_ondemand_pointer_usage_data_field_symbol_name);
+        }
+
+        return usage_data.value();
+    }
+
     size_t heap_lfh_bucket::slot_count() const
     {
+        validate_enabled();
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_lfh_bucket_slot_count_field_symbol_name);
     }
 
     uint64_t heap_lfh_bucket::total_block_count() const
     {
+        validate_enabled();
         return stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name);
     }
 
     uint64_t heap_lfh_bucket::total_subsegment_count() const
     {
+        validate_enabled();
         return stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name);
     }
 
     size_units::base_10::bytes heap_lfh_bucket::reciprocal_block_size() const
     {
+        validate_enabled();
         return size_units::base_10::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name)};
     }
 
     uint8_t heap_lfh_bucket::shift() const
     {
+        validate_enabled();
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_lfh_bucket_shift_field_symbol_name);
     }
 
     std::vector<uint8_t> heap_lfh_bucket::processor_affinity_mapping() const
     {
+        validate_enabled();
         auto const proc_affinity_mapping_address = stream_utils::get_field_pointer(*this, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
 
         std::vector<uint8_t> rv;
@@ -72,6 +115,7 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<heap_lfh_affinity_slot> heap_lfh_bucket::affinity_slots() const
     {
+        validate_enabled();
         auto const max_slots{slot_count()};
         auto affinity_slots_address = stream_utils::get_field_pointer(*this, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name);
         auto const pointer_size{peb().is_x86_target() ? sizeof uint32_t : sizeof uint64_t};
@@ -106,8 +150,17 @@ namespace dlg_help_utils::heap
         };
     }
 
+    void heap_lfh_bucket::validate_enabled() const
+    {
+        if(!is_enabled())
+        {
+            throw exceptions::wide_runtime_error{L"LFH Bucket not enabled"s};
+        }
+    }
+
     size_t heap_lfh_bucket::get_bucket_index() const
     {
+        validate_enabled();
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_lfh_bucket_bucket_index_field_symbol_name);
     }
 

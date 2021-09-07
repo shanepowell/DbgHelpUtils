@@ -262,7 +262,7 @@ namespace dlg_help_utils::heap
             return size_units::base_10::bytes{0};
         }
 
-        return size_units::base_10::bytes{(address() + size().count()) - (user_address() + requested_size().count())};
+        return size_units::base_10::bytes{(address() + size().count()) - (user_address() + user_requested_size().count())};
     }
 
     uint64_t heap_entry::get_ust_address() const
@@ -312,7 +312,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_10::bytes heap_entry::get_virtual_alloc_end_unused_bytes(uint64_t const end_address) const
     {
-        return size_units::base_10::bytes{end_address - (user_address() + requested_size().count())};
+        return size_units::base_10::bytes{end_address - (user_address() + user_requested_size().count())};
     }
 
     dbg_help::symbol_type_info heap_entry::get_heap_entry_symbol_type() const

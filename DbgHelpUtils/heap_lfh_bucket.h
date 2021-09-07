@@ -22,12 +22,14 @@ namespace dlg_help_utils::heap
     class heap_lfh_bucket
     {
     public:
-        heap_lfh_bucket(heap_lfh_context const& heap, uint64_t heap_lfh_bucket_address);
+        heap_lfh_bucket(heap_lfh_context const& heap, uint64_t heap_lfh_bucket_address, int16_t bucket_index);
 
         [[nodiscard]] heap_lfh_context const& heap() const { return heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
+        [[nodiscard]] bool is_enabled() const { return is_enabled_; }
+        [[nodiscard]] uint16_t usage_count() const;
         [[nodiscard]] size_t bucket_index() const { return bucket_index_; }
         [[nodiscard]] size_units::base_10::bytes bucket_granularity() const { return bucket_granularity_; }
         [[nodiscard]] size_units::base_10::bytes max_allocation_size() const { return max_allocation_size_; }
@@ -48,6 +50,7 @@ namespace dlg_help_utils::heap
         static std::wstring const& symbol_name;
 
     private:
+        void validate_enabled() const;
         [[nodiscard]] size_t get_bucket_index() const;
         [[nodiscard]] size_units::base_10::bytes get_bucket_granularity() const;
         [[nodiscard]] size_units::base_10::bytes get_max_allocation_size() const;
@@ -55,7 +58,9 @@ namespace dlg_help_utils::heap
     private:
         heap_lfh_context const& heap_;
         uint64_t const heap_lfh_bucket_address_;
+        bool const is_enabled_;
         dbg_help::symbol_type_info const heap_lfh_bucket_symbol_type_;
+        dbg_help::symbol_type_info const heap_lfh_ondemand_pointer_symbol_type_;
         size_t const bucket_index_;
         size_units::base_10::bytes const bucket_granularity_;
         size_units::base_10::bytes const max_allocation_size_;

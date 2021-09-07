@@ -61,7 +61,7 @@ void dump_mini_dump_thread_context(stream_thread_context const& thread_context, 
 
     if (options.hex_dump_memory_data() || force_hex_dump)
     {
-        hex_dump::hex_dump(wcout, thread_context.context(), thread_context.size(), 4);
+        hex_dump::hex_dump(wcout, thread_context.context(), options.hex_dump_memory_size(thread_context.size()), 4);
         wcout << L'\n';
     }
 }
@@ -258,7 +258,7 @@ void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t c
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(wcout, thread.stack(), thread->Stack.Memory.DataSize, 5, true, 16,
+                hex_dump::hex_dump(wcout, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
                                    thread->Stack.StartOfMemoryRange);
                 wcout << L'\n';
             }
@@ -319,7 +319,7 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(wcout, thread.stack(), thread->Stack.Memory.DataSize, 5, true, 16,
+                hex_dump::hex_dump(wcout, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
                                    thread->Stack.StartOfMemoryRange);
                 wcout << L'\n';
             }
@@ -335,7 +335,7 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
         {
             if (thread.backing_store() != nullptr)
             {
-                hex_dump::hex_dump(wcout, thread.backing_store(), thread->BackingStore.Memory.DataSize, 5, true, 16,
+                hex_dump::hex_dump(wcout, thread.backing_store(), options.hex_dump_memory_size(thread->BackingStore.Memory.DataSize), 5, true, 16,
                                    thread->BackingStore.StartOfMemoryRange);
                 wcout << L'\n';
             }

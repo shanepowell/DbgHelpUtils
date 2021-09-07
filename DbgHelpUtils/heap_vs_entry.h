@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t block_address() const;
         [[nodiscard]] uint64_t block_size() const;
         [[nodiscard]] uint64_t user_address() const;
-        [[nodiscard]] size_units::base_10::bytes user_size() const;
+        [[nodiscard]] size_units::base_10::bytes user_requested_size() const;
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
@@ -70,6 +70,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t read_front_padding_size() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
+        void validate_buffer() const;
 
     private:
         segment_heap const& heap_;
