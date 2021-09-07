@@ -67,7 +67,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
 
     if(vm.count("limitmemoryhexdump") > 0)
     {
-        limit_hex_dump_memory_size_ = vm["limitmemoryhexdump"].as<size_t>();
+        limit_hex_dump_memory_size_ = dlg_help_utils::size_units::base_10::from_wstring(vm["limitmemoryhexdump"].as<wstring>()).count();
     }
 
     if(vm.count("type"))

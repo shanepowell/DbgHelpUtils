@@ -28,6 +28,8 @@ namespace dlg_help_utils::size_units
             os << to_wstring(size);
             return os;
         }
+
+        bytes from_wstring(std::wstring const& value);
     } // namespace base_10
 
     namespace base_10_literals

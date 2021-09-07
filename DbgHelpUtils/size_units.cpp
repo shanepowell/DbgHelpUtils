@@ -3,6 +3,8 @@
 #include <sstream>
 
 #include "chrono_unit_convert_to_string.h"
+#include "string_compare.h"
+#include "wide_runtime_error.h"
 
 namespace dlg_help_utils::size_units
 {
@@ -83,6 +85,59 @@ namespace dlg_help_utils::size_units
             }
 
             return ss.str();
+        }
+
+        bytes from_wstring(std::wstring const& value)
+        {
+            uint64_t units_value;
+            std::wstring units;
+            std::wistringstream ss{ value };
+            ss >> units_value >> units;
+            if (ss.eof())
+            {
+                if (units.empty() || string_compare::iequals(units, L"b"))
+                {
+                    return bytes(units_value);
+                }
+
+                if (string_compare::iequals(units, L"kb"))
+                {
+                    return kilobytes(units_value);
+                }
+
+                if (string_compare::iequals(units, L"mb"))
+                {
+                    return megabytes(units_value);
+                }
+
+                if (string_compare::iequals(units, L"gb"))
+                {
+                    return gigabytes(units_value);
+                }
+
+                if (string_compare::iequals(units, L"tb"))
+                {
+                    return terabytes(units_value);
+                }
+
+                if (string_compare::iequals(units, L"pb"))
+                {
+                    return petabytes(units_value);
+                }
+
+                if (string_compare::iequals(units, L"eb"))
+                {
+                    return exabytes(units_value);
+                }
+
+                std::wostringstream runtime_error_ss;
+                runtime_error_ss << "Unknown units type [" << units << "] for value [" << value << "]";
+                throw exceptions::wide_runtime_error{std::move(runtime_error_ss).str()};
+            }
+
+            std::wostringstream runtime_error_ss;
+            runtime_error_ss << "Unknown units value [" << value << "]";
+            throw exceptions::wide_runtime_error{std::move(runtime_error_ss).str()};
         }
     }
 
