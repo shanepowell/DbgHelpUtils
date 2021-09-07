@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamUnusedView : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamUnusedView();
-    }
-}

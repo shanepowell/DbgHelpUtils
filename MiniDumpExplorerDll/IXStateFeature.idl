@@ -1,9 +1,0 @@
-namespace MiniDumpExplorer
-{
-    interface IXStateFeature
-    {
-        String Name { get; };
-        UInt32 Offset { get; };
-        UInt32 Size { get; };
-    }
-}

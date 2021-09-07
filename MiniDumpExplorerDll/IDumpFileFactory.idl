@@ -1,9 +1,0 @@
-import "IDumpFile.idl";
-
-namespace MiniDumpExplorer
-{
-    interface IDumpFileFactory
-    {
-        IDumpFile Make(String path);
-    }
-}

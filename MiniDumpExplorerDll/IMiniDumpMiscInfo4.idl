@@ -1,9 +1,0 @@
-namespace MiniDumpExplorer
-{
-    interface IMiniDumpMiscInfo4
-    {
-        Boolean HasBuildString{ get; };
-        String BuildString{ get; };
-        String DbgBldStr{ get; };
-    }
-}

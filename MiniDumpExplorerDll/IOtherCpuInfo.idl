@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    interface IOtherCpuInfo
-    {
-        UInt64 ProcessorFeatures0 { get; };
-        UInt64 ProcessorFeatures1 { get; };
-    }
-}

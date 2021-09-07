@@ -1,8 +1,0 @@
-namespace MiniDumpExplorer
-{
-    [default_interface]
-    runtimeclass DumpStreamTokenView : Windows.UI.Xaml.Controls.UserControl
-    {
-        DumpStreamTokenView();
-    }
-}
