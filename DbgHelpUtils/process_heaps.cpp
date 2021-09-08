@@ -36,17 +36,7 @@ namespace dlg_help_utils::heap
         {
             if(auto const nt_heap = peb().nt_heap(heap_index); nt_heap.has_value())
             {
-                for(auto const& segment : nt_heap.value().segments())
-                {
-                    for(auto const& entry : segment.entries())
-                    {
-                        if(entry.is_busy())
-                        {
-                            co_yield process_heap_entry{entry};
-                        }
-                    }
-                }
-
+                std::vector<heap_subsegment> lfh_data;
                 if(auto const lfh_heap = nt_heap.value().lfh_heap(); lfh_heap.has_value())
                 {
                     for(auto const& segment : lfh_heap.value().lfh_segments())
@@ -60,6 +50,19 @@ namespace dlg_help_utils::heap
                                     co_yield process_heap_entry{entry};
                                 }
                             }
+
+                            lfh_data.emplace_back(subsegment);
+                        }
+                    }
+                }
+
+                for(auto const& segment : nt_heap.value().segments())
+                {
+                    for(auto const& entry : segment.entries())
+                    {
+                        if(entry.is_busy() && !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
+                        {
+                            co_yield process_heap_entry{entry};
                         }
                     }
                 }
@@ -148,4 +151,10 @@ namespace dlg_help_utils::heap
             }
         }
     }
+
+    bool process_heaps::is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment)
+    {
+        return subsegment.entry_start_address() > entry.address() && subsegment.entry_start_address() < entry.address() + entry.size().count();
+    }
+
 }

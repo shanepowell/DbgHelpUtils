@@ -21,6 +21,27 @@
 #include "DbgHelpUtils/process_heap_entry.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 
+namespace ConsoleForeground
+{
+    constexpr WORD BLACK = 0;
+    constexpr WORD DARKBLUE = FOREGROUND_BLUE;
+    constexpr WORD DARKGREEN = FOREGROUND_GREEN;
+    constexpr WORD DARKCYAN = FOREGROUND_GREEN | FOREGROUND_BLUE;
+    constexpr WORD DARKRED = FOREGROUND_RED;
+    constexpr WORD DARKMAGENTA = FOREGROUND_RED | FOREGROUND_BLUE;
+    constexpr WORD DARKYELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
+    constexpr WORD DARKGRAY = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+    constexpr WORD GRAY = FOREGROUND_INTENSITY;
+    constexpr WORD BLUE = FOREGROUND_INTENSITY | FOREGROUND_BLUE;
+    constexpr WORD GREEN = FOREGROUND_INTENSITY | FOREGROUND_GREEN;
+    constexpr WORD CYAN = FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE;
+    constexpr WORD RED = FOREGROUND_INTENSITY | FOREGROUND_RED;
+    constexpr WORD MAGENTA = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE;
+    constexpr WORD YELLOW = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
+    constexpr WORD WHITE = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+}
+
+
 int main(int const argc, char* argv[])
 {
     namespace po = boost::program_options;
@@ -82,11 +103,14 @@ int main(int const argc, char* argv[])
             ResultSet set;
             context.parseTo(set);
 
+            auto successful = true;
+
             dlg_help_utils::mini_dump dump_file{dump_filename};
             dump_file.open_mini_dump();
             if(dump_file.type() != dlg_help_utils::dump_file_type::user_mode_dump)
             {
                 *o_log << "ERROR: invalid dmp file [" << dump_filename << "]\n";
+                successful = false;
             }
             else
             {
@@ -111,34 +135,43 @@ int main(int const argc, char* argv[])
                         if(allocation.allocated)
                         {
                             *o_log << "ERROR: can't find allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "]\n";
+                            successful = false;
                         }
                         continue;
                     }
 
-                    if (auto it = heap_allocations.lower_bound(allocation.pointer);
-                        it == heap_allocations.end() || it->first != allocation.pointer)
+                    if (auto it = std::ranges::find_if(heap_allocations, [&allocation](auto const& entry) { return entry.second.contains_address(allocation.pointer); });
+                        it == heap_allocations.end())
                     {
                         if(allocation.allocated)
                         {
-                            if(it != heap_allocations.begin())
+                            auto it_closest = heap_allocations.lower_bound(allocation.pointer);
+                            if (it_closest != heap_allocations.begin())
                             {
-                                --it;
+                                --it_closest;
                             }
-
-                            *o_log << "ERROR: can't find json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "], closest dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+                            *o_log << "ERROR: can't find json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "], closest dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it_closest->first, hex_length) <<"] of [" << it_closest->second.user_requested_size().count() << "]\n";
+                            successful = false;
                         }
                     }
                     else if(!allocation.allocated)
                     {
-                        *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] even though it's free(!), found dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+                        *o_log << "WARNING: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] even though it's free(!), found dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+                    }
+                    else if(allocation.pointer != it->second.user_address())
+                    {
+                        *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but dmp heap allocation pointer is different [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+                        successful = false;
                     }
                     else if(allocation.size != static_cast<size_t>(it->second.user_requested_size().count()))
                     {
                         *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but dmp heap allocation size is different [" << it->second.user_requested_size().count() << "]\n";
+                        successful = false;
                     }
                     else if(stacktrace && it->second.allocation_stack_trace().empty())
                     {
                         *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but dmp heap allocation has no expected stack trace\n";
+                        successful = false;
                     }
                     else
                     {
@@ -149,12 +182,14 @@ int main(int const argc, char* argv[])
                             if(stream.read(&ch, sizeof ch) != sizeof ch)
                             {
                                 *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but failed to read dmp heap allocation\n";
+                                successful = false;
                                 break;
                             }
 
                             if(ch != allocation.fill_char)
                             {
                                 *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but failed fill compare of [" << allocation.fill_char << "] compared to dmp allocation of [" << ch << "] @ [" << dlg_help_utils::stream_hex_dump::to_hex(stream.current_address() - sizeof ch, hex_length) << "]\n";
+                                successful = false;
                                 break;
                             }
                         }
@@ -163,6 +198,13 @@ int main(int const argc, char* argv[])
             }
 
             log->close();
+
+            std::wcout << dump_filename << " : ";
+            auto console = GetStdHandle(STD_OUTPUT_HANDLE);
+            SetConsoleTextAttribute(console, successful ? ConsoleForeground::GREEN : ConsoleForeground::RED);
+            std::wcout << (successful ? "Passed" : "Failed");
+            SetConsoleTextAttribute(console, ConsoleForeground::WHITE);
+            std::wcout << '\n';
             return result;
         }
         catch (std::exception const& e)

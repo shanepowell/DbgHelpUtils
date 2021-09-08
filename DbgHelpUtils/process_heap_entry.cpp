@@ -15,6 +15,8 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
+    , block_start_address_{entry.virtual_block_address()}
+    , block_end_address_{block_start_address_ + entry.virtual_block_size().count()}
     {
     }
 
@@ -23,6 +25,8 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
+    , block_start_address_{entry.address()}
+    , block_end_address_{block_start_address_ + entry.size().count()}
     {
     }
 
@@ -31,6 +35,8 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
+    , block_start_address_{entry.block_address()}
+    , block_end_address_{block_start_address_ + entry.block_size().count()}
     {
     }
 
@@ -39,6 +45,8 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
+    , block_start_address_{entry.block_address()}
+    , block_end_address_{block_start_address_ + entry.block_size().count()}
     {
     }
 
@@ -47,6 +55,8 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
+    , block_start_address_{entry.block_address()}
+    , block_end_address_{block_start_address_ + entry.block_size()}
     {
     }
 
@@ -55,6 +65,8 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
+    , block_start_address_{entry.block_address()}
+    , block_end_address_{block_start_address_ + entry.block_size()}
     {
     }
 
@@ -62,5 +74,10 @@ namespace dlg_help_utils::heap
     {
         uint64_t const size = user_requested_size().count();
         return peb_.walker().get_process_memory_stream(user_address(), size);
+    }
+
+    bool process_heap_entry::contains_address(uint64_t const address) const
+    {
+        return address >= block_start_address_ && address < block_end_address_;
     }
 }

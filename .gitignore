@@ -37,4 +37,4 @@ testCaseCollection.xml
 /packages
 vcpkg_installed
 /*.dll
-/GenerateDumps.ps1
+/CrashDumps

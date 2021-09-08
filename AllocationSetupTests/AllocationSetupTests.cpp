@@ -30,10 +30,18 @@ void DeallocateSomeBuffers(std::wostream& log, ResultSet& set, std::function<voi
     DeallocateSomeBuffers(log, set, deallocator, args...);
 }
 
+void DeallocateSomeBuffer(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, void* allocation);
+
 void FreeAllocationInResultSet(ResultSet& set, void* allocation);
 
 void CreateOutput(std::wostream& log, std::wstring const& dump_filename);
 void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename);
+
+template<typename T, typename D>
+std::unique_ptr<T, D> make_handle(T* handle, D deleter)
+{
+    return std::unique_ptr<T, D>{handle, deleter};
+}
 
 
 int main(int const argc, char* argv[])
@@ -111,12 +119,12 @@ int main(int const argc, char* argv[])
                 result = LfhAllocations(*o_log, dump_filename, allocator, deallocator, set);
             }
 
-            if(do_virtual_allocations)
+            if(result == EXIT_SUCCESS && do_virtual_allocations)
             {
                 result = VirtualAllocations(*o_log, dump_filename, allocator, deallocator, set);
             }
 
-            if(do_sizes)
+            if(result == EXIT_SUCCESS && do_sizes)
             {
                 result = AllocateSizeRanges(*o_log, dump_filename, allocator, deallocator, set);
             }
@@ -240,7 +248,7 @@ bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const
     for (auto& virtual_allocation : small_allocations)
     {
         virtual_allocation = allocator(allocation_size);
-        log << type << " allocation (" << virtual_allocation <<  ") [" << fill_value << "] of buffer size [" << allocation_size << " | 0x" << std::hex << allocation_size << std::dec << "]\n";
+        log << type << " allocation [0x" << virtual_allocation <<  " / " << reinterpret_cast<uint64_t>(virtual_allocation) << "] fill value [" << fill_value << "]  buffer size [0x" << std::hex << allocation_size << std::dec << " | " << allocation_size << "]\n";
         if(virtual_allocation == nullptr)
         {
             log << "Failed to allocate " << type << " allocation\n";
@@ -259,14 +267,15 @@ bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const
 template<size_t N>
 void DeallocateSomeBuffers(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations)
 {
-    deallocator(allocations[1]);
-    deallocator(allocations[3]);
+    DeallocateSomeBuffer(log, set, deallocator, allocations[1]);
+    DeallocateSomeBuffer(log, set, deallocator, allocations[3]);
+}
 
-    log << "deallocate [" << allocations[1] << "]\n";
-    log << "deallocate [" << allocations[3] << "]\n";
-
-    FreeAllocationInResultSet(set, allocations[1]);
-    FreeAllocationInResultSet(set, allocations[2]);
+void DeallocateSomeBuffer(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, void* allocation)
+{
+    deallocator(allocation);
+    log << "deallocate [0x" << allocation <<  " / " << reinterpret_cast<uint64_t>(allocation) << "]\n";
+    FreeAllocationInResultSet(set, allocation);
 }
 
 void FreeAllocationInResultSet(ResultSet& set, void* allocation)
@@ -300,11 +309,34 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
     auto const command = std::move(ss).str();
 
 
+    SECURITY_ATTRIBUTES security_attributes;
+
+    // Set the bInheritHandle flag so pipe handles are inherited. 
+    security_attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+    security_attributes.bInheritHandle = TRUE;
+    security_attributes.lpSecurityDescriptor = nullptr;
+
+    // Create a pipe for the child process's STDOUT.
+    HANDLE out_write_pipe_handle{nullptr};
+    HANDLE out_read_pipe_handle{nullptr};
+    if (!CreatePipe(&out_read_pipe_handle, &out_write_pipe_handle, &security_attributes, 0))
+    {
+        log << "Failed to create pipe : 0x" << std::hex << GetLastError() << std::dec << '\n';
+        return;
+    }
+
+    auto const out_write_handle = make_handle(out_write_pipe_handle, CloseHandle);
+    auto const out_read_handle = make_handle(out_read_pipe_handle, CloseHandle);
+
     STARTUPINFOW startup_info;
     PROCESS_INFORMATION process_info;
     memset(&startup_info, 0, sizeof(startup_info));
     memset(&process_info, 0, sizeof(process_info));
     startup_info.cb = sizeof(startup_info);
+    startup_info.hStdError = out_write_pipe_handle;
+    startup_info.hStdOutput = out_write_pipe_handle;
+    startup_info.hStdInput = out_read_pipe_handle;
+    startup_info.dwFlags |= STARTF_USESTDHANDLES;
 
     if(command.size() >= MAX_PATH)
     {
@@ -318,7 +350,7 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
 
     if (!CreateProcessW(nullptr, temp, nullptr, nullptr, false, 0, nullptr, nullptr, &startup_info, &process_info))
     {
-        log << "CreateProcessW [" << command << "] failed " << GetLastError() << '\n';
+        log << "CreateProcessW [" << command << "] failed : 0x" << std::hex << GetLastError() << std::dec << '\n';
         return;
     }
 

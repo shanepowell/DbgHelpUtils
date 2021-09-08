@@ -159,7 +159,7 @@
     <ClCompile Include="AllocationSetupTests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GenerateDumps.ps1" />
+    <None Include="..\RunHeapDumpTests.ps1" />
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>

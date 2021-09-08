@@ -13,6 +13,8 @@ namespace dlg_help_utils::dbg_help
 
 namespace dlg_help_utils::heap
 {
+    class heap_subsegment;
+    class heap_entry;
     class process_heap_entry;
 
     class process_heaps
@@ -23,6 +25,9 @@ namespace dlg_help_utils::heap
         process::process_environment_block const& peb() const { return peb_; }
 
         [[nodiscard]] std::experimental::generator<process_heap_entry> entries() const;
+
+    private:
+        static bool is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment);
 
     private:
         process::process_environment_block const peb_;

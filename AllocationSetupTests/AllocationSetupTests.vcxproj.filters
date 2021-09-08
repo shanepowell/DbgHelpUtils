@@ -20,8 +20,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GenerateDumps.ps1" />
     <None Include="vcpkg.json" />
+    <None Include="..\RunHeapDumpTests.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ResultSet.h">

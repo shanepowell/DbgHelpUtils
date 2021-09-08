@@ -35,10 +35,14 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] mini_dump_memory_stream user_data() const;
 
+        [[nodiscard]] bool contains_address(uint64_t address) const;
+
     private:
         process::process_environment_block const& peb_;
         uint64_t const user_address_;
         size_units::base_10::bytes const user_size_;
         std::vector<uint64_t> const allocation_stack_trace_;
+        uint64_t const block_start_address_;
+        uint64_t const block_end_address_;
     };
 }
