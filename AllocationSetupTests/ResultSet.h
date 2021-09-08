@@ -3,7 +3,7 @@
 #include <vector>
 
 #pragma warning(push)
-#pragma warning(disable : 4267)
+#pragma warning(disable : 4267 4457 4100)
 #include <json_struct/include/json_struct.h>
 #pragma warning(pop)
 

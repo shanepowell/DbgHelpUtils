@@ -66,9 +66,9 @@ int main(int const argc, char* argv[])
             auto const do_sizes = vm.count("sizes") != 0;
             auto const use_malloc = vm.count("usemalloc") != 0;
             auto const use_new = vm.count("usenew") != 0;
-            auto const dump_filename = vm["dmp"].as<std::wstring>();
-            auto const log_filename = vm["log"].as<std::wstring>();
-            auto const json_filename = vm["json"].as<std::wstring>();
+            auto const dump_filename = vm.count("dmp") > 0 ? vm["dmp"].as<std::wstring>() : std::wstring{};
+            auto const log_filename = vm.count("log") > 0 ? vm["log"].as<std::wstring>() : std::wstring{};
+            auto const json_filename = vm.count("json") > 0 ? vm["json"].as<std::wstring>() : std::wstring{};
 
             if (vm.count("help") || (!do_lfh_allocations && !do_virtual_allocations && !do_sizes))
             {
@@ -271,7 +271,7 @@ void DeallocateSomeBuffers(std::wostream& log, ResultSet& set, std::function<voi
 
 void FreeAllocationInResultSet(ResultSet& set, void* allocation)
 {
-    if(auto const it = std::ranges::find_if(set.allocations, [allocation](Allocation const& a) { return !a.allocated && a.pointer == reinterpret_cast<uint64_t>(allocation); });
+    if(auto const it = std::ranges::find_if(set.allocations, [allocation](Allocation const& a) { return a.allocated && a.pointer == reinterpret_cast<uint64_t>(allocation); });
         it != set.allocations.end())
     {
         it->allocated = false;

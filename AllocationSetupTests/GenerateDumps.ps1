@@ -11,7 +11,8 @@
 
 Param
 (
-    [Parameter(Mandatory=$true)][string] $DumpFolder
+    [Parameter(Mandatory=$true)][string] $DumpFolder,
+    [Parameter(Mandatory=$true)][string] $ResultFile
 )
 
 Function Run-AllAllocationApplicationArgs($options)
@@ -49,7 +50,21 @@ Function Run-AllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opt
     $json = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).json"
     remove-item $json -ErrorAction:SilentlyContinue
     . "$PSScriptRoot\..\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log "--json" $json
+    . "$PSScriptRoot\..\x64\Release\ValidateHeapEntries.exe" "--dmp" $dmp "--log" $ResultFile "--json" $json
 }
+
+function Test-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+    $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+}
+
+if ((Test-Admin) -eq $false) 
+{
+    Write-Host "This script can only be run with Administrator"
+    exit
+}
+
+remove-item $ResultFile -ErrorAction:SilentlyContinue
 
 $app_name = "AllocationSetupTests.exe"
 $app_image_options = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AllocationSetupTests.exe"

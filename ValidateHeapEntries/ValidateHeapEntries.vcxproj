@@ -13,8 +13,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{930465e4-9d42-4781-89be-da2ee7a46f19}</ProjectGuid>
-    <RootNamespace>MiniDumper</RootNamespace>
+    <ProjectGuid>{3f040eab-d22b-4095-8dbd-356ac168069a}</ProjectGuid>
+    <RootNamespace>ValidateHeapEntries</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -58,9 +58,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)AllocationSetupTests;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -75,9 +75,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)AllocationSetupTests;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,21 +87,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="common_symbol_lookup_utils.cpp" />
-    <ClCompile Include="dump_file_options.cpp" />
-    <ClCompile Include="dump_mini_dump.cpp" />
-    <ClCompile Include="dump_mini_dump_app_info.cpp" />
-    <ClCompile Include="dump_mini_dump_comment.cpp" />
-    <ClCompile Include="dump_mini_dump_exception.cpp" />
-    <ClCompile Include="dump_mini_dump_heap.cpp" />
-    <ClCompile Include="dump_mini_dump_info.cpp" />
-    <ClCompile Include="dump_mini_dump_memory.cpp" />
-    <ClCompile Include="dump_mini_dump_module.cpp" />
-    <ClCompile Include="dump_mini_dump_streams.cpp" />
-    <ClCompile Include="dump_mini_dump_symbols.cpp" />
-    <ClCompile Include="dump_mini_dump_thread.cpp" />
-    <ClCompile Include="MiniDumper.cpp" />
     <ClCompile Include="symbol_engine_ui.cpp" />
+    <ClCompile Include="ValidateHeapEntries.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DbgHelpUtils\DbgHelpUtils.vcxproj">
@@ -109,30 +96,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common_symbol_lookup_utils.h" />
-    <ClInclude Include="dump_file_options.h" />
-    <ClInclude Include="dump_mini_dump.h" />
-    <ClInclude Include="dump_mini_dump_app_info.h" />
-    <ClInclude Include="dump_mini_dump_comment.h" />
-    <ClInclude Include="dump_mini_dump_exception.h" />
-    <ClInclude Include="dump_mini_dump_heap.h" />
-    <ClInclude Include="dump_mini_dump_info.h" />
-    <ClInclude Include="dump_mini_dump_memory.h" />
-    <ClInclude Include="dump_mini_dump_module.h" />
-    <ClInclude Include="dump_mini_dump_streams.h" />
-    <ClInclude Include="dump_mini_dump_symbols.h" />
-    <ClInclude Include="dump_mini_dump_thread.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="symbol_engine_ui.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="MiniDumper.exe.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="vcpkg.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="symbol_engine_ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
