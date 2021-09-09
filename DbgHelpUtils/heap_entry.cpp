@@ -284,6 +284,11 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_entry::get_ust_data_size() const
     {
+        if(is_lfh_entry())
+        {
+            return heap_entry_length_ + heap_entry_length_;
+        }
+
         if(peb().is_x86_target())
         {
             return heap_entry_length_ + 0x02;
