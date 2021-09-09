@@ -3,6 +3,7 @@
 #include "common_symbol_names.h"
 #include "heap_entry.h"
 #include "nt_heap.h"
+#include "process_environment_block.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::heap
@@ -58,11 +59,11 @@ namespace dlg_help_utils::heap
                 heap().decode_heap_entry(buffer.get());
 
                 uint16_t unused_bytes{0};
-                if(heap().peb().is_x86_target())
+                if(peb().is_x86_target())
                 {
                     memcpy(&unused_bytes, buffer.get(), sizeof(uint16_t));
                 }
-                if(heap().peb().is_x64_target())
+                if(peb().is_x64_target())
                 {
                     memcpy(&unused_bytes, buffer.get() + 8, sizeof(uint16_t));
                 }

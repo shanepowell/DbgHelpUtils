@@ -34,6 +34,7 @@ public:
     [[nodiscard]] bool display_peb() const { return display_peb_; }
     [[nodiscard]] bool display_heap() const { return display_heap_; }
     [[nodiscard]] bool display_heap_entries() const { return display_heap_entries_; }
+    [[nodiscard]] bool display_crtheap() const { return display_crtheap_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> symbol_types() const { return symbol_types_; }
@@ -58,6 +59,7 @@ private:
     bool display_peb_;
     bool display_heap_;
     bool display_heap_entries_;
+    bool display_crtheap_;
     bool debug_heap_data_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
     std::vector<std::wstring> symbol_names_;

@@ -4,6 +4,7 @@
 #include "heap_subsegment.h"
 #include "lfh_heap.h"
 #include "nt_heap.h"
+#include "process_environment_block.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::heap

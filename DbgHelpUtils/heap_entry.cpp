@@ -2,6 +2,7 @@
 
 #include "common_symbol_names.h"
 #include "nt_heap.h"
+#include "process_environment_block.h"
 #include "stream_utils.h"
 #include "ust_address_stack_trace.h"
 #include "wide_runtime_error.h"

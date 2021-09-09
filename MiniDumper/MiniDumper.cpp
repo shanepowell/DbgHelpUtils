@@ -49,6 +49,7 @@ int wmain(int const argc, wchar_t* argv[])
             ("peb", "process environment block")
             ("heap", "heap data information")
             ("heapentries", "heap entries only")
+            ("crtheap", "crtheap data information")
             ;
 
         po::variables_map vm;

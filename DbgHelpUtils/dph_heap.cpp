@@ -3,7 +3,7 @@
 #include "common_symbol_names.h"
 #include "dph_entry.h"
 #include "list_entry_walker.h"
-#include "nt_heap.h"
+#include "process_environment_block.h"
 #include "rtl_balanced_links_walker.h"
 #include "stream_utils.h"
 

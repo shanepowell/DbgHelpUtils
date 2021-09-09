@@ -11,6 +11,7 @@ namespace dlg_help_utils::process
 
 namespace dlg_help_utils::heap
 {
+    class crt_entry;
     class large_alloc_entry;
     class heap_vs_entry;
     class page_range_descriptor;
@@ -28,6 +29,13 @@ namespace dlg_help_utils::heap
         process_heap_entry(heap_vs_entry const& entry);
         process_heap_entry(large_alloc_entry const& entry);
 
+        process_heap_entry(dph_entry const& entry, crt_entry const& crt_block);
+        process_heap_entry(heap_entry const& entry, crt_entry const& crt_block);
+        process_heap_entry(heap_lfh_entry const& entry, crt_entry const& crt_block);
+        process_heap_entry(page_range_descriptor const& entry, crt_entry const& crt_block);
+        process_heap_entry(heap_vs_entry const& entry, crt_entry const& crt_block);
+        process_heap_entry(large_alloc_entry const& entry, crt_entry const& crt_block);
+
         [[nodiscard]] uint64_t user_address() const { return user_address_; }
         [[nodiscard]] size_units::base_10::bytes user_requested_size() const { return user_size_; }
 
@@ -36,6 +44,10 @@ namespace dlg_help_utils::heap
         [[nodiscard]] mini_dump_memory_stream user_data() const;
 
         [[nodiscard]] bool contains_address(uint64_t address) const;
+
+    private:
+        static uint64_t get_nt_heap_entry_block_start(heap_entry const& entry);
+        static uint64_t get_nt_heap_entry_block_size(heap_entry const& entry);
 
     private:
         process::process_environment_block const& peb_;

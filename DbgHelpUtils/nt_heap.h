@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <experimental/generator>
 
-#include "process_environment_block.h"
 #include "size_units.h"
 #include "symbol_type_info.h"
 #include "ust_address_stack_trace.h"
@@ -31,7 +30,7 @@ namespace dlg_help_utils::heap
         nt_heap(process::process_environment_block const& peb, uint64_t nt_heap_address);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return peb_.walker(); }
+        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
 
         [[nodiscard]] uint64_t nt_heap_address() const { return nt_heap_address_; }
         [[nodiscard]] uint32_t segment_signature() const;

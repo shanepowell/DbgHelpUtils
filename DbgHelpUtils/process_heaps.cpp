@@ -1,5 +1,7 @@
 ﻿#include "process_heaps.h"
 
+#include "crt_entry.h"
+#include "crt_heap.h"
 #include "dph_entry.h"
 #include "dph_heap.h"
 #include "heap_entry.h"
@@ -16,6 +18,7 @@
 #include "heap_vs_context.h"
 #include "heap_vs_entry.h"
 #include "heap_vs_subsegment.h"
+#include "large_alloc_entry.h"
 #include "lfh_heap.h"
 #include "lfh_segment.h"
 #include "nt_heap.h"
@@ -32,6 +35,13 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<process_heap_entry> process_heaps::entries() const
     {
+        crt_heap const crt_heap{peb_};
+        std::map<uint64_t, crt_entry> crt_entries;
+        for(auto const& entry : crt_heap.entries())
+        {
+            crt_entries.insert(std::make_pair(entry.entry_address(), entry));
+        }
+
         for(uint32_t heap_index = 0; heap_index < peb().number_of_heaps(); ++heap_index)
         {
             if(auto const nt_heap = peb().nt_heap(heap_index); nt_heap.has_value())
@@ -47,7 +57,14 @@ namespace dlg_help_utils::heap
                             {
                                 if(entry.is_busy())
                                 {
-                                    co_yield process_heap_entry{entry};
+                                    if(auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                                    {
+                                        co_yield process_heap_entry{ entry, it->second };
+                                    }
+                                    else
+                                    {
+                                        co_yield process_heap_entry{ entry };
+                                    }
                                 }
                             }
 
@@ -62,7 +79,14 @@ namespace dlg_help_utils::heap
                     {
                         if(entry.is_busy() && !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
                         {
-                            co_yield process_heap_entry{entry};
+                            if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                            {
+                                co_yield process_heap_entry{ entry, it->second };
+                            }
+                            else
+                            {
+                                co_yield process_heap_entry{ entry };
+                            }
                         }
                     }
                 }
@@ -73,7 +97,14 @@ namespace dlg_help_utils::heap
                     {
                         if(entry.is_busy())
                         {
-                            co_yield process_heap_entry{entry};
+                            if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                            {
+                                co_yield process_heap_entry{ entry, it->second };
+                            }
+                            else
+                            {
+                                co_yield process_heap_entry{ entry };
+                            }
                         }
                     }
                 }
@@ -88,7 +119,14 @@ namespace dlg_help_utils::heap
                         {
                             if(entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT)
                             {
-                                co_yield process_heap_entry{entry};
+                                if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                                {
+                                    co_yield process_heap_entry{ entry, it->second };
+                                }
+                                else
+                                {
+                                    co_yield process_heap_entry{ entry };
+                                }
                             }
                         }
                     }
@@ -100,7 +138,14 @@ namespace dlg_help_utils::heap
                     {
                         if(!entry.uncommitted_range() && entry.allocated())
                         {
-                            co_yield process_heap_entry{entry};
+                            if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                            {
+                                co_yield process_heap_entry{ entry, it->second };
+                            }
+                            else
+                            {
+                                co_yield process_heap_entry{ entry };
+                            }
                         }
                     }
                 }
@@ -117,7 +162,14 @@ namespace dlg_help_utils::heap
                                 {
                                     if(entry.allocated())
                                     {
-                                        co_yield process_heap_entry{entry};
+                                        if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                                        {
+                                            co_yield process_heap_entry{ entry, it->second };
+                                        }
+                                        else
+                                        {
+                                            co_yield process_heap_entry{ entry };
+                                        }
                                     }
                                 }
                             }
@@ -127,7 +179,14 @@ namespace dlg_help_utils::heap
 
                 for(auto const& entry : segment_heap.value().large_entries())
                 {
-                    co_yield process_heap_entry{entry};
+                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                    {
+                        co_yield process_heap_entry{ entry, it->second };
+                    }
+                    else
+                    {
+                        co_yield process_heap_entry{ entry };
+                    }
                 }
             }
         }
@@ -138,7 +197,14 @@ namespace dlg_help_utils::heap
             {
                 if(entry.is_allocated())
                 {
-                    co_yield process_heap_entry{entry};
+                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                    {
+                        co_yield process_heap_entry{ entry, it->second };
+                    }
+                    else
+                    {
+                        co_yield process_heap_entry{ entry };
+                    }
                 }
             }
 
@@ -146,7 +212,14 @@ namespace dlg_help_utils::heap
             {
                 if(entry.is_allocated())
                 {
-                    co_yield process_heap_entry{entry};
+                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                    {
+                        co_yield process_heap_entry{ entry, it->second };
+                    }
+                    else
+                    {
+                        co_yield process_heap_entry{ entry };
+                    }
                 }
             }
         }

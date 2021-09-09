@@ -9,6 +9,7 @@
 #include "lfh_heap.h"
 #include "list_entry_walker.h"
 #include "mini_dump_stack_walk.h"
+#include "process_environment_block.h"
 #include "stream_utils.h"
 
 
@@ -29,6 +30,11 @@ namespace dlg_help_utils::heap
                 encoding_ = std::move(std::get<0>(encoding_data.value()));
             }
         }
+    }
+
+    stream_stack_dump::mini_dump_stack_walk const& nt_heap::walker() const
+    {
+        return peb().walker();
     }
 
     uint32_t nt_heap::segment_signature() const

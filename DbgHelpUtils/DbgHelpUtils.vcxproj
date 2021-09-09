@@ -86,6 +86,8 @@
     <ClCompile Include="comment_stream_w.cpp" />
     <ClCompile Include="common_symbol_names.cpp" />
     <ClCompile Include="common_symbol_utils.cpp" />
+    <ClCompile Include="crt_entry.cpp" />
+    <ClCompile Include="crt_heap.cpp" />
     <ClCompile Include="cv_info_pdb70.cpp" />
     <ClCompile Include="dph_entry.cpp" />
     <ClCompile Include="dph_heap.cpp" />
@@ -186,6 +188,8 @@
     <ClInclude Include="call_convention.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
+    <ClInclude Include="crt_entry.h" />
+    <ClInclude Include="crt_heap.h" />
     <ClInclude Include="dph_entry.h" />
     <ClInclude Include="dph_heap.h" />
     <ClInclude Include="gflags_utils.h" />

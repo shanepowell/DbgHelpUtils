@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "dump_file_options.h"
+#include "DbgHelpUtils/crt_entry.h"
+#include "DbgHelpUtils/crt_heap.h"
 #include "DbgHelpUtils/dph_entry.h"
 #include "DbgHelpUtils/dph_heap.h"
 #include "DbgHelpUtils/heap_entry.h"
@@ -978,5 +980,43 @@ void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options c
     }
 
     wcout << '\n';
+}
+
+void dump_mini_dump_crtheap(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+{
+    process::process_environment_block const peb{mini_dump, symbol_engine};
+    auto const hex_length = peb.machine_hex_printable_length();
+
+    heap::crt_heap const heap{peb};
+
+    if(!heap.is_using_crt_heap())
+    {
+        wcout << "Not using CRT Heap.\n";
+        return;
+    }
+
+    cout << "CRT Heap Entries:\n";
+    std::wstring const indent_str(2, L' ');
+    for (auto const& entry : heap.entries())
+    {
+        wcout << indent_str << "CRT Entry: " << stream_hex_dump::to_hex(entry.entry_address(), hex_length) << '\n';
+        using namespace size_units::base_10;
+        wcout << indent_str << "  Block In Use: " << std::boolalpha << entry.block_use() << '\n';
+        wcout << indent_str << "  Filename: " << entry.filename() << '\n';
+        wcout << indent_str << "  Line Number: " << entry.line_number() << '\n';
+        wcout << indent_str << "  Request Number: " << entry.request_number() << '\n';
+        wcout << indent_str << "  Data Size: " << entry.data_size() << " (" << stream_hex_dump::to_hex(entry.data_size().count()) << ")" << '\n';
+        wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
+
+        if(entry.block_use() && options.hex_dump_memory_data())
+        {
+            uint64_t const size = entry.data_size().count();
+            if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
+            {
+                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), 4);
+                wcout << L'\n';
+            }
+        }
+    }
 }
 

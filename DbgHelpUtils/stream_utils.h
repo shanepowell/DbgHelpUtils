@@ -189,6 +189,12 @@ namespace dlg_help_utils::stream_utils
     }
 
     template <typename E>
+    uint64_t get_field_pointer_raw(E const& entry, std::wstring const& field_name)
+    {
+        return stream_utils::get_field_pointer_raw(entry.walker(), entry.symbol_address(), entry.symbol_type(), E::symbol_name, field_name);
+    }
+
+    template <typename E>
     uint64_t get_field_pointer(E const& entry, std::wstring const& field_name)
     {
         return stream_utils::get_field_pointer(entry.walker(), entry.symbol_address(), entry.symbol_type(), E::symbol_name, field_name);
