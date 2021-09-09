@@ -197,7 +197,10 @@ int main(int const argc, char* argv[])
                 }
             }
 
-            log->close();
+            if(log)
+            {
+                log->close();
+            }
 
             std::wcout << dump_filename << " : ";
             auto console = GetStdHandle(STD_OUTPUT_HANDLE);

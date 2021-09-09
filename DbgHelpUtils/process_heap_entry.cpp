@@ -144,17 +144,11 @@ namespace dlg_help_utils::heap
 
     uint64_t process_heap_entry::get_nt_heap_entry_block_start(heap_entry const& entry)
     {
-        if(entry.is_lfh_entry() && entry.user_address() == entry.address() + entry.size().count())
-        {
-            // this is a weird LFH overlapping block entry, just use the actual user address
-            return entry.user_address();
-        }
-
-        return entry.address();
+        return entry.user_address();
     }
 
     uint64_t process_heap_entry::get_nt_heap_entry_block_size(heap_entry const& entry)
     {
-        return entry.size().count();
+        return entry.user_requested_size().count();
     }
 }
