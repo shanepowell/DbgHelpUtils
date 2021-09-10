@@ -42,6 +42,7 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const heap_lfh_subsegment_encoded_offsets_structure_symbol_name;
     extern std::wstring const heap_lfh_ondemand_pointer_structure_symbol_name;
     extern std::wstring const crt_mem_block_header_structure_symbol_name;
+    extern std::wstring const stack_trace_database_structure_symbol_name;
 
     extern std::wstring const rtl_p_lfh_key_global_symbol_name;
     extern std::wstring const av_rfp_dph_page_heap_list_global_symbol_name;
@@ -240,4 +241,6 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const crt_mem_block_header_block_use_field_symbol_name;
     extern std::wstring const crt_mem_block_header_data_size_field_symbol_name;
     extern std::wstring const crt_mem_block_header_request_number_field_symbol_name;
+    extern std::wstring const stack_trace_database_entry_index_array_field_symbol_name;
+    extern std::wstring const stack_trace_database_number_of_entries_allocated_field_symbol_name;
 }

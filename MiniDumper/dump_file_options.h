@@ -36,6 +36,7 @@ public:
     [[nodiscard]] bool display_heap_entries() const { return display_heap_entries_; }
     [[nodiscard]] bool display_crtheap() const { return display_crtheap_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
+    [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> symbol_types() const { return symbol_types_; }
     [[nodiscard]] std::vector<std::wstring> symbol_names() const { return symbol_names_; }
@@ -61,6 +62,7 @@ private:
     bool display_heap_entries_;
     bool display_crtheap_;
     bool debug_heap_data_;
+    bool display_stack_trace_database_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
     std::vector<std::wstring> symbol_names_;
     std::vector<std::wstring> symbol_types_;

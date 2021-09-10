@@ -50,6 +50,7 @@ int wmain(int const argc, wchar_t* argv[])
             ("heap", "heap data information")
             ("heapentries", "heap entries only")
             ("crtheap", "crtheap data information")
+            ("std", "stack trace database")
             ;
 
         po::variables_map vm;

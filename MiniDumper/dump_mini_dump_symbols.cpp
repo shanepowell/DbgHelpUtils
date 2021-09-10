@@ -18,6 +18,7 @@
 #include "DbgHelpUtils/pe_file_memory_mapping.h"
 #include "DbgHelpUtils/process_environment_block.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
+#include "DbgHelpUtils/stream_utils.h"
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/symbol_type_info.h"
 #include "DbgHelpUtils/symbol_type_utils.h"
@@ -25,6 +26,26 @@
 
 using namespace std;
 using namespace dlg_help_utils;
+
+namespace
+{
+    uint64_t get_stack_database_address(process::process_environment_block const& peb)
+    {
+        auto const symbol = peb.walker().get_symbol_info(common_symbol_names::rtl_stack_trace_database);
+        if(!symbol.has_value())
+        {
+            return 0;
+        }
+
+        auto const address = symbol.value().address();
+        if(!address.has_value())
+        {
+            return 0;
+        }
+
+        return stream_utils::read_machine_size_field_value(peb, address.value()).value_or(0);
+    }
+}
 
 void dump_mini_dump_symbol_type(mini_dump const& mini_dump, std::wstring const& type_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
@@ -472,4 +493,17 @@ void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_o
             wcout << '\n';
         }
     }
+}
+
+void dump_mini_dump_stack_trace_database(mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+{
+    process::process_environment_block const peb{mini_dump, symbol_engine};
+
+    auto const stack_database_address = get_stack_database_address(peb);
+    if(stack_database_address == 0)
+    {
+        wcout << "No Stack Database in DMP\n";
+    }
+
+    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(peb.walker(), common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address);
 }

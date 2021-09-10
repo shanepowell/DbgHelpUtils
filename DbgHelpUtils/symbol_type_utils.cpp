@@ -550,7 +550,7 @@ namespace dlg_help_utils::symbol_type_utils
             else
             {
                 os << L":\n";
-                print_utils::print_stream_array_lines<T>(os, variable_stream, max_size, 5, 14, indent, dump_hex);
+                print_utils::print_stream_array_lines<T>(os, variable_stream, max_size, 5, 20, indent, dump_hex);
             }
         }
         else 

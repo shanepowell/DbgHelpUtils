@@ -26,6 +26,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     , display_heap_entries_{ vm.count("heapentries") > 0 }
     , display_crtheap_{ vm.count("crtheap") > 0 }
     , debug_heap_data_{ vm.count("heapdebug") > 0 }
+    , display_stack_trace_database_{ vm.count("std") > 0 }
 {
     if (vm.count("streamindex") > 0)
     {

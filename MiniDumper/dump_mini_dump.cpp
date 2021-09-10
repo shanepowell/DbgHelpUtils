@@ -125,6 +125,11 @@ void process_user_mode_dump(mini_dump const& dump_file, dump_file_options const&
         dump_mini_dump_crtheap(dump_file, options, symbol_engine);
     }
 
+    if(options.display_stack_trace_database())
+    {
+        dump_mini_dump_stack_trace_database(dump_file, options, symbol_engine);
+    }
+
     for (auto const& module_name : options.dump_types_modules())
     {
         dump_mini_dump_module_symbol_types(dump_file, module_name, options, symbol_engine);
