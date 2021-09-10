@@ -960,7 +960,13 @@ void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options c
     for(auto const& entry : heaps.entries())
     {
         using namespace size_units::base_10;
-        wcout << "  " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " " << entry.user_requested_size() << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
+        wcout << "  " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " " << entry.user_requested_size();
+        if(!entry.filename().empty())
+        {
+            wcout << ' ' << entry.filename() << ':' << entry.line_number();
+        }
+        wcout << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
+
 
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
         {

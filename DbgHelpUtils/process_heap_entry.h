@@ -38,6 +38,8 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t user_address() const { return user_address_; }
         [[nodiscard]] size_units::base_10::bytes user_requested_size() const { return user_size_; }
+        [[nodiscard]] std::wstring const& filename() const { return file_name_; }
+        [[nodiscard]] uint32_t line_number() const { return line_number_; }
 
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
 
@@ -54,6 +56,8 @@ namespace dlg_help_utils::heap
         uint64_t const user_address_;
         size_units::base_10::bytes const user_size_;
         std::vector<uint64_t> const allocation_stack_trace_;
+        std::wstring const file_name_;
+        uint32_t const line_number_{0};
         uint64_t const block_start_address_;
         uint64_t const block_end_address_;
     };
