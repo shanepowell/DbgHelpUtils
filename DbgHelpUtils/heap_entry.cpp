@@ -23,7 +23,7 @@ namespace dlg_help_utils::heap
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
-    , is_valid_ust_area_{is_valid_ust_area()}
+    , ust_user_address_{get_ust_user_address()}
     , unused_bytes_{get_unused_bytes()}
     , requested_size_{get_requested_size()}
     , user_address_{get_user_address()}
@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
-    , is_valid_ust_area_{is_valid_ust_area()}
+    , ust_user_address_{get_ust_user_address()}
     , unused_bytes_{get_unused_bytes()}
     , requested_size_{get_requested_size()}
     , user_address_{get_user_address()}
@@ -63,7 +63,7 @@ namespace dlg_help_utils::heap
     , size_{size}
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
-    , is_valid_ust_area_{is_valid_ust_area()}
+    , ust_user_address_{get_ust_user_address()}
     , unused_bytes_{unused_bytes}
     , requested_size_{get_virtual_alloc_requested_size(size, unused_bytes)}
     , user_address_{get_user_address()}
@@ -85,7 +85,7 @@ namespace dlg_help_utils::heap
     , previous_size_{get_previous_size()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
-    , is_valid_ust_area_{is_valid_ust_area()}
+    , ust_user_address_{get_ust_user_address()}
     , unused_bytes_{get_unused_bytes()}
     , requested_size_{get_requested_size()}
     , user_address_{get_user_address()}
@@ -184,29 +184,12 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, buffer_.get());
     }
 
-    bool heap_entry::is_valid_ust_area() const
-    {
-        if(peb().user_stack_db_enabled() && is_busy())
-        {
-            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
-            if(!unused_bytes_value.has_value())
-            {
-                throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " can't get ust extra field data").str()};
-            }
-
-            auto const unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
-            return unused_bytes_data <= size();
-        }
-
-        return false;
-    }
-
     size_units::base_10::bytes heap_entry::get_unused_bytes() const
     {
         size_units::base_10::bytes unused_bytes_data;
-        if(is_valid_ust_area_)
+        if(ust_user_address_ != 0)
         {
-            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, get_ust_data_heap_entry_address());
+            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, ust_user_address_ - heap_entry_length_);
             unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
         }
         else
@@ -225,7 +208,7 @@ namespace dlg_help_utils::heap
     size_units::base_10::bytes heap_entry::get_requested_size() const
     {
         size_units::base_10::bytes unused_bytes_data;
-        if(is_valid_ust_area_)
+        if(ust_user_address_ != 0)
         {
             unused_bytes_data = unused_bytes();
         }
@@ -246,9 +229,9 @@ namespace dlg_help_utils::heap
     {
         if(is_busy() && !is_heap_allocation())
         {
-            if(is_valid_ust_area_)
+            if(ust_user_address_ != 0)
             {
-                return heap_entry_address_ + heap_entry_length_ + get_ust_data_size();
+                return get_ust_user_address();
             }
 
             return heap_entry_address_ + heap_entry_length_ + (is_front_padded() ? heap_entry_length_ : 0);
@@ -268,7 +251,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_entry::get_ust_address() const
     {
-        if(!is_valid_ust_area_ || is_heap_allocation() || !is_busy())
+        if(ust_user_address_ == 0 || is_heap_allocation() || !is_busy())
         {
             return 0;
         }
@@ -282,28 +265,49 @@ namespace dlg_help_utils::heap
         return value.value();
     }
 
-    uint64_t heap_entry::get_ust_data_size() const
+    uint64_t heap_entry::get_ust_user_address() const
     {
-        if(is_lfh_entry())
+        if(is_heap_allocation())
         {
-            return heap_entry_length_ + heap_entry_length_;
+            return 0;
         }
 
-        if(peb().is_x86_target())
+        auto const min_ust_data_size = heap_entry_length_ + heap_entry_length_;
+        auto const end_address = heap_entry_address_ + size().count();
+        auto stream = walker().get_process_memory_stream(heap_entry_address_ + min_ust_data_size, size().count() - min_ust_data_size);
+
+        std::array constexpr find_values =
         {
-            return heap_entry_length_ + 0x02;
-        }
-        if(peb().is_x64_target())
+            static_cast<uint16_t>(0x0001),
+            static_cast<uint16_t>(0x0000),
+            std::numeric_limits<uint16_t>::max(),
+            static_cast<uint16_t>(0x0502)
+        };
+
+        int index = 0;
+        while(!stream.eof() && stream.current_address() < end_address)
         {
-            return heap_entry_length_ + 0x10;
+            uint16_t check;
+            if(stream.read(&check, sizeof check) != sizeof check)
+            {
+                break;
+            }
+
+            if(find_values[index] == std::numeric_limits<uint16_t>::max() || find_values[index] == check)
+            {
+                ++index;
+                if(index == find_values.size())
+                {
+                    return stream.current_address();
+                }
+            }
+            else
+            {
+                index = 0;
+            }
         }
 
         return 0;
-    }
-
-    uint64_t heap_entry::get_ust_data_heap_entry_address() const
-    {
-        return heap_entry_address_ + heap_entry_length_ + get_ust_data_size() - heap_entry_length_;
     }
 
     std::vector<uint64_t> heap_entry::get_allocation_stack_trace() const

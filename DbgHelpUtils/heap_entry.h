@@ -95,14 +95,12 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_previous_size() const;
         [[nodiscard]] uint8_t get_segment_offset() const;
         [[nodiscard]] uint8_t get_raw_unused_bytes() const;
-        [[nodiscard]] bool is_valid_ust_area() const;
         [[nodiscard]] size_units::base_10::bytes get_unused_bytes() const;
         [[nodiscard]] size_units::base_10::bytes get_requested_size() const;
         [[nodiscard]] uint64_t get_user_address() const;
         [[nodiscard]] size_units::base_10::bytes get_end_unused_bytes() const;
         [[nodiscard]] uint64_t get_ust_address() const;
-        [[nodiscard]] uint64_t get_ust_data_size() const;
-        [[nodiscard]] uint64_t get_ust_data_heap_entry_address() const;
+        [[nodiscard]] uint64_t get_ust_user_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
         [[nodiscard]] static size_units::base_10::bytes get_virtual_alloc_requested_size(uint64_t size, uint16_t unused_bytes);
         [[nodiscard]] size_units::base_10::bytes get_virtual_alloc_end_unused_bytes(uint64_t end_address) const;
@@ -123,7 +121,7 @@ namespace dlg_help_utils::heap
         size_units::base_10::bytes const previous_size_{0};
         uint8_t const segment_offset_{0};
         uint8_t const raw_unused_bytes_{0};
-        bool const is_valid_ust_area_{false};
+        uint64_t const ust_user_address_{0};
         size_units::base_10::bytes unused_bytes_{0};
         size_units::base_10::bytes requested_size_{0};
         uint64_t const user_address_{0};

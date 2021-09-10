@@ -19,6 +19,12 @@ namespace dlg_help_utils::heap
             return {0, 0};
         }
 
+        if((unused_bytes_value.value() & 0x8000) == 0x8000)
+        {
+            // only 1 byte extra data
+            return {1, 0};
+        }
+
         // is UST data available
         if((unused_bytes_value.value() & 0x4000) != 0x4000)
         {

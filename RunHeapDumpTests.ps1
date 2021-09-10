@@ -12,7 +12,8 @@
 Param
 (
     [string] $DumpFolder = "CrashDumps",
-    [string] $ResultFile = "CrashDumps\Report.log"
+    [string] $ResultFile = "CrashDumps\Report.log",
+    [switch] $CheckOnly
 )
 
 Function RunAllAllocationApplicationArgs($options, $validateoptions)
@@ -43,13 +44,17 @@ Function RunAllocationReleaseDebugApplication($arg, $arch_dir, $arch, $alloc, $o
 
 Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $options, $validateoptions)
 {
+
     $dmp = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).dmp"
-    remove-item $dmp -ErrorAction:SilentlyContinue | Out-Null
     $log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).log"
-    remove-item $log -ErrorAction:SilentlyContinue | Out-Null
     $json = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).json"
-    remove-item $json -ErrorAction:SilentlyContinue | Out-Null
-    . "$PSScriptRoot\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log "--json" $json
+    if(!$CheckOnly)
+    {
+        remove-item $dmp -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $log -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $json -ErrorAction:SilentlyContinue | Out-Null
+        . "$PSScriptRoot\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log "--json" $json
+    }
     . "$PSScriptRoot\x64\Release\ValidateHeapEntries.exe" "--dmp" $dmp "--log" $ResultFile "--json" $json $validateoptions
 }
 
@@ -78,42 +83,69 @@ $page_heap_flags = "PageHeapFlags"
 $front_end_heap = "FrontEndHeapDebugOptions"
 $expected_stacetrace = "--stacktrace"
 
-#. $GFlags /i $app_name -ust -hpa
-Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name -ust -hpa
+    Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+}
 RunAllAllocationApplicationArgs "" ""
 
-#. $GFlags /i $app_name +ust -hpa
-New-Item $app_image_options | Out-Null
-New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name +ust -hpa
+    New-Item $app_image_options | Out-Null
+    New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
+}
 RunAllAllocationApplicationArgs "_ust" $expected_stacetrace
 
-#. $GFlags /i $app_name +ust +hpa
-Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
-New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name +ust +hpa
+    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
+    New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
+}
 RunAllAllocationApplicationArgs "_ust_hpa" $expected_stacetrace
 
-#. $GFlags /i $app_name +hpa
-Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name +hpa
+    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
+}
 RunAllAllocationApplicationArgs "_hpa" ""
 
-# enable segment heap type
-Remove-ItemProperty -Path $app_image_options -Name $global_flag | Out-Null
-Remove-ItemProperty -Path $app_image_options -Name $page_heap_flags | Out-Null
-New-ItemProperty -Path $app_image_options -Name $front_end_heap -PropertyType DWord -Value 0x08 | Out-Null
+if(!$CheckOnly)
+{
+    # enable segment heap type
+    Remove-ItemProperty -Path $app_image_options -Name $global_flag | Out-Null
+    Remove-ItemProperty -Path $app_image_options -Name $page_heap_flags | Out-Null
+    New-ItemProperty -Path $app_image_options -Name $front_end_heap -PropertyType DWord -Value 0x08 | Out-Null
+}
 RunAllAllocationApplicationArgs "_segment" ""
 
-#. $GFlags /i $app_name +ust -hpa
-New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name +ust -hpa
+    New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
+}
 RunAllAllocationApplicationArgs "_segment_ust" $expected_stacetrace
 
-#. $GFlags /i $app_name +ust +hpa
-Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
-New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name +ust +hpa
+    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
+    New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
+}
 RunAllAllocationApplicationArgs "_segment_ust_hpa" $expected_stacetrace
 
-#. $GFlags /i $app_name +hpa
-Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name +hpa
+    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
+}
 RunAllAllocationApplicationArgs "_segment_hpa"
 
-#. $GFlags /i $app_name -ust -hpa
-Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+if(!$CheckOnly)
+{
+    #. $GFlags /i $app_name -ust -hpa
+    Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+}
