@@ -16,6 +16,8 @@
 
 #include "ResultSet.h"
 #include "symbol_engine_ui.h"
+#include "DbgHelpUtils/crt_entry.h"
+#include "DbgHelpUtils/crt_heap.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_entry.h"
@@ -124,9 +126,22 @@ int main(int const argc, char* argv[])
                 auto const hex_length = heaps.peb().machine_hex_printable_length();
                 for(auto const& entry : heaps.entries())
                 {
-                    heap_allocations.insert(std::make_pair(entry.user_address(), entry));
+                    if(entry.user_address() == 0)
+                    {
+                        *o_log << "ERROR: CRT allocation == nullptr\n";
+                        successful = false;
+                    }
+                    else
+                    {
+                        heap_allocations.insert(std::make_pair(entry.user_address(), entry));
+                    }
                 }
 
+                std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> heap_free_entries;
+                for(auto const& entry : heaps.free_entries())
+                {
+                    heap_free_entries.insert(std::make_pair(entry.user_address(), entry));
+                }
 
                 for(auto const& allocation : set.allocations)
                 {
@@ -156,7 +171,7 @@ int main(int const argc, char* argv[])
                     }
                     else if(!allocation.allocated)
                     {
-                        *o_log << "WARNING: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] even though it's free(!), found dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+                        *o_log << "INFO: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] even though it's free(!), found dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
                     }
                     else if(allocation.pointer != it->second.user_address())
                     {
@@ -192,6 +207,28 @@ int main(int const argc, char* argv[])
                                 successful = false;
                                 break;
                             }
+                        }
+                    }
+                }
+
+                // valid CRT Entries are all found
+                for (dlg_help_utils::heap::crt_heap const crt_heap{ heaps.peb() };
+                    auto const& entry : crt_heap.entries())
+                {
+                    if(entry.block_use())
+                    {
+                        if(heap_allocations.find(entry.user_address()) == heap_allocations.end())
+                        {
+                            *o_log << "ERROR: CRT Allocation Entry [" << dlg_help_utils::stream_hex_dump::to_hex(entry.user_address()) << "] of [" << entry.data_size() << "] not found\n";
+                            successful = false;
+                        }
+                    }
+                    else
+                    {
+                        if(heap_free_entries.find(entry.user_address()) == heap_free_entries.end())
+                        {
+                            *o_log << "ERROR: CRT Free Entry [" << dlg_help_utils::stream_hex_dump::to_hex(entry.user_address()) << "] of [" << entry.data_size() << "] not found\n";
+                            successful = false;
                         }
                     }
                 }

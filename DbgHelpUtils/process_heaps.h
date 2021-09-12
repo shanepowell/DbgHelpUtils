@@ -22,12 +22,14 @@ namespace dlg_help_utils::heap
     public:
         process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine);
 
-        process::process_environment_block const& peb() const { return peb_; }
+        [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
 
         [[nodiscard]] std::experimental::generator<process_heap_entry> entries() const;
+        [[nodiscard]] std::experimental::generator<process_heap_entry> free_entries() const;
 
     private:
         static bool is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment);
+        static bool contains_address(uint64_t start_address, uint64_t size, uint64_t address);
 
     private:
         process::process_environment_block const peb_;

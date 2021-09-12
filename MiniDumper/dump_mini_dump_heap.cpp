@@ -1223,6 +1223,34 @@ void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& op
     wcout << '\n';
 }
 
+void print_process_entry(heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options)
+{
+    using namespace size_units::base_10;
+    wcout << "  " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " " << entry.user_requested_size();
+    if(!entry.filename().empty())
+    {
+        wcout << ' ' << entry.filename() << ':' << entry.line_number();
+    }
+    wcout << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
+
+
+    if(options.display_symbols() && !entry.allocation_stack_trace().empty())
+    {
+        wcout << "    Allocation Stack Trace:\n";
+        hex_dump_stack(wcout, peb.walker(), entry.allocation_stack_trace(), peb.is_x86_target(), 6);
+        wcout << '\n';
+    }
+
+    if(options.hex_dump_memory_data())
+    {
+        if(auto stream = entry.user_data(); !stream.eof())
+        {
+            hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), 6);
+            wcout << L'\n';
+        }
+    }
+}
+
 void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     heap::process_heaps const heaps{mini_dump, symbol_engine};
@@ -1231,30 +1259,13 @@ void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options c
     cout << "Heap Allocated Entries:\n";
     for(auto const& entry : heaps.entries())
     {
-        using namespace size_units::base_10;
-        wcout << "  " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " " << entry.user_requested_size();
-        if(!entry.filename().empty())
-        {
-            wcout << ' ' << entry.filename() << ':' << entry.line_number();
-        }
-        wcout << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
+        print_process_entry(entry, heaps.peb(), hex_length, options);
+    }
 
-
-        if(options.display_symbols() && !entry.allocation_stack_trace().empty())
-        {
-            wcout << "    Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, heaps.peb().walker(), entry.allocation_stack_trace(), heaps.peb().is_x86_target(), 6);
-            wcout << '\n';
-        }
-
-        if(options.hex_dump_memory_data())
-        {
-            if(auto stream = entry.user_data(); !stream.eof())
-            {
-                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), 6);
-                wcout << L'\n';
-            }
-        }
+    cout << "Heap Free Entries:\n";
+    for(auto const& entry : heaps.free_entries())
+    {
+        print_process_entry(entry, heaps.peb(), hex_length, options);
     }
 
     wcout << '\n';

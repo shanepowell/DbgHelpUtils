@@ -36,8 +36,8 @@ namespace dlg_help_utils::heap
         process_heap_entry(heap_vs_entry const& entry, crt_entry const& crt_block);
         process_heap_entry(large_alloc_entry const& entry, crt_entry const& crt_block);
 
-        [[nodiscard]] uint64_t user_address() const { return user_address_; }
-        [[nodiscard]] size_units::base_10::bytes user_requested_size() const { return user_size_; }
+        [[nodiscard]] uint64_t user_address() const;
+        [[nodiscard]] size_units::base_10::bytes user_requested_size() const;
         [[nodiscard]] std::wstring const& filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const { return line_number_; }
 
@@ -48,8 +48,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool contains_address(uint64_t address) const;
 
     private:
-        static uint64_t get_nt_heap_entry_block_start(heap_entry const& entry);
-        static uint64_t get_nt_heap_entry_block_size(heap_entry const& entry);
+        [[nodiscard]] uint64_t get_nt_heap_entry_block_start(heap_entry const& entry) const;
+        [[nodiscard]] uint64_t get_nt_heap_entry_block_size(heap_entry const& entry) const;
 
     private:
         process::process_environment_block const& peb_;

@@ -53,8 +53,8 @@ namespace dlg_help_utils::heap
 
     process_heap_entry::process_heap_entry(heap_vs_entry const& entry)
     : peb_{entry.peb()}
-    , user_address_{entry.user_address()}
-    , user_size_{entry.user_requested_size()}
+    , user_address_{entry.uncommitted_range() ? entry.block_address() : entry.user_address()}
+    , user_size_{entry.uncommitted_range() ? size_units::base_10::bytes{entry.block_size()} : entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , block_start_address_{entry.block_address()}
     , block_end_address_{block_start_address_ + entry.block_size()}
@@ -143,6 +143,24 @@ namespace dlg_help_utils::heap
     {
     }
 
+    uint64_t process_heap_entry::user_address() const
+    {
+        if(user_address_ == 0)
+        {
+            return block_start_address_;
+        }
+        return user_address_;
+    }
+
+    size_units::base_10::bytes process_heap_entry::user_requested_size() const
+    {
+        if(user_address_ == 0)
+        {
+            return  size_units::base_10::bytes{block_end_address_ - block_start_address_};
+        }
+        return user_size_;
+    }
+
     mini_dump_memory_stream process_heap_entry::user_data() const
     {
         uint64_t const size = user_requested_size().count();
@@ -154,13 +172,22 @@ namespace dlg_help_utils::heap
         return address >= block_start_address_ && address < block_end_address_;
     }
 
-    uint64_t process_heap_entry::get_nt_heap_entry_block_start(heap_entry const& entry)
+    uint64_t process_heap_entry::get_nt_heap_entry_block_start(heap_entry const& entry) const
     {
-        return entry.user_address();
+        if(user_address_ == 0)
+        {
+            return entry.address();
+        }
+
+        return user_address_;
     }
 
-    uint64_t process_heap_entry::get_nt_heap_entry_block_size(heap_entry const& entry)
+    uint64_t process_heap_entry::get_nt_heap_entry_block_size(heap_entry const& entry) const
     {
-        return entry.user_requested_size().count();
+        if(user_address_ == 0)
+        {
+            return entry.size().count();
+        }
+        return user_size_.count();
     }
 }
