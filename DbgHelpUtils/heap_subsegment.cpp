@@ -36,9 +36,9 @@ namespace dlg_help_utils::heap
         return lfh_heap().peb();
     }
 
-    uint16_t heap_subsegment::block_size() const
+    size_units::base_10::bytes heap_subsegment::block_size() const
     {
-        return block_size_raw() * static_cast<uint16_t>(lfh_heap().heap().granularity());
+        return size_units::base_10::bytes{block_size_raw() * static_cast<uint16_t>(lfh_heap().heap().granularity())};
     }
 
     uint16_t heap_subsegment::block_size_raw() const

@@ -1,6 +1,7 @@
 ﻿#include "segment_heap.h"
 
 #include "common_symbol_names.h"
+#include "dph_heap.h"
 #include "heap_lfh_context.h"
 #include "heap_segment_context.h"
 #include "heap_vs_context.h"
@@ -215,6 +216,24 @@ namespace dlg_help_utils::heap
     heap_lfh_context segment_heap::lfh_context() const
     {
         return heap_lfh_context{*this, segment_heap_address() + heap_lfh_context_offset_};
+    }
+
+    std::optional<dph_heap> segment_heap::debug_page_heap() const
+    {
+        if(!peb().heap_page_alloc_enabled())
+        {
+            return std::nullopt;
+        }
+
+        for(auto const& heap : dph_heap::dph_heaps(peb()))
+        {
+            if(heap.normal_heap() == segment_heap_address())
+            {
+                return heap;
+            }
+        }
+
+        return std::nullopt;
     }
 
     std::experimental::generator<large_alloc_entry> segment_heap::large_entries() const

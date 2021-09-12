@@ -17,6 +17,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class dph_heap;
     class heap_lfh_context;
     class heap_segment_context;
     class heap_vs_context;
@@ -52,6 +53,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_segment_context> segment_contexts() const;
         [[nodiscard]] heap_vs_context vs_context() const;
         [[nodiscard]] heap_lfh_context lfh_context() const;
+
+        [[nodiscard]] std::optional<dph_heap> debug_page_heap() const;
 
         [[nodiscard]] std::experimental::generator<large_alloc_entry> large_entries() const;
 

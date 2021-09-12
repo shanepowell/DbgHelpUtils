@@ -13,7 +13,8 @@ Param
 (
     [string] $DumpFolder = "CrashDumps",
     [string] $ResultFile = "CrashDumps\Report.log",
-    [switch] $CheckOnly
+    [switch] $CheckOnly,
+    [switch] $GenerateHeapLogs
 )
 
 Function RunAllAllocationApplicationArgs($options, $validateoptions)
@@ -54,6 +55,17 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $json -ErrorAction:SilentlyContinue | Out-Null
         . "$PSScriptRoot\$arch_dir\$config\$app_name" "--$arg" "--use$alloc" "--dmp" $dmp "--log" $log "--json" $json
+    }
+    if($GenerateHeapLogs)
+    {
+        $full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_full.log"
+        $debug_full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_debugfull.log"
+
+        remove-item $full_log -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $debug_full_log -ErrorAction:SilentlyContinue | Out-Null
+
+        . "$PSScriptRoot\x64\Release\MiniDumper.exe" --heap --crtheap --heapentries --dumpfile $dmp > $full_log
+        . "$PSScriptRoot\x64\Release\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --dumpfile $dmp > $debug_full_log
     }
     . "$PSScriptRoot\x64\Release\ValidateHeapEntries.exe" "--dmp" $dmp "--log" $ResultFile "--json" $json $validateoptions
 }
