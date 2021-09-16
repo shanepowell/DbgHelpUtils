@@ -14,6 +14,17 @@ namespace dlg_help_utils::size_units
         compact
     };
 
+    enum class size_unit_type
+    {
+        exabytes,
+        petabytes,
+        terabytes,
+        gigabytes,
+        megabytes,
+        kilobytes,
+        bytes
+    };
+
     namespace base_10
     {
         using byte  = std::ratio<1>;
@@ -149,17 +160,20 @@ namespace dlg_help_utils::size_units
         }
     }
 
-
-    enum class size_unit_type
-    {
-        exabytes,
-        petabytes,
-        terabytes,
-        gigabytes,
-        megabytes,
-        kilobytes,
-        bytes
-    };
+    template<typename T> struct map_to_size_type {};
+    template<> struct map_to_size_type<base_10::exabytes> { static constexpr size_unit_type type = size_unit_type::exabytes; };
+    template<> struct map_to_size_type<base_10::petabytes> { static constexpr size_unit_type type = size_unit_type::petabytes; };
+    template<> struct map_to_size_type<base_10::terabytes> { static constexpr size_unit_type type = size_unit_type::terabytes; };
+    template<> struct map_to_size_type<base_10::gigabytes> { static constexpr size_unit_type type = size_unit_type::gigabytes; };
+    template<> struct map_to_size_type<base_10::megabytes> { static constexpr size_unit_type type = size_unit_type::megabytes; };
+    template<> struct map_to_size_type<base_10::kilobytes> { static constexpr size_unit_type type = size_unit_type::kilobytes; };
+    template<> struct map_to_size_type<base_16::exabytes> { static constexpr size_unit_type type = size_unit_type::exabytes; };
+    template<> struct map_to_size_type<base_16::petabytes> { static constexpr size_unit_type type = size_unit_type::petabytes; };
+    template<> struct map_to_size_type<base_16::terabytes> { static constexpr size_unit_type type = size_unit_type::terabytes; };
+    template<> struct map_to_size_type<base_16::gigabytes> { static constexpr size_unit_type type = size_unit_type::gigabytes; };
+    template<> struct map_to_size_type<base_16::megabytes> { static constexpr size_unit_type type = size_unit_type::megabytes; };
+    template<> struct map_to_size_type<base_16::kilobytes> { static constexpr size_unit_type type = size_unit_type::kilobytes; };
+    template<> struct map_to_size_type<base_16::bytes> { static constexpr size_unit_type type = size_unit_type::bytes; };
 
     enum class string_type
     {
@@ -171,4 +185,5 @@ namespace dlg_help_utils::size_units
     std::wstring const& get_label_string(size_unit_type time_type, string_type type);
     std::tuple<std::wstring, std::wstring, std::wstring> const& get_label_strings(size_unit_type type);
     void set_label_strings(std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> user_string_data);
+    size_unit_type get_label_type(std::wstring_view label);
 }

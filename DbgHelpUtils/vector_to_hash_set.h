@@ -111,34 +111,30 @@ namespace dlg_help_utils
         }
 
         template <typename T, typename=void> 
-        constexpr bool has_rt_type = false;
+        struct rt_type
+        {
+            using type = T;
+        };
 
         template <typename T>
-        constexpr bool has_rt_type<T, std::void_t<decltype(sizeof(typename T::Rt))>> = true;
+        struct rt_type<T, std::void_t<decltype(sizeof(typename T::Rt))>>
+        {
+            using type = typename T::Rt;
+        };
+
+        template<typename T>
+        using rt_type_t = typename rt_type<T>::type;
     }
 
     template <typename T>
     auto vector_to_hash_set(std::vector<std::wstring> const& data)
     {
-        if constexpr(details::has_rt_type<T>)
+        using Rt = details::rt_type_t<T>;
+        std::set<Rt> rv;
+        for (auto const& value : data)
         {
-            using Rt = typename T::Rt;
-            std::set<Rt> rv;
-            for (auto const& value : data)
-            {
-                rv.emplace(details::string_converter<T, Rt>(value));
-            }
-            return rv;
+            rv.emplace(details::string_converter<T, Rt>(value));
         }
-        else
-        {
-            using Rt = T;
-            std::set<Rt> rv;
-            for (auto const& value : data)
-            {
-                rv.emplace(details::string_converter<T, Rt>(value));
-            }
-            return rv;
-        }
+        return rv;
     }
 }

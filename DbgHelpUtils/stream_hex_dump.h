@@ -4,6 +4,7 @@
 #include <ostream>
 #include <sstream>
 #include <iomanip>
+#include <format>
 
 namespace dlg_help_utils::stream_hex_dump
 {

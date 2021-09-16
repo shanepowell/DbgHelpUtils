@@ -1329,14 +1329,16 @@ void dump_mini_dump_crtheap(mini_dump const& mini_dump, dump_file_options const&
     }
 }
 
-void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk const& walker, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target)
+void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk const& walker, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target, streamsize const hex_length)
 {
     using namespace size_units::base_16;
     wcout << "  " << heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()) << ":\n";
+    auto const single_line_range_title_length = 2 + hex_length;
 
     if(view_by_size_frequency.is_range_single_value())
     {
         wcout << std::format(L" {0:<10} ", L"");
+        wcout << std::format(L"{0:<{1}} ", L"", single_line_range_title_length);
     }
     else
     {
@@ -1355,6 +1357,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     if(view_by_size_frequency.is_range_single_value())
     {
         wcout << std::format(L" {0:<10} ", L"size");
+        wcout << std::format(L"{0:<{1}} ", L"size hex", single_line_range_title_length);
     }
     else
     {
@@ -1373,6 +1376,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     if(view_by_size_frequency.is_range_single_value())
     {
         wcout << std::format(L" {0:=<10} ", L"");
+        wcout << std::format(L"{0:=<{1}} ", L"", single_line_range_title_length);
     }
     else
     {
@@ -1392,7 +1396,9 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     {
         if(bucket.is_range_single_value())
         {
-            wcout << std::format(L" {0:10} ", to_wstring(bucket.start_range()));
+            wcout << std::format(L" {:10} ", to_wstring(bucket.start_range()));
+            wcout << std::format(L"{0:{1}} ", std::format(L"0x{0:x}", bucket.start_range().count()), single_line_range_title_length);
+            //wcout << std::format(L"0x{0:0>{1}x} ", bucket.start_range().count(), hex_length);
         }
         else
         {
@@ -1423,8 +1429,10 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
 void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list()};
+    auto const hex_length = heaps.peb().machine_hex_printable_length();
+    auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();
     wcout << "Heap Statistics:\n";
-    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_frequency(), options, heaps.peb().is_x86_target());
+    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
 }
 
