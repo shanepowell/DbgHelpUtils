@@ -37,8 +37,7 @@ namespace dlg_help_utils
         {
             auto const ec = GetLastError();
             throw wide_runtime_error{
-                (wostringstream{} << L"Error: CreateFile failed. Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
+                (wostringstream{} << L"CreateFile failed (" << file_path_ << "). Error: " << ec << L" - " << get_windows_error_string(ec)).str()
             };
         }
 
@@ -47,7 +46,7 @@ namespace dlg_help_utils
         {
             auto const ec = GetLastError();
             throw wide_runtime_error{
-                (wostringstream{} << L"Error: GetFileSizeEx failed. Error: " << ec << L" - " <<
+                (wostringstream{} << L"GetFileSizeEx failed (" << file_path_ << "). Error: " << ec << L" - " <<
                     get_windows_error_string(ec)).str()
             };
         }
@@ -67,7 +66,7 @@ namespace dlg_help_utils
         {
             auto const ec = GetLastError();
             throw wide_runtime_error{
-                (wostringstream{} << L"Error: CreateFileMapping failed. Error: " << ec << L" - " <<
+                (wostringstream{} << L"CreateFileMapping failed (" << file_path_ << "). Error: " << ec << L" - " <<
                     get_windows_error_string(ec)).str()
             };
         }
@@ -77,7 +76,7 @@ namespace dlg_help_utils
         {
             auto const ec = GetLastError();
             throw wide_runtime_error{
-                (wostringstream{} << L"Error: MapViewOfFile failed. Error: " << ec << L" - " <<
+                (wostringstream{} << L"MapViewOfFile failed (" << file_path_ << "). Error: " << ec << L" - " <<
                     get_windows_error_string(ec)).str()
             };
         }

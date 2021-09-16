@@ -28,9 +28,9 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
-    size_units::base_10::bytes heap_vs_subsegment::size() const
+    size_units::base_16::bytes heap_vs_subsegment::size() const
     {
-        return size_units::base_10::bytes{static_cast<uint64_t>(size_raw()) << 4};
+        return size_units::base_16::bytes{static_cast<uint64_t>(size_raw()) << 4};
     }
 
     uint16_t heap_vs_subsegment::signature() const

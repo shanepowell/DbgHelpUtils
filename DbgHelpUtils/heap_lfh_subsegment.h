@@ -35,7 +35,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint16_t block_count() const;
         [[nodiscard]] lfh_subsegment_location_utils::location location() const;
         [[nodiscard]] uint8_t witheld_block_count() const;
-        [[nodiscard]] size_units::base_10::bytes block_size() const;
+        [[nodiscard]] size_units::base_16::bytes block_size() const;
         [[nodiscard]] uint8_t commit_unit_shift() const;
         [[nodiscard]] uint8_t commit_unit_count() const;
 

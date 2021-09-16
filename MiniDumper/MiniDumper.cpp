@@ -49,6 +49,7 @@ int wmain(int const argc, wchar_t* argv[])
             ("peb", "process environment block")
             ("heap", "heap data information")
             ("heapentries", "heap entries only")
+            ("heapstats", "heap statistics")
             ("crtheap", "crtheap data information")
             ("std", "stack trace database")
             ;

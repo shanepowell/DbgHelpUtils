@@ -38,9 +38,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_lfh_context_max_affinity_field_symbol_name);
     }
 
-    size_units::base_10::bytes heap_lfh_context::max_block_size() const
+    size_units::base_16::bytes heap_lfh_context::max_block_size() const
     {
-        return size_units::base_10::bytes{stream_utils::get_field_value<uint16_t>(*this, common_symbol_names::heap_lfh_context_config_max_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint16_t>(*this, common_symbol_names::heap_lfh_context_config_max_block_size_field_symbol_name)};
     }
 
     bool heap_lfh_context::with_old_page_crossing_blocks() const

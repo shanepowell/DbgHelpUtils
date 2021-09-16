@@ -30,8 +30,8 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_pointer(walker(), heap_ucr_descriptor_address_, heap_ucr_descriptor_symbol_type_, symbol_name, common_symbol_names::heap_ucr_descriptor_address_field_symbol_name);
     }
 
-    size_units::base_10::bytes heap_ucr_descriptor::size() const
+    size_units::base_16::bytes heap_ucr_descriptor::size() const
     {
-        return size_units::base_10::bytes {stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_ucr_descriptor_size_field_symbol_name) };
+        return size_units::base_16::bytes {stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_ucr_descriptor_size_field_symbol_name) };
     }
 }

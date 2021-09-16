@@ -52,6 +52,12 @@
     <Filter Include="Heap\Crt">
       <UniqueIdentifier>{d9ef71f3-ae62-478d-b2a9-15ab03c13df4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Heap\ProcessHeaps">
+      <UniqueIdentifier>{63f6b202-ccc1-4a46-acc7-3ed0bf2dea07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Heap\ProcessHeaps\StatisticViews">
+      <UniqueIdentifier>{dfc928a3-8d9d-4b62-9c07-e628683d8d02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -345,17 +351,38 @@
     <ClCompile Include="mini_dump_memory_stream.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="process_heaps.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="process_heap_entry.cpp">
-      <Filter>Heap</Filter>
-    </ClCompile>
     <ClCompile Include="crt_heap.cpp">
       <Filter>Heap\Crt</Filter>
     </ClCompile>
     <ClCompile Include="crt_entry.cpp">
       <Filter>Heap\Crt</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_entry.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heaps.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heaps_statistic_view.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heaps_statistics.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="interface_process_heaps_statistic_view_impl.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="by_size_frequency_view.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heaps_statistic_bucket_view.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="allocation_stack_trace_helper.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClCompile>
+    <ClCompile Include="system_module_list.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -719,17 +746,41 @@
     <ClInclude Include="mini_dump_memory_stream.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
-    <ClInclude Include="process_heaps.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_entry.h">
-      <Filter>Heap</Filter>
-    </ClInclude>
     <ClInclude Include="crt_heap.h">
       <Filter>Heap\Crt</Filter>
     </ClInclude>
     <ClInclude Include="crt_entry.h">
       <Filter>Heap\Crt</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_entry.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heaps.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heaps_statistic_view.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heaps_statistics.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="interface_process_heaps_statistic_view_impl.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="by_size_frequency_view.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heaps_statistic_bucket_view.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="allocation_stack_trace_helper.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="system_module_list.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="string_utils.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,10 +2,13 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
+
 // ReSharper disable once CppUnusedIncludeDirective
 #include <compare>
 
+#include "string_utils.h"
 #include "wide_runtime_error.h"
 
 namespace dlg_help_utils
@@ -18,19 +21,29 @@ namespace dlg_help_utils
         auto operator<=>(range const&) const = default; // NOLINT(clang-diagnostic-unused-member-function)
     };
 
+    struct wstring_to_lower
+    {
+        using Rt = std::wstring;
+    };
+
+    struct wstring_to_upper
+    {
+        using Rt = std::wstring;
+    };
+
     namespace details
     {
-        template <typename T>
-        T string_converter([[maybe_unused]] std::wstring const& value)
+        template <typename T, typename Rt>
+        Rt string_converter([[maybe_unused]] std::wstring const& value)
         {
             auto constexpr unsupported_string_convert_type = false;
             // ReSharper disable once CppStaticAssertFailure
             static_assert(unsupported_string_convert_type);
-            return T{};
+            return Rt{};
         }
 
         template <>
-        inline uint32_t string_converter<uint32_t>(std::wstring const& value)
+        inline uint32_t string_converter<uint32_t, uint32_t>(std::wstring const& value)
         {
             wchar_t* end;
             auto const rv = std::wcstoul(value.c_str(), &end, 0);
@@ -46,7 +59,7 @@ namespace dlg_help_utils
         }
 
         template <>
-        inline uint64_t string_converter<uint64_t>(std::wstring const& value)
+        inline uint64_t string_converter<uint64_t, uint64_t>(std::wstring const& value)
         {
             wchar_t* end;
             auto const rv = std::wcstoull(value.c_str(), &end, 0);
@@ -62,7 +75,7 @@ namespace dlg_help_utils
         }
 
         template <>
-        inline range string_converter<range>(std::wstring const& value)
+        inline range string_converter<range, range>(std::wstring const& value)
         {
             auto const pos = value.find_first_of(L'-');
             if (pos == std::wstring::npos)
@@ -82,19 +95,50 @@ namespace dlg_help_utils
                 throw exceptions::wide_runtime_error{std::move(ss).str()};
             }
 
-            return range{string_converter<uint64_t>(start), string_converter<uint64_t>(size)};
+            return range{string_converter<uint64_t, uint64_t>(start), string_converter<uint64_t, uint64_t>(size)};
         }
+
+        template <>
+        inline std::wstring string_converter<wstring_to_lower, std::wstring>(std::wstring const& value)
+        {
+            return string_compare::to_lower(value);
+        }
+
+        template <>
+        inline std::wstring string_converter<wstring_to_upper, std::wstring>(std::wstring const& value)
+        {
+            return string_compare::to_upper(value);
+        }
+
+        template <typename T, typename=void> 
+        constexpr bool has_rt_type = false;
+
+        template <typename T>
+        constexpr bool has_rt_type<T, std::void_t<decltype(sizeof(typename T::Rt))>> = true;
     }
 
     template <typename T>
-    std::set<T> vector_to_hash_set(std::vector<std::wstring> const& data)
+    auto vector_to_hash_set(std::vector<std::wstring> const& data)
     {
-        std::set<T> rv;
-        for (auto const& value : data)
+        if constexpr(details::has_rt_type<T>)
         {
-            rv.emplace(details::string_converter<T>(value));
+            using Rt = typename T::Rt;
+            std::set<Rt> rv;
+            for (auto const& value : data)
+            {
+                rv.emplace(details::string_converter<T, Rt>(value));
+            }
+            return rv;
         }
-
-        return rv;
+        else
+        {
+            using Rt = T;
+            std::set<Rt> rv;
+            for (auto const& value : data)
+            {
+                rv.emplace(details::string_converter<T, Rt>(value));
+            }
+            return rv;
+        }
     }
 }

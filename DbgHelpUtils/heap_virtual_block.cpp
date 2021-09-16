@@ -29,20 +29,20 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
-    size_units::base_10::bytes heap_virtual_block::reserved() const
+    size_units::base_16::bytes heap_virtual_block::reserved() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name) };
     }
 
-    size_units::base_10::bytes heap_virtual_block::committed() const
+    size_units::base_16::bytes heap_virtual_block::committed() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
     }
 
     std::experimental::generator<heap_entry> heap_virtual_block::entries() const
     {
         auto const committed_size = committed();
-        if(auto const reserved_size = reserved(); committed_size > size_units::base_10::bytes{0})
+        if(auto const reserved_size = reserved(); committed_size > size_units::base_16::bytes{0})
         {
             auto const entry_address = descriptor_address() + busy_block_offset_;
             auto const last_address = address() + committed_size.count();
@@ -83,7 +83,7 @@ namespace dlg_help_utils::heap
                 co_yield heap_entry{heap(), last_address, last_committed_address -  last_address};
             }
         }
-        else if(reserved_size > size_units::base_10::bytes{0})
+        else if(reserved_size > size_units::base_16::bytes{0})
         {
             co_yield heap_entry{heap(), address(), static_cast<uint64_t>(reserved_size.count())};
         }

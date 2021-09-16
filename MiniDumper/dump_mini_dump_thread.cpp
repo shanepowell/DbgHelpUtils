@@ -243,7 +243,7 @@ void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t c
 
         dump_mini_dump_thread_context(thread.thread_context(), options);
 
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L"   Stack: " << to_hex_full(thread->Stack.StartOfMemoryRange) << L" - " <<
             to_hex_full(thread->Stack.StartOfMemoryRange + thread->Stack.Memory.DataSize) << L" (" <<
             to_hex(thread->Stack.Memory.DataSize) << L") (" << bytes{thread->Stack.Memory.DataSize} << L")\n";
@@ -305,7 +305,7 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
 
         load_and_dump_teb(mini_dump, symbol_engine, thread->Teb);
 
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L"   Stack: " << to_hex_full(thread->Stack.StartOfMemoryRange) << L" - " <<
             to_hex_full(thread->Stack.StartOfMemoryRange + thread->Stack.Memory.DataSize) << L" (" <<
             to_hex(thread->Stack.Memory.DataSize) << L") (" << bytes{thread->Stack.Memory.DataSize} << L")\n";

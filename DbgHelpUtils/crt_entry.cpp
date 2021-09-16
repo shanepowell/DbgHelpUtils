@@ -38,9 +38,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::crt_mem_block_header_block_use_field_symbol_name) != 0;
     }
 
-    size_units::base_10::bytes crt_entry::data_size() const
+    size_units::base_16::bytes crt_entry::data_size() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name)};
     }
 
     uint32_t crt_entry::request_number() const

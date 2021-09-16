@@ -82,6 +82,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="allocation_stack_trace_helper.cpp" />
+    <ClCompile Include="by_size_frequency_view.cpp" />
     <ClCompile Include="comment_stream_a.cpp" />
     <ClCompile Include="comment_stream_w.cpp" />
     <ClCompile Include="common_symbol_names.cpp" />
@@ -115,6 +117,7 @@
     <ClCompile Include="heap_vs_entry.cpp" />
     <ClCompile Include="heap_vs_subsegment.cpp" />
     <ClCompile Include="hex_dump.cpp" />
+    <ClCompile Include="interface_process_heaps_statistic_view_impl.cpp" />
     <ClCompile Include="large_alloc_entry.cpp" />
     <ClCompile Include="lfh_heap.cpp" />
     <ClCompile Include="lfh_segment.cpp" />
@@ -141,8 +144,11 @@
     <ClCompile Include="pe_file_memory_mapping.cpp" />
     <ClCompile Include="process_environment_block.cpp" />
     <ClCompile Include="process_heaps.cpp" />
+    <ClCompile Include="process_heaps_statistic_bucket_view.cpp" />
+    <ClCompile Include="process_heaps_statistic_view.cpp" />
     <ClCompile Include="process_heap_entry.cpp" />
     <ClCompile Include="process_parameters.cpp" />
+    <ClCompile Include="process_heaps_statistics.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
     <ClCompile Include="rtl_rb_tree_walker.cpp" />
@@ -171,6 +177,7 @@
     <ClCompile Include="system_info_stream.cpp" />
     <ClCompile Include="system_info_utils.cpp" />
     <ClCompile Include="system_memory_info_stream.cpp" />
+    <ClCompile Include="system_module_list.cpp" />
     <ClCompile Include="thread_ex_list_stream.cpp" />
     <ClCompile Include="thread_info_list_stream.cpp" />
     <ClCompile Include="thread_info_utils.cpp" />
@@ -185,6 +192,8 @@
     <ClCompile Include="windows_error.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="allocation_stack_trace_helper.h" />
+    <ClInclude Include="by_size_frequency_view.h" />
     <ClInclude Include="call_convention.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
@@ -208,6 +217,7 @@
     <ClInclude Include="heap_vs_context.h" />
     <ClInclude Include="heap_vs_entry.h" />
     <ClInclude Include="heap_vs_subsegment.h" />
+    <ClInclude Include="interface_process_heaps_statistic_view_impl.h" />
     <ClInclude Include="large_alloc_entry.h" />
     <ClInclude Include="lfh_heap.h" />
     <ClInclude Include="lfh_segment.h" />
@@ -256,8 +266,11 @@
     <ClInclude Include="pe_file_memory_mapping.h" />
     <ClInclude Include="process_environment_block.h" />
     <ClInclude Include="process_heaps.h" />
+    <ClInclude Include="process_heaps_statistic_bucket_view.h" />
+    <ClInclude Include="process_heaps_statistic_view.h" />
     <ClInclude Include="process_heap_entry.h" />
     <ClInclude Include="process_parameters.h" />
+    <ClInclude Include="process_heaps_statistics.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
     <ClInclude Include="range_units.h" />
     <ClInclude Include="rtl_balanced_links_walker.h" />
@@ -283,6 +296,7 @@
     <ClInclude Include="string_compare.h" />
     <ClInclude Include="string_conversation.h" />
     <ClInclude Include="string_stream.h" />
+    <ClInclude Include="string_utils.h" />
     <ClInclude Include="symbol_address_info.h" />
     <ClInclude Include="basic_type.h" />
     <ClInclude Include="symbol_engine.h" />
@@ -292,6 +306,7 @@
     <ClInclude Include="system_info_stream.h" />
     <ClInclude Include="system_info_utils.h" />
     <ClInclude Include="system_memory_info_stream.h" />
+    <ClInclude Include="system_module_list.h" />
     <ClInclude Include="system_time_utils.h" />
     <ClInclude Include="thread_ex_list_stream.h" />
     <ClInclude Include="thread_info_list_stream.h" />

@@ -81,9 +81,9 @@ namespace dlg_help_utils::heap
         return value.value();
     }
 
-    size_units::base_10::bytes heap_lfh_subsegment::block_size() const
+    size_units::base_16::bytes heap_lfh_subsegment::block_size() const
     {
-        return size_units::base_10::bytes{get_field_value_from_block_offsets<uint16_t>(common_symbol_names::heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_field_value_from_block_offsets<uint16_t>(common_symbol_names::heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name)};
     }
 
     uint8_t heap_lfh_subsegment::commit_unit_shift() const

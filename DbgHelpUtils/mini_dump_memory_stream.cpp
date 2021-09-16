@@ -59,4 +59,24 @@ namespace dlg_help_utils
             {
             });
     }
+
+    std::experimental::generator<std::pair<void const*, size_t>> mini_dump_memory_stream::ranges()
+    {
+        while(!eof())
+        {
+            auto const buffer = static_cast<void const*>(memory_);
+            auto const length = static_cast<size_t>(end_memory_ - memory_);
+            current_address_ += length;
+            memory_ += length;
+
+            co_yield std::make_pair(buffer, length);
+
+            if(!eof() && memory_ == end_memory_)
+            {
+                uint64_t size = end_address_ - current_address_;
+                memory_ = static_cast<uint8_t const*>(get_process_memory_range_(current_address_, size, enable_module_loading_));
+                end_memory_ = memory_ + size;
+            }
+        }
+    }
 }

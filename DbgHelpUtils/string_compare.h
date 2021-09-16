@@ -13,3 +13,4 @@ namespace dlg_help_utils::string_compare
         return _wcsnicmp(str1.data(), str2.data(), str1.length()) == 0;
     }
 }
+    

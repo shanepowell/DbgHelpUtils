@@ -48,9 +48,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::dph_heap_root_busy_allocations_field_symbol_name);
     }
 
-    size_units::base_10::bytes dph_heap::busy_allocations_committed() const
+    size_units::base_16::bytes dph_heap::busy_allocations_committed() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name)};
     }
 
     uint32_t dph_heap::virtual_storage_ranges() const
@@ -58,9 +58,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::dph_heap_root_virtual_storage_ranges_field_symbol_name);
     }
 
-    size_units::base_10::bytes dph_heap::virtual_storage_total() const
+    size_units::base_16::bytes dph_heap::virtual_storage_total() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name)};
     }
 
     uint32_t dph_heap::free_allocations() const
@@ -75,9 +75,9 @@ namespace dlg_help_utils::heap
         return index;
     }
 
-    size_units::base_10::bytes dph_heap::free_allocations_committed() const
+    size_units::base_16::bytes dph_heap::free_allocations_committed() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
     }
 
     std::experimental::generator<dph_heap> dph_heap::dph_heaps(process::process_environment_block const& peb)

@@ -11,6 +11,7 @@
 #pragma warning(pop)
 
 #include "DbgHelpUtils/size_units.h"
+#include "DbgHelpUtils/system_module_list.h"
 
 class dump_file_options
 {
@@ -34,6 +35,7 @@ public:
     [[nodiscard]] bool display_peb() const { return display_peb_; }
     [[nodiscard]] bool display_heap() const { return display_heap_; }
     [[nodiscard]] bool display_heap_entries() const { return display_heap_entries_; }
+    [[nodiscard]] bool display_heap_statistics() const { return display_heap_statistics_; }
     [[nodiscard]] bool display_crtheap() const { return display_crtheap_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
@@ -42,6 +44,7 @@ public:
     [[nodiscard]] std::vector<std::wstring> symbol_names() const { return symbol_names_; }
     [[nodiscard]] std::vector<std::wstring> dump_types_modules() const { return dump_types_modules_; }
     [[nodiscard]] std::vector<std::wstring> dump_address_types() const { return dump_address_types_; }
+    [[nodiscard]] dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list() const { return system_module_list_; }
 
 private:
     bool dump_header_;
@@ -60,6 +63,7 @@ private:
     bool display_peb_;
     bool display_heap_;
     bool display_heap_entries_;
+    bool display_heap_statistics_;
     bool display_crtheap_;
     bool debug_heap_data_;
     bool display_stack_trace_database_;
@@ -68,4 +72,5 @@ private:
     std::vector<std::wstring> symbol_types_;
     std::vector<std::wstring> dump_types_modules_;
     std::vector<std::wstring> dump_address_types_;
+    dlg_help_utils::heap::statistic_views::system_module_list system_module_list_;
 };

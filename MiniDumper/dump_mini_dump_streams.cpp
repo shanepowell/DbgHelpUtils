@@ -41,7 +41,7 @@ void dump_mini_dump_streams(mini_dump const& dump_file)
     wcout << L"STREAM Directory:\n";
     for (size_t index = 0; index < header->NumberOfStreams; ++index)
     {
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         auto const& entry = directory[index];
         wcout << L"Stream: [" << index << "] " <<
             mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType)) << " - RVA: [" <<

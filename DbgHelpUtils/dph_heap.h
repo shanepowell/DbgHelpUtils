@@ -33,13 +33,13 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint32_t seed() const;
 
         [[nodiscard]] uint32_t busy_allocations() const;
-        [[nodiscard]] size_units::base_10::bytes busy_allocations_committed() const;
+        [[nodiscard]] size_units::base_16::bytes busy_allocations_committed() const;
 
         [[nodiscard]] uint32_t virtual_storage_ranges() const;
-        [[nodiscard]] size_units::base_10::bytes virtual_storage_total() const;
+        [[nodiscard]] size_units::base_16::bytes virtual_storage_total() const;
 
         [[nodiscard]] uint32_t free_allocations() const;
-        [[nodiscard]] size_units::base_10::bytes free_allocations_committed() const;
+        [[nodiscard]] size_units::base_16::bytes free_allocations_committed() const;
 
         [[nodiscard]] static std::experimental::generator<dph_heap> dph_heaps(process::process_environment_block const& peb);
 

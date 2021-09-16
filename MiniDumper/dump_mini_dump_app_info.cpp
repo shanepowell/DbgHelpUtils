@@ -52,7 +52,7 @@ void dump_mini_dump_token_stream_data(mini_dump const& mini_dump, size_t const i
     wcout << L"TokenListEntries: " << token_list.size() << L'\n';
     for (size_t i = 0; auto const& entry : token_list.list())
     {
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L" [" << i << L"]:\n";
         wcout << L"   TokenId: " << entry->TokenId << L'\n';
         wcout << L"   TokenHandle: " << to_hex(entry->TokenHandle) << L'\n';
@@ -87,7 +87,7 @@ void dump_mini_dump_function_table_stream_data(mini_dump const& mini_dump, size_
         return;
     }
 
-    using namespace size_units::base_10;
+    using namespace size_units::base_16;
     wcout << L"NumberOfDescriptors: " << function_table.size() << L'\n';
     for (size_t i = 0; auto const& table : function_table.list())
     {
@@ -180,7 +180,7 @@ void dump_mini_dump_handle_operation_list_stream_data(mini_dump const& mini_dump
 
     system_info_stream const system_info{mini_dump};
 
-    using namespace size_units::base_10;
+    using namespace size_units::base_16;
     wcout << L"NumberOfEntries: " << handle_operation_list.size() << L'\n';
     for (size_t i = 0; auto const& entry : handle_operation_list.list())
     {

@@ -35,13 +35,13 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t nt_heap_address() const { return nt_heap_address_; }
         [[nodiscard]] uint32_t segment_signature() const;
         [[nodiscard]] uint32_t flags() const;
-        [[nodiscard]] size_units::base_10::bytes reserved() const;
-        [[nodiscard]] size_units::base_10::bytes committed() const;
-        [[nodiscard]] size_units::base_10::bytes uncommitted() const;
-        [[nodiscard]] size_units::base_10::bytes virtual_blocks() const;
+        [[nodiscard]] size_units::base_16::bytes reserved() const;
+        [[nodiscard]] size_units::base_16::bytes committed() const;
+        [[nodiscard]] size_units::base_16::bytes uncommitted() const;
+        [[nodiscard]] size_units::base_16::bytes virtual_blocks() const;
         [[nodiscard]] uint32_t total_segments() const;
         [[nodiscard]] uint32_t total_ucrs() const;
-        [[nodiscard]] size_units::base_10::bytes total_free_size() const;
+        [[nodiscard]] size_units::base_16::bytes total_free_size() const;
         [[nodiscard]] uint16_t allocator_back_trace_index() const;
         [[nodiscard]] uint8_t front_end_heap_type() const;
         [[nodiscard]] bool is_low_fragment_heap_enabled() const { return front_end_heap_type() == FrontEndHeapTypeLowFragmentationHeap; }

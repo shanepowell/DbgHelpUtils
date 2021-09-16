@@ -29,9 +29,9 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
-    size_units::base_10::bytes heap_segment_context::max_allocation_size() const
+    size_units::base_16::bytes heap_segment_context::max_allocation_size() const
     {
-        return size_units::base_10::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::segment_heap_seg_context_max_allocation_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::segment_heap_seg_context_max_allocation_size_field_symbol_name)};
     }
 
     uint64_t heap_segment_context::segment_count() const

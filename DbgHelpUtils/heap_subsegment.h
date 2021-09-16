@@ -29,7 +29,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] process::process_environment_block const& peb() const;
 
         [[nodiscard]] uint64_t address() const { return heap_subsegment_address_; }
-        [[nodiscard]] size_units::base_10::bytes block_size() const;
+        [[nodiscard]] size_units::base_16::bytes block_size() const;
         [[nodiscard]] uint16_t block_size_raw() const;
         [[nodiscard]] uint16_t block_count() const;
 

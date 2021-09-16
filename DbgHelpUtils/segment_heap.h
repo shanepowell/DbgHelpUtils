@@ -40,12 +40,12 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t lfh_free_committed_pages() const;
         [[nodiscard]] uint64_t large_reserved_pages() const;
         [[nodiscard]] uint64_t large_committed_pages() const;
-        [[nodiscard]] size_units::base_10::bytes reserved() const;
-        [[nodiscard]] size_units::base_10::bytes committed() const;
-        [[nodiscard]] size_units::base_10::bytes uncommitted() const;
-        [[nodiscard]] size_units::base_10::bytes large_reserved() const;
-        [[nodiscard]] size_units::base_10::bytes large_committed() const;
-        [[nodiscard]] size_units::base_10::bytes large_uncommitted() const;
+        [[nodiscard]] size_units::base_16::bytes reserved() const;
+        [[nodiscard]] size_units::base_16::bytes committed() const;
+        [[nodiscard]] size_units::base_16::bytes uncommitted() const;
+        [[nodiscard]] size_units::base_16::bytes large_reserved() const;
+        [[nodiscard]] size_units::base_16::bytes large_committed() const;
+        [[nodiscard]] size_units::base_16::bytes large_uncommitted() const;
 
         [[nodiscard]] uint64_t heap_key() const { return heap_key_; }
         [[nodiscard]] uint32_t lfh_heap_key() const { return lfh_heap_key_; }

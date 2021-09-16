@@ -33,7 +33,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t heap_lfh_context_address() const { return heap_lfh_context_address_; }
 
         [[nodiscard]] uint8_t max_affinity() const;
-        [[nodiscard]] size_units::base_10::bytes max_block_size() const;
+        [[nodiscard]] size_units::base_16::bytes max_block_size() const;
         [[nodiscard]] bool with_old_page_crossing_blocks() const;
         [[nodiscard]] bool disable_randomization() const;
 

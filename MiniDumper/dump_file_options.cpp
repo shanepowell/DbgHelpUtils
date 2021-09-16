@@ -24,6 +24,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
     , display_peb_{ vm.count("peb") > 0 }
     , display_heap_{ vm.count("heap") > 0 }
     , display_heap_entries_{ vm.count("heapentries") > 0 }
+    , display_heap_statistics_{ vm.count("heapstats") > 0 }
     , display_crtheap_{ vm.count("crtheap") > 0 }
     , debug_heap_data_{ vm.count("heapdebug") > 0 }
     , display_stack_trace_database_{ vm.count("std") > 0 }
@@ -69,7 +70,7 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
 
     if(vm.count("limitmemoryhexdump") > 0)
     {
-        limit_hex_dump_memory_size_ = dlg_help_utils::size_units::base_10::from_wstring(vm["limitmemoryhexdump"].as<wstring>()).count();
+        limit_hex_dump_memory_size_ = dlg_help_utils::size_units::base_16::from_wstring(vm["limitmemoryhexdump"].as<wstring>()).count();
     }
 
     if(vm.count("type"))

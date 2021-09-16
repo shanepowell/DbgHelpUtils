@@ -13,19 +13,27 @@ namespace dlg_help_utils::dbg_help
 
 namespace dlg_help_utils::heap
 {
+    namespace statistic_views
+    {
+        class system_module_list;
+    }
+
     class heap_subsegment;
     class heap_entry;
     class process_heap_entry;
+    class process_heaps_statistics;
 
     class process_heaps
     {
     public:
-        process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine);
+        process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
 
         [[nodiscard]] std::experimental::generator<process_heap_entry> entries() const;
         [[nodiscard]] std::experimental::generator<process_heap_entry> free_entries() const;
+
+        [[nodiscard]] process_heaps_statistics statistics() const;
 
     private:
         static bool is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment);
@@ -33,5 +41,6 @@ namespace dlg_help_utils::heap
 
     private:
         process::process_environment_block const peb_;
+        statistic_views::system_module_list const& system_module_list_;
     };
 }

@@ -23,13 +23,15 @@
 #include "lfh_segment.h"
 #include "nt_heap.h"
 #include "page_range_descriptor.h"
+#include "process_heaps_statistics.h"
 #include "process_heap_entry.h"
 #include "segment_heap.h"
 
 namespace dlg_help_utils::heap
 {
-    process_heaps::process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine)
+    process_heaps::process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list)
     : peb_{ mini_dump, symbol_engine }
+    , system_module_list_{system_module_list}
     {
     }
 
@@ -444,6 +446,11 @@ namespace dlg_help_utils::heap
                 }
             }
         }
+    }
+
+    process_heaps_statistics process_heaps::statistics() const
+    {
+        return process_heaps_statistics{*this, system_module_list_};
     }
 
     bool process_heaps::is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment)

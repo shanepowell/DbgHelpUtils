@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 #include <functional>
+#include <experimental/generator>
 
 namespace dlg_help_utils
 {
@@ -13,6 +14,8 @@ namespace dlg_help_utils
         [[nodiscard]] size_t read(void* buffer, size_t length);
         size_t skip(size_t length);
         [[nodiscard]] uint64_t current_address() const { return current_address_; }
+
+        [[nodiscard]] std::experimental::generator<std::pair<void const*,size_t>> ranges();
 
     private:
         template<typename T>

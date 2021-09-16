@@ -35,14 +35,14 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] bool is_valid() const { return is_valid_; }
 
-        [[nodiscard]] size_units::base_10::bytes size() const { return size_; }
-        [[nodiscard]] size_units::base_10::bytes previous_size() const { return previous_size_; }
+        [[nodiscard]] size_units::base_16::bytes size() const { return size_; }
+        [[nodiscard]] size_units::base_16::bytes previous_size() const { return previous_size_; }
         [[nodiscard]] bool uncommitted_range() const { return uncommitted_range_; }
         [[nodiscard]] uint16_t memory_cost() const;
         [[nodiscard]] bool allocated() const;
         [[nodiscard]] uint8_t segment_page_offset() const;
         [[nodiscard]] bool has_unused_bytes() const;
-        [[nodiscard]] size_units::base_10::bytes unused_bytes() const;
+        [[nodiscard]] size_units::base_16::bytes unused_bytes() const;
         [[nodiscard]] bool skip_during_walk() const;
         [[nodiscard]] uint32_t spare() const;
         [[nodiscard]] uint32_t allocated_chunk_bits() const;
@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t block_address() const;
         [[nodiscard]] uint64_t block_size() const;
         [[nodiscard]] uint64_t user_address() const;
-        [[nodiscard]] size_units::base_10::bytes user_requested_size() const;
+        [[nodiscard]] size_units::base_16::bytes user_requested_size() const;
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
@@ -63,8 +63,8 @@ namespace dlg_help_utils::heap
         static std::wstring const& symbol_name;
 
     private:
-        [[nodiscard]] size_units::base_10::bytes get_size() const;
-        [[nodiscard]] size_units::base_10::bytes get_previous_size() const;
+        [[nodiscard]] size_units::base_16::bytes get_size() const;
+        [[nodiscard]] size_units::base_16::bytes get_previous_size() const;
         [[nodiscard]] uint16_t get_previous_size_raw() const;
         [[nodiscard]] bool get_is_valid(uint16_t previous_size) const;
         [[nodiscard]] uint64_t read_front_padding_size() const;
@@ -78,8 +78,8 @@ namespace dlg_help_utils::heap
         std::unique_ptr<uint8_t[]> buffer_;
         dbg_help::symbol_type_info const heap_vs_chunk_header_symbol_type_;
         uint64_t const heap_vs_chunk_header_length_;
-        size_units::base_10::bytes const size_;
-        size_units::base_10::bytes const previous_size_{0};
+        size_units::base_16::bytes const size_;
+        size_units::base_16::bytes const previous_size_{0};
         bool const is_valid_{true};
         bool const uncommitted_range_{false};
         uint64_t const ust_address_{0};

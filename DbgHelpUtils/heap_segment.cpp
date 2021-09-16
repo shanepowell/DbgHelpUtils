@@ -80,7 +80,7 @@ namespace dlg_help_utils::heap
             ranges.push_back(uncommitted_range);
         }
 
-        size_units::base_10::bytes previous_size{0};
+        size_units::base_16::bytes previous_size{0};
 
         while(entry_address < last_entry_address)
         {

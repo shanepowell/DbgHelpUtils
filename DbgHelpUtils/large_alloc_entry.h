@@ -31,9 +31,9 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t large_alloc_entry_address() const { return large_alloc_entry_address_; }
 
-        [[nodiscard]] size_units::base_10::bytes size() const { return size_; }
+        [[nodiscard]] size_units::base_16::bytes size() const { return size_; }
         [[nodiscard]] uint64_t virtual_address() const;
-        [[nodiscard]] size_units::base_10::bytes unused_bytes() const;
+        [[nodiscard]] size_units::base_16::bytes unused_bytes() const;
         [[nodiscard]] bool extra_present() const;
         [[nodiscard]] uint32_t guard_page_count() const;
         [[nodiscard]] uint32_t guard_page_alignment() const;
@@ -43,7 +43,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t block_address() const;
         [[nodiscard]] uint64_t block_size() const;
         [[nodiscard]] uint64_t user_address() const;
-        [[nodiscard]] size_units::base_10::bytes user_requested_size() const;
+        [[nodiscard]] size_units::base_16::bytes user_requested_size() const;
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
@@ -54,7 +54,7 @@ namespace dlg_help_utils::heap
         static std::wstring const& symbol_name;
 
     private:
-        [[nodiscard]] size_units::base_10::bytes get_size() const;
+        [[nodiscard]] size_units::base_16::bytes get_size() const;
         [[nodiscard]] uint64_t read_front_padding() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
@@ -64,7 +64,7 @@ namespace dlg_help_utils::heap
         uint64_t const large_alloc_entry_address_;
         dbg_help::symbol_type_info const heap_large_alloc_symbol_type_;
         uint64_t const heap_large_alloc_length_;
-        size_units::base_10::bytes const size_;
+        size_units::base_16::bytes const size_;
         uint64_t const ust_address_{0};
         std::vector<uint64_t> const allocation_stack_trace_{};
    };

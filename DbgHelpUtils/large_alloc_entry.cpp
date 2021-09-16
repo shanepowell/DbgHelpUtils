@@ -35,9 +35,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name);
     }
 
-    size_units::base_10::bytes large_alloc_entry::unused_bytes() const
+    size_units::base_16::bytes large_alloc_entry::unused_bytes() const
     {
-        return size_units::base_10::bytes{stream_utils::get_bit_field_value<uint64_t>(*this, common_symbol_names::heap_large_alloc_unused_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_bit_field_value<uint64_t>(*this, common_symbol_names::heap_large_alloc_unused_bytes_field_symbol_name)};
     }
 
     bool large_alloc_entry::extra_present() const
@@ -80,14 +80,14 @@ namespace dlg_help_utils::heap
         return block_address() + read_front_padding();
     }
 
-    size_units::base_10::bytes large_alloc_entry::user_requested_size() const
+    size_units::base_16::bytes large_alloc_entry::user_requested_size() const
     {
-        return size_units::base_10::bytes{block_size() - unused_bytes().count() - read_front_padding()};
+        return size_units::base_16::bytes{block_size() - unused_bytes().count() - read_front_padding()};
     }
 
-    size_units::base_10::bytes large_alloc_entry::get_size() const
+    size_units::base_16::bytes large_alloc_entry::get_size() const
     {
-        return size_units::base_10::bytes{allocated_pages() * heap().peb().page_size()};
+        return size_units::base_16::bytes{allocated_pages() * heap().peb().page_size()};
     }
 
     uint64_t large_alloc_entry::read_front_padding() const

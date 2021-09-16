@@ -30,8 +30,8 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t descriptor_address() const { return heap_virtual_block_address_; }
         [[nodiscard]] uint64_t address() const { return data_address_; }
-        [[nodiscard]] size_units::base_10::bytes reserved() const;
-        [[nodiscard]] size_units::base_10::bytes committed() const;
+        [[nodiscard]] size_units::base_16::bytes reserved() const;
+        [[nodiscard]] size_units::base_16::bytes committed() const;
 
         [[nodiscard]] std::experimental::generator<heap_entry> entries() const;
 

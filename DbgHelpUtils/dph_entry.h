@@ -36,9 +36,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] process::process_environment_block const& peb() const;
 
         [[nodiscard]] uint64_t virtual_block_address() const { return virtual_block_address_; }
-        [[nodiscard]] size_units::base_10::bytes virtual_block_size() const { return virtual_block_size_; }
+        [[nodiscard]] size_units::base_16::bytes virtual_block_size() const { return virtual_block_size_; }
         [[nodiscard]] uint64_t user_address() const { return user_address_; }
-        [[nodiscard]] size_units::base_10::bytes user_requested_size() const { return user_requested_size_; }
+        [[nodiscard]] size_units::base_16::bytes user_requested_size() const { return user_requested_size_; }
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] bool is_allocated() const { return allocated_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
@@ -53,9 +53,9 @@ namespace dlg_help_utils::heap
 
     private:
         [[nodiscard]] uint64_t get_virtual_block_address() const;
-        [[nodiscard]] size_units::base_10::bytes get_virtual_block_size() const;
+        [[nodiscard]] size_units::base_16::bytes get_virtual_block_size() const;
         [[nodiscard]] uint64_t get_user_address() const;
-        [[nodiscard]] size_units::base_10::bytes get_user_requested_size() const;
+        [[nodiscard]] size_units::base_16::bytes get_user_requested_size() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] uint64_t get_next_alloc_address() const;
         [[nodiscard]] bool get_is_allocated() const;
@@ -68,9 +68,9 @@ namespace dlg_help_utils::heap
         uint64_t const dph_block_information_symbol_length_;
         uint64_t const entry_address_;
         uint64_t const virtual_block_address_{get_virtual_block_address()};
-        size_units::base_10::bytes const virtual_block_size_{get_virtual_block_size()};
+        size_units::base_16::bytes const virtual_block_size_{get_virtual_block_size()};
         uint64_t const user_address_{get_user_address()};
-        size_units::base_10::bytes const user_requested_size_{get_user_requested_size()};
+        size_units::base_16::bytes const user_requested_size_{get_user_requested_size()};
         uint64_t const ust_address_{get_ust_address()};
         uint64_t next_alloc_address_{get_next_alloc_address()};
         bool const allocated_{get_is_allocated()};

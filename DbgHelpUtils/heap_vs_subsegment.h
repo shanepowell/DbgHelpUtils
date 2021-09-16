@@ -31,7 +31,7 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t heap_vs_subsegment_address() const { return heap_vs_subsegment_address_; }
 
-        [[nodiscard]] size_units::base_10::bytes size() const;
+        [[nodiscard]] size_units::base_16::bytes size() const;
         [[nodiscard]] uint16_t signature() const;
         [[nodiscard]] bool is_signature_valid() const;
         [[nodiscard]] bool full_commit() const;

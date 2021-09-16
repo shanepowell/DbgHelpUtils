@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::wstring filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const;
         [[nodiscard]] bool block_use() const;
-        [[nodiscard]] size_units::base_10::bytes data_size() const;
+        [[nodiscard]] size_units::base_16::bytes data_size() const;
         [[nodiscard]] uint32_t request_number() const;
         [[nodiscard]] uint64_t user_address() const;
 

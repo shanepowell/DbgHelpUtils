@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t heap_segment_context_address() const { return heap_segment_context_address_; }
 
-        [[nodiscard]] size_units::base_10::bytes max_allocation_size() const;
+        [[nodiscard]] size_units::base_16::bytes max_allocation_size() const;
         [[nodiscard]] uint64_t segment_count() const;
         [[nodiscard]] uint64_t segment_mask() const;
         [[nodiscard]] uint8_t unit_shift() const;

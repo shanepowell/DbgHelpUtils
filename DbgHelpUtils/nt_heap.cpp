@@ -47,24 +47,24 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_flags_field_symbol_name);
     }
 
-    size_units::base_10::bytes nt_heap::reserved() const
+    size_units::base_16::bytes nt_heap::reserved() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_memory_reserved_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_memory_reserved_field_symbol_name) };
     }
 
-    size_units::base_10::bytes nt_heap::committed() const
+    size_units::base_16::bytes nt_heap::committed() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_memory_committed_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_memory_committed_field_symbol_name) };
     }
 
-    size_units::base_10::bytes nt_heap::uncommitted() const
+    size_units::base_16::bytes nt_heap::uncommitted() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_memory_large_ucr_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_memory_large_ucr_field_symbol_name) };
     }
 
-    size_units::base_10::bytes nt_heap::virtual_blocks() const
+    size_units::base_16::bytes nt_heap::virtual_blocks() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_size_in_virtual_blocks_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_size_in_virtual_blocks_field_symbol_name) };
     }
 
     uint32_t nt_heap::total_segments() const
@@ -77,9 +77,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_total_ucrs_field_symbol_name);
     }
 
-    size_units::base_10::bytes nt_heap::total_free_size() const
+    size_units::base_16::bytes nt_heap::total_free_size() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_free_size_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_total_free_size_field_symbol_name) };
     }
 
     uint16_t nt_heap::allocator_back_trace_index() const

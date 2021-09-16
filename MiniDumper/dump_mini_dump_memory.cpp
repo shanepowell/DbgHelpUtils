@@ -57,7 +57,7 @@ void dump_mini_dump_memory_list_stream_data(mini_dump const& mini_dump, size_t c
             continue;
         }
 
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L" [" << i << "]: " << to_hex_full(entry->StartOfMemoryRange) << L" - " <<
             to_hex_full(entry->StartOfMemoryRange + entry->Memory.DataSize) << L" (" << to_hex(entry->Memory.DataSize)
             << L") (" << bytes{entry->Memory.DataSize} << L")\n";
@@ -120,7 +120,7 @@ void dump_mini_dump_memory64_list_stream_data(mini_dump const& mini_dump, size_t
             continue;
         }
 
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L" [" << i << "]: " << to_hex_full(entry.start_of_memory_range) << L" - " <<
             to_hex_full(entry.start_of_memory_range + entry.location.DataSize) << L" (" <<
             to_hex(entry.location.DataSize) << L") (" << bytes{entry.location.DataSize} << L")\n";
@@ -166,7 +166,7 @@ void dump_mini_dump_memory_info_list_stream_data(mini_dump const& mini_dump, siz
     wcout << L"NumberOfEntries: " << memory_info_list.size() << L'\n';
     for (size_t i = 0; auto const* entry : memory_info_list.list())
     {
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L" [" << i << "]:\n";
         wcout << L"   BaseAddress: " << to_hex_full(entry->BaseAddress) << L'\n';
         wcout << L"   AllocationBase: " << to_hex_full(entry->AllocationBase) << L'\n';
@@ -210,7 +210,7 @@ void dump_mini_dump_system_memory_info_stream_data(mini_dump const& mini_dump, s
         to_hex(info.Flags) << L")\n";
 
     {
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L" BasicInfo:\n";
         wcout << L"  TimerResolution: " << info.BasicInfo.TimerResolution << L'\n';
         wcout << L"  PageSize: " << info.BasicInfo.PageSize << L'\n';
@@ -230,7 +230,7 @@ void dump_mini_dump_system_memory_info_stream_data(mini_dump const& mini_dump, s
 
     {
         wcout << L" FileCacheInfo:\n";
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L"  CurrentSize: " << info.FileCacheInfo.CurrentSize << L" (" << bytes{info.FileCacheInfo.CurrentSize}
             << L")\n";
         wcout << L"  PeakSize: " << info.FileCacheInfo.PeakSize << L" (" << bytes{info.FileCacheInfo.PeakSize} <<
@@ -258,7 +258,7 @@ void dump_mini_dump_system_memory_info_stream_data(mini_dump const& mini_dump, s
     if ((info.Flags & MINIDUMP_SYSMEMINFO1_BASICPERF) == MINIDUMP_SYSMEMINFO1_BASICPERF)
     {
         wcout << L" BasicPerfInfo:\n";
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L"  AvailablePages: " << info.BasicPerfInfo.AvailablePages << L" (" << bytes{
             info.BasicPerfInfo.AvailablePages * info.BasicInfo.PageSize
         } << L")\n";
@@ -283,7 +283,7 @@ void dump_mini_dump_system_memory_info_stream_data(mini_dump const& mini_dump, s
         }
 
         {
-            using namespace size_units::base_10;
+            using namespace size_units::base_16;
             wcout << L"  IoReadTransferCount: " << info.PerfInfo.IoReadTransferCount << L'\n';
             wcout << L"  IoWriteTransferCount: " << info.PerfInfo.IoWriteTransferCount << L'\n';
             wcout << L"  IoOtherTransferCount: " << info.PerfInfo.IoOtherTransferCount << L'\n';

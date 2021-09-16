@@ -32,7 +32,7 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
         return;
     }
 
-    using namespace size_units::base_10;
+    using namespace size_units::base_16;
 
     auto const modules = options.filter_values(L"module");
     auto const module_bases = vector_to_hash_set<uint64_t>(options.filter_values(L"module_base"s));
@@ -145,7 +145,7 @@ void dump_mini_dump_unloaded_module_list_stream_data(mini_dump const& mini_dump,
         wcout << L" [" << i << "]: " << module.name() << L'\n';
         wcout << L"   Base: " << to_hex_full(module->BaseOfImage) << L'\n';
         wcout << L"   CheckSum: " << module->CheckSum << L'\n';
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L"   Size: " << module->SizeOfImage << L" (" << bytes{module->SizeOfImage} << L")\n";
         wcout << L"   Timestamp [local: " << time_utils::to_local_time(module->TimeDateStamp) << L"] [UTC: " <<
             time_utils::to_utc_time(module->TimeDateStamp) << L"]\n";

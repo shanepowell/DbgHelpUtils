@@ -8,7 +8,7 @@
 
 namespace dlg_help_utils::heap
 {
-    heap_lfh_entry::heap_lfh_entry(heap_lfh_context const& heap, uint64_t const heap_lfh_entry_address, size_units::base_10::bytes const block_size, bool const allocated, bool const has_unused_bytes)
+    heap_lfh_entry::heap_lfh_entry(heap_lfh_context const& heap, uint64_t const heap_lfh_entry_address, size_units::base_16::bytes const block_size, bool const allocated, bool const has_unused_bytes)
     : heap_{heap}
     , heap_lfh_entry_address_{heap_lfh_entry_address}
     , block_size_{block_size}
@@ -35,19 +35,19 @@ namespace dlg_help_utils::heap
         return heap_lfh_entry_address() + read_front_padding_size();
     }
 
-    size_units::base_10::bytes heap_lfh_entry::user_requested_size() const
+    size_units::base_16::bytes heap_lfh_entry::user_requested_size() const
     {
-        return size_units::base_10::bytes{block_size().count() - unused_bytes_.count() - read_front_padding_size()};
+        return size_units::base_16::bytes{block_size().count() - unused_bytes_.count() - read_front_padding_size()};
     }
 
-    size_units::base_10::bytes heap_lfh_entry::get_unused_bytes() const
+    size_units::base_16::bytes heap_lfh_entry::get_unused_bytes() const
     {
         if(!has_unused_bytes() || !allocated())
         {
-            return size_units::base_10::bytes{0};
+            return size_units::base_16::bytes{0};
         }
 
-        return size_units::base_10::bytes{segment_heap_utils::read_extra_data(peb(), block_address(), block_size().count()).unused_bytes};
+        return size_units::base_16::bytes{segment_heap_utils::read_extra_data(peb(), block_address(), block_size().count()).unused_bytes};
     }
 
     uint64_t heap_lfh_entry::read_front_padding_size() const

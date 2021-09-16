@@ -32,15 +32,15 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_t index() const { return index_; }
 
         [[nodiscard]] bool extra_present() const;
-        [[nodiscard]] size_units::base_10::bytes extra_bytes() const;
+        [[nodiscard]] size_units::base_16::bytes extra_bytes() const;
         [[nodiscard]] page_range_flags_utils::page_range_flags range_flags() const;
         [[nodiscard]] uint8_t committed_page_count() const;
         [[nodiscard]] uint8_t unit_offset() const;
-        [[nodiscard]] size_units::base_10::bytes unit_size() const;
+        [[nodiscard]] size_units::base_16::bytes unit_size() const;
         [[nodiscard]] uint64_t block_address() const;
-        [[nodiscard]] size_units::base_10::bytes block_size() const;
+        [[nodiscard]] size_units::base_16::bytes block_size() const;
         [[nodiscard]] uint64_t user_address() const;
-        [[nodiscard]] size_units::base_10::bytes user_requested_size() const;
+        [[nodiscard]] size_units::base_16::bytes user_requested_size() const;
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }

@@ -83,14 +83,14 @@ namespace dlg_help_utils::heap
         return stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_unused_bytes_field_symbol_name, buffer_.get()) != 0x0;
     }
 
-    size_units::base_10::bytes heap_vs_entry::unused_bytes() const
+    size_units::base_16::bytes heap_vs_entry::unused_bytes() const
     {
         if(!has_unused_bytes() || !allocated())
         {
-            return size_units::base_10::bytes{0};
+            return size_units::base_16::bytes{0};
         }
 
-        return size_units::base_10::bytes{segment_heap_utils::read_extra_data(peb(), block_address(), block_size()).unused_bytes};
+        return size_units::base_16::bytes{segment_heap_utils::read_extra_data(peb(), block_address(), block_size()).unused_bytes};
     }
 
     bool heap_vs_entry::skip_during_walk() const
@@ -126,7 +126,7 @@ namespace dlg_help_utils::heap
         return block_address() + read_front_padding_size();
     }
 
-    size_units::base_10::bytes heap_vs_entry::user_requested_size() const
+    size_units::base_16::bytes heap_vs_entry::user_requested_size() const
     {
         auto requested_user_size = block_size() - read_front_padding_size();
         if(has_unused_bytes())
@@ -134,7 +134,7 @@ namespace dlg_help_utils::heap
             requested_user_size -= unused_bytes().count();
         }
 
-        return size_units::base_10::bytes{requested_user_size};
+        return size_units::base_16::bytes{requested_user_size};
     }
 
     uint16_t heap_vs_entry::raw_size() const
@@ -143,14 +143,14 @@ namespace dlg_help_utils::heap
         return static_cast<uint16_t>(stream_utils::get_bit_field_value_from_buffer<uint32_t>(*this, common_symbol_names::heap_vs_chunk_header_sizes_unsafe_size_field_symbol_name, buffer_.get()));
     }
 
-    size_units::base_10::bytes heap_vs_entry::get_size() const
+    size_units::base_16::bytes heap_vs_entry::get_size() const
     {
-        return size_units::base_10::bytes{raw_size() << heap().unit_shift_amount()};
+        return size_units::base_16::bytes{raw_size() << heap().unit_shift_amount()};
     }
 
-    size_units::base_10::bytes heap_vs_entry::get_previous_size() const
+    size_units::base_16::bytes heap_vs_entry::get_previous_size() const
     {
-        return size_units::base_10::bytes{static_cast<uint64_t>(get_previous_size_raw()) << heap().unit_shift_amount()};
+        return size_units::base_16::bytes{static_cast<uint64_t>(get_previous_size_raw()) << heap().unit_shift_amount()};
     }
 
     uint16_t heap_vs_entry::get_previous_size_raw() const

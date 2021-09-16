@@ -39,9 +39,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_bit_field_value<uint16_t>(*this, common_symbol_names::heap_page_range_descriptor_extra_present_field_symbol_name) == 0x1;
     }
 
-    size_units::base_10::bytes page_range_descriptor::extra_bytes() const
+    size_units::base_16::bytes page_range_descriptor::extra_bytes() const
     {
-        return size_units::base_10::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_page_range_descriptor_unused_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_page_range_descriptor_unused_bytes_field_symbol_name)};
     }
 
     page_range_flags_utils::page_range_flags page_range_descriptor::range_flags() const
@@ -82,14 +82,14 @@ namespace dlg_help_utils::heap
         return 0;
     }
 
-    size_units::base_10::bytes page_range_descriptor::unit_size() const
+    size_units::base_16::bytes page_range_descriptor::unit_size() const
     {
         if(is_start_of_range())
         {
-            return size_units::base_10::bytes{stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name)};
+            return size_units::base_16::bytes{stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name)};
         }
 
-        return size_units::base_10::bytes{1};
+        return size_units::base_16::bytes{1};
     }
 
     uint64_t page_range_descriptor::block_address() const
@@ -102,22 +102,22 @@ namespace dlg_help_utils::heap
         return block_address() + read_front_padding_size();
     }
 
-    size_units::base_10::bytes page_range_descriptor::block_size() const
+    size_units::base_16::bytes page_range_descriptor::block_size() const
     {
-        return size_units::base_10::bytes{(unit_size().count() << unit_shift_)};
+        return size_units::base_16::bytes{(unit_size().count() << unit_shift_)};
     }
 
-    size_units::base_10::bytes page_range_descriptor::user_requested_size() const
+    size_units::base_16::bytes page_range_descriptor::user_requested_size() const
     {
         auto const size = (unit_size().count() << unit_shift_) - read_front_padding_size();
         auto const extra = extra_bytes().count();
 
         if(extra >= size)
         {
-            return size_units::base_10::bytes{size};
+            return size_units::base_16::bytes{size};
         }
 
-        return size_units::base_10::bytes{size - extra};
+        return size_units::base_16::bytes{size - extra};
     }
 
     bool page_range_descriptor::is_start_of_range() const

@@ -193,7 +193,7 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
         }
         else
         {
-            using namespace size_units::base_10;
+            using namespace size_units::base_16;
 
             wcout << L"  XStateData:\n";
             wcout << L"    ContextSize: " << info_5.XStateData.ContextSize << " (" << bytes{
@@ -222,7 +222,7 @@ void dump_mini_dump_xstate_config_feature(XSTATE_CONFIG_FEATURE_MSC_INFO const& 
 {
     if (auto const mask = 1ui64 << index; (xstate.EnabledFeatures & mask) == mask)
     {
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         wcout << L"      " << name << L'\n';
         wcout << L"        Offset: " << to_hex(xstate.Features[index].Offset) << L'\n';
         wcout << L"        Size: " << to_hex(xstate.Features[index].Size) << L" (" << bytes{xstate.Features[index].Size}
@@ -249,7 +249,7 @@ void dump_mini_dump_process_vm_counters_stream_data(mini_dump const& mini_dump, 
     if (process_vm_counters.process_vm_counters_version() == 1)
     {
         auto const& counters = process_vm_counters.process_vm_counters();
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         // ReSharper disable StringLiteralTypo
         wcout << L"  Revision: " << counters.Revision << L'\n';
         wcout << L"  PageFaultCount: " << counters.PageFaultCount << L'\n';
@@ -277,7 +277,7 @@ void dump_mini_dump_process_vm_counters_stream_data(mini_dump const& mini_dump, 
     else if (process_vm_counters.process_vm_counters_version() == 2)
     {
         auto const& counters = process_vm_counters.process_vm_counters_2();
-        using namespace size_units::base_10;
+        using namespace size_units::base_16;
         // ReSharper disable StringLiteralTypo
         wcout << L"  Revision: " << counters.Revision << L'\n';
         wcout << L"  Flags: " << system_info_utils::vm_counters_2_flags_to_string(counters.Flags) << L" (" <<

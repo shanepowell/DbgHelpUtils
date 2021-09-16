@@ -1,5 +1,7 @@
 ﻿#include "heap_entry.h"
 
+#include <array>
+
 #include "common_symbol_names.h"
 #include "nt_heap.h"
 #include "process_environment_block.h"
@@ -29,7 +31,7 @@ namespace dlg_help_utils::heap
     , user_address_{get_user_address()}
     , end_unused_bytes_{get_end_unused_bytes()}
     , ust_address_{get_ust_address()}
-    , is_valid_{get_is_valid(size_units::base_10::bytes{-1})}
+    , is_valid_{get_is_valid(size_units::base_16::bytes{-1})}
     , allocation_stack_trace_{get_allocation_stack_trace()}
     {
     }
@@ -69,13 +71,13 @@ namespace dlg_help_utils::heap
     , user_address_{get_user_address()}
     , end_unused_bytes_{get_virtual_alloc_end_unused_bytes(end_address)}
     , ust_address_{get_ust_address()}
-    , is_valid_{get_is_valid(size_units::base_10::bytes{-1})}
+    , is_valid_{get_is_valid(size_units::base_16::bytes{-1})}
     , is_virtual_alloc_{true}
     , allocation_stack_trace_{get_allocation_stack_trace()}
     {
     }
 
-    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer, size_units::base_10::bytes const previous_size)
+    heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer, size_units::base_16::bytes const previous_size)
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
@@ -136,7 +138,7 @@ namespace dlg_help_utils::heap
         return address() == heap().nt_heap_address();
     }
 
-    bool heap_entry::get_is_valid(size_units::base_10::bytes const previous_size) const
+    bool heap_entry::get_is_valid(size_units::base_16::bytes const previous_size) const
     {
         if(peb().is_x86_target())
         {
@@ -156,7 +158,7 @@ namespace dlg_help_utils::heap
             }
         }
 
-        return previous_size < size_units::base_10::bytes{0} || previous_size == previous_size_;
+        return previous_size < size_units::base_16::bytes{0} || previous_size == previous_size_;
     }
 
     uint8_t heap_entry::get_flags()  const
@@ -184,17 +186,17 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, buffer_.get());
     }
 
-    size_units::base_10::bytes heap_entry::get_unused_bytes() const
+    size_units::base_16::bytes heap_entry::get_unused_bytes() const
     {
-        size_units::base_10::bytes unused_bytes_data;
+        size_units::base_16::bytes unused_bytes_data;
         if(ust_user_address_ != 0)
         {
             const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_entry_symbol_type_, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, ust_user_address_ - heap_entry_length_);
-            unused_bytes_data = size_units::base_10::bytes{unused_bytes_value.value()};
+            unused_bytes_data = size_units::base_16::bytes{unused_bytes_value.value()};
         }
         else
         {
-            unused_bytes_data = size_units::base_10::bytes{unused_bytes_raw()};
+            unused_bytes_data = size_units::base_16::bytes{unused_bytes_raw()};
         }
 
         if(unused_bytes_data > size())
@@ -205,16 +207,16 @@ namespace dlg_help_utils::heap
         return unused_bytes_data;
     }
 
-    size_units::base_10::bytes heap_entry::get_requested_size() const
+    size_units::base_16::bytes heap_entry::get_requested_size() const
     {
-        size_units::base_10::bytes unused_bytes_data;
+        size_units::base_16::bytes unused_bytes_data;
         if(ust_user_address_ != 0)
         {
             unused_bytes_data = unused_bytes();
         }
         else
         {
-            unused_bytes_data = size_units::base_10::bytes{unused_bytes_raw()};
+            unused_bytes_data = size_units::base_16::bytes{unused_bytes_raw()};
         }
 
         if(unused_bytes_data > size())
@@ -239,14 +241,14 @@ namespace dlg_help_utils::heap
         return 0;
     }
 
-    size_units::base_10::bytes heap_entry::get_end_unused_bytes() const
+    size_units::base_16::bytes heap_entry::get_end_unused_bytes() const
     {
         if(user_address() == 0)
         {
-            return size_units::base_10::bytes{0};
+            return size_units::base_16::bytes{0};
         }
 
-        return size_units::base_10::bytes{(address() + size().count()) - (user_address() + user_requested_size().count())};
+        return size_units::base_16::bytes{(address() + size().count()) - (user_address() + user_requested_size().count())};
     }
 
     uint64_t heap_entry::get_ust_address() const
@@ -315,14 +317,14 @@ namespace dlg_help_utils::heap
         return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
     }
 
-    size_units::base_10::bytes heap_entry::get_virtual_alloc_requested_size(uint64_t const size, uint16_t const unused_bytes)
+    size_units::base_16::bytes heap_entry::get_virtual_alloc_requested_size(uint64_t const size, uint16_t const unused_bytes)
     {
-        return size_units::base_10::bytes{size - unused_bytes};
+        return size_units::base_16::bytes{size - unused_bytes};
     }
 
-    size_units::base_10::bytes heap_entry::get_virtual_alloc_end_unused_bytes(uint64_t const end_address) const
+    size_units::base_16::bytes heap_entry::get_virtual_alloc_end_unused_bytes(uint64_t const end_address) const
     {
-        return size_units::base_10::bytes{end_address - (user_address() + user_requested_size().count())};
+        return size_units::base_16::bytes{end_address - (user_address() + user_requested_size().count())};
     }
 
     dbg_help::symbol_type_info heap_entry::get_heap_entry_symbol_type() const

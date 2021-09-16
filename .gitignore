@@ -38,3 +38,4 @@ testCaseCollection.xml
 vcpkg_installed
 /*.dll
 /CrashDumps
+/failed

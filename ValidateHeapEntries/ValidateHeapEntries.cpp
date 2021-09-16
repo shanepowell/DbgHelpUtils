@@ -22,6 +22,7 @@
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_entry.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
+#include "DbgHelpUtils/system_module_list.h"
 
 namespace ConsoleForeground
 {
@@ -120,9 +121,10 @@ int main(int const argc, char* argv[])
 
                 symbol_engine_ui ui;
                 dlg_help_utils::dbg_help::symbol_engine symbol_engine{ui};
+                dlg_help_utils::heap::statistic_views::system_module_list module_list;
 
                 std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> heap_allocations;
-                dlg_help_utils::heap::process_heaps const heaps{dump_file, symbol_engine};
+                dlg_help_utils::heap::process_heaps const heaps{dump_file, symbol_engine, module_list};
                 auto const hex_length = heaps.peb().machine_hex_printable_length();
                 for(auto const& entry : heaps.entries())
                 {
@@ -190,23 +192,24 @@ int main(int const argc, char* argv[])
                     }
                     else
                     {
-                        auto stream = it->second.user_data();
-                        while(!stream.eof())
+                        size_t length{0};
+                        for(auto stream = it->second.user_data();
+                            auto [range_buffer, range_length] : stream.ranges())
                         {
-                            char ch;
-                            if(stream.read(&ch, sizeof ch) != sizeof ch)
+                            auto* start_data = static_cast<char const*>(range_buffer);
+                            auto* data = start_data;
+                            auto* end_data = data + range_length;
+                            while(data < end_data)
                             {
-                                *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but failed to read dmp heap allocation\n";
-                                successful = false;
-                                break;
+                                if(*data != allocation.fill_char)
+                                {
+                                    *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but failed fill compare of [" << allocation.fill_char << "] compared to dmp allocation of [" << *data << "] @ [" << dlg_help_utils::stream_hex_dump::to_hex(length + (data - start_data)) << "]\n";
+                                    successful = false;
+                                    break;
+                                }
+                                ++data;
                             }
-
-                            if(ch != allocation.fill_char)
-                            {
-                                *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but failed fill compare of [" << allocation.fill_char << "] compared to dmp allocation of [" << ch << "] @ [" << dlg_help_utils::stream_hex_dump::to_hex(stream.current_address() - sizeof ch, hex_length) << "]\n";
-                                successful = false;
-                                break;
-                            }
+                            length += range_length;
                         }
                     }
                 }

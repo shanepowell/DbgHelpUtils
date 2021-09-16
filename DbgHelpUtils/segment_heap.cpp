@@ -166,32 +166,32 @@ namespace dlg_help_utils::heap
         return stream_utils::get_machine_size_field_value(*this, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name);
     }
 
-    size_units::base_10::bytes segment_heap::reserved() const
+    size_units::base_16::bytes segment_heap::reserved() const
     {
-        return size_units::base_10::bytes{total_reserved_pages() * peb().page_size()};
+        return size_units::base_16::bytes{total_reserved_pages() * peb().page_size()};
     }
 
-    size_units::base_10::bytes segment_heap::committed() const
+    size_units::base_16::bytes segment_heap::committed() const
     {
-        return size_units::base_10::bytes{total_committed_pages() * peb().page_size()};
+        return size_units::base_16::bytes{total_committed_pages() * peb().page_size()};
     }
 
-    size_units::base_10::bytes segment_heap::uncommitted() const
+    size_units::base_16::bytes segment_heap::uncommitted() const
     {
         return reserved() - committed();
     }
 
-    size_units::base_10::bytes segment_heap::large_reserved() const
+    size_units::base_16::bytes segment_heap::large_reserved() const
     {
-        return size_units::base_10::bytes{large_reserved_pages() * peb().page_size()};
+        return size_units::base_16::bytes{large_reserved_pages() * peb().page_size()};
     }
 
-    size_units::base_10::bytes segment_heap::large_committed() const
+    size_units::base_16::bytes segment_heap::large_committed() const
     {
-        return size_units::base_10::bytes{large_committed_pages() * peb().page_size()};
+        return size_units::base_16::bytes{large_committed_pages() * peb().page_size()};
     }
 
-    size_units::base_10::bytes segment_heap::large_uncommitted() const
+    size_units::base_16::bytes segment_heap::large_uncommitted() const
     {
         return large_reserved() - large_committed();
     }

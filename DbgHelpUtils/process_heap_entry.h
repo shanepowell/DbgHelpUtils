@@ -37,7 +37,8 @@ namespace dlg_help_utils::heap
         process_heap_entry(large_alloc_entry const& entry, crt_entry const& crt_block);
 
         [[nodiscard]] uint64_t user_address() const;
-        [[nodiscard]] size_units::base_10::bytes user_requested_size() const;
+        [[nodiscard]] size_units::base_16::bytes user_requested_size() const;
+        [[nodiscard]] size_units::base_16::bytes overhead_size() const { return overhead_size_; }
         [[nodiscard]] std::wstring const& filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const { return line_number_; }
 
@@ -48,17 +49,18 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool contains_address(uint64_t address) const;
 
     private:
-        [[nodiscard]] uint64_t get_nt_heap_entry_block_start(heap_entry const& entry) const;
-        [[nodiscard]] uint64_t get_nt_heap_entry_block_size(heap_entry const& entry) const;
+        [[nodiscard]] uint64_t get_nt_heap_entry_check_block_start(heap_entry const& entry) const;
+        [[nodiscard]] uint64_t get_nt_heap_entry_check_block_size(heap_entry const& entry) const;
 
     private:
         process::process_environment_block const& peb_;
         uint64_t const user_address_;
-        size_units::base_10::bytes const user_size_;
+        size_units::base_16::bytes const user_size_;
         std::vector<uint64_t> const allocation_stack_trace_;
         std::wstring const file_name_;
         uint32_t const line_number_{0};
-        uint64_t const block_start_address_;
-        uint64_t const block_end_address_;
+        uint64_t const check_block_start_address_;
+        uint64_t const check_block_end_address_;
+        size_units::base_16::bytes const overhead_size_;
     };
 }

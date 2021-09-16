@@ -16,8 +16,9 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , block_start_address_{entry.virtual_block_address()}
-    , block_end_address_{block_start_address_ + entry.virtual_block_size().count()}
+    , check_block_start_address_{entry.virtual_block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.virtual_block_size().count()}
+    , overhead_size_{entry.virtual_block_size().count() - user_size_.count()}
     {
     }
 
@@ -26,8 +27,9 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , block_start_address_{get_nt_heap_entry_block_start(entry)}
-    , block_end_address_{block_start_address_ + get_nt_heap_entry_block_size(entry)}
+    , check_block_start_address_{get_nt_heap_entry_check_block_start(entry)}
+    , check_block_end_address_{check_block_start_address_ + get_nt_heap_entry_check_block_size(entry)}
+    , overhead_size_{entry.unused_bytes()}
     {
     }
 
@@ -36,8 +38,9 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size().count()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
+    , overhead_size_{entry.block_size().count() - user_size_.count()}
     {
     }
 
@@ -46,18 +49,20 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size().count()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
+    , overhead_size_{entry.block_size().count() - user_size_.count()}
     {
     }
 
     process_heap_entry::process_heap_entry(heap_vs_entry const& entry)
     : peb_{entry.peb()}
     , user_address_{entry.uncommitted_range() ? entry.block_address() : entry.user_address()}
-    , user_size_{entry.uncommitted_range() ? size_units::base_10::bytes{entry.block_size()} : entry.user_requested_size()}
+    , user_size_{entry.uncommitted_range() ? size_units::base_16::bytes{entry.block_size()} : entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size()}
+    , overhead_size_{entry.block_size() - user_size_.count()}
     {
     }
 
@@ -66,8 +71,9 @@ namespace dlg_help_utils::heap
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size()}
+    , overhead_size_{entry.block_size() - user_size_.count()}
     {
     }
 
@@ -78,8 +84,9 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
-    , block_start_address_{entry.virtual_block_address()}
-    , block_end_address_{block_start_address_ + entry.virtual_block_size().count()}
+    , check_block_start_address_{entry.virtual_block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.virtual_block_size().count()}
+    , overhead_size_{entry.virtual_block_size().count() - user_size_.count()}
     {
     }
 
@@ -90,8 +97,9 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
-    , block_start_address_{get_nt_heap_entry_block_start(entry)}
-    , block_end_address_{block_start_address_ + get_nt_heap_entry_block_size(entry)}
+    , check_block_start_address_{get_nt_heap_entry_check_block_start(entry)}
+    , check_block_end_address_{check_block_start_address_ + get_nt_heap_entry_check_block_size(entry)}
+    , overhead_size_{entry.unused_bytes()}
     {
     }
 
@@ -102,8 +110,9 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size().count()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
+    , overhead_size_{entry.block_size().count() - user_size_.count()}
     {
     }
 
@@ -114,8 +123,9 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size().count()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
+    , overhead_size_{entry.block_size().count() - user_size_.count()}
     {
     }
 
@@ -126,8 +136,9 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size()}
+    , overhead_size_{entry.block_size() - user_size_.count()}
     {
     }
 
@@ -138,8 +149,9 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
-    , block_start_address_{entry.block_address()}
-    , block_end_address_{block_start_address_ + entry.block_size()}
+    , check_block_start_address_{entry.block_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.block_size()}
+    , overhead_size_{entry.block_size() - user_size_.count()}
     {
     }
 
@@ -147,16 +159,16 @@ namespace dlg_help_utils::heap
     {
         if(user_address_ == 0)
         {
-            return block_start_address_;
+            return check_block_start_address_;
         }
         return user_address_;
     }
 
-    size_units::base_10::bytes process_heap_entry::user_requested_size() const
+    size_units::base_16::bytes process_heap_entry::user_requested_size() const
     {
         if(user_address_ == 0)
         {
-            return  size_units::base_10::bytes{block_end_address_ - block_start_address_};
+            return  size_units::base_16::bytes{check_block_end_address_ - check_block_start_address_};
         }
         return user_size_;
     }
@@ -169,10 +181,10 @@ namespace dlg_help_utils::heap
 
     bool process_heap_entry::contains_address(uint64_t const address) const
     {
-        return address >= block_start_address_ && address < block_end_address_;
+        return address >= check_block_start_address_ && address < check_block_end_address_;
     }
 
-    uint64_t process_heap_entry::get_nt_heap_entry_block_start(heap_entry const& entry) const
+    uint64_t process_heap_entry::get_nt_heap_entry_check_block_start(heap_entry const& entry) const
     {
         if(user_address_ == 0)
         {
@@ -182,7 +194,7 @@ namespace dlg_help_utils::heap
         return user_address_;
     }
 
-    uint64_t process_heap_entry::get_nt_heap_entry_block_size(heap_entry const& entry) const
+    uint64_t process_heap_entry::get_nt_heap_entry_check_block_size(heap_entry const& entry) const
     {
         if(user_address_ == 0)
         {

@@ -85,10 +85,10 @@ namespace dlg_help_utils::heap
         return stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name);
     }
 
-    size_units::base_10::bytes heap_lfh_bucket::reciprocal_block_size() const
+    size_units::base_16::bytes heap_lfh_bucket::reciprocal_block_size() const
     {
         validate_enabled();
-        return size_units::base_10::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name)};
     }
 
     uint8_t heap_lfh_bucket::shift() const
@@ -164,14 +164,14 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint8_t>(*this, common_symbol_names::heap_lfh_bucket_bucket_index_field_symbol_name);
     }
 
-    size_units::base_10::bytes heap_lfh_bucket::get_bucket_granularity() const
+    size_units::base_16::bytes heap_lfh_bucket::get_bucket_granularity() const
     {
-        return size_units::base_10::bytes{bucket_index_map.lower_bound(bucket_index())->second.granularity};
+        return size_units::base_16::bytes{bucket_index_map.lower_bound(bucket_index())->second.granularity};
     }
 
-    size_units::base_10::bytes heap_lfh_bucket::get_max_allocation_size() const
+    size_units::base_16::bytes heap_lfh_bucket::get_max_allocation_size() const
     {
         auto const& bucket_data = bucket_index_map.lower_bound(bucket_index());
-        return size_units::base_10::bytes{bucket_data->second.base_size + bucket_data->second.granularity * (bucket_index() - bucket_data->second.offset + bucket_data->second.index_adjustment)};
+        return size_units::base_16::bytes{bucket_data->second.base_size + bucket_data->second.granularity * (bucket_index() - bucket_data->second.offset + bucket_data->second.index_adjustment)};
     }
 }

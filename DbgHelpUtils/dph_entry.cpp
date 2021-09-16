@@ -34,9 +34,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_pointer_raw(walker(), entry_address(), dph_heap_block_symbol_type_, symbol_name, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name);
     }
 
-    size_units::base_10::bytes dph_entry::get_virtual_block_size() const
+    size_units::base_16::bytes dph_entry::get_virtual_block_size() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name)};
     }
 
     uint64_t dph_entry::get_user_address() const
@@ -44,9 +44,9 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_pointer_raw(walker(), entry_address(), dph_heap_block_symbol_type_, symbol_name, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name);
     }
 
-    size_units::base_10::bytes dph_entry::get_user_requested_size() const
+    size_units::base_16::bytes dph_entry::get_user_requested_size() const
     {
-        return size_units::base_10::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name)};
     }
 
     uint64_t dph_entry::get_ust_address() const

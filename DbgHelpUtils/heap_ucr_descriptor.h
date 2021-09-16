@@ -28,7 +28,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] process::process_environment_block const& peb() const;
 
         [[nodiscard]] uint64_t address() const;
-        [[nodiscard]] size_units::base_10::bytes size() const;
+        [[nodiscard]] size_units::base_16::bytes size() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_ucr_descriptor_address_; }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_ucr_descriptor_symbol_type_; }
