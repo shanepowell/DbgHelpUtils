@@ -29,6 +29,36 @@ namespace dlg_help_utils::heap
         return impl_->buckets();
     }
 
+    size_units::base_16::bytes process_heaps_statistic_view::allocated_average() const
+    {
+        return impl_->allocated_average();
+    }
+
+    size_units::base_16::bytes process_heaps_statistic_view::allocated_total() const
+    {
+        return impl_->allocated_total();
+    }
+
+    size_units::base_16::bytes process_heaps_statistic_view::free_total() const
+    {
+        return impl_->free_total();
+    }
+
+    size_units::base_16::bytes process_heaps_statistic_view::overhead_total() const
+    {
+        return impl_->overhead_total();
+    }
+
+    size_t process_heaps_statistic_view::allocated_count() const
+    {
+        return impl_->allocated_count();
+    }
+
+    size_t process_heaps_statistic_view::free_count() const
+    {
+        return impl_->free_count();
+    }
+
     std::wstring process_heaps_statistic_view::to_wstring(view_type const type)
     {
         switch(type)

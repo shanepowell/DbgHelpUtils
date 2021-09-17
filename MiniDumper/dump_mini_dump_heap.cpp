@@ -1348,6 +1348,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     wcout << std::format(L"{:<10} ", L"allocated");
     wcout << std::format(L"{:<10} ", L"allocated");
     wcout << std::format(L"{:<10} ", L"allocated");
+    wcout << std::format(L"{:<10} ", L"overhead");
     wcout << std::format(L"{:<8} ", L"free");
     wcout << std::format(L"{:<10} ", L"free");
     wcout << std::format(L"{:<7} ", L"count");
@@ -1367,6 +1368,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     wcout << std::format(L"{:<10} ", L"count");
     wcout << std::format(L"{:<10} ", L"total");
     wcout << std::format(L"{:<10} ", L"average");
+    wcout << std::format(L"{:<10} ", L"total");
     wcout << std::format(L"{:<8} ", L"count");
     wcout << std::format(L"{:<10} ", L"total");
     wcout << std::format(L"{:<7} ", L"percent");
@@ -1375,22 +1377,23 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        wcout << std::format(L" {0:=<10} ", L"");
-        wcout << std::format(L"{0:=<{1}} ", L"", single_line_range_title_length);
+        wcout << std::format(L"={0:=<10}=", L"");
+        wcout << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
     }
     else
     {
-        wcout << std::format(L" {0:=<10} {1:=<10} ", L"", L"");
+        wcout << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
     }
 
-    wcout << std::format(L"{:=<10} ", L"");
-    wcout << std::format(L"{:=<10} ", L"");
-    wcout << std::format(L"{:=<10} ", L"");
-    wcout << std::format(L"{:=<8} ", L"");
-    wcout << std::format(L"{:=<10} ", L"");
-    wcout << std::format(L"{:=<7} ", L"");
-    wcout << std::format(L"{:=<7} ", L"");
-    wcout << L" =====================\n";
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<8}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<7}=", L"");
+    wcout << std::format(L"{:=<7}=", L"");
+    wcout << L"======================\n";
 
     for(auto const& bucket : view_by_size_frequency.buckets())
     {
@@ -1406,6 +1409,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
         wcout << std::format(L"{:10} ", locale_formatting::to_wstring(bucket.allocated_count()));
         wcout << std::format(L"{:10} ", to_wstring(bucket.allocated_total()));
         wcout << std::format(L"{:10} ", to_wstring(bucket.allocated_average()));
+        wcout << std::format(L"{:10} ", to_wstring(bucket.overhead_total()));
         wcout << std::format(L"{:8} ", locale_formatting::to_wstring(bucket.free_count()));
         wcout << std::format(L"{:10} ", to_wstring(bucket.free_total()));
         wcout << std::format(L"{:<7.2f} ", bucket.range_count_percent());
@@ -1423,6 +1427,43 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
             wcout << '\n';
         }
     }
+
+    if(view_by_size_frequency.is_range_single_value())
+    {
+        wcout << std::format(L"={0:=<10}=", L"");
+        wcout << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
+    }
+    else
+    {
+        wcout << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
+    }
+
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<8}=", L"");
+    wcout << std::format(L"{:=<10}=", L"");
+    wcout << std::format(L"{:=<7}=", L"");
+    wcout << std::format(L"{:=<7}=", L"");
+    wcout << L"======================\n";
+
+    if(view_by_size_frequency.is_range_single_value())
+    {
+        wcout << std::format(L" {:10} ", L"");
+        wcout << std::format(L"{0:>{1}} ", L"Total:", single_line_range_title_length);
+    }
+    else
+    {
+        wcout << std::format(L" {0:10} {1:>10} ", L"", L"Total:");
+    }
+    wcout << std::format(L"{:10} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
+    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_total()));
+    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_average()));
+    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.overhead_total()));
+    wcout << std::format(L"{:8} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
+    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.free_total()));
+    wcout << '\n';
 }
 
 void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)

@@ -3,6 +3,8 @@
 #include <string>
 #include <experimental/generator>
 
+#include "size_units.h"
+
 namespace dlg_help_utils::heap
 {
     namespace statistic_views
@@ -43,6 +45,13 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_range_single_value() const;
 
         [[nodiscard]] std::experimental::generator<process_heaps_statistic_bucket_view> buckets() const;
+
+        [[nodiscard]] size_units::base_16::bytes allocated_average() const;
+        [[nodiscard]] size_units::base_16::bytes allocated_total() const;
+        [[nodiscard]] size_units::base_16::bytes free_total() const;
+        [[nodiscard]] size_units::base_16::bytes overhead_total() const;
+        [[nodiscard]] size_t allocated_count() const;
+        [[nodiscard]] size_t free_count() const;
 
         static std::wstring to_wstring(view_type type);
     private:
