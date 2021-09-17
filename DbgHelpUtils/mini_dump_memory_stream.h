@@ -23,9 +23,9 @@ namespace dlg_help_utils
 
     private:
         std::function<void const*(uint64_t base_address, uint64_t& size, bool enable_module_loading)> get_process_memory_range_;
-        bool const enable_module_loading_;
+        bool enable_module_loading_;
         uint64_t current_address_;
-        uint64_t const end_address_{};
+        uint64_t end_address_{};
         uint8_t const* memory_{nullptr};
         uint8_t const* end_memory_{nullptr};
     };

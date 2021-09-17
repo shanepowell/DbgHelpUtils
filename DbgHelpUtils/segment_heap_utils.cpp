@@ -1,7 +1,9 @@
 ﻿#include "segment_heap_utils.h"
 
+#include "common_symbol_names.h"
 #include "process_environment_block.h"
 #include "stream_utils.h"
+#include "ust_address_stack_trace.h"
 
 namespace dlg_help_utils::heap
 {
@@ -49,40 +51,56 @@ namespace dlg_help_utils::heap
             return 0;
         }
 
-        // search for 0x01 0x01 0x00 0x00 0x00 0x00 sequence that seems to be the start of the UST data area
-        size_t found_marker = 0;
-        while(ust_field_address < end_address && found_marker < 6)
+        auto reset_stream = stream;
+        auto reset_ust_field_address = ust_field_address;
+
+        while(!stream.eof())
         {
-            uint8_t data;
-            if(stream.read(&data, 1) != 1)
+            // search for 0x01 0x01 0x00 0x00 0x00 0x00 sequence that seems to be the start of the UST data area
+            size_t found_marker = 0;
+            const size_t header_size = peb.is_x64_target() ? 0xE : 0x6;
+            while(ust_field_address < end_address && found_marker < header_size)
+            {
+                uint8_t data;
+                if(stream.read(&data, 1) != 1)
+                {
+                    return 0;
+                }
+
+                if(data == (found_marker < 2 ? 0x01 : 0x0))
+                {
+                    if(found_marker == 0)
+                    {
+                        reset_stream = stream;
+                        reset_ust_field_address = ust_field_address;
+                    }
+                    ++found_marker;
+                }
+                else
+                {
+                    if(found_marker > 0)
+                    {
+                        stream = reset_stream;
+                        ust_field_address = reset_ust_field_address;
+                    }
+                    found_marker = 0;
+                }
+                ++ust_field_address;
+            }
+
+            if(found_marker != header_size)
             {
                 return 0;
             }
 
-            if(data == (found_marker < 2 ? 0x01 : 0x0))
+            if(const auto ust_address = stream_utils::read_machine_size_field_value(peb, ust_field_address); ust_address.has_value())
             {
-                ++found_marker;
+                // is valid pointer?
+                if(ust_address_stack_trace::is_valid_ust_address(peb, ust_address.value()))
+                {
+                    return ust_address.value();
+                }
             }
-            else
-            {
-                found_marker = 0;
-            }
-            ++ust_field_address;
-        }
-
-        if(found_marker != 6)
-        {
-            return 0;
-        }
-
-        if(peb.is_x64_target())
-        {
-            ust_field_address += 0x08;
-        }
-
-        if(const auto ust_address = stream_utils::read_machine_size_field_value(peb, ust_field_address); ust_address.has_value())
-        {
-            return ust_address.value();
         }
 
         return 0;

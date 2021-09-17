@@ -27,6 +27,8 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] std::vector<uint64_t> read_allocation_stack_trace(process::process_environment_block const& peb, uint64_t ust_address) const;
 
+        [[nodiscard]] static bool is_valid_ust_address(process::process_environment_block const& peb, uint64_t ust_address);
+
     private:
         [[nodiscard]] dbg_help::symbol_type_info get_rtl_stack_trace_entry_symbol_type() const;
         [[nodiscard]] static std::wstring const& get_ust_address_depth_field(process::process_environment_block const& peb);

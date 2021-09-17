@@ -56,6 +56,42 @@ namespace dlg_help_utils::heap
         return trace;
     }
 
+    bool ust_address_stack_trace::is_valid_ust_address(process::process_environment_block const& peb, uint64_t const ust_address)
+    {
+        if(ust_address == 0)
+        {
+            return false;
+        }
+
+        auto const rtl_stack_trace_entry_symbol_type = stream_utils::get_type(peb.walker(), common_symbol_names::rtl_stack_trace_entry_structure_symbol_name);
+
+        if(auto const rtl_stack_trace_entry_symbol_length =  stream_utils::get_type_length(rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_structure_symbol_name);
+            peb.walker().find_memory_range(ust_address, 0x01, rtl_stack_trace_entry_symbol_length) != rtl_stack_trace_entry_symbol_length)
+        {
+            return false;
+        }
+
+        auto const depth = stream_utils::find_basic_type_field_value_in_type<uint16_t>(peb.walker(), rtl_stack_trace_entry_symbol_type, get_ust_address_depth_field(peb), ust_address);
+        if(!depth.has_value())
+        {
+            return false;
+        }
+
+        const auto backtrace_array = stream_utils::find_field_type_and_offset_in_type(rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
+        if(!backtrace_array.has_value())
+        {
+            stream_utils::throw_cant_get_field_data(common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name);
+        }
+
+        auto const array_count = backtrace_array.value().first.array_count();
+        if(!array_count.has_value())
+        {
+            stream_utils::throw_cant_get_field_data(common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name);
+        }
+
+        return depth < array_count.value();
+    }
+
     std::wstring const& ust_address_stack_trace::get_ust_address_depth_field(process::process_environment_block const& peb)
     {
         if(peb.heap_page_alloc_enabled())
