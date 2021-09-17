@@ -29,9 +29,10 @@
 
 namespace dlg_help_utils::heap
 {
-    process_heaps::process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list)
+    process_heaps::process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
     : peb_{ mini_dump, symbol_engine }
     , system_module_list_{system_module_list}
+    , statistic_view_options_{statistic_view_options}
     {
     }
 
@@ -450,7 +451,7 @@ namespace dlg_help_utils::heap
 
     process_heaps_statistics process_heaps::statistics() const
     {
-        return process_heaps_statistics{*this, system_module_list_};
+        return process_heaps_statistics{*this, system_module_list_, statistic_view_options_};
     }
 
     bool process_heaps::is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment)

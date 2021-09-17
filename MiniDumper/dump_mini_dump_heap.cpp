@@ -1258,7 +1258,7 @@ void print_process_entry(heap::process_heap_entry const& entry, process::process
 
 void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list()};
+    heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
     cout << "Heap Allocated Entries:\n";
@@ -1342,7 +1342,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     }
     else
     {
-        wcout << std::format(L" {0:<10}   {1:<10} ", L"range", L"range");
+        wcout << std::format(L" {0:<10} {1:<10} ", L"range", L"range");
     }
 
     wcout << std::format(L"{:<10} ", L"allocated");
@@ -1361,7 +1361,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     }
     else
     {
-        wcout << std::format(L" {0:<10} - {1:<10} ", L"start", L"end");
+        wcout << std::format(L" {0:<10} {1:<10} ", L"start", L"size");
     }
 
     wcout << std::format(L"{:<10} ", L"count");
@@ -1380,7 +1380,7 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
     }
     else
     {
-        wcout << std::format(L" {0:=<10} - {1:=<10} ", L"", L"");
+        wcout << std::format(L" {0:=<10} {1:=<10} ", L"", L"");
     }
 
     wcout << std::format(L"{:=<10} ", L"");
@@ -1394,15 +1394,14 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
 
     for(auto const& bucket : view_by_size_frequency.buckets())
     {
-        if(bucket.is_range_single_value())
+        if(view_by_size_frequency.is_range_single_value())
         {
             wcout << std::format(L" {:10} ", to_wstring(bucket.start_range()));
             wcout << std::format(L"{0:{1}} ", std::format(L"0x{0:x}", bucket.start_range().count()), single_line_range_title_length);
-            //wcout << std::format(L"0x{0:0>{1}x} ", bucket.start_range().count(), hex_length);
         }
         else
         {
-            wcout << std::format(L" {0:10} - {1:10} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range()));
+            wcout << std::format(L" {0:10} {1:10} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
         }
         wcout << std::format(L"{:10} ", locale_formatting::to_wstring(bucket.allocated_count()));
         wcout << std::format(L"{:10} ", to_wstring(bucket.allocated_total()));
@@ -1428,11 +1427,17 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
 
 void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list()};
+    heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
     auto const hex_length = heaps.peb().machine_hex_printable_length();
     auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();
     wcout << "Heap Statistics:\n";
     dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
+    wcout << '\n';
+    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
+    wcout << '\n';
+    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
+    wcout << '\n';
+    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
 }
 

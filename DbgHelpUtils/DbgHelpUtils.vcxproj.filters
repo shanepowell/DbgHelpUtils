@@ -384,6 +384,18 @@
     <ClCompile Include="system_module_list.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
+    <ClCompile Include="by_size_ranges_frequency_view.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClCompile>
+    <ClCompile Include="statistic_view_options.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClCompile>
+    <ClCompile Include="by_stacktrace_frequency.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClCompile>
+    <ClCompile Include="by_application_callsite_frequency.cpp">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -781,6 +793,18 @@
     </ClInclude>
     <ClInclude Include="string_utils.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="by_size_ranges_frequency_view.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="statistic_view_options.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="by_stacktrace_frequency.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="by_application_callsite_frequency.h">
+      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

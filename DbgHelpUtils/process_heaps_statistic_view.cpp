@@ -7,8 +7,8 @@ using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
-    process_heaps_statistic_view::process_heaps_statistic_view(view_type const view, statistic_views::allocation_stack_trace_helper const& helper, process_heaps const& process, std::map<uint64_t, process_heap_entry> const& allocated_entries, std::map<uint64_t, process_heap_entry> const& free_entries)
-    : impl_{interface_process_heaps_statistic_view_impl::make(view, helper, process, allocated_entries, free_entries)}
+    process_heaps_statistic_view::process_heaps_statistic_view(view_type const view, statistic_views::allocation_stack_trace_helper const& helper, statistic_views::statistic_view_options const& statistic_view_options, process_heaps const& process, std::map<uint64_t, process_heap_entry> const& allocated_entries, std::map<uint64_t, process_heap_entry> const& free_entries)
+    : impl_{interface_process_heaps_statistic_view_impl::make(view, helper, statistic_view_options, process, allocated_entries, free_entries)}
     {
     }
 

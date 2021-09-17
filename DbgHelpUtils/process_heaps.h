@@ -15,6 +15,7 @@ namespace dlg_help_utils::heap
 {
     namespace statistic_views
     {
+        class statistic_view_options;
         class system_module_list;
     }
 
@@ -26,7 +27,7 @@ namespace dlg_help_utils::heap
     class process_heaps
     {
     public:
-        process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list);
+        process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
 
@@ -42,5 +43,6 @@ namespace dlg_help_utils::heap
     private:
         process::process_environment_block const peb_;
         statistic_views::system_module_list const& system_module_list_;
+        statistic_views::statistic_view_options const& statistic_view_options_;
     };
 }

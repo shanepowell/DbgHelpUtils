@@ -23,7 +23,6 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] size_units::base_16::bytes start_range() const { return start_range_; }
         [[nodiscard]] size_units::base_16::bytes end_range() const { return end_range_; }
-        [[nodiscard]] bool is_range_single_value() const { return start_range_ == end_range_; }
         [[nodiscard]] size_units::base_16::bytes allocated_average() const;
         [[nodiscard]] size_units::base_16::bytes allocated_total() const;
         [[nodiscard]] size_units::base_16::bytes free_total() const;

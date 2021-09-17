@@ -6,6 +6,11 @@
 
 namespace dlg_help_utils::heap
 {
+    namespace statistic_views
+    {
+        class statistic_view_options;
+    }
+
     class process_heaps;
     class process_heap_entry;
     class process_heaps_statistic_view;
@@ -13,7 +18,7 @@ namespace dlg_help_utils::heap
     class process_heaps_statistics
     {
     public:
-        process_heaps_statistics(process_heaps const& process, statistic_views::system_module_list const& system_module_list);
+        process_heaps_statistics(process_heaps const& process, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
 
         [[nodiscard]] process_heaps_statistic_view view_by_size_frequency() const;
         [[nodiscard]] process_heaps_statistic_view view_by_size_ranges_frequency() const;
@@ -27,6 +32,7 @@ namespace dlg_help_utils::heap
 
     private:
         process_heaps const& process_;
+        statistic_views::statistic_view_options const& statistic_view_options_;
         statistic_views::allocation_stack_trace_helper const helper_;
         std::map<uint64_t, process_heap_entry> const allocated_entries_;
         std::map<uint64_t, process_heap_entry> const free_entries_;

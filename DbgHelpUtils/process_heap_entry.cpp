@@ -15,6 +15,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , check_block_start_address_{entry.virtual_block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.virtual_block_size().count()}
@@ -26,6 +27,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , check_block_start_address_{get_nt_heap_entry_check_block_start(entry)}
     , check_block_end_address_{check_block_start_address_ + get_nt_heap_entry_check_block_size(entry)}
@@ -37,6 +39,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
@@ -48,6 +51,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
@@ -59,6 +63,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{entry.uncommitted_range() ? entry.block_address() : entry.user_address()}
     , user_size_{entry.uncommitted_range() ? size_units::base_16::bytes{entry.block_size()} : entry.user_requested_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size()}
@@ -70,6 +75,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size()}
@@ -81,6 +87,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
@@ -94,6 +101,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
@@ -107,6 +115,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
@@ -120,6 +129,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
@@ -133,6 +143,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
@@ -146,6 +157,7 @@ namespace dlg_help_utils::heap
     : peb_{entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
+    , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}

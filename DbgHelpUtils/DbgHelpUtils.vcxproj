@@ -83,7 +83,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="allocation_stack_trace_helper.cpp" />
+    <ClCompile Include="by_application_callsite_frequency.cpp" />
     <ClCompile Include="by_size_frequency_view.cpp" />
+    <ClCompile Include="by_size_ranges_frequency_view.cpp" />
+    <ClCompile Include="by_stacktrace_frequency.cpp" />
     <ClCompile Include="comment_stream_a.cpp" />
     <ClCompile Include="comment_stream_w.cpp" />
     <ClCompile Include="common_symbol_names.cpp" />
@@ -155,6 +158,7 @@
     <ClCompile Include="segment_heap.cpp" />
     <ClCompile Include="segment_heap_utils.cpp" />
     <ClCompile Include="size_units.cpp" />
+    <ClCompile Include="statistic_view_options.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
     <ClCompile Include="stream_function_entry.cpp" />
     <ClCompile Include="stream_handle.cpp" />
@@ -193,7 +197,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allocation_stack_trace_helper.h" />
+    <ClInclude Include="by_application_callsite_frequency.h" />
     <ClInclude Include="by_size_frequency_view.h" />
+    <ClInclude Include="by_size_ranges_frequency_view.h" />
+    <ClInclude Include="by_stacktrace_frequency.h" />
     <ClInclude Include="call_convention.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
@@ -278,6 +285,7 @@
     <ClInclude Include="segment_heap.h" />
     <ClInclude Include="segment_heap_utils.h" />
     <ClInclude Include="size_units.h" />
+    <ClInclude Include="statistic_view_options.h" />
     <ClInclude Include="stream_function_descriptor.h" />
     <ClInclude Include="stream_function_entry.h" />
     <ClInclude Include="stream_handle.h" />

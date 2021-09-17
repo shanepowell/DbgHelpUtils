@@ -42,6 +42,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::wstring const& filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const { return line_number_; }
 
+        [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
 
         [[nodiscard]] mini_dump_memory_stream user_data() const;
@@ -56,6 +57,7 @@ namespace dlg_help_utils::heap
         process::process_environment_block const& peb_;
         uint64_t const user_address_;
         size_units::base_16::bytes const user_size_;
+        uint64_t const ust_address_;
         std::vector<uint64_t> const allocation_stack_trace_;
         std::wstring const file_name_;
         uint32_t const line_number_{0};

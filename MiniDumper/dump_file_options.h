@@ -11,6 +11,7 @@
 #pragma warning(pop)
 
 #include "DbgHelpUtils/size_units.h"
+#include "DbgHelpUtils/statistic_view_options.h"
 #include "DbgHelpUtils/system_module_list.h"
 
 class dump_file_options
@@ -45,6 +46,7 @@ public:
     [[nodiscard]] std::vector<std::wstring> dump_types_modules() const { return dump_types_modules_; }
     [[nodiscard]] std::vector<std::wstring> dump_address_types() const { return dump_address_types_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list() const { return system_module_list_; }
+    [[nodiscard]] dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options() const { return statistic_view_options_; }
 
 private:
     bool dump_header_;
@@ -73,4 +75,5 @@ private:
     std::vector<std::wstring> dump_types_modules_;
     std::vector<std::wstring> dump_address_types_;
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list_;
+    dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
 };

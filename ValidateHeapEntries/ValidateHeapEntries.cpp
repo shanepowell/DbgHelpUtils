@@ -21,6 +21,7 @@
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_entry.h"
+#include "DbgHelpUtils/statistic_view_options.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/system_module_list.h"
 
@@ -121,10 +122,11 @@ int main(int const argc, char* argv[])
 
                 symbol_engine_ui ui;
                 dlg_help_utils::dbg_help::symbol_engine symbol_engine{ui};
-                dlg_help_utils::heap::statistic_views::system_module_list module_list;
+                dlg_help_utils::heap::statistic_views::system_module_list system_module_list;
+                dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options;
 
                 std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> heap_allocations;
-                dlg_help_utils::heap::process_heaps const heaps{dump_file, symbol_engine, module_list};
+                dlg_help_utils::heap::process_heaps const heaps{dump_file, symbol_engine, system_module_list, statistic_view_options};
                 auto const hex_length = heaps.peb().machine_hex_printable_length();
                 for(auto const& entry : heaps.entries())
                 {
