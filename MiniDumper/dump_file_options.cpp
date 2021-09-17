@@ -3,6 +3,8 @@
 #include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 
+#include <ranges>
+
 using namespace std;
 
 namespace
@@ -10,41 +12,56 @@ namespace
     std::vector<std::wstring> const g_empty_values;
 }
 
-dump_file_options::dump_file_options(boost::program_options::variables_map const& vm)
-    : dump_header_{ vm.count("header") > 0 }
-    , dump_streams_{ vm.count("streams") > 0 }
-    , generate_crc32_{ vm.count("crc32") > 0 }
-    , hex_dump_stream_data_{ vm.count("hexdump") > 0 }
-    , hex_dump_memory_data_{ vm.count("memoryhexdump") > 0 }
-    , continue_on_errors_{ vm.count("continue") > 0 }
-    , display_symbols_{ vm.count("symbols") > 0 }
-    , debug_symbols_{ vm.count("symboldebug") > 0 || vm.count("symboldebugmemory") > 0 }
-    , debug_load_symbols_memory_{ vm.count("symboldebugmemory") > 0 }
-    , debug_type_data_{ vm.count("typedebug") > 0 }
-    , display_peb_{ vm.count("peb") > 0 }
-    , display_heap_{ vm.count("heap") > 0 }
-    , display_heap_entries_{ vm.count("heapentries") > 0 }
-    , display_heap_statistics_{ vm.count("heapstats") > 0 }
-    , display_crtheap_{ vm.count("crtheap") > 0 }
-    , debug_heap_data_{ vm.count("heapdebug") > 0 }
-    , display_stack_trace_database_{ vm.count("std") > 0 }
+lyra::cli dump_file_options::generate_options()
 {
-    if (vm.count("streamindex") > 0)
-    {
-        dump_stream_indexes_ = vm["streamindex"].as<vector<size_t>>();
-    }
+    return 
+        lyra::opt( display_version_)["-v"]["--version"]("display version information")
+        | lyra::opt( dump_header_)["-h"]["--header"]("dump file header")
+        | lyra::opt( dump_files_raw_, "dumpfile" )["-d"]["--dumpfile"]("dump files to open")
+        | lyra::opt( continue_on_errors_)["-c"]["--continue"]("continue on errors")
+        | lyra::opt( dump_streams_)["-s"]["--streams"]("dump streams")
+        | lyra::opt( hex_dump_stream_data_)["-x"]["--hexdump"]("hex dump stream data")
+        | lyra::opt( hex_dump_memory_data_)["-m"]["--memoryhexdump"]("limit hex dump memory data to size")
+        | lyra::opt( limit_hex_dump_memory_size_raw_, "limitmemoryhexdump" )["--limitmemoryhexdump"]("limit hex dump memory data to size")
+        | lyra::opt( dump_stream_indexes_, "streamindex" )["-i"]["--streamindex"]("dump stream indexes")
+        | lyra::opt( dump_stream_types_raw_, "streamtype" )["-i"]["--streamtype"]("dump stream indexes")
+        | lyra::opt( display_symbols_)["-y"]["--symbols"]("display stack trace symbols")
+        | lyra::opt( filter_values_raw_, "filter" )["--filter"]("filter by supported values")
+        | lyra::opt( debug_symbols_)["--symboldebug"]("debug load symbols")
+        | lyra::opt( debug_load_symbols_memory_)["--symboldebugmemory"]("debug load symbols memory loading")
+        | lyra::opt( generate_crc32_)["--crc32"]("generate crc32")
+        | lyra::opt( symbol_types_raw_, "type" )["-p"]["--type"]("dump symbol type information")
+        | lyra::opt( symbol_names_raw_, "symbol" )["--symbol"]("dump symbol information")
+        | lyra::opt( dump_types_modules_raw_, "moduletypes" )["--moduletypes"]("dump module symbol types")
+        | lyra::opt( dump_address_types_raw_, "address" )["--address"]("dump address with type")
+        | lyra::opt( debug_type_data_)["--typedebug"]("debug type data")
+        | lyra::opt( debug_heap_data_)["--heapdebug"]("debug heap data")
+        | lyra::opt( display_peb_)["--peb"]("process environment block")
+        | lyra::opt( display_heap_)["--heap"]("heap data information")
+        | lyra::opt( display_heap_entries_)["--heapentries"]("heap entries only")
+        | lyra::opt( display_heap_statistics_)["--heapstats"]("heap statistics")
+        | lyra::opt( display_crtheap_)["--crtheap"]("crtheap data information")
+        | lyra::opt( display_stack_trace_database_)["--std"]("stack trace database")
+    ;
+}
 
-    if (vm.count("streamtype") > 0)
+void dump_file_options::process_raw_options()
+{
+    dump_files_ = convert_to_wstring(dump_files_raw_);
+
+    if (!dump_stream_types_raw_.empty())
     {
-        for (auto stream_types = vm["streamtype"].as<vector<wstring>>(); auto const& stream_type : stream_types)
+        dump_stream_types_.reserve(dump_stream_types_raw_.size());
+        for (auto const& stream_type : dump_stream_types_raw_)
         {
-            dump_stream_types_.emplace_back(dlg_help_utils::mini_dump_stream_type::from_string(stream_type));
+            dump_stream_types_.emplace_back(dlg_help_utils::mini_dump_stream_type::from_string(dlg_help_utils::string_conversation::acp_to_wstring(stream_type)));
         }
+        dump_stream_types_raw_.clear();
     }
 
-    if (vm.count("filter") > 0)
+    if (!filter_values_raw_.empty())
     {
-        for (auto filter_values = vm["filter"].as<vector<wstring>>(); auto const& filter_value : filter_values)
+        for (auto const& filter_value : filter_values_raw_ | std::views::transform([](std::string const& value) { return dlg_help_utils::string_conversation::acp_to_wstring(value); }))
         {
             auto const pos = filter_value.find_first_of('=');
             if (pos == std::wstring::npos)
@@ -66,32 +83,32 @@ dump_file_options::dump_file_options(boost::program_options::variables_map const
 
             filter_values_[name].emplace_back(std::move(value));
         }
+        filter_values_raw_.clear();
     }
 
-    if(vm.count("limitmemoryhexdump") > 0)
+    if(!limit_hex_dump_memory_size_raw_.empty())
     {
-        limit_hex_dump_memory_size_ = dlg_help_utils::size_units::base_16::from_wstring(vm["limitmemoryhexdump"].as<wstring>()).count();
+        limit_hex_dump_memory_size_ = dlg_help_utils::size_units::base_16::from_wstring(dlg_help_utils::string_conversation::acp_to_wstring(limit_hex_dump_memory_size_raw_)).count();
+        limit_hex_dump_memory_size_raw_.clear();
     }
 
-    if(vm.count("type"))
+    symbol_types_ = convert_to_wstring(symbol_types_raw_);
+    symbol_names_ = convert_to_wstring(symbol_names_raw_);
+    dump_types_modules_ = convert_to_wstring(dump_types_modules_raw_);
+    dump_address_types_ = convert_to_wstring(dump_address_types_raw_);
+}
+
+std::vector<std::wstring> dump_file_options::convert_to_wstring(std::vector<std::string>& raw)
+{
+    std::vector<std::wstring> rv;
+    if(!raw.empty())
     {
-        symbol_types_ = vm["type"].as<vector<wstring>>();
+        rv.reserve(raw.size());
+        std::ranges::copy(raw | std::views::transform([](std::string const& value) { return dlg_help_utils::string_conversation::acp_to_wstring(value); }), std::back_inserter(rv));
+        raw.clear();
     }
 
-    if(vm.count("moduletypes"))
-    {
-        dump_types_modules_ = vm["moduletypes"].as<vector<wstring>>();
-    }
-
-    if(vm.count("address"))
-    {
-        dump_address_types_ = vm["address"].as<vector<wstring>>();
-    }
-
-    if(vm.count("symbol"))
-    {
-        symbol_names_ = vm["symbol"].as<vector<wstring>>();
-    }
+    return rv;
 }
 
 size_t dump_file_options::hex_dump_memory_size(size_t const size) const

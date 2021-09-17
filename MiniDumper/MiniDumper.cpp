@@ -4,6 +4,11 @@
 #include <filesystem>
 #include <iostream>
 
+#pragma warning(push)
+#pragma warning(disable : 4100 4458)
+#include <lyra/lyra.hpp>
+#pragma warning(pop)
+
 #include "dump_file_options.h"
 #include "dump_mini_dump.h"
 #include "DbgHelpUtils/filesystem_utils.h"
@@ -14,65 +19,47 @@ using namespace std;
 using namespace dlg_help_utils::exceptions;
 using namespace dlg_help_utils;
 
-int wmain(int argc, wchar_t* argv[]);
-
-int wmain(int const argc, wchar_t* argv[])
+int main(int const argc, char* argv[])
 {
-    namespace po = boost::program_options;
-
     try
     {
-        po::options_description options;
-        options.add_options()
-            ("help,h", "produce help message")
-            ("version,v", "display version information")
-            ("dumpfile,d", po::wvalue<vector<wstring>>(), "dump files to open")
-            ("continue,c", "continue on errors")
-            ("header,r", "dump file header")
-            ("streams,s", "dump streams")
-            ("hexdump,x", "hex dump stream data")
-            ("memoryhexdump,m", "hex dump memory data")
-            ("limitmemoryhexdump", po::wvalue<wstring>(), "limit hex dump memory data to size")
-            ("streamindex,i", po::wvalue<vector<size_t>>(), "dump stream indexes")
-            ("streamtype,t", po::wvalue<vector<wstring>>(), "dump stream types")
-            ("symbols,y", "display stack trace symbols")
-            ("filter", po::wvalue<vector<wstring>>(), "filter by supported values")
-            ("symboldebug", "debug load symbols")
-            ("symboldebugmemory", "debug load symbols memory loading")
-            ("crc32", "generate crc32")
-            ("type,p", po::wvalue<vector<wstring>>(), "dump symbol type information")
-            ("symbol", po::wvalue<vector<wstring>>(), "dump symbol information")
-            ("moduletypes", po::wvalue<vector<wstring>>(), "dump module symbol types")
-            ("address", po::wvalue<vector<wstring>>(), "dump address with type")
-            ("typedebug", "debug type data")
-            ("heapdebug", "debug heap data")
-            ("peb", "process environment block")
-            ("heap", "heap data information")
-            ("heapentries", "heap entries only")
-            ("heapstats", "heap statistics")
-            ("crtheap", "crtheap data information")
-            ("std", "stack trace database")
-            ;
+        bool show_help = false;
 
-        po::variables_map vm;
-        store(parse_command_line(argc, argv, options), vm);
-        notify(vm);
+        // The parser with the multiple option arguments and help option.
+        dump_file_options dump_options;
+        auto cli = lyra::cli() | lyra::help(show_help) | dump_options.generate_options();
 
-        if (vm.count("version"))
+        if (auto const result = cli.parse({ argc, argv });
+            !result)
+        {
+            std::cerr << "Error in command line: " << result.errorMessage() << '\n';
+            std::cerr << cli << "\n";
+            return EXIT_FAILURE;
+        }
+
+        // Show the help when asked for.
+        if (show_help)
+        {
+            std::cout << cli << '\n';
+            return EXIT_SUCCESS;
+        }
+
+        if (dump_options.display_version())
         {
             display_version_information();
             return EXIT_SUCCESS;
         }
 
-        if (vm.count("help") || !vm.count("dumpfile"))
+        dump_options.process_raw_options();
+
+        if (dump_options.dump_files().empty())
         {
-            cout << options << "\n";
+            std::cout << "no dump files specified\n";
+            std::cout << cli << '\n';
             return EXIT_SUCCESS;
         }
 
-        dump_file_options const dump_options{vm};
-
-        for (auto const& dump_file_match : vm["dumpfile"].as<vector<wstring>>())
+        for (auto const& dump_file_match : dump_options.dump_files())
         {
             std::wstring match;
             std::filesystem::path path{dump_file_match};

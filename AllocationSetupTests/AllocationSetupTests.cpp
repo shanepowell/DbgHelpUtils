@@ -9,8 +9,8 @@
 #include <Windows.h>
 
 #pragma warning(push)
-#pragma warning(disable : 26812 26495)
-#include <boost/program_options.hpp>
+#pragma warning(disable : 4100 4458)
+#include <lyra/lyra.hpp>
 #pragma warning(pop)
 
 #include "ResultSet.h"
@@ -43,46 +43,84 @@ std::unique_ptr<T, D> make_handle(T* handle, D deleter)
     return std::unique_ptr<T, D>{handle, deleter};
 }
 
+std::tuple<std::wstring, uint32_t> code_page_string_to_wstring(char const* str, const size_t length,
+                                                               const uint32_t code_page)
+{
+    if (length == 0)
+    {
+        return make_tuple(std::wstring(), ERROR_SUCCESS);
+    }
+
+    const auto ret = MultiByteToWideChar(code_page, 0, str, static_cast<int>(length), nullptr, 0);
+    if (ret == 0)
+    {
+        //something went wrong - GetLastError();
+        return make_tuple(std::wstring(), GetLastError());
+    }
+
+    std::wstring rv(static_cast<size_t>(ret), static_cast<wchar_t>(0x0));
+    if (static_cast<size_t>(MultiByteToWideChar(code_page, 0, str, static_cast<int>(length), &*rv.begin(),
+                                                static_cast<int>(rv.length()))) != rv.length())
+    {
+        //something went wrong - GetLastError();
+        return make_tuple(std::wstring(), GetLastError());
+    }
+    return make_tuple(rv, ERROR_SUCCESS);
+}
+
+std::wstring acp_to_wstring(std::string const& str)
+{
+    [[maybe_unused]] auto [result, status] = code_page_string_to_wstring(str.c_str(), str.length(), CP_ACP);
+    return result;
+}
+
 
 int main(int const argc, char* argv[])
 {
-    namespace po = boost::program_options;
     try
     {
         try
         {
-            po::options_description options;
-            options.add_options()
-                ("help,h", "produce help message")
-                ("lfh", "generate lfh allocations")
-                ("virtual", "generate virtual allocations")
-                ("sizes", "generate range allocation sizes allocations")
-                ("useheapalloc", "use HeapAlloc/HeapFree")
-                ("usemalloc", "use malloc/free")
-                ("usenew", "use new/delete")
-                ("dmp", po::wvalue<std::wstring>(), "dump filename")
-                ("log", po::wvalue<std::wstring>(), "log filename")
-                ("json", po::wvalue<std::wstring>(), "json filename")
+            std::string dump_filename_l;
+            std::string log_filename_l;
+            std::string json_filename_l;
+            auto do_lfh_allocations{false};
+            auto do_virtual_allocations{false};
+            auto do_sizes{false};
+            auto use_heap_alloc{false};
+            auto use_malloc{false};
+            auto use_new{false};
+            auto show_help{false};
+            auto cli = lyra::help(show_help)
+                | lyra::opt( do_lfh_allocations)["--lfh"]("generate lfh allocations")
+                | lyra::opt( do_virtual_allocations)["--virtual"]("generate virtual allocations")
+                | lyra::opt( do_sizes)["--sizes"]("generate range allocation sizes allocations")
+                | lyra::opt( use_heap_alloc)["--useheapalloc"]("use HeapAlloc/HeapFree")
+                | lyra::opt( use_malloc)["--usemalloc"]("use malloc/free")
+                | lyra::opt( use_new)["--usenew"]("use new/delete")
+                | lyra::opt( dump_filename_l, "dmp" )["-d"]["--dmp"]("dump filename")
+                | lyra::opt( log_filename_l, "log" )["-l"]["--log"]("log filename")
+                | lyra::opt( json_filename_l, "json" )["-j"]["--json"]("json filename")
                 ;
 
-            po::variables_map vm;
-            store(parse_command_line(argc, argv, options), vm);
-            notify(vm);
-
-            auto const do_lfh_allocations = vm.count("lfh") != 0;
-            auto const do_virtual_allocations = vm.count("virtual") != 0;
-            auto const do_sizes = vm.count("sizes") != 0;
-            auto const use_malloc = vm.count("usemalloc") != 0;
-            auto const use_new = vm.count("usenew") != 0;
-            auto const dump_filename = vm.count("dmp") > 0 ? vm["dmp"].as<std::wstring>() : std::wstring{};
-            auto const log_filename = vm.count("log") > 0 ? vm["log"].as<std::wstring>() : std::wstring{};
-            auto const json_filename = vm.count("json") > 0 ? vm["json"].as<std::wstring>() : std::wstring{};
-
-            if (vm.count("help") || (!do_lfh_allocations && !do_virtual_allocations && !do_sizes))
+            if (auto const result = cli.parse({ argc, argv });
+                !result)
             {
-                std::cout << options << "\n";
+                std::cerr << "Error in command line: " << result.errorMessage() << '\n';
+                std::cerr << cli << "\n";
+                return EXIT_FAILURE;
+            }
+
+            // Show the help when asked for.
+            if (show_help || (!do_lfh_allocations && !do_virtual_allocations && !do_sizes))
+            {
+                std::cout << cli << '\n';
                 return EXIT_SUCCESS;
             }
+
+            auto const dump_filename = acp_to_wstring(dump_filename_l);
+            auto const log_filename = acp_to_wstring(log_filename_l);
+            auto const json_filename = acp_to_wstring(json_filename_l);
 
             std::function allocator = [](size_t const size) { return HeapAlloc(GetProcessHeap(), 0x0, size); };
             std::function deallocator = [](void* memory) { HeapFree(GetProcessHeap(), 0x0, memory); };
@@ -129,7 +167,6 @@ int main(int const argc, char* argv[])
                 result = AllocateSizeRanges(*o_log, dump_filename, allocator, deallocator, set);
             }
 
-            
             if(!json_filename.empty())
             {
                 std::fstream json_file{json_filename, std::ios_base::out | std::ios_base::trunc};

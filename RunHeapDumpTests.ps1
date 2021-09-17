@@ -34,7 +34,7 @@ Function RunAllocationAllocationTypesApplication($arg, $options, $validateoption
 
 Function RunAllocationX86X64Application($arg, $alloc, $options, $validateoptions)
 {
-    RunAllocationReleaseDebugApplication $arg "." "x86" $alloc $options $validateoptions
+    RunAllocationReleaseDebugApplication $arg "x86" "x86" $alloc $options $validateoptions
     RunAllocationReleaseDebugApplication $arg "x64" "x64" $alloc $options $validateoptions
 }
 
