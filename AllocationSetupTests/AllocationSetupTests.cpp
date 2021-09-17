@@ -4,7 +4,9 @@
 #include <array>
 #include <fstream>
 #include <iostream>
+#include <ranges>
 #include <sstream>
+
 #define NOMINMAX 1
 #include <Windows.h>
 
@@ -13,7 +15,12 @@
 #include <lyra/lyra.hpp>
 #pragma warning(pop)
 
+#include <map>
+
 #include "ResultSet.h"
+
+using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set);
 int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set);
@@ -75,32 +82,58 @@ std::wstring acp_to_wstring(std::string const& str)
 }
 
 
+template<typename V>
+std::string join(V const& v,  std::string_view const& delimiter = "|"sv)
+{
+    std::string out;
+    auto i = std::begin(v);
+    auto e = std::end(v);
+    if (i != std::end(v))
+    {
+        out += *i++;
+        for (; i != e; ++i) out.append(delimiter).append(*i);
+    }
+    return out;
+}
+
+
 int main(int const argc, char* argv[])
 {
     try
     {
         try
         {
+            using allocator_type = std::function<void*(size_t)>;
+            using deallocator_type = std::function<void(void*)>;
+            using allocation_functions_data = std::pair<allocator_type, deallocator_type>;
+            std::map<std::string, allocation_functions_data> const allocation_functions
+            {
+                { "heapalloc"s, {[](size_t const size) { return HeapAlloc(GetProcessHeap(), 0x0, size); }, [](void* memory) { HeapFree(GetProcessHeap(), 0x0, memory); }}},
+                { "malloc"s, {[](size_t const size) { return malloc(size); }, [](void* memory) { free(memory); }}},
+                { "new"s, {[](size_t const size) { return new char[size]; }, [](void* memory) { delete[] static_cast<char*>(memory); }}}
+            };
+
+            using test_type = std::function<int(std::wostream&, std::wstring const&, std::function<void*(size_t)> const&, std::function<void(void*)> const&, ResultSet&)>;
+            std::map<std::string, test_type> const test_functions
+            {
+                { "lfh"s, LfhAllocations},
+                { "virtual"s, VirtualAllocations},
+                { "sizes"s, AllocateSizeRanges}
+            };
+
             std::string dump_filename_l;
             std::string log_filename_l;
             std::string json_filename_l;
-            auto do_lfh_allocations{false};
-            auto do_virtual_allocations{false};
-            auto do_sizes{false};
-            auto use_heap_alloc{false};
-            auto use_malloc{false};
-            auto use_new{false};
+            std::string allocation_test;
+            std::string allocation_type;
             auto show_help{false};
+
             auto cli = lyra::help(show_help)
-                | lyra::opt( do_lfh_allocations)["--lfh"]("generate lfh allocations")
-                | lyra::opt( do_virtual_allocations)["--virtual"]("generate virtual allocations")
-                | lyra::opt( do_sizes)["--sizes"]("generate range allocation sizes allocations")
-                | lyra::opt( use_heap_alloc)["--useheapalloc"]("use HeapAlloc/HeapFree")
-                | lyra::opt( use_malloc)["--usemalloc"]("use malloc/free")
-                | lyra::opt( use_new)["--usenew"]("use new/delete")
-                | lyra::opt( dump_filename_l, "dmp" )["-d"]["--dmp"]("dump filename")
-                | lyra::opt( log_filename_l, "log" )["-l"]["--log"]("log filename")
-                | lyra::opt( json_filename_l, "json" )["-j"]["--json"]("json filename")
+                | lyra::opt(allocation_test, join(test_functions | std::views::keys, "|"sv))["--test"]("generate test of allocations").choices([&test_functions](std::string const& value) { return test_functions.find(value) != test_functions.end(); })
+                | lyra::opt(allocation_type, join(allocation_functions | std::views::keys, "|"sv))["--type"]("application type").choices([&allocation_functions](std::string const& value) { return allocation_functions.find(value) != allocation_functions.end(); })
+                | lyra::opt( dump_filename_l, "filename" )["-d"]["--dmp"]("dump filename")
+                | lyra::opt( log_filename_l, "filename" )["-l"]["--log"]("log filename")
+                | lyra::opt( json_filename_l, "filename" )["-j"]["--json"]("json filename")
                 ;
 
             if (auto const result = cli.parse({ argc, argv });
@@ -112,8 +145,22 @@ int main(int const argc, char* argv[])
             }
 
             // Show the help when asked for.
-            if (show_help || (!do_lfh_allocations && !do_virtual_allocations && !do_sizes))
+            if (show_help)
             {
+                std::cout << cli << '\n';
+                return EXIT_SUCCESS;
+            }
+
+            if (allocation_test.empty())
+            {
+                std::cerr << "No allocation test specified\n";
+                std::cout << cli << '\n';
+                return EXIT_SUCCESS;
+            }
+
+            if (allocation_type.empty())
+            {
+                std::cerr << "No allocation type specified\n";
                 std::cout << cli << '\n';
                 return EXIT_SUCCESS;
             }
@@ -122,20 +169,9 @@ int main(int const argc, char* argv[])
             auto const log_filename = acp_to_wstring(log_filename_l);
             auto const json_filename = acp_to_wstring(json_filename_l);
 
-            std::function allocator = [](size_t const size) { return HeapAlloc(GetProcessHeap(), 0x0, size); };
-            std::function deallocator = [](void* memory) { HeapFree(GetProcessHeap(), 0x0, memory); };
-
-            if(use_malloc)
-            {
-                allocator = [](size_t const size) { return malloc(size); };
-                deallocator = [](void* memory) { free(memory); };
-            }
-
-            if(use_new)
-            {
-                allocator = [](size_t const size) { return new char[size]; };
-                deallocator = [](void* memory) { delete[] static_cast<char*>(memory); };
-            }
+            auto const& allocation_function_data = allocation_functions.at(allocation_type);
+            auto const& allocator = std::get<0>(allocation_function_data);
+            auto const& deallocator = std::get<1>(allocation_function_data);
 
             std::unique_ptr<std::wfstream> log;
             std::wostream* o_log{&std::wcout};
@@ -150,22 +186,8 @@ int main(int const argc, char* argv[])
                 o_log = log.get();
             }
 
-            auto result = EXIT_SUCCESS;
             ResultSet set;
-            if(do_lfh_allocations)
-            {
-                result = LfhAllocations(*o_log, dump_filename, allocator, deallocator, set);
-            }
-
-            if(result == EXIT_SUCCESS && do_virtual_allocations)
-            {
-                result = VirtualAllocations(*o_log, dump_filename, allocator, deallocator, set);
-            }
-
-            if(result == EXIT_SUCCESS && do_sizes)
-            {
-                result = AllocateSizeRanges(*o_log, dump_filename, allocator, deallocator, set);
-            }
+            auto result = test_functions.at(allocation_test)(*o_log, dump_filename, allocator, deallocator, set);
 
             if(!json_filename.empty())
             {

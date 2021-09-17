@@ -59,9 +59,9 @@ int main(int const argc, char* argv[])
             auto stacktrace{false};
             auto show_help{false};
             auto cli = lyra::help(show_help)
-                | lyra::opt( dump_filename_l, "dmp" )["-d"]["--dmp"]("dump filename")
-                | lyra::opt( log_filename_l, "log" )["-l"]["--log"]("log filename")
-                | lyra::opt( json_filename_l, "json" )["-j"]["--json"]("json filename")
+                | lyra::opt( dump_filename_l, "filename" )["-d"]["--dmp"]("dump filename")
+                | lyra::opt( log_filename_l, "filename" )["-l"]["--log"]("log filename")
+                | lyra::opt( json_filename_l, "filename" )["-j"]["--json"]("json filename")
                 | lyra::opt( stacktrace)["-s"]["--stacktrace"]("expects allocation stack trace")
                 ;
 
