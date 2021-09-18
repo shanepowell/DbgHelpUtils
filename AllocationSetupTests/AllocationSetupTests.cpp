@@ -17,6 +17,7 @@
 
 #include <map>
 
+#include <DbgHelpUtils/join.h>
 #include "ResultSet.h"
 
 using namespace std::string_literals;
@@ -50,8 +51,7 @@ std::unique_ptr<T, D> make_handle(T* handle, D deleter)
     return std::unique_ptr<T, D>{handle, deleter};
 }
 
-std::tuple<std::wstring, uint32_t> code_page_string_to_wstring(char const* str, const size_t length,
-                                                               const uint32_t code_page)
+std::tuple<std::wstring, uint32_t> code_page_string_to_wstring(char const* str, const size_t length, const uint32_t code_page)
 {
     if (length == 0)
     {
@@ -79,21 +79,6 @@ std::wstring acp_to_wstring(std::string const& str)
 {
     [[maybe_unused]] auto [result, status] = code_page_string_to_wstring(str.c_str(), str.length(), CP_ACP);
     return result;
-}
-
-
-template<typename V>
-std::string join(V const& v,  std::string_view const& delimiter = "|"sv)
-{
-    std::string out;
-    auto i = std::begin(v);
-    auto e = std::end(v);
-    if (i != std::end(v))
-    {
-        out += *i++;
-        for (; i != e; ++i) out.append(delimiter).append(*i);
-    }
-    return out;
 }
 
 
@@ -129,8 +114,8 @@ int main(int const argc, char* argv[])
             auto show_help{false};
 
             auto cli = lyra::help(show_help)
-                | lyra::opt(allocation_test, join(test_functions | std::views::keys, "|"sv))["--test"]("generate test of allocations").choices([&test_functions](std::string const& value) { return test_functions.find(value) != test_functions.end(); })
-                | lyra::opt(allocation_type, join(allocation_functions | std::views::keys, "|"sv))["--type"]("application type").choices([&allocation_functions](std::string const& value) { return allocation_functions.find(value) != allocation_functions.end(); })
+                | lyra::opt(allocation_test, dlg_help_utils::join(test_functions | std::views::keys, "|"sv))["--test"]("generate test of allocations").choices([&test_functions](std::string const& value) { return test_functions.find(value) != test_functions.end(); })
+                | lyra::opt(allocation_type, dlg_help_utils::join(allocation_functions | std::views::keys, "|"sv))["--type"]("application type").choices([&allocation_functions](std::string const& value) { return allocation_functions.find(value) != allocation_functions.end(); })
                 | lyra::opt( dump_filename_l, "filename" )["-d"]["--dmp"]("dump filename")
                 | lyra::opt( log_filename_l, "filename" )["-l"]["--log"]("log filename")
                 | lyra::opt( json_filename_l, "filename" )["-j"]["--json"]("json filename")

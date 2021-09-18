@@ -112,7 +112,11 @@ int main(int const argc, char* argv[])
 
             JS::ParseContext context(json);
             ResultSet set;
-            context.parseTo(set);
+            if (context.parseTo(set) != JS::Error::NoError)
+            {
+                *o_log << "failed to parse json result set file: " << json_filename << " with " << dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()) << '\n';
+                return EXIT_FAILURE;
+            }
 
             auto successful = true;
 

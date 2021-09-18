@@ -83,10 +83,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="allocation_stack_trace_helper.cpp" />
-    <ClCompile Include="by_application_callsite_frequency.cpp" />
+    <ClCompile Include="by_application_callsite_frequency_view.cpp" />
     <ClCompile Include="by_size_frequency_view.cpp" />
     <ClCompile Include="by_size_ranges_frequency_view.cpp" />
-    <ClCompile Include="by_stacktrace_frequency.cpp" />
+    <ClCompile Include="by_stacktrace_frequency_view.cpp" />
     <ClCompile Include="comment_stream_a.cpp" />
     <ClCompile Include="comment_stream_w.cpp" />
     <ClCompile Include="common_symbol_names.cpp" />
@@ -197,10 +197,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allocation_stack_trace_helper.h" />
-    <ClInclude Include="by_application_callsite_frequency.h" />
+    <ClInclude Include="by_application_callsite_frequency_view.h" />
     <ClInclude Include="by_size_frequency_view.h" />
     <ClInclude Include="by_size_ranges_frequency_view.h" />
-    <ClInclude Include="by_stacktrace_frequency.h" />
+    <ClInclude Include="by_stacktrace_frequency_view.h" />
     <ClInclude Include="call_convention.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
@@ -225,6 +225,7 @@
     <ClInclude Include="heap_vs_entry.h" />
     <ClInclude Include="heap_vs_subsegment.h" />
     <ClInclude Include="interface_process_heaps_statistic_view_impl.h" />
+    <ClInclude Include="join.h" />
     <ClInclude Include="large_alloc_entry.h" />
     <ClInclude Include="lfh_heap.h" />
     <ClInclude Include="lfh_segment.h" />

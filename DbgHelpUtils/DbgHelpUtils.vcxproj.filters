@@ -390,10 +390,10 @@
     <ClCompile Include="statistic_view_options.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
-    <ClCompile Include="by_stacktrace_frequency.cpp">
+    <ClCompile Include="by_stacktrace_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
-    <ClCompile Include="by_application_callsite_frequency.cpp">
+    <ClCompile Include="by_application_callsite_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
   </ItemGroup>
@@ -800,11 +800,14 @@
     <ClInclude Include="statistic_view_options.h">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClInclude>
-    <ClInclude Include="by_stacktrace_frequency.h">
+    <ClInclude Include="by_stacktrace_frequency_view.h">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClInclude>
-    <ClInclude Include="by_application_callsite_frequency.h">
+    <ClInclude Include="by_application_callsite_frequency_view.h">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
+    </ClInclude>
+    <ClInclude Include="join.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

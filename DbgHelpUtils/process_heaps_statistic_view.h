@@ -9,8 +9,8 @@ namespace dlg_help_utils::heap
 {
     namespace statistic_views
     {
-        class by_application_callsite_frequency;
-        class by_stacktrace_frequency;
+        class by_application_callsite_frequency_view;
+        class by_stacktrace_frequency_view;
         class statistic_view_options;
         class allocation_stack_trace_helper;
         class by_size_frequency_view;
@@ -58,8 +58,8 @@ namespace dlg_help_utils::heap
         class interface_process_heaps_statistic_view_impl;
         friend class statistic_views::by_size_frequency_view;
         friend class statistic_views::by_size_ranges_frequency_view;
-        friend class statistic_views::by_stacktrace_frequency;
-        friend class statistic_views::by_application_callsite_frequency;
+        friend class statistic_views::by_stacktrace_frequency_view;
+        friend class statistic_views::by_application_callsite_frequency_view;
         std::unique_ptr<interface_process_heaps_statistic_view_impl> impl_;
     };
 

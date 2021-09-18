@@ -15,9 +15,19 @@
 #include "DbgHelpUtils/statistic_view_options.h"
 #include "DbgHelpUtils/system_module_list.h"
 
+namespace heap_statistics_view
+{
+    constexpr uint16_t by_size_frequency_view                   = 0x01;
+    constexpr uint16_t by_size_ranges_frequency_view            = 0x02;
+    constexpr uint16_t by_stacktrace_frequency_view             = 0x04;
+    constexpr uint16_t by_application_callsite_frequency_view   = 0x08;
+    constexpr uint16_t all_views                                = 0x0F;
+}
+
 class dump_file_options
 {
 public:
+
     dump_file_options() = default;
 
     lyra::cli generate_options();
@@ -42,7 +52,8 @@ public:
     [[nodiscard]] bool display_peb() const { return display_peb_; }
     [[nodiscard]] bool display_heap() const { return display_heap_; }
     [[nodiscard]] bool display_heap_entries() const { return display_heap_entries_; }
-    [[nodiscard]] bool display_heap_statistics() const { return display_heap_statistics_; }
+    [[nodiscard]] bool display_heap_statistic_views() const { return heap_statistics_views_ != 0x0; }
+    [[nodiscard]] bool display_heap_statistic_view(uint16_t const view) const { return (heap_statistics_views_ & view) == view; }
     [[nodiscard]] bool display_crtheap() const { return display_crtheap_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
@@ -78,10 +89,10 @@ private:
     bool display_peb_{false};
     bool display_heap_{false};
     bool display_heap_entries_{false};
-    bool display_heap_statistics_{false};
     bool display_crtheap_{false};
     bool debug_heap_data_{false};
     bool display_stack_trace_database_{false};
+    uint16_t heap_statistics_views_{0};
     std::vector<std::string> filter_values_raw_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
     std::vector<std::string> dump_files_raw_;
@@ -94,6 +105,9 @@ private:
     std::vector<std::wstring> dump_types_modules_;
     std::vector<std::string> dump_address_types_raw_;
     std::vector<std::wstring> dump_address_types_;
+    std::vector<std::string> heap_statistics_raw_;
+    std::string by_range_view_range_raw_;
+    std::string system_module_list_file_;
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list_;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
 };

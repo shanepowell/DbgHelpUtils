@@ -1473,12 +1473,25 @@ void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, dump_file_option
     auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();
     wcout << "Heap Statistics:\n";
-    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
-    wcout << '\n';
-    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
-    wcout << '\n';
-    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
-    wcout << '\n';
-    dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
+    if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))
+    {
+        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
+        wcout << '\n';
+    }
+    if(options.display_heap_statistic_view(heap_statistics_view::by_size_ranges_frequency_view))
+    {
+        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
+        wcout << '\n';
+    }
+    if(options.display_heap_statistic_view(heap_statistics_view::by_stacktrace_frequency_view))
+    {
+        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
+        wcout << '\n';
+    }
+    if(options.display_heap_statistic_view(heap_statistics_view::by_application_callsite_frequency_view))
+    {
+        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
+        wcout << '\n';
+    }
 }
 

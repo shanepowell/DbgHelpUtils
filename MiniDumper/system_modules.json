@@ -1,0 +1,10 @@
+{
+    "systemmodules": [
+        "ntdll.dll",
+        "kernelbase.dll",
+        "kernel32.dll",
+        "msvcp140.dll",
+        "msvcp140d.dll",
+        "ucrtbase.dll"
+    ]
+}
