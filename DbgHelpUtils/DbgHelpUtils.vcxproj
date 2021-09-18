@@ -158,7 +158,6 @@
     <ClCompile Include="segment_heap.cpp" />
     <ClCompile Include="segment_heap_utils.cpp" />
     <ClCompile Include="size_units.cpp" />
-    <ClCompile Include="statistic_view_options.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
     <ClCompile Include="stream_function_entry.cpp" />
     <ClCompile Include="stream_handle.cpp" />

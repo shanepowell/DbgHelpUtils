@@ -387,9 +387,6 @@
     <ClCompile Include="by_size_ranges_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
-    <ClCompile Include="statistic_view_options.cpp">
-      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
-    </ClCompile>
     <ClCompile Include="by_stacktrace_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>

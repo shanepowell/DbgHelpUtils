@@ -8,8 +8,8 @@
 
 namespace dlg_help_utils::heap::statistic_views
 {
-    by_application_callsite_frequency_view::by_application_callsite_frequency_view(view_type const view, allocation_stack_trace_helper const& helper, process_heaps const& process, std::map<uint64_t, process_heap_entry> const& allocated_entries, std::map<uint64_t, process_heap_entry> const& free_entries)
-    : interface_process_heaps_statistic_view_impl(view, helper, process, allocated_entries, free_entries)
+    by_application_callsite_frequency_view::by_application_callsite_frequency_view(view_type const view, allocation_stack_trace_helper const& helper, statistic_view_options const& statistic_view_options, process_heaps const& process, std::map<uint64_t, process_heap_entry> const& allocated_entries, std::map<uint64_t, process_heap_entry> const& free_entries)
+    : interface_process_heaps_statistic_view_impl(view, helper, statistic_view_options, process, allocated_entries, free_entries)
     {
     }
 
@@ -28,16 +28,20 @@ namespace dlg_help_utils::heap::statistic_views
             bucket.free_entries.emplace_back(entry.second);
         }
 
-        for(auto const& [key, bucket] : buckets)
+        for(auto bucket : sorted_range(buckets | std::views::transform([this, &buckets](std::pair<uint64_t, bucket_entries> const& data)
+            {
+                auto const& [key, bucket] = data;
+                return process_heaps_statistic_bucket_view{bucket.start_range
+                    , bucket.end_range
+                    , calculate_bucket_range_count_percent(bucket, allocated_entries().size())
+                    , calculate_bucket_range_size_percent(buckets, key)
+                    , bucket.common_allocation_callsite
+                    , helper().find_common_allocation_stack_trace(bucket.common_allocation_callsite, bucket.entries)
+                    , bucket.entries
+                    , bucket.free_entries};
+            }), buckets.size()))
         {
-            co_yield process_heaps_statistic_bucket_view{bucket.start_range
-                , bucket.end_range
-                , calculate_bucket_range_count_percent(bucket, allocated_entries().size())
-                , calculate_bucket_range_size_percent(buckets, key)
-                , bucket.common_allocation_callsite
-                , helper().find_common_allocation_stack_trace(bucket.common_allocation_callsite, bucket.entries)
-                , bucket.entries
-                , bucket.free_entries};
+            co_yield bucket;
         }
     }
 

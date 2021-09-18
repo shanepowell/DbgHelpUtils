@@ -44,13 +44,13 @@ namespace dlg_help_utils::heap
         [[nodiscard]] static uint64_t accumulate_entries(std::vector<process_heap_entry> const& entries, Op op);
 
     private:
-        size_units::base_16::bytes const start_range_;
-        size_units::base_16::bytes const end_range_;
-        double const range_count_percent_;
-        double const range_size_percent_;
+        size_units::base_16::bytes start_range_;
+        size_units::base_16::bytes end_range_;
+        double range_count_percent_;
+        double range_size_percent_;
         std::optional<dbg_help::symbol_address_info> common_allocation_callsite_;
         std::vector<uint64_t> allocation_stack_trace_;
-        std::vector<process_heap_entry> const entries_;
-        std::vector<process_heap_entry> const free_entries_;
+        std::vector<process_heap_entry> entries_;
+        std::vector<process_heap_entry> free_entries_;
     };
 }

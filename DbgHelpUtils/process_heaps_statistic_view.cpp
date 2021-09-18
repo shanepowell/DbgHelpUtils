@@ -24,6 +24,28 @@ namespace dlg_help_utils::heap
         return impl_->is_range_single_value();
     }
 
+    enum process_heaps_statistic_view::sort_column_type process_heaps_statistic_view::sort_column() const
+    {
+        return impl_->sort_column();
+    }
+
+    // ReSharper disable once CppMemberFunctionMayBeConst
+    void process_heaps_statistic_view::sort_column(sort_column_type const value)
+    {
+        return impl_->sort_column(value);
+    }
+
+    enum process_heaps_statistic_view::sort_order_type process_heaps_statistic_view::sort_order() const
+    {
+        return impl_->sort_order();
+    }
+
+    // ReSharper disable once CppMemberFunctionMayBeConst
+    void process_heaps_statistic_view::sort_order(sort_order_type const value)
+    {
+        impl_->sort_order(value);
+    }
+
     std::experimental::generator<process_heaps_statistic_bucket_view> process_heaps_statistic_view::buckets() const
     {
         return impl_->buckets();

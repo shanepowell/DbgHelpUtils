@@ -68,9 +68,9 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $full_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $debug_full_log -ErrorAction:SilentlyContinue | Out-Null
 
-        Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\MiniDumper.exe`" --heap --crtheap --heapentries --dumpfile $dmp > $full_log"
+        Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $full_log"
         . "$PSScriptRoot\x64\Release\MiniDumper.exe" --heap --crtheap --heapentries --dumpfile $dmp > $full_log
-        Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --dumpfile $dmp > $debug_full_log"
+        Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --dumpfile $dmp > $debug_full_log"
         . "$PSScriptRoot\x64\Release\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --dumpfile $dmp > $debug_full_log
     }
     Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\ValidateHeapEntries.exe`" `"--dmp`" $dmp `"--log`" $ResultFile `"--json`" $json $validateoptions"

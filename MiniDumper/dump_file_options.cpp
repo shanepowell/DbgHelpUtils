@@ -13,6 +13,7 @@
 
 #include "DbgHelpUtils/join.h"
 #include "DbgHelpUtils/mini_dump_stream_type.h"
+#include "DbgHelpUtils/process_heaps_statistic_view.h"
 #include "DbgHelpUtils/string_conversation.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 
@@ -25,11 +26,30 @@ namespace
 
     map<std::string, uint16_t> const g_heap_statistics_view_options
     {
-        {"bysize"s, heap_statistics_view::by_size_frequency_view},
-        {"byrange"s, heap_statistics_view::by_size_ranges_frequency_view},
-        {"bystack"s, heap_statistics_view::by_stacktrace_frequency_view},
-        {"bycallsite"s, heap_statistics_view::by_application_callsite_frequency_view},
+        {"size"s, heap_statistics_view::by_size_frequency_view},
+        {"range"s, heap_statistics_view::by_size_ranges_frequency_view},
+        {"stack"s, heap_statistics_view::by_stacktrace_frequency_view},
+        {"callsite"s, heap_statistics_view::by_application_callsite_frequency_view},
         {"all"s, heap_statistics_view::all_views}
+    };
+
+    map<std::string, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type> const g_view_sort_column
+    {
+        {"size"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::size},
+        {"allocated_total"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::allocated_total},
+        {"allocated_count"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::allocated_count},
+        {"allocated_average"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::allocated_average},
+        {"free_total"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::free_total},
+        {"free_count"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::free_count},
+        {"overhead_total"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::overhead_total},
+        {"range_size_percent"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::range_size_percent},
+        {"range_count_percent"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_column_type::range_count_percent}
+    };
+
+    map<std::string, dlg_help_utils::heap::process_heaps_statistic_view::sort_order_type> const g_view_sort_order
+    {
+        {"ascending"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_order_type::ascending},
+        {"descending"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_order_type::descending}
     };
 
     struct system_modules_json
@@ -72,6 +92,10 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt( heap_statistics_raw_, dlg_help_utils::join(g_heap_statistics_view_options | std::views::keys, "|"sv))["--heapstat"]("display heap statistic").choices([](std::string const& value) { return g_heap_statistics_view_options.find(value) != g_heap_statistics_view_options.end(); })
         | lyra::opt( by_range_view_range_raw_, "range")["--viewrange"]("heap size statistic view bucket size")
         | lyra::opt( system_module_list_file_, "filename")["--systemmodules"]("json file holding the list of system modules")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt( view_sort_column_raw_, dlg_help_utils::join(g_view_sort_column | std::views::keys, "|"sv))["--statsortcolumn"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_column.find(value) != g_view_sort_column.end(); })
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt( view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_order.find(value) != g_view_sort_order.end(); })
     ;
 }
 
@@ -163,6 +187,18 @@ void dump_file_options::process_raw_options()
 
         system_module_list_ = dlg_help_utils::heap::statistic_views::system_module_list{convert_to_wstring(values.systemmodules)};
         system_module_list_file_.clear();
+    }
+
+    if(!view_sort_column_raw_.empty())
+    {
+        statistic_view_options_.view_sort_column() = g_view_sort_column.at(view_sort_column_raw_);
+        view_sort_column_raw_.clear();
+    }
+
+    if(!view_sort_order_raw_.empty())
+    {
+        statistic_view_options_.view_sort_order() = g_view_sort_order.at(view_sort_order_raw_);
+        view_sort_order_raw_.clear();
     }
 }
 

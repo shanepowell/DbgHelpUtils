@@ -108,6 +108,8 @@ private:
     std::vector<std::string> heap_statistics_raw_;
     std::string by_range_view_range_raw_;
     std::string system_module_list_file_;
+    std::string view_sort_column_raw_;
+    std::string view_sort_order_raw_;
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list_;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
 };
