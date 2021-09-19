@@ -108,14 +108,14 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes get_virtual_alloc_end_unused_bytes(uint64_t end_address) const;
 
         [[nodiscard]] dbg_help::symbol_type_info get_heap_entry_symbol_type() const;
-        [[nodiscard]] uint64_t get_heap_entry_length() const;
+        [[nodiscard]] size_t get_heap_entry_length() const;
         [[nodiscard]] uint64_t get_small_tag_index_offset() const;
 
     private:
         nt_heap const& heap_;
         uint64_t const heap_entry_address_;
         dbg_help::symbol_type_info const heap_entry_symbol_type_{get_heap_entry_symbol_type()};
-        uint64_t const heap_entry_length_{get_heap_entry_length()};
+        size_t const heap_entry_length_{get_heap_entry_length()};
         std::shared_ptr<uint8_t[]> buffer_;
         uint64_t const small_tag_index_offset_{0};
         uint8_t const flags_{0};

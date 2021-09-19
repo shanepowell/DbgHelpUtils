@@ -1228,10 +1228,11 @@ void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& op
     wcout << '\n';
 }
 
-void print_process_entry(heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options)
+void print_process_entry(heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options, size_t const indent)
 {
+    std::wstring const indent_str(indent, L' ');
     using namespace size_units::base_16;
-    wcout << "  " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " size(" << entry.user_requested_size() << ") overhead(" << entry.overhead_size() << ")";
+    wcout << indent_str << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " size(" << entry.user_requested_size() << ") overhead(" << entry.overhead_size() << ")";
     if(!entry.filename().empty())
     {
         wcout << ' ' << entry.filename() << ':' << entry.line_number();
@@ -1241,8 +1242,8 @@ void print_process_entry(heap::process_heap_entry const& entry, process::process
 
     if(options.display_symbols() && !entry.allocation_stack_trace().empty())
     {
-        wcout << "    Allocation Stack Trace:\n";
-        hex_dump_stack(wcout, peb.walker(), entry.allocation_stack_trace(), peb.is_x86_target(), 6);
+        wcout << indent_str << "  Allocation Stack Trace:\n";
+        hex_dump_stack(wcout, peb.walker(), entry.allocation_stack_trace(), peb.is_x86_target(), indent + 4);
         wcout << '\n';
     }
 
@@ -1250,7 +1251,7 @@ void print_process_entry(heap::process_heap_entry const& entry, process::process
     {
         if(auto stream = entry.user_data(); !stream.eof())
         {
-            hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), 6);
+            hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), indent + 4);
             wcout << L'\n';
         }
     }
@@ -1264,13 +1265,13 @@ void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options c
     cout << "Heap Allocated Entries:\n";
     for(auto const& entry : heaps.entries())
     {
-        print_process_entry(entry, heaps.peb(), hex_length, options);
+        print_process_entry(entry, heaps.peb(), hex_length, options, 2);
     }
 
     cout << "Heap Free Entries:\n";
     for(auto const& entry : heaps.free_entries())
     {
-        print_process_entry(entry, heaps.peb(), hex_length, options);
+        print_process_entry(entry, heaps.peb(), hex_length, options, 2);
     }
 
     wcout << '\n';
@@ -1329,7 +1330,7 @@ void dump_mini_dump_crtheap(mini_dump const& mini_dump, dump_file_options const&
     }
 }
 
-void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk const& walker, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target, streamsize const hex_length)
+void dump_mini_dump_heap_statistics_view(process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target, streamsize const hex_length)
 {
     using namespace size_units::base_16;
     wcout << "  " << heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()) << ":\n";
@@ -1422,9 +1423,24 @@ void dump_mini_dump_heap_statistics_view(stream_stack_dump::mini_dump_stack_walk
 
         if(options.display_symbols() && !bucket.allocation_stack_trace().empty())
         {
-            wcout << "    Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, walker, bucket.allocation_stack_trace(), is_x86_target, 4);
+            wcout << "  Allocation Stack Trace:\n";
+            hex_dump_stack(wcout, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
             wcout << '\n';
+        }
+
+        if(options.debug_heap_data())
+        {
+            wcout << "  Entries:\n";
+            for(auto const& entry : bucket.entries())
+            {
+                print_process_entry(entry, peb, hex_length, options, 4);
+            }
+
+            wcout << "  Free Entries:\n";
+            for(auto const& entry : bucket.free_entries())
+            {
+                print_process_entry(entry, peb, hex_length, options, 4);
+            }
         }
     }
 
@@ -1475,22 +1491,22 @@ void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, dump_file_option
     wcout << "Heap Statistics:\n";
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
         wcout << '\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_ranges_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
         wcout << '\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_stacktrace_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
         wcout << '\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_application_callsite_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb().walker(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
         wcout << '\n';
     }
 }

@@ -127,7 +127,7 @@ namespace dlg_help_utils::stream_utils
 
     [[nodiscard]] std::optional<uint64_t> find_machine_size_field_value(process::process_environment_block const& peb, dbg_help::symbol_type_info const& type, std::wstring_view field_name, uint64_t memory_address);
     [[nodiscard]] dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& name);
-    [[nodiscard]] uint64_t get_type_length(dbg_help::symbol_type_info const& type, std::wstring const& type_name);
+    [[nodiscard]] size_t get_type_length(dbg_help::symbol_type_info const& type, std::wstring const& type_name);
     [[nodiscard]] uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name);
     [[nodiscard]] uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name);
     [[nodiscard]] uint64_t get_field_offset(dbg_help::symbol_type_info const& symbol_type, std::wstring const& symbol_name, std::wstring const& field_name);

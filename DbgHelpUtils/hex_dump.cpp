@@ -9,9 +9,9 @@ using namespace std;
 
 namespace
 {
-    size_t hex_string_size_for(size_t value)
+    uint64_t hex_string_size_for(uint64_t value)
     {
-        size_t length(1);
+        uint64_t length(1);
         value >>= 4;
         while (value > 0)
         {
@@ -27,14 +27,14 @@ namespace dlg_help_utils::hex_dump
 {
     using namespace stream_hex_dump;
 
-    void hex_dump(std::wostream& os, void const* data, size_t const length, size_t const indent, bool const write_header, size_t const bytes_per_row, uint64_t const offset)
+    void hex_dump(std::wostream& os, void const* data, uint64_t const length, size_t const indent, bool const write_header, uint64_t const bytes_per_row, uint64_t const offset)
     {
         auto const* values = static_cast<uint8_t const*>(data);
 
         const wstring indent_str(indent, L' ');
 
         auto const length_hex_size_bytes = static_cast<streamsize>(hex_string_size_for(offset + length));
-        auto const bytes_per_row_hex_size_bytes = static_cast<streamsize>(std::max<>(hex_string_size_for(bytes_per_row), static_cast<size_t>(2)));
+        auto const bytes_per_row_hex_size_bytes = static_cast<streamsize>(std::max<>(hex_string_size_for(bytes_per_row), static_cast<uint64_t>(2)));
 
         if (write_header)
         {
@@ -74,7 +74,7 @@ namespace dlg_help_utils::hex_dump
             if (num_bytes != bytes_per_row)
             {
                 auto const gaps = bytes_per_row - num_bytes;
-                std::wstring const spaces(gaps * static_cast<size_t>(bytes_per_row_hex_size_bytes + 1), L' ');
+                std::wstring const spaces(static_cast<size_t>(gaps * (bytes_per_row_hex_size_bytes + 1)), L' ');
                 os << spaces;
             }
 
@@ -97,12 +97,12 @@ namespace dlg_help_utils::hex_dump
         }
     }
 
-    void hex_dump(std::wostream& os, mini_dump_memory_stream& stream, size_t const length, size_t const indent, bool const write_header, size_t const bytes_per_row, uint64_t const offset)
+    void hex_dump(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const length, size_t const indent, bool const write_header, uint64_t const bytes_per_row, uint64_t const offset)
     {
         const wstring indent_str(indent, L' ');
 
         auto const length_hex_size_bytes = static_cast<streamsize>(hex_string_size_for(offset + length));
-        auto const bytes_per_row_hex_size_bytes = static_cast<streamsize>(std::max<>(hex_string_size_for(bytes_per_row), static_cast<size_t>(2)));
+        auto const bytes_per_row_hex_size_bytes = static_cast<streamsize>(std::max<>(hex_string_size_for(bytes_per_row), static_cast<uint64_t>(2)));
 
         if (write_header)
         {
@@ -123,16 +123,16 @@ namespace dlg_help_utils::hex_dump
             os << L'\n';
         }
 
-        const auto values = std::make_unique<uint8_t[]>(bytes_per_row);
+        const auto values = std::make_unique<uint8_t[]>(static_cast<size_t>(bytes_per_row));
         for (size_t row = 0; row * bytes_per_row < length; ++row)
         {
-            auto const num_bytes = stream.read(values.get(), bytes_per_row);
+            auto const num_bytes = stream.read(values.get(), static_cast<size_t>(bytes_per_row));
 
             //indent the memory dump
             os << indent_str;
 
             //write the address of the first byte of this row
-            os << to_hex(static_cast<uint64_t>(row * bytes_per_row) + offset, length_hex_size_bytes) << L": ";
+            os << to_hex(row * bytes_per_row + offset, length_hex_size_bytes) << L": ";
 
             //first write out the hexadecimal values of the individual bytes
             for (size_t column = 0; column < num_bytes; ++column)
@@ -144,7 +144,7 @@ namespace dlg_help_utils::hex_dump
             if (num_bytes != bytes_per_row)
             {
                 auto const gaps = bytes_per_row - num_bytes;
-                std::wstring const spaces(gaps * static_cast<size_t>(bytes_per_row_hex_size_bytes + 1), L' ');
+                std::wstring const spaces(static_cast<size_t>(gaps * (bytes_per_row_hex_size_bytes + 1)), L' ');
                 os << spaces;
             }
 

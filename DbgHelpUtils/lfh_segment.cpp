@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
     size_t lfh_segment::subsegments_count() const
     {
         auto [start_subsegment_address, end_subsegment_address] = get_subsegment_range();
-        return (end_subsegment_address - start_subsegment_address) / heap_subsegment_size_;
+        return static_cast<size_t>((end_subsegment_address - start_subsegment_address) / heap_subsegment_size_);
     }
 
     std::experimental::generator<heap_subsegment> lfh_segment::subsegments() const
@@ -71,7 +71,7 @@ namespace dlg_help_utils::heap
         return std::make_pair(start_subsegment_address, end_subsegment_address);
     }
 
-    uint64_t lfh_segment::get_lfh_block_zone_size() const
+    size_t lfh_segment::get_lfh_block_zone_size() const
     {
         if(lfh_heap_.heap().peb().is_x86_target())
         {

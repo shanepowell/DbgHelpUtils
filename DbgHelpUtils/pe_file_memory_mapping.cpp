@@ -43,7 +43,7 @@ namespace dlg_help_utils
         loaded_pe_files_.erase(module_base);
     }
 
-    void const* pe_file_memory_mapping::find_address_range(uint64_t const address, size_t const length) const
+    void const* pe_file_memory_mapping::find_address_range(uint64_t const address, uint64_t const length) const
     {
         if (!range_utils::validate_range(address, length)) return nullptr;
 
@@ -60,7 +60,7 @@ namespace dlg_help_utils
         return static_cast<uint8_t const*>(it->second.data()) + (address - it->first);
     }
 
-    void const* pe_file_memory_mapping::find_any_address_range(const uint64_t address, size_t& length) const
+    void const* pe_file_memory_mapping::find_any_address_range(const uint64_t address, uint64_t& length) const
     {
         range_utils::limit_range(address, length);
         if (length == 0) return nullptr;

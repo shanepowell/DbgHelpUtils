@@ -47,6 +47,6 @@ namespace dlg_help_utils::heap
         uint64_t const heap_vs_context_address_;
         dbg_help::symbol_type_info const heap_vs_context_symbol_type_;
         dbg_help::symbol_type_info const heap_vs_chunk_free_symbol_type_;
-        uint64_t const heap_vs_chunk_header_length_;
+        size_t const heap_vs_chunk_header_length_;
     };
 }

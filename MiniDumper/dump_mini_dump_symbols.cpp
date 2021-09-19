@@ -124,7 +124,7 @@ void dump_mini_dump_module_symbol_types(mini_dump const& mini_dump, std::wstring
 }
 
 template<typename T>
-void dump_address_type_array(std::wostream& os, std::wstring const& dt, mini_dump_memory_stream& variable_stream, size_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
+void dump_address_type_array(std::wostream& os, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
 {
     os << dt << " array @ [" << stream_hex_dump::to_hex_full(variable_stream.current_address()) << "] for [" << memory_size / sizeof(T) << "] elements:\n";
     print_utils::print_stream_array_lines<T>(wcout, variable_stream, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);

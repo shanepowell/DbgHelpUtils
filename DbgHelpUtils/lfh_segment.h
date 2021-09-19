@@ -40,13 +40,13 @@ namespace dlg_help_utils::heap
     private:
         [[nodiscard]] std::pair<uint64_t, uint64_t> get_subsegment_range() const;
 
-        [[nodiscard]] uint64_t get_lfh_block_zone_size() const;
+        [[nodiscard]] size_t get_lfh_block_zone_size() const;
 
     private:
         heap::lfh_heap const& lfh_heap_;
         uint64_t const lfh_segment_address_;
         dbg_help::symbol_type_info const lfh_block_zone_symbol_type_;
-        uint64_t const lfh_block_zone_size_{get_lfh_block_zone_size()};
-        uint64_t const heap_subsegment_size_;
+        size_t const lfh_block_zone_size_{get_lfh_block_zone_size()};
+        size_t const heap_subsegment_size_;
     };
 }

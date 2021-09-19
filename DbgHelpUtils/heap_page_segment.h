@@ -49,7 +49,7 @@ namespace dlg_help_utils::heap
         uint64_t const heap_page_segment_address_;
         uint64_t const heap_segment_context_address_;
         dbg_help::symbol_type_info const heap_page_segment_symbol_type_;
-        uint64_t const heap_page_range_descriptor_length_;
+        size_t const heap_page_range_descriptor_length_;
         dbg_help::symbol_type_info const desc_array_array_field_symbol_type_{get_desc_array_field_symbol_type()};
         uint64_t const heap_seg_context_array_field_offset_{get_desc_array_field_offset()};
     };

@@ -89,7 +89,7 @@ namespace dlg_help_utils::heap
         process::process_environment_block const& peb_;
         dbg_help::symbol_type_info const segment_heap_symbol_type_;
         dbg_help::symbol_type_info const heap_seg_context_symbol_type_;
-        uint64_t const heap_seg_context_symbol_length_;
+        size_t const heap_seg_context_symbol_length_;
         dbg_help::symbol_type_info const heap_seg_context_array_field_symbol_type_;
         uint64_t const heap_seg_context_array_field_offset_;
         uint64_t heap_key_;

@@ -25,8 +25,8 @@ namespace dlg_help_utils
 
         [[nodiscard]] std::experimental::generator<memory64_entry> list() const;
 
-        [[nodiscard]] void const* find_address_range(uint64_t address, size_t length) const;
-        [[nodiscard]] void const* find_any_address_range(uint64_t address, size_t& length) const;
+        [[nodiscard]] void const* find_address_range(uint64_t address, uint64_t length) const;
+        [[nodiscard]] void const* find_any_address_range(uint64_t address, uint64_t& length) const;
 
     private:
         mini_dump const& dump_;

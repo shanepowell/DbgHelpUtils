@@ -39,3 +39,7 @@ vcpkg_installed
 /*.dll
 /CrashDumps
 /failed
+/x64DebugCrashDumps
+/x64ReleaseCrashDumps
+/x86DebugCrashDumps
+/x86ReleaseCrashDumps

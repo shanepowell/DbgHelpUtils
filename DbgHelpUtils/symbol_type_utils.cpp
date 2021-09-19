@@ -526,14 +526,14 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_array_inline(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, size_t max_size, bool const dump_hex = false)
+    void dump_array_inline(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t max_size, bool const dump_hex = false)
     {
         if(max_size == 0)
         {
             max_size = walker.find_memory_range(variable_address, sizeof(T), 1);
         }
 
-        print_utils::print_stream_array_inline<T>(os, variable_stream, max_size, dump_hex);
+        print_utils::print_stream_array_inline<T>(os, variable_stream, static_cast<size_t>(max_size), dump_hex);
     }
 
     template<typename T>
@@ -588,14 +588,14 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_string(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t max_size, size_t const limit_size = 256)
+    void dump_string(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, mini_dump_memory_stream& variable_stream, uint64_t max_size, uint64_t const limit_size = 256)
     {
         if(max_size == 0)
         {
             max_size = walker.find_memory_range_if(variable_address, sizeof(T), limit_size, [](void const* ptr) { return *static_cast<T const*>(ptr) == NULL; });
         }
 
-        print_utils::print_stream_str<T>(os, variable_stream, max_size, false);
+        print_utils::print_stream_str<T>(os, variable_stream, static_cast<size_t>(max_size), false);
     }
 
 
@@ -768,6 +768,7 @@ namespace dlg_help_utils::symbol_type_utils
     {
         if(auto const length_data = type.length(); length_data.value_or(0) > 0)
         {
+            auto const length = static_cast<size_t>(length_data.value());
             std::wstring const indent_str(indent, L' ');
             for(size_t index = 0; index < max_size; ++index)
             {
@@ -776,7 +777,7 @@ namespace dlg_help_utils::symbol_type_utils
                 dump_variable_symbol_at(os, walker, type, type, variable_address, copy_stream, indent, false);
                 variable_address += length_data.value();
 
-                variable_stream.skip(length_data.value());
+                variable_stream.skip(length);
             }
         }
     }

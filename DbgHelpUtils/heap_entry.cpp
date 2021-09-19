@@ -286,7 +286,7 @@ namespace dlg_help_utils::heap
             static_cast<uint16_t>(0x0502)
         };
 
-        int index = 0;
+        size_t index = 0;
         while(!stream.eof() && stream.current_address() < end_address)
         {
             uint16_t check;
@@ -332,7 +332,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_type(walker(), symbol_name);
     }
 
-    uint64_t heap_entry::get_heap_entry_length() const
+    size_t heap_entry::get_heap_entry_length() const
     {
         return stream_utils::get_type_length(heap_entry_symbol_type_, symbol_name);
     }

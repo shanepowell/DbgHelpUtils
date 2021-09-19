@@ -215,7 +215,7 @@ std::vector<std::wstring> dump_file_options::convert_to_wstring(std::vector<std:
     return rv;
 }
 
-size_t dump_file_options::hex_dump_memory_size(size_t const size) const
+uint64_t dump_file_options::hex_dump_memory_size(uint64_t const size) const
 {
     if(limit_hex_dump_memory_size() > 0)
     {

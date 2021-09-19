@@ -85,7 +85,7 @@ namespace dlg_help_utils::heap
             auto const entry_address : rb_tree_walker.entries())
         {
             auto const page_segment_address = entry_address & segment_address_mask;
-            auto const index = (entry_address - page_segment_address) / heap_page_range_descriptor_length;
+            auto const index = static_cast<size_t>((entry_address - page_segment_address) / heap_page_range_descriptor_length);
             co_yield page_range_descriptor{*this, entry_address, index, page_segment_address};
         }
     }

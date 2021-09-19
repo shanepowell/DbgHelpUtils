@@ -65,7 +65,7 @@ namespace dlg_help_utils::heap
         dph_heap const& heap_;
         dbg_help::symbol_type_info const dph_heap_block_symbol_type_;
         dbg_help::symbol_type_info const dph_block_information_symbol_type_;
-        uint64_t const dph_block_information_symbol_length_;
+        size_t const dph_block_information_symbol_length_;
         uint64_t const entry_address_;
         uint64_t const virtual_block_address_{get_virtual_block_address()};
         size_units::base_16::bytes const virtual_block_size_{get_virtual_block_size()};

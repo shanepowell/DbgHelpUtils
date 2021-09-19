@@ -11,10 +11,12 @@
 
 Param
 (
-    [string] $DumpFolder = "CrashDumps",
-    [string] $ResultFile = "CrashDumps\Report.log",
+    [string] $DumpFolder,
+    [string] $ResultFile,
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
+    [switch] $TestX86,
+    [switch] $TestDebug,
     [switch] $Verbose
 )
 
@@ -59,6 +61,7 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         Write-Verbose "Run: . `"$PSScriptRoot\$arch_dir\$config\$app_name`" `"--test`" `"$arg`" `"--type`" `"$alloc`" `"--dmp`" $dmp `"--log`" $log `"--json`" $json"
         . "$PSScriptRoot\$arch_dir\$config\$app_name" "--test" "$arg" "--type" "$alloc" "--dmp" $dmp "--log" $log "--json" $json
     }
+
     if($GenerateHeapLogs)
     {
         $full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_full.log"
@@ -68,13 +71,13 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $full_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $debug_full_log -ErrorAction:SilentlyContinue | Out-Null
 
-        Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $full_log"
-        . "$PSScriptRoot\x64\Release\MiniDumper.exe" --heap --crtheap --heapentries --dumpfile $dmp > $full_log
-        Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --dumpfile $dmp > $debug_full_log"
-        . "$PSScriptRoot\x64\Release\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --dumpfile $dmp > $debug_full_log
+        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $full_log"
+        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $full_log
+        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp > $debug_full_log"
+        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp > $debug_full_log
     }
-    Write-Verbose "Run: . `"$PSScriptRoot\x64\Release\ValidateHeapEntries.exe`" `"--dmp`" $dmp `"--log`" $ResultFile `"--json`" $json $validateoptions"
-    . "$PSScriptRoot\x64\Release\ValidateHeapEntries.exe" "--dmp" $dmp "--log" $ResultFile "--json" $json $validateoptions
+    Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\ValidateHeapEntries.exe`" `"--dmp`" $dmp `"--log`" $ResultFile `"--json`" $json $validateoptions"
+    . "$PSScriptRoot\$BinFolder\$ReleaseFolder\ValidateHeapEntries.exe" "--dmp" $dmp "--log" $ResultFile "--json" $json $validateoptions
 }
 
 function Test-Admin {
@@ -91,6 +94,34 @@ if ((Test-Admin) -eq $false)
 {
     Write-Host "This script can only be run with Administrator"
     exit
+}
+
+if($TestDebug)
+{
+    $ReleaseFolder = "Debug"
+}
+else
+{
+    $ReleaseFolder = "Release"
+}
+
+if($TestX86)
+{
+    $BinFolder = "x86"
+}
+else
+{
+    $BinFolder = "x64"
+}
+
+if(!$DumpFolder)
+{
+    $DumpFolder = "$($BinFolder)$($ReleaseFolder)CrashDumps"
+}
+
+if(!$ResultFile)
+{
+    $ResultFile = "$($DumpFolder)\Report.log"
 }
 
 if (!(Test-Path $DumpFolder))

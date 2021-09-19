@@ -46,7 +46,7 @@ void dump_mini_dump_thread_context(stream_thread_context const& thread_context, 
     }
     else if (thread_context.wow64_thread_context_available())
     {
-        dump_mini_dump_x86_thread_context(thread_context.wow64_thread_context(),
+        dump_mini_dump_wow64_thread_context(thread_context.wow64_thread_context(),
                                           thread_context.wow64_thread_context_has_extended_registers());
     }
     else if (thread_context.x86_thread_context_available())
@@ -66,7 +66,7 @@ void dump_mini_dump_thread_context(stream_thread_context const& thread_context, 
     }
 }
 
-void dump_mini_dump_x64_thread_context(CONTEXT const& context)
+void dump_mini_dump_x64_thread_context(stream_thread_context::context_x64 const& context)
 {
     wcout << L"    ContextFlags: " << to_hex_full(context.ContextFlags) << L'\n';
     wcout << L"    RIP: " << to_hex_full(context.Rip) << L'\n';
@@ -138,7 +138,53 @@ void dump_mini_dump_x64_thread_context(CONTEXT const& context)
     wcout << L"    LastExceptionFromRip: " << to_hex_full(context.LastExceptionFromRip) << L'\n';
 }
 
-void dump_mini_dump_x86_thread_context(WOW64_CONTEXT const& context, bool const has_extended_registers)
+void dump_mini_dump_x86_thread_context(stream_thread_context::context_x86 const& context, bool const has_extended_registers)
+{
+    wcout << L"    ContextFlags: " << to_hex_full(context.ContextFlags) << L'\n';
+    wcout << L"    EIP: " << to_hex_full(context.Eip) << L'\n';
+    wcout << L"    ESP: " << to_hex_full(context.Esp) << L'\n';
+    wcout << L"    EAX: " << to_hex_full(context.Eax) << L'\n';
+    wcout << L"    EBX: " << to_hex_full(context.Ebx) << L'\n';
+    wcout << L"    ECX: " << to_hex_full(context.Ecx) << L'\n';
+    wcout << L"    EDX: " << to_hex_full(context.Edx) << L'\n';
+    wcout << L"    EDI: " << to_hex_full(context.Edi) << L'\n';
+    wcout << L"    ESI: " << to_hex_full(context.Esi) << L'\n';
+    wcout << L"    EBP: " << to_hex_full(context.Ebp) << L'\n';
+    wcout << L"    CS: " << to_hex_full(context.SegCs) << L'\n';
+    wcout << L"    DS: " << to_hex_full(context.SegDs) << L'\n';
+    wcout << L"    ES: " << to_hex_full(context.SegEs) << L'\n';
+    wcout << L"    FS: " << to_hex_full(context.SegFs) << L'\n';
+    wcout << L"    GS: " << to_hex_full(context.SegGs) << L'\n';
+    wcout << L"    SS: " << to_hex_full(context.SegSs) << L'\n';
+    wcout << L"    EFlags: " << to_hex_full(context.EFlags) << L'\n';
+    wcout << L"    DR0: " << to_hex_full(context.Dr0) << L'\n';
+    wcout << L"    DR1: " << to_hex_full(context.Dr1) << L'\n';
+    wcout << L"    DR2: " << to_hex_full(context.Dr2) << L'\n';
+    wcout << L"    DR3: " << to_hex_full(context.Dr3) << L'\n';
+    wcout << L"    DR6: " << to_hex_full(context.Dr6) << L'\n';
+    wcout << L"    DR7: " << to_hex_full(context.Dr7) << L'\n';
+
+    wcout << L"    FloatSave:\n";
+    wcout << L"      ControlWord: " << to_hex(context.FloatSave.ControlWord) << L'\n';
+    wcout << L"      StatusWord: " << to_hex(context.FloatSave.StatusWord) << L'\n';
+    wcout << L"      TagWord: " << to_hex(context.FloatSave.TagWord) << L'\n';
+    wcout << L"      ErrorOffset: " << to_hex(context.FloatSave.ErrorOffset) << L'\n';
+    wcout << L"      ErrorSelector: " << to_hex(context.FloatSave.ErrorSelector) << L'\n';
+    wcout << L"      DataOffset: " << to_hex(context.FloatSave.DataOffset) << L'\n';
+    wcout << L"      DataSelector: " << to_hex(context.FloatSave.DataSelector) << L'\n';
+    wcout << L"      RegisterArea:\n";
+    hex_dump::hex_dump(wcout, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+    wcout << L'\n';
+
+    if (has_extended_registers)
+    {
+        wcout << L"    ExtendedRegisters:\n";
+        hex_dump::hex_dump(wcout, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
+        wcout << L'\n';
+    }
+}
+
+void dump_mini_dump_wow64_thread_context(WOW64_CONTEXT const& context, bool const has_extended_registers)
 {
     wcout << L"    ContextFlags: " << to_hex_full(context.ContextFlags) << L'\n';
     wcout << L"    EIP: " << to_hex_full(context.Eip) << L'\n';

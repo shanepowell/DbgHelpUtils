@@ -4,6 +4,7 @@
 #include <array>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <ranges>
 #include <sstream>
 
@@ -15,10 +16,10 @@
 #include <lyra/lyra.hpp>
 #pragma warning(pop)
 
-#include <map>
-
-#include <DbgHelpUtils/join.h>
 #include "ResultSet.h"
+#include "DbgHelpUtils/handles.h"
+#include "DbgHelpUtils/join.h"
+#include "DbgHelpUtils/string_conversation.h"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -44,43 +45,6 @@ void FreeAllocationInResultSet(ResultSet& set, void* allocation);
 
 void CreateOutput(std::wostream& log, std::wstring const& dump_filename);
 void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename);
-
-template<typename T, typename D>
-std::unique_ptr<T, D> make_handle(T* handle, D deleter)
-{
-    return std::unique_ptr<T, D>{handle, deleter};
-}
-
-std::tuple<std::wstring, uint32_t> code_page_string_to_wstring(char const* str, const size_t length, const uint32_t code_page)
-{
-    if (length == 0)
-    {
-        return make_tuple(std::wstring(), ERROR_SUCCESS);
-    }
-
-    const auto ret = MultiByteToWideChar(code_page, 0, str, static_cast<int>(length), nullptr, 0);
-    if (ret == 0)
-    {
-        //something went wrong - GetLastError();
-        return make_tuple(std::wstring(), GetLastError());
-    }
-
-    std::wstring rv(static_cast<size_t>(ret), static_cast<wchar_t>(0x0));
-    if (static_cast<size_t>(MultiByteToWideChar(code_page, 0, str, static_cast<int>(length), &*rv.begin(),
-                                                static_cast<int>(rv.length()))) != rv.length())
-    {
-        //something went wrong - GetLastError();
-        return make_tuple(std::wstring(), GetLastError());
-    }
-    return make_tuple(rv, ERROR_SUCCESS);
-}
-
-std::wstring acp_to_wstring(std::string const& str)
-{
-    [[maybe_unused]] auto [result, status] = code_page_string_to_wstring(str.c_str(), str.length(), CP_ACP);
-    return result;
-}
-
 
 int main(int const argc, char* argv[])
 {
@@ -150,6 +114,7 @@ int main(int const argc, char* argv[])
                 return EXIT_SUCCESS;
             }
 
+            using dlg_help_utils::string_conversation::acp_to_wstring;
             auto const dump_filename = acp_to_wstring(dump_filename_l);
             auto const log_filename = acp_to_wstring(log_filename_l);
             auto const json_filename = acp_to_wstring(json_filename_l);
@@ -369,6 +334,7 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
         return;
     }
 
+    using dlg_help_utils::handles::make_handle;
     auto const out_write_handle = make_handle(out_write_pipe_handle, CloseHandle);
     auto const out_read_handle = make_handle(out_read_pipe_handle, CloseHandle);
 

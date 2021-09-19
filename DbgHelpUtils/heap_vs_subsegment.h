@@ -51,7 +51,7 @@ namespace dlg_help_utils::heap
         segment_heap const& heap_;
         uint64_t const heap_vs_subsegment_address_;
         dbg_help::symbol_type_info const heap_vs_subsegment_symbol_type_;
-        uint64_t const heap_vs_subsegment_length_;
-        uint64_t const heap_vs_chunk_header_length_;
+        size_t const heap_vs_subsegment_length_;
+        size_t const heap_vs_chunk_header_length_;
    };
 }

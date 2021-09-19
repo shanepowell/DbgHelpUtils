@@ -40,8 +40,8 @@ public:
     [[nodiscard]] bool generate_crc32() const { return generate_crc32_; }
     [[nodiscard]] bool hex_dump_stream_data() const { return hex_dump_stream_data_; }
     [[nodiscard]] bool hex_dump_memory_data() const { return hex_dump_memory_data_; }
-    [[nodiscard]] size_t limit_hex_dump_memory_size() const { return limit_hex_dump_memory_size_; }
-    [[nodiscard]] size_t hex_dump_memory_size(size_t size) const;
+    [[nodiscard]] uint64_t limit_hex_dump_memory_size() const { return limit_hex_dump_memory_size_; }
+    [[nodiscard]] uint64_t hex_dump_memory_size(uint64_t size) const;
     [[nodiscard]] std::vector<size_t> const& dump_stream_indexes() const { return dump_stream_indexes_; }
     [[nodiscard]] std::vector<MINIDUMP_STREAM_TYPE> const& dump_stream_types() const { return dump_stream_types_; }
     [[nodiscard]] bool continue_on_errors() const { return continue_on_errors_; }
@@ -77,7 +77,7 @@ private:
     bool hex_dump_stream_data_{false};
     bool hex_dump_memory_data_{false};
     std::string limit_hex_dump_memory_size_raw_;
-    size_t limit_hex_dump_memory_size_{0};
+    uint64_t limit_hex_dump_memory_size_{0};
     std::vector<size_t> dump_stream_indexes_;
     std::vector<std::string> dump_stream_types_raw_;
     std::vector<MINIDUMP_STREAM_TYPE> dump_stream_types_;

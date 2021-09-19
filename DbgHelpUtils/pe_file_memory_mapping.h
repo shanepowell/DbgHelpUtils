@@ -14,8 +14,8 @@ namespace dlg_help_utils
         void load_pe_file(std::wstring const& path, uint64_t module_base);
         void unload_pe_file(uint64_t module_base);
 
-        [[nodiscard]] void const* find_address_range(uint64_t address, size_t length) const;
-        [[nodiscard]] void const* find_any_address_range(uint64_t address, size_t& length) const;
+        [[nodiscard]] void const* find_address_range(uint64_t address, uint64_t length) const;
+        [[nodiscard]] void const* find_any_address_range(uint64_t address, uint64_t& length) const;
 
     private:
         [[nodiscard]] std::map<uint64_t, pe_file>::const_iterator find_loaded_pe_file(uint64_t address) const;

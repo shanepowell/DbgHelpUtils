@@ -63,7 +63,7 @@ namespace dlg_help_utils::heap
         segment_heap const& heap_;
         uint64_t const large_alloc_entry_address_;
         dbg_help::symbol_type_info const heap_large_alloc_symbol_type_;
-        uint64_t const heap_large_alloc_length_;
+        size_t const heap_large_alloc_length_;
         size_units::base_16::bytes const size_;
         uint64_t const ust_address_{0};
         std::vector<uint64_t> const allocation_stack_trace_{};

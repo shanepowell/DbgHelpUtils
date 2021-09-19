@@ -21,6 +21,7 @@ namespace dlg_help_utils::heap
     : nt_heap_address_{nt_heap_address}
     , peb_{peb}
     , heap_symbol_type_{stream_utils::get_type(walker(), symbol_name)}
+    // ReSharper disable once CppRedundantCastExpression
     , granularity_{static_cast<uint32_t>(stream_utils::get_type_length(stream_utils::get_type(walker(), heap_entry::symbol_name), heap_entry::symbol_name))}
     {
         if(auto const encode_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), heap_symbol_type_, common_symbol_names::heap_encode_flag_mask_field_symbol_name, nt_heap_address_); (encode_flag.value_or(0x0) & HeapEncodeFlagMakeEncodingEnabled) == HeapEncodeFlagMakeEncodingEnabled)

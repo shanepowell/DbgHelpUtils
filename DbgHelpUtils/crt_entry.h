@@ -48,7 +48,7 @@ namespace dlg_help_utils::heap
         crt_heap const& heap_;
         uint64_t const entry_address_;
         dbg_help::symbol_type_info const crt_mem_block_header_symbol_type_;
-        uint64_t const crt_mem_block_header_length_;
+        size_t const crt_mem_block_header_length_;
         std::wstring const file_name_;
     };
 }

@@ -119,7 +119,7 @@ namespace dlg_help_utils::stream_stack_dump
 
     void const* mini_dump_stack_walk::get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const
     {
-        size_t max_size = size;
+        auto max_size = size;
         auto const* memory = get_stack_memory(base_address, max_size, false);
         if (memory != nullptr)
         {
@@ -286,7 +286,7 @@ namespace dlg_help_utils::stream_stack_dump
                                                  LPDWORD number_of_bytes_read) const
     {
         if(stack_size_ == 0) return false;
-        size_t length = size;
+        uint64_t length = size;
         if (!range_utils::range_union(stack_start_range_, stack_size_, base_address, length)) return false;
         *number_of_bytes_read = static_cast<DWORD>(length);
 

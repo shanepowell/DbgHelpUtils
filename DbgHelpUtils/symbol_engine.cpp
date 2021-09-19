@@ -49,13 +49,13 @@ namespace
         DWORD unknown;
         WCHAR file_name[133]; // symbols file or image name
         uint16_t reparse; // load failure reparse
-        HANDLE h_file; // file handle, if passed
+        uint64_t h_file; // file handle, if passed
         DWORD flags;
     };
 
     struct symbol_load
     {
-        [[maybe_unused]] DWORD size_of_struct; // set to sizeof(symbol_load_w64)
+        [[maybe_unused]] DWORD size_of_struct; // set to sizeof(symbol_load)
         DWORD64 base_of_image; // base load address of module
         DWORD check_sum; // checksum from the pe header
         DWORD time_date_stamp; // date/time stamp from pe header

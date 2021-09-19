@@ -46,7 +46,7 @@ namespace dlg_help_utils
 
     size_t mini_dump_memory_stream::read(void* buffer, size_t const length)
     {
-        return process_data(length, [destination = static_cast<uint8_t*>(buffer)](uint8_t const* memory, uint64_t const amount) mutable
+        return process_data(length, [destination = static_cast<uint8_t*>(buffer)](uint8_t const* memory, size_t const amount) mutable
             {
                 memcpy(destination, memory, amount);
                 destination += amount;
@@ -55,7 +55,7 @@ namespace dlg_help_utils
 
     size_t mini_dump_memory_stream::skip(size_t const length)
     {
-        return process_data(length, []([[maybe_unused]] uint8_t const* memory, [[maybe_unused]] uint64_t const amount)
+        return process_data(length, []([[maybe_unused]] uint8_t const* memory, [[maybe_unused]] size_t const amount)
             {
             });
     }

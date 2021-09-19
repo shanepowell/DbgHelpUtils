@@ -77,7 +77,7 @@ namespace dlg_help_utils::heap
         uint64_t const heap_vs_entry_address_;
         std::unique_ptr<uint8_t[]> buffer_;
         dbg_help::symbol_type_info const heap_vs_chunk_header_symbol_type_;
-        uint64_t const heap_vs_chunk_header_length_;
+        size_t const heap_vs_chunk_header_length_;
         size_units::base_16::bytes const size_;
         size_units::base_16::bytes const previous_size_{0};
         bool const is_valid_{true};

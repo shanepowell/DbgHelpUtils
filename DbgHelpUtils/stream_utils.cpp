@@ -367,7 +367,8 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        auto buffer = std::make_unique<uint8_t[]>(data_type_length.value());
+        auto const length = static_cast<size_t>(data_type_length.value());
+        auto buffer = std::make_unique<uint8_t[]>(length);
         auto stream = walker.get_process_memory_stream(memory_address + offset, data_type_length.value());
 
         if(stream.eof())
@@ -375,7 +376,7 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        if(stream.read(buffer.get(), data_type_length.value()) != data_type_length.value())
+        if(stream.read(buffer.get(), length) != data_type_length.value())
         {
             return std::nullopt;
         }
@@ -438,11 +439,11 @@ namespace dlg_help_utils::stream_utils
         return symbol_info.value();
     }
 
-    uint64_t get_type_length(dbg_help::symbol_type_info const& type, std::wstring const& type_name)
+    size_t get_type_length(dbg_help::symbol_type_info const& type, std::wstring const& type_name)
     {
         if(auto const length_data = type.length(); length_data.has_value())
         {
-            return length_data.value();
+            return static_cast<size_t>(length_data.value());
         }
 
         throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " length not found").str()};
