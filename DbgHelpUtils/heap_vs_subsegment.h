@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
         static std::wstring const& symbol_name;
 
     private:
-        [[nodiscard]] uint16_t size_raw() const;
+        [[nodiscard]] uint16_t last_entry_offset() const;
         [[nodiscard]] uint64_t get_subsegment_offset() const;
 
     private:

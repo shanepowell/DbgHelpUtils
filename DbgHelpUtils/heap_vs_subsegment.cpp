@@ -30,7 +30,13 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes heap_vs_subsegment::size() const
     {
-        return size_units::base_16::bytes{static_cast<uint64_t>(size_raw()) << 4};
+        auto size = static_cast<uint64_t>(last_entry_offset()) << 4;
+
+        // round up to nearest page size...
+        auto const page_size = peb().page_size();
+        size = (size + (page_size - 1)) / page_size * page_size;
+
+        return size_units::base_16::bytes{size};
     }
 
     uint16_t heap_vs_subsegment::signature() const
@@ -40,7 +46,7 @@ namespace dlg_help_utils::heap
 
     bool heap_vs_subsegment::is_signature_valid() const
     {
-        return (signature() ^ size_raw() ^ 0x2BED) == 0;
+        return (signature() ^ last_entry_offset() ^ 0x2BED) == 0;
     }
 
     bool heap_vs_subsegment::full_commit() const
@@ -75,7 +81,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    uint16_t heap_vs_subsegment::size_raw() const
+    uint16_t heap_vs_subsegment::last_entry_offset() const
     {
         return stream_utils::get_field_value<uint16_t>(*this, common_symbol_names::heap_vs_subsegment_size_field_symbol_name);
     }
