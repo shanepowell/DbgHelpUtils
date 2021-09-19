@@ -19,7 +19,8 @@ struct Allocation
 
 struct ResultSet
 {
-    std::vector<Allocation> allocations;
+    std::vector<Allocation> first_allocations;
+    std::vector<Allocation> second_allocations;
 
-    JS_OBJ(allocations);
+    JS_OBJ(first_allocations, second_allocations);
 };

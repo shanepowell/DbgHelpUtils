@@ -58,11 +58,12 @@ public:
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
-    [[nodiscard]] std::vector<std::wstring> symbol_types() const { return symbol_types_; }
-    [[nodiscard]] std::vector<std::wstring> symbol_names() const { return symbol_names_; }
-    [[nodiscard]] std::vector<std::wstring> dump_types_modules() const { return dump_types_modules_; }
-    [[nodiscard]] std::vector<std::wstring> dump_address_types() const { return dump_address_types_; }
-    [[nodiscard]] std::vector<std::wstring> dump_files() const { return dump_files_; }
+    [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
+    [[nodiscard]] std::vector<std::wstring> const& symbol_names() const { return symbol_names_; }
+    [[nodiscard]] std::vector<std::wstring> const& dump_types_modules() const { return dump_types_modules_; }
+    [[nodiscard]] std::vector<std::wstring> const& dump_address_types() const { return dump_address_types_; }
+    [[nodiscard]] std::vector<std::wstring> const& dump_files() const { return dump_files_; }
+    [[nodiscard]] std::vector<std::wstring> const& base_diff_dump_files() const { return base_diff_dump_files_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list() const { return system_module_list_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options() const { return statistic_view_options_; }
 
@@ -97,6 +98,8 @@ private:
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
     std::vector<std::string> dump_files_raw_;
     std::vector<std::wstring> dump_files_;
+    std::vector<std::string> base_diff_dump_files_raw_;
+    std::vector<std::wstring> base_diff_dump_files_;
     std::vector<std::string> symbol_names_raw_;
     std::vector<std::wstring> symbol_names_;
     std::vector<std::string> symbol_types_raw_;

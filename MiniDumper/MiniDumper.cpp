@@ -59,61 +59,28 @@ int main(int const argc, char* argv[])
             return EXIT_SUCCESS;
         }
 
-        for (auto const& dump_file_match : dump_options.dump_files())
+        // ReSharper disable once CppLocalVariableMayBeConst
+        auto base_diff_dump_files = filesystem_utils::enumerate_files(dump_options.base_diff_dump_files(), [&dump_options](std::wstring const& error){ wcout << L"Dump file: " << error << L'\n'; return dump_options.continue_on_errors(); });
+        auto base_diff_dump_files_current = std::begin(base_diff_dump_files);
+        auto const base_diff_dump_files_end = std::end(base_diff_dump_files);
+        for (auto const& dump_file : filesystem_utils::enumerate_files(dump_options.dump_files(), [&dump_options](std::wstring const& error){ wcout << L"Dump file: " << error << L'\n'; return dump_options.continue_on_errors(); }))
         {
-            std::wstring match;
-            std::filesystem::path path{dump_file_match};
-            if (exists(path))
+            std::wstring base_diff_dump_file;
+            if(base_diff_dump_files_current != base_diff_dump_files_end)
             {
-                if (is_regular_file(path))
-                {
-                    if (!process_dump_file(dump_file_match, dump_options) && !dump_options.continue_on_errors())
-                    {
-                        return EXIT_FAILURE;
-                    }
-                    continue;
-                }
-
-                if (!is_directory(path))
-                {
-                    wcout << L"Invalid dump file: [" << path.wstring() << L"]\n";
-                    continue;
-                }
-
-                match = L"*";
-            }
-            else
-            {
-                match = path.filename().wstring();
-                path = path.parent_path();
-
-                if (match.find_first_of(L"*?") == std::wstring::npos)
-                {
-                    wcout << L"Invalid wildcard pattern: [" << match << L"]\n";
-                    continue;
-                }
+                base_diff_dump_file = *base_diff_dump_files_current;
+                ++base_diff_dump_files_current;
             }
 
-            if (path.empty())
+            if(!process_dump_file(dump_file, base_diff_dump_file, dump_options) && !dump_options.continue_on_errors())
             {
-                path = ".";
+                return EXIT_FAILURE;
             }
+        }
 
-            if (!is_directory(path))
-            {
-                wcout << L"Invalid directory: [" << path.wstring() << L"]\n";
-                continue;
-            }
-
-            for (auto const& entry : filesystem::directory_iterator(path))
-            {
-                if (entry.is_regular_file() &&
-                    filesystem_utils::wildcard_match(entry.path().filename().wstring(), match) &&
-                    (!process_dump_file(entry.path().wstring(), dump_options) && !dump_options.continue_on_errors()))
-                {
-                    return EXIT_FAILURE;
-                }
-            }
+        if(base_diff_dump_files_current != base_diff_dump_files_end)
+        {
+            wcout << "warning: more base diff dump file paths than dump file paths\n";
         }
 
         return EXIT_SUCCESS;

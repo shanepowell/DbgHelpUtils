@@ -36,7 +36,96 @@ namespace dlg_help_utils::heap
     {
     }
 
+    void process_heaps::set_base_diff_filter(process_heaps& base_diff_filter)
+    {
+        base_diff_filter_ = &base_diff_filter;
+        clear_cache();
+    }
+
+    void process_heaps::clear_base_diff_filter()
+    {
+        base_diff_filter_ = nullptr;
+        clear_cache();
+    }
+
     std::experimental::generator<process_heap_entry> process_heaps::entries() const
+    {
+        if(entry_filters_cache_.empty())
+        {
+            std::ranges::copy(filter_entries(), std::back_inserter(entry_filters_cache_));
+        }
+
+        if(entry_cache_.empty())
+        {
+            for (auto const& entry : all_entries())
+            {
+                if(!is_filtered(entry_filters_cache_, entry))
+                {
+                    entry_cache_.emplace_back(entry);
+                    co_yield entry;
+                }
+            }
+        }
+        else
+        {
+            for (auto const& entry : entry_cache_)
+            {
+                co_yield entry;
+            }
+        }
+    }
+
+    std::experimental::generator<process_heap_entry> process_heaps::free_entries() const
+    {
+        if(free_entry_filters_cache_.empty())
+        {
+            std::ranges::copy(filter_free_entries(), std::back_inserter(free_entry_filters_cache_));
+        }
+
+        if(free_entry_cache_.empty())
+        {
+            for (auto const& entry : all_free_entries())
+            {
+                if(!is_filtered(free_entry_filters_cache_, entry))
+                {
+                    free_entry_cache_.emplace_back(entry);
+                    co_yield entry;
+                }
+            }
+        }
+        else
+        {
+            for (auto const& entry : free_entry_cache_)
+            {
+                co_yield entry;
+            }
+        }
+    }
+
+    bool process_heaps::is_address_filtered(uint64_t const address, size_units::base_16::bytes const size) const
+    {
+        if(is_address_filtered(entry_filters_cache_, address, size))
+        {
+            return true;
+        }
+
+        return is_address_filtered(free_entry_filters_cache_, address, size);
+    }
+
+    process_heaps_statistics process_heaps::statistics() const
+    {
+        return process_heaps_statistics{*this, system_module_list_, statistic_view_options_};
+    }
+
+    void process_heaps::clear_cache() const
+    {
+        entry_filters_cache_.clear();
+        free_entry_filters_cache_.clear();
+        entry_cache_.clear();
+        free_entry_cache_.clear();
+    }
+
+    std::experimental::generator<process_heap_entry> process_heaps::all_entries() const
     {
         crt_heap const crt_heap{ peb_ };
         std::map<uint64_t, crt_entry> crt_entries;
@@ -255,7 +344,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::free_entries() const
+    std::experimental::generator<process_heap_entry> process_heaps::all_free_entries() const
     {
         crt_heap const crt_heap{ peb_ };
         std::vector<crt_entry> crt_entries;
@@ -449,9 +538,36 @@ namespace dlg_help_utils::heap
         }
     }
 
-    process_heaps_statistics process_heaps::statistics() const
+    std::experimental::generator<process_heap_entry> process_heaps::filter_entries() const
     {
-        return process_heaps_statistics{*this, system_module_list_, statistic_view_options_};
+        if(base_diff_filter_ != nullptr)
+        {
+            for (auto const& entry : base_diff_filter_->entries())
+            {
+                co_yield entry;
+            }
+        }
+    }
+
+    std::experimental::generator<process_heap_entry> process_heaps::filter_free_entries() const
+    {
+        if(base_diff_filter_ != nullptr)
+        {
+            for (auto const& entry : base_diff_filter_->free_entries())
+            {
+                co_yield entry;
+            }
+        }
+    }
+
+    bool process_heaps::is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry)
+    {
+        return std::ranges::find(filters, entry) != filters.end();
+    }
+
+    bool process_heaps::is_address_filtered(std::vector<process_heap_entry> const& filters, uint64_t const address, size_units::base_16::bytes const size)
+    {
+        return std::ranges::find_if(filters, [&address, &size](process_heap_entry const& entry) { return entry.user_address() == address && entry.user_requested_size() == size; }) != filters.end();
     }
 
     bool process_heaps::is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment)

@@ -23,9 +23,9 @@ using namespace dlg_help_utils::crc;
 namespace dlg_help_utils
 {
     mini_dump::mini_dump(wstring file_path)
-        : file_path_{move(file_path)}
-          , file_{make_empty_windows_handle()}
-          , map_view_{make_empty_map_view_handle()}
+    : file_path_{move(file_path)}
+    , file_{make_empty_windows_handle()}
+    , map_view_{make_empty_map_view_handle()}
     {
     }
 

@@ -41,6 +41,11 @@ namespace dlg_help_utils::heap
 
         static std::wstring const& symbol_name;
 
+        [[nodiscard]] bool operator==(crt_entry const& rhs) const
+        {
+            return request_number() == rhs.request_number() && entry_address() == rhs.entry_address() && data_size() == rhs.data_size();
+        }
+
     private:
         [[nodiscard]] std::wstring get_filename() const;
 

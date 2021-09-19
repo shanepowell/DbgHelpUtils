@@ -41,6 +41,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes overhead_size() const { return overhead_size_; }
         [[nodiscard]] std::wstring const& filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const { return line_number_; }
+        [[nodiscard]] bool has_request_number() const { return has_request_number_; }
+        [[nodiscard]] uint32_t request_number() const { return request_number_; }
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
@@ -48,6 +50,11 @@ namespace dlg_help_utils::heap
         [[nodiscard]] mini_dump_memory_stream user_data() const;
 
         [[nodiscard]] bool contains_address(uint64_t address) const;
+
+        [[nodiscard]] bool operator==(process_heap_entry const& rhs) const
+        {
+            return has_request_number() == rhs.has_request_number() && request_number() == rhs.request_number() && user_address() == rhs.user_address() && user_requested_size() == rhs.user_requested_size();
+        }
 
     private:
         [[nodiscard]] uint64_t get_nt_heap_entry_check_block_start(heap_entry const& entry) const;
@@ -61,6 +68,8 @@ namespace dlg_help_utils::heap
         std::vector<uint64_t> const allocation_stack_trace_;
         std::wstring const file_name_;
         uint32_t const line_number_{0};
+        bool const has_request_number_{false};
+        uint32_t const request_number_{0};
         uint64_t const check_block_start_address_;
         uint64_t const check_block_end_address_;
         size_units::base_16::bytes const overhead_size_;

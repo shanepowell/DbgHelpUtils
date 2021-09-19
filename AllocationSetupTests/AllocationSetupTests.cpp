@@ -24,24 +24,24 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set);
-int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set);
-int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set);
+int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
+int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
+int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, char const* type, ResultSet& set);
+bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, char const* type, std::vector<Allocation>& set);
 template<size_t N>
-void DeallocateSomeBuffers(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations);
+void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations);
 
 template<size_t N, typename ...Args>
-void DeallocateSomeBuffers(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations, Args... args)
+void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations, Args... args)
 {
     DeallocateSomeBuffers(log, set, deallocator, allocations);
     DeallocateSomeBuffers(log, set, deallocator, args...);
 }
 
-void DeallocateSomeBuffer(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, void* allocation);
+void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, void* allocation);
 
-void FreeAllocationInResultSet(ResultSet& set, void* allocation);
+void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation);
 
 void CreateOutput(std::wostream& log, std::wstring const& dump_filename);
 void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename);
@@ -62,7 +62,7 @@ int main(int const argc, char* argv[])
                 { "new"s, {[](size_t const size) { return new char[size]; }, [](void* memory) { delete[] static_cast<char*>(memory); }}}
             };
 
-            using test_type = std::function<int(std::wostream&, std::wstring const&, std::function<void*(size_t)> const&, std::function<void(void*)> const&, ResultSet&)>;
+            using test_type = std::function<int(std::wostream&, std::wstring const&, std::function<void*(size_t)> const&, std::function<void(void*)> const&, std::vector<Allocation>&)>;
             std::map<std::string, test_type> const test_functions
             {
                 { "lfh"s, LfhAllocations},
@@ -70,7 +70,8 @@ int main(int const argc, char* argv[])
                 { "sizes"s, AllocateSizeRanges}
             };
 
-            std::string dump_filename_l;
+            std::string dump_filename_1_l;
+            std::string dump_filename_2_l;
             std::string log_filename_l;
             std::string json_filename_l;
             std::string allocation_test;
@@ -80,7 +81,8 @@ int main(int const argc, char* argv[])
             auto cli = lyra::help(show_help)
                 | lyra::opt(allocation_test, dlg_help_utils::join(test_functions | std::views::keys, "|"sv))["--test"]("generate test of allocations").choices([&test_functions](std::string const& value) { return test_functions.find(value) != test_functions.end(); })
                 | lyra::opt(allocation_type, dlg_help_utils::join(allocation_functions | std::views::keys, "|"sv))["--type"]("application type").choices([&allocation_functions](std::string const& value) { return allocation_functions.find(value) != allocation_functions.end(); })
-                | lyra::opt( dump_filename_l, "filename" )["-d"]["--dmp"]("dump filename")
+                | lyra::opt( dump_filename_1_l, "filename" )["-1"]["--dmp1"]("first dump filename")
+                | lyra::opt( dump_filename_2_l, "filename" )["-2"]["--dmp2"]("second dump filename")
                 | lyra::opt( log_filename_l, "filename" )["-l"]["--log"]("log filename")
                 | lyra::opt( json_filename_l, "filename" )["-j"]["--json"]("json filename")
                 ;
@@ -115,7 +117,8 @@ int main(int const argc, char* argv[])
             }
 
             using dlg_help_utils::string_conversation::acp_to_wstring;
-            auto const dump_filename = acp_to_wstring(dump_filename_l);
+            auto const dump_filename_1 = acp_to_wstring(dump_filename_1_l);
+            auto const dump_filename_2 = acp_to_wstring(dump_filename_2_l);
             auto const log_filename = acp_to_wstring(log_filename_l);
             auto const json_filename = acp_to_wstring(json_filename_l);
 
@@ -137,7 +140,11 @@ int main(int const argc, char* argv[])
             }
 
             ResultSet set;
-            auto result = test_functions.at(allocation_test)(*o_log, dump_filename, allocator, deallocator, set);
+            auto result = test_functions.at(allocation_test)(*o_log, dump_filename_1, allocator, deallocator, set.first_allocations);
+            if(result == EXIT_SUCCESS)
+            {
+                result = test_functions.at(allocation_test)(*o_log, dump_filename_2, allocator, deallocator, set.second_allocations);
+            }
 
             if(!json_filename.empty())
             {
@@ -169,7 +176,7 @@ int main(int const argc, char* argv[])
     return EXIT_FAILURE;
 }
 
-int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set)
+int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
 {
     std::array<void*, 0x12> backend_allocations{};
     constexpr size_t allocation_size = 0x10;
@@ -194,7 +201,7 @@ int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::f
 }
 
 
-int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set)
+int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
 {
     std::array<void*, 0x5> virtual_allocations{};
     
@@ -211,7 +218,7 @@ int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, st
     return EXIT_SUCCESS;
 }
 
-int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, ResultSet& set)
+int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
 {
     size_t allocation_size = 0x1;
 
@@ -252,7 +259,7 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, st
 }
 
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& small_allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, char const* type, ResultSet& set)
+bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& small_allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, char const* type, std::vector<Allocation>& set)
 {
     for (auto& virtual_allocation : small_allocations)
     {
@@ -265,7 +272,7 @@ bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const
         }
         memset(virtual_allocation, fill_value, allocation_size);
 
-        set.allocations.emplace_back(Allocation{reinterpret_cast<uint64_t>(virtual_allocation), allocation_size, fill_value, true});
+        set.emplace_back(Allocation{reinterpret_cast<uint64_t>(virtual_allocation), allocation_size, fill_value, true});
 
         ++fill_value;
         allocation_size += increase_amount;
@@ -274,23 +281,23 @@ bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const
 }
 
 template<size_t N>
-void DeallocateSomeBuffers(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations)
+void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations)
 {
     DeallocateSomeBuffer(log, set, deallocator, allocations[1]);
     DeallocateSomeBuffer(log, set, deallocator, allocations[3]);
 }
 
-void DeallocateSomeBuffer(std::wostream& log, ResultSet& set, std::function<void(void*)> const& deallocator, void* allocation)
+void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, void* allocation)
 {
     deallocator(allocation);
     log << "deallocate [0x" << allocation <<  " / " << reinterpret_cast<uint64_t>(allocation) << "]\n";
     FreeAllocationInResultSet(set, allocation);
 }
 
-void FreeAllocationInResultSet(ResultSet& set, void* allocation)
+void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation)
 {
-    if(auto const it = std::ranges::find_if(set.allocations, [allocation](Allocation const& a) { return a.allocated && a.pointer == reinterpret_cast<uint64_t>(allocation); });
-        it != set.allocations.end())
+    if(auto const it = std::ranges::find_if(set, [allocation](Allocation const& a) { return a.allocated && a.pointer == reinterpret_cast<uint64_t>(allocation); });
+        it != set.end())
     {
         it->allocated = false;
     }

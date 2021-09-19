@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <memory>
 
 class dump_file_options;
 
@@ -13,6 +14,6 @@ namespace dlg_help_utils
 }
 
 void dump_mini_dump_heap(dlg_help_utils::mini_dump const& mini_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_heap_entries(dlg_help_utils::mini_dump const& mini_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_crtheap(dlg_help_utils::mini_dump const& mini_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_heap_statistics(dlg_help_utils::mini_dump const& mini_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+void dump_mini_dump_heap_entries(dlg_help_utils::mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+void dump_mini_dump_crtheap(dlg_help_utils::mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+void dump_mini_dump_heap_statistics(dlg_help_utils::mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);

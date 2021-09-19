@@ -64,8 +64,10 @@ lyra::cli dump_file_options::generate_options()
 {
     return 
         lyra::opt( display_version_)["-v"]["--version"]("display version information")
-        | lyra::opt( dump_header_)["-h"]["--header"]("dump file header")
+        | lyra::opt( dump_header_)["-r"]["--header"]("dump file header")
         | lyra::opt( dump_files_raw_, "filename" )["-d"]["--dumpfile"]("dump files to open")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt( base_diff_dump_files_raw_, "filename" )["--basediffdumpfile"]("base diff dump files to open")
         | lyra::opt( continue_on_errors_)["-c"]["--continue"]("continue on errors")
         | lyra::opt( dump_streams_)["-s"]["--streams"]("dump streams")
         | lyra::opt( hex_dump_stream_data_)["-x"]["--hexdump"]("hex dump stream data")
@@ -102,6 +104,7 @@ lyra::cli dump_file_options::generate_options()
 void dump_file_options::process_raw_options()
 {
     dump_files_ = convert_to_wstring(dump_files_raw_);
+    base_diff_dump_files_ = convert_to_wstring(base_diff_dump_files_raw_);
 
     if (!dump_stream_types_raw_.empty())
     {

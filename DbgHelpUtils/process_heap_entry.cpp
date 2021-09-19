@@ -91,6 +91,8 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
+    , has_request_number_{true}
+    , request_number_{crt_block.request_number()}
     , check_block_start_address_{entry.virtual_block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.virtual_block_size().count()}
     , overhead_size_{entry.virtual_block_size().count() - user_size_.count()}
@@ -105,6 +107,8 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
+    , has_request_number_{true}
+    , request_number_{crt_block.request_number()}
     , check_block_start_address_{get_nt_heap_entry_check_block_start(entry)}
     , check_block_end_address_{check_block_start_address_ + get_nt_heap_entry_check_block_size(entry)}
     , overhead_size_{entry.unused_bytes()}
@@ -119,6 +123,8 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
+    , has_request_number_{true}
+    , request_number_{crt_block.request_number()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
     , overhead_size_{entry.block_size().count() - user_size_.count()}
@@ -133,6 +139,8 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
+    , has_request_number_{true}
+    , request_number_{crt_block.request_number()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size().count()}
     , overhead_size_{entry.block_size().count() - user_size_.count()}
@@ -147,6 +155,8 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
+    , has_request_number_{true}
+    , request_number_{crt_block.request_number()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size()}
     , overhead_size_{entry.block_size() - user_size_.count()}
@@ -161,6 +171,8 @@ namespace dlg_help_utils::heap
     , allocation_stack_trace_{entry.allocation_stack_trace()}
     , file_name_{crt_block.filename()}
     , line_number_{crt_block.line_number()}
+    , has_request_number_{true}
+    , request_number_{crt_block.request_number()}
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size()}
     , overhead_size_{entry.block_size() - user_size_.count()}

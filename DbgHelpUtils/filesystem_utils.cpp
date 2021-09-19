@@ -1,5 +1,6 @@
 ﻿#include "filesystem_utils.h"
 
+#include <filesystem>
 #include <locale>
 
 namespace dlg_help_utils::filesystem_utils
@@ -51,5 +52,70 @@ namespace dlg_help_utils::filesystem_utils
         }
 
         return value_index == value.size();
+    }
+
+    std::experimental::generator<std::wstring> enumerate_files(std::vector<std::wstring> const& paths, std::function<bool(std::wstring)> const on_error)
+    {
+        for (auto const& raw_path : paths)
+        {
+            std::wstring match;
+            std::filesystem::path path{raw_path};
+            if (exists(path))
+            {
+                if (is_regular_file(path))
+                {
+                    co_yield raw_path;
+                    continue;
+                }
+
+                if (!is_directory(path))
+                {
+                    if(!on_error((std::wstringstream{} << L"Invalid file path: [" << path.wstring() << L"]").str()))
+                    {
+                        co_return;
+                    }
+                    continue;
+                }
+
+                match = L"*";
+            }
+            else
+            {
+                match = path.filename().wstring();
+                path = path.parent_path();
+
+                if (match.find_first_of(L"*?") == std::wstring::npos)
+                {
+                    if(!on_error((std::wstringstream{} << L"Invalid wildcard pattern: [" << match << L"]").str()))
+                    {
+                        co_return;
+                    }
+                    continue;
+                }
+            }
+
+            if (path.empty())
+            {
+                path = ".";
+            }
+
+            if (!is_directory(path))
+            {
+                if (!on_error((std::wstringstream{} << L"Invalid directory: [" << path.wstring() << L"]").str()))
+                {
+                    co_return;
+                }
+                continue;
+            }
+
+            for (auto const& entry : std::filesystem::directory_iterator(path))
+            {
+                if (entry.is_regular_file() &&
+                    wildcard_match(entry.path().filename().wstring(), match))
+                {
+                    co_yield entry.path().wstring();
+                }
+            }
+        }
     }
 }

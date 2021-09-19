@@ -1120,6 +1120,42 @@ namespace
             print_heap_large_entry(hex_length, entry, options, indent + 2);
         }
     }
+
+    std::unique_ptr<heap::process_heaps> setup_base_diff_dump_heaps(std::unique_ptr<mini_dump> const& base_diff_dump, heap::process_heaps& heaps, dbg_help::symbol_engine& symbol_engine, dump_file_options const& options)
+    {
+        if(!base_diff_dump)
+        {
+            return {};
+        }
+
+        auto base_diff_heaps = std::make_unique<heap::process_heaps>(*base_diff_dump, symbol_engine, options.system_module_list(), options.statistic_view_options());
+        heaps.set_base_diff_filter(*base_diff_heaps);
+        return base_diff_heaps;
+    }
+
+    struct diff_crt_data
+    {
+        diff_crt_data(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine)
+        : peb{mini_dump, symbol_engine}
+        , crtheap{peb}
+        {
+        }
+
+        process::process_environment_block const peb;
+        heap::crt_heap crtheap;
+    };
+
+    std::unique_ptr<diff_crt_data> setup_base_diff_dump_crtheap(std::unique_ptr<mini_dump> const& base_diff_dump, heap::crt_heap& crtheap, dbg_help::symbol_engine& symbol_engine)
+    {
+        if(!base_diff_dump)
+        {
+            return {};
+        }
+
+        auto base_diff_crtheap = std::make_unique<diff_crt_data>(*base_diff_dump, symbol_engine);
+        crtheap.set_base_diff_filter(base_diff_crtheap->crtheap);
+        return base_diff_crtheap;
+    }
 }
 
 void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
@@ -1237,6 +1273,10 @@ void print_process_entry(heap::process_heap_entry const& entry, process::process
     {
         wcout << ' ' << entry.filename() << ':' << entry.line_number();
     }
+    if(entry.has_request_number())
+    {
+        wcout << " #" << entry.request_number();
+    }
     wcout << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
 
 
@@ -1257,9 +1297,10 @@ void print_process_entry(heap::process_heap_entry const& entry, process::process
     }
 }
 
-void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_entries(mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
+    heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
+    [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
     cout << "Heap Allocated Entries:\n";
@@ -1277,18 +1318,20 @@ void dump_mini_dump_heap_entries(mini_dump const& mini_dump, dump_file_options c
     wcout << '\n';
 }
 
-void dump_mini_dump_crtheap(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_crtheap(mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     process::process_environment_block const peb{mini_dump, symbol_engine};
     auto const hex_length = peb.machine_hex_printable_length();
 
-    heap::crt_heap const heap{peb};
+    heap::crt_heap heap{peb};
 
     if(!heap.is_using_crt_heap())
     {
         wcout << "Not using CRT Heap.\n";
         return;
     }
+
+    [[maybe_unused]] auto const base_diff_crtheap = setup_base_diff_dump_crtheap(base_diff_dump, heap, symbol_engine);
 
     cout << "CRT Heap Entries:\n";
     std::wstring const indent_str(2, L' ');
@@ -1482,9 +1525,11 @@ void dump_mini_dump_heap_statistics_view(process::process_environment_block cons
     wcout << '\n';
 }
 
-void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    heap::process_heaps const heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
+    heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
+    [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
+
     auto const hex_length = heaps.peb().machine_hex_printable_length();
     auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();

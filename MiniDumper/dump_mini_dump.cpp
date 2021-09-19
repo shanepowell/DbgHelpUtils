@@ -22,7 +22,35 @@ using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils::exceptions;
 using namespace dlg_help_utils;
 
-bool process_dump_file(wstring const& file_name, dump_file_options const& options)
+namespace
+{
+    std::unique_ptr<mini_dump> get_base_diff_dump_file(std::wstring const& path)
+    {
+        if(path.empty())
+        {
+            return {};
+        }
+
+        wcout << L"Loading base diff dump file: "s << path << L'\n';
+        auto dump_file = std::make_unique<mini_dump>(path);
+
+        dump_file->open_mini_dump();
+
+        if (dump_file->header() == nullptr)
+        {
+            throw wide_runtime_error{(std::wostringstream{} << L"no valid header detected for [" << path << L"]").str()};
+        }
+
+        if(dump_file->type() != dump_file_type::user_mode_dump)
+        {
+            throw wide_runtime_error{(std::wostringstream{} << L"base diff dump file not a user mode dump for [" << path << L"]").str()};
+        }
+
+        return dump_file;
+    }
+}
+
+bool process_dump_file(wstring const& file_name, std::wstring const& base_diff_file_name, dump_file_options const& options)
 {
     try
     {
@@ -48,7 +76,7 @@ bool process_dump_file(wstring const& file_name, dump_file_options const& option
         switch (dump_file.type())
         {
         case dump_file_type::user_mode_dump:
-            process_user_mode_dump(dump_file, options);
+            process_user_mode_dump(dump_file, get_base_diff_dump_file(base_diff_file_name), options);
             break;
 
         case dump_file_type::invalid:
@@ -81,7 +109,7 @@ bool process_dump_file(wstring const& file_name, dump_file_options const& option
     return false;
 }
 
-void process_user_mode_dump(mini_dump const& dump_file, dump_file_options const& options)
+void process_user_mode_dump(mini_dump const& dump_file, std::unique_ptr<mini_dump> const& base_diff_dump, dump_file_options const& options)
 {
     symbol_engine_ui ui{options};
     dbg_help::symbol_engine symbol_engine{ui};
@@ -117,17 +145,17 @@ void process_user_mode_dump(mini_dump const& dump_file, dump_file_options const&
 
     if(options.display_heap_entries())
     {
-        dump_mini_dump_heap_entries(dump_file, options, symbol_engine);
+        dump_mini_dump_heap_entries(dump_file, base_diff_dump, options, symbol_engine);
     }
 
     if(options.display_crtheap())
     {
-        dump_mini_dump_crtheap(dump_file, options, symbol_engine);
+        dump_mini_dump_crtheap(dump_file, base_diff_dump, options, symbol_engine);
     }
 
     if(options.display_heap_statistic_views())
     {
-        dump_mini_dump_heap_statistics(dump_file, options, symbol_engine);
+        dump_mini_dump_heap_statistics(dump_file, base_diff_dump, options, symbol_engine);
     }
 
     if(options.display_stack_trace_database())
