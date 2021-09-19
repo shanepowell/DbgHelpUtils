@@ -19,10 +19,10 @@ namespace dlg_help_utils::heap
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
-    , small_tag_index_offset_{get_small_tag_index_offset()}
     , flags_{get_flags()}
     , size_{get_size()}
     , previous_size_{get_previous_size()}
+    , small_tag_index_{get_small_tag_index()}
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
     , ust_user_address_{get_ust_user_address()}
@@ -40,10 +40,10 @@ namespace dlg_help_utils::heap
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
-    , small_tag_index_offset_{get_small_tag_index_offset() }
     , flags_{get_flags()}
     , size_{block_size * heap.granularity()}
     , previous_size_{get_previous_size()}
+    , small_tag_index_{get_small_tag_index() }
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
     , ust_user_address_{get_ust_user_address()}
@@ -60,10 +60,10 @@ namespace dlg_help_utils::heap
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
-    , small_tag_index_offset_{get_small_tag_index_offset() }
     , flags_{get_flags()}
     , size_{size}
     , previous_size_{get_previous_size()}
+    , small_tag_index_{get_small_tag_index() }
     , segment_offset_{get_segment_offset()}
     , ust_user_address_{get_ust_user_address()}
     , unused_bytes_{unused_bytes}
@@ -81,10 +81,10 @@ namespace dlg_help_utils::heap
     : heap_{heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
-    , small_tag_index_offset_{get_small_tag_index_offset() }
     , flags_{get_flags()}
     , size_{get_size()}
     , previous_size_{get_previous_size()}
+    , small_tag_index_{get_small_tag_index() }
     , segment_offset_{get_segment_offset()}
     , raw_unused_bytes_{get_raw_unused_bytes()}
     , ust_user_address_{get_ust_user_address()}
@@ -179,6 +179,11 @@ namespace dlg_help_utils::heap
     uint8_t heap_entry::get_segment_offset() const
     {
         return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_segment_offset_field_symbol_name, buffer_.get());
+    }
+
+    uint8_t heap_entry::get_small_tag_index() const
+    {
+        return stream_utils::get_field_value_from_buffer<uint8_t>(*this, common_symbol_names::heap_entry_small_tag_index_field_symbol_name, buffer_.get());
     }
 
     uint8_t heap_entry::get_raw_unused_bytes()  const
@@ -286,6 +291,8 @@ namespace dlg_help_utils::heap
             static_cast<uint16_t>(0x0502)
         };
 
+        auto reset_stream = stream;
+
         size_t index = 0;
         while(!stream.eof() && stream.current_address() < end_address)
         {
@@ -297,6 +304,10 @@ namespace dlg_help_utils::heap
 
             if(find_values[index] == std::numeric_limits<uint16_t>::max() || find_values[index] == check)
             {
+                if(index == 0)
+                {
+                    reset_stream = stream;
+                }
                 ++index;
                 if(index == find_values.size())
                 {
@@ -305,6 +316,10 @@ namespace dlg_help_utils::heap
             }
             else
             {
+                if(index > 0)
+                {
+                    stream = reset_stream;
+                }
                 index = 0;
             }
         }
@@ -335,10 +350,5 @@ namespace dlg_help_utils::heap
     size_t heap_entry::get_heap_entry_length() const
     {
         return stream_utils::get_type_length(heap_entry_symbol_type_, symbol_name);
-    }
-
-    uint64_t heap_entry::get_small_tag_index_offset() const
-    {
-        return stream_utils::get_field_offset(heap_entry_symbol_type_, symbol_name, common_symbol_names::heap_entry_small_tag_index_field_symbol_name);
     }
 }

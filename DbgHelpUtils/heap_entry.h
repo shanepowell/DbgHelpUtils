@@ -59,6 +59,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes unused_bytes() const { return unused_bytes_; }
 
         [[nodiscard]] uint8_t segment_offset() const { return segment_offset_; }
+        [[nodiscard]] uint8_t small_tag_index() const { return small_tag_index_; }
         [[nodiscard]] bool is_uncommitted() const { return buffer_ == nullptr && flags_ == 0; }
         [[nodiscard]] bool is_unknown() const { return buffer_ == nullptr && flags_ == FlagBusy; }
         [[nodiscard]] bool is_virtual_alloc() const { return is_virtual_alloc_ || buffer_ == nullptr && flags_ == FlagBusy; }
@@ -96,6 +97,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_size() const;
         [[nodiscard]] uint64_t get_previous_size() const;
         [[nodiscard]] uint8_t get_segment_offset() const;
+        [[nodiscard]] uint8_t get_small_tag_index() const;
         [[nodiscard]] uint8_t get_raw_unused_bytes() const;
         [[nodiscard]] size_units::base_16::bytes get_unused_bytes() const;
         [[nodiscard]] size_units::base_16::bytes get_requested_size() const;
@@ -109,7 +111,6 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] dbg_help::symbol_type_info get_heap_entry_symbol_type() const;
         [[nodiscard]] size_t get_heap_entry_length() const;
-        [[nodiscard]] uint64_t get_small_tag_index_offset() const;
 
     private:
         nt_heap const& heap_;
@@ -117,10 +118,10 @@ namespace dlg_help_utils::heap
         dbg_help::symbol_type_info const heap_entry_symbol_type_{get_heap_entry_symbol_type()};
         size_t const heap_entry_length_{get_heap_entry_length()};
         std::shared_ptr<uint8_t[]> buffer_;
-        uint64_t const small_tag_index_offset_{0};
         uint8_t const flags_{0};
         size_units::base_16::bytes const size_;
         size_units::base_16::bytes const previous_size_{0};
+        uint8_t const small_tag_index_{0};
         uint8_t const segment_offset_{0};
         uint8_t const raw_unused_bytes_{0};
         uint64_t const ust_user_address_{0};

@@ -290,6 +290,8 @@ namespace
             {
                 wcout << indent_str << "  User Requested Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size().count()) << ")" << '\n';
                 wcout << indent_str << "  Unused Bytes: " << entry.unused_bytes() << " (" << stream_hex_dump::to_hex(entry.unused_bytes().count()) << ")" << '\n';
+                wcout << indent_str << "  Segment Offset: " << static_cast<uint16_t>(entry.segment_offset()) << " (" << stream_hex_dump::to_hex(entry.segment_offset()) << ")" << '\n';
+                wcout << indent_str << "  Small Tag Index: " << static_cast<uint16_t>(entry.small_tag_index()) << " (" << stream_hex_dump::to_hex(entry.small_tag_index()) << ")" << '\n';
                 if (entry.end_unused_bytes() > bytes{ 0 })
                 {
                     wcout << indent_str << "  End Unused Bytes: " << entry.end_unused_bytes() << " (" << stream_hex_dump::to_hex(entry.end_unused_bytes().count()) << ")" << '\n';
