@@ -23,7 +23,7 @@ Param
 Function RunAllAllocationApplicationArgs($options, $validateoptions)
 {
     RunAllocationAllocationTypesApplication "lfh" $options $validateoptions
-    RunAllocationAllocationTypesApplication "virtual" $options $validateoptions
+    RunAllocationAllocationTypesApplication "large" $options $validateoptions
     RunAllocationAllocationTypesApplication "sizes" $options $validateoptions
 }
 
@@ -66,26 +66,26 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
 
     if($GenerateHeapLogs)
     {
-        $full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_full.log"
-        $debug_full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_debugfull.log"
-        $full_diff_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_fulldiff.log"
-        $debug_full_diff_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_debugfulldiff.log"
+        $dmp_1_full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_1_full.log"
+        $dmp_1_debug_full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_1_debugfull.log"
+        $dmp_2_full_diff_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_2_fulldiff.log"
+        $dmp_2_debug_full_diff_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_2_debugfulldiff.log"
 
-        Write-Verbose "Remove all files [$full_log] [$debug_full_log] [$full_diff_log] [$debug_full_diff_log]"
-        remove-item $full_log -ErrorAction:SilentlyContinue | Out-Null
-        remove-item $debug_full_log -ErrorAction:SilentlyContinue | Out-Null
-        remove-item $full_diff_log -ErrorAction:SilentlyContinue | Out-Null
-        remove-item $debug_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
+        Write-Verbose "Remove all files [$dmp_1_full_log] [$dmp_1_debug_full_log] [$dmp_2_full_diff_log] [$dmp_2_debug_full_diff_log]"
+        remove-item $dmp_1_full_log -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $dmp_1_debug_full_log -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $dmp_2_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $dmp_2_debug_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
 
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $full_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $full_log
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $debug_full_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $debug_full_log
+        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log"
+        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log
+        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log"
+        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log
 
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $full_diff_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $full_diff_log
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $debug_full_diff_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $debug_full_diff_log
+        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log"
+        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log
+        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log"
+        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log
     }
     Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\ValidateHeapEntries.exe`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $ResultFile `"--json`" $json $validateoptions"
     . "$PSScriptRoot\$BinFolder\$ReleaseFolder\ValidateHeapEntries.exe" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $ResultFile "--json" $json $validateoptions

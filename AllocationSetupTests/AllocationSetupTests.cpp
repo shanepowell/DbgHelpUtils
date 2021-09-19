@@ -25,7 +25,7 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
-int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
+int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
 int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
 template<size_t N>
 bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, char const* type, std::vector<Allocation>& set);
@@ -66,7 +66,7 @@ int main(int const argc, char* argv[])
             std::map<std::string, test_type> const test_functions
             {
                 { "lfh"s, LfhAllocations},
-                { "virtual"s, VirtualAllocations},
+                { "large"s, LargeAllocations},
                 { "sizes"s, AllocateSizeRanges}
             };
 
@@ -201,17 +201,17 @@ int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::f
 }
 
 
-int VirtualAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
+int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
 {
-    std::array<void*, 0x5> virtual_allocations{};
+    std::array<void*, 0x5> large_allocations{};
     
     if (char fill_value = 'A';
-        !AllocateBuffers(log, allocator, virtual_allocations, fill_value, 0x100000, 0, "virtual", set))
+        !AllocateBuffers(log, allocator, large_allocations, fill_value, 0x100000, 0, "large", set))
     {
         return EXIT_FAILURE;
     }
 
-    DeallocateSomeBuffers(log, set, deallocator, virtual_allocations);
+    DeallocateSomeBuffers(log, set, deallocator, large_allocations);
 
     CreateOutput(log, dump_filename);
 
@@ -259,20 +259,20 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, st
 }
 
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& small_allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, char const* type, std::vector<Allocation>& set)
+bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, char const* type, std::vector<Allocation>& set)
 {
-    for (auto& virtual_allocation : small_allocations)
+    for (auto& allocation : allocations)
     {
-        virtual_allocation = allocator(allocation_size);
-        log << type << " allocation [0x" << virtual_allocation <<  " / " << reinterpret_cast<uint64_t>(virtual_allocation) << "] fill value [" << fill_value << "]  buffer size [0x" << std::hex << allocation_size << std::dec << " | " << allocation_size << "]\n";
-        if(virtual_allocation == nullptr)
+        allocation = allocator(allocation_size);
+        log << type << " allocation [0x" << allocation <<  " / " << reinterpret_cast<uint64_t>(allocation) << "] fill value [" << fill_value << "]  buffer size [0x" << std::hex << allocation_size << std::dec << " | " << allocation_size << "]\n";
+        if(allocation == nullptr)
         {
             log << "Failed to allocate " << type << " allocation\n";
             return false;
         }
-        memset(virtual_allocation, fill_value, allocation_size);
+        memset(allocation, fill_value, allocation_size);
 
-        set.emplace_back(Allocation{reinterpret_cast<uint64_t>(virtual_allocation), allocation_size, fill_value, true});
+        set.emplace_back(Allocation{reinterpret_cast<uint64_t>(allocation), allocation_size, fill_value, true});
 
         ++fill_value;
         allocation_size += increase_amount;
