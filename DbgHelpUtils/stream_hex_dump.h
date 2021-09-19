@@ -4,7 +4,7 @@
 #include <ostream>
 #include <sstream>
 #include <iomanip>
-#include <format>
+#include <chrono>
 
 namespace dlg_help_utils::stream_hex_dump
 {
@@ -132,6 +132,54 @@ namespace dlg_help_utils::stream_hex_dump
 
         private:
             M128A const value_;
+            bool const write_header_;
+            std::streamsize const width_;
+            wchar_t const fill_char_;
+        };
+
+        template <typename Rep, typename Period>
+        class hex_converter<std::chrono::duration<Rep, Period>>
+        {
+        public:
+            hex_converter(std::chrono::duration<Rep, Period> value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
+                : value_{std::move(value)}
+                  , write_header_(write_header)
+                  , width_(width)
+                  , fill_char_(fill_char)
+            {
+            }
+
+            template <typename Ts>
+            void write_to_stream(Ts& os)
+            {
+                std::basic_stringstream<typename Ts::char_type, typename Ts::traits_type, std::allocator<typename Ts::char_type>> oss;
+                if (write_header_)
+                {
+                    oss << "0x";
+                }
+
+                if (width_ > 0)
+                {
+                    oss << std::setw(width_) << std::setfill(fill_char_);
+                }
+                oss << std::hex << value_.count() << std::dec;
+                os << std::move(oss).str();
+            }
+
+            friend std::wostream& operator<<(std::wostream& os, hex_converter<std::chrono::duration<Rep, Period>> raw_value)
+            {
+                raw_value.write_to_stream(os);
+                return os;
+            }
+
+            friend std::wostringstream&& operator<<(std::wostringstream&& os, hex_converter<std::chrono::duration<Rep, Period>> raw_value)
+            {
+                raw_value.write_to_stream(os);
+                return std::move(os);
+            }
+
+        private:
+            std::chrono::duration<Rep, Period> const value_;
             bool const write_header_;
             std::streamsize const width_;
             wchar_t const fill_char_;
