@@ -12,11 +12,12 @@
 Param
 (
     [string] $DumpFolder,
-    [string] $ResultFile,
+    [string] $ResultFile = "Report.log",
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
     [switch] $TestX86,
     [switch] $TestDebug,
+    [switch] $ClearResultsLog,
     [switch] $Verbose
 )
 
@@ -130,17 +131,15 @@ if(!$DumpFolder)
     $DumpFolder = "$($BinFolder)$($ReleaseFolder)CrashDumps"
 }
 
-if(!$ResultFile)
-{
-    $ResultFile = "$($DumpFolder)\Report.log"
-}
-
 if (!(Test-Path $DumpFolder))
 {
     New-Item $DumpFolder -ItemType Directory | Out-Null
 }
 
-Remove-Item $ResultFile -ErrorAction:SilentlyContinue | Out-Null
+if($ClearResultsLog)
+{
+    Remove-Item $ResultFile -ErrorAction:SilentlyContinue | Out-Null
+}
 
 $app_name = "AllocationSetupTests.exe"
 $app_image_options = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AllocationSetupTests.exe"
