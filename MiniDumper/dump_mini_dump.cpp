@@ -38,12 +38,12 @@ namespace
 
         if (dump_file->header() == nullptr)
         {
-            throw wide_runtime_error{(std::wostringstream{} << L"no valid header detected for [" << path << L"]").str()};
+            throw wide_runtime_error{std::format(L"no valid header detected for [{}]", path)};
         }
 
         if(dump_file->type() != dump_file_type::user_mode_dump)
         {
-            throw wide_runtime_error{(std::wostringstream{} << L"base diff dump file not a user mode dump for [" << path << L"]").str()};
+            throw wide_runtime_error{std::format(L"base diff dump file not a user mode dump for [{}]", path)};
         }
 
         return dump_file;
@@ -123,14 +123,21 @@ void process_user_mode_dump(mini_dump const& dump_file, std::unique_ptr<mini_dum
         dump_mini_dump_streams(dump_file);
     }
 
-    for (auto const index : options.dump_stream_indexes())
+    if(options.dump_all_stream_indexes())
     {
-        dump_mini_dump_stream_index(dump_file, index, options, symbol_engine);
+        dump_mini_dump_all_stream_indexes(dump_file, options, symbol_engine);
     }
-
-    for (auto const& type : options.dump_stream_types())
+    else
     {
-        dump_mini_dump_stream_type(dump_file, type, options, symbol_engine);
+        for (auto const index : options.dump_stream_indexes())
+        {
+            dump_mini_dump_stream_index(dump_file, index, options, symbol_engine);
+        }
+
+        for (auto const& type : options.dump_stream_types())
+        {
+            dump_mini_dump_stream_type(dump_file, type, options, symbol_engine);
+        }
     }
 
     if(options.display_peb())

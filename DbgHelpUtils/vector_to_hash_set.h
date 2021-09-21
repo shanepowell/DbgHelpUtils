@@ -50,9 +50,7 @@ namespace dlg_help_utils
 
             if (*end != 0)
             {
-                std::wostringstream ss;
-                ss << L"invalid number value [" << value << L"]";
-                throw exceptions::wide_runtime_error(std::move(ss).str());
+                throw exceptions::wide_runtime_error(std::format(L"invalid number value [{}]", value));
             }
 
             return rv;
@@ -66,9 +64,7 @@ namespace dlg_help_utils
 
             if (*end != 0)
             {
-                std::wostringstream ss;
-                ss << L"invalid number value [" << value << L"]";
-                throw exceptions::wide_runtime_error(std::move(ss).str());
+                throw exceptions::wide_runtime_error(std::format(L"invalid number value [{}]", value));
             }
 
             return rv;
@@ -80,9 +76,7 @@ namespace dlg_help_utils
             auto const pos = value.find_first_of(L'-');
             if (pos == std::wstring::npos)
             {
-                std::wostringstream ss;
-                ss << "Range value: [" << value << "] format incorrect. Expecting <start>-<size> format";
-                throw exceptions::wide_runtime_error{std::move(ss).str()};
+                throw exceptions::wide_runtime_error{std::format(L"Range value: [{}] format incorrect. Expecting <start>-<size> format", value)};
             }
 
             auto const start = value.substr(0, pos);
@@ -90,9 +84,7 @@ namespace dlg_help_utils
 
             if (start.empty() || size.empty())
             {
-                std::wostringstream ss;
-                ss << "Range value: [" << value << "] format incorrect. Expecting <start>-<size> format";
-                throw exceptions::wide_runtime_error{std::move(ss).str()};
+                throw exceptions::wide_runtime_error{std::format(L"Range value: [{}] format incorrect. Expecting <start>-<size> format", value)};
             }
 
             return range{string_converter<uint64_t, uint64_t>(start), string_converter<uint64_t, uint64_t>(size)};

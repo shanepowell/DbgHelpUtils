@@ -1,6 +1,6 @@
 ﻿#include "process_parameters.h"
 
-#include <sstream>
+#include <format>
 
 #include "common_symbol_names.h"
 #include "stream_hex_dump.h"
@@ -27,7 +27,7 @@ namespace dlg_help_utils::process
         auto stream = walker().get_process_memory_stream(environment_address.value().second, std::numeric_limits<uint64_t>::max());
         if(stream.eof())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Can't find process Environment memory address [" << stream_hex_dump::to_hex_full(environment_address.value().second) << "]").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Can't find process Environment memory address [{0}]", stream_hex_dump::to_hex_full(environment_address.value().second))};
         }
 
         auto null_found = false;

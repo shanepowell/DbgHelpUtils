@@ -60,6 +60,16 @@ namespace dlg_help_utils::time_units
         millisecond
     };
 
+    template<typename T> struct map_to_time_type {};
+    template<> struct map_to_time_type<years> { static constexpr time_unit_type type = time_unit_type::year; };
+    template<> struct map_to_time_type<months> { static constexpr time_unit_type type = time_unit_type::month; };
+    template<> struct map_to_time_type<weeks> { static constexpr time_unit_type type = time_unit_type::week; };
+    template<> struct map_to_time_type<days> { static constexpr time_unit_type type = time_unit_type::day; };
+    template<> struct map_to_time_type<std::chrono::hours> { static constexpr time_unit_type type = time_unit_type::hour; };
+    template<> struct map_to_time_type<std::chrono::minutes> { static constexpr time_unit_type type = time_unit_type::minute; };
+    template<> struct map_to_time_type<std::chrono::seconds> { static constexpr time_unit_type type = time_unit_type::second; };
+    template<> struct map_to_time_type<std::chrono::milliseconds> { static constexpr time_unit_type type = time_unit_type::millisecond; };
+
     enum class string_type
     {
         singular,
@@ -81,4 +91,5 @@ namespace dlg_help_utils::time_units
     std::wstring const& get_label_string(time_unit_type time_type, string_type type);
     std::pair<std::wstring, std::wstring> const& get_label_strings(time_unit_type type);
     void set_label_strings(std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> user_string_data);
+    time_unit_type get_label_type(std::wstring_view label);
 }

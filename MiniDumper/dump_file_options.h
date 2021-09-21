@@ -44,6 +44,7 @@ public:
     [[nodiscard]] uint64_t hex_dump_memory_size(uint64_t size) const;
     [[nodiscard]] std::vector<size_t> const& dump_stream_indexes() const { return dump_stream_indexes_; }
     [[nodiscard]] std::vector<MINIDUMP_STREAM_TYPE> const& dump_stream_types() const { return dump_stream_types_; }
+    [[nodiscard]] bool dump_all_stream_indexes() const { return dump_all_stream_indexes_; }
     [[nodiscard]] bool continue_on_errors() const { return continue_on_errors_; }
     [[nodiscard]] bool display_symbols() const { return display_symbols_; }
     [[nodiscard]] bool debug_symbols() const { return debug_symbols_ || debug_load_symbols_memory_; }
@@ -83,6 +84,7 @@ private:
     std::vector<std::string> dump_stream_types_raw_;
     std::vector<MINIDUMP_STREAM_TYPE> dump_stream_types_;
     bool continue_on_errors_{false};
+    bool dump_all_stream_indexes_{false};
     bool display_symbols_{false};
     bool debug_symbols_{false};
     bool debug_load_symbols_memory_{false};

@@ -1,6 +1,6 @@
 ﻿#include "stream_utils.h"
 
-#include <sstream>
+#include <format>
 
 #include "mini_dump.h"
 #include "process_environment_block.h"
@@ -433,7 +433,7 @@ namespace dlg_help_utils::stream_utils
         auto const symbol_info = walker.get_type_info(name);
         if(!symbol_info.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << name << " not found").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} not found", name)};
         }
 
         return symbol_info.value();
@@ -446,7 +446,7 @@ namespace dlg_help_utils::stream_utils
             return static_cast<size_t>(length_data.value());
         }
 
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " length not found").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} length not found", type_name)};
     }
 
     uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name)
@@ -479,9 +479,9 @@ namespace dlg_help_utils::stream_utils
             {
                 return segment_entry.value().second + offset_data.value();
             }
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " " << field_name << " field has no offset").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} {1} field has no offset", symbol_name, field_name)};
         }
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " has no " << field_name << " field").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} has no {1} field", symbol_name, field_name)};
     }
 
     std::optional<uint64_t> read_static_variable_machine_size_value(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
@@ -495,13 +495,13 @@ namespace dlg_help_utils::stream_utils
         auto const address = symbol.value().address();
         if(!address.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read address").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol name {} can't read address", symbol_name)};
         }
 
         auto const length = symbol.value().length();
         if(!length.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read length").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol name {} can't read length", symbol_name)};
         }
 
         switch(length.value())
@@ -521,7 +521,7 @@ namespace dlg_help_utils::stream_utils
             throw_failed_to_read_from_address(symbol_name, address.value());
 
         default:
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " <<symbol_name << " can't length [" << length.value() << "] not supported").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol name {0} can't length [{1}] not supported", symbol_name, length.value())};
         }
     }
 
@@ -536,13 +536,13 @@ namespace dlg_help_utils::stream_utils
         auto const address = symbol.value().address();
         if(!address.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read address").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol name {} can't read address", symbol_name)};
         }
 
         auto const length = symbol.value().length();
         if(!length.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol name " << symbol_name << " can't read length").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol name {} can't read length", symbol_name)};
         }
 
         return std::make_pair(address.value(), length.value());
@@ -550,22 +550,22 @@ namespace dlg_help_utils::stream_utils
 
     void throw_cant_get_field_is_null(std::wstring const& type_name, std::wstring const& field_name)
     {
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " field " << field_name << " is nullptr").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} field {1} is nullptr", type_name, field_name)};
     }
 
     void throw_cant_get_field_data(std::wstring const& type_name, std::wstring const& field_name)
     {
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << type_name << " can't get " << field_name << " field data").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} can't get {1} field data", type_name, field_name)};
     }
 
     void throw_failed_to_read_from_address(std::wstring const& symbol_name, uint64_t const address)
     {
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: Failed to read " << symbol_name << " from address " << stream_hex_dump::to_hex(address)).str()};
+        throw exceptions::wide_runtime_error{std::format(L"Error: Failed to read {0} from address {1}", symbol_name, stream_hex_dump::to_hex(address))};
     }
 
     void throw_cant_get_symbol_field(std::wstring const& symbol_name)
     {
-        throw exceptions::wide_runtime_error{(std::wostringstream{} <<  "Error: No " << symbol_name << " symbol field found").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Error: No {} symbol field found", symbol_name)};
     }
 }
 

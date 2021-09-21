@@ -1,10 +1,9 @@
 ﻿#include "symbol_type_info.h"
 
 #include "symbol_engine.h"
-#include "wide_runtime_error.h"
 #include "windows_error.h"
 
-#include <sstream>
+#include <format>
 
 using namespace std::string_view_literals;
 
@@ -248,11 +247,7 @@ namespace dlg_help_utils::dbg_help
             return;
         }
 
-        throw exceptions::wide_runtime_error{
-            // ReSharper disable once StringLiteralTypo
-            (std::wostringstream{} << L"SymGetTypeInfo " << function << " failed. Error: " << ec << L" - " <<
-                windows_error::get_windows_error_string(ec)).str()
-        };
+        windows_error::throw_windows_api_error(L"SymGetTypeInfo"sv, function, ec);
     }
 
     std::experimental::generator<symbol_type_info> symbol_type_info::children() const  // NOLINT(bugprone-reserved-identifier)

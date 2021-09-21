@@ -1,6 +1,6 @@
 ﻿#include "heap_subsegment.h"
 
-#include <sstream>
+#include <format>
 
 #include "common_symbol_names.h"
 #include "heap_entry.h"
@@ -8,6 +8,8 @@
 #include "nt_heap.h"
 #include "stream_utils.h"
 #include "wide_runtime_error.h"
+
+using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
@@ -108,7 +110,7 @@ namespace dlg_help_utils::heap
 
                 if(encoded_offsets_length < sizeof(uint32_t))
                 {
-                    throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: Field " << heap_user_data_encoded_offsets_field_symbol_name << " length (" << encoded_offsets_length << ") to small").str()};
+                    throw exceptions::wide_runtime_error{std::format(L"Error: Field {0} length ({1}) to small", heap_user_data_encoded_offsets_field_symbol_name, encoded_offsets_length)};
                 }
 
                 uint32_t encoded_offsets_value;
@@ -121,7 +123,7 @@ namespace dlg_help_utils::heap
             }
             else
             {
-                throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: Failed to find expected lfh key").str()};
+                throw exceptions::wide_runtime_error{L"Error: Failed to find expected lfh key"s};
             }
         }
         else if(auto const first_allocation_offset = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), heap_user_data_header_symbol_type_, common_symbol_names::heap_user_data_first_allocation_offset_field_symbol_name, user_blocks_address); 

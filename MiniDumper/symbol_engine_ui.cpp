@@ -22,9 +22,7 @@ void symbol_engine_ui::deferred_symbol_load_partial([[maybe_unused]] std::wstrin
 
 void symbol_engine_ui::start_download(std::wstring_view const& module_name)
 {
-    std::wstringstream ss;
-    ss << L"downloading " << module_name << L": ";
-    module_ = std::move(ss).str();
+    module_ = std::format(L"downloading {}: ", module_name);
     std::wcerr << module_;
     last_percent_.clear();
 }

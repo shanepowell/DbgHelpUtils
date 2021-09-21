@@ -1,6 +1,6 @@
 ﻿#include "pe_file.h"
 
-#include <sstream>
+#include <format>
 
 #include "windows_error.h"
 #include "wide_runtime_error.h"
@@ -26,28 +26,18 @@ namespace dlg_help_utils
                                                OPEN_EXISTING, 0, nullptr));
         if (!file_)
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"Error: CreateFile failed. Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"CreateFile"sv, file_path_);
         }
 
         LARGE_INTEGER file_size;
         if (!GetFileSizeEx(file_.get(), &file_size))
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"Error: GetFileSizeEx failed. Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"GetFileSizeEx"sv, file_path_);
         }
 
         if (static_cast<size_t>(file_size.QuadPart) < sizeof(IMAGE_DOS_HEADER))
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" to small to be a PE File").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {} to small to be a PE File", file_path_)};
         }
 
         file_length_ = static_cast<size_t>(file_size.QuadPart);
@@ -56,21 +46,13 @@ namespace dlg_help_utils
             make_windows_handle(CreateFileMapping(file_.get(), nullptr, PAGE_READONLY, 0, 0, nullptr));
         if (!map_file)
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"Error: CreateFileMapping failed. Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"CreateFileMapping"sv, file_path_);
         }
 
         map_view_ = make_map_view_handle(MapViewOfFile(map_file.get(), FILE_MAP_READ, 0, 0, 0));
         if (map_view_ == nullptr)
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"Error: MapViewOfFile failed. Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"MapViewOfFile"sv, file_path_);
         }
 
         auto const* current = static_cast<uint8_t const*>(map_view_.get());

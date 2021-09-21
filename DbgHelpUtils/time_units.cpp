@@ -3,6 +3,8 @@
 #include <sstream>
 
 #include "chrono_unit_convert_to_string.h"
+#include "string_compare.h"
+#include "wide_runtime_error.h"
 
 namespace dlg_help_utils::time_units
 {
@@ -25,6 +27,49 @@ namespace dlg_help_utils::time_units
         std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> const g_default_string_data =
             populate_default_strings();
         std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> g_user_string_data;
+
+        std::wstring print_value(time_unit_type const type, auto const us1, auto const us2)
+        {
+            auto const& str = get_label_strings(type);
+            std::wstringstream ss;
+            chrono_unit_utilities::convert_to_string(ss, us1, us2, std::get<0>(str), std::get<1>(str));
+            return std::move(ss).str();
+        }
+
+        template<typename TBsz, typename Tsz>
+        std::wstring to_string_internal(TBsz ms)
+        {
+            return print_value(map_to_time_type<Tsz>::type, ms, TBsz{0});
+        }
+
+        template<typename TBsz, typename Tsz, typename Ysz, typename ...Args>
+        std::wstring to_string_internal(TBsz ms)
+        {
+            const auto tb = std::chrono::duration_cast<Tsz>(ms);
+            ms -= tb;
+
+            if (tb.count() > 0)
+            {
+                return print_value(map_to_time_type<Tsz>::type, tb, std::chrono::duration_cast<Ysz>(ms));
+            }
+
+            return to_string_internal<TBsz, Ysz, Args...>(ms);
+        }
+
+        std::optional<time_unit_type> get_label_type_from_labels(std::wstring_view const& label, std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> const& labels)
+        {
+            for(auto const& [type, label_strings] : labels)
+            {
+                if(auto const& [singular, plural] = label_strings;
+                    string_compare::iequals(singular, label) ||
+                    string_compare::iequals(plural, label))
+                {
+                    return type;
+                }
+            }
+
+            return std::nullopt;
+        }
     } // namespace
 
 
@@ -42,7 +87,7 @@ namespace dlg_help_utils::time_units
             if (yrs.count() > 0)
             {
                 auto const& str = get_label_strings(time_unit_type::year);
-                chrono_unit_utilities::convert_to_string(ss, yrs, mons, str.first.c_str(), str.second.c_str());
+                chrono_unit_utilities::convert_to_string(ss, yrs, mons, str.first, str.second);
             }
             else
             {
@@ -54,49 +99,7 @@ namespace dlg_help_utils::time_units
         }
         else
         {
-            const auto wks = std::chrono::duration_cast<weeks>(ms);
-            ms -= wks;
-            const auto dys = std::chrono::duration_cast<days>(ms);
-            ms -= dys;
-            const auto hrs = std::chrono::duration_cast<std::chrono::hours>(ms);
-            ms -= hrs;
-            const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(ms);
-            ms -= minutes;
-            const auto secs = std::chrono::duration_cast<std::chrono::seconds>(ms);
-            ms -= secs;
-
-            if (wks.count() > 0)
-            {
-                auto const& str = get_label_strings(time_unit_type::week);
-                chrono_unit_utilities::convert_to_string(ss, wks, dys, str.first.c_str(), str.second.c_str());
-            }
-            else if (dys.count() > 0)
-            {
-                auto const& str = get_label_strings(time_unit_type::day);
-                chrono_unit_utilities::convert_to_string(ss, dys, hrs, str.first.c_str(), str.second.c_str());
-            }
-            else if (hrs.count() > 0)
-            {
-                auto const& str = get_label_strings(time_unit_type::hour);
-                chrono_unit_utilities::convert_to_string(ss, hrs, minutes, str.first.c_str(), str.second.c_str());
-            }
-            else if (minutes.count() > 0)
-            {
-                auto const& str = get_label_strings(time_unit_type::minute);
-                chrono_unit_utilities::convert_to_string(ss, minutes, secs, str.first.c_str(), str.second.c_str());
-            }
-            else if (secs.count() > 0)
-            {
-                auto const& str = get_label_strings(time_unit_type::second);
-                chrono_unit_utilities::convert_to_string(ss, secs, ms, str.first.c_str(), str.second.c_str());
-            }
-            else
-            {
-                ss << ms.count() << L" " << get_label_string(time_unit_type::millisecond,
-                                                             ms.count() == 1
-                                                                 ? string_type::singular
-                                                                 : string_type::plural);
-            }
+            return to_string_internal<std::chrono::milliseconds, weeks, days, std::chrono::hours, std::chrono::minutes, std::chrono::seconds, std::chrono::milliseconds>(ms);
         }
 
         return ss.str();
@@ -122,5 +125,19 @@ namespace dlg_help_utils::time_units
     void set_label_strings(std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> user_string_data)
     {
         g_user_string_data = std::move(user_string_data);
+    }
+
+    time_unit_type get_label_type(std::wstring_view const label)
+    {
+        if(auto const type = get_label_type_from_labels(label, g_user_string_data); type.has_value())
+        {
+            return type.value();
+        }
+        if(auto const type = get_label_type_from_labels(label, g_default_string_data); type.has_value())
+        {
+            return type.value();
+        }
+
+        throw exceptions::wide_runtime_error{std::format(L"Unknown units type [{}]", label)};
     }
 }

@@ -1,7 +1,6 @@
 ﻿#include "pe_file_memory_mapping.h"
 
-#include <sstream>
-
+#include <format>
 
 #include "range_units.h"
 #include "stream_hex_dump.h"
@@ -21,10 +20,7 @@ namespace dlg_help_utils
     {
         if (auto const it = find_loaded_pe_file(module_base); it != loaded_pe_files_.end())
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"Error: module " << path << L" base : " << stream_hex_dump::to_hex(module_base) <<
-                    L" already used by " << it->second.path()).str()
-            };
+            throw wide_runtime_error{std::format(L"Error: module {0} base : {1} already used by {2}", path, stream_hex_dump::to_hex(module_base), it->second.path())};
         }
 
         pe_file file{path};
@@ -32,7 +28,7 @@ namespace dlg_help_utils
 
         if (!file.is_valid() || (!file.is_x86_pe() && !file.is_x64_pe()))
         {
-            throw wide_runtime_error{(wostringstream{} << L"Error: module " << path << L" not a valid pe file").str()};
+            throw wide_runtime_error{std::format(L"Error: module {} not a valid pe file", path)};
         }
 
         loaded_pe_files_.insert(std::make_pair(module_base, std::move(file)));

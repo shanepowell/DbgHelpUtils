@@ -520,11 +520,7 @@ namespace dlg_help_utils::dbg_help
 
         if (!SymInitializeW(fake_process, nullptr, FALSE))
         {
-            auto const ec = GetLastError();
-            throw exceptions::wide_runtime_error{
-                (std::wostringstream{} << L"SymInitialize failed. Error: " << ec << L" - " <<
-                    windows_error::get_windows_error_string(ec)).str()
-            };
+            windows_error::throw_windows_api_error(L"SymInitialize"sv);
         }
 
         SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | (callback.symbol_load_debug() ? SYMOPT_DEBUG : 0));
@@ -543,11 +539,7 @@ namespace dlg_help_utils::dbg_help
         {
             if (info.handle != 0 && !SymUnloadModule64(fake_process, info.handle))
             {
-                auto const ec = GetLastError();
-                throw exceptions::wide_runtime_error{
-                    (std::wostringstream{} << L"SymUnloadModule64 failed. Error: " << ec << L" - " <<
-                        windows_error::get_windows_error_string(ec)).str()
-                };
+                windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(info.handle));
             }
         }
 
@@ -726,11 +718,7 @@ namespace dlg_help_utils::dbg_help
         {
             if (it->second.handle != 0 && !SymUnloadModule64(fake_process, it->second.handle))
             {
-                auto const ec = GetLastError();
-                throw exceptions::wide_runtime_error{
-                    (std::wostringstream{} << L"SymUnloadModule64 failed. Error: " << ec << L" - " <<
-                        windows_error::get_windows_error_string(ec)).str()
-                };
+                windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(it->second.handle));
             }
             modules_.erase(it);
         }
@@ -757,9 +745,7 @@ namespace dlg_help_utils::dbg_help
         auto const it = modules_.find(module_name);
         if (it == modules_.end())
         {
-            throw exceptions::wide_runtime_error{
-                (std::wostringstream{} << L"Module [" << module_name << L"] is not loaded").str()
-            };
+            throw exceptions::wide_runtime_error{std::format(L"Module [{}] is not loaded", module_name)};
         }
         return get_module_information(it->second.base);
     }
@@ -770,11 +756,7 @@ namespace dlg_help_utils::dbg_help
         module.SizeOfStruct = sizeof(module);
         if (!SymGetModuleInfoW64(fake_process, module_base, &module))
         {
-            auto const ec = GetLastError();
-            throw exceptions::wide_runtime_error{
-                (std::wostringstream{} << L"SymUnloadModule64 failed. Error: " << ec << L" - " <<
-                    windows_error::get_windows_error_string(ec)).str()
-            };
+            windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(module_base));
         }
 
         return module;
@@ -785,9 +767,7 @@ namespace dlg_help_utils::dbg_help
         auto const it = modules_.find(module_name);
         if (it == modules_.end())
         {
-            throw exceptions::wide_runtime_error{
-                (std::wostringstream{} << L"Module [" << module_name << L"] is not loaded").str()
-            };
+            throw exceptions::wide_runtime_error{std::format(L"Module [{}] is not loaded", module_name)};
         }
         return it->second.module_image_path;
     }
@@ -955,11 +935,7 @@ namespace dlg_help_utils::dbg_help
                               return TRUE;
                           }, &types))
         {
-            auto const ec = GetLastError();
-            throw exceptions::wide_runtime_error{
-                (std::wostringstream{} << L"SymEnumTypesW failed. Error: " << ec << L" - " <<
-                    windows_error::get_windows_error_string(ec)).str()
-            };
+            windows_error::throw_windows_api_error(L"SymEnumTypesW"sv, to_hex(it->second.base));
         }
 
         for (auto const& type : types)

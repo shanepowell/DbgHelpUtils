@@ -1,6 +1,6 @@
 #include "process_environment_block.h"
 
-#include <sstream>
+#include <format>
 
 #include "common_symbol_names.h"
 #include "common_symbol_utils.h"
@@ -71,7 +71,7 @@ namespace dlg_help_utils::process
         auto const heap = stream_utils::get_field_pointer_type_and_value(walker(), process_heaps_pointer_type_, process_heaps_address_, heap_index);
         if(!heap.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} <<  "Error: Failed to find heap index " << heap_index).str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: Failed to find heap index {}", heap_index)};
         }
 
         return heap.value().second;

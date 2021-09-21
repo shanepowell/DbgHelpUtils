@@ -70,7 +70,7 @@ namespace dlg_help_utils::filesystem_utils
 
                 if (!is_directory(path))
                 {
-                    if(!on_error((std::wstringstream{} << L"Invalid file path: [" << path.wstring() << L"]").str()))
+                    if(!on_error(std::format(L"Invalid file path: [{}]", path.wstring())))
                     {
                         co_return;
                     }
@@ -86,7 +86,7 @@ namespace dlg_help_utils::filesystem_utils
 
                 if (match.find_first_of(L"*?") == std::wstring::npos)
                 {
-                    if(!on_error((std::wstringstream{} << L"Invalid wildcard pattern: [" << match << L"]").str()))
+                    if(!on_error(std::format(L"Invalid wildcard pattern: [{}]", match)))
                     {
                         co_return;
                     }
@@ -101,7 +101,7 @@ namespace dlg_help_utils::filesystem_utils
 
             if (!is_directory(path))
             {
-                if (!on_error((std::wstringstream{} << L"Invalid directory: [" << path.wstring() << L"]").str()))
+                if (!on_error(std::format(L"Invalid directory: [{}]", path.wstring())))
                 {
                     co_return;
                 }

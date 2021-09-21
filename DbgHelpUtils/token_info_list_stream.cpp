@@ -1,8 +1,9 @@
 ﻿#include "token_info_list_stream.h"
 
-#include <sstream>
+#include <format>
 
 #include "mini_dump.h"
+#include "stream_hex_dump.h"
 #include "wide_runtime_error.h"
 
 namespace dlg_help_utils
@@ -36,14 +37,10 @@ namespace dlg_help_utils
         auto const* entry = list_;
         for (size_t index = 0; index < token_info_list_->TokenListEntries; ++index)
         {
-            auto const* next_entry = reinterpret_cast<MINIDUMP_TOKEN_INFO_HEADER const*>(reinterpret_cast<uint8_t const*
-            >(entry) + entry->TokenSize);
+            auto const* next_entry = reinterpret_cast<MINIDUMP_TOKEN_INFO_HEADER const*>(reinterpret_cast<uint8_t const*>(entry) + entry->TokenSize);
             if (next_entry > end_list_)
             {
-                std::wostringstream ss;
-                ss << L"token info entry [" << index << L"] at [" << entry << L"] end data [" << next_entry <<
-                    L"] out of range from stream data end [" << end_list_ << L"]";
-                throw exceptions::wide_runtime_error{std::move(ss).str()};
+                throw exceptions::wide_runtime_error{std::format(L"token info entry [{0}] at [{1}] end data [{2}] out of range from stream data end [{3}]", index, stream_hex_dump::to_hex(entry), stream_hex_dump::to_hex(next_entry), stream_hex_dump::to_hex(end_list_))};
             }
 
             // ReSharper disable once CppAwaiterTypeIsNotClass

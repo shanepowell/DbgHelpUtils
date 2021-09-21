@@ -1,5 +1,6 @@
 ﻿#include "mini_dump_stream_type.h"
-#include <sstream>
+
+#include <format>
 #include <unordered_map>
 
 #include "stream_hex_dump.h"
@@ -61,13 +62,13 @@ namespace dlg_help_utils::mini_dump_stream_type
     {
         if (type > LastReservedStream)
         {
-            return (std::wostringstream{} << L"User Stream Type [" << to_hex(type) << L"]").str();
+            return std::format(L"User Stream Type [{}]", to_hex(type));
         }
 
         auto const it = type_map.find(type);
         if (it == type_map.end())
         {
-            return (std::wostringstream{} << L"Unknown Stream Type [" << to_hex(type) << L"]").str();
+            return std::format(L"Unknown Stream Type [{}]", to_hex(type));
         }
 
         return std::get<0>(it->second);
@@ -77,13 +78,13 @@ namespace dlg_help_utils::mini_dump_stream_type
     {
         if (type > LastReservedStream)
         {
-            return (std::wostringstream{} << to_hex(type)).str();
+            return to_hex(type);
         }
 
         auto const it = type_map.find(type);
         if (it == type_map.end())
         {
-            return (std::wostringstream{} << L"unknown stream type [" << to_hex(type) << L"]").str();
+            return std::format(L"unknown stream type [{}]", to_hex(type));
         }
 
         return std::get<1>(it->second);
@@ -119,8 +120,6 @@ namespace dlg_help_utils::mini_dump_stream_type
         }
 
         // ReSharper disable once StringLiteralTypo
-        throw exceptions::wide_runtime_error{
-            (std::wostringstream{} << "invalid MINIDUMP_STREAM_TYPE : [" << type << "]").str()
-        };
+        throw exceptions::wide_runtime_error{std::format(L"invalid MINIDUMP_STREAM_TYPE : [{}]", type)};
     }
 }

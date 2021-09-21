@@ -1,6 +1,7 @@
 ﻿#include "heap_entry.h"
 
 #include <array>
+#include <format>
 
 #include "common_symbol_names.h"
 #include "nt_heap.h"
@@ -266,7 +267,7 @@ namespace dlg_help_utils::heap
         auto const value = stream_utils::read_machine_size_field_value(peb(), heap_entry_address_ + heap_entry_length_);
         if(!value.has_value())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "Error: symbol " << symbol_name << " can't get ust address field data").str()};
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} can't get ust address field data", symbol_name)};
         }
 
         return value.value();

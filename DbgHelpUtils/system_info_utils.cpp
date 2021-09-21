@@ -2,13 +2,14 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
+
 #include <avrfsdk.h>
 #include <unordered_map>
 
 #include "flags_string_utils.h"
 #include "hash_combine.h"
-#include "stream_hex_dump.h"
 #include "mini_dump.h"
+#include "stream_hex_dump.h"
 
 #pragma comment(lib, "Version.lib")
 
@@ -264,8 +265,7 @@ namespace dlg_help_utils::system_info_utils
             return L"unknown"s;
 
         default:
-            return (std::wostringstream{} << "unknown processor type [" << stream_hex_dump::to_hex(
-                processor_architecture) << "]").str();
+            return std::format(L"unknown processor type [{}]", stream_hex_dump::to_hex(processor_architecture));
         }
     }
 
@@ -283,8 +283,7 @@ namespace dlg_help_utils::system_info_utils
             return L"NT Domain Controller"s;
 
         default:
-            return (std::wostringstream{} << "unknown product type [" << stream_hex_dump::to_hex(product_type) << "]").
-                str();
+            return std::format(L"unknown product type [{}]", stream_hex_dump::to_hex(product_type));
         }
     }
 
@@ -302,8 +301,7 @@ namespace dlg_help_utils::system_info_utils
             return L"Win32"s;
 
         default:
-            return (std::wostringstream{} << "unknown platform id [" << stream_hex_dump::to_hex(platform_id) << "]").
-                str();
+            return std::format(L"unknown platform id [{}]", stream_hex_dump::to_hex(platform_id));
         }
     }
 
@@ -544,16 +542,12 @@ namespace dlg_help_utils::system_info_utils
 
     std::wstring version_info_to_string(uint32_t const version)
     {
-        std::wostringstream ss;
-        ss << stream_hex_dump::to_hex_raw(HIWORD(version)) << L'.' << stream_hex_dump::to_hex_raw(LOWORD(version));
-        return std::move(ss).str();
+        return std::format(L"{0}.{1}", stream_hex_dump::to_hex_raw(HIWORD(version)), stream_hex_dump::to_hex_raw(LOWORD(version)));
     }
 
     std::wstring version_info_to_string(uint32_t const version_ms, uint32_t const version_ls)
     {
-        std::wostringstream ss;
-        ss << stream_hex_dump::to_hex_raw(HIWORD(version_ms)) << L'.' << stream_hex_dump::to_hex_raw(LOWORD(version_ms)) << L'.' << stream_hex_dump::to_hex_raw(HIWORD(version_ls)) << L'.' << stream_hex_dump::to_hex_raw(LOWORD(version_ls));
-        return std::move(ss).str();
+        return std::format(L"{0}.{1}.{2}.{3}", stream_hex_dump::to_hex_raw(HIWORD(version_ms)), stream_hex_dump::to_hex_raw(LOWORD(version_ms)), stream_hex_dump::to_hex_raw(HIWORD(version_ls)), stream_hex_dump::to_hex_raw(LOWORD(version_ls)));
     }
 
     std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t const process_execute_flags)

@@ -111,9 +111,7 @@ namespace dlg_help_utils::size_units
             case size_unit_type::bytes: return bytes(units_value);
             }
 
-            std::wostringstream runtime_error_ss;
-            runtime_error_ss << "Unknown units value [" << value << "]";
-            throw exceptions::wide_runtime_error{std::move(runtime_error_ss).str()};
+            throw exceptions::wide_runtime_error{std::format(L"Unknown units value [{}]", value)};
         }
     }
 
@@ -146,9 +144,7 @@ namespace dlg_help_utils::size_units
             case size_unit_type::bytes: return bytes(units_value);
             }
 
-            std::wostringstream runtime_error_ss;
-            runtime_error_ss << "Unknown units value [" << value << "]";
-            throw exceptions::wide_runtime_error{std::move(runtime_error_ss).str()};
+            throw exceptions::wide_runtime_error{std::format(L"Unknown units value [{}]", value)};
         }
     }
 
@@ -191,8 +187,6 @@ namespace dlg_help_utils::size_units
             return type.value();
         }
 
-        std::wostringstream runtime_error_ss;
-        runtime_error_ss << "Unknown units type [" << label << "]";
-        throw exceptions::wide_runtime_error{std::move(runtime_error_ss).str()};
+        throw exceptions::wide_runtime_error{std::format(L"Unknown units type [{}]", label)};
     }
 }

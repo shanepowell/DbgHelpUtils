@@ -6,7 +6,7 @@
 
 namespace dlg_help_utils::time_utils
 {
-    std::wstring to_local_time(time_t timestamp)
+    std::wstring to_local_time(time_t const timestamp)
     {
         tm local_tm{};
         localtime_s(&local_tm, &timestamp);
@@ -16,7 +16,7 @@ namespace dlg_help_utils::time_utils
         return std::move(oss).str();
     }
 
-    std::wstring to_utc_time(time_t timestamp)
+    std::wstring to_utc_time(time_t const timestamp)
     {
         tm utc_tm{};
         gmtime_s(&utc_tm, &timestamp);

@@ -1,5 +1,6 @@
 ﻿#include "interface_process_heaps_statistic_view_impl.h"
 
+#include <format>
 #include <functional>
 #include <numeric>
 #include <sstream>
@@ -39,7 +40,7 @@ namespace dlg_help_utils::heap
         auto const it = Factory.find(view);
         if(it == Factory.end())
         {
-            throw exceptions::wide_runtime_error{(std::wostringstream{} << "View (" << static_cast<int>(view) << ") not supported").str()};
+            throw exceptions::wide_runtime_error{std::format(L"View ({}) not supported", static_cast<int>(view))};
         }
 
         return it->second(view, helper, statistic_view_options, process, allocated_entries, free_entries);
@@ -84,7 +85,7 @@ namespace dlg_help_utils::heap
         case sort_order_type::descending: return b < a;
         }
 
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Sort Order (" << static_cast<int>(sort_order()) << ") not supported").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Sort Order ({}) not supported", static_cast<int>(sort_order()))};
     }
 
     template<typename T, typename ...Args>
@@ -113,7 +114,7 @@ namespace dlg_help_utils::heap
         case sort_column_type::range_size_percent: return bucket_data_compare(a.range_size_percent(), b.range_size_percent(), a.allocated_total(), b.allocated_total());
         }
 
-        throw exceptions::wide_runtime_error{(std::wostringstream{} << "Sort Column (" << static_cast<int>(sort_column()) << ") not supported").str()};
+        throw exceptions::wide_runtime_error{std::format(L"Sort Column ({}) not supported", static_cast<int>(sort_column()))};
     }
 
     uint64_t process_heaps_statistic_view::interface_process_heaps_statistic_view_impl::sum_entries(std::map<uint64_t, process_heap_entry> const& entries)

@@ -1,8 +1,9 @@
 ﻿#include "function_table_stream.h"
 
-#include <sstream>
+#include <format>
 
 #include "mini_dump.h"
+#include "stream_hex_dump.h"
 #include "system_info_stream.h"
 #include "wide_runtime_error.h"
 
@@ -59,10 +60,7 @@ namespace dlg_help_utils
                 ) + entry->SizeOfAlignPad);
             if (next_entry > end_list_)
             {
-                std::wostringstream ss;
-                ss << L"function table entry [" << index << L"] at [" << entry << L"] end data [" << next_entry <<
-                    L"] out of range from stream data end [" << end_list_ << L"]";
-                throw exceptions::wide_runtime_error{std::move(ss).str()};
+                throw exceptions::wide_runtime_error{std::format(L"function table entry [{0}] at [{1}] end data [{2}] out of range from stream data end [{3}]", index, stream_hex_dump::to_hex(entry), stream_hex_dump::to_hex(next_entry), stream_hex_dump::to_hex(end_list_))};
             }
 
             // ReSharper disable once CppAwaiterTypeIsNotClass

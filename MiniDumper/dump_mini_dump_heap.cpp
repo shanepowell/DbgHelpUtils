@@ -1446,7 +1446,7 @@ void dump_mini_dump_heap_statistics_view(process::process_environment_block cons
         if(view_by_size_frequency.is_range_single_value())
         {
             wcout << std::format(L" {:10} ", to_wstring(bucket.start_range()));
-            wcout << std::format(L"{0:{1}} ", std::format(L"0x{0:x}", bucket.start_range().count()), single_line_range_title_length);
+            wcout << std::format(L"{0:{1}} ", stream_hex_dump::to_hex(bucket.start_range()), single_line_range_title_length);
         }
         else
         {

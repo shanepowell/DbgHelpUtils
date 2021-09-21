@@ -1,13 +1,27 @@
 #include "windows_error.h"
 
+#include <format>
 #include <stdexcept>
+
 #include "handles.h"
+#include "stream_hex_dump.h"
+#include "wide_runtime_error.h"
 
 using namespace std;
 
 namespace dlg_help_utils::windows_error
 {
     using namespace handles;
+
+    void throw_windows_api_error(std::wstring_view const& api, DWORD const ec)
+    {
+        throw exceptions::wide_runtime_error{std::format(L"{0} failed. Error: {1} - {2}", api, stream_hex_dump::to_hex(ec), get_windows_error_string(ec))};
+    }
+
+    void throw_windows_api_error(std::wstring_view const& api, std::wstring_view const& optional_data, DWORD const ec)
+    {
+        throw exceptions::wide_runtime_error{std::format(L"{0} failed ({1}). Error: {2} - {3}", api, optional_data, stream_hex_dump::to_hex(ec), get_windows_error_string(ec))};
+    }
 
     std::wstring get_windows_error_string(DWORD const ec, std::wstring const& dll_source_path)
     {

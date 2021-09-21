@@ -1,8 +1,9 @@
 ﻿#include "mini_dump.h"
 
-#include <sstream>
+#include <format>
 
 #include "crc.h"
+#include "stream_hex_dump.h"
 #include "windows_error.h"
 #include "wide_runtime_error.h"
 
@@ -35,27 +36,18 @@ namespace dlg_help_utils
                                                OPEN_EXISTING, 0, nullptr));
         if (!file_)
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"CreateFile failed (" << file_path_ << "). Error: " << ec << L" - " << get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"CreateFile"sv, file_path_);
         }
 
         LARGE_INTEGER file_size;
         if (!GetFileSizeEx(file_.get(), &file_size))
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"GetFileSizeEx failed (" << file_path_ << "). Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"GetFileSizeEx"sv, file_path_);
         }
 
         if (static_cast<size_t>(file_size.QuadPart) < sizeof(MINIDUMP_HEADER))
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" to small to be a MiniDumpFile").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {} to small to be a MiniDumpFile", file_path_)};
         }
 
         file_length_ = static_cast<size_t>(file_size.QuadPart);
@@ -64,21 +56,13 @@ namespace dlg_help_utils
             make_windows_handle(CreateFileMapping(file_.get(), nullptr, PAGE_READONLY, 0, 0, nullptr));
         if (!map_file)
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"CreateFileMapping failed (" << file_path_ << "). Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"CreateFileMapping"sv, file_path_);
         }
 
         map_view_ = make_map_view_handle(MapViewOfFile(map_file.get(), FILE_MAP_READ, 0, 0, 0));
         if (map_view_ == nullptr)
         {
-            auto const ec = GetLastError();
-            throw wide_runtime_error{
-                (wostringstream{} << L"MapViewOfFile failed (" << file_path_ << "). Error: " << ec << L" - " <<
-                    get_windows_error_string(ec)).str()
-            };
+            throw_windows_api_error(L"MapViewOfFile"sv, file_path_);
         }
 
         header_ = static_cast<MINIDUMP_HEADER const*>(map_view_.get());
@@ -108,17 +92,13 @@ namespace dlg_help_utils
         }
         else
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" has invalid MiniDump signature").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {} has invalid MiniDump signature", file_path_)};
         }
 
         if (header_->StreamDirectoryRva < sizeof(MINIDUMP_HEADER) || header_->StreamDirectoryRva > file_length_ - (
             sizeof(MINIDUMP_DIRECTORY) * header_->NumberOfStreams))
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" has invalid StreamDirectoryRva offset").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {} has invalid StreamDirectoryRva offset", file_path_)};
         }
         directory_ = reinterpret_cast<MINIDUMP_DIRECTORY const*>(static_cast<uint8_t const*>(map_view_.get()) + header_
             ->StreamDirectoryRva);
@@ -134,10 +114,7 @@ namespace dlg_help_utils
     {
         if (location.Rva < sizeof(MINIDUMP_HEADER) || location.Rva > file_length_ - location.DataSize)
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" has invalid RVA32[" << location.Rva << L" - " <<
-                    location.DataSize << L"] offset").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {0} has invalid invalid RVA32[{1} - {2}] offset", file_path_, location.Rva, location.DataSize)};
         }
 
         return static_cast<uint8_t const*>(data()) + (location.Rva - sizeof(MINIDUMP_HEADER));
@@ -147,9 +124,7 @@ namespace dlg_help_utils
     {
         if (rva < sizeof(MINIDUMP_HEADER) || rva >= file_length_)
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" has invalid RVA32[" << rva << L"] offset").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {0} has invalid invalid RVA32[{1}] offset", file_path_, rva)};
         }
 
         return static_cast<uint8_t const*>(data()) + (rva - sizeof(MINIDUMP_HEADER));
@@ -159,10 +134,7 @@ namespace dlg_help_utils
     {
         if (location.Rva < sizeof(MINIDUMP_HEADER) || location.Rva > file_length_ - location.DataSize)
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" has invalid RVA64[" << location.Rva << L" - " <<
-                    location.DataSize << L"] offset").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {0} has invalid invalid RVA64[{1}] offset", file_path_, location.Rva)};
         }
 
         return static_cast<uint8_t const*>(data()) + (location.Rva - sizeof(MINIDUMP_HEADER));
@@ -172,9 +144,7 @@ namespace dlg_help_utils
     {
         if (rva < sizeof(MINIDUMP_HEADER) || rva >= file_length_)
         {
-            throw wide_runtime_error{
-                (wostringstream{} << L"File: " << file_path_ << L" has invalid RVA64[" << rva << L"] offset").str()
-            };
+            throw wide_runtime_error{std::format(L"File: {0} has invalid invalid RVA64[{1}] offset", file_path_, rva)};
         }
 
         return static_cast<uint8_t const*>(data()) + (rva - sizeof(MINIDUMP_HEADER));
@@ -184,12 +154,12 @@ namespace dlg_help_utils
     {
         if (header_ == nullptr)
         {
-            throw runtime_error{"no header found"};
+            throw wide_runtime_error{L"no header found"s};
         }
 
         if (directory_ == nullptr)
         {
-            throw runtime_error{"no stream directory found"};
+            throw wide_runtime_error{L"no stream directory found"s};
         }
 
         for (; index < header_->NumberOfStreams; ++index)

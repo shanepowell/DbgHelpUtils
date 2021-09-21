@@ -1,207 +1,86 @@
 ﻿#pragma once
-#include "windows_setup.h"
-
-#include <ostream>
-#include <sstream>
-#include <iomanip>
 #include <chrono>
+#include <format>
+
+#include "windows_setup.h"
 
 namespace dlg_help_utils::stream_hex_dump
 {
     namespace details
     {
-        template <typename T>
-        class hex_converter
+        template<typename T>
+        [[nodiscard]] auto to_printable_value(T const& value)
         {
-        public:
-            hex_converter(T value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
-                : value_{std::move(value)}
-                  , write_header_(write_header)
-                  , width_(width)
-                  , fill_char_(fill_char)
+            if constexpr (std::is_same_v<T, char> || std::is_same_v<T, int8_t> || std::is_same_v<T, char8_t> || std::is_same_v<T, char16_t> || std::is_same_v<T, wchar_t>)
             {
+                return static_cast<int16_t>(value);
             }
-
-            template <typename Ts>
-            void write_to_stream(Ts& os)
+            else if constexpr (std::is_same_v<T, unsigned char> || std::is_same_v<T, uint8_t>)
             {
-                std::basic_stringstream<typename Ts::char_type, typename Ts::traits_type, std::allocator<typename Ts::char_type>> oss;
-                if (write_header_)
-                {
-                    oss << "0x";
-                }
-
-                if (width_ > 0)
-                {
-                    oss << std::setw(width_) << std::setfill(fill_char_);
-                }
-                oss << std::hex << to_printable_value() << std::dec;
-                os << std::move(oss).str();
+                return static_cast<uint16_t>(value);
             }
-
-            friend std::wostream& operator<<(std::wostream& os, hex_converter<T> raw_value)
+            else if constexpr (std::is_same_v<T, char32_t>)
             {
-                raw_value.write_to_stream(os);
-                return os;
+                return static_cast<int32_t>(value);
             }
-
-            friend std::wostringstream&& operator<<(std::wostringstream&& os, hex_converter<T> raw_value)
+            else if constexpr (std::is_enum_v<T>)
             {
-                raw_value.write_to_stream(os);
-                return std::move(os);
+                return static_cast<int32_t>(value);
             }
-
-        private:
-            [[nodiscard]] auto to_printable_value() const
+            else
             {
-                if constexpr (std::is_same_v<T, char> || std::is_same_v<T, int8_t> || std::is_same_v<T, char8_t> || std::is_same_v<T, char16_t> || std::is_same_v<T, wchar_t>)
-                {
-                    return static_cast<int16_t>(value_);
-                }
-                else if constexpr (std::is_same_v<T, unsigned char> || std::is_same_v<T, uint8_t>)
-                {
-                    return static_cast<uint16_t>(value_);
-                }
-                else if constexpr (std::is_same_v<T, char32_t>)
-                {
-                    return static_cast<int32_t>(value_);
-                }
-                else
-                {
-                    return value_;
-                }
+                return value;
             }
+        }
 
-        private:
-            T const value_;
-            bool const write_header_;
-            std::streamsize const width_;
-            wchar_t const fill_char_;
-        };
-
-        template <>
-        class hex_converter<M128A>
+        template<typename T>
+        std::wstring to_hex(T const& value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
         {
-        public:
-            hex_converter(M128A value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
-                : value_{value}
-                  , write_header_(write_header)
-                  , width_(width)
-                  , fill_char_(fill_char)
-            {
-            }
-
-            template <typename Ts>
-            void write_to_stream(Ts& os)
-            {
-                if (write_header_)
-                {
-                    os << L"0x";
-                }
-
-                os << std::hex;
-
-                if (value_.High)
-                {
-                    if (width_ > 16)
-                    {
-                        os << std::setw(width_ - 16) << std::setfill(fill_char_);
-                    }
-                    os << value_.High;
-                    os << std::setw(16) << std::setfill(L'0');
-                }
-                else
-                {
-                    os << std::setw(width_) << std::setfill(fill_char_);
-                }
-
-                os << value_.Low << std::dec;
-            }
-
-            friend std::wostream& operator<<(std::wostream& os, hex_converter<M128A> raw_value)
-            {
-                raw_value.write_to_stream(os);
-                return os;
-            }
-
-            friend std::wostringstream&& operator<<(std::wostringstream&& os, hex_converter<M128A> raw_value)
-            {
-                raw_value.write_to_stream(os);
-                return std::move(os);
-            }
-
-        private:
-            M128A const value_;
-            bool const write_header_;
-            std::streamsize const width_;
-            wchar_t const fill_char_;
-        };
+            using namespace std::string_view_literals;
+            auto const spec = std::format(L"{0}{{0:{2}>{1}x}}", write_header ? L"0x"sv : L""sv, width, fill_char);
+            return std::format(spec, to_printable_value(value));
+        }
 
         template <typename Rep, typename Period>
-        class hex_converter<std::chrono::duration<Rep, Period>>
+        std::wstring to_hex(std::chrono::duration<Rep, Period> const& value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
         {
-        public:
-            hex_converter(std::chrono::duration<Rep, Period> value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
-                : value_{std::move(value)}
-                  , write_header_(write_header)
-                  , width_(width)
-                  , fill_char_(fill_char)
+            return to_hex(value.count(), width, fill_char, write_header);
+        }
+
+        template <typename T>
+        std::wstring to_hex(T* value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
+        {
+            return to_hex(reinterpret_cast<uint64_t>(value), width, fill_char, write_header);
+        }
+
+        inline std::wstring to_hex(M128A const& value, std::streamsize const width, wchar_t const fill_char, bool const write_header)
+        {
+            using namespace std::string_view_literals;
+            if (value.High)
             {
+                auto const spec = std::format(L"{0}{{0:{2}>{1}x}}{{1:{2}>16x}}", write_header ? L"0x"sv : L""sv, width > 16 ? (width - 16) : 0, fill_char);
+                return std::format(spec, value.High, value.Low);
             }
 
-            template <typename Ts>
-            void write_to_stream(Ts& os)
-            {
-                std::basic_stringstream<typename Ts::char_type, typename Ts::traits_type, std::allocator<typename Ts::char_type>> oss;
-                if (write_header_)
-                {
-                    oss << "0x";
-                }
-
-                if (width_ > 0)
-                {
-                    oss << std::setw(width_) << std::setfill(fill_char_);
-                }
-                oss << std::hex << value_.count() << std::dec;
-                os << std::move(oss).str();
-            }
-
-            friend std::wostream& operator<<(std::wostream& os, hex_converter<std::chrono::duration<Rep, Period>> raw_value)
-            {
-                raw_value.write_to_stream(os);
-                return os;
-            }
-
-            friend std::wostringstream&& operator<<(std::wostringstream&& os, hex_converter<std::chrono::duration<Rep, Period>> raw_value)
-            {
-                raw_value.write_to_stream(os);
-                return std::move(os);
-            }
-
-        private:
-            std::chrono::duration<Rep, Period> const value_;
-            bool const write_header_;
-            std::streamsize const width_;
-            wchar_t const fill_char_;
-        };
+            return to_hex(value.Low, width, fill_char, write_header);
+        }
     }
 
     template <typename T>
-    details::hex_converter<T> to_hex(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0',
-                                     bool const write_header = true)
+    std::wstring to_hex(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0', bool const write_header = true)
     {
-        return details::hex_converter<T>{value, width, fill_char, write_header};
+        return details::to_hex(value, width, fill_char, write_header);
     }
 
     template <typename T>
-    details::hex_converter<T> to_hex_raw(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0')
+    std::wstring to_hex_raw(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0')
     {
-        return details::hex_converter<T>{value, width, fill_char, false};
+        return details::to_hex(value, width, fill_char, false);
     }
 
     template <typename T>
-    details::hex_converter<T> to_hex_full(T value, bool const write_header = true)
+    std::wstring to_hex_full(T value, bool const write_header = true)
     {
-        return details::hex_converter<T>{value, sizeof(T) * 2, L'0', write_header};
+        return details::to_hex(value, sizeof(T) * 2, L'0', write_header);
     }
 }

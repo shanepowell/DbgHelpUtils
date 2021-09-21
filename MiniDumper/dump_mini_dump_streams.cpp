@@ -67,7 +67,7 @@ void dump_mini_dump_stream_index(mini_dump const& dump_file, size_t const index,
 
     if (index >= header->NumberOfStreams)
     {
-        throw wide_runtime_error{(std::wostringstream{} << "stream index [" << index << "] out of range").str()};
+        throw wide_runtime_error{std::format(L"stream index [{}] out of range", index)};
     }
 
     auto const& entry = directory[index];
@@ -80,15 +80,38 @@ void dump_mini_dump_stream_type(mini_dump const& dump_file, MINIDUMP_STREAM_TYPE
     auto const stream = stream_utils::find_stream_for_type(dump_file, type);
     if(!stream.has_value())
     {
-        throw wide_runtime_error{
-            (std::wostringstream{} << "stream type [" << mini_dump_stream_type::to_string(type) << "] not found").str()
-        };
+        throw wide_runtime_error{std::format(L"stream type [{}] not found", mini_dump_stream_type::to_string(type))};
     }
 
     auto const& [index, entry] = stream.value();
     dump_mini_dump_stream_data(dump_file, index, entry, options, symbol_engine);
 }
 
+void dump_mini_dump_all_stream_indexes(mini_dump const& dump_file, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+{
+    auto const* header = dump_file.header();
+    if (header == nullptr)
+    {
+        return;
+    }
+
+    auto const* directory = dump_file.directory();
+    if (directory == nullptr)
+    {
+        return;
+    }
+
+    for (size_t index = 0; index < header->NumberOfStreams; ++index)
+    {
+        using namespace size_units::base_16;
+        auto const& entry = directory[index];
+        wcout << L"Stream: [" << index << "] " <<
+            mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType)) << " - RVA: [" <<
+            entry.Location.Rva << "] - [" << to_hex(entry.Location.DataSize) << L"](" << bytes{entry.Location.DataSize}
+            << "):\n";
+        dump_mini_dump_stream_index(dump_file, index, options, symbol_engine);
+    }
+}
 
 void dump_mini_dump_stream_data(mini_dump const& mini_dump, size_t const index, MINIDUMP_DIRECTORY const& entry,
                                 dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
