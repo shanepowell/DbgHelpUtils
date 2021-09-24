@@ -1,15 +1,18 @@
 ﻿#include "symbol_type_utils.h"
 
+#include <format>
 #include <unordered_map>
 
 #include "print_utils.h"
 #include "function_table_stream.h"
+#include "locale_number_formatting.h"
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
 #include "mini_dump_stack_walk.h"
 #include "mini_dump_stream_type.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
+#include "size_units.h"
 #include "stream_hex_dump.h"
 #include "symbol_type_info.h"
 #include "unloaded_module_list_stream.h"
@@ -158,7 +161,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         static std::wstring bad_result;
-        bad_result = L"unknown sym tag: "s + std::to_wstring(static_cast<int>(type));
+        bad_result = std::format(L"unknown sym tag: {}", static_cast<int>(type));
         return bad_result;
     }
 
@@ -170,7 +173,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         static std::wstring bad_result;
-        bad_result = L"unknown basic type: "s + std::to_wstring(static_cast<int>(type));
+        bad_result = std::format(L"unknown basic type: {}", static_cast<int>(type));
         return bad_result;
     }
 
@@ -182,7 +185,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         static std::wstring bad_result;
-        bad_result = L"unknown UDT type: "s + std::to_wstring(static_cast<int>(type));
+        bad_result = std::format(L"unknown UDT type: {}", static_cast<int>(type));
         return bad_result;
     }
 
@@ -194,7 +197,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         static std::wstring bad_result;
-        bad_result = L"unknown calling convention: "s + std::to_wstring(static_cast<int>(type));
+        bad_result = std::format(L"unknown calling convention: {}", static_cast<int>(type));
         return bad_result;
     }
 
@@ -206,7 +209,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         static std::wstring bad_result;
-        bad_result = L"unknown DataKind: "s + std::to_wstring(static_cast<int>(type));
+        bad_result = std::format(L"unknown DataKind: ", static_cast<int>(type));
         return bad_result;
     }
 
@@ -494,21 +497,21 @@ namespace dlg_help_utils::symbol_type_utils
         auto const symbol_info = walker.get_type_info(symbol_type_name);
         if(!symbol_info.has_value())
         {
-            os << "failed to find [" << symbol_type_name << "]\n";
+            os << std::format(L"failed to find [{}]\n", symbol_type_name);
             return;
         }
 
         auto const length = symbol_info.value().length();
         if(!length.has_value())
         {
-            os << "symbol [" << symbol_type_name << "] is zero length\n";
+            os << std::format(L"symbol [{}] is zero length\n", symbol_type_name);
             return;
         }
 
         auto stream = walker.get_process_memory_stream(variable_address, length.value());
         if(stream.eof())
         {
-            os << "failed to find [" << variable_address << "] in dump file\n";
+            os << std::format(L"failed to find [{0} - {1}] memory address range in dump file\n", stream_hex_dump::to_hex(variable_address), size_units::base_16::to_wstring(size_units::base_16::bytes{length.value()}));
             return;
         }
 
@@ -517,12 +520,12 @@ namespace dlg_help_utils::symbol_type_utils
 
     void dump_unsupported_variable_symbol_at(std::wostream& os, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
     {
-        os << L" : unsupported type [" << sym_tag_to_string(type.sym_tag().value()) << L"]";
+        os << std::format(L" : unsupported type [{}]", sym_tag_to_string(type.sym_tag().value()));
     }
 
     void dump_enum_variable_symbol_at(std::wostream& os, [[maybe_unused]] symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
     {
-        os << " : enum value tbd";
+        os << L" : enum value tbd";
     }
 
     template<typename T>
@@ -559,7 +562,7 @@ namespace dlg_help_utils::symbol_type_utils
             if(variable_stream.read(&value, sizeof T) == sizeof T)
             {
                 value &= static_cast<T>(bit_mask);
-                os << L": " << std::to_wstring(value) << L" (" << stream_hex_dump::to_hex(value) << ")";
+                os << std::format(L": {0} ({1})", locale_formatting::to_wstring(value), stream_hex_dump::to_hex(value));
             }
         }
     }
@@ -583,7 +586,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
         else if(T value; variable_stream.read(&value, sizeof T) == sizeof T)
         {
-            os << L": " << std::to_wstring(value);
+            os << std::format(L": {}", value);
         }
     }
 
@@ -613,7 +616,7 @@ namespace dlg_help_utils::symbol_type_utils
             T ch;
             if(variable_stream.read(&ch, sizeof ch) == sizeof ch)
             {
-                os << L": " << print_utils::to_printable_char(ch) << L" (" << stream_hex_dump::to_hex(ch) << ")";
+                os << std::format(L": {0} ({1})", print_utils::to_printable_char(ch), stream_hex_dump::to_hex(ch));
             }
         }
     }
@@ -708,7 +711,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::BCD:
-                os << ": BCD value unsupported";
+                os << L": BCD value unsupported";
                 break;
 
             case basic_type::Bool:
@@ -716,19 +719,19 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::Currency:
-                os << ": Currency value unsupported";
+                os << L": Currency value unsupported";
                 break;
 
             case basic_type::Date:
-                os << ": Date value unsupported";
+                os << L": Date value unsupported";
                 break;
 
             case basic_type::Variant:
-                os << ": Variant value unsupported";
+                os << L": Variant value unsupported";
                 break;
 
             case basic_type::Complex:
-                os << ": Complex value unsupported";
+                os << L": Complex value unsupported";
                 break;
 
             case basic_type::Bit:
@@ -737,7 +740,7 @@ namespace dlg_help_utils::symbol_type_utils
 
             case basic_type::BSTR:
                 // ReSharper disable once StringLiteralTypo
-                os << ": BSTR value unsupported";
+                os << L": BSTR value unsupported";
                 break;
 
             case basic_type::HResult:
@@ -772,7 +775,7 @@ namespace dlg_help_utils::symbol_type_utils
             std::wstring const indent_str(indent, L' ');
             for(size_t index = 0; index < max_size; ++index)
             {
-                os << indent_str << '[' << index << "]\n";
+                os << std::format(L"{0}[{1}]\n", indent_str, locale_formatting::to_wstring(index));
                 mini_dump_memory_stream copy_stream = variable_stream;
                 dump_variable_symbol_at(os, walker, type, type, variable_address, copy_stream, indent, false);
                 variable_address += length_data.value();
@@ -785,7 +788,7 @@ namespace dlg_help_utils::symbol_type_utils
     template<typename T>
     void dump_pointer_memory_value(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, T const& pointer_value, size_t const indent)
     {
-        os << L": " << stream_hex_dump::to_hex_full(pointer_value);
+        os << std::format(L": {}", stream_hex_dump::to_hex_full(pointer_value));
         if(auto const pointer_type = type.type(); pointer_type.has_value())
         {
             // lookup memory for pointer_value to see if it's in the memory list...
@@ -905,7 +908,7 @@ namespace dlg_help_utils::symbol_type_utils
                         break;
 
                     case sym_tag_enum::UDT:
-                        os << '\n';
+                        os << L'\n';
                         dump_udt_array(os, walker, data_type.value(), variable_address, variable_stream, static_cast<size_t>(type.array_count().value_or(0)), indent);
                         return true;
 
@@ -925,12 +928,7 @@ namespace dlg_help_utils::symbol_type_utils
 
         if(print_header)
         {
-            os << std::wstring(indent, ' ');
-            if(!first)
-            {
-                os << '+';
-            }
-            os << stream_hex_dump::to_hex_full(variable_address) << ' ' << get_symbol_type_friendly_name(display_type);
+            os << std::format(L"{0:>{1}}{2} {3}", first ? L' ' : L'+', indent, stream_hex_dump::to_hex_full(variable_address), get_symbol_type_friendly_name(display_type));
         }
 
         auto bit_mask = all_bits;
@@ -938,19 +936,17 @@ namespace dlg_help_utils::symbol_type_utils
         {
             if(auto const bit_position_data = type.bit_position(); bit_position_data.has_value())
             {
-                auto const length_data = type.length();
-                auto const is_bits = length_data.value_or(1) > 1;
-                os << " bit" << (is_bits ? "s" : "") << " " << bit_position_data.value();
-                if(is_bits)
+                if(auto const length_data = type.length();
+                    length_data.value_or(1) > 1)
                 {
-                    os << "-" << bit_position_data.value() + length_data.value() - 1;
                     bit_mask = (~(bit_mask << length_data.value())) << bit_position_data.value();
+                    os << std::format(L" bits {0}-{1} ({2})", bit_position_data.value(), bit_position_data.value() + length_data.value() - 1, stream_hex_dump::to_hex(bit_mask));
                 }
                 else
                 {
                     bit_mask = 0x01ULL << bit_position_data.value();
+                    os << std::format(L" bit {0} ({1})", bit_position_data.value(), stream_hex_dump::to_hex(bit_mask));
                 }
-                os << L" (" << stream_hex_dump::to_hex(bit_mask) << L')';
             }
 
             // data member, type the data member type and print based on that type
@@ -1011,12 +1007,8 @@ namespace dlg_help_utils::symbol_type_utils
 
     uint64_t memory_address_from_string(std::wstring const& value)
     {
-        if(value.starts_with(L"0x"))
-        {
-            size_t index{0};
-            return std::stoull(value.substr(2), &index, 16);
-        }
-        return std::stoull(value);
+        size_t index{0};
+        return std::stoull(value, &index, 0);
     }
 
     std::tuple<uint64_t, std::wstring, uint64_t, std::wstring> parse_address(std::wstring const& address)

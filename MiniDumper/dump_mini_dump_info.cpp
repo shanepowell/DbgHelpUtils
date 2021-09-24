@@ -1,10 +1,9 @@
 ﻿#include "dump_mini_dump_info.h"
 
-#include <iostream>
-
 #include "dump_file_options.h"
 #include "DbgHelpUtils/guid_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/process_vm_counters_stream.h"
@@ -21,88 +20,81 @@ using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils::system_time_utils;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_xstate_config_feature(XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t index,
+void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t index,
                                           std::wstring_view const& name);
 
-void dump_mini_dump_system_info_stream_data(mini_dump const& mini_dump, size_t const index)
+void dump_mini_dump_system_info_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
     system_info_stream const system_info{mini_dump, index};
 
     if (!system_info.found())
     {
-        wcout << L"SystemInfoStream not found!\n";
+        log << L"SystemInfoStream not found!\n";
         return;
     }
 
     auto const& info = system_info.system_info();
-    wcout << L"  ProcessorArchitecture: " << system_info_utils::processor_architecture_to_string(
-        info.ProcessorArchitecture) << L'\n';
-    wcout << L"  ProcessorLevel: " << to_hex(info.ProcessorLevel) << L'\n';
-    wcout << L"  ProcessorRevision: " << L"Model " << system_info.processor_model() << " Stepping " << system_info.
-        processor_stepping() << L" (" << to_hex(info.ProcessorRevision) << L")\n";
-    wcout << L"  NumberOfProcessors: " << info.NumberOfProcessors << L'\n';
-    wcout << L"  ProductType: " << system_info_utils::product_type_to_string(info.ProductType) << L'\n';
-    wcout << L"  OS Version: " << info.MajorVersion << L'.' << info.MinorVersion << L'.' << info.BuildNumber << L" - "
-        << system_info_utils::windows_version_to_string(info.MajorVersion, info.MinorVersion, info.BuildNumber,
-                                                        info.ProductType, info.ProcessorArchitecture,
-                                                        info.SuiteMask) << L'\n';
-    wcout << L"  PlatformId: " << system_info_utils::platform_id_to_string(info.PlatformId) << L'\n';
-    wcout << L"  CSDVersion: " << system_info.csd_version() << L'\n';
-    wcout << L"  SuiteMask: " << to_hex(info.SuiteMask) << L'\n';
+    log << std::format(L"  ProcessorArchitecture: {}\n", system_info_utils::processor_architecture_to_string(info.ProcessorArchitecture));
+    log << std::format(L"  ProcessorLevel: {}\n", to_hex(info.ProcessorLevel));
+    log << std::format(L"  ProcessorRevision: Model {0} Stepping {1} ({2})\n"
+        , system_info.processor_model()
+        , system_info.processor_stepping()
+        , to_hex(info.ProcessorRevision));
+    log << std::format(L"  NumberOfProcessors: {}\n", locale_formatting::to_wstring(info.NumberOfProcessors));
+    log << std::format(L"  ProductType: {}\n", system_info_utils::product_type_to_string(info.ProductType));
+    log << std::format(L"  OS Version: {0}.{1}.{2} - {3}\n", info.MajorVersion, info.MinorVersion, info.BuildNumber, system_info_utils::windows_version_to_string(info.MajorVersion, info.MinorVersion, info.BuildNumber, info.ProductType, info.ProcessorArchitecture, info.SuiteMask));
+    log << std::format(L"  PlatformId: {}\n", system_info_utils::platform_id_to_string(info.PlatformId));
+    log << std::format(L"  CSDVersion: {}\n", system_info.csd_version());
+    log << std::format(L"  SuiteMask: {}\n", to_hex(info.SuiteMask));
     for (auto const& value : system_info_utils::suite_mask_to_strings(info.SuiteMask))
     {
-        wcout << L"    " << value << L'\n';
+        log << std::format(L"    {}\n", value);
     }
-    wcout << L"  Reserved2: " << to_hex(info.Reserved2) << L'\n';
-    wcout << L"  CPU:\n";
-    wcout << L"    X86CpuInfo\n";
-    wcout << L"      VendorId: " << system_info.vendor_id() << L'\n';
-    wcout << L"      VersionInformation: " << to_hex(info.Cpu.X86CpuInfo.VersionInformation) << L'\n';
+    log << std::format(L"  Reserved2: {}\n", to_hex(info.Reserved2));
+    log << L"  CPU:\n";
+    log << L"    X86CpuInfo\n";
+    log << std::format(L"      VendorId: {}\n", system_info.vendor_id());
+    log << std::format(L"      VersionInformation: {}\n", to_hex(info.Cpu.X86CpuInfo.VersionInformation));
     if (system_info.is_intel())
     {
     }
-    wcout << L"      FeatureInformation: " << to_hex(info.Cpu.X86CpuInfo.FeatureInformation) << L'\n';
-    wcout << L"      AMDExtendedCpuFeatures: " << to_hex(info.Cpu.X86CpuInfo.AMDExtendedCpuFeatures) << L'\n';
-    wcout << L"    OtherCpuInfo\n";
-    wcout << L"      ProcessorFeatures: " << to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[0]) << L" - " << to_hex(
-        info.Cpu.OtherCpuInfo.ProcessorFeatures[1]) << L'\n';
-    wcout << L'\n';
+    log << std::format(L"      FeatureInformation: {}\n", to_hex(info.Cpu.X86CpuInfo.FeatureInformation));
+    log << std::format(L"      AMDExtendedCpuFeatures: {}\n", to_hex(info.Cpu.X86CpuInfo.AMDExtendedCpuFeatures));
+    log << L"    OtherCpuInfo\n";
+    log << std::format(L"      ProcessorFeatures: {0} - {1}\n", to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[0]), to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[1]));
+    log << L'\n';
 }
 
-void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t const index)
+void dump_mini_dump_misc_info_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
     misc_info_stream const misc_info{mini_dump, index};
 
     if (!misc_info.found())
     {
-        wcout << L"MiscInfoStream not found!\n";
+        log << L"MiscInfoStream not found!\n";
         return;
     }
 
     if (!misc_info.is_valid())
     {
-        wcout << L"MiscInfoStream version unknown!\n";
+        log << L"MiscInfoStream version unknown!\n";
         return;
     }
 
     auto const& info = misc_info.misc_info();
-    wcout << L"  Flags: " << to_hex(info.Flags1) << L'\n';
+    log << std::format(L"  Flags: {}\n", to_hex(info.Flags1));
 
     if (info.Flags1 & MINIDUMP_MISC1_PROCESS_ID)
     {
-        wcout << L"  ProcessId: " << info.ProcessId << L'\n';
+        log << std::format(L"  ProcessId: {}", to_hex(info.ProcessId));
     }
 
     if (info.Flags1 & MINIDUMP_MISC1_PROCESS_TIMES)
     {
         using namespace time_units;
-        wcout << L"  ProcessCreateTime: [local: " << time_utils::to_local_time(info.ProcessCreateTime) << L"] [UTC: " <<
-            time_utils::to_utc_time(info.ProcessCreateTime) << L"]\n";
-        wcout << L"  ProcessUserTime: " << info.ProcessUserTime << L" (" << std::chrono::seconds{info.ProcessUserTime}
-            << L")\n";
-        wcout << L"  ProcessKernelTime: " << info.ProcessKernelTime << L" (" << std::chrono::seconds{
-            info.ProcessKernelTime
-        } << L")\n";
+        log << std::format(L"  ProcessCreateTime: [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(info.ProcessCreateTime), time_utils::to_utc_time(info.ProcessCreateTime));
+        log << std::format(L"  ProcessUserTime: {0}s ({1})\n", locale_formatting::to_wstring(info.ProcessUserTime), std::chrono::seconds{info.ProcessUserTime});
+        log << std::format(L"  ProcessKernelTime: {0}s ({1})\n", locale_formatting::to_wstring(info.ProcessKernelTime), std::chrono::seconds{info.ProcessKernelTime});
     }
 
     if (misc_info.misc_info_version() == 1)
@@ -114,11 +106,11 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
 
     if (info.Flags1 & MINIDUMP_MISC1_PROCESSOR_POWER_INFO)
     {
-        wcout << L"  ProcessorMaxMhz: " << info_2.ProcessorMaxMhz << L'\n';
-        wcout << L"  ProcessorCurrentMhz: " << info_2.ProcessorCurrentMhz << L'\n';
-        wcout << L"  ProcessorMhzLimit: " << info_2.ProcessorMhzLimit << L'\n';
-        wcout << L"  ProcessorMaxIdleState: " << info_2.ProcessorMaxIdleState << L'\n';
-        wcout << L"  ProcessorCurrentIdleState: " << info_2.ProcessorCurrentIdleState << L'\n';
+        log << std::format(L"  ProcessorMaxMhz: {}\n", locale_formatting::to_wstring(info_2.ProcessorMaxMhz));
+        log << std::format(L"  ProcessorCurrentMhz: {}\n", locale_formatting::to_wstring(info_2.ProcessorCurrentMhz));
+        log << std::format(L"  ProcessorMhzLimit: {}\n", locale_formatting::to_wstring(info_2.ProcessorMhzLimit));
+        log << std::format(L"  ProcessorMaxIdleState: {}\n", locale_formatting::to_wstring(info_2.ProcessorMaxIdleState));
+        log << std::format(L"  ProcessorCurrentIdleState: {}\n", locale_formatting::to_wstring(info_2.ProcessorCurrentIdleState));
     }
 
     if (misc_info.misc_info_version() == 2)
@@ -130,34 +122,33 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
 
     if (info.Flags1 & MINIDUMP_MISC3_PROCESS_INTEGRITY)
     {
-        wcout << L"  ProcessIntegrityLevel: " << to_hex(info_3.ProcessIntegrityLevel) << L" (" <<
-            system_info_utils::process_integrity_level_to_string(info_3.ProcessIntegrityLevel) << L")\n";
+        log << std::format(L"  ProcessIntegrityLevel: {0} ({1})\n", to_hex(info_3.ProcessIntegrityLevel), system_info_utils::process_integrity_level_to_string(info_3.ProcessIntegrityLevel));
     }
 
     if (info.Flags1 & MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS)
     {
-        wcout << L"  ProcessExecuteFlags: " << to_hex(info_3.ProcessExecuteFlags) << L'\n';
+        log << std::format(L"  ProcessExecuteFlags: {}\n", to_hex(info_3.ProcessExecuteFlags));
         for (auto const& value : system_info_utils::process_execute_flags_to_strings(info_3.ProcessExecuteFlags))
         {
-            wcout << L"    " << value << L'\n';
+            log << std::format(L"    {}\n", value);
         }
     }
 
     if (info.Flags1 & MINIDUMP_MISC3_PROTECTED_PROCESS)
     {
-        wcout << L"  ProtectedProcess: " << info_3.ProtectedProcess << L'\n';
+        log << std::format(L"  ProtectedProcess: {}\n", locale_formatting::to_wstring(info_3.ProtectedProcess));
     }
 
     if (info.Flags1 & MINIDUMP_MISC3_TIMEZONE)
     {
-        wcout << L"  TimeZoneId: " << info_3.TimeZoneId << L'\n';
-        wcout << L"    Bias: " << info_3.TimeZone.Bias << L'\n';
-        wcout << L"    StandardName: " << info_3.TimeZone.StandardName << L'\n';
-        wcout << L"    StandardDate: " << info_3.TimeZone.StandardDate << L'\n';
-        wcout << L"    StandardBias: " << info_3.TimeZone.StandardBias << L'\n';
-        wcout << L"    DaylightName: " << info_3.TimeZone.DaylightName << L'\n';
-        wcout << L"    DaylightDate: " << info_3.TimeZone.DaylightDate << L'\n';
-        wcout << L"    DaylightBias: " << info_3.TimeZone.DaylightBias << L'\n';
+        log << std::format(L"  TimeZoneId: {}\n", locale_formatting::to_wstring(info_3.TimeZoneId));
+        log << std::format(L"    Bias: {}\n", locale_formatting::to_wstring(info_3.TimeZone.Bias));
+        log << std::format(L"    StandardName: {}\n", info_3.TimeZone.StandardName);
+        log << std::format(L"    StandardDate: {}\n", to_wstring(info_3.TimeZone.StandardDate));
+        log << std::format(L"    StandardBias: {}\n", locale_formatting::to_wstring(info_3.TimeZone.StandardBias));
+        log << std::format(L"    DaylightName: {}\n", info_3.TimeZone.DaylightName);
+        log << std::format(L"    DaylightDate: {}\n", to_wstring(info_3.TimeZone.DaylightDate));
+        log << std::format(L"    DaylightBias: {}\n", locale_formatting::to_wstring(info_3.TimeZone.DaylightBias));
     }
 
     if (misc_info.misc_info_version() == 3)
@@ -169,8 +160,8 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
 
     if (info.Flags1 & MINIDUMP_MISC4_BUILDSTRING)
     {
-        wcout << L"  BuildString: " << info_4.BuildString << L'\n';
-        wcout << L"  DbgBldStr: " << info_4.DbgBldStr << L'\n';
+        log << std::format(L"  BuildString: {}\n", info_4.BuildString);
+        log << std::format(L"  DbgBldStr: {}\n", info_4.DbgBldStr);
     }
 
     if (misc_info.misc_info_version() == 4)
@@ -182,67 +173,63 @@ void dump_mini_dump_misc_info_stream_data(mini_dump const& mini_dump, size_t con
 
     if (info.Flags1 & MINIDUMP_MISC5_PROCESS_COOKIE)
     {
-        wcout << L"  ProcessCookie: " << info_5.ProcessCookie << L'\n';
+        log << std::format(L"  ProcessCookie: {}\n", to_hex(info_5.ProcessCookie));
     }
 
     if (info_5.XStateData.SizeOfInfo > 0)
     {
         if (info_5.XStateData.SizeOfInfo != sizeof(XSTATE_CONFIG_FEATURE_MSC_INFO))
         {
-            wcout << "Unknown XStateData version\n";
+            log << L"Unknown XStateData version\n";
         }
         else
         {
             using namespace size_units::base_16;
 
-            wcout << L"  XStateData:\n";
-            wcout << L"    ContextSize: " << info_5.XStateData.ContextSize << " (" << bytes{
-                info_5.XStateData.ContextSize
-            } << L")\n";
-            wcout << L"    EnabledFeatures: " << to_hex(info_5.XStateData.EnabledFeatures) << L'\n';
+            log << L"  XStateData:\n";
+            log << std::format(L"    ContextSize: {0} ({1})\n", locale_formatting::to_wstring(info_5.XStateData.ContextSize), to_wstring(bytes{info_5.XStateData.ContextSize}));
+            log << std::format(L"    EnabledFeatures: {0}\n",  to_hex(info_5.XStateData.EnabledFeatures));
 
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_LEGACY_FLOATING_POINT,
-                                                 L"XSTATE_LEGACY_FLOATING_POINT"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_LEGACY_SSE, L"XSTATE_LEGACY_SSE"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_AVX, L"XSTATE_AVX"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_MPX_BNDREGS, L"XSTATE_MPX_BNDREGS"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_MPX_BNDCSR, L"XSTATE_MPX_BNDCSR"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_AVX512_KMASK, L"XSTATE_AVX512_KMASK"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_AVX512_ZMM_H, L"XSTATE_AVX512_ZMM_H"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_AVX512_ZMM, L"XSTATE_AVX512_ZMM"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_IPT, L"XSTATE_IPT"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_CET_U, L"XSTATE_CET_U"sv);
-            dump_mini_dump_xstate_config_feature(info_5.XStateData, XSTATE_LWP, L"XSTATE_LWP"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_LEGACY_FLOATING_POINT, L"XSTATE_LEGACY_FLOATING_POINT"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_LEGACY_SSE, L"XSTATE_LEGACY_SSE"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX, L"XSTATE_AVX"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_MPX_BNDREGS, L"XSTATE_MPX_BNDREGS"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_MPX_BNDCSR, L"XSTATE_MPX_BNDCSR"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX512_KMASK, L"XSTATE_AVX512_KMASK"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX512_ZMM_H, L"XSTATE_AVX512_ZMM_H"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX512_ZMM, L"XSTATE_AVX512_ZMM"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_IPT, L"XSTATE_IPT"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_CET_U, L"XSTATE_CET_U"sv);
+            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_LWP, L"XSTATE_LWP"sv);
         }
     }
 }
 
-void dump_mini_dump_xstate_config_feature(XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t const index,
+void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t const index,
                                           std::wstring_view const& name)
 {
     if (auto const mask = 1ui64 << index; (xstate.EnabledFeatures & mask) == mask)
     {
         using namespace size_units::base_16;
-        wcout << L"      " << name << L'\n';
-        wcout << L"        Offset: " << to_hex(xstate.Features[index].Offset) << L'\n';
-        wcout << L"        Size: " << to_hex(xstate.Features[index].Size) << L" (" << bytes{xstate.Features[index].Size}
-            << L")\n";
+        log << std::format(L"      {}\n", name);
+        log << std::format(L"        Offset: {}\n", to_hex(xstate.Features[index].Offset));
+        log << std::format(L"        Size: {0} ({1})", to_hex(xstate.Features[index].Size), to_wstring(bytes{xstate.Features[index].Size}));
     }
 }
 
-void dump_mini_dump_process_vm_counters_stream_data(mini_dump const& mini_dump, size_t const index)
+void dump_mini_dump_process_vm_counters_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
     process_vm_counters_stream const process_vm_counters{mini_dump, index};
 
     if (!process_vm_counters.found())
     {
-        wcout << L"ProcessVmCountersStream not found!\n";
+        log << L"ProcessVmCountersStream not found!\n";
         return;
     }
 
     if (!process_vm_counters.is_valid())
     {
-        wcout << L"ProcessVmCountersStream version unknown!\n";
+        log << L"ProcessVmCountersStream version unknown!\n";
         return;
     }
 
@@ -251,27 +238,17 @@ void dump_mini_dump_process_vm_counters_stream_data(mini_dump const& mini_dump, 
         auto const& counters = process_vm_counters.process_vm_counters();
         using namespace size_units::base_16;
         // ReSharper disable StringLiteralTypo
-        wcout << L"  Revision: " << counters.Revision << L'\n';
-        wcout << L"  PageFaultCount: " << counters.PageFaultCount << L'\n';
-        wcout << L"  PeakWorkingSetSize: " << counters.PeakWorkingSetSize << L" (" << bytes{counters.PeakWorkingSetSize}
-            << L")\n";
-        wcout << L"  WorkingSetSize: " << counters.WorkingSetSize << L" (" << bytes{counters.WorkingSetSize} << L")\n";
-        wcout << L"  QuotaPeakPagedPoolUsage: " << counters.QuotaPeakPagedPoolUsage << L" (" << bytes{
-            counters.QuotaPeakPagedPoolUsage
-        } << L")\n";
-        wcout << L"  QuotaPagedPoolUsage: " << counters.QuotaPagedPoolUsage << L" (" << bytes{
-            counters.QuotaPagedPoolUsage
-        } << L")\n";
-        wcout << L"  QuotaPeakNonPagedPoolUsage: " << counters.QuotaPeakNonPagedPoolUsage << L" (" << bytes{
-            counters.QuotaPeakNonPagedPoolUsage
-        } << L")\n";
-        wcout << L"  QuotaNonPagedPoolUsage: " << counters.QuotaNonPagedPoolUsage << L" (" << bytes{
-            counters.QuotaNonPagedPoolUsage
-        } << L")\n";
-        wcout << L"  PagefileUsage: " << counters.PagefileUsage << L" (" << bytes{counters.PagefileUsage} << L")\n";
-        wcout << L"  PeakPagefileUsage: " << counters.PeakPagefileUsage << L" (" << bytes{counters.PeakPagefileUsage} <<
-            L")\n";
-        wcout << L"  PrivateUsage: " << counters.PrivateUsage << L" (" << bytes{counters.PrivateUsage} << L")\n";
+        log << std::format(L"  Revision: {}\n", locale_formatting::to_wstring(counters.Revision));
+        log << std::format(L"  PageFaultCount: {}\n", locale_formatting::to_wstring(counters.PageFaultCount));
+        log << std::format(L"  PeakWorkingSetSize: {0} ({1})\n", locale_formatting::to_wstring(counters.PeakWorkingSetSize), to_wstring(bytes{counters.PeakWorkingSetSize}));
+        log << std::format(L"  WorkingSetSize: {0} ({1})\n", locale_formatting::to_wstring(counters.WorkingSetSize), to_wstring(bytes{counters.WorkingSetSize}));
+        log << std::format(L"  QuotaPeakPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaPeakPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakPagedPoolUsage}));
+        log << std::format(L"  QuotaPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaPagedPoolUsage ), to_wstring(bytes{counters.QuotaPagedPoolUsage}));
+        log << std::format(L"  QuotaPeakNonPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaPeakNonPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakNonPagedPoolUsage}));
+        log << std::format(L"  QuotaNonPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaNonPagedPoolUsage), to_wstring(bytes{counters.QuotaNonPagedPoolUsage}));
+        log << std::format(L"  PagefileUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.PagefileUsage), to_wstring(bytes{counters.PagefileUsage}));
+        log << std::format(L"  PeakPagefileUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.PeakPagefileUsage), to_wstring(bytes{counters.PeakPagefileUsage}));
+        log << std::format(L"  PrivateUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.PrivateUsage), to_wstring(bytes{counters.PrivateUsage}));
         // ReSharper restore StringLiteralTypo
     }
     else if (process_vm_counters.process_vm_counters_version() == 2)
@@ -279,70 +256,41 @@ void dump_mini_dump_process_vm_counters_stream_data(mini_dump const& mini_dump, 
         auto const& counters = process_vm_counters.process_vm_counters_2();
         using namespace size_units::base_16;
         // ReSharper disable StringLiteralTypo
-        wcout << L"  Revision: " << counters.Revision << L'\n';
-        wcout << L"  Flags: " << system_info_utils::vm_counters_2_flags_to_string(counters.Flags) << L" (" <<
-            to_hex(counters.Flags) << L")\n";
+        log << std::format(L"  Revision: {}\n", locale_formatting::to_wstring(counters.Revision));
+        log << std::format(L"  Flags: {0} ({1})\n", system_info_utils::vm_counters_2_flags_to_string(counters.Flags), to_hex(counters.Flags));
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS) == MINIDUMP_PROCESS_VM_COUNTERS)
         {
-            wcout << L"  PageFaultCount: " << counters.PageFaultCount << L'\n';
-            wcout << L"  PeakWorkingSetSize: " << counters.PeakWorkingSetSize << L" (" << bytes{
-                counters.PeakWorkingSetSize
-            } << L")\n";
-            wcout << L"  WorkingSetSize: " << counters.WorkingSetSize << L" (" << bytes{counters.WorkingSetSize} <<
-                L")\n";
-            wcout << L"  QuotaPeakPagedPoolUsage: " << counters.QuotaPeakPagedPoolUsage << L" (" << bytes{
-                counters.QuotaPeakPagedPoolUsage
-            } << L")\n";
-            wcout << L"  QuotaPagedPoolUsage: " << counters.QuotaPagedPoolUsage << L" (" << bytes{
-                counters.QuotaPagedPoolUsage
-            } << L")\n";
-            wcout << L"  QuotaPeakNonPagedPoolUsage: " << counters.QuotaPeakNonPagedPoolUsage << L" (" << bytes{
-                counters.QuotaPeakNonPagedPoolUsage
-            } << L")\n";
-            wcout << L"  QuotaNonPagedPoolUsage: " << counters.QuotaNonPagedPoolUsage << L" (" << bytes{
-                counters.QuotaNonPagedPoolUsage
-            } << L")\n";
-            wcout << L"  PagefileUsage: " << counters.PagefileUsage << L" (" << bytes{counters.PagefileUsage} << L")\n";
-            wcout << L"  PeakPagefileUsage: " << counters.PeakPagefileUsage << L" (" << bytes{
-                counters.PeakPagefileUsage
-            } << L")\n";
+            log << std::format(L"  PageFaultCount: {}\n", locale_formatting::to_wstring(counters.PageFaultCount));
+            log << std::format(L"  PeakWorkingSetSize: {1} ({2})\n", locale_formatting::to_wstring(counters.PeakWorkingSetSize), to_wstring(bytes{counters.PeakWorkingSetSize}));
+            log << std::format(L"  WorkingSetSize: {1} ({2})\n", locale_formatting::to_wstring(counters.WorkingSetSize), to_wstring(bytes{counters.WorkingSetSize}));
+            log << std::format(L"  QuotaPeakPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaPeakPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakPagedPoolUsage}));
+            log << std::format(L"  QuotaPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaPagedPoolUsage), to_wstring(bytes{counters.QuotaPagedPoolUsage}));
+            log << std::format(L"  QuotaPeakNonPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaPeakNonPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakNonPagedPoolUsage}));
+            log << std::format(L"  QuotaNonPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaNonPagedPoolUsage), to_wstring(bytes{counters.QuotaNonPagedPoolUsage}));
+            log << std::format(L"  PagefileUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.PagefileUsage), to_wstring(bytes{counters.PagefileUsage}));
+            log << std::format(L"  PeakPagefileUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.PeakPagefileUsage), to_wstring(bytes{counters.PeakPagefileUsage}));
         }
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS_VIRTUALSIZE) == MINIDUMP_PROCESS_VM_COUNTERS_VIRTUALSIZE)
         {
-            wcout << L"  PeakVirtualSize: " << counters.PeakVirtualSize << L" (" << bytes{counters.PeakVirtualSize} <<
-                L")\n";
-            wcout << L"  VirtualSize: " << counters.VirtualSize << L" (" << bytes{counters.VirtualSize} << L")\n";
+            log << std::format(L"  PeakVirtualSize: {0} ({1})\n", locale_formatting::to_wstring(counters.PeakVirtualSize), to_wstring(bytes{counters.PeakVirtualSize}));
+            log << std::format(L"  VirtualSize: {0} ({1})\n", locale_formatting::to_wstring(counters.VirtualSize), to_wstring(bytes{counters.VirtualSize}));
         }
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS_EX) == MINIDUMP_PROCESS_VM_COUNTERS_EX)
         {
-            wcout << L"  PrivateUsage: " << counters.PrivateUsage << L" (" << bytes{counters.PrivateUsage} << L")\n";
+            log << std::format(L"  PrivateUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.PrivateUsage), to_wstring(bytes{counters.PrivateUsage}));
         }
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS_EX2) == MINIDUMP_PROCESS_VM_COUNTERS_EX2)
         {
-            wcout << L"  PrivateWorkingSetSize: " << counters.PrivateWorkingSetSize << L" (" << bytes{
-                counters.PrivateWorkingSetSize
-            } << L")\n";
-            wcout << L"  SharedCommitUsage: " << counters.SharedCommitUsage << L" (" << bytes{
-                counters.SharedCommitUsage
-            } << L")\n";
+            log << std::format(L"  PrivateWorkingSetSize: {0} ({1})\n", locale_formatting::to_wstring(counters.PrivateWorkingSetSize), to_wstring(bytes{counters.PrivateWorkingSetSize}));
+            log << std::format(L"  SharedCommitUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.SharedCommitUsage), to_wstring(bytes{counters.SharedCommitUsage}));
         }
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS_JOB) == MINIDUMP_PROCESS_VM_COUNTERS_JOB)
         {
-            wcout << L"  JobSharedCommitUsage: " << counters.JobSharedCommitUsage << L" (" << bytes{
-                counters.JobSharedCommitUsage
-            } << L")\n";
-            wcout << L"  JobPrivateCommitUsage: " << counters.JobPrivateCommitUsage << L" (" << bytes{
-                counters.JobPrivateCommitUsage
-            } << L")\n";
-            wcout << L"  JobPeakPrivateCommitUsage: " << counters.JobPeakPrivateCommitUsage << L" (" << bytes{
-                counters.JobPeakPrivateCommitUsage
-            } << L")\n";
-            wcout << L"  JobPrivateCommitLimit: " << counters.JobPrivateCommitLimit << L" (" << bytes{
-                counters.JobPrivateCommitLimit
-            } << L")\n";
-            wcout << L"  JobTotalCommitLimit: " << counters.JobTotalCommitLimit << L" (" << bytes{
-                counters.JobTotalCommitLimit
-            } << L")\n";
+            log << std::format(L"  JobSharedCommitUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.JobSharedCommitUsage), to_wstring(bytes{counters.JobSharedCommitUsage}));
+            log << std::format(L"  JobPrivateCommitUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.JobPrivateCommitUsage), to_wstring(bytes{counters.JobPrivateCommitUsage}));
+            log << std::format(L"  JobPeakPrivateCommitUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.JobPeakPrivateCommitUsage), to_wstring(bytes{counters.JobPeakPrivateCommitUsage}));
+            log << std::format(L"  JobPrivateCommitLimit: {0} ({1})\n", locale_formatting::to_wstring(counters.JobPrivateCommitLimit), to_wstring(bytes{counters.JobPrivateCommitLimit}));
+            log << std::format(L"  JobTotalCommitLimit: {0} ({1})\n", locale_formatting::to_wstring(counters.JobTotalCommitLimit), to_wstring(bytes{counters.JobTotalCommitLimit}));
         }
         // ReSharper restore StringLiteralTypo
     }

@@ -34,10 +34,8 @@ void symbol_engine_ui::download_percent(unsigned const percent)
         std::wcerr << std::wstring(last_percent_.size(), L'\b');
     }
 
-    std::wstringstream ss;
-    ss << percent << L"%";
-    std::wcerr << ss.str();
-    last_percent_ = std::move(ss).str();
+    last_percent_ = std::format(L"{}%", percent);
+    std::wcerr << last_percent_;
 }
 
 void symbol_engine_ui::download_complete()

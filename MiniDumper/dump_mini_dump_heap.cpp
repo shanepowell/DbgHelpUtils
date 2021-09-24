@@ -1,8 +1,5 @@
 ﻿#include "dump_mini_dump_heap.h"
 
-#include <iostream>
-#include <format>
-
 #include "dump_file_options.h"
 #include "DbgHelpUtils/crt_entry.h"
 #include "DbgHelpUtils/crt_heap.h"
@@ -75,56 +72,46 @@ namespace
     };
 
 
-    void print_nt_heap_line(char const* process_heap_marker, heap::nt_heap const& nt_heap)
+    void print_nt_heap_line(std::wostream& log, std::wstring_view const& process_heap_marker, heap::nt_heap const& nt_heap)
     {
-        wcout << " NT Heap     ";
-        wcout << ' ' << stream_hex_dump::to_hex_full(nt_heap.flags());
-        wcout << ' ';
         using namespace size_units::base_16;
-        wcout << std::left << std::setw(units_max_width) << nt_heap.reserved();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << nt_heap.committed();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << nt_heap.uncommitted();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << nt_heap.virtual_blocks();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << nt_heap.total_free_size();
-        wcout << ' ';
-        wcout << std::left << std::setw(8) << nt_heap.total_segments();
-        wcout << ' ';
-        wcout << std::left << std::setw(4) << nt_heap.total_ucrs();
-        if (nt_heap.is_low_fragment_heap_enabled())
-        {
-            wcout << " (LFH)";
-        }
-        if(nt_heap.debug_page_heap().has_value())
-        {
-            wcout << " (DPH)";
-        }
-        wcout << process_heap_marker << '\n';
+        log << std::format(L" NT Heap      {1} {2:<{0}} {3:<{0}} {4:<{0}} {5:<{0}} {6:<{0}} {7:<8} {8:<4}{9}{10}{11}\n"
+            , units_max_width
+            , stream_hex_dump::to_hex_full(nt_heap.flags())
+            , to_wstring(nt_heap.reserved())
+            , to_wstring(nt_heap.committed())
+            , to_wstring(nt_heap.uncommitted())
+            , to_wstring(nt_heap.virtual_blocks())
+            , to_wstring(nt_heap.total_free_size())
+            , locale_formatting::to_wstring(nt_heap.total_segments())
+            , locale_formatting::to_wstring(nt_heap.total_ucrs())
+            , locale_formatting::to_wstring(nt_heap.total_ucrs())
+            , (nt_heap.is_low_fragment_heap_enabled() ? L" (LFH)"sv : L""sv)
+            , (nt_heap.debug_page_heap().has_value() ? L" (DPH)"sv : L""sv)
+            , process_heap_marker
+        );
     }
 
-    void print_nt_heap_segment_line(std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, std::wstring const& indent_str)
+    void print_nt_heap_segment_line(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, std::wstring const& indent_str)
     {
         auto const first_entry = segment.first_entry();
         auto const last_entry = segment.last_entry();
         using namespace size_units::base_16;
         auto const total_size_bytes = bytes{ last_entry - first_entry };
-        wcout << indent_str << "Segment " << segment_index << ' ' << stream_hex_dump::to_hex(first_entry, hex_length) << '-' << stream_hex_dump::to_hex(last_entry, hex_length) << ' ' << total_size_bytes << '\n';
+        log << std::format(L"{0}Segment {1} {2}-{3} {4}\n", indent_str, locale_formatting::to_wstring(segment_index), stream_hex_dump::to_hex(first_entry, hex_length), stream_hex_dump::to_hex(last_entry, hex_length), to_wstring(total_size_bytes));
     }
 
-    void print_nt_heap_segments_list(std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
+    void print_nt_heap_segments_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         for (size_t segment_index = 0; auto const& segment : nt_heap.segments())
         {
-            print_nt_heap_segment_line(hex_length, segment_index, segment, indent_str);
+            print_nt_heap_segment_line(log, hex_length, segment_index, segment, indent_str);
             ++segment_index;
         }
     }
 
-    void print_lfh_heap_segment_line(std::streamsize const hex_length, size_t const segment_index, heap::lfh_segment const& segment, std::wstring const& indent_str)
+    void print_lfh_heap_segment_line(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::lfh_segment const& segment, std::wstring const& indent_str)
     {
         using namespace size_units::base_16;
         bytes segment_total{ 0 };
@@ -136,194 +123,192 @@ namespace
             }
         }
 
-        wcout << indent_str << "LFH Segment " << segment_index << ' ' << stream_hex_dump::to_hex(segment.address(), hex_length) << " - subsegments " << segment.subsegments_count() << " - total " << segment_total << '\n';
+        log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}", indent_str, locale_formatting::to_wstring(segment_index), stream_hex_dump::to_hex(segment.address(), hex_length), locale_formatting::to_wstring(segment.subsegments_count()), to_wstring(segment_total));
     }
 
-    void print_nt_heap_lfh_segments_list(std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
+    void print_nt_heap_lfh_segments_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
     {
         if (auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())
         {
             std::wstring const indent_str(indent, L' ');
             for (size_t segment_index = 0; auto const& segment : lfh_heap.value().lfh_segments())
             {
-                print_lfh_heap_segment_line(hex_length, segment_index, segment, indent_str);
+                print_lfh_heap_segment_line(log, hex_length, segment_index, segment, indent_str);
                 ++segment_index;
             }
         }
     }
 
-    void print_nt_heap(std::streamsize const hex_length, char const* process_heap_marker, heap::nt_heap const& nt_heap, size_t const indent)
+    void print_nt_heap(std::wostream& log, std::streamsize const hex_length, std::wstring_view const& process_heap_marker, heap::nt_heap const& nt_heap, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "NT Heap: " << stream_hex_dump::to_hex(nt_heap.nt_heap_address(), hex_length) << ' ' << process_heap_marker << '\n';
-        wcout << indent_str << "  Flags: " << stream_hex_dump::to_hex_full(nt_heap.flags()) << '\n';
+        log << std::format(L"{0}NT Heap: {1} {2}\n", indent_str, stream_hex_dump::to_hex(nt_heap.nt_heap_address(), hex_length), process_heap_marker);
+        log << std::format(L"{0}  Flags: {1}\n", indent_str, stream_hex_dump::to_hex_full(nt_heap.flags()));
         using namespace size_units::base_16;
-        wcout << indent_str << "  Total Reserved: " << nt_heap.reserved() << " (" << stream_hex_dump::to_hex(nt_heap.reserved()) << ")" << '\n';
-        wcout << indent_str << "  Total Committed: " << nt_heap.committed() << " (" << stream_hex_dump::to_hex(nt_heap.committed()) << ")" << '\n';
-        wcout << indent_str << "  Total Uncommitted: " << nt_heap.uncommitted() << " (" << stream_hex_dump::to_hex(nt_heap.uncommitted()) << ")" << '\n';
-        wcout << indent_str << "  Total Virtual Blocks: " << nt_heap.virtual_blocks() << " (" << stream_hex_dump::to_hex(nt_heap.virtual_blocks()) << ")" << '\n';
-        wcout << indent_str << "  Total Free Size: " << nt_heap.total_free_size() << " (" << stream_hex_dump::to_hex(nt_heap.total_free_size()) << ")" << '\n';
-        wcout << indent_str << "  Total Segments: " << nt_heap.total_segments() << '\n';
-        wcout << indent_str << "  Total Uncommitted Ranges: " << nt_heap.total_ucrs() << '\n';
-        wcout << indent_str << "  Granularity: " << bytes{ nt_heap.granularity() } << '\n';
-        wcout << indent_str << "  Is Heap Entry Encoded: " << std::boolalpha << nt_heap.is_encoded() << '\n';
-        wcout << indent_str << "  Allocator Back Trace Index : " << nt_heap.allocator_back_trace_index() << '\n';
-        wcout << indent_str << "  Front End Heap Type : " << static_cast<uint16_t>(nt_heap.front_end_heap_type()) << (nt_heap.is_low_fragment_heap_enabled() ? " (LFH)" : "") << '\n';
+        log << std::format(L"{0}  Total Reserved: {1} ({2})\n", indent_str, to_wstring(nt_heap.reserved()), stream_hex_dump::to_hex(nt_heap.reserved()));
+        log << std::format(L"{0}  Total Committed: {1} ({2})\n", indent_str, to_wstring(nt_heap.committed()), stream_hex_dump::to_hex(nt_heap.committed()));
+        log << std::format(L"{0}  Total Uncommitted: {1} ({2})\n", indent_str, to_wstring(nt_heap.uncommitted()), stream_hex_dump::to_hex(nt_heap.uncommitted()));
+        log << std::format(L"{0}  Total Virtual Blocks: {1} ({2})\n", indent_str, to_wstring(nt_heap.virtual_blocks()), stream_hex_dump::to_hex(nt_heap.virtual_blocks()));
+        log << std::format(L"{0}  Total Free Size: {1} ({2})\n", indent_str, to_wstring(nt_heap.total_free_size()), stream_hex_dump::to_hex(nt_heap.total_free_size()));
+        log << std::format(L"{0}  Total Segments: {1}\n", indent_str, locale_formatting::to_wstring(nt_heap.total_segments()));
+        log << std::format(L"{0}  Total Uncommitted Ranges: {1}\n", indent_str, locale_formatting::to_wstring(nt_heap.total_ucrs()));
+        log << std::format(L"{0}  Granularity: {1}\n", indent_str, to_wstring(bytes{ nt_heap.granularity() }));
+        log << std::format(L"{0}  Is Heap Entry Encoded: {1}\n", indent_str, nt_heap.is_encoded());
+        log << std::format(L"{0}  Allocator Back Trace Index : {1}\n", indent_str, locale_formatting::to_wstring(nt_heap.allocator_back_trace_index()));
+        log << std::format(L"{0}  Front End Heap Type : {1}{2}\n", indent_str, locale_formatting::to_wstring(nt_heap.front_end_heap_type()), nt_heap.is_low_fragment_heap_enabled() ? L" (LFH)"sv : L""sv);
         if (nt_heap.is_low_fragment_heap_enabled())
         {
             if (auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())
             {
                 if (auto const lfh_key = lfh_heap.value().lfh_key(); lfh_key.has_value())
                 {
-                    wcout << indent_str << "  LFH Key : " << stream_hex_dump::to_hex(lfh_key.value()) << '\n';
+                    log << std::format(L"{0}  LFH Key : {1}\n", indent_str,  stream_hex_dump::to_hex(lfh_key.value()));
                 }
             }
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_entry_flags_break_down(heap::heap_entry const& entry)
+    void print_entry_flags_break_down(std::wostream& log, heap::heap_entry const& entry)
     {
         auto const busy = (entry.flags() & heap::heap_entry::FlagBusy) == heap::heap_entry::FlagBusy;
         if (busy)
         {
-            wcout << ", Busy";
+            log << L", Busy";
         }
         else
         {
-            wcout << ", Free";
+            log << L", Free";
         }
         if ((entry.flags() & heap::heap_entry::FlagVirtualAlloc) == heap::heap_entry::FlagVirtualAlloc)
         {
-            wcout << (busy ? ", Internal" : ", Decommitted");
+            log << (busy ? L", Internal" : L", Decommitted");
         }
         if ((entry.flags() & heap::heap_entry::FlagExtraPresent) == heap::heap_entry::FlagExtraPresent)
         {
-            wcout << ", Tail ill";
+            log << L", Tail ill";
         }
         if ((entry.flags() & heap::heap_entry::FlagFillPattern) == heap::heap_entry::FlagFillPattern)
         {
-            wcout << ", Fill";
+            log << L", Fill";
         }
         if ((entry.flags() & heap::heap_entry::FlagLastEntry) == heap::heap_entry::FlagLastEntry)
         {
-            wcout << ", Last";
+            log << L", Last";
         }
         if ((entry.flags() & heap::heap_entry::FlagUserMask) != 0)
         {
-            wcout << ", User Flag " << static_cast<uint16_t>(entry.flags() >> heap::heap_entry::FlagUserBitOffset);
+            log << std::format(L", User Flag {0}", static_cast<uint16_t>(entry.flags() >> heap::heap_entry::FlagUserBitOffset));
         }
 
         if (entry.is_front_padded())
         {
-            wcout << ", Front Padded";
+            log << L", Front Padded";
         }
 
         if (!entry.is_valid())
         {
-            wcout << ", Invalid Checksum";
+            log << L", Invalid Checksum";
         }
     }
 
-    void print_dump_entry_single_line(std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
+    void print_dump_entry_single_line(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
     {
         using namespace size_units::base_16;
-        wcout << std::wstring(indent, L' ') << stream_hex_dump::to_hex(entry.address(), hex_length);
-        wcout << " Size(" << entry.size() << ")";
+        log << std::format(L"{0:{1}}{2} Size({3})", L' ', indent, stream_hex_dump::to_hex(entry.address(), hex_length), to_wstring(entry.size()));
         if (entry.is_uncommitted())
         {
-            wcout << " - Uncommitted\n";
+            log << L" - Uncommitted\n";
         }
         else if (entry.is_unknown())
         {
-            wcout << " - Unknown Range\n";
+            log << L" - Unknown Range\n";
         }
         else
         {
             if (entry.is_busy())
             {
-                wcout << " ReqSize(" << entry.user_requested_size() << ")";
-                wcout << " UnusedBytes(" << entry.unused_bytes() << ")";
+                log << std::format(L" ReqSize({0}) UnusedBytes({1})", to_wstring(entry.user_requested_size()), to_wstring(entry.unused_bytes()));
                 if (entry.end_unused_bytes() > bytes{ 0 })
                 {
-                    wcout << " EndUnusedBytes(" << entry.end_unused_bytes() << ")";
+                    log << std::format(L" EndUnusedBytes({})", to_wstring(entry.end_unused_bytes()));
                 }
                 if (entry.user_address() != 0)
                 {
-                    wcout << " UsrPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ")";
+                    log << std::format(L" UsrPtr({})", stream_hex_dump::to_hex(entry.user_address(), hex_length));
                 }
             }
 
             if (entry.is_lfh_entry())
             {
-                wcout << (entry.is_lfh_busy() ? " Busy" : " Free");
+                log << (entry.is_lfh_busy() ? L" Busy" : L" Free");
             }
             else
             {
-                wcout << " Flags(" << stream_hex_dump::to_hex(entry.flags()) << ")";
-                print_entry_flags_break_down(entry);
+                log << std::format(L" Flags({})", stream_hex_dump::to_hex(entry.flags()));
+                print_entry_flags_break_down(log, entry);
             }
 
-            wcout << '\n';
+            log << L'\n';
         }
     }
 
-    void print_dump_entry_debug(std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
+    void print_dump_entry_debug(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
     {
         using namespace size_units::base_16;
         std::wstring const indent_str(indent, L' ');
         if (entry.is_uncommitted())
         {
-            wcout << indent_str << "Uncommitted Entry: " << stream_hex_dump::to_hex(entry.address(), hex_length) << '\n';
-            wcout << indent_str << "  Size: " << entry.size() <<  " (" << stream_hex_dump::to_hex(entry.size()) << ")" << '\n';
+            log << std::format(L"{0}Uncommitted Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.address(), hex_length));
+            log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
         }
         else if (entry.is_unknown())
         {
-            wcout << indent_str << "Unknown Range Entry: " << stream_hex_dump::to_hex(entry.address(), hex_length) << '\n';
-            wcout << indent_str << "  Size: " << entry.size() <<  " (" << stream_hex_dump::to_hex(entry.size()) << ")" << '\n';
+            log << std::format(L"{0}Unknown Range Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.address(), hex_length));
+            log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
         }
         else
         {
-            wcout << indent_str << (entry.is_lfh_entry() ? "LFH " : "") << (entry.is_busy() ? "Busy" : "Free") << " Entry: " << stream_hex_dump::to_hex(entry.address(), hex_length) << '\n';
-            wcout << indent_str << "  Size: " << entry.size() <<  " (" << stream_hex_dump::to_hex(entry.size()) << ")" << '\n';
+            log << std::format(L"{0}{1}{2} Entry: {3}\n", indent_str, entry.is_lfh_entry() ? L"LFH "sv : L""sv, entry.is_busy() ? L"Busy"sv : L"Free"sv, stream_hex_dump::to_hex(entry.address(), hex_length));
+            log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
             if (entry.is_busy())
             {
-                wcout << indent_str << "  User Requested Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size()) << ")" << '\n';
-                wcout << indent_str << "  Unused Bytes: " << entry.unused_bytes() << " (" << stream_hex_dump::to_hex(entry.unused_bytes()) << ")" << '\n';
-                wcout << indent_str << "  Segment Offset: " << static_cast<uint16_t>(entry.segment_offset()) << " (" << stream_hex_dump::to_hex(entry.segment_offset()) << ")" << '\n';
-                wcout << indent_str << "  Small Tag Index: " << static_cast<uint16_t>(entry.small_tag_index()) << " (" << stream_hex_dump::to_hex(entry.small_tag_index()) << ")" << '\n';
+                log << std::format(L"{0}  User Requested Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
+                log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
+                log << std::format(L"{0}  Segment Offset: {1} ({2})\n", indent_str, locale_formatting::to_wstring(entry.segment_offset()), stream_hex_dump::to_hex(entry.segment_offset()));
+                log << std::format(L"{0}  Small Tag Index: {1} ({2})\n", indent_str, locale_formatting::to_wstring(entry.small_tag_index()), stream_hex_dump::to_hex(entry.small_tag_index()));
                 if (entry.end_unused_bytes() > bytes{ 0 })
                 {
-                    wcout << indent_str << "  End Unused Bytes: " << entry.end_unused_bytes() << " (" << stream_hex_dump::to_hex(entry.end_unused_bytes()) << ")" << '\n';
+                    log << std::format(L"{0}  End Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.end_unused_bytes()), stream_hex_dump::to_hex(entry.end_unused_bytes()));
                 }
                 if (entry.user_address() != 0)
                 {
-                    wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
+                    log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
                 }
                 if (entry.ust_address() != 0)
                 {
-                    wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+                    log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
                 }
             }
 
             if (!entry.is_lfh_entry())
             {
-                wcout << indent_str << "  Flags: " << stream_hex_dump::to_hex(entry.flags());
-                print_entry_flags_break_down(entry);
-                wcout << '\n';
+                log << std::format(L"{0}  Flags: {1}", indent_str, stream_hex_dump::to_hex(entry.flags()));
+                print_entry_flags_break_down(log, entry);
+                log << L'\n';
             }
         }
     }
 
-    void print_dump_entry(std::streamsize const hex_length, heap::heap_entry const& entry, bool const entry_contains_lfh_subsegments, dump_file_options const& options, size_t const indent)
+    void print_dump_entry(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, bool const entry_contains_lfh_subsegments, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_dump_entry_debug(hex_length, entry, indent);
+            print_dump_entry_debug(log, hex_length, entry, indent);
         }
         else
         {
-            print_dump_entry_single_line(hex_length, entry, indent);
+            print_dump_entry_single_line(log, hex_length, entry, indent);
         }
 
         if (entry.is_unknown())
@@ -333,8 +318,8 @@ namespace
                 const uint64_t size = entry.size().count();
                 if(auto stream = entry.walker().get_process_memory_stream(entry.address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
-                    wcout << L'\n';
+                    hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 2);
+                    log << L'\n';
                 }
             }
         }
@@ -342,9 +327,9 @@ namespace
         {
             if(options.display_symbols() && entry.is_busy() && !entry.allocation_stack_trace().empty())
             {
-                wcout << std::wstring(indent + 2, L' ') << "Allocation Stack Trace:\n";
-                hex_dump_stack(wcout, entry.walker(), entry.allocation_stack_trace(), entry.peb().is_x86_target(), indent + 2);
-                wcout << '\n';
+                log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+                hex_dump_stack(log, entry.walker(), entry.allocation_stack_trace(), entry.peb().is_x86_target(), indent + 2);
+                log << L'\n';
             }
 
             if(options.hex_dump_memory_data() && entry.is_busy() && entry.user_address() != 0 && ((entry.flags() & heap::heap_entry::FlagVirtualAlloc) != heap::heap_entry::FlagVirtualAlloc || !entry_contains_lfh_subsegments))
@@ -352,52 +337,58 @@ namespace
                 uint64_t const size = entry.user_requested_size().count();
                 if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
-                    wcout << L'\n';
+                    hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 2);
+                    log << L'\n';
                 }
             }
         }
     }
 
-    void print_lfh_heap_segment_single_line(std::streamsize const hex_length, LfhSubsegmentData& data, size_t const indent)
+    void print_lfh_heap_segment_single_line(std::wostream& log, std::streamsize const hex_length, LfhSubsegmentData& data, size_t const indent)
+    {
+        using namespace size_units::base_16;
+
+        data.printed_subsegment = true;
+        bytes const total{ data.subsegment.address() ? data.subsegment.block_count() * data.subsegment.block_stride() : 0 };
+        log << std::format(L"{0:{1}}LFH Segment {2} Subsegment {3}, block count {4}, block size {5}, entry data {6}, total {7}\n"
+            , L' ', indent
+            , locale_formatting::to_wstring(data.segment->segment_index)
+            , stream_hex_dump::to_hex(data.subsegment.address(), hex_length)
+            , locale_formatting::to_wstring(data.subsegment.block_count())
+            , to_wstring(data.subsegment.block_size())
+            , stream_hex_dump::to_hex(data.subsegment.entry_start_address(), hex_length)
+            , to_wstring(total));
+    }
+
+    void print_lfh_heap_segment_debug(std::wostream& log, std::streamsize const hex_length, LfhSubsegmentData& data, size_t const indent)
     {
         using namespace size_units::base_16;
         std::wstring const indent_str(indent, L' ');
 
         data.printed_subsegment = true;
         bytes const total{ data.subsegment.address() ? data.subsegment.block_count() * data.subsegment.block_stride() : 0 };
-        wcout << indent_str << "LFH Segment " << data.segment->segment_index << " Subsegment " << stream_hex_dump::to_hex(data.subsegment.address(), hex_length) << ", block count " << data.subsegment.block_count() << ", block size " << data.subsegment.block_size() << ", entry data " << stream_hex_dump::to_hex(data.subsegment.entry_start_address(), hex_length) << ", total " << total << '\n';
+        log << std::format(L"{0}LFH Segment: {1}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index));
+        log << std::format(L"{0}  Subsegment: {1}\n", indent_str, stream_hex_dump::to_hex(data.subsegment.address(), hex_length));
+        log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(data.subsegment.block_count()));
+        log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(data.subsegment.block_size()), stream_hex_dump::to_hex(data.subsegment.block_size()));
+        log << std::format(L"{0}  Entry Data: {1}\n", indent_str, stream_hex_dump::to_hex(data.subsegment.entry_start_address(), hex_length));
+        log << std::format(L"{0}  Total: {1} ({2})\n", indent_str, to_wstring(total), stream_hex_dump::to_hex(total));
     }
 
-    void print_lfh_heap_segment_debug(std::streamsize const hex_length, LfhSubsegmentData& data, size_t const indent)
-    {
-        using namespace size_units::base_16;
-        std::wstring const indent_str(indent, L' ');
-
-        data.printed_subsegment = true;
-        bytes const total{ data.subsegment.address() ? data.subsegment.block_count() * data.subsegment.block_stride() : 0 };
-        wcout << indent_str << "LFH Segment: " << data.segment->segment_index << '\n';
-        wcout << indent_str << "  Subsegment: " << stream_hex_dump::to_hex(data.subsegment.address(), hex_length) << '\n';
-        wcout << indent_str << "  Block Count: " << data.subsegment.block_count() << '\n';
-        wcout << indent_str << "  Block Size: " << data.subsegment.block_size() << " (" << stream_hex_dump::to_hex(data.subsegment.block_size()) << ")" << '\n';
-        wcout << indent_str << "  Entry Data: " << stream_hex_dump::to_hex(data.subsegment.entry_start_address(), hex_length) << '\n';
-        wcout << indent_str << "  Total: " << total << " (" << stream_hex_dump::to_hex(total) << ")" << '\n';
-    }
-
-    void print_lfh_heap_segment(std::streamsize const hex_length, LfhSubsegmentData& data, dump_file_options const& options, size_t const indent)
+    void print_lfh_heap_segment(std::wostream& log, std::streamsize const hex_length, LfhSubsegmentData& data, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_lfh_heap_segment_debug(hex_length, data, indent);
+            print_lfh_heap_segment_debug(log, hex_length, data, indent);
         }
         else
         {
-            print_lfh_heap_segment_single_line(hex_length, data, indent);
+            print_lfh_heap_segment_single_line(log, hex_length, data, indent);
         }
 
         for (auto const& entry : data.subsegment.entries())
         {
-            print_dump_entry(hex_length, entry, false, options, indent + 2);
+            print_dump_entry(log, hex_length, entry, false, options, indent + 2);
         }
     }
 
@@ -406,126 +397,131 @@ namespace
         return !data.printed_subsegment && data.subsegment.entry_start_address() > entry.address() && data.subsegment.entry_start_address() < entry.address() + entry.size().count();
     }
 
-    void print_heap_segment(std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, vector<LfhSubsegmentData>& lfh_data, dump_file_options const& options, size_t const indent)
+    void print_heap_segment(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, vector<LfhSubsegmentData>& lfh_data, dump_file_options const& options, size_t const indent)
     {
         using namespace size_units::base_16;
         std::wstring const indent_str(indent, L' ');
-        print_nt_heap_segment_line(hex_length, segment_index, segment, indent_str);
-        wcout << indent_str << "   Flags: " << stream_hex_dump::to_hex(segment.segment_flags()) << '\n';
-        wcout << indent_str << "   Number of Pages: " << stream_hex_dump::to_hex(segment.number_of_pages()) << '\n';
-        wcout << indent_str << "   Number of Uncommitted Pages: " << stream_hex_dump::to_hex(segment.number_of_uncommitted_pages()) << '\n';
-        wcout << indent_str << "   Number of Uncommitted Ranges: " << stream_hex_dump::to_hex(segment.number_of_uncommitted_ranges()) << '\n';
-        wcout << '\n';
+        print_nt_heap_segment_line(log, hex_length, segment_index, segment, indent_str);
+        log << std::format(L"{0}   Flags: {1}\n", indent_str, stream_hex_dump::to_hex(segment.segment_flags()));
+        log << std::format(L"{0}   Number of Pages: {1}\n", indent_str, stream_hex_dump::to_hex(segment.number_of_pages()));
+        log << std::format(L"{0}   Number of Uncommitted Pages: {1}\n", indent_str, stream_hex_dump::to_hex(segment.number_of_uncommitted_pages()));
+        log << std::format(L"{0}   Number of Uncommitted Ranges: {1}\n", indent_str, stream_hex_dump::to_hex(segment.number_of_uncommitted_ranges()));
+        log << L'\n';
 
-        wcout << indent_str << "Uncommitted Ranges\n";
+        log << std::format(L"{0}Uncommitted Ranges\n", indent_str);
         for (auto const& uncommitted_range : segment.uncommitted_ranges())
         {
-            wcout << indent_str << "    Range " << stream_hex_dump::to_hex(uncommitted_range.address()) << " for " << uncommitted_range.size() << '\n';
+            log << std::format(L"{0}    Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
         }
 
-        wcout << '\n' << indent_str << "Heap Entries\n";
+        log << std::format(L"\n{}Heap Entries\n", indent_str);
         for (auto const& entry : segment.entries())
         {
             auto const entry_contains_lfh_subsegments = ranges::any_of(lfh_data, [&entry](LfhSubsegmentData const& data) { return is_lfh_subsegment_in_entry(entry, data); });
-            print_dump_entry(hex_length, entry, entry_contains_lfh_subsegments, options, indent + 4);
+            print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments, options, indent + 4);
 
             for (auto& data : lfh_data)
             {
                 if (is_lfh_subsegment_in_entry(entry, data))
                 {
-                    print_lfh_heap_segment(hex_length, data, options, indent + 6);
+                    print_lfh_heap_segment(log, hex_length, data, options, indent + 6);
                 }
             }
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    char const* get_process_marker(bool const is_process_heap)
+    std::wstring_view get_process_marker(bool const is_process_heap)
     {
-        return is_process_heap ? " (process heap)" : "";
+        return is_process_heap ? L" (process heap)"sv : L""sv;
     }
 
-    void print_nt_heap_uncommitted_ranges(heap::nt_heap const& nt_heap, size_t const indent)
+    void print_nt_heap_uncommitted_ranges(std::wostream& log, heap::nt_heap const& nt_heap, size_t const indent)
     {
         using namespace size_units::base_16;
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Heap Uncommitted ranges\n";
+        log << std::format(L"{}Heap Uncommitted ranges\n", indent_str);
         for (auto const& uncommitted_range : nt_heap.uncommitted_ranges())
         {
-            wcout << indent_str << "  Range " << stream_hex_dump::to_hex(uncommitted_range.address()) << " for " << uncommitted_range.size() << '\n';
+            log << std::format(L"{0}  Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_nt_heap_virtual_allocated_blocks(std::streamsize const hex_length, heap::nt_heap const& nt_heap, dump_file_options const& options, size_t const indent)
+    void print_nt_heap_virtual_allocated_blocks(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, dump_file_options const& options, size_t const indent)
     {
         using namespace size_units::base_16;
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Virtual Allocated Blocks\n";
+        log << std::format(L"{0}Virtual Allocated Blocks\n", indent_str);
         for (auto const& virtual_block : nt_heap.heap_virtual_blocks())
         {
-            wcout << indent_str << "  Entry " << stream_hex_dump::to_hex(virtual_block.descriptor_address()) << " data " << stream_hex_dump::to_hex(virtual_block.address()) << " reversed " << virtual_block.reserved() << " committed " << virtual_block.committed() << '\n';
+            log << std::format(L"{0}  Entry {1} data {2} reversed {3} committed {4}\n"
+                , indent_str
+                , stream_hex_dump::to_hex(virtual_block.descriptor_address())
+                , stream_hex_dump::to_hex(virtual_block.address())
+                , to_wstring(virtual_block.reserved())
+                , to_wstring(virtual_block.committed()));
             for (auto const& entry : virtual_block.entries())
             {
-                print_dump_entry(hex_length, entry, false, options, indent + 4);
+                print_dump_entry(log, hex_length, entry, false, options, indent + 4);
             }
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_nt_heap_free_list(std::streamsize const hex_length, heap::nt_heap const& nt_heap, dump_file_options const& options, size_t const indent)
+    void print_nt_heap_free_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, dump_file_options const& options, size_t const indent)
     {
-        std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Free List Entries\n";
+        log << std::format(L"{0:{1}}Free List Entries\n", ' ', indent);
         for (auto const& free_entry : nt_heap.free_entries())
         {
-            print_dump_entry(hex_length, free_entry, false, options, indent + 4);
+            print_dump_entry(log, hex_length, free_entry, false, options, indent + 4);
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_debug_page_heap_entry_single_line(streamsize const hex_length, size_t const index, heap::dph_entry const& entry, size_t const indent)
+    void print_debug_page_heap_entry_single_line(std::wostream& log, streamsize const hex_length, size_t const index, heap::dph_entry const& entry, size_t const indent)
+    {
+        using namespace size_units::base_16;
+        log << std::format(L"{0:{1}}{2} @ {3} {4} BlockPtr({5}) BlockSize({6}) UserPtr({7}) ReqSize({8})\n", ' ', indent
+            , locale_formatting::to_wstring(index)
+            , stream_hex_dump::to_hex(entry.entry_address(), hex_length)
+            , entry.is_allocated() ? L"Busy"sv : L"Free"sv
+            , stream_hex_dump::to_hex(entry.virtual_block_address(), hex_length)
+            , to_wstring(entry.virtual_block_size())
+            , stream_hex_dump::to_hex(entry.user_address(), hex_length)
+            , to_wstring(entry.user_requested_size()));
+    }
+
+    void print_debug_page_heap_entry_debug(std::wostream& log, streamsize const hex_length, size_t const index, heap::dph_entry const& entry, size_t const indent)
     {
         using namespace size_units::base_16;
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << index << " @ " << stream_hex_dump::to_hex(entry.entry_address(), hex_length);
-        wcout << (entry.is_allocated() ? " Busy" : " Free");
-        wcout << " BlockPtr(" << stream_hex_dump::to_hex(entry.virtual_block_address(), hex_length) << ')';
-        wcout << " BlockSize(" << entry.virtual_block_size() << ')';
-        wcout << " UserPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ')';
-        wcout << " ReqSize(" << entry.user_requested_size() << ')' << '\n';
+        log << std::format(L"{0}{1} @ {2}\n", indent_str, locale_formatting::to_wstring(index), stream_hex_dump::to_hex(entry.entry_address(), hex_length));
+        log << std::format(L"{0}  Is Allocated: {1}\n", indent_str, entry.is_allocated());
+        log << std::format(L"{0}  Virtual Block: {1}\n", indent_str, stream_hex_dump::to_hex(entry.virtual_block_address(), hex_length));
+        log << std::format(L"{0}  Virtual Block Size: {1} ({2})\n", indent_str, entry.virtual_block_size(), stream_hex_dump::to_hex(entry.virtual_block_size().count()));
+        log << std::format(L"{0}  User Allocation: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
+        log << std::format(L"{0}  User Requested Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size().count()));
+        log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
-    void print_debug_page_heap_entry_debug(streamsize const hex_length, size_t const index, heap::dph_entry const& entry, size_t const indent)
-    {
-        using namespace size_units::base_16;
-        std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << index << " @ " << stream_hex_dump::to_hex(entry.entry_address(), hex_length) << '\n';
-        wcout << indent_str << "  Is Allocated: " << std::boolalpha << entry.is_allocated() << '\n';
-        wcout << indent_str << "  Virtual Block: " << stream_hex_dump::to_hex(entry.virtual_block_address(), hex_length) << '\n';
-        wcout << indent_str << "  Virtual Block Size: " << entry.virtual_block_size() << " (" << entry.virtual_block_size().count() << ")" << '\n';
-        wcout << indent_str << "  User Allocation: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  User Requested Size: " << entry.user_requested_size() << " (" << entry.user_requested_size().count() << ")" << '\n';
-        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
-    }
-
-    void print_debug_page_heap_entry(streamsize const hex_length, size_t const index, heap::dph_entry const& entry, dump_file_options const& options, size_t const indent)
+    void print_debug_page_heap_entry(std::wostream& log, streamsize const hex_length, size_t const index, heap::dph_entry const& entry, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_debug_page_heap_entry_debug(hex_length, index, entry, indent);
+            print_debug_page_heap_entry_debug(log, hex_length, index, entry, indent);
         }
         else
         {
-            print_debug_page_heap_entry_single_line(hex_length, index, entry, indent);
+            print_debug_page_heap_entry_single_line(log, hex_length, index, entry, indent);
         }
 
         if(options.display_symbols() && entry.is_allocated() && !entry.allocation_stack_trace().empty())
         {
             std::wstring const indent_str(indent, L' ');
-            wcout << indent_str << "  Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
-            wcout << '\n';
+            log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+            hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            log << L'\n';
         }
 
         if(options.hex_dump_memory_data() && entry.is_allocated() && entry.user_address() != 0)
@@ -533,123 +529,120 @@ namespace
             uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 4);
-                wcout << L'\n';
+                hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 4);
+                log << L'\n';
             }
         }
     }
 
-    void print_debug_page_heap(streamsize const hex_length, heap::dph_heap const& heap, dump_file_options const& options, size_t const indent)
+    void print_debug_page_heap(std::wostream& log, streamsize const hex_length, heap::dph_heap const& heap, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "Debug Page Heap: " << stream_hex_dump::to_hex(heap.address(), hex_length) << '\n';
-        wcout << indent_str << "  Flags: " << stream_hex_dump::to_hex(heap.flags()) << '\n';
-        wcout << indent_str << "  Extra Flags: " << stream_hex_dump::to_hex(heap.extra_flags()) << '\n';
-        wcout << indent_str << "  Seed: " << stream_hex_dump::to_hex(heap.seed()) << '\n';
-        wcout << indent_str << "  Normal Heap: " << stream_hex_dump::to_hex(heap.normal_heap(), hex_length) << '\n';
-        wcout << indent_str << "  Busy Allocations: " << heap.busy_allocations() << '\n';
-        wcout << indent_str << "  Busy Allocations Committed Total: " << heap.busy_allocations_committed() << " (" << stream_hex_dump::to_hex(heap.busy_allocations_committed()) << ")" << '\n';
-        wcout << indent_str << "  Virtual Ranges: " << heap.virtual_storage_ranges() << '\n';
-        wcout << indent_str << "  Virtual Ranges Total: " << heap.virtual_storage_total() << " (" << stream_hex_dump::to_hex(heap.virtual_storage_total()) << ")" << '\n';
-        wcout << indent_str << "  Free Allocations: " << heap.free_allocations() << '\n';
-        wcout << indent_str << "  Free Allocations Committed Total: " << heap.free_allocations_committed() << " (" << stream_hex_dump::to_hex(heap.free_allocations_committed()) << ")" << '\n';
-        wcout << indent_str << "  Busy Entries: (" << heap.busy_allocations() << ")\n";
+        log << std::format(L"{0}Debug Page Heap: {1}\n", indent_str, stream_hex_dump::to_hex(heap.address(), hex_length));
+        log << std::format(L"{0}  Flags: {1}\n", indent_str, stream_hex_dump::to_hex(heap.flags()));
+        log << std::format(L"{0}  Extra Flags: {1}\n", indent_str, stream_hex_dump::to_hex(heap.extra_flags()));
+        log << std::format(L"{0}  Seed: {1}\n", indent_str, stream_hex_dump::to_hex(heap.seed()));
+        log << std::format(L"{0}  Normal Heap: {1}\n", indent_str, stream_hex_dump::to_hex(heap.normal_heap(), hex_length));
+        log << std::format(L"{0}  Busy Allocations: {1}\n", indent_str, locale_formatting::to_wstring(heap.busy_allocations()));
+        log << std::format(L"{0}  Busy Allocations Committed Total: {1} ({2})\n", indent_str, heap.busy_allocations_committed(), stream_hex_dump::to_hex(heap.busy_allocations_committed()));
+        log << std::format(L"{0}  Virtual Ranges: {1}\n", indent_str, locale_formatting::to_wstring(heap.virtual_storage_ranges()));
+        log << std::format(L"{0}  Virtual Ranges Total: {1} ({2})\n", indent_str, to_wstring(heap.virtual_storage_total()), stream_hex_dump::to_hex(heap.virtual_storage_total()));
+        log << std::format(L"{0}  Free Allocations: {1}\n", indent_str, locale_formatting::to_wstring(heap.free_allocations()));
+        log << std::format(L"{0}  Free Allocations Committed Total: {1} ({2})\n", indent_str, to_wstring(heap.free_allocations_committed()), stream_hex_dump::to_hex(heap.free_allocations_committed()));
+        log << std::format(L"{0}  Busy Entries: ({1})\n", indent_str, locale_formatting::to_wstring(heap.busy_allocations()));
 
         size_t index = 1;
         for(auto const& entry : heap.busy_entries())
         {
-            print_debug_page_heap_entry(hex_length, index, entry, options, indent + 4);
+            print_debug_page_heap_entry(log, hex_length, index, entry, options, indent + 4);
             ++index;
         }
 
-        wcout << indent_str << "  Virtual Ranges: (" << heap.virtual_storage_ranges() << ")\n";
+        log << std::format(L"{0}  Virtual Ranges: ({1})\n", indent_str, locale_formatting::to_wstring(heap.virtual_storage_ranges()));
 
         index = 1;
         for(auto const& entry : heap.virtual_ranges())
         {
-            print_debug_page_heap_entry(hex_length, index, entry, options, indent + 4);
+            print_debug_page_heap_entry(log, hex_length, index, entry, options, indent + 4);
             ++index;
         }
 
-        wcout << indent_str << "  Free Allocations: (" << heap.free_allocations() << ")\n";
+        log << std::format(L"{0}  Free Allocations: ({1})\n", indent_str, locale_formatting::to_wstring(heap.free_allocations()));
 
         index = 1;
         for(auto const& entry : heap.free_entries())
         {
-            print_debug_page_heap_entry(hex_length, index, entry, options, indent + 4);
+            print_debug_page_heap_entry(log, hex_length, index, entry, options, indent + 4);
             ++index;
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_segment_heap_line(char const* process_heap_marker, heap::segment_heap const& segment_heap)
+    void print_segment_heap_line(std::wostream& log, std::wstring_view const& process_heap_marker, heap::segment_heap const& segment_heap)
     {
-        wcout << " Segment Heap";
-        wcout << ' ' << stream_hex_dump::to_hex_full(segment_heap.global_flags());
-        wcout << ' ';
         using namespace size_units::base_16;
-        wcout << std::left << std::setw(units_max_width) << segment_heap.reserved();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << segment_heap.committed();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << segment_heap.uncommitted();
-        wcout << ' ';
-        wcout << std::left << std::setw(units_max_width) << segment_heap.large_reserved();
-        wcout << process_heap_marker << '\n';
+        log << std::format(L" Segment Heap {0} {2:<{1}} {3:<{1}} {4:<{1}} {5:<{1}} {6}\n"
+            , stream_hex_dump::to_hex_full(segment_heap.global_flags())
+            , units_max_width
+            , to_wstring(segment_heap.reserved())
+            , to_wstring(segment_heap.committed())
+            , to_wstring(segment_heap.uncommitted())
+            , to_wstring(segment_heap.large_reserved())
+            , process_heap_marker);
     }
 
-    void print_segment_heap_page_entry_single_line(streamsize const hex_length, heap::page_range_descriptor const& entry, size_t const indent)
+    void print_segment_heap_page_entry_single_line(std::wostream& log, streamsize const hex_length, heap::page_range_descriptor const& entry, size_t const indent)
     {
         using namespace size_units::base_16;
-        std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Page Entry: " << entry.index() << " : " << stream_hex_dump::to_hex(entry.page_range_descriptor_address(), hex_length);
-        wcout << " Extra(" << entry.extra_bytes() << ")";
-        wcout << " BlockPtr(" << stream_hex_dump::to_hex(entry.block_address(), hex_length) << ')';
-        wcout << " BlockSize(" << entry.block_size() << ')';
-        wcout << " UserPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ')';
-        wcout << " ReqSize(" << entry.user_requested_size() << ')';
         auto const range_flags = entry.range_flags();
-        wcout << " Flags(" << stream_hex_dump::to_hex(static_cast<uint32_t>(range_flags)) << ") " << dump_page_range_to_string(range_flags);
-        wcout << '\n';
+        log << std::format(L"{0:{1}}Page Entry: {2} : {3} Extra({4}) BlockPtr({5}) BlockSize({6}) UserPtr({7}) ReqSize({8}) Flags({9}){10}\n", ' ', indent
+            , locale_formatting::to_wstring(entry.index())
+            , stream_hex_dump::to_hex(entry.page_range_descriptor_address(), hex_length)
+            , to_wstring(entry.extra_bytes())
+            , stream_hex_dump::to_hex(entry.block_address(), hex_length)
+            , to_wstring(entry.block_size())
+            , stream_hex_dump::to_hex(entry.user_address(), hex_length)
+            , to_wstring(entry.user_requested_size())
+            , stream_hex_dump::to_hex(static_cast<uint32_t>(range_flags))
+            , dump_page_range_to_string(range_flags));
     }
 
-    void print_segment_heap_page_entry_debug(streamsize const hex_length, heap::page_range_descriptor const& entry, size_t const indent)
+    void print_segment_heap_page_entry_debug(std::wostream& log, streamsize const hex_length, heap::page_range_descriptor const& entry, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Page Entry: " << entry.index() << " : " << stream_hex_dump::to_hex(entry.page_range_descriptor_address(), hex_length) << '\n';
         using namespace size_units::base_16;
-        wcout << indent_str << "  Extra Present: " << std::boolalpha << entry.extra_present() << '\n';
         auto const range_flags = entry.range_flags();
-        wcout << indent_str << "  Range Flags: " << stream_hex_dump::to_hex(static_cast<uint32_t>(range_flags)) << " (" << dump_page_range_flags_to_string(range_flags) << ") - " << dump_page_range_to_string(range_flags) << '\n';
-        wcout << indent_str << "  Extra Bytes: " << entry.extra_bytes() << " (" << stream_hex_dump::to_hex(entry.extra_bytes()) << ")" << '\n';
-        wcout << indent_str << "  Committed Page Count: " << static_cast<uint16_t>(entry.committed_page_count()) << '\n';
-        wcout << indent_str << "  Unit Offset: " << static_cast<uint16_t>(entry.unit_offset()) << '\n';
-        wcout << indent_str << "  Unit Size: " << entry.unit_size() << " (" << stream_hex_dump::to_hex(entry.unit_size()) << ")" << '\n';
-        wcout << indent_str << "  Block Address: " << stream_hex_dump::to_hex(entry.block_address(), hex_length) << '\n';
-        wcout << indent_str << "  Block Size: " << entry.block_size() << " (" << stream_hex_dump::to_hex(entry.block_size()) << ")" << '\n';
-        wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size()) << ")" << '\n';
-        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+        log << std::format(L"{0}Page Entry: {1} : {2}\n", indent_str, locale_formatting::to_wstring(entry.index()), stream_hex_dump::to_hex(entry.page_range_descriptor_address(), hex_length));
+        log << std::format(L"{0}  Extra Present: {1}\n", indent_str, entry.extra_present());
+        log << std::format(L"{0}  Range Flags: {1} ({2}) - {3}\n", indent_str, stream_hex_dump::to_hex(static_cast<uint32_t>(range_flags)), dump_page_range_flags_to_string(range_flags), dump_page_range_to_string(range_flags));
+        log << std::format(L"{0}  Extra Bytes: {1} ({2})\n", indent_str, to_wstring(entry.extra_bytes()), stream_hex_dump::to_hex(entry.extra_bytes()));
+        log << std::format(L"{0}  Committed Page Count: {1}\n", indent_str, locale_formatting::to_wstring(entry.committed_page_count()));
+        log << std::format(L"{0}  Unit Offset: {1}\n", indent_str, locale_formatting::to_wstring(entry.unit_offset()));
+        log << std::format(L"{0}  Unit Size: {1} ({2})\n", indent_str, to_wstring(entry.unit_size()), stream_hex_dump::to_hex(entry.unit_size()));
+        log << std::format(L"{0}  Block Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.block_address(), hex_length));
+        log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(entry.block_size()), stream_hex_dump::to_hex(entry.block_size()));
+        log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
+        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size()));
+        log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
-    void print_segment_heap_page_entry(streamsize const hex_length, heap::page_range_descriptor const& entry, dump_file_options const& options, size_t const indent)
+    void print_segment_heap_page_entry(std::wostream& log, streamsize const hex_length, heap::page_range_descriptor const& entry, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_segment_heap_page_entry_debug(hex_length, entry, indent);
+            print_segment_heap_page_entry_debug(log, hex_length, entry, indent);
         }
         else
         {
-            print_segment_heap_page_entry_single_line(hex_length, entry, indent);
+            print_segment_heap_page_entry_single_line(log, hex_length, entry, indent);
         }
 
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
         {
-            std::wstring const indent_str(indent, L' ');
-            wcout << indent_str << "  Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
-            wcout << '\n';
+            log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+            hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            log << L'\n';
         }
 
         if(options.hex_dump_memory_data() && entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT && entry.user_address() != 0)
@@ -657,50 +650,50 @@ namespace
             uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 4);
-                wcout << L'\n';
+                hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 4);
+                log << L'\n';
             }
         }
     }
 
-    void print_segment_heap_page(streamsize const hex_length, size_t const page_index, heap::heap_page_segment const& page, dump_file_options const& options, size_t const indent)
+    void print_segment_heap_page(std::wostream& log, streamsize const hex_length, size_t const page_index, heap::heap_page_segment const& page, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Segment Page: " << page_index << " : " << stream_hex_dump::to_hex(page.heap_page_segment_address(), hex_length) << '\n';
         using namespace size_units::base_16;
-        wcout << indent_str << "  Signature: " << stream_hex_dump::to_hex(page.signature(), hex_length) << (page.is_signature_valid() ? " (valid)" : "") << '\n';
+        log << std::format(L"{0}Segment Page: {1} : {2}\n" , indent_str, locale_formatting::to_wstring(page_index), stream_hex_dump::to_hex(page.heap_page_segment_address(), hex_length));
+        log << std::format(L"{0}  Signature: {1}{2}\n", indent_str, stream_hex_dump::to_hex(page.signature(), hex_length), page.is_signature_valid() ? L" (valid)"sv : L""sv);
 
         if(options.debug_heap_data())
         {
             for(auto const& entry : page.all_entries())
             {
-                print_segment_heap_page_entry(hex_length, entry, options, indent + 2);
+                print_segment_heap_page_entry(log, hex_length, entry, options, indent + 2);
             }
         }
         else
         {
             for(auto const& entry : page.entries())
             {
-                print_segment_heap_page_entry(hex_length, entry, options, indent + 2);
+                print_segment_heap_page_entry(log, hex_length, entry, options, indent + 2);
             }
         }
     }
 
-    void print_segment_context_heap(streamsize const hex_length, size_t const segment_context_index, heap::heap_segment_context const& segment_context, dump_file_options const& options, size_t const indent)
+    void print_segment_context_heap(std::wostream& log, streamsize const hex_length, size_t const segment_context_index, heap::heap_segment_context const& segment_context, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Segment Context: " << segment_context_index << " : " << stream_hex_dump::to_hex(segment_context.heap_segment_context_address(), hex_length) << '\n';
-        wcout << indent_str << "  Segment Mask: " << stream_hex_dump::to_hex(segment_context.segment_mask(), hex_length) << '\n';
         using namespace size_units::base_16;
-        wcout << indent_str << "  Max Allocation Size: " << segment_context.max_allocation_size() << " (" << stream_hex_dump::to_hex(segment_context.max_allocation_size()) << ")" << '\n';
-        wcout << indent_str << "  Unit Shift: " << stream_hex_dump::to_hex(segment_context.unit_shift()) << '\n';
-        wcout << indent_str << "  Pages Per Unit Shift: " << static_cast<uint16_t>(segment_context.pages_per_unit_shift()) << '\n';
-        wcout << indent_str << "  Segment Count: " << segment_context.segment_count() << '\n';
+        log << std::format(L"{0}Segment Context: {1} : {2}\n", indent_str, locale_formatting::to_wstring(segment_context_index), stream_hex_dump::to_hex(segment_context.heap_segment_context_address(), hex_length));
+        log << std::format(L"{0}  Segment Mask: {1}\n", indent_str, stream_hex_dump::to_hex(segment_context.segment_mask(), hex_length));
+        log << std::format(L"{0}  Max Allocation Size: {1} ({2})\n", indent_str, to_wstring(segment_context.max_allocation_size()), stream_hex_dump::to_hex(segment_context.max_allocation_size()));
+        log << std::format(L"{0}  Unit Shift: {1}\n", indent_str, stream_hex_dump::to_hex(segment_context.unit_shift()));
+        log << std::format(L"{0}  Pages Per Unit Shift: {1}\n", indent_str, locale_formatting::to_wstring(segment_context.pages_per_unit_shift()));
+        log << std::format(L"{0}  Segment Count: {1}\n", indent_str, locale_formatting::to_wstring(segment_context.segment_count()));
 
         size_t index{0};
         for(auto const& page : segment_context.pages())
         {
-            print_segment_heap_page(hex_length, index, page, options, indent + 2);
+            print_segment_heap_page(log, hex_length, index, page, options, indent + 2);
             ++index;
         }
 
@@ -709,85 +702,94 @@ namespace
         {
             if(first)
             {
-                wcout << indent_str << "  Free Page Ranges:\n";
+                log << std::format(L"{0}  Free Page Ranges:\n", indent_str);
                 first = false;
             }
-            print_segment_heap_page_entry(hex_length, entry, options, indent + 4);
+            print_segment_heap_page_entry(log, hex_length, entry, options, indent + 4);
         }
     }
 
-    void print_vs_entry_single_line(streamsize const hex_length, heap::heap_vs_entry const& entry, size_t const indent)
+    std::wstring_view get_vs_entry_title(heap::heap_vs_entry const& entry)
     {
-        std::wstring const indent_str(indent, L' ');
+        return (entry.uncommitted_range() ? L"Uncommitted"sv : (entry.allocated() ? L"Busy"sv : L"Free"sv));
+    }
+
+    void print_vs_entry_single_line(std::wostream& log, streamsize const hex_length, heap::heap_vs_entry const& entry, size_t const indent)
+    {
         using namespace size_units::base_16;
-        wcout << indent_str << (entry.uncommitted_range() ? "VS Uncommitted Entry: " : (entry.allocated() ? "VS Busy Entry: " : "VS Free Entry: ")) << stream_hex_dump::to_hex(entry.heap_vs_entry_address(), hex_length);
-        wcout << " size(" << entry.size() << " (" << stream_hex_dump::to_hex(entry.size()) << ")";
+        log << std::format(L"{0:{1}}VS {2} Entry: {3} size({4} - {5})", L' ', indent
+            , get_vs_entry_title(entry)
+            , stream_hex_dump::to_hex(entry.heap_vs_entry_address(), hex_length)
+            , to_wstring(entry.size())
+            , stream_hex_dump::to_hex(entry.size()));
 
         if(!entry.uncommitted_range())
         {
-            wcout << " PSize(" << entry.previous_size() << ")";
+            log << std::format(L" PSize({})" , to_wstring(entry.previous_size()));
             if(entry.has_unused_bytes())
             {
-                wcout << " UnusedBytes(" << entry.unused_bytes() << ')';
+                log << std::format(L" UnusedBytes({})", to_wstring(entry.unused_bytes()));
             }
-            wcout << " UserPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ')';
-            wcout << " ReqSize(" << entry.user_requested_size() << ")";
+            log << std::format(L" UserPtr({0}) ReqSize({1})"
+                , stream_hex_dump::to_hex(entry.user_address(), hex_length)
+                , to_wstring(entry.user_requested_size()));
             if(!entry.is_valid())
             {
-                wcout << " - invalid";
+                log << L" - invalid";
             }
         }
 
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_vs_entry_debug(streamsize const hex_length, heap::heap_vs_entry const& entry, size_t const indent)
+    void print_vs_entry_debug(std::wostream& log, streamsize const hex_length, heap::heap_vs_entry const& entry, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << (entry.uncommitted_range() ? "VS Uncommitted Entry: " : "VS Entry: ") << stream_hex_dump::to_hex(entry.heap_vs_entry_address(), hex_length) << '\n';
-        wcout << indent_str << "  Size: " << entry.size() << " (" << stream_hex_dump::to_hex(entry.size()) << ")" << '\n';
+        log << std::format(L"{0}VS {1} Entry: {3}\n", indent_str
+            , get_vs_entry_title(entry)
+            , stream_hex_dump::to_hex(entry.heap_vs_entry_address(), hex_length));
+        log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
 
         if(!entry.uncommitted_range())
         {
-            wcout << indent_str << "  Previous Size: " << entry.previous_size() << " (" << stream_hex_dump::to_hex(entry.previous_size()) << ")" << '\n';
-            wcout << indent_str << "  Is Valid: " << std::boolalpha << entry.is_valid() << '\n';
-            wcout << indent_str << "  Allocated: " << std::boolalpha << entry.allocated() << '\n';
-            wcout << indent_str << "  Memory Cost: " << entry.memory_cost() << '\n';
-            wcout << indent_str << "  Segment Page Offset: " << static_cast<uint16_t>(entry.segment_page_offset()) << '\n';
-            wcout << indent_str << "  Has Unused Bytes: " << std::boolalpha << entry.has_unused_bytes() << '\n';
+            log << std::format(L"{0}  Previous Size: {1} ({2})\n", indent_str, to_wstring(entry.previous_size()), stream_hex_dump::to_hex(entry.previous_size()));
+            log << std::format(L"{0}  Is Valid: {1}\n", indent_str, entry.is_valid());
+            log << std::format(L"{0}  Allocated: {1}\n", indent_str, entry.allocated());
+            log << std::format(L"{0}  Memory Cost: {1}\n", indent_str, locale_formatting::to_wstring(entry.memory_cost()));
+            log << std::format(L"{0}  Segment Page Offset: {1}\n", indent_str, locale_formatting::to_wstring(entry.segment_page_offset()));
+            log << std::format(L"{0}  Has Unused Bytes: {1}\n", indent_str, entry.has_unused_bytes());
             if(entry.has_unused_bytes())
             {
-                wcout << indent_str << "  Unused Bytes: " << entry.unused_bytes() << '\n';
+                log << std::format(L"{0}  Unused Bytes: {1}\n", indent_str, to_wstring(entry.unused_bytes()));
             }
-            wcout << indent_str << "  Skip During Walk: " << std::boolalpha << entry.skip_during_walk() << '\n';
-            wcout << indent_str << "  Spare: " << stream_hex_dump::to_hex(entry.spare()) << '\n';
-            wcout << indent_str << "  Allocated Chunk Bits: " << stream_hex_dump::to_hex(entry.allocated_chunk_bits()) << '\n';
-            wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-            wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size()) << ")" << '\n';
-            wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
+            log << std::format(L"{0}  Skip During Walk: {1}\n", indent_str, entry.skip_during_walk());
+            log << std::format(L"{0}  Spare: {1}\n", indent_str, stream_hex_dump::to_hex(entry.spare()));
+            log << std::format(L"{0}  Allocated Chunk Bits: {1}\n", indent_str, stream_hex_dump::to_hex(entry.allocated_chunk_bits()));
+            log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
+            log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
+            log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
         }
     }
 
-    void print_vs_entry(streamsize const hex_length, heap::heap_vs_entry const& entry, dump_file_options const& options, size_t const indent)
+    void print_vs_entry(std::wostream& log, streamsize const hex_length, heap::heap_vs_entry const& entry, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_vs_entry_debug(hex_length, entry, indent);
+            print_vs_entry_debug(log, hex_length, entry, indent);
         }
         else
         {
-            print_vs_entry_single_line(hex_length, entry, indent);
+            print_vs_entry_single_line(log, hex_length, entry, indent);
         }
 
         if(!entry.uncommitted_range())
         {
             if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
             {
-                std::wstring const indent_str(indent, L' ');
-                wcout << indent_str << "  Allocation Stack Trace:\n";
-                hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
-                wcout << '\n';
+            log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+                hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+                log << L'\n';
             }
 
             if(options.hex_dump_memory_data() && entry.allocated())
@@ -795,95 +797,93 @@ namespace
                 uint64_t const size = entry.user_requested_size().count();
                 if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
                 {
-                    hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
-                    wcout << L'\n';
+                    hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 2);
+                    log << L'\n';
                 }
             }
         }
     }
 
-    void print_vs_subsegment(streamsize const hex_length, heap::heap_vs_subsegment const& subsegment, dump_file_options const& options, size_t const indent)
+    void print_vs_subsegment(std::wostream& log, streamsize const hex_length, heap::heap_vs_subsegment const& subsegment, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "VS Subsegment: " << stream_hex_dump::to_hex(subsegment.heap_vs_subsegment_address(), hex_length) << '\n';
-        wcout << indent_str << "  Size: " << subsegment.size() << " (" << stream_hex_dump::to_hex(subsegment.size()) << ")" << '\n';
-        wcout << indent_str << "  Signature: " << stream_hex_dump::to_hex(subsegment.signature()) << (subsegment.is_signature_valid() ? " (valid)" : " (invalid)") << '\n';
-        wcout << indent_str << "  Full Commit: " << std::boolalpha << subsegment.full_commit() << '\n';
+        log << std::format(L"{0}VS Subsegment: {1}\n", indent_str, stream_hex_dump::to_hex(subsegment.heap_vs_subsegment_address(), hex_length));
+        log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(subsegment.size()), stream_hex_dump::to_hex(subsegment.size()));
+        log << std::format(L"{0}  Signature: {1}{2}\n", indent_str, stream_hex_dump::to_hex(subsegment.signature()), subsegment.is_signature_valid() ? L" (valid)"sv : L" (invalid)"sv);
+        log << std::format(L"{0}  Full Commit: {1}\n", indent_str, subsegment.full_commit());
 
         for(auto const& entry : subsegment.entries())
         {
-            print_vs_entry(hex_length, entry, options, indent + 2);
+            print_vs_entry(log, hex_length, entry, options, indent + 2);
         }
     }
 
-    void print_vs_context_heap(streamsize const hex_length, heap::heap_vs_context const& vs_context, dump_file_options const& options, size_t const indent)
+    void print_vs_context_heap(std::wostream& log, streamsize const hex_length, heap::heap_vs_context const& vs_context, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "VS Context: " << stream_hex_dump::to_hex(vs_context.heap_vs_context_address(), hex_length) << '\n';
-        wcout << indent_str << "  Total Committed Units: " << vs_context.total_committed_units() << '\n';
-        wcout << indent_str << "  Free Committed Units: " << vs_context.free_committed_units() << '\n';
+        log << std::format(L"{0}VS Context: {1}\n", indent_str, stream_hex_dump::to_hex(vs_context.heap_vs_context_address(), hex_length));
+        log << std::format(L"{0}  Total Committed Units: {1}\n", indent_str, vs_context.total_committed_units());
+        log << std::format(L"{0}  Free Committed Units: {1}\n", indent_str, vs_context.free_committed_units());
 
         for(auto const& subsegment : vs_context.subsegments())
         {
-            print_vs_subsegment(hex_length, subsegment, options, indent + 2);
+            print_vs_subsegment(log, hex_length, subsegment, options, indent + 2);
         }
 
-        wcout << indent_str << "  Free Entries:\n";
+        log << std::format(L"{0}  Free Entries:\n", indent_str);
         for(auto const& entry : vs_context.free_entries())
         {
-            print_vs_entry(hex_length, entry, options, indent + 4);
+            print_vs_entry(log, hex_length, entry, options, indent + 4);
         }
     }
 
-    void print_heap_large_entry_single_line(streamsize const hex_length, heap::large_alloc_entry const& entry, size_t const indent)
+    void print_heap_large_entry_single_line(std::wostream& log, streamsize const hex_length, heap::large_alloc_entry const& entry, size_t const indent)
+    {
+        using namespace size_units::base_16;
+        log << std::format(L"{0:{1}}Large Entry: {2} Size({3}) VirtualPtr({4}) UnusedBytes({5}) UserPtr({6}) ReqSize({7})\n", L' ', indent
+            , stream_hex_dump::to_hex(entry.large_alloc_entry_address(), hex_length)
+            , to_wstring(entry.size())
+            , stream_hex_dump::to_hex(entry.virtual_address(), hex_length)
+            , to_wstring(entry.unused_bytes())
+            , stream_hex_dump::to_hex(entry.user_address(), hex_length)
+            , entry.user_requested_size());
+    }
+
+    void print_heap_large_entry_debug(std::wostream& log, streamsize const hex_length, heap::large_alloc_entry const& entry, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "Large Entry: " << stream_hex_dump::to_hex(entry.large_alloc_entry_address(), hex_length);
-        wcout << " Size(" << entry.size() << ')';
-        wcout << " VirtualPtr(" << stream_hex_dump::to_hex(entry.virtual_address(), hex_length) << ')';
-        wcout << " UnusedBytes(" << entry.unused_bytes() << ')';
-        wcout << " UserPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ')';
-        wcout << " ReqSize(" << entry.user_requested_size() << ')';
-        wcout << '\n';
+        log << std::format(L"{0}Large Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.large_alloc_entry_address(), hex_length));
+        log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
+        log << std::format(L"{0}  Virtual Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.virtual_address(), hex_length));
+        log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, entry.unused_bytes(), stream_hex_dump::to_hex(entry.unused_bytes()));
+        log << std::format(L"{0}  Spare: {1}\n", indent_str, stream_hex_dump::to_hex(entry.spare()));
+        log << std::format(L"{0}  Extra Present: {1}\n", indent_str, entry.extra_present());
+        log << std::format(L"{0}  Guard Page Count: {1}\n", indent_str, locale_formatting::to_wstring(entry.guard_page_count()));
+        log << std::format(L"{0}  Guard Page Alignment: {1}\n", indent_str, locale_formatting::to_wstring(entry.guard_page_alignment()));
+        log << std::format(L"{0}  Allocated Pages: {1}\n", indent_str, locale_formatting::to_wstring(entry.allocated_pages()));
+        log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
+        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size()));
+        log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
-    void print_heap_large_entry_debug(streamsize const hex_length, heap::large_alloc_entry const& entry, size_t const indent)
-    {
-        std::wstring const indent_str(indent, L' ');
-        using namespace size_units::base_16;
-        wcout << indent_str << "Large Entry: " << stream_hex_dump::to_hex(entry.large_alloc_entry_address(), hex_length) << '\n';
-        wcout << indent_str << "  Size: " << entry.size() << " (" << stream_hex_dump::to_hex(entry.size()) << ")" << '\n';
-        wcout << indent_str << "  Virtual Address: " << stream_hex_dump::to_hex(entry.virtual_address(), hex_length) << '\n';
-        wcout << indent_str << "  Unused Bytes: " << entry.unused_bytes() << " (" << stream_hex_dump::to_hex(entry.unused_bytes()) << ")" << '\n';
-        wcout << indent_str << "  Spare: " << stream_hex_dump::to_hex(entry.spare()) << '\n';
-        wcout << indent_str << "  Extra Present: " << std::boolalpha << entry.extra_present() << '\n';
-        wcout << indent_str << "  Guard Page Count: " << entry.guard_page_count() << '\n';
-        wcout << indent_str << "  Guard Page Alignment: " << entry.guard_page_alignment() << '\n';
-        wcout << indent_str << "  Allocated Pages: " << entry.allocated_pages() << '\n';
-        wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size()) << ")" << '\n';
-        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
-    }
-
-    void print_heap_large_entry(streamsize const hex_length, heap::large_alloc_entry const& entry, dump_file_options const& options, size_t const indent)
+    void print_heap_large_entry(std::wostream& log, streamsize const hex_length, heap::large_alloc_entry const& entry, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_heap_large_entry_debug(hex_length, entry, indent);
+            print_heap_large_entry_debug(log, hex_length, entry, indent);
         }
         else
         {
-            print_heap_large_entry_single_line(hex_length, entry, indent);
+            print_heap_large_entry_single_line(log, hex_length, entry, indent);
         }
 
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
         {
-            std::wstring const indent_str(indent, L' ');
-            wcout << indent_str << "  Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
-            wcout << '\n';
+            log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+            hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            log << L'\n';
         }
 
         if(options.hex_dump_memory_data())
@@ -891,61 +891,57 @@ namespace
             uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
-                wcout << L'\n';
+                hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 2);
+                log << L'\n';
             }
         }
     }
 
-    void print_lfh_entry_single_line(streamsize const hex_length, heap::heap_lfh_entry const& entry, size_t const indent)
+    void print_lfh_entry_single_line(std::wostream& log, streamsize const hex_length, heap::heap_lfh_entry const& entry, size_t const indent)
+    {
+        using namespace size_units::base_16;
+        log << std::format(L"{0:{1}}{2} LFH Entry: {3} BlockSize({4}){5} UserPtr({6}) ReqSize({7})\n", L' ', indent
+            , entry.allocated() ? L"Busy"sv : L"Free"sv
+            , stream_hex_dump::to_hex(entry.heap_lfh_entry_address(), hex_length)
+            , to_wstring(entry.block_size())
+            , entry.has_unused_bytes() ? std::format(L" UnusedBytes({})", to_wstring(entry.unused_bytes())) : L""s
+            , stream_hex_dump::to_hex(entry.user_address(), hex_length)
+            , entry.user_requested_size());
+    }
+
+    void print_lfh_entry_debug(std::wostream& log, streamsize const hex_length, heap::heap_lfh_entry const& entry, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << (entry.allocated() ? "Busy LFH Entry: " : "Free LFH Entry: ") << stream_hex_dump::to_hex(entry.heap_lfh_entry_address(), hex_length);
-        wcout << " BlockSize(" << entry.block_size() << ')';
+        log << std::format(L"{0}LFH Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.heap_lfh_entry_address(), hex_length));
+        log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(entry.block_size()), stream_hex_dump::to_hex(entry.block_size()));
+        log << std::format(L"{0}  Allocated: {1}\n", indent_str, entry.allocated());
+        log << std::format(L"{0}  Has Unused Bytes: {1}\n", indent_str, entry.has_unused_bytes());
         if(entry.has_unused_bytes())
         {
-            wcout << " UnusedBytes(" << entry.unused_bytes() << ')';
+            log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
         }
-        wcout << " UserPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ')';
-        wcout << " ReqSize(" << entry.user_requested_size() << ')';
-        wcout << '\n';
+        log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
+        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size()));
+        log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
-    void print_lfh_entry_debug(streamsize const hex_length, heap::heap_lfh_entry const& entry, size_t const indent)
-    {
-        std::wstring const indent_str(indent, L' ');
-        using namespace size_units::base_16;
-        wcout << indent_str << "LFH Entry: " << stream_hex_dump::to_hex(entry.heap_lfh_entry_address(), hex_length) << '\n';
-        wcout << indent_str << "  Block Size: " << entry.block_size() << " (" << stream_hex_dump::to_hex(entry.block_size()) << ")" << '\n';
-        wcout << indent_str << "  Allocated: " << std::boolalpha << entry.allocated() << '\n';
-        wcout << indent_str << "  Has Unused Bytes: " << std::boolalpha << entry.has_unused_bytes() << '\n';
-        if(entry.has_unused_bytes())
-        {
-            wcout << indent_str << "  Unused Bytes: " << entry.unused_bytes() << " (" << stream_hex_dump::to_hex(entry.unused_bytes()) << ")"  << '\n';
-        }
-        wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
-        wcout << indent_str << "  Requested User Size: " << entry.user_requested_size() << " (" << stream_hex_dump::to_hex(entry.user_requested_size()) << ")" << '\n';
-        wcout << indent_str << "  UST Address: " << stream_hex_dump::to_hex(entry.ust_address(), hex_length) << '\n';
-    }
-
-    void print_lfh_entry(streamsize const hex_length, heap::heap_lfh_entry const& entry, dump_file_options const& options, size_t const indent)
+    void print_lfh_entry(std::wostream& log, streamsize const hex_length, heap::heap_lfh_entry const& entry, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_lfh_entry_debug(hex_length, entry, indent);
+            print_lfh_entry_debug(log, hex_length, entry, indent);
         }
         else
         {
-            print_lfh_entry_single_line(hex_length, entry, indent);
+            print_lfh_entry_single_line(log, hex_length, entry, indent);
         }
 
         if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
         {
-            std::wstring const indent_str(indent, L' ');
-            wcout << indent_str << "  Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
-            wcout << '\n';
+            log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+            hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), entry.heap().peb().is_x86_target(), indent + 4);
+            log << L'\n';
         }
 
         if(options.hex_dump_memory_data() && entry.allocated() && entry.user_address() != 0)
@@ -953,173 +949,174 @@ namespace
             uint64_t const size = entry.user_requested_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), indent + 2);
-                wcout << L'\n';
+                hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), indent + 2);
+                log << L'\n';
             }
         }
     }
 
-    void print_lfh_subsegment(streamsize const hex_length, heap::heap_lfh_subsegment const& subsegment, dump_file_options const& options, size_t const indent)
+    void print_lfh_subsegment(std::wostream& log, streamsize const hex_length, heap::heap_lfh_subsegment const& subsegment, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "LFH Subsegment: " << stream_hex_dump::to_hex(subsegment.heap_lfh_subsegment_address(), hex_length) << '\n';
-        wcout << indent_str << "  Free Count: " << subsegment.free_count() << '\n';
-        wcout << indent_str << "  Block Count: " << subsegment.block_count() << '\n';
-        wcout << indent_str << "  Block Size: " << subsegment.block_size() << " (" << stream_hex_dump::to_hex(subsegment.block_size()) << ")" << '\n';
+        log << std::format(L"{0}LFH Subsegment: {1}\n", indent_str, stream_hex_dump::to_hex(subsegment.heap_lfh_subsegment_address(), hex_length));
+        log << std::format(L"{0}  Free Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.free_count()));
+        log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.block_count()));
+        log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(subsegment.block_size()), stream_hex_dump::to_hex(subsegment.block_size()));
         auto const location{subsegment.location()};
-        wcout << indent_str << "  Location: " << static_cast<uint16_t>(location) << " (" << dump_page_range_flags_to_string(location) << ")" << '\n';
+        log << std::format(L"{0}  Location: {1} ({2})\n", indent_str, locale_formatting::to_wstring(static_cast<uint16_t>(location)), dump_page_range_flags_to_string(location));
         if(options.debug_heap_data())
         {
-            wcout << indent_str << "  Witheld Block Count: " << static_cast<uint16_t>(subsegment.witheld_block_count()) << '\n';
-            wcout << indent_str << "  Commit Unit Count: " << static_cast<uint16_t>(subsegment.commit_unit_count()) << '\n';
-            wcout << indent_str << "  Commit Unit Shift: " << static_cast<uint16_t>(subsegment.commit_unit_shift()) << '\n';
+            log << std::format(L"{0}  Witheld Block Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.witheld_block_count()));
+            log << std::format(L"{0}  Commit Unit Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.commit_unit_count()));
+            log << std::format(L"{0}  Commit Unit Shift: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.commit_unit_shift()));
         }
 
         for(auto const& entry : subsegment.entries())
         {
-            print_lfh_entry(hex_length, entry, options, indent + 2);
+            print_lfh_entry(log, hex_length, entry, options, indent + 2);
         }
     }
 
-    void print_lfh_affinity_slot(streamsize const hex_length, heap::heap_lfh_affinity_slot const& affinity_slot, dump_file_options const& options, size_t const indent)
+    void print_lfh_affinity_slot(std::wostream& log, streamsize const hex_length, heap::heap_lfh_affinity_slot const& affinity_slot, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "LFH Affinity Slot: " << stream_hex_dump::to_hex(affinity_slot.heap_lfh_affinity_slot_address(), hex_length) << '\n';
-        wcout << indent_str << "  Slot Index: " << affinity_slot.slot_index() << '\n';
-        wcout << indent_str << "  Bucket Index: " << affinity_slot.bucket_index() << '\n';
-        wcout << indent_str << "  Available Subsegment Count: " << affinity_slot.available_subsegment_count() << '\n';
+        log << std::format(L"{0}LFH Affinity Slot: {1}\n", indent_str, stream_hex_dump::to_hex(affinity_slot.heap_lfh_affinity_slot_address(), hex_length));
+        log << std::format(L"{0}  Slot Index: {1}\n", indent_str, locale_formatting::to_wstring(affinity_slot.slot_index()));
+        log << std::format(L"{0}  Bucket Index: {1}\n", indent_str, locale_formatting::to_wstring(affinity_slot.bucket_index()));
+        log << std::format(L"{0}  Available Subsegment Count: {1}\n", indent_str, locale_formatting::to_wstring(affinity_slot.available_subsegment_count()));
 
         for(auto const& subsegment : affinity_slot.subsegments())
         {
-            print_lfh_subsegment(hex_length, subsegment, options, indent + 2);
+            print_lfh_subsegment(log, hex_length, subsegment, options, indent + 2);
         }
     }
 
-    void print_lfh_bucket_single_line(streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, size_t const indent)
+    void print_lfh_bucket_single_line(std::wostream& log, streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, size_t const indent)
     {
-        std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "LFH Bucket: " << stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length);
-        wcout << " @ " << lfh_bucket.bucket_index();
-        wcout << (lfh_bucket.is_enabled() ? " Enabled" : " Disabled");
-        wcout << " Granularity(" << lfh_bucket.bucket_granularity() << ')';
-        wcout << " MaxAllocationSize(" << lfh_bucket.max_allocation_size() << ')';
+        log << std::format(L"{0:{1}}LFH Bucket: {2} @ {3} {4} Granularity({5}) MaxAllocationSize({6})", L' ', indent
+            , stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length)
+            , locale_formatting::to_wstring(lfh_bucket.bucket_index())
+            , lfh_bucket.is_enabled() ? L"Enabled"sv : L"Disabled"sv
+            , to_wstring(lfh_bucket.bucket_granularity())
+            , to_wstring(lfh_bucket.max_allocation_size()));
 
         if(lfh_bucket.is_enabled())
         {
-            wcout << " TotalBlockCount(" << lfh_bucket.total_block_count() << ')';
-            wcout << " TotalSubsegmentCount(" << lfh_bucket.total_subsegment_count() << ')';
-            wcout << " Shift(" << static_cast<uint16_t>(lfh_bucket.shift()) << ')';
+            log << std::format(L" TotalBlockCount({0}) TotalSubsegmentCount({1}) Shift({2})"
+                , locale_formatting::to_wstring(lfh_bucket.total_block_count())
+                , locale_formatting::to_wstring(lfh_bucket.total_subsegment_count())
+                , locale_formatting::to_wstring(lfh_bucket.shift()));
         }
         else
         {
-            wcout << " UsageCount(" << lfh_bucket.usage_count() << ')';
+            log << std::format(L" UsageCount({})", locale_formatting::to_wstring(lfh_bucket.usage_count()));
         }
-        wcout << '\n';
+        log << L'\n';
     }
 
-    void print_lfh_bucket_debug(streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, size_t const indent)
+    void print_lfh_bucket_debug(std::wostream& log, streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "LFH Bucket: " << stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length) << '\n';
-        wcout << indent_str << "  Bucket Index: " << lfh_bucket.bucket_index() << '\n';
-        wcout << indent_str << "  Bucket Enabled: " << std::boolalpha << lfh_bucket.is_enabled() << '\n';
-        wcout << indent_str << "  Granularity: " << lfh_bucket.bucket_granularity() << " (" << stream_hex_dump::to_hex(lfh_bucket.bucket_granularity()) << ")" << '\n';
-        wcout << indent_str << "  Max Allocation Size: " << lfh_bucket.max_allocation_size() << " (" << stream_hex_dump::to_hex(lfh_bucket.max_allocation_size()) << ")" << '\n';
+        log << std::format(L"{0}LFH Bucket: {1}\n", indent_str, stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length));
+        log << std::format(L"{0}  Bucket Index: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.bucket_index()));
+        log << std::format(L"{0}  Bucket Enabled: {1}\n", indent_str, lfh_bucket.is_enabled());
+        log << std::format(L"{0}  Granularity: {1} ({2})\n", indent_str, to_wstring(lfh_bucket.bucket_granularity()), stream_hex_dump::to_hex(lfh_bucket.bucket_granularity()));
+        log << std::format(L"{0}  Max Allocation Size: {1} ({2})\n", indent_str, to_wstring(lfh_bucket.max_allocation_size()), stream_hex_dump::to_hex(lfh_bucket.max_allocation_size()));
 
         if(lfh_bucket.is_enabled())
         {
-            wcout << indent_str << "  Slot Count: " << lfh_bucket.slot_count() << '\n';
-            wcout << indent_str << "  Total Block Count: " << lfh_bucket.total_block_count() << '\n';
-            wcout << indent_str << "  Total Subsegment Count: " << lfh_bucket.total_subsegment_count() << '\n';
-            wcout << indent_str << "  Shift: " << static_cast<uint16_t>(lfh_bucket.shift()) << '\n';
-            wcout << indent_str << "  Reciprocal Block Size: " << lfh_bucket.reciprocal_block_size() << " (" << stream_hex_dump::to_hex(lfh_bucket.reciprocal_block_size()) << ")"  << '\n';
+            log << std::format(L"{0}  Slot Count: {1}\n", indent_str, lfh_bucket.slot_count());
+            log << std::format(L"{0}  Total Block Count: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.total_block_count()));
+            log << std::format(L"{0}  Total Subsegment Count: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.total_subsegment_count()));
+            log << std::format(L"{0}  Shift: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.shift()));
+            log << std::format(L"{0}  Reciprocal Block Size: {1} ({2})\n", indent_str, to_wstring(lfh_bucket.reciprocal_block_size()), stream_hex_dump::to_hex(lfh_bucket.reciprocal_block_size()));
+            log << std::format(L"{}  Processor Affinity Mapping:\n", indent_str);
             auto const processor_affinity_mapping = lfh_bucket.processor_affinity_mapping();
-            wcout << indent_str << "  Processor Affinity Mapping:\n";
             for(size_t index = 0; index < processor_affinity_mapping.size(); ++index)
             {
-                wcout << indent_str << "    { CPU:" << index << " -> Slot:" << processor_affinity_mapping[index] << " }\n";
+                log << std::format(L"{0}    {{ CPU:{1} -> Slot:{2} }}\n", indent_str, locale_formatting::to_wstring(index), locale_formatting::to_wstring(processor_affinity_mapping[index]));
             }
         }
         else
         {
-            wcout << indent_str << "  Usage Count: " << lfh_bucket.usage_count() << '\n';
+            log << std::format(L"{0}  Usage Count: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.usage_count()));
         }
     }
 
-    void print_lfh_bucket(streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, dump_file_options const& options, size_t const indent)
+    void print_lfh_bucket(std::wostream& log, streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, dump_file_options const& options, size_t const indent)
     {
         if(options.debug_heap_data())
         {
-            print_lfh_bucket_debug(hex_length, lfh_bucket, indent);
+            print_lfh_bucket_debug(log, hex_length, lfh_bucket, indent);
         }
         else
         {
-            print_lfh_bucket_single_line(hex_length, lfh_bucket, indent);
+            print_lfh_bucket_single_line(log, hex_length, lfh_bucket, indent);
         }
 
         if(lfh_bucket.is_enabled())
         {
             for(auto const& affinity_slot : lfh_bucket.affinity_slots())
             {
-                print_lfh_affinity_slot(hex_length, affinity_slot, options, indent + 2);
+                print_lfh_affinity_slot(log, hex_length, affinity_slot, options, indent + 2);
             }
         }
     }
 
-    void print_lfh_context_heap(streamsize const hex_length, const heap::heap_lfh_context& lfh_context, dump_file_options const& options, size_t const indent)
+    void print_lfh_context_heap(std::wostream& log, streamsize const hex_length, const heap::heap_lfh_context& lfh_context, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        wcout << indent_str << "LFH Context: " << stream_hex_dump::to_hex(lfh_context.heap_lfh_context_address(), hex_length) << '\n';
-        wcout << indent_str << "  Max Affinity: " << static_cast<uint16_t>(lfh_context.max_affinity()) << '\n';
-        wcout << indent_str << "  Max Block Size: " << lfh_context.max_block_size() << " (" << stream_hex_dump::to_hex(lfh_context.max_block_size()) << ")" << '\n';
-        wcout << indent_str << "  With Old Page Crossing Blocks: " << std::boolalpha << lfh_context.with_old_page_crossing_blocks() << '\n';
-        wcout << indent_str << "  Disable Randomization: " << std::boolalpha << lfh_context.disable_randomization() << '\n';
+        log << std::format(L"{0}LFH Context: {1}\n", indent_str, stream_hex_dump::to_hex(lfh_context.heap_lfh_context_address(), hex_length));
+        log << std::format(L"{0}  Max Affinity: {1}\n", indent_str, locale_formatting::to_wstring(lfh_context.max_affinity()));
+        log << std::format(L"{0}  Max Block Size: {1} ({2})\n", indent_str, to_wstring(lfh_context.max_block_size()), stream_hex_dump::to_hex(lfh_context.max_block_size()));
+        log << std::format(L"{0}  With Old Page Crossing Blocks: {1}\n", indent_str, lfh_context.with_old_page_crossing_blocks());
+        log << std::format(L"{0}  Disable Randomization: {1}\n", indent_str, lfh_context.disable_randomization());
 
         for(auto const& bucket : lfh_context.active_buckets())
         {
-            print_lfh_bucket(hex_length, bucket, options, indent + 2);
+            print_lfh_bucket(log, hex_length, bucket, options, indent + 2);
         }
     }
 
-    void print_segment_heap(std::streamsize const hex_length, char const* process_heap_marker, heap::segment_heap const& segment_heap, dump_file_options const& options, size_t const indent)
+    void print_segment_heap(std::wostream& log, std::streamsize const hex_length, std::wstring_view const& process_heap_marker, heap::segment_heap const& segment_heap, dump_file_options const& options, size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
-        wcout << indent_str << "Segment Heap: " << stream_hex_dump::to_hex(segment_heap.segment_heap_address(), hex_length) << ' ' << process_heap_marker << '\n';
-        wcout << indent_str << "  Global Flags: " << stream_hex_dump::to_hex_full(segment_heap.global_flags()) << '\n';
         using namespace size_units::base_16;
-        wcout << indent_str << "  Total Reserved: " << segment_heap.reserved() << " (" << stream_hex_dump::to_hex(segment_heap.reserved()) << ")" << '\n';
-        wcout << indent_str << "  Total Committed: " << segment_heap.committed() << " (" << stream_hex_dump::to_hex(segment_heap.committed()) << ")" << '\n';
-        wcout << indent_str << "  Total Uncommitted: " << segment_heap.uncommitted() << " (" << stream_hex_dump::to_hex(segment_heap.uncommitted()) << ")" << '\n';
-        wcout << indent_str << "  Large Reserved: " << segment_heap.large_reserved() << " (" << stream_hex_dump::to_hex(segment_heap.large_reserved()) << ")" << '\n';
-        wcout << indent_str << "  Large Committed: " << segment_heap.large_committed() << " (" << stream_hex_dump::to_hex(segment_heap.large_committed()) << ")" << '\n';
-        wcout << indent_str << "  Large Uncommitted: " << segment_heap.large_uncommitted() << " (" << stream_hex_dump::to_hex(segment_heap.large_uncommitted()) << ")" << '\n';
-        wcout << indent_str << "  Total Reserved Pages: " << segment_heap.total_reserved_pages() << '\n';
-        wcout << indent_str << "  Total Committed Pages: " << segment_heap.total_committed_pages() << '\n';
-        wcout << indent_str << "  Free Committed Pages: " << segment_heap.free_committed_pages() << '\n';
-        wcout << indent_str << "  LFH Free Committed Pages: " << segment_heap.lfh_free_committed_pages() << '\n';
-        wcout << indent_str << "  Large Reserved Pages: " << segment_heap.large_reserved_pages() << '\n';
-        wcout << indent_str << "  Large Committed Pages: " << segment_heap.large_committed_pages() << '\n';
-        wcout << indent_str << "  Heap Key: " << stream_hex_dump::to_hex(segment_heap.heap_key(), hex_length) << '\n';
-        wcout << '\n';
+        log << std::format(L"{0}Segment Heap: {1} {2}\n", indent_str, stream_hex_dump::to_hex(segment_heap.segment_heap_address(), hex_length), process_heap_marker);
+        log << std::format(L"{0}  Global Flags: {1}\n", indent_str, stream_hex_dump::to_hex_full(segment_heap.global_flags()));
+        log << std::format(L"{0}  Total Reserved: {1} ({2})\n", indent_str, to_wstring(segment_heap.reserved()), stream_hex_dump::to_hex(segment_heap.reserved()));
+        log << std::format(L"{0}  Total Committed: {1} ({2})\n", indent_str, to_wstring(segment_heap.committed()), stream_hex_dump::to_hex(segment_heap.committed()));
+        log << std::format(L"{0}  Total Uncommitted: {1} ({2})\n", indent_str, to_wstring(segment_heap.uncommitted()), stream_hex_dump::to_hex(segment_heap.uncommitted()));
+        log << std::format(L"{0}  Large Reserved: {1} ({2})\n", indent_str, to_wstring(segment_heap.large_reserved()), stream_hex_dump::to_hex(segment_heap.large_reserved()));
+        log << std::format(L"{0}  Large Committed: {1} ({2})\n", indent_str, to_wstring(segment_heap.large_committed()), stream_hex_dump::to_hex(segment_heap.large_committed()));
+        log << std::format(L"{0}  Large Uncommitted: {1} ({2})\n", indent_str, to_wstring(segment_heap.large_uncommitted()), stream_hex_dump::to_hex(segment_heap.large_uncommitted()));
+        log << std::format(L"{0}  Total Reserved Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.total_reserved_pages()));
+        log << std::format(L"{0}  Total Committed Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.total_committed_pages()));
+        log << std::format(L"{0}  Free Committed Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.free_committed_pages()));
+        log << std::format(L"{0}  LFH Free Committed Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.lfh_free_committed_pages()));
+        log << std::format(L"{0}  Large Reserved Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.large_reserved_pages()));
+        log << std::format(L"{0}  Large Committed Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.large_committed_pages()));
+        log << std::format(L"{0}  Heap Key: {1}\n", indent_str, stream_hex_dump::to_hex(segment_heap.heap_key(), hex_length));
+        log << L'\n';
 
         size_t index{0};
         for(auto const& segment_context : segment_heap.segment_contexts())
         {
-            print_segment_context_heap(hex_length, index, segment_context, options, indent + 2);
+            print_segment_context_heap(log, hex_length, index, segment_context, options, indent + 2);
             ++index;
         }
 
-        print_vs_context_heap(hex_length, segment_heap.vs_context(), options, indent + 2);
-        print_lfh_context_heap(hex_length, segment_heap.lfh_context(), options, indent + 2);
+        print_vs_context_heap(log, hex_length, segment_heap.vs_context(), options, indent + 2);
+        print_lfh_context_heap(log, hex_length, segment_heap.lfh_context(), options, indent + 2);
 
         for(auto const& entry : segment_heap.large_entries())
         {
-            print_heap_large_entry(hex_length, entry, options, indent + 2);
+            print_heap_large_entry(log, hex_length, entry, options, indent + 2);
         }
     }
 
@@ -1160,55 +1157,56 @@ namespace
     }
 }
 
-void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     process::process_environment_block const peb{mini_dump, symbol_engine};
     auto const hex_length = peb.machine_hex_printable_length();
 
-    wcout << "Heaps:\n";
-    wcout << ' ' << std::left << std::setw(hex_length + 2) << "Address" << " NT/Segment   Flags      "
-        << std::left << std::setw(units_max_width) << "Reserved" << ' '
-        << std::left << std::setw(units_max_width) << "Committed" << ' '
-        << std::left << std::setw(units_max_width) << "Uncommitted" << ' '
-        << std::left << std::setw(units_max_width) << "Virtual" << ' '
-        << std::left << std::setw(units_max_width) << "Free" << ' '
-        << std::left << std::setw(8) << "Segments" << ' '
-        << std::left << std::setw(4) << "UCRs" << ' '
-        << '\n';
+    log << L"Heaps:\n";
+    log << std::format(L"{1:<{0}} NT/Segment   Flags      {3:<{2}} {4:<{2}} {5:<{2}} {6:<{2}} {7:<{2}} {8:<8} {9:<4}\n"
+        , hex_length + 2, L"Address"sv
+        , units_max_width
+        , L"Reserved"sv
+        , L"Committed"sv
+        , L"Uncommitted"sv
+        , L"Virtual"sv
+        , L"Free"sv
+        , L"Segments"sv
+        , L"UCRs"sv);
     for(uint32_t heap_index = 0; heap_index < peb.number_of_heaps(); ++heap_index)
     {
         auto const heap_address = peb.heap_address(heap_index);
-        wcout << ' ' << stream_hex_dump::to_hex(heap_address, hex_length);
+        log << ' ' << stream_hex_dump::to_hex(heap_address, hex_length);
 
         if(auto const segment_signature = peb.segment_signature(heap_index); segment_signature == heap::SegmentSignatureNtHeap)
         {
             if(auto const nt_heap = peb.nt_heap(heap_index); nt_heap.has_value())
             {
-                print_nt_heap_line(get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value());
-                print_nt_heap_segments_list(hex_length, nt_heap.value(), 2);
-                print_nt_heap_lfh_segments_list(hex_length, nt_heap.value(), 2);
+                print_nt_heap_line(log, get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value());
+                print_nt_heap_segments_list(log, hex_length, nt_heap.value(), 2);
+                print_nt_heap_lfh_segments_list(log, hex_length, nt_heap.value(), 2);
             }
         }
         else if(segment_signature == heap::SegmentSignatureSegmentHeap)
         {
             if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
             {
-                print_segment_heap_line(get_process_marker(peb.process_heap() == heap_address), segment_heap.value());
+                print_segment_heap_line(log, get_process_marker(peb.process_heap() == heap_address), segment_heap.value());
             }
         }
         else
         {
-            wcout << " Unknown Heap Type (" << stream_hex_dump::to_hex(segment_signature) << ")\n";
+            log << std::format(L" Unknown Heap Type ({0})\n", stream_hex_dump::to_hex(segment_signature));
         }
     }
 
-    wcout << '\n';
+    log << L'\n';
 
     for(uint32_t heap_index = 0; heap_index < peb.number_of_heaps(); ++heap_index)
     {
         if(auto const nt_heap = peb.nt_heap(heap_index); nt_heap.has_value())
         {
-            print_nt_heap(hex_length, get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value(), 0);
+            print_nt_heap(log, hex_length, get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value(), 0);
 
             vector<LfhSubsegmentData> lfh_data;
             if(auto const lfh_heap = nt_heap.value().lfh_heap(); lfh_heap.has_value())
@@ -1227,7 +1225,7 @@ void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& op
 
             for(size_t segment_index = 0; auto const& segment : nt_heap.value().segments())
             {
-                print_heap_segment(hex_length, segment_index, segment, lfh_data, options, 4);
+                print_heap_segment(log, hex_length, segment_index, segment, lfh_data, options, 4);
                 ++segment_index;
             }
 
@@ -1236,91 +1234,93 @@ void dump_mini_dump_heap(mini_dump const& mini_dump, dump_file_options const& op
             {
                 if(!data.printed_subsegment)
                 {
-                    print_lfh_heap_segment(hex_length, data, options, 4);
+                    print_lfh_heap_segment(log, hex_length, data, options, 4);
                     printed_lfh_output = true;
                 }
             }
 
             if(printed_lfh_output)
             {
-                wcout << '\n';
+                log << L'\n';
             }
 
-            print_nt_heap_uncommitted_ranges(nt_heap.value(), 2);
+            print_nt_heap_uncommitted_ranges(log, nt_heap.value(), 2);
 
-            print_nt_heap_virtual_allocated_blocks(hex_length, nt_heap.value(), options, 2);
+            print_nt_heap_virtual_allocated_blocks(log, hex_length, nt_heap.value(), options, 2);
 
-            print_nt_heap_free_list(hex_length, nt_heap.value(), options, 2);
+            print_nt_heap_free_list(log, hex_length, nt_heap.value(), options, 2);
         }
         else if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
         {
-            print_segment_heap(hex_length, get_process_marker(peb.process_heap() == segment_heap.value().segment_heap_address()), segment_heap.value(), options, 0);
+            print_segment_heap(log, hex_length, get_process_marker(peb.process_heap() == segment_heap.value().segment_heap_address()), segment_heap.value(), options, 0);
         }
     }
 
     for(auto const& heap : heap::dph_heap::dph_heaps(peb))
     {
-        print_debug_page_heap(hex_length, heap, options, 2);
+        print_debug_page_heap(log, hex_length, heap, options, 2);
     }
 
-    wcout << '\n';
+    log << L'\n';
 }
 
-void print_process_entry(heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options, size_t const indent)
+void print_process_entry(std::wostream& log, heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options, size_t const indent)
 {
-    std::wstring const indent_str(indent, L' ');
     using namespace size_units::base_16;
-    wcout << indent_str << stream_hex_dump::to_hex(entry.user_address(), hex_length) << " size(" << entry.user_requested_size() << ") overhead(" << entry.overhead_size() << ")";
+    log << std::format(L"{0:{1}}{3} size({4}) overhead({5})", L' ', indent, stream_hex_dump::to_hex(entry.user_address(), hex_length), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
     if(!entry.filename().empty())
     {
-        wcout << ' ' << entry.filename() << ':' << entry.line_number();
+        log << std::format(L" {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));
     }
     if(entry.has_request_number())
     {
-        wcout << " #" << entry.request_number();
+        log << std::format(L" #{}", locale_formatting::to_wstring(entry.request_number()));
     }
-    wcout << (entry.allocation_stack_trace().empty() ? "" : " (has stack)") << '\n';
-
-
+    if(!entry.allocation_stack_trace().empty())
+    {
+        log << L" (has stack)";
+    }
+    log << L'\n';
+\
     if(options.display_symbols() && !entry.allocation_stack_trace().empty())
     {
-        wcout << indent_str << "  Allocation Stack Trace:\n";
-        hex_dump_stack(wcout, peb.walker(), entry.allocation_stack_trace(), peb.is_x86_target(), indent + 4);
-        wcout << '\n';
+        log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
+        hex_dump_stack(log, peb.walker(), entry.allocation_stack_trace(), peb.is_x86_target(), indent + 4);
+        log << L'\n';
     }
 
     if(options.hex_dump_memory_data())
     {
         if(auto stream = entry.user_data(); !stream.eof())
         {
-            hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), indent + 4);
-            wcout << L'\n';
+            hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), indent + 4);
+            log << L'\n';
         }
     }
 }
 
-void dump_mini_dump_heap_entries(mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_entries(std::wostream& log, mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
     [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
-    cout << "Heap Allocated Entries:\n";
+    log << L"Heap Allocated Entries:\n";
     for(auto const& entry : heaps.entries())
     {
-        print_process_entry(entry, heaps.peb(), hex_length, options, 2);
+        print_process_entry(log, entry, heaps.peb(), hex_length, options, 2);
     }
 
-    cout << "Heap Free Entries:\n";
+    log << L"Heap Free Entries:\n";
     for(auto const& entry : heaps.free_entries())
     {
-        print_process_entry(entry, heaps.peb(), hex_length, options, 2);
+        print_process_entry(log, entry, heaps.peb(), hex_length, options, 2);
     }
 
-    wcout << '\n';
+    log << L'\n';
 }
 
-void dump_mini_dump_crtheap(mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_crtheap(std::wostream& log, mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     process::process_environment_block const peb{mini_dump, symbol_engine};
     auto const hex_length = peb.machine_hex_printable_length();
@@ -1329,38 +1329,39 @@ void dump_mini_dump_crtheap(mini_dump const& mini_dump, std::unique_ptr<dlg_help
 
     if(!heap.is_using_crt_heap())
     {
-        wcout << "Not using CRT Heap.\n";
+        log << L"Not using CRT Heap.\n";
         return;
     }
 
     [[maybe_unused]] auto const base_diff_crtheap = setup_base_diff_dump_crtheap(base_diff_dump, heap, symbol_engine);
 
-    cout << "CRT Heap Entries:\n";
+    log << L"CRT Heap Entries:\n";
     std::wstring const indent_str(2, L' ');
     for (auto const& entry : heap.entries())
     {
         using namespace size_units::base_16;
         if(options.debug_heap_data())
         {
-            wcout << indent_str << "CRT Entry: " << stream_hex_dump::to_hex(entry.entry_address(), hex_length) << '\n';
-            wcout << indent_str << "  Block In Use: " << std::boolalpha << entry.block_use() << '\n';
-            wcout << indent_str << "  Filename: " << entry.filename() << '\n';
-            wcout << indent_str << "  Line Number: " << entry.line_number() << '\n';
-            wcout << indent_str << "  Request Number: " << entry.request_number() << '\n';
-            wcout << indent_str << "  Data Size: " << entry.data_size() << " (" << stream_hex_dump::to_hex(entry.data_size()) << ")" << '\n';
-            wcout << indent_str << "  User Address: " << stream_hex_dump::to_hex(entry.user_address(), hex_length) << '\n';
+            log << std::format(L"{0}CRT Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.entry_address(), hex_length));
+            log << std::format(L"{0}  Block In Use: {1}\n", indent_str, entry.block_use());
+            log << std::format(L"{0}  Filename: {1}\n", indent_str, entry.filename());
+            log << std::format(L"{0}  Line Number: {1}\n", indent_str, locale_formatting::to_wstring(entry.line_number()));
+            log << std::format(L"{0}  Request Number: {1}\n", indent_str, locale_formatting::to_wstring(entry.request_number()));
+            log << std::format(L"{0}  Data Size: {1} ({2})\n", indent_str, to_wstring(entry.data_size()), stream_hex_dump::to_hex(entry.data_size()));
+            log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
         }
         else
         {
-            wcout << indent_str << "CRT Entry: " << stream_hex_dump::to_hex(entry.entry_address(), hex_length)
-                  << (entry.block_use() ? " in use" : " free")
-                  << " " << entry.data_size()
-                  << " UserPtr(" << stream_hex_dump::to_hex(entry.user_address(), hex_length) << ')';
+            log << std::format(L"{0}CRT Entry: {1} {2} {3} UserPtr({4})", indent_str
+                , stream_hex_dump::to_hex(entry.entry_address(), hex_length)
+                , entry.block_use() ? L"in use"sv : L"free"sv
+                , to_wstring(entry.data_size())
+                , stream_hex_dump::to_hex(entry.user_address(), hex_length));
             if(!entry.filename().empty())
             {
-                wcout << " : " << entry.filename() << ':' <<  entry.line_number();
+                log << std::format(L" : {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));
             }
-            wcout << '\n';
+            log << L'\n';
         }
 
         if(entry.block_use() && options.hex_dump_memory_data())
@@ -1368,166 +1369,166 @@ void dump_mini_dump_crtheap(mini_dump const& mini_dump, std::unique_ptr<dlg_help
             uint64_t const size = entry.data_size().count();
             if(auto stream = entry.walker().get_process_memory_stream(entry.user_address(), size); !stream.eof())
             {
-                hex_dump::hex_dump(wcout, stream, options.hex_dump_memory_size(size), 4);
-                wcout << L'\n';
+                hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(size), 4);
+                log << L'\n';
             }
         }
     }
 }
 
-void dump_mini_dump_heap_statistics_view(process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target, streamsize const hex_length)
+void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target, streamsize const hex_length)
 {
     using namespace size_units::base_16;
-    wcout << "  " << heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()) << ":\n";
+    log << std::format(L"  {}:\n", heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()));
     auto const single_line_range_title_length = 2 + hex_length;
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        wcout << std::format(L" {0:<10} ", L"");
-        wcout << std::format(L"{0:<{1}} ", L"", single_line_range_title_length);
+        log << std::format(L" {0:<10} ", L"");
+        log << std::format(L"{0:<{1}} ", L"", single_line_range_title_length);
     }
     else
     {
-        wcout << std::format(L" {0:<10} {1:<10} ", L"range", L"range");
+        log << std::format(L" {0:<10} {1:<10} ", L"range", L"range");
     }
 
-    wcout << std::format(L"{:<10} ", L"allocated");
-    wcout << std::format(L"{:<10} ", L"allocated");
-    wcout << std::format(L"{:<10} ", L"allocated");
-    wcout << std::format(L"{:<10} ", L"overhead");
-    wcout << std::format(L"{:<8} ", L"free");
-    wcout << std::format(L"{:<10} ", L"free");
-    wcout << std::format(L"{:<7} ", L"count");
-    wcout << std::format(L"{:<7} ", L"size");
-    wcout << L"\n";
+    log << std::format(L"{:<10} ", L"allocated");
+    log << std::format(L"{:<10} ", L"allocated");
+    log << std::format(L"{:<10} ", L"allocated");
+    log << std::format(L"{:<10} ", L"overhead");
+    log << std::format(L"{:<8} ", L"free");
+    log << std::format(L"{:<10} ", L"free");
+    log << std::format(L"{:<7} ", L"count");
+    log << std::format(L"{:<7} ", L"size");
+    log << L"\n";
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        wcout << std::format(L" {0:<10} ", L"size");
-        wcout << std::format(L"{0:<{1}} ", L"size hex", single_line_range_title_length);
+        log << std::format(L" {0:<10} ", L"size");
+        log << std::format(L"{0:<{1}} ", L"size hex", single_line_range_title_length);
     }
     else
     {
-        wcout << std::format(L" {0:<10} {1:<10} ", L"start", L"size");
+        log << std::format(L" {0:<10} {1:<10} ", L"start", L"size");
     }
 
-    wcout << std::format(L"{:<10} ", L"count");
-    wcout << std::format(L"{:<10} ", L"total");
-    wcout << std::format(L"{:<10} ", L"average");
-    wcout << std::format(L"{:<10} ", L"total");
-    wcout << std::format(L"{:<8} ", L"count");
-    wcout << std::format(L"{:<10} ", L"total");
-    wcout << std::format(L"{:<7} ", L"percent");
-    wcout << std::format(L"{:<7} ", L"percent");
-    wcout << L" application call site\n";
+    log << std::format(L"{:<10} ", L"count");
+    log << std::format(L"{:<10} ", L"total");
+    log << std::format(L"{:<10} ", L"average");
+    log << std::format(L"{:<10} ", L"total");
+    log << std::format(L"{:<8} ", L"count");
+    log << std::format(L"{:<10} ", L"total");
+    log << std::format(L"{:<7} ", L"percent");
+    log << std::format(L"{:<7} ", L"percent");
+    log << L" application call site\n";
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        wcout << std::format(L"={0:=<10}=", L"");
-        wcout << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
+        log << std::format(L"={0:=<10}=", L"");
+        log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
     }
     else
     {
-        wcout << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
+        log << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
     }
 
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<8}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<7}=", L"");
-    wcout << std::format(L"{:=<7}=", L"");
-    wcout << L"======================\n";
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<8}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<7}=", L"");
+    log << std::format(L"{:=<7}=", L"");
+    log << L"======================\n";
 
     for(auto const& bucket : view_by_size_frequency.buckets())
     {
         if(view_by_size_frequency.is_range_single_value())
         {
-            wcout << std::format(L" {:10} ", to_wstring(bucket.start_range()));
-            wcout << std::format(L"{0:{1}} ", stream_hex_dump::to_hex(bucket.start_range()), single_line_range_title_length);
+            log << std::format(L" {:10} ", to_wstring(bucket.start_range()));
+            log << std::format(L"{0:{1}} ", stream_hex_dump::to_hex(bucket.start_range()), single_line_range_title_length);
         }
         else
         {
-            wcout << std::format(L" {0:10} {1:10} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
+            log << std::format(L" {0:10} {1:10} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
         }
-        wcout << std::format(L"{:10} ", locale_formatting::to_wstring(bucket.allocated_count()));
-        wcout << std::format(L"{:10} ", to_wstring(bucket.allocated_total()));
-        wcout << std::format(L"{:10} ", to_wstring(bucket.allocated_average()));
-        wcout << std::format(L"{:10} ", to_wstring(bucket.overhead_total()));
-        wcout << std::format(L"{:8} ", locale_formatting::to_wstring(bucket.free_count()));
-        wcout << std::format(L"{:10} ", to_wstring(bucket.free_total()));
-        wcout << std::format(L"{:<7.2f} ", bucket.range_count_percent());
-        wcout << std::format(L"{:<7.2f} ", bucket.range_size_percent());
+        log << std::format(L"{:10} ", locale_formatting::to_wstring(bucket.allocated_count()));
+        log << std::format(L"{:10} ", to_wstring(bucket.allocated_total()));
+        log << std::format(L"{:10} ", to_wstring(bucket.allocated_average()));
+        log << std::format(L"{:10} ", to_wstring(bucket.overhead_total()));
+        log << std::format(L"{:8} ", locale_formatting::to_wstring(bucket.free_count()));
+        log << std::format(L"{:10} ", to_wstring(bucket.free_total()));
+        log << std::format(L"{:<7.2f} ", bucket.range_count_percent());
+        log << std::format(L"{:<7.2f} ", bucket.range_size_percent());
         if(bucket.common_allocation_callsite().has_value())
         {
-            wcout << std::format(L" {0}", stream_stack_dump::hex_dump_stack_frame(bucket.common_allocation_callsite().value(), is_x86_target));
+            log << std::format(L" {0}", stream_stack_dump::hex_dump_stack_frame(bucket.common_allocation_callsite().value(), is_x86_target));
         }
-        wcout << '\n';
+        log << L'\n';
 
         if(options.display_symbols() && !bucket.allocation_stack_trace().empty())
         {
-            wcout << "  Allocation Stack Trace:\n";
-            hex_dump_stack(wcout, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
-            wcout << '\n';
+            log << L"  Allocation Stack Trace:\n";
+            hex_dump_stack(log, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
+            log << L'\n';
         }
 
         if(options.debug_heap_data())
         {
-            wcout << "  Entries:\n";
+            log << L"  Entries:\n";
             for(auto const& entry : bucket.entries())
             {
-                print_process_entry(entry, peb, hex_length, options, 4);
+                print_process_entry(log, entry, peb, hex_length, options, 4);
             }
 
-            wcout << "  Free Entries:\n";
+            log << L"  Free Entries:\n";
             for(auto const& entry : bucket.free_entries())
             {
-                print_process_entry(entry, peb, hex_length, options, 4);
+                print_process_entry(log, entry, peb, hex_length, options, 4);
             }
         }
     }
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        wcout << std::format(L"={0:=<10}=", L"");
-        wcout << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
+        log << std::format(L"={0:=<10}=", L"");
+        log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
     }
     else
     {
-        wcout << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
+        log << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
     }
 
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<8}=", L"");
-    wcout << std::format(L"{:=<10}=", L"");
-    wcout << std::format(L"{:=<7}=", L"");
-    wcout << std::format(L"{:=<7}=", L"");
-    wcout << L"======================\n";
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<8}=", L"");
+    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<7}=", L"");
+    log << std::format(L"{:=<7}=", L"");
+    log << L"======================\n";
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        wcout << std::format(L" {:10} ", L"");
-        wcout << std::format(L"{0:>{1}} ", L"Total:", single_line_range_title_length);
+        log << std::format(L" {:10} ", L"");
+        log << std::format(L"{0:>{1}} ", L"Total:", single_line_range_title_length);
     }
     else
     {
-        wcout << std::format(L" {0:10} {1:>10} ", L"", L"Total:");
+        log << std::format(L" {0:10} {1:>10} ", L"", L"Total:");
     }
-    wcout << std::format(L"{:10} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
-    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_total()));
-    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_average()));
-    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.overhead_total()));
-    wcout << std::format(L"{:8} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
-    wcout << std::format(L"{:10} ", to_wstring(view_by_size_frequency.free_total()));
-    wcout << '\n';
+    log << std::format(L"{:10} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
+    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_total()));
+    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_average()));
+    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.overhead_total()));
+    log << std::format(L"{:8} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
+    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.free_total()));
+    log << L'\n';
 }
 
-void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
     [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
@@ -1535,26 +1536,26 @@ void dump_mini_dump_heap_statistics(mini_dump const& mini_dump, std::unique_ptr<
     auto const hex_length = heaps.peb().machine_hex_printable_length();
     auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();
-    wcout << "Heap Statistics:\n";
+    log << L"Heap Statistics:\n";
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
-        wcout << '\n';
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
+        log << L'\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_ranges_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
-        wcout << '\n';
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
+        log << L'\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_stacktrace_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
-        wcout << '\n';
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
+        log << L'\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_application_callsite_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(heaps.peb(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
-        wcout << '\n';
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
+        log << L'\n';
     }
 }
 

@@ -3,6 +3,8 @@
 #include "DbgHelpUtils/stream_thread_context.h"
 #include "DbgHelpUtils/windows_setup.h"
 
+#include <ostream>
+
 class dump_file_options;
 
 namespace dlg_help_utils
@@ -15,19 +17,19 @@ namespace dlg_help_utils
     class mini_dump;
 }
 
-void dump_mini_dump_thread_context(dlg_help_utils::stream_thread_context const& thread_context,
+void dump_mini_dump_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context const& thread_context,
                                    dump_file_options const& options);
-void dump_mini_dump_x64_thread_context(dlg_help_utils::stream_thread_context::context_x64 const& context);
-void dump_mini_dump_wow64_thread_context(WOW64_CONTEXT const& context, bool has_extended_registers);
-void dump_mini_dump_x86_thread_context(dlg_help_utils::stream_thread_context::context_x86 const& context, bool has_extended_registers);
-void dump_mini_dump_thread_names_stream_data(dlg_help_utils::mini_dump const& mini_dump, size_t index);
-void dump_mini_dump_thread_list_stream_data(dlg_help_utils::mini_dump const& mini_dump, size_t index,
+void dump_mini_dump_x64_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context::context_x64 const& context);
+void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context, bool has_extended_registers);
+void dump_mini_dump_x86_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context::context_x86 const& context, bool has_extended_registers);
+void dump_mini_dump_thread_names_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
+void dump_mini_dump_thread_list_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index,
                                             dump_file_options const& options,
                                             dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_thread_list_ex_stream_data(dlg_help_utils::mini_dump const& mini_dump, size_t index,
+void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index,
                                                dump_file_options const& options,
                                                dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_thread_info_list_stream_data(dlg_help_utils::mini_dump const& mini_dump, size_t index);
-void load_and_dump_teb(dlg_help_utils::mini_dump const& mini_dump,
+void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
+void load_and_dump_teb(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump,
     dlg_help_utils::dbg_help::symbol_engine& symbol_engine,
     ULONG64 teb_address);

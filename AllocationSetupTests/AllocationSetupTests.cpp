@@ -2,6 +2,7 @@
 //
 
 #include <array>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -28,7 +29,7 @@ int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::f
 int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
 int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, char const* type, std::vector<Allocation>& set);
+bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, std::wstring_view const& type, std::vector<Allocation>& set);
 template<size_t N>
 void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations);
 
@@ -90,7 +91,7 @@ int main(int const argc, char* argv[])
             if (auto const result = cli.parse({ argc, argv });
                 !result)
             {
-                std::cerr << "Error in command line: " << result.errorMessage() << '\n';
+                std::cerr << std::format("Error in command line: {}\n", result.errorMessage());
                 std::cerr << cli << "\n";
                 return EXIT_FAILURE;
             }
@@ -133,7 +134,7 @@ int main(int const argc, char* argv[])
                 log = std::make_unique<std::wfstream>(log_filename, std::ios_base::out | std::ios_base::trunc);
                 if(log->bad())
                 {
-                    std::wcout << "failed to open log file: " << log_filename << '\n';
+                    std::wcout << std::format(L"failed to open log file: {}\n", log_filename);
                     return EXIT_FAILURE;
                 }
                 o_log = log.get();
@@ -151,7 +152,7 @@ int main(int const argc, char* argv[])
                 std::fstream json_file{json_filename, std::ios_base::out | std::ios_base::trunc};
                 if(json_file.bad())
                 {
-                    std::wcout << "failed to open json result set file: " << json_filename << '\n';
+                    std::wcout << std::format(L"failed to open json result set file: {}\n", json_filename);
                     return EXIT_FAILURE;
                 }
                 json_file << JS::serializeStruct(set);
@@ -163,11 +164,11 @@ int main(int const argc, char* argv[])
         }
         catch (std::exception const& e)
         {
-            std::cout << "fatal error: " << e.what() << '\n';
+            std::cerr << std::format("fatal error: {}\n", e.what());
         }
         catch (...)
         {
-            std::cout << "fatal error: Unknown exception\n";
+            std::cerr << "fatal error: Unknown exception\n";
         }
     }
     catch(...)
@@ -182,13 +183,13 @@ int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::f
     constexpr size_t allocation_size = 0x10;
 
     char fill_value = 'A';
-    if (!AllocateBuffers(log, allocator, backend_allocations, fill_value, allocation_size, 0, "backend", set))
+    if (!AllocateBuffers(log, allocator, backend_allocations, fill_value, allocation_size, 0, L"backend"sv, set))
     {
         return EXIT_FAILURE;
     }
 
     std::array<void*, 0x12> frontend_allocations{};
-    if (!AllocateBuffers(log, allocator, frontend_allocations, fill_value, allocation_size, 0, "frontend", set))
+    if (!AllocateBuffers(log, allocator, frontend_allocations, fill_value, allocation_size, 0, L"frontend"sv, set))
     {
         return EXIT_FAILURE;
     }
@@ -206,7 +207,7 @@ int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std:
     std::array<void*, 0x5> large_allocations{};
     
     if (char fill_value = 'A';
-        !AllocateBuffers(log, allocator, large_allocations, fill_value, 0x100000, 0, "large", set))
+        !AllocateBuffers(log, allocator, large_allocations, fill_value, 0x100000, 0, L"large"sv, set))
     {
         return EXIT_FAILURE;
     }
@@ -227,16 +228,18 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, st
     std::array<std::array<void*, 0xF>, max_rounds> allocation_groups{};
     std::array<std::array<void*, 0xE>, max_rounds - 1> small_allocation_groups{};
 
+    auto const sizes_type = L"sizes"sv;
+
     for(auto index = 0; index < max_rounds; ++index)
     {
         char fill_value = 'A';
-        if (!AllocateBuffers(log, allocator, allocation_groups[index], fill_value, allocation_size, allocation_size, "sizes", set))
+        if (!AllocateBuffers(log, allocator, allocation_groups[index], fill_value, allocation_size, allocation_size, sizes_type, set))
         {
             return EXIT_FAILURE;
         }
         if(allocation_size > 1)
         {
-            if (!AllocateBuffers(log, allocator, small_allocation_groups[index - 1], fill_value, allocation_size + 1, 1, "sizes", set))
+            if (!AllocateBuffers(log, allocator, small_allocation_groups[index - 1], fill_value, allocation_size + 1, 1, sizes_type, set))
             {
                 return EXIT_FAILURE;
             }
@@ -259,15 +262,15 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, st
 }
 
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, char const* type, std::vector<Allocation>& set)
+bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, std::wstring_view const& type, std::vector<Allocation>& set)
 {
     for (auto& allocation : allocations)
     {
         allocation = allocator(allocation_size);
-        log << type << " allocation [0x" << allocation <<  " / " << reinterpret_cast<uint64_t>(allocation) << "] fill value [" << fill_value << "]  buffer size [0x" << std::hex << allocation_size << std::dec << " | " << allocation_size << "]\n";
+        log << std::format(L"{0} allocation [0x{1:x} / {1}] fill value [{2}] buffer size [0x{3:x} | {3}]\n", type, reinterpret_cast<uint64_t>(allocation), fill_value, allocation_size);
         if(allocation == nullptr)
         {
-            log << "Failed to allocate " << type << " allocation\n";
+            log << std::format(L"Failed to allocate {} allocation\n", type);
             return false;
         }
         memset(allocation, fill_value, allocation_size);
@@ -290,7 +293,7 @@ void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std
 void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, void* allocation)
 {
     deallocator(allocation);
-    log << "deallocate [0x" << allocation <<  " / " << reinterpret_cast<uint64_t>(allocation) << "]\n";
+    log << std::format(L"deallocate [0x{0:x} / {0}]\n", reinterpret_cast<uint64_t>(allocation));
     FreeAllocationInResultSet(set, allocation);
 }
 
@@ -318,11 +321,8 @@ void CreateOutput(std::wostream& log, std::wstring const& free_dump_filename)
 
 void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
 {
-    std::wostringstream ss;
-
     // ReSharper disable once StringLiteralTypo
-    ss << "procdump -ma " << GetCurrentProcessId() << " \"" << dump_filename << "\"";
-    auto const command = std::move(ss).str();
+    auto const command = std::format(L"procdump -ma {0} \"{1}\"", GetCurrentProcessId(), dump_filename);
 
 
     SECURITY_ATTRIBUTES security_attributes;
@@ -337,7 +337,7 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
     HANDLE out_read_pipe_handle{nullptr};
     if (!CreatePipe(&out_read_pipe_handle, &out_write_pipe_handle, &security_attributes, 0))
     {
-        log << "Failed to create pipe : 0x" << std::hex << GetLastError() << std::dec << '\n';
+        log << std::format(L"Failed to create pipe : 0x{0:x}\n", GetLastError());
         return;
     }
 
@@ -357,7 +357,7 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
 
     if(command.size() >= MAX_PATH)
     {
-        log << "Command line [" << command << "] to long : " << command.size() << " >= " << MAX_PATH << '\n';
+        log << std::format(L"Command line [{0}] to long : {1} >= {2}\n", command, command.size(), MAX_PATH);
         return;
     }
 
@@ -367,7 +367,7 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
 
     if (!CreateProcessW(nullptr, temp, nullptr, nullptr, false, 0, nullptr, nullptr, &startup_info, &process_info))
     {
-        log << "CreateProcessW [" << command << "] failed : 0x" << std::hex << GetLastError() << std::dec << '\n';
+        log << std::format(L"CreateProcessW [{0}] failed : 0x{1:x}\n", command, GetLastError());
         return;
     }
 
@@ -380,5 +380,5 @@ void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
     // Close process handle.
     CloseHandle(process_info.hProcess);
 
-    log << "Dump file created: " << dump_filename << '\n';
+    log << std::format(L"Dump file created: {}\n", dump_filename);
 }

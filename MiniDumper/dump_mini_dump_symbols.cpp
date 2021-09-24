@@ -1,8 +1,5 @@
 ﻿#include "dump_mini_dump_symbols.h"
 
-#include <iomanip>
-#include <iostream>
-
 #include "common_symbol_lookup_utils.h"
 #include "dump_file_options.h"
 #include "DbgHelpUtils/common_symbol_names.h"
@@ -11,6 +8,7 @@
 #include "DbgHelpUtils/function_table_stream.h"
 #include "DbgHelpUtils/gflags_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/memory64_list_stream.h"
 #include "DbgHelpUtils/memory_list_stream.h"
 #include "DbgHelpUtils/mini_dump_stack_walk.h"
@@ -47,7 +45,7 @@ namespace
     }
 }
 
-void dump_mini_dump_symbol_type(mini_dump const& mini_dump, std::wstring const& type_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, std::wstring const& type_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -62,16 +60,16 @@ void dump_mini_dump_symbol_type(mini_dump const& mini_dump, std::wstring const& 
 
     if(auto const symbol_info = walker.get_type_info(type_name); symbol_info.has_value())
     {
-        wcout << "Symbol Type [" << type_name << "] found:\n";
-        dump_symbol_type(symbol_info.value(), options);
+        log << std::format(L"Symbol Type [{}] found:\n", type_name);
+        dump_symbol_type(log, symbol_info.value(), options);
     }
     else
     {
-        wcout << "Symbol Type [" << type_name << "] not found\n";
+        log << std::format(L"Symbol Type [{}] not found\n", type_name);
     }
 }
 
-void dump_mini_dump_symbol_name(mini_dump const& mini_dump, std::wstring const& symbol_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, std::wstring const& symbol_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -86,16 +84,16 @@ void dump_mini_dump_symbol_name(mini_dump const& mini_dump, std::wstring const& 
 
     if(auto const symbol_info = walker.get_symbol_info(symbol_name); symbol_info.has_value())
     {
-        wcout << "Symbol Name [" << symbol_name << "] found:\n";
-        dump_symbol_type(symbol_info.value(), options);
+        log << std::format(L"Symbol Name [{}] found:\n", symbol_name);
+        dump_symbol_type(log, symbol_info.value(), options);
     }
     else
     {
-        wcout << "Symbol Name [" << symbol_name << "] not found\n";
+        log << std::format(L"Symbol Name [{}] not found\n", symbol_name);
     }
 }
 
-void dump_mini_dump_module_symbol_types(mini_dump const& mini_dump, std::wstring const& module_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& mini_dump, std::wstring const& module_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -116,22 +114,25 @@ void dump_mini_dump_module_symbol_types(mini_dump const& mini_dump, std::wstring
         }
         else
         {
-            wcout << '\n';
+            log << L'\n';
         }
 
-        dump_symbol_type(type, options);
+        dump_symbol_type(log, type, options);
     }
 }
 
 template<typename T>
-void dump_address_type_array(std::wostream& os, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
+void dump_address_type_array(std::wostream& log, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
 {
-    os << dt << " array @ [" << stream_hex_dump::to_hex_full(variable_stream.current_address()) << "] for [" << memory_size / sizeof(T) << "] elements:\n";
-    print_utils::print_stream_array_lines<T>(wcout, variable_stream, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);
-    os << '\n';
+    log << std::format(L"{0} array @ [{1}] for [{2}] elements:\n"
+        , dt
+        , stream_hex_dump::to_hex_full(variable_stream.current_address())
+        , locale_formatting::to_wstring(memory_size / sizeof(T)));
+    print_utils::print_stream_array_lines<T>(log, variable_stream, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);
+    log << L'\n';
 }
 
-void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& address, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std::wstring const& address, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -146,7 +147,7 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
 
     if(auto [memory_pointer, symbol_type, memory_size, dt] = symbol_type_utils::parse_address(address); !symbol_type.empty())
     {
-        symbol_type_utils::dump_variable_type_at(wcout, mini_dump, symbol_engine, symbol_type, memory_pointer);
+        symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_engine, symbol_type, memory_pointer);
     }
     else
     {
@@ -159,36 +160,36 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
         auto stream = walker.get_process_memory_stream(memory_pointer, memory_size);
         if(stream.eof())
         {
-            wcout << "Can't find memory address [" << stream_hex_dump::to_hex_full(memory_pointer) << "]\n";
+            log << std::format(L"Can't find memory address [{}]\n", stream_hex_dump::to_hex_full(memory_pointer));
         }
 
         if(dt.empty())
         {
-            hex_dump::hex_dump(wcout, stream, memory_size);
+            hex_dump::hex_dump(log, stream, memory_size);
         }
         else if(string_compare::iequals(dt, L"str"sv))
         {
-            wcout << "string @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_stream_str<char>(wcout, stream, memory_size, find_limit);
-            wcout << '\n';
+            log << std::format(L"string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
+            print_utils::print_stream_str<char>(log, stream, memory_size, find_limit);
+            log << L'\n';
         }
         else if(string_compare::iequals(dt, L"wstr"sv))
         {
-            wcout << "unicode string @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_stream_str<wchar_t>(wcout, stream, memory_size / sizeof(wchar_t), find_limit);
-            wcout << '\n';
+            log << std::format(L"unicode string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
+            print_utils::print_stream_str<wchar_t>(log, stream, memory_size / sizeof(wchar_t), find_limit);
+            log << L'\n';
         }
         else if(string_compare::iequals(dt, L"astr"sv))
         {
-            wcout << "string array @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_stream_array_str<char>(wcout, stream, memory_size, 2);
-            wcout << '\n';
+            log << std::format(L"string array @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
+            print_utils::print_stream_array_str<char>(log, stream, memory_size, 2);
+            log << L'\n';
         }
         else if(string_compare::iequals(dt, L"awstr"sv))
         {
-            wcout << "unicode string array @ [" << stream_hex_dump::to_hex_full(memory_pointer) << "]:\n";
-            print_utils::print_stream_array_str<wchar_t>(wcout, stream, memory_size / sizeof(wchar_t), 2);
-            wcout << '\n';
+            log << std::format(L"unicode string array @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
+            print_utils::print_stream_array_str<wchar_t>(log, stream, memory_size / sizeof(wchar_t), 2);
+            log << L'\n';
         }
         else
         {
@@ -200,58 +201,58 @@ void dump_mini_dump_address(mini_dump const& mini_dump, std::wstring const& addr
             }
             if(string_compare::iequals(dt, L"uint8"sv))
             {
-                dump_address_type_array<uint8_t>(wcout, dt, stream, memory_size, 16, 6, 2, display_hex);
+                dump_address_type_array<uint8_t>(log, dt, stream, memory_size, 16, 6, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int8"sv))
             {
-                dump_address_type_array<int8_t>(wcout, dt, stream, memory_size, 16, 6, 2, display_hex);
+                dump_address_type_array<int8_t>(log, dt, stream, memory_size, 16, 6, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"uint16"sv))
             {
-                dump_address_type_array<uint16_t>(wcout, dt, stream, memory_size, 8, 8, 2, display_hex);
+                dump_address_type_array<uint16_t>(log, dt, stream, memory_size, 8, 8, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int16"sv))
             {
-                dump_address_type_array<int16_t>(wcout, dt, stream, memory_size, 8, 8, 2, display_hex);
+                dump_address_type_array<int16_t>(log, dt, stream, memory_size, 8, 8, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"uint32"sv))
             {
-                dump_address_type_array<uint32_t>(wcout, dt, stream, memory_size, 4, 14, 2, display_hex);
+                dump_address_type_array<uint32_t>(log, dt, stream, memory_size, 4, 14, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int32"sv))
             {
-                dump_address_type_array<int32_t>(wcout, dt, stream, memory_size, 4, 14, 2, display_hex);
+                dump_address_type_array<int32_t>(log, dt, stream, memory_size, 4, 14, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"uint64"sv))
             {
-                dump_address_type_array<uint64_t>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<uint64_t>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"int64"sv))
             {
-                dump_address_type_array<int64_t>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<int64_t>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"float"sv))
             {
-                dump_address_type_array<float>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<float>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else if(string_compare::iequals(dt, L"double"sv))
             {
-                dump_address_type_array<double>(wcout, dt, stream, memory_size, 2, 24, 2, display_hex);
+                dump_address_type_array<double>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
             else
             {
-                wcout << "Invalid dt [" << dt << "]\n";
+                log << std::format(L"Invalid dt [{}]\n", dt);
             }
         }
     }
 }
 
-void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
+void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& value, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
 {
     auto const tag_data = value.sym_tag();
     auto const offset_data = value.offset();
 
-    wcout << std::wstring(indent, ' ');
+    log << std::wstring(indent, ' ');
 
     auto const bit_position_data = value.bit_position();
 
@@ -259,49 +260,52 @@ void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] 
         std::wostringstream ss;
         if(offset_data.has_value())
         {
-            ss << L'+' << stream_hex_dump::to_hex_full(base_offset + offset_data.value());
+            ss << std::format(L"+{}", stream_hex_dump::to_hex_full(base_offset + offset_data.value()));
         }
 
         if(auto const str = std::move(ss).str(); !bit_position_data.has_value())
         {
-            wcout << str;
+            log << str;
         }
         else if(options.debug_type_data())
         {
-            wcout << str << ' ';
+            log << std::format(L"{} ", str);
         }
         else
         {
-            wcout << std::wstring(str.size() + 1, ' ');
+            log << std::wstring(str.size() + 1, ' ');
         }
     }
 
     auto name = symbol_type_utils::get_symbol_type_friendly_name(value);
-    wcout << ' ' << name;
+    log << std::format(L" {}", name);
 
     if(bit_position_data.has_value())
     {
         auto const length_data = value.length();
-        auto const is_bits = length_data.value_or(1) > 1;
-        wcout << " bit" << (is_bits ? "s" : "") << " " << bit_position_data.value();
         uint64_t bit_mask;
-        if(is_bits)
+        if(length_data.value_or(1) > 1)
         {
-            wcout << "-" << bit_position_data.value() + length_data.value() - 1;
             bit_mask = (~(std::numeric_limits<uint64_t>::max() << length_data.value())) << bit_position_data.value();
+            log << std::format(L" bits {0} - {1} ({2})"
+                , locale_formatting::to_wstring(bit_position_data.value())
+                , locale_formatting::to_wstring(bit_position_data.value() + length_data.value() - 1)
+                , stream_hex_dump::to_hex(bit_mask));
         }
         else
         {
             bit_mask = 0x01ULL << bit_position_data.value();
+            log << std::format(L" bits {0} ({1})"
+                , locale_formatting::to_wstring(bit_position_data.value())
+                , stream_hex_dump::to_hex(bit_mask));
         }
 
-        wcout << " (" << stream_hex_dump::to_hex(bit_mask) << ")";
     }
     else
     {
         if(auto const data = value.length(); data.has_value())
         {
-            wcout << ", Length: " << data.value();
+            log << std::format(L", Length: {}", locale_formatting::to_wstring(data.value()));
         }
     }
 
@@ -311,136 +315,136 @@ void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] 
         {
             if(auto const data = value.length(); data.has_value())
             {
-                wcout << ", Length: " << data.value();
+                log << std::format(L", Length: {}", locale_formatting::to_wstring(data.value()));
             }
         }
 
-        wcout << ", SymIndex: " << value.sym_index();
+        log << std::format(L", SymIndex: {}", locale_formatting::to_wstring(value.sym_index()));
 
         if(tag_data.has_value())
         {
-            wcout << ", tag: " << symbol_type_utils::sym_tag_to_string(tag_data.value());
+            log << std::format(L", tag: {}", symbol_type_utils::sym_tag_to_string(tag_data.value()));
         }
 
         if(auto const data = value.base_type(); data.has_value())
         {
-            wcout << ", BaseType: " << symbol_type_utils::basic_type_to_string(data.value());
+            log << std::format(L", BaseType: {}",  symbol_type_utils::basic_type_to_string(data.value()));
         }
         
         if(auto const data = value.data_kind(); data.has_value())
         {
-            wcout << ", DataKind: " << symbol_type_utils::data_kind_convention_to_string(data.value());
+            log << std::format(L", DataKind: {}", symbol_type_utils::data_kind_convention_to_string(data.value()));
         }
 
         if(auto const data = value.address_offset(); data.has_value())
         {
-            wcout << ", AddressOffset: " << data.value();
+            log << std::format(L", AddressOffset: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.array_index_typeid(); data.has_value())
         {
-            wcout << ", ArrayIndexTypeId: " << data.value();
+            log << std::format(L", ArrayIndexTypeId: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.array_count(); data.has_value())
         {
-            wcout << ", ArrayCount: " << data.value();
+            log << std::format(L", ArrayCount: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.bit_position(); data.has_value())
         {
-            wcout << ", BitPosition: " << data.value();
+            log << std::format(L", BitPosition: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.is_virtual_base_class(); data.has_value())
         {
-            wcout << ", IsVirtualBaseClass: " << std::boolalpha << data.value();
+            log << std::format(L", IsVirtualBaseClass: {}", data.value());
         }
 
         if(auto const data = value.virtual_base_pointer_offset(); data.has_value())
         {
-            wcout << ", VirtualBasePointerOffset: " << data.value();
+            log << std::format(L", VirtualBasePointerOffset: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.class_parent_id(); data.has_value())
         {
-            wcout << ", ClassParentId: " << data.value();
+            log << std::format(L", ClassParentId: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.nested(); data.has_value())
         {
-            wcout << ", Nested: " << data.value();
+            log << std::format(L", Nested: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.lexical_parent(); data.has_value())
         {
-            wcout << ", LexicalParent: " << data.value();
+            log << std::format(L", LexicalParent: {}", locale_formatting::to_wstring(data.value()));
         }
 
 
         if(auto const data = value.address(); data.has_value())
         {
-            wcout << ", Address: " << data.value();
+            log << std::format(L", Address: {}", locale_formatting::to_wstring(data.value()));
         }
 
         if(auto const data = value.virtual_base_offset(); data.has_value())
         {
-            wcout << ", VirtualBaseOffset: " << data.value();
+            log << std::format(L", VirtualBaseOffset: {}", locale_formatting::to_wstring(data.value()));
         }
 
 
         if(auto const data = value.virtual_base_displacement_table_index(); data.has_value())
         {
-            wcout << ", VirtualBaseDisplacementTableIndex: " << data.value();
+            log << std::format(L", VirtualBaseDisplacementTableIndex: {}", locale_formatting::to_wstring(data.value()));
         }
 
 
         if(auto const data = value.is_reference(); data.has_value())
         {
-            wcout << ", IsReference: " << std::boolalpha << data.value();
+            log << std::format(L", IsReference: {}", data.value());
         }
 
 
         if(auto const data = value.indirect_virtual_base_class(); data.has_value())
         {
-            wcout << ", IndirectVirtualBaseClass: " << std::boolalpha << data.value();
+            log << std::format(L", IndirectVirtualBaseClass: {}", data.value());
         }
 
 
         if(auto const data = value.const_value(); data.has_value())
         {
-            wcout << ", ConstValue: " << static_cast<_bstr_t>(data.value());
+            log << std::format(L", ConstValue: {}", static_cast<_bstr_t>(data.value()));
         }
 
 
         if(auto const data = value.calling_convention(); data.has_value())
         {
-            wcout << ", CallingConvention: " << symbol_type_utils::calling_convention_to_string(data.value());
+            log << std::format(L", CallingConvention: {}", symbol_type_utils::calling_convention_to_string(data.value()));
         }
 
         if(auto const data = value.type(); data.has_value())
         {
-            wcout << ", Type: " << data.value().sym_index();
+            log << std::format(L", Type: {}", locale_formatting::to_wstring(data.value().sym_index()));
         }
 
         if(auto const data = value.type_id(); data.has_value())
         {
-            wcout << ", TypeId: " << data.value().sym_index();
+            log << std::format(L", TypeId: {}", locale_formatting::to_wstring(data.value().sym_index()));
         }
 
         if(auto const data = value.children_count(); data.has_value())
         {
-            wcout << ", ChildrenCount: " << data.value();
+            log << std::format(L", ChildrenCount: {}", locale_formatting::to_wstring(data.value()));
         }
     }
 
-    wcout << '\n';
+    log << L'\n';
 
     if(options.debug_type_data())
     {
         if(auto const type_data = value.type(); type_data.has_value() && tag_data.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::PointerType)
         {
-            dump_symbol_type(type_data.value(), options, base_offset + offset_data.value_or(0), indent + 1);
+            dump_symbol_type(log, type_data.value(), options, base_offset + offset_data.value_or(0), indent + 1);
         }
     }
     else if(auto const type_data = value.type(); type_data.has_value())
@@ -449,61 +453,61 @@ void dump_symbol_type(dbg_help::symbol_type_info const& value, [[maybe_unused]] 
         {
             for (auto const& child : type_data.value().children())
             {
-                dump_symbol_type(child, options, base_offset + offset_data.value_or(0), indent + 1);
+                dump_symbol_type(log, child, options, base_offset + offset_data.value_or(0), indent + 1);
             }
         }
     }
 
     for (auto const& child : value.children())
     {
-        dump_symbol_type(child, options, base_offset, indent + 2);
+        dump_symbol_type(log, child, options, base_offset, indent + 2);
     }
 }
 
-void dump_mini_dump_peb(mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     process::process_environment_block const peb{mini_dump, symbol_engine};
 
-    [[maybe_unused]] auto const peb_symbol_info = dump_field(peb.walker(), common_symbol_names::peb_structure_symbol_name, peb.peb_address());
+    [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), common_symbol_names::peb_structure_symbol_name, peb.peb_address());
 
-    wcout << '\n';
+    log << L'\n';
     const auto values = dump_gflags_to_strings(peb.nt_global_flag());
-    wcout << "NtGlobalFlag: (" << stream_hex_dump::to_hex_full(static_cast<uint32_t>(peb.nt_global_flag())) << ")\n";
+    log << std::format(L"NtGlobalFlag: ({})\n", stream_hex_dump::to_hex_full(static_cast<uint32_t>(peb.nt_global_flag())));
     for (auto const& value : values)
     {
-        wcout << "  " << value << '\n';
+        log << std::format(L"  {}\n", value);
     }
 
     if(auto const ldr_address = peb.ldr_address(); ldr_address != 0)
     {
-        wcout << '\n';
-        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(peb.walker(), common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
+        log << L'\n';
+        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
     }
 
     if(auto const process_parameters = peb.process_parameters(); process_parameters.has_value())
     {
-        wcout << '\n';
-        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(peb.walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters.value().process_parameters_address());
+        log << L'\n';
+        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters.value().process_parameters_address());
 
-        wcout << "\nProcess Environment Variables:\n";
+        log << L"\nProcess Environment Variables:\n";
         for(auto const& value : process_parameters.value().environment())
         {
-            wcout << "  ";
-            print_utils::print_str(wcout, value.data(), value.size(), false);
-            wcout << '\n';
+            log << L"  ";
+            print_utils::print_str(log, value.data(), value.size(), false);
+            log << L'\n';
         }
     }
 }
 
-void dump_mini_dump_stack_trace_database(mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     process::process_environment_block const peb{mini_dump, symbol_engine};
 
     auto const stack_database_address = get_stack_database_address(peb);
     if(stack_database_address == 0)
     {
-        wcout << "No Stack Database in DMP\n";
+        log << L"No Stack Database in DMP\n";
     }
 
-    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(peb.walker(), common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address);
+    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(log, peb.walker(), common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address);
 }

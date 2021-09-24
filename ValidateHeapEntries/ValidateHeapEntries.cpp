@@ -3,9 +3,11 @@
 
 
 #include <array>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
 #define NOMINMAX 1
 #include <Windows.h>
 
@@ -18,6 +20,7 @@
 #include "symbol_engine_ui.h"
 #include "DbgHelpUtils/crt_entry.h"
 #include "DbgHelpUtils/crt_heap.h"
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_entry.h"
@@ -68,7 +71,7 @@ private:
         dump_file.open_mini_dump();
         if(dump_file.type() != dlg_help_utils::dump_file_type::user_mode_dump)
         {
-            *o_log << "ERROR: invalid base dmp file [" << dump_filename << "]\n";
+            *o_log << std::format(L"ERROR: invalid base dmp file [{}]\n", dump_filename);
             throw std::runtime_error{"invalid base dmp file"};
         }
 
@@ -102,7 +105,7 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
     dump_file.open_mini_dump();
     if(dump_file.type() != dlg_help_utils::dump_file_type::user_mode_dump)
     {
-        *o_log << "ERROR: invalid dmp file [" << dump_filename << "]\n";
+        *o_log << std::format(L"ERROR: invalid dmp file [{}]\n", dump_filename);
         return false;
     }
 
@@ -123,7 +126,7 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
         return true;
     }
 
-    *o_log << "Processing dmp [" << dump_filename << "]\n";
+    *o_log << std::format(L"Processing dmp [{}]\n", dump_filename);
 
     bool successful = true;
 
@@ -133,7 +136,7 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
     {
         if(entry.user_address() == 0)
         {
-            *o_log << "ERROR: CRT allocation == nullptr\n";
+            *o_log << L"ERROR: CRT allocation == nullptr\n";
             successful = false;
         }
         else
@@ -154,7 +157,7 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
         {
             if(allocation.allocated)
             {
-                *o_log << "ERROR: can't find allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "]\n";
+                *o_log << std::format(L"ERROR: can't find allocation [{}]\n", dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length));
                 successful = false;
             }
             continue;
@@ -177,32 +180,51 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
                 // we have the json report of what you expected to have allocated.
                 if(!crt_heap.is_using_crt_heap() && heaps.is_address_filtered(allocation.pointer, bytes{allocation.size}))
                 {
-                    *o_log << "WARNING: [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] is a filtered entry, the address/size is reused from the base dmp file\n";
+                    *o_log << std::format(L"WARNING: [{0}] of [{1}] is a filtered entry, the address/size is reused from the base dmp file\n"
+                        , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                        , locale_formatting::to_wstring(allocation.size));
                 }
                 else
                 {
-                    *o_log << "ERROR: can't find json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "], closest dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it_closest->first, hex_length) <<"] of [" << it_closest->second.user_requested_size().count() << "]\n";
+                    *o_log << std::format(L"ERROR: can't find json allocation [{0}] of [{1}], closest dmp heap allocation is [{2}] of [{3}]\n"
+                        , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                        , locale_formatting::to_wstring(allocation.size)
+                        , dlg_help_utils::stream_hex_dump::to_hex(it_closest->first, hex_length)
+                        , locale_formatting::to_wstring(it_closest->second.user_requested_size().count()));
                     successful = false;
                 }
             }
         }
         else if(!allocation.allocated)
         {
-            *o_log << "INFO: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] even though it's free(!), found dmp heap allocation is [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+            *o_log << std::format(L"INFO: found json allocation [{0}] of [{1}] even though it's free(!), found dmp heap allocation is [{2}] of [{3}]\n"
+                , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                , locale_formatting::to_wstring(allocation.size)
+                , dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length)
+                , locale_formatting::to_wstring(it->second.user_requested_size().count()));
         }
         else if(allocation.pointer != it->second.user_address())
         {
-            *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but dmp heap allocation pointer is different [" << dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length) <<"] of [" << it->second.user_requested_size().count() << "]\n";
+            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but dmp heap allocation pointer is different [{2}] of [{3}]\n"
+                , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                , locale_formatting::to_wstring(allocation.size)
+                , dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length)
+                , locale_formatting::to_wstring(it->second.user_requested_size().count()));
             successful = false;
         }
         else if(allocation.size != static_cast<size_t>(it->second.user_requested_size().count()))
         {
-            *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but dmp heap allocation size is different [" << it->second.user_requested_size().count() << "]\n";
+            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but dmp heap allocation size is different [{2}]\n"
+                , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                , locale_formatting::to_wstring(allocation.size)
+                , locale_formatting::to_wstring(it->second.user_requested_size().count()));
             successful = false;
         }
         else if(stacktrace && it->second.allocation_stack_trace().empty())
         {
-            *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but dmp heap allocation has no expected stack trace\n";
+            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but dmp heap allocation has no expected stack trace\n"
+                , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                , allocation.size);
             successful = false;
         }
         else
@@ -218,7 +240,12 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
                 {
                     if(*data != allocation.fill_char)
                     {
-                        *o_log << "ERROR: found json allocation [" << dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length) << "] of [" << allocation.size << "] but failed fill compare of [" << allocation.fill_char << "] compared to dmp allocation of [" << *data << "] @ [" << dlg_help_utils::stream_hex_dump::to_hex(length + (data - start_data)) << "]\n";
+                        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but failed fill compare of [{2}] compared to dmp allocation of [{3}] @ [{4}]\n"
+                            , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
+                            , locale_formatting::to_wstring(allocation.size)
+                            , allocation.fill_char
+                            , *data
+                            , dlg_help_utils::stream_hex_dump::to_hex(length + (data - start_data)));
                         successful = false;
                         break;
                     }
@@ -236,7 +263,9 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
         {
             if(heap_allocations.find(entry.user_address()) == heap_allocations.end())
             {
-                *o_log << "ERROR: CRT Allocation Entry [" << dlg_help_utils::stream_hex_dump::to_hex(entry.user_address()) << "] of [" << entry.data_size() << "] not found\n";
+                *o_log << std::format(L"ERROR: CRT Allocation Entry [{0}] of [{1}] not found\n"
+                    , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address())
+                    , locale_formatting::to_wstring(entry.data_size().count()));
                 successful = false;
             }
         }
@@ -244,7 +273,9 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
         {
             if(heap_free_entries.find(entry.user_address()) == heap_free_entries.end())
             {
-                *o_log << "ERROR: CRT Free Entry [" << dlg_help_utils::stream_hex_dump::to_hex(entry.user_address()) << "] of [" << entry.data_size() << "] not found\n";
+                *o_log << std::format(L"ERROR: CRT Free Entry [{0}] of [{1}] not found\n"
+                    , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address())
+                    , locale_formatting::to_wstring(entry.data_size().count()));
                 successful = false;
             }
         }
@@ -253,9 +284,9 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
     std::wcout << dump_filename << " : ";
     auto console = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(console, successful ? ConsoleForeground::GREEN : ConsoleForeground::RED);
-    std::wcout << (successful ? "Passed" : "Failed");
+    std::wcout << (successful ? L"Passed" : L"Failed");
     SetConsoleTextAttribute(console, ConsoleForeground::WHITE);
-    std::wcout << '\n';
+    std::wcout << L'\n';
 
     return successful;
 }
@@ -283,8 +314,8 @@ int main(int const argc, char* argv[])
             if (auto const result = cli.parse({ argc, argv });
                 !result)
             {
-                std::cerr << "Error in command line: " << result.errorMessage() << '\n';
-                std::cerr << cli << "\n";
+                std::cerr << std::format("Error in command line: {}\n", result.errorMessage());
+                std::cerr << cli << '\n';
                 return EXIT_FAILURE;
             }
 
@@ -307,7 +338,7 @@ int main(int const argc, char* argv[])
                 log = std::make_unique<std::wfstream>(log_filename, std::ios_base::out | std::ios_base::app);
                 if(log->bad())
                 {
-                    std::wcerr << "failed to open log file: " << log_filename << '\n';
+                    std::wcerr << std::format(L"failed to open log file: {}\n", log_filename);
                     return EXIT_FAILURE;
                 }
                 o_log = log.get();
@@ -316,7 +347,7 @@ int main(int const argc, char* argv[])
             std::fstream json_file{json_filename, std::ios_base::in};
             if(json_file.bad())
             {
-                *o_log << "failed to open json result set file: " << json_filename << '\n';
+                *o_log << std::format(L"failed to open json result set file: {}\n", json_filename);
                 return EXIT_FAILURE;
             }
 
@@ -329,7 +360,7 @@ int main(int const argc, char* argv[])
             ResultSet set;
             if (context.parseTo(set) != JS::Error::NoError)
             {
-                *o_log << "failed to parse json result set file: " << json_filename << " with " << dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()) << '\n';
+                *o_log << std::format(L"failed to parse json result set file: {1} with {2}\n", json_filename, dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()));
                 return EXIT_FAILURE;
             }
 
@@ -348,11 +379,11 @@ int main(int const argc, char* argv[])
         }
         catch (std::exception const& e)
         {
-            std::cout << "fatal error: " << e.what() << '\n';
+            std::cerr << std::format("fatal error: {}\n", e.what());
         }
         catch (...)
         {
-            std::cout << "fatal error: Unknown exception\n";
+            std::cerr << "fatal error: Unknown exception\n";
         }
     }
     catch(...)

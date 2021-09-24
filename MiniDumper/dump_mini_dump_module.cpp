@@ -1,11 +1,10 @@
 ﻿#include "dump_mini_dump_module.h"
 
-#include <iostream>
-
 #include "dump_file_options.h"
 #include "DbgHelpUtils/filesystem_utils.h"
 #include "DbgHelpUtils/guid_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/module_list_stream.h"
 #include "DbgHelpUtils/stream_module.h"
@@ -21,14 +20,14 @@ using namespace std;
 using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t const index,
+void dump_mini_dump_module_list_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
                                             dump_file_options const& options)
 {
     module_list_stream const module_list{mini_dump, index};
 
     if (!module_list.found())
     {
-        wcout << L"ModuleListStream not found!\n";
+        log << L"ModuleListStream not found!\n";
         return;
     }
 
@@ -37,7 +36,7 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
     auto const modules = options.filter_values(L"module");
     auto const module_bases = vector_to_hash_set<uint64_t>(options.filter_values(L"module_base"s));
 
-    wcout << L"NumberOfModules: " << module_list.module_list().NumberOfModules << L'\n';
+    log << std::format(L"NumberOfModules: {}\n", locale_formatting::to_wstring(module_list.module_list().NumberOfModules));
     for (size_t i = 0; auto const& stream_module : module_list.list())
     {
         std::filesystem::path p{stream_module.name()};
@@ -55,102 +54,93 @@ void dump_mini_dump_module_list_stream_data(mini_dump const& mini_dump, size_t c
             continue;
         }
 
-        wcout << L" [" << i << "]: " << stream_module.name() << L'\n';
-        wcout << L"   Base: " << to_hex_full(stream_module->BaseOfImage) << L'\n';
-        wcout << L"   CheckSum: " << to_hex(stream_module->CheckSum) << L'\n';
-        wcout << L"   Size: " << stream_module->SizeOfImage << L" (" << bytes{stream_module->SizeOfImage} << L")\n";
-        wcout << L"   Timestamp [local: " << time_utils::to_local_time(stream_module->TimeDateStamp) << L"] [UTC: " <<
-            time_utils::to_utc_time(stream_module->TimeDateStamp) << L"]\n";
-        wcout << L"   VersionInfo: \n";
-        wcout << L"     Signature: " << to_hex(stream_module->VersionInfo.dwSignature) << L'\n';
-        wcout << L"     Struct Version: " << system_info_utils::version_info_to_string(stream_module->VersionInfo.dwStrucVersion) << L'\n';
-        wcout << L"     File Flags: " << to_hex(stream_module->VersionInfo.dwFileFlags) << L" - " << system_info_utils::version_file_flags_to_string(stream_module->VersionInfo.dwFileFlags, stream_module->VersionInfo.dwFileFlagsMask) << L'\n';
-        wcout << L"     File Flags Mask: " << to_hex(stream_module->VersionInfo.dwFileFlagsMask) << L'\n';
-        wcout << L"     File Type: " << to_hex(stream_module->VersionInfo.dwFileType) << L" - " << system_info_utils::version_file_type_to_string(stream_module->VersionInfo.dwFileType, stream_module->VersionInfo.dwFileSubtype) << L'\n';
-        wcout << L"     File Subtype: " << to_hex(stream_module->VersionInfo.dwFileSubtype) << L'\n';
-        wcout << L"     File OS: " << to_hex(stream_module->VersionInfo.dwFileOS) << L" - " << system_info_utils::version_file_os_to_string(stream_module->VersionInfo.dwFileOS) << L'\n';
-
-        wcout << L"     File Date Raw : " << stream_module->VersionInfo.dwFileDateMS << L'.' << stream_module->VersionInfo.
-            dwFileDateLS << L'\n';
+        log << std::format(L" [{0}]: {1}\n", locale_formatting::to_wstring(i), stream_module.name());
+        log << std::format(L"   Base: {}\n", to_hex_full(stream_module->BaseOfImage));
+        log << std::format(L"   CheckSum: {}\n", to_hex(stream_module->CheckSum));
+        log << std::format(L"   Size: {0} ({1})\n", locale_formatting::to_wstring(stream_module->SizeOfImage), to_wstring(bytes{stream_module->SizeOfImage}));
+        log << std::format(L"   Timestamp [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(stream_module->TimeDateStamp), time_utils::to_utc_time(stream_module->TimeDateStamp));
+        log << L"   VersionInfo: \n";
+        log << std::format(L"     Signature: {}\n", to_hex(stream_module->VersionInfo.dwSignature));
+        log << std::format(L"     Struct Version: {}\n", system_info_utils::version_info_to_string(stream_module->VersionInfo.dwStrucVersion));
+        log << std::format(L"     File Flags: {0} - {1}\n", to_hex(stream_module->VersionInfo.dwFileFlags), system_info_utils::version_file_flags_to_string(stream_module->VersionInfo.dwFileFlags, stream_module->VersionInfo.dwFileFlagsMask));
+        log << std::format(L"     File Flags Mask: {}\n", to_hex(stream_module->VersionInfo.dwFileFlagsMask));
+        log << std::format(L"     File Type: {0} - {1}\n", to_hex(stream_module->VersionInfo.dwFileType), system_info_utils::version_file_type_to_string(stream_module->VersionInfo.dwFileType, stream_module->VersionInfo.dwFileSubtype));
+        log << std::format(L"     File Subtype: {}\n", to_hex(stream_module->VersionInfo.dwFileSubtype));
+        log << std::format(L"     File OS: {0} - {1}\n", to_hex(stream_module->VersionInfo.dwFileOS), system_info_utils::version_file_os_to_string(stream_module->VersionInfo.dwFileOS));
+        log << std::format(L"     File Date Raw : {0}.{1}\n", stream_module->VersionInfo.dwFileDateMS, stream_module->VersionInfo. dwFileDateLS);
         if (stream_module->VersionInfo.dwFileDateMS != 0 && stream_module->VersionInfo.dwFileDateLS != 0)
         {
             FILETIME ft;
             ft.dwHighDateTime = stream_module->VersionInfo.dwFileDateMS;
             ft.dwLowDateTime = stream_module->VersionInfo.dwFileDateLS;
             auto const time_stamp = time_utils::filetime_to_time_t(ft);
-            wcout << L"     File Date: [local: " << time_utils::to_local_time(time_stamp) << L"] [UTC: " <<
-                time_utils::to_utc_time(time_stamp) << L"]\n";
+            log << std::format(L"     File Date: [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(time_stamp), time_utils::to_utc_time(time_stamp));
         }
-        wcout << L"     File Version: " << system_info_utils::version_info_to_string(
-            stream_module->VersionInfo.dwFileVersionMS, stream_module->VersionInfo.dwFileVersionLS) << L'\n';
-        wcout << L"     Product Version: " << system_info_utils::version_info_to_string(
-            stream_module->VersionInfo.dwProductVersionMS, stream_module->VersionInfo.dwProductVersionLS) << L'\n';
-        wcout << L"   CvRecord (size): " << stream_module->CvRecord.DataSize << L" (" << bytes{stream_module->CvRecord.DataSize} <<
-            L")\n";
+        log << std::format(L"     File Version: {}\n", system_info_utils::version_info_to_string(stream_module->VersionInfo.dwFileVersionMS, stream_module->VersionInfo.dwFileVersionLS));
+        log << std::format(L"     Product Version: {}\n", system_info_utils::version_info_to_string(stream_module->VersionInfo.dwProductVersionMS, stream_module->VersionInfo.dwProductVersionLS));
+        log << std::format(L"   CvRecord (size): {0} ({1})\n", locale_formatting::to_wstring(stream_module->CvRecord.DataSize), to_wstring(bytes{stream_module->CvRecord.DataSize}));
 
         if (stream_module.pdb_info().is_valid())
         {
-            wcout << L"     PDB Info:\n";
-            wcout << L"       Signature: " << guid_utils::to_string(stream_module.pdb_info().get_signature()) << L'\n';
-            wcout << L"       Age: " << stream_module.pdb_info().get_age() << L'\n';
-            wcout << L"       Path: " << stream_module.pdb_info().get_pdb_file_name() << L'\n';
+            log << L"     PDB Info:\n";
+            log << std::format(L"       Signature: {}\n", guid_utils::to_string(stream_module.pdb_info().get_signature()));
+            log << std::format(L"       Age: {}\n", locale_formatting::to_wstring(stream_module.pdb_info().get_age()));
+            log << std::format(L"       Path: {}\n", stream_module.pdb_info().get_pdb_file_name());
         }
 
-        wcout << L"   MiscRecord (size): " << stream_module->MiscRecord.DataSize << L" (" << bytes{stream_module->MiscRecord.DataSize}
-            << L")\n";
-        wcout << L"   Reserved0: " << stream_module->Reserved0 << L'\n';
-        wcout << L"   Reserved1: " << stream_module->Reserved1 << L'\n';
+        log << std::format(L"   MiscRecord (size): {0} ({1})\n", locale_formatting::to_wstring(stream_module->MiscRecord.DataSize), to_wstring(bytes{stream_module->MiscRecord.DataSize}));
+        log << std::format(L"   Reserved0: {}\n", to_hex(stream_module->Reserved0));
+        log << std::format(L"   Reserved1: {}\n", to_hex(stream_module->Reserved1));
 
         if (options.hex_dump_memory_data())
         {
             if (stream_module->CvRecord.DataSize && !stream_module.pdb_info().is_valid())
             {
-                wcout << L"   CvRecord:\n";
-                hex_dump::hex_dump(wcout, stream_module.cv_record(), options.hex_dump_memory_size(stream_module->CvRecord.DataSize), 5);
-                wcout << L'\n';
+                log << L"   CvRecord:\n";
+                hex_dump::hex_dump(log, stream_module.cv_record(), options.hex_dump_memory_size(stream_module->CvRecord.DataSize), 5);
+                log << L'\n';
             }
 
             if (stream_module->MiscRecord.DataSize)
             {
-                wcout << L"   MiscRecord:\n";
-                hex_dump::hex_dump(wcout, stream_module.misc_record(), options.hex_dump_memory_size(stream_module->MiscRecord.DataSize), 5);
-                wcout << L'\n';
+                log << L"   MiscRecord:\n";
+                hex_dump::hex_dump(log, stream_module.misc_record(), options.hex_dump_memory_size(stream_module->MiscRecord.DataSize), 5);
+                log << L'\n';
             }
         }
 
         ++i;
     }
-    wcout << L'\n';
+    log << L'\n';
 }
 
-void dump_mini_dump_unloaded_module_list_stream_data(mini_dump const& mini_dump, size_t const index)
+void dump_mini_dump_unloaded_module_list_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
     unloaded_module_list_stream const module_list{mini_dump, index};
 
     if (!module_list.found())
     {
-        wcout << L"UnloadedModuleListStream not found!\n";
+        log << L"UnloadedModuleListStream not found!\n";
         return;
     }
 
     if (!module_list.is_valid())
     {
-        wcout << L"UnloadedModuleListStream version unknown!\n";
+        log << L"UnloadedModuleListStream version unknown!\n";
         return;
     }
 
-    wcout << L"NumberOfUnloadedModules: " << module_list.size() << L'\n';
+    log << std::format(L"NumberOfUnloadedModules: {}\n", locale_formatting::to_wstring(module_list.size()));
     for (size_t i = 0; auto const& module : module_list.list())
     {
-        wcout << L" [" << i << "]: " << module.name() << L'\n';
-        wcout << L"   Base: " << to_hex_full(module->BaseOfImage) << L'\n';
-        wcout << L"   CheckSum: " << module->CheckSum << L'\n';
         using namespace size_units::base_16;
-        wcout << L"   Size: " << module->SizeOfImage << L" (" << bytes{module->SizeOfImage} << L")\n";
-        wcout << L"   Timestamp [local: " << time_utils::to_local_time(module->TimeDateStamp) << L"] [UTC: " <<
-            time_utils::to_utc_time(module->TimeDateStamp) << L"]\n";
+        log << std::format(L" [{0}]: {1}\n", locale_formatting::to_wstring(i), module.name());
+        log << std::format(L"   Base: {}\n", to_hex_full(module->BaseOfImage));
+        log << std::format(L"   CheckSum: {}\n", locale_formatting::to_wstring(module->CheckSum));
+        log << std::format(L"   Size: {0} ({1})\n", locale_formatting::to_wstring(module->SizeOfImage), to_wstring(bytes{module->SizeOfImage}));
+        log << std::format(L"   Timestamp [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(module->TimeDateStamp), time_utils::to_utc_time(module->TimeDateStamp));
 
         ++i;
     }
-    wcout << L'\n';
+    log << L'\n';
 }

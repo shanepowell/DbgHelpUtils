@@ -27,12 +27,12 @@ int main(int const argc, char* argv[])
 
         // The parser with the multiple option arguments and help option.
         dump_file_options dump_options;
-        auto cli = lyra::cli() | lyra::help(show_help) | dump_options.generate_options();
+        const auto cli = lyra::cli() | lyra::help(show_help) | dump_options.generate_options();
 
         if (auto const result = cli.parse({ argc, argv });
             !result)
         {
-            std::cerr << "Error in command line: " << result.errorMessage() << '\n';
+            std::cerr << std::format("Error in command line: {}\n", result.errorMessage());
             std::cerr << cli << "\n";
             return EXIT_FAILURE;
         }
@@ -46,7 +46,7 @@ int main(int const argc, char* argv[])
 
         if (dump_options.display_version())
         {
-            display_version_information();
+            display_version_information(wcout);
             return EXIT_SUCCESS;
         }
 
@@ -59,11 +59,12 @@ int main(int const argc, char* argv[])
             return EXIT_SUCCESS;
         }
 
+        auto const on_error_handler = [&dump_options](std::wstring const& error){ wcout << std::format(L"Dump file: {}\n", error); return dump_options.continue_on_errors(); };
         // ReSharper disable once CppLocalVariableMayBeConst
-        auto base_diff_dump_files = filesystem_utils::enumerate_files(dump_options.base_diff_dump_files(), [&dump_options](std::wstring const& error){ wcout << L"Dump file: " << error << L'\n'; return dump_options.continue_on_errors(); });
+        auto base_diff_dump_files = filesystem_utils::enumerate_files(dump_options.base_diff_dump_files(), on_error_handler);
         auto base_diff_dump_files_current = std::begin(base_diff_dump_files);
         auto const base_diff_dump_files_end = std::end(base_diff_dump_files);
-        for (auto const& dump_file : filesystem_utils::enumerate_files(dump_options.dump_files(), [&dump_options](std::wstring const& error){ wcout << L"Dump file: " << error << L'\n'; return dump_options.continue_on_errors(); }))
+        for (auto const& dump_file : filesystem_utils::enumerate_files(dump_options.dump_files(), on_error_handler))
         {
             std::wstring base_diff_dump_file;
             if(base_diff_dump_files_current != base_diff_dump_files_end)
@@ -72,7 +73,7 @@ int main(int const argc, char* argv[])
                 ++base_diff_dump_files_current;
             }
 
-            if(!process_dump_file(dump_file, base_diff_dump_file, dump_options) && !dump_options.continue_on_errors())
+            if(!process_dump_file(wcout, dump_file, base_diff_dump_file, dump_options) && !dump_options.continue_on_errors())
             {
                 return EXIT_FAILURE;
             }
@@ -80,22 +81,22 @@ int main(int const argc, char* argv[])
 
         if(base_diff_dump_files_current != base_diff_dump_files_end)
         {
-            wcout << "warning: more base diff dump file paths than dump file paths\n";
+            wcout << L"warning: more base diff dump file paths than dump file paths\n";
         }
 
         return EXIT_SUCCESS;
     }
     catch (wide_runtime_error const& e)
     {
-        wcout << L"fatal error: " << e.message() << L'\n';
+        wcerr << std::format(L"fatal error: {}\n", e.message());
     }
     catch (exception const& e)
     {
-        wcout << L"fatal error: " << e.what() << L'\n';
+        wcerr << std::format(L"fatal error: {}\n", string_conversation::acp_to_wstring(e.what()));
     }
     catch (...)
     {
-        wcout << L"fatal error: Unknown exception\n";
+        wcerr << L"fatal error: Unknown exception\n";
     }
     return EXIT_FAILURE;
 }

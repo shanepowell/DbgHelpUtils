@@ -1,11 +1,9 @@
 ﻿#include "dump_mini_dump_thread.h"
 
-
-#include <iostream>
-
 #include "dump_file_options.h"
 #include "DbgHelpUtils/common_symbol_names.h"
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
@@ -36,22 +34,22 @@ std::set<uint32_t> get_filtered_thread_ids(dump_file_options const& options)
     return vector_to_hash_set<uint32_t>(options.filter_values(L"thread_id"s));
 }
 
-void dump_mini_dump_thread_context(stream_thread_context const& thread_context, dump_file_options const& options)
+void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context const& thread_context, dump_file_options const& options)
 {
-    wcout << L"  ThreadContext:\n";
+    log << L"  ThreadContext:\n";
     auto force_hex_dump = false;
     if (thread_context.x64_thread_context_available())
     {
-        dump_mini_dump_x64_thread_context(thread_context.x64_thread_context());
+        dump_mini_dump_x64_thread_context(log, thread_context.x64_thread_context());
     }
     else if (thread_context.wow64_thread_context_available())
     {
-        dump_mini_dump_wow64_thread_context(thread_context.wow64_thread_context(),
+        dump_mini_dump_wow64_thread_context(log, thread_context.wow64_thread_context(),
                                           thread_context.wow64_thread_context_has_extended_registers());
     }
     else if (thread_context.x86_thread_context_available())
     {
-        dump_mini_dump_x86_thread_context(thread_context.x86_thread_context(),
+        dump_mini_dump_x86_thread_context(log, thread_context.x86_thread_context(),
                                           thread_context.x86_thread_context_has_extended_registers());
     }
     else
@@ -61,211 +59,208 @@ void dump_mini_dump_thread_context(stream_thread_context const& thread_context, 
 
     if (options.hex_dump_memory_data() || force_hex_dump)
     {
-        hex_dump::hex_dump(wcout, thread_context.context(), options.hex_dump_memory_size(thread_context.size()), 4);
-        wcout << L'\n';
+        hex_dump::hex_dump(log, thread_context.context(), options.hex_dump_memory_size(thread_context.size()), 4);
+        log << L'\n';
     }
 }
 
-void dump_mini_dump_x64_thread_context(stream_thread_context::context_x64 const& context)
+void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context::context_x64 const& context)
 {
-    wcout << L"    ContextFlags: " << to_hex_full(context.ContextFlags) << L'\n';
-    wcout << L"    RIP: " << to_hex_full(context.Rip) << L'\n';
-    wcout << L"    RSP: " << to_hex_full(context.Rsp) << L'\n';
-    wcout << L"    RAX: " << to_hex_full(context.Rax) << L'\n';
-    wcout << L"    RBX: " << to_hex_full(context.Rbx) << L'\n';
-    wcout << L"    RCX: " << to_hex_full(context.Rcx) << L'\n';
-    wcout << L"    RDX: " << to_hex_full(context.Rdx) << L'\n';
-    wcout << L"    RDI: " << to_hex_full(context.Rdi) << L'\n';
-    wcout << L"    RSI: " << to_hex_full(context.Rsi) << L'\n';
-    wcout << L"    RBP: " << to_hex_full(context.Rbp) << L'\n';
-    wcout << L"    R8: " << to_hex_full(context.R8) << L'\n';
-    wcout << L"    R9: " << to_hex_full(context.R9) << L'\n';
-    wcout << L"    R10: " << to_hex_full(context.R10) << L'\n';
-    wcout << L"    R11: " << to_hex_full(context.R11) << L'\n';
-    wcout << L"    R12: " << to_hex_full(context.R12) << L'\n';
-    wcout << L"    R13: " << to_hex_full(context.R13) << L'\n';
-    wcout << L"    R14: " << to_hex_full(context.R14) << L'\n';
-    wcout << L"    R15: " << to_hex_full(context.R15) << L'\n';
-    wcout << L"    CS: " << to_hex_full(context.SegCs) << L'\n';
-    wcout << L"    DS: " << to_hex_full(context.SegDs) << L'\n';
-    wcout << L"    ES: " << to_hex_full(context.SegEs) << L'\n';
-    wcout << L"    FS: " << to_hex_full(context.SegFs) << L'\n';
-    wcout << L"    GS: " << to_hex_full(context.SegGs) << L'\n';
-    wcout << L"    SS: " << to_hex_full(context.SegSs) << L'\n';
-    wcout << L"    EFlags: " << to_hex_full(context.EFlags) << L'\n';
-    wcout << L"    DR0: " << to_hex_full(context.Dr0) << L'\n';
-    wcout << L"    DR1: " << to_hex_full(context.Dr1) << L'\n';
-    wcout << L"    DR2: " << to_hex_full(context.Dr2) << L'\n';
-    wcout << L"    DR3: " << to_hex_full(context.Dr3) << L'\n';
-    wcout << L"    DR6: " << to_hex_full(context.Dr6) << L'\n';
-    wcout << L"    DR7: " << to_hex_full(context.Dr7) << L'\n';
-    wcout << L"    MxCsr: " << to_hex_full(context.MxCsr) << L'\n';
-    wcout << L"    XMM:\n";
-    wcout << L"      Header: " << to_hex_full(context.Header[0]) << L'-' << to_hex_full(context.Header[1]) << L'\n';
-    wcout << L"      Legacy: " << to_hex_full(context.Legacy[0]) << L'-' << to_hex_full(context.Legacy[1]) << L'\n';
+    log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
+    log << std::format(L"    RIP: {}\n", to_hex_full(context.Rip));
+    log << std::format(L"    RSP: {}\n", to_hex_full(context.Rsp));
+    log << std::format(L"    RAX: {}\n", to_hex_full(context.Rax));
+    log << std::format(L"    RBX: {}\n", to_hex_full(context.Rbx));
+    log << std::format(L"    RCX: {}\n", to_hex_full(context.Rcx));
+    log << std::format(L"    RDX: {}\n", to_hex_full(context.Rdx));
+    log << std::format(L"    RDI: {}\n", to_hex_full(context.Rdi));
+    log << std::format(L"    RSI: {}\n", to_hex_full(context.Rsi));
+    log << std::format(L"    RBP: {}\n", to_hex_full(context.Rbp));
+    log << std::format(L"    R8: {}\n", to_hex_full(context.R8));
+    log << std::format(L"    R9: {}\n", to_hex_full(context.R9));
+    log << std::format(L"    R10: {}\n", to_hex_full(context.R10));
+    log << std::format(L"    R11: {}\n", to_hex_full(context.R11));
+    log << std::format(L"    R12: {}\n", to_hex_full(context.R12));
+    log << std::format(L"    R13: {}\n", to_hex_full(context.R13));
+    log << std::format(L"    R14: {}\n", to_hex_full(context.R14));
+    log << std::format(L"    R15: {}\n", to_hex_full(context.R15));
+    log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
+    log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
+    log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
+    log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
+    log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
+    log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
+    log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+    log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
+    log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
+    log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
+    log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
+    log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
+    log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
+    log << std::format(L"    MxCsr: {}\n", to_hex_full(context.MxCsr));
+    log << L"    XMM:\n";
+    log << std::format(L"      Header: {0}-{1}\n", to_hex_full(context.Header[0]), to_hex_full(context.Header[1]));
+    log << std::format(L"      Legacy: {0}-{1}\n", to_hex_full(context.Legacy[0]), to_hex_full(context.Legacy[1]));
     for (size_t index = 0; index < std::size(context.Legacy); index += 2)
     {
-        wcout << L"      Legacy[" << index << L'/' << index + 1 << L"]: " << to_hex_full(context.Legacy[index]) << L'-'
-            << to_hex_full(context.Legacy[index + 1]) << L'\n';
+        log << std::format(L"      Legacy[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.Legacy[index]), to_hex_full(context.Legacy[index + 1]));
     }
-    wcout << L"      Xmm0: " << to_hex_full(context.Xmm0) << L'\n';
-    wcout << L"      Xmm1: " << to_hex_full(context.Xmm1) << L'\n';
-    wcout << L"      Xmm2: " << to_hex_full(context.Xmm2) << L'\n';
-    wcout << L"      Xmm3: " << to_hex_full(context.Xmm3) << L'\n';
-    wcout << L"      Xmm4: " << to_hex_full(context.Xmm4) << L'\n';
-    wcout << L"      Xmm5: " << to_hex_full(context.Xmm5) << L'\n';
-    wcout << L"      Xmm6: " << to_hex_full(context.Xmm6) << L'\n';
-    wcout << L"      Xmm7: " << to_hex_full(context.Xmm7) << L'\n';
-    wcout << L"      Xmm8: " << to_hex_full(context.Xmm8) << L'\n';
-    wcout << L"      Xmm9: " << to_hex_full(context.Xmm9) << L'\n';
-    wcout << L"      Xmm10: " << to_hex_full(context.Xmm10) << L'\n';
-    wcout << L"      Xmm11: " << to_hex_full(context.Xmm11) << L'\n';
-    wcout << L"      Xmm12: " << to_hex_full(context.Xmm12) << L'\n';
-    wcout << L"      Xmm13: " << to_hex_full(context.Xmm13) << L'\n';
-    wcout << L"      Xmm14: " << to_hex_full(context.Xmm14) << L'\n';
-    wcout << L"      Xmm15: " << to_hex_full(context.Xmm15) << L'\n';
+    log << std::format(L"      Xmm0: {}\n", to_hex_full(context.Xmm0));
+    log << std::format(L"      Xmm1: {}\n", to_hex_full(context.Xmm1));
+    log << std::format(L"      Xmm2: {}\n", to_hex_full(context.Xmm2));
+    log << std::format(L"      Xmm3: {}\n", to_hex_full(context.Xmm3));
+    log << std::format(L"      Xmm4: {}\n", to_hex_full(context.Xmm4));
+    log << std::format(L"      Xmm5: {}\n", to_hex_full(context.Xmm5));
+    log << std::format(L"      Xmm6: {}\n", to_hex_full(context.Xmm6));
+    log << std::format(L"      Xmm7: {}\n", to_hex_full(context.Xmm7));
+    log << std::format(L"      Xmm8: {}\n", to_hex_full(context.Xmm8));
+    log << std::format(L"      Xmm9: {}\n", to_hex_full(context.Xmm9));
+    log << std::format(L"      Xmm10: {}\n", to_hex_full(context.Xmm10));
+    log << std::format(L"      Xmm11: {}\n", to_hex_full(context.Xmm11));
+    log << std::format(L"      Xmm12: {}\n", to_hex_full(context.Xmm12));
+    log << std::format(L"      Xmm13: {}\n", to_hex_full(context.Xmm13));
+    log << std::format(L"      Xmm14: {}\n", to_hex_full(context.Xmm14));
+    log << std::format(L"      Xmm15: {}\n", to_hex_full(context.Xmm15));
     for (size_t index = 0; index < std::size(context.VectorRegister); index += 2)
     {
-        wcout << L"    VectorRegister[" << index << L'/' << index + 1 << L"]: " <<
-            to_hex_full(context.VectorRegister[index]) << L'-' << to_hex_full(context.VectorRegister[index + 1]) <<
-            L'\n';
+        log << std::format(L"    VectorRegister[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.VectorRegister[index]), to_hex_full(context.VectorRegister[index + 1]));
     }
-    wcout << L"    VectorControl: " << to_hex_full(context.VectorControl) << L'\n';
-    wcout << L"    DebugControl: " << to_hex_full(context.DebugControl) << L'\n';
-    wcout << L"    LastBranchToRip: " << to_hex_full(context.LastBranchToRip) << L'\n';
-    wcout << L"    LastBranchFromRip: " << to_hex_full(context.LastBranchFromRip) << L'\n';
-    wcout << L"    LastExceptionToRip: " << to_hex_full(context.LastExceptionToRip) << L'\n';
-    wcout << L"    LastExceptionFromRip: " << to_hex_full(context.LastExceptionFromRip) << L'\n';
+    log << std::format(L"    VectorControl: {}\n", to_hex_full(context.VectorControl));
+    log << std::format(L"    DebugControl: {}\n", to_hex_full(context.DebugControl));
+    log << std::format(L"    LastBranchToRip: {}\n", to_hex_full(context.LastBranchToRip));
+    log << std::format(L"    LastBranchFromRip: {}\n", to_hex_full(context.LastBranchFromRip));
+    log << std::format(L"    LastExceptionToRip: {}\n", to_hex_full(context.LastExceptionToRip));
+    log << std::format(L"    LastExceptionFromRip: {}\n", to_hex_full(context.LastExceptionFromRip));
 }
 
-void dump_mini_dump_x86_thread_context(stream_thread_context::context_x86 const& context, bool const has_extended_registers)
+void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context::context_x86 const& context, bool const has_extended_registers)
 {
-    wcout << L"    ContextFlags: " << to_hex_full(context.ContextFlags) << L'\n';
-    wcout << L"    EIP: " << to_hex_full(context.Eip) << L'\n';
-    wcout << L"    ESP: " << to_hex_full(context.Esp) << L'\n';
-    wcout << L"    EAX: " << to_hex_full(context.Eax) << L'\n';
-    wcout << L"    EBX: " << to_hex_full(context.Ebx) << L'\n';
-    wcout << L"    ECX: " << to_hex_full(context.Ecx) << L'\n';
-    wcout << L"    EDX: " << to_hex_full(context.Edx) << L'\n';
-    wcout << L"    EDI: " << to_hex_full(context.Edi) << L'\n';
-    wcout << L"    ESI: " << to_hex_full(context.Esi) << L'\n';
-    wcout << L"    EBP: " << to_hex_full(context.Ebp) << L'\n';
-    wcout << L"    CS: " << to_hex_full(context.SegCs) << L'\n';
-    wcout << L"    DS: " << to_hex_full(context.SegDs) << L'\n';
-    wcout << L"    ES: " << to_hex_full(context.SegEs) << L'\n';
-    wcout << L"    FS: " << to_hex_full(context.SegFs) << L'\n';
-    wcout << L"    GS: " << to_hex_full(context.SegGs) << L'\n';
-    wcout << L"    SS: " << to_hex_full(context.SegSs) << L'\n';
-    wcout << L"    EFlags: " << to_hex_full(context.EFlags) << L'\n';
-    wcout << L"    DR0: " << to_hex_full(context.Dr0) << L'\n';
-    wcout << L"    DR1: " << to_hex_full(context.Dr1) << L'\n';
-    wcout << L"    DR2: " << to_hex_full(context.Dr2) << L'\n';
-    wcout << L"    DR3: " << to_hex_full(context.Dr3) << L'\n';
-    wcout << L"    DR6: " << to_hex_full(context.Dr6) << L'\n';
-    wcout << L"    DR7: " << to_hex_full(context.Dr7) << L'\n';
+    log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
+    log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
+    log << std::format(L"    ESP: {}\n", to_hex_full(context.Esp));
+    log << std::format(L"    EAX: {}\n", to_hex_full(context.Eax));
+    log << std::format(L"    EBX: {}\n", to_hex_full(context.Ebx));
+    log << std::format(L"    ECX: {}\n", to_hex_full(context.Ecx));
+    log << std::format(L"    EDX: {}\n", to_hex_full(context.Edx));
+    log << std::format(L"    EDI: {}\n", to_hex_full(context.Edi));
+    log << std::format(L"    ESI: {}\n", to_hex_full(context.Esi));
+    log << std::format(L"    EBP: {}\n", to_hex_full(context.Ebp));
+    log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
+    log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
+    log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
+    log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
+    log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
+    log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
+    log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+    log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
+    log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
+    log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
+    log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
+    log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
+    log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
 
-    wcout << L"    FloatSave:\n";
-    wcout << L"      ControlWord: " << to_hex(context.FloatSave.ControlWord) << L'\n';
-    wcout << L"      StatusWord: " << to_hex(context.FloatSave.StatusWord) << L'\n';
-    wcout << L"      TagWord: " << to_hex(context.FloatSave.TagWord) << L'\n';
-    wcout << L"      ErrorOffset: " << to_hex(context.FloatSave.ErrorOffset) << L'\n';
-    wcout << L"      ErrorSelector: " << to_hex(context.FloatSave.ErrorSelector) << L'\n';
-    wcout << L"      DataOffset: " << to_hex(context.FloatSave.DataOffset) << L'\n';
-    wcout << L"      DataSelector: " << to_hex(context.FloatSave.DataSelector) << L'\n';
-    wcout << L"      RegisterArea:\n";
-    hex_dump::hex_dump(wcout, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
-    wcout << L'\n';
+    log << L"    FloatSave:\n";
+    log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
+    log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
+    log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
+    log << std::format(L"      ErrorOffset: {}\n", to_hex(context.FloatSave.ErrorOffset));
+    log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
+    log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
+    log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
+    log << L"      RegisterArea:\n";
+    hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+    log << L'\n';
 
     if (has_extended_registers)
     {
-        wcout << L"    ExtendedRegisters:\n";
-        hex_dump::hex_dump(wcout, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
-        wcout << L'\n';
+        log << L"    ExtendedRegisters:\n";
+        hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
+        log << L'\n';
     }
 }
 
-void dump_mini_dump_wow64_thread_context(WOW64_CONTEXT const& context, bool const has_extended_registers)
+void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context, bool const has_extended_registers)
 {
-    wcout << L"    ContextFlags: " << to_hex_full(context.ContextFlags) << L'\n';
-    wcout << L"    EIP: " << to_hex_full(context.Eip) << L'\n';
-    wcout << L"    ESP: " << to_hex_full(context.Esp) << L'\n';
-    wcout << L"    EAX: " << to_hex_full(context.Eax) << L'\n';
-    wcout << L"    EBX: " << to_hex_full(context.Ebx) << L'\n';
-    wcout << L"    ECX: " << to_hex_full(context.Ecx) << L'\n';
-    wcout << L"    EDX: " << to_hex_full(context.Edx) << L'\n';
-    wcout << L"    EDI: " << to_hex_full(context.Edi) << L'\n';
-    wcout << L"    ESI: " << to_hex_full(context.Esi) << L'\n';
-    wcout << L"    EBP: " << to_hex_full(context.Ebp) << L'\n';
-    wcout << L"    CS: " << to_hex_full(context.SegCs) << L'\n';
-    wcout << L"    DS: " << to_hex_full(context.SegDs) << L'\n';
-    wcout << L"    ES: " << to_hex_full(context.SegEs) << L'\n';
-    wcout << L"    FS: " << to_hex_full(context.SegFs) << L'\n';
-    wcout << L"    GS: " << to_hex_full(context.SegGs) << L'\n';
-    wcout << L"    SS: " << to_hex_full(context.SegSs) << L'\n';
-    wcout << L"    EFlags: " << to_hex_full(context.EFlags) << L'\n';
-    wcout << L"    DR0: " << to_hex_full(context.Dr0) << L'\n';
-    wcout << L"    DR1: " << to_hex_full(context.Dr1) << L'\n';
-    wcout << L"    DR2: " << to_hex_full(context.Dr2) << L'\n';
-    wcout << L"    DR3: " << to_hex_full(context.Dr3) << L'\n';
-    wcout << L"    DR6: " << to_hex_full(context.Dr6) << L'\n';
-    wcout << L"    DR7: " << to_hex_full(context.Dr7) << L'\n';
+    log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
+    log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
+    log << std::format(L"    ESP: {}\n", to_hex_full(context.Esp));
+    log << std::format(L"    EAX: {}\n", to_hex_full(context.Eax));
+    log << std::format(L"    EBX: {}\n", to_hex_full(context.Ebx));
+    log << std::format(L"    ECX: {}\n", to_hex_full(context.Ecx));
+    log << std::format(L"    EDX: {}\n", to_hex_full(context.Edx));
+    log << std::format(L"    EDI: {}\n", to_hex_full(context.Edi));
+    log << std::format(L"    ESI: {}\n", to_hex_full(context.Esi));
+    log << std::format(L"    EBP: {}\n", to_hex_full(context.Ebp));
+    log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
+    log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
+    log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
+    log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
+    log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
+    log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
+    log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+    log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
+    log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
+    log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
+    log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
+    log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
+    log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
 
-    wcout << L"    FloatSave:\n";
-    wcout << L"      ControlWord: " << to_hex(context.FloatSave.ControlWord) << L'\n';
-    wcout << L"      StatusWord: " << to_hex(context.FloatSave.StatusWord) << L'\n';
-    wcout << L"      TagWord: " << to_hex(context.FloatSave.TagWord) << L'\n';
-    wcout << L"      ErrorOffset: " << to_hex(context.FloatSave.ErrorOffset) << L'\n';
-    wcout << L"      ErrorSelector: " << to_hex(context.FloatSave.ErrorSelector) << L'\n';
-    wcout << L"      DataOffset: " << to_hex(context.FloatSave.DataOffset) << L'\n';
-    wcout << L"      DataSelector: " << to_hex(context.FloatSave.DataSelector) << L'\n';
-    wcout << L"      Cr0NpxState: " << to_hex(context.FloatSave.Cr0NpxState) << L'\n';
-    wcout << L"      RegisterArea:\n";
-    hex_dump::hex_dump(wcout, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
-    wcout << L'\n';
+    log << L"    FloatSave:\n";
+    log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
+    log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
+    log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
+    log << std::format(L"      ErrorOffset: {}\n", to_hex(context.FloatSave.ErrorOffset));
+    log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
+    log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
+    log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
+    log << std::format(L"      Cr0NpxState: {}\n", to_hex(context.FloatSave.Cr0NpxState));
+    log << L"      RegisterArea:\n";
+    hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+    log << L'\n';
 
     if (has_extended_registers)
     {
-        wcout << L"    ExtendedRegisters:\n";
-        hex_dump::hex_dump(wcout, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
-        wcout << L'\n';
+        log << L"    ExtendedRegisters:\n";
+        hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
+        log << L'\n';
     }
 }
 
-void dump_mini_dump_thread_names_stream_data(mini_dump const& mini_dump, size_t const index)
+void dump_mini_dump_thread_names_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
     thread_names_list_stream const thread_names_list{mini_dump, index};
 
     if (!thread_names_list.found())
     {
-        wcout << L"ThreadNamesStream not found!\n";
+        log << L"ThreadNamesStream not found!\n";
         return;
     }
 
-    wcout << L"NumberOfThreadNames: " << thread_names_list.thread_names_list().NumberOfThreadNames << L'\n';
+    log << std::format(L"NumberOfThreadNames: {}\n", locale_formatting::to_wstring(thread_names_list.thread_names_list().NumberOfThreadNames));
     for (size_t i = 0; auto const& entry : thread_names_list.list())
     {
-        wcout << L" [" << i << "]: " << entry.name() << L'\n';
-        wcout << L"   ThreadId: " << entry->ThreadId << L'\n';
+        log << std::format(L" [{0}]: {1}\n", locale_formatting::to_wstring(i), entry.name());
+        log << std::format(L"   ThreadId: {}\n", to_hex(entry->ThreadId));
 
         ++i;
     }
-    wcout << L'\n';
+    log << L'\n';
 }
 
-void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t const index,
+void dump_mini_dump_thread_list_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
                                             dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     thread_list_stream const thread_list{mini_dump, index};
 
     if (!thread_list.found())
     {
-        wcout << L"ThreadListStream not found!\n";
+        log << L"ThreadListStream not found!\n";
         return;
     }
 
     auto const thread_ids = get_filtered_thread_ids(options);
 
-    wcout << L"NumberOfThreads: " << thread_list.thread_list().NumberOfThreads << L'\n';
+    log << std::format(L"NumberOfThreads: {}\n", locale_formatting::to_wstring(thread_list.thread_list().NumberOfThreads));
     for (size_t i = 0; auto const& thread : thread_list.list())
     {
         if (!thread_ids.empty() && !thread_ids.contains(thread->ThreadId))
@@ -274,62 +269,64 @@ void dump_mini_dump_thread_list_stream_data(mini_dump const& mini_dump, size_t c
             continue;
         }
 
-        wcout << L" [" << i << "] Thread Id: " << thread->ThreadId << L" (" << to_hex(thread->ThreadId) << L')';
+        log << std::format(L" [{0}] Thread Id: {1} ({2})", locale_formatting::to_wstring(i), locale_formatting::to_wstring(thread->ThreadId), to_hex(thread->ThreadId));
         if (!thread.thread_name().empty())
         {
-            wcout << L" (" << thread.thread_name() << L")";
+            log << std::format(L" ({})", thread.thread_name());
         }
-        wcout << L'\n';
-        wcout << L"   Priority: " << thread->Priority << L'\n';
-        wcout << L"   PriorityClass: " << thread->PriorityClass << L'\n';
-        wcout << L"   SuspendCount: " << thread->SuspendCount << L'\n';
-        wcout << L"   TEB: " << to_hex_full(thread->Teb) << L'\n';
+        log << L'\n';
+        log << std::format(L"   Priority: {}\n", locale_formatting::to_wstring(thread->Priority));
+        log << std::format(L"   PriorityClass: {}\n", locale_formatting::to_wstring(thread->PriorityClass));
+        log << std::format(L"   SuspendCount: {}\n", locale_formatting::to_wstring(thread->SuspendCount));
+        log << std::format(L"   TEB: {}\n", to_hex_full(thread->Teb));
 
-        load_and_dump_teb(mini_dump, symbol_engine, thread->Teb);
+        load_and_dump_teb(log, mini_dump, symbol_engine, thread->Teb);
 
-        dump_mini_dump_thread_context(thread.thread_context(), options);
+        dump_mini_dump_thread_context(log, thread.thread_context(), options);
 
         using namespace size_units::base_16;
-        wcout << L"   Stack: " << to_hex_full(thread->Stack.StartOfMemoryRange) << L" - " <<
-            to_hex_full(thread->Stack.StartOfMemoryRange + thread->Stack.Memory.DataSize) << L" (" <<
-            to_hex(thread->Stack.Memory.DataSize) << L") (" << bytes{thread->Stack.Memory.DataSize} << L")\n";
+        log << std::format(L"   Stack: {0} - {1} ({2}) ({3})\n"
+            , to_hex_full(thread->Stack.StartOfMemoryRange)
+            , to_hex_full(thread->Stack.StartOfMemoryRange + thread->Stack.Memory.DataSize)
+            , to_hex(thread->Stack.Memory.DataSize)
+            , to_wstring(bytes{thread->Stack.Memory.DataSize}));
 
         if (thread.stack() != nullptr)
         {
             if (options.display_symbols())
             {
-                stream_stack_dump::hex_dump_stack(wcout, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
+                stream_stack_dump::hex_dump_stack(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,
                                                   thread.thread_context(), 5);
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(wcout, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
+                hex_dump::hex_dump(log, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
                                    thread->Stack.StartOfMemoryRange);
-                wcout << L'\n';
+                log << L'\n';
             }
         }
 
         ++i;
     }
-    wcout << L'\n';
+    log << L'\n';
 }
 
 
-void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_t const index,
+void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
                                                dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     thread_ex_list_stream const thread_ex_list{mini_dump, index};
 
     if (!thread_ex_list.found())
     {
-        wcout << L"ThreadListExStream not found!\n";
+        log << L"ThreadListExStream not found!\n";
         return;
     }
 
     auto const thread_ids = get_filtered_thread_ids(options);
 
-    wcout << L"NumberOfThreads: " << thread_ex_list.thread_list().NumberOfThreads << L'\n';
+    log << std::format(L"NumberOfThreads: {}\n", locale_formatting::to_wstring(thread_ex_list.thread_list().NumberOfThreads));
     for (size_t i = 0; auto const& thread : thread_ex_list.list())
     {
         if (!thread_ids.empty() && !thread_ids.contains(thread->ThreadId))
@@ -338,115 +335,116 @@ void dump_mini_dump_thread_list_ex_stream_data(mini_dump const& mini_dump, size_
             continue;
         }
 
-        wcout << L" [" << i << "] Thread Id: " << thread->ThreadId << L" (" << to_hex(thread->ThreadId) << L')';
+        log << std::format(L" [{0}] Thread Id: {1} ({2})", locale_formatting::to_wstring(i), locale_formatting::to_wstring(thread->ThreadId), to_hex(thread->ThreadId));
         if (!thread.thread_name().empty())
         {
-            wcout << L" (" << thread.thread_name() << L")";
+            log << std::format(L" ({})", thread.thread_name());
         }
-        wcout << L'\n';
-        wcout << L"   Priority: " << thread->Priority << L'\n';
-        wcout << L"   PriorityClass: " << thread->PriorityClass << L'\n';
-        wcout << L"   SuspendCount: " << thread->SuspendCount << L'\n';
-        wcout << L"   TEB: " << to_hex_full(thread->Teb) << L'\n';
+        log << L'\n';
+        log << std::format(L"   Priority: {}\n", locale_formatting::to_wstring(thread->Priority));
+        log << std::format(L"   PriorityClass: {}\n", locale_formatting::to_wstring(thread->PriorityClass));
+        log << std::format(L"   SuspendCount: {}\n", locale_formatting::to_wstring(thread->SuspendCount));
+        log << std::format(L"   TEB: {}\n", to_hex_full(thread->Teb));
 
-        load_and_dump_teb(mini_dump, symbol_engine, thread->Teb);
+        load_and_dump_teb(log, mini_dump, symbol_engine, thread->Teb);
 
         using namespace size_units::base_16;
-        wcout << L"   Stack: " << to_hex_full(thread->Stack.StartOfMemoryRange) << L" - " <<
-            to_hex_full(thread->Stack.StartOfMemoryRange + thread->Stack.Memory.DataSize) << L" (" <<
-            to_hex(thread->Stack.Memory.DataSize) << L") (" << bytes{thread->Stack.Memory.DataSize} << L")\n";
+        log << std::format(L"   Stack: {0} - {1} ({2}) ({3})\n"
+            , to_hex_full(thread->Stack.StartOfMemoryRange)
+            , to_hex_full(thread->Stack.StartOfMemoryRange + thread->Stack.Memory.DataSize)
+            , to_hex(thread->Stack.Memory.DataSize)
+            , to_wstring(bytes{thread->Stack.Memory.DataSize}));
         if (thread.stack() != nullptr)
         {
             if (options.display_symbols())
             {
-                stream_stack_dump::hex_dump_stack(wcout, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
+                stream_stack_dump::hex_dump_stack(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,
                                                   thread.thread_context(), 5);
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(wcout, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
+                hex_dump::hex_dump(log, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
                                    thread->Stack.StartOfMemoryRange);
-                wcout << L'\n';
+                log << L'\n';
             }
         }
 
-        dump_mini_dump_thread_context(thread.thread_context(), options);
+        dump_mini_dump_thread_context(log, thread.thread_context(), options);
 
-        wcout << L"   BackingStore: " << to_hex_full(thread->BackingStore.StartOfMemoryRange) << L" - " << to_hex_full(
-                thread->BackingStore.StartOfMemoryRange + thread->BackingStore.Memory.DataSize) << L" (" <<
-            to_hex(thread->Stack.Memory.DataSize) << L") (" << bytes{thread->BackingStore.Memory.DataSize} << L")\n";
+        log << std::format(L"   BackingStore: {0} - {1} ({2}) ({3})\n"
+            , to_hex_full(thread->BackingStore.StartOfMemoryRange)
+            , to_hex_full(thread->BackingStore.StartOfMemoryRange + thread->BackingStore.Memory.DataSize)
+            , to_hex(thread->Stack.Memory.DataSize)
+            , to_wstring(bytes{thread->BackingStore.Memory.DataSize}));
 
         if (options.hex_dump_memory_data())
         {
             if (thread.backing_store() != nullptr)
             {
-                hex_dump::hex_dump(wcout, thread.backing_store(), options.hex_dump_memory_size(thread->BackingStore.Memory.DataSize), 5, true, 16,
+                hex_dump::hex_dump(log, thread.backing_store(), options.hex_dump_memory_size(thread->BackingStore.Memory.DataSize), 5, true, 16,
                                    thread->BackingStore.StartOfMemoryRange);
-                wcout << L'\n';
+                log << L'\n';
             }
         }
 
         ++i;
     }
-    wcout << L'\n';
+    log << L'\n';
 }
 
-void dump_mini_dump_thread_info_list_stream_data(mini_dump const& mini_dump, size_t const index)
+void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
     thread_info_list_stream const thread_info_list{mini_dump, index};
 
     if (!thread_info_list.found())
     {
-        wcout << L"ThreadInfoListStream not found!\n";
+        log << L"ThreadInfoListStream not found!\n";
         return;
     }
 
     if (!thread_info_list.is_valid())
     {
-        wcout << L"ThreadInfoListStream version unknown!\n";
+        log << L"ThreadInfoListStream version unknown!\n";
         return;
     }
 
-    wcout << L"NumberOfEntries: " << thread_info_list.size() << L'\n';
+    log << std::format(L"NumberOfEntries: {}\n", locale_formatting::to_wstring(thread_info_list.size()));
     for (size_t i = 0; auto const& thread : thread_info_list.list())
     {
         using namespace time_units;
-        wcout << L" [" << i << "]: ThreadId: " << thread->ThreadId << L" (" << to_hex(thread->ThreadId) << L')';
+        log << std::format(L" [{0}] Thread Id: {1} ({2})", locale_formatting::to_wstring(i), locale_formatting::to_wstring(thread->ThreadId), to_hex(thread->ThreadId));
         if (!thread.thread_name().empty())
         {
-            wcout << L" (" << thread.thread_name() << L")";
+            log << std::format(L" ({})", thread.thread_name());
         }
-        wcout << L'\n';
-        wcout << L"   StartAddress: " << to_hex_full(thread->StartAddress) << L'\n';
-        wcout << L"   Affinity: " << to_hex_full(thread->Affinity) << L'\n';
+        log << L'\n';
+        log << std::format(L"   StartAddress: {}\n", to_hex_full(thread->StartAddress));
+        log << std::format(L"   Affinity: {}\n", to_hex_full(thread->Affinity));
         if (thread->CreateTime > 0)
         {
-            wcout << L"   CreateTime [local: " <<
-                time_utils::to_local_time(time_utils::filetime_to_time_t(thread->CreateTime)) << L"] [UTC: " <<
-                time_utils::to_utc_time(time_utils::filetime_to_time_t(thread->CreateTime)) << L"]\n";
+            log << std::format(L"   CreateTime [local: {0}] [UTC: {1}]\n"
+                , time_utils::to_local_time(time_utils::filetime_to_time_t(thread->CreateTime))
+                , time_utils::to_utc_time(time_utils::filetime_to_time_t(thread->CreateTime)));
         }
         if (thread->ExitTime > 0)
         {
-            wcout << L"   ExitTime [local: " <<
-                time_utils::to_local_time(time_utils::filetime_to_time_t(thread->ExitTime)) << L"] [UTC: " <<
-                time_utils::to_utc_time(time_utils::filetime_to_time_t(thread->ExitTime)) << L"]\n";
+            log << std::format(L"   ExitTime [local: {0}] [UTC: {1}]\n"
+                , time_utils::to_local_time(time_utils::filetime_to_time_t(thread->ExitTime))
+                , time_utils::to_utc_time(time_utils::filetime_to_time_t(thread->ExitTime)));
         }
-        wcout << L"   UserTime: " << thread->UserTime << L" (" << time_utils::duration_to_ms(thread->UserTime) <<
-            L")\n";
-        wcout << L"   KernelTime: " << thread->KernelTime << L" (" << time_utils::duration_to_ms(thread->KernelTime) <<
-            L")\n";
-        wcout << L"   ExitStatus: " << thread->ExitStatus << L'\n';
-        wcout << L"   DumpFlags: " << thread_info_utils::dump_flags_to_string(thread->DumpFlags) << L" (" <<
-            to_hex(thread->DumpFlags) << L")\n";
-        wcout << L"   DumpError: " << to_hex(thread->DumpError) << L'\n';
+        log << std::format(L"   UserTime: {0} ({1})\n", locale_formatting::to_wstring(thread->UserTime), time_utils::duration_to_ms(thread->UserTime));
+        log << std::format(L"   KernelTime: {0} ({1})\n", locale_formatting::to_wstring(thread->KernelTime), time_utils::duration_to_ms(thread->KernelTime));
+        log << std::format(L"   ExitStatus: {}\n", locale_formatting::to_wstring(thread->ExitStatus));
+        log << std::format(L"   DumpFlags: {0} ({1})\n", thread_info_utils::dump_flags_to_string(thread->DumpFlags), to_hex(thread->DumpFlags));
+        log << std::format(L"   DumpError: {}\n", to_hex(thread->DumpError));
 
         ++i;
     }
-    wcout << L'\n';
+    log << L'\n';
 }
 
-void load_and_dump_teb(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, ULONG64 const teb_address)
+void load_and_dump_teb(std::wostream& log, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, ULONG64 const teb_address)
 {
-    symbol_type_utils::dump_variable_type_at(wcout, mini_dump, symbol_engine, common_symbol_names::teb_structure_symbol_name, teb_address);
+    symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_engine, common_symbol_names::teb_structure_symbol_name, teb_address);
 }

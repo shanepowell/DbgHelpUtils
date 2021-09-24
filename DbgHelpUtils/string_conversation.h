@@ -6,15 +6,12 @@ namespace dlg_help_utils::string_conversation
 {
     // convert UTF-8 string to wstring
     std::wstring utf8_to_wstring(const char* str);
-    std::wstring utf8_to_wstring(std::string const& str);
     std::wstring utf8_to_wstring(std::string_view const& str);
 
     // convert wstring to UTF-8 string
-    std::string wstring_to_utf8(std::wstring const& str);
     std::string wstring_to_utf8(std::wstring_view const& str);
 
     // convert ACP string to wstring 
-    std::wstring acp_to_wstring(std::string const& str);
     std::wstring acp_to_wstring(std::string_view const& str);
 
     // convert code page string to wstring

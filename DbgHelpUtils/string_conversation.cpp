@@ -11,12 +11,6 @@ namespace dlg_help_utils::string_conversation
     }
 
     // convert UTF-8 string to wstring
-    std::wstring utf8_to_wstring(const std::string& str)
-    {
-        [[maybe_unused]] auto [result, status] = code_page_string_to_wstring(str.c_str(), str.length(), CP_UTF8);
-        return result;
-    }
-
     std::wstring utf8_to_wstring(std::string_view const& str)
     {
         [[maybe_unused]] auto [result, status] = code_page_string_to_wstring(str.data(), str.length(), CP_UTF8);
@@ -24,21 +18,9 @@ namespace dlg_help_utils::string_conversation
     }
 
     // convert wstring to UTF-8 string
-    std::string wstring_to_utf8(const std::wstring& str)
-    {
-        [[maybe_unused]] auto [result, status] = to_code_page_string(str.c_str(), str.length(), CP_UTF8);
-        return result;
-    }
-
     std::string wstring_to_utf8(std::wstring_view const& str)
     {
         [[maybe_unused]] auto [result, status] = to_code_page_string(str.data(), str.length(), CP_UTF8);
-        return result;
-    }
-
-    std::wstring acp_to_wstring(std::string const& str)
-    {
-        [[maybe_unused]] auto [result, status] = code_page_string_to_wstring(str.c_str(), str.length(), CP_ACP);
         return result;
     }
 
