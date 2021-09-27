@@ -117,7 +117,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vcpkg.json" />
     <None Include="system_modules.json" />
   </ItemGroup>
 </Project>

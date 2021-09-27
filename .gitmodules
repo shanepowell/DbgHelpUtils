@@ -1,3 +1,6 @@
 [submodule "libraries/json_struct"]
 	path = libraries/json_struct
 	url = https://github.com/jorgen/json_struct
+[submodule "libraries/lyra"]
+	path = libraries/lyra
+	url = https://github.com/bfgroup/Lyra.git

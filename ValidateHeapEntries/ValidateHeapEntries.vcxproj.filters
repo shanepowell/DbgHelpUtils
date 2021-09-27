@@ -23,9 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vcpkg.json" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="symbol_engine_ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -7,7 +7,6 @@
 #include <iostream>
 #include <map>
 #include <ranges>
-#include <sstream>
 
 #define NOMINMAX 1
 #include <Windows.h>

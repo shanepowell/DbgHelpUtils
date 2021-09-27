@@ -20,7 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vcpkg.json" />
     <None Include="..\RunHeapDumpTests.ps1" />
     <None Include="..\RunAllBuildHeapDumpTests.ps1" />
   </ItemGroup>
