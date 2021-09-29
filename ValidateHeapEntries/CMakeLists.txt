@@ -113,3 +113,24 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     DbgHelpUtils
 )
 
+################################################################################
+# Post build setup to copy dbghelp dll's
+################################################################################
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "win32")
+    set(PLATFORM_DIRECTORY "x86")
+else()
+    set(PLATFORM_DIRECTORY "${CMAKE_VS_PLATFORM_NAME}")
+endif()
+set(SOURCE_COPY_FILES "${CMAKE_SOURCE_DIR}/dbghelp_support_files/${PLATFORM_DIRECTORY}")
+if(EXISTS "${SOURCE_COPY_FILES}")
+    set(DESTINATION_COPY_FILES "${CMAKE_SOURCE_DIR}/${PLATFORM_DIRECTORY}/$<CONFIG>")
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy "${SOURCE_COPY_FILES}/dbghelp.dll" "${DESTINATION_COPY_FILES}/dbghelp.dll")
+
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy "${SOURCE_COPY_FILES}/symsrv.dll" "${DESTINATION_COPY_FILES}/symsrv.dll")
+else()
+    message("dbhelp.dll and symsrv.dll must be provided manually for the ValidateHeapEntries to work")
+endif()
