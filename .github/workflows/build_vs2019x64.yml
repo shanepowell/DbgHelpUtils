@@ -23,7 +23,7 @@ jobs:
             name: "Windows $ENV{MS_COMPILER_TYPE} $ENV{ARCH_TYPE}", artifact: "Windows-$ENV{MS_COMPILER_TYPE}$ENV{ARCH_TYPE}.7z",
             os: windows-latest,
             cc: "cl", cxx: "cl",
-            environment_script: $ENV{VSVARSBAT}
+            environment_script: "$ENV{VSVARSBAT}"
           }
 
     steps:
@@ -90,7 +90,7 @@ jobs:
           COMMAND cmake
             -S .
             -B build
-            -G $ENV{CMAKE_COMPILER_TYPE}
+            -G "$ENV{CMAKE_COMPILER_TYPE}"
             -A $ENV{MS_ARCH_TYPE}
           RESULT_VARIABLE result
         )
