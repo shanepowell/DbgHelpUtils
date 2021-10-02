@@ -1,4 +1,4 @@
-name: Windows Build
+name: Windows Visual Studio 2019 x86
 
 on: [push, pull_request]
 
@@ -15,7 +15,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows Latest MSVC", artifact: "Windows-MSVC.7z",
+            name: "Windows vs2019 x86", artifact: "Windows-Vs2019x86.7z",
             os: windows-latest,
             cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
@@ -82,44 +82,8 @@ jobs:
         execute_process(
           COMMAND cmake
             -S .
-            -B build/vs2019x64
+            -B build
             -G "Visual Studio 16 2019"
-            -A x64
-          RESULT_VARIABLE result
-        )
-        if (NOT result EQUAL 0)
-          message(FATAL_ERROR "Bad exit status")
-        endif()
-
-        execute_process(
-          COMMAND cmake
-            -S .
-            -B build/vs2019x86
-            -G "Visual Studio 16 2019"
-            -A win32
-          RESULT_VARIABLE result
-        )
-        if (NOT result EQUAL 0)
-          message(FATAL_ERROR "Bad exit status")
-        endif()
-
-        execute_process(
-          COMMAND cmake
-            -S .
-            -B build/vs2022x64
-            -G "Visual Studio 17 2022"
-            -A x64
-          RESULT_VARIABLE result
-        )
-        if (NOT result EQUAL 0)
-          message(FATAL_ERROR "Bad exit status")
-        endif()
-
-        execute_process(
-          COMMAND cmake
-            -S .
-            -B build/vs2022x86
-            -G "Visual Studio 17 2022"
             -A win32
           RESULT_VARIABLE result
         )
@@ -140,49 +104,7 @@ jobs:
         endif()
 
         execute_process(
-          COMMAND cmake --build build/vs2019x64 --config $ENV{BUILD_TYPE}
-          RESULT_VARIABLE result
-          OUTPUT_VARIABLE output
-          ERROR_VARIABLE output
-          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
-        )
-        if (NOT result EQUAL 0)
-          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
-          string(REPLACE "\n" "%0A" error_message "${error_message}")
-          message("::error::${error_message}")
-          message(FATAL_ERROR "Build failed")
-        endif()
-
-        execute_process(
-          COMMAND cmake --build build/vs2019x86 --config $ENV{BUILD_TYPE}
-          RESULT_VARIABLE result
-          OUTPUT_VARIABLE output
-          ERROR_VARIABLE output
-          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
-        )
-        if (NOT result EQUAL 0)
-          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
-          string(REPLACE "\n" "%0A" error_message "${error_message}")
-          message("::error::${error_message}")
-          message(FATAL_ERROR "Build failed")
-        endif()
-
-        execute_process(
-          COMMAND cmake --build build/vs2022x64 --config $ENV{BUILD_TYPE}
-          RESULT_VARIABLE result
-          OUTPUT_VARIABLE output
-          ERROR_VARIABLE output
-          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
-        )
-        if (NOT result EQUAL 0)
-          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
-          string(REPLACE "\n" "%0A" error_message "${error_message}")
-          message("::error::${error_message}")
-          message(FATAL_ERROR "Build failed")
-        endif()
-
-        execute_process(
-          COMMAND cmake --build build/vs2022x86 --config $ENV{BUILD_TYPE}
+          COMMAND cmake --build build --config $ENV{BUILD_TYPE}
           RESULT_VARIABLE result
           OUTPUT_VARIABLE output
           ERROR_VARIABLE output
@@ -196,7 +118,7 @@ jobs:
         endif()
 
     - name: Install Strip
-      run: cmake --install build/vs2022x64 --prefix instdir --strip
+      run: cmake --install build --prefix instdir --strip
 
     - name: Pack
       working-directory: instdir
