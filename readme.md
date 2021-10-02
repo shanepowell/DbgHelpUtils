@@ -1,5 +1,6 @@
 # **DbgHelp Utilities Library**
-![Windows](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_cmake.yml/badge.svg)
+![Windows VS 2019 x64](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2019x64.yml/badge.svg)
+![Windows VS 2019 x86](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2019x86.yml/badge.svg)
 
 DbgHelp Utilities Library is a simple wrapper around the windows dbghelp.dll library to help break down the structures in a user mode dump file. Specifically it helps in being able to list all the heap allocated memory areas in a dump file.
 
