@@ -82,8 +82,7 @@ jobs:
         execute_process(
           COMMAND cmake
             -S .
-            -B build\vs2019${{ matrix.config.artifact }}
-            -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
+            -B build\vs2019x64
             -G "Visual Studio 16 2019"
             -A x64
           RESULT_VARIABLE result
@@ -95,10 +94,33 @@ jobs:
         execute_process(
           COMMAND cmake
             -S .
-            -B build/vs2022${{ matrix.config.artifact }}
-            -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
+            -B build\vs2019x86
+            -G "Visual Studio 16 2019"
+            -A Win32
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+
+        execute_process(
+          COMMAND cmake
+            -S .
+            -B build/vs2022x64
             -G "Visual Studio 17 2022"
             -A x64
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+
+        execute_process(
+          COMMAND cmake
+            -S .
+            -B build/vs2022x86
+            -G "Visual Studio 17 2022"
+            -A Win32
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -118,7 +140,7 @@ jobs:
         endif()
 
         execute_process(
-          COMMAND cmake --build build/vs2019${{ matrix.config.artifact }} --config $ENV{BUILD_TYPE}
+          COMMAND cmake --build build/vs2019x64 --config $ENV{BUILD_TYPE}
           RESULT_VARIABLE result
           OUTPUT_VARIABLE output
           ERROR_VARIABLE output
@@ -132,7 +154,35 @@ jobs:
         endif()
 
         execute_process(
-          COMMAND cmake --build build/vs2022${{ matrix.config.artifact }} --config $ENV{BUILD_TYPE}
+          COMMAND cmake --build build/vs2019x86 --config $ENV{BUILD_TYPE}
+          RESULT_VARIABLE result
+          OUTPUT_VARIABLE output
+          ERROR_VARIABLE output
+          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
+        )
+        if (NOT result EQUAL 0)
+          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
+          string(REPLACE "\n" "%0A" error_message "${error_message}")
+          message("::error::${error_message}")
+          message(FATAL_ERROR "Build failed")
+        endif()
+
+        execute_process(
+          COMMAND cmake --build build/vs2022x64 --config $ENV{BUILD_TYPE}
+          RESULT_VARIABLE result
+          OUTPUT_VARIABLE output
+          ERROR_VARIABLE output
+          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
+        )
+        if (NOT result EQUAL 0)
+          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
+          string(REPLACE "\n" "%0A" error_message "${error_message}")
+          message("::error::${error_message}")
+          message(FATAL_ERROR "Build failed")
+        endif()
+
+        execute_process(
+          COMMAND cmake --build build/vs2022x86 --config $ENV{BUILD_TYPE}
           RESULT_VARIABLE result
           OUTPUT_VARIABLE output
           ERROR_VARIABLE output
@@ -146,7 +196,7 @@ jobs:
         endif()
 
     - name: Install Strip
-      run: cmake --install build/vs2022${{ matrix.config.artifact }} --prefix instdir --strip
+      run: cmake --install build/vs2022x64 --prefix instdir --strip
 
     - name: Pack
       working-directory: instdir
