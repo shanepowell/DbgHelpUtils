@@ -1,4 +1,4 @@
-name: Windows Visual Studio 2019 x64
+name: "Visual Studio 2019 x64"
 
 on: [push, pull_request]
 
@@ -10,6 +10,7 @@ env:
   MS_COMPILER_TYPE: vs2019
   CMAKE_COMPILER_TYPE: "Visual Studio 16 2019"
   VSVARSBAT: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+  ARTIFACT_FILE: "Windows-Vs2019x64.7z"
 
 jobs:
   build:
@@ -20,7 +21,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows $ENV{MS_COMPILER_TYPE} $ENV{ARCH_TYPE}", artifact: "Windows-$ENV{MS_COMPILER_TYPE}$ENV{ARCH_TYPE}.7z",
+            name: "Windows Visual Studio Build", artifact: "$ENV{ARTIFACT_FILE}",
             os: windows-latest,
             cc: "cl", cxx: "cl",
             environment_script: "$ENV{VSVARSBAT}"
@@ -172,7 +173,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows $ENV{MS_COMPILER_TYPE} $ENV{ARCH_TYPE}", artifact: "Windows-$ENV{MS_COMPILER_TYPE}$ENV{ARCH_TYPE}.7z",
+            name: "Windows Visual Studio Build", artifact: "$ENV{ARTIFACT_FILE}",
             os: ubuntu-latest
           }
     needs: release
