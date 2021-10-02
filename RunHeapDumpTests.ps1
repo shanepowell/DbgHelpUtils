@@ -12,6 +12,7 @@
 Param
 (
     [string] $DumpFolder,
+    [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
     [string] $ResultFile = "Report.log",
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
@@ -61,8 +62,8 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $dmp_2 -ErrorAction:SilentlyContinue | Out-Null
         remove-item $log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $json -ErrorAction:SilentlyContinue | Out-Null
-        Write-Verbose "Run: . `"$PSScriptRoot\$arch_dir\$config\$app_name`" `"--test`" `"$arg`" `"--type`" `"$alloc`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $log `"--json`" $json"
-        . "$PSScriptRoot\$arch_dir\$config\$app_name" "--test" "$arg" "--type" "$alloc" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $log "--json" $json
+        Write-Verbose "Run: . `"$ExeFolder\$app_name`" `"--test`" `"$arg`" `"--type`" `"$alloc`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $log `"--json`" $json"
+        . "$ExeFolder\$app_name" "--test" "$arg" "--type" "$alloc" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $log "--json" $json
     }
 
     if($GenerateHeapLogs)
@@ -78,18 +79,18 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $dmp_2_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_2_debug_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
 
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log
+        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log"
+        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log
+        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log"
+        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log
 
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log
-        Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log"
-        . "$PSScriptRoot\$BinFolder\$ReleaseFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log
+        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log"
+        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log
+        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log"
+        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log
     }
-    Write-Verbose "Run: . `"$PSScriptRoot\$BinFolder\$ReleaseFolder\ValidateHeapEntries.exe`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $ResultFile `"--json`" $json $validateoptions"
-    . "$PSScriptRoot\$BinFolder\$ReleaseFolder\ValidateHeapEntries.exe" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $ResultFile "--json" $json $validateoptions
+    Write-Verbose "Run: . `"$ExeFolder\ValidateHeapEntries.exe`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $ResultFile `"--json`" $json $validateoptions"
+    . "$ExeFolder\ValidateHeapEntries.exe" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $ResultFile "--json" $json $validateoptions
 }
 
 function Test-Admin {
@@ -126,10 +127,18 @@ else
     $BinFolder = "x64"
 }
 
+$compilers = @{
+    "vs2019" = "v142";
+    "vs2022" = "v143";
+}
+$CompilerDir = $compilers[$Compiler]
+
 if(!$DumpFolder)
 {
-    $DumpFolder = "$($BinFolder)$($ReleaseFolder)CrashDumps"
+    $DumpFolder = "$Compiler$($BinFolder)$($ReleaseFolder)CrashDumps"
 }
+
+$ExeFolder = "$PSScriptRoot\$BinFolder\$CompilerDir\$ReleaseFolder"
 
 if (!(Test-Path $DumpFolder))
 {
