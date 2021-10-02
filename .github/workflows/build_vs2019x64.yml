@@ -5,6 +5,11 @@ on: [push, pull_request]
 env:
   CMAKE_VERSION: 3.21.1
   BUILD_TYPE: Release
+  ARCH_TYPE: x64
+  MS_ARCH_TYPE: x64
+  MS_COMPILER_TYPE: vs2019
+  CMAKE_COMPILER_TYPE: "Visual Studio 16 2019"
+  VSVARSBAT: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
 
 jobs:
   build:
@@ -15,14 +20,16 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows vs2019 x64", artifact: "Windows-Vs2019x64.7z",
+            name: "Windows $ENV{MS_COMPILER_TYPE} $ENV{ARCH_TYPE}", artifact: "Windows-$ENV{MS_COMPILER_TYPE}$ENV{ARCH_TYPE}.7z",
             os: windows-latest,
             cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+            environment_script: $ENV{VSVARSBAT}
           }
 
     steps:
     - uses: actions/checkout@v1
+      with:
+        submodules: recursive
 
     - name: Download CMake
       shell: cmake -P {0}
@@ -83,8 +90,8 @@ jobs:
           COMMAND cmake
             -S .
             -B build
-            -G "Visual Studio 16 2019"
-            -A x64
+            -G $ENV{CMAKE_COMPILER_TYPE}
+            -A $ENV{MS_ARCH_TYPE}
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -165,7 +172,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows Latest MSVC", artifact: "Windows-MSVC.7z",
+            name: "Windows $ENV{MS_COMPILER_TYPE} $ENV{ARCH_TYPE}", artifact: "Windows-$ENV{MS_COMPILER_TYPE}$ENV{ARCH_TYPE}.7z",
             os: ubuntu-latest
           }
     needs: release
