@@ -1,4 +1,4 @@
-name: CMake Build Matrix
+name: Windows Build
 
 on: [push, pull_request]
 
