@@ -50,4 +50,3 @@ vcpkg_installed
 /vs2019x86ReleaseCrashDumps
 /report.log
 /build
-CMake/
