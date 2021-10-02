@@ -7,9 +7,9 @@ env:
   BUILD_TYPE: Release
   ARCH_TYPE: x86
   MS_ARCH_TYPE: win32
-  MS_COMPILER_TYPE: vs2019
-  CMAKE_COMPILER_TYPE: "Visual Studio 16 2019"
-  VSVARSBAT: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+  MS_COMPILER_TYPE: vs2022
+  CMAKE_COMPILER_TYPE: "Visual Studio 17 2022"
+  VSVARSBAT: "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Auxiliary/Build/vcvars64.bat"
 
 jobs:
   build:
@@ -20,8 +20,8 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows Visual Studio Build", artifact: "Windows-Vs2019x86.7z",
-            os: windows-latest,
+            name: "Windows Visual Studio Build", artifact: "Windows-Vs2022x86.7z",
+            os: windows-2022,
             cc: "cl", cxx: "cl",
             environment_script: "$ENV{VSVARSBAT}"
           }
@@ -172,7 +172,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Windows Visual Studio Build", artifact: "Windows-Vs2019x86.7z",
+            name: "Windows Visual Studio Build", artifact: "Windows-Vs2022x86.7z",
             os: ubuntu-latest
           }
     needs: release

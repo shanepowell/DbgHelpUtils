@@ -1,4 +1,4 @@
-name: "Visual Studio 2019 x64 "
+name: "Visual Studio 2019 x64   "
 
 on: [push, pull_request]
 
