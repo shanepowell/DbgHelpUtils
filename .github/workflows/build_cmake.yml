@@ -96,7 +96,7 @@ jobs:
             -S .
             -B build/vs2019x86
             -G "Visual Studio 16 2019"
-            -A Win32
+            -A win32
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -120,7 +120,7 @@ jobs:
             -S .
             -B build/vs2022x86
             -G "Visual Studio 17 2022"
-            -A Win32
+            -A win32
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
