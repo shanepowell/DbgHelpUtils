@@ -82,7 +82,7 @@ jobs:
         execute_process(
           COMMAND cmake
             -S .
-            -B build\vs2019x64
+            -B build/vs2019x64
             -G "Visual Studio 16 2019"
             -A x64
           RESULT_VARIABLE result
@@ -94,7 +94,7 @@ jobs:
         execute_process(
           COMMAND cmake
             -S .
-            -B build\vs2019x86
+            -B build/vs2019x86
             -G "Visual Studio 16 2019"
             -A Win32
           RESULT_VARIABLE result
