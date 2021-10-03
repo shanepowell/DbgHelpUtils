@@ -14,6 +14,7 @@ namespace dlg_help_utils
         explicit stream_thread_context(mini_dump const& dump, MINIDUMP_LOCATION_DESCRIPTOR const& location);
 
 #ifdef _WIN64
+
 #define SIZE_OF_80387_REGISTERS      80
 #define MAXIMUM_SUPPORTED_EXTENSION     512
         typedef struct {
@@ -40,7 +41,7 @@ namespace dlg_help_utils
         //  The layout of the record conforms to a standard call frame.
         //
 
-        typedef struct DECLSPEC_NOINITALL _X86_CONTEXT {
+        typedef struct _X86_CONTEXT {
 
             //
             // The flags values within this flag control the contents of
