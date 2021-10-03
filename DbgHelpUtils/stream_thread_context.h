@@ -157,7 +157,7 @@ namespace dlg_help_utils
         } XSAVE_FORMAT;
 
         typedef XSAVE_FORMAT XMM_SAVE_AREA32;
-        typedef struct DECLSPEC_ALIGN(16) DECLSPEC_NOINITALL {
+        typedef struct DECLSPEC_ALIGN(16) {
 
             //
             // Register parameter home addresses.
