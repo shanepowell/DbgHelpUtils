@@ -58,7 +58,7 @@ namespace dlg_help_utils::heap
 
     bool ust_address_stack_trace::is_valid_ust_address(process::process_environment_block const& peb, uint64_t const ust_address)
     {
-        if(ust_address == 0)
+        if(ust_address == 0 || ust_address == 0x01010000 || ust_address == 0x0101000000000000)
         {
             return false;
         }
@@ -89,7 +89,7 @@ namespace dlg_help_utils::heap
             stream_utils::throw_cant_get_field_data(common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name);
         }
 
-        return depth < array_count.value();
+        return depth > 0 && depth < array_count.value();
     }
 
     std::wstring const& ust_address_stack_trace::get_ust_address_depth_field(process::process_environment_block const& peb)

@@ -746,7 +746,7 @@ namespace
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        log << std::format(L"{0}VS {1} Entry: {3}\n", indent_str
+        log << std::format(L"{0}VS {1} Entry: {2}\n", indent_str
             , get_vs_entry_title(entry)
             , stream_hex_dump::to_hex(entry.heap_vs_entry_address(), hex_length));
         log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
@@ -1267,7 +1267,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, dump_fi
 void print_process_entry(std::wostream& log, heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options, size_t const indent)
 {
     using namespace size_units::base_16;
-    log << std::format(L"{0:{1}}{3} size({4}) overhead({5})", L' ', indent, stream_hex_dump::to_hex(entry.user_address(), hex_length), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
+    log << std::format(L"{0:{1}}{2} size({3}) overhead({4})", L' ', indent, stream_hex_dump::to_hex(entry.user_address(), hex_length), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
     if(!entry.filename().empty())
     {
         log << std::format(L" {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));

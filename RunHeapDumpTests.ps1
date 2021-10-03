@@ -19,6 +19,7 @@ Param
     [switch] $TestX86,
     [switch] $TestDebug,
     [switch] $ClearResultsLog,
+    [string[]] $Filter,
     [switch] $Verbose
 )
 
@@ -50,11 +51,16 @@ Function RunAllocationReleaseDebugApplication($arg, $arch_dir, $arch, $alloc, $o
 
 Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $options, $validateoptions)
 {
-
     $dmp_1 = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_1.dmp"
     $dmp_2 = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_2.dmp"
     $log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).log"
     $json = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).json"
+
+    if($Filter -and $null -eq ($Filter | Where-Object { $dmp_1 -match $_ -or $dmp_2 -match $_ }))
+    {
+        return
+    }
+
     if(!$CheckOnly)
     {
         Write-Verbose "Remove all files [$dmp_1] [$dmp_2] [$log] [$json]"
