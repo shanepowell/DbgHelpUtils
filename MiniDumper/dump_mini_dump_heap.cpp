@@ -39,6 +39,8 @@
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
 
+// ReSharper disable CppClangTidyBugproneBranchClone
+
 using namespace std;
 using namespace dlg_help_utils;
 
@@ -123,7 +125,7 @@ namespace
             }
         }
 
-        log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}", indent_str, locale_formatting::to_wstring(segment_index), stream_hex_dump::to_hex(segment.address(), hex_length), locale_formatting::to_wstring(segment.subsegments_count()), to_wstring(segment_total));
+        log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}\n", indent_str, locale_formatting::to_wstring(segment_index), stream_hex_dump::to_hex(segment.address(), hex_length), locale_formatting::to_wstring(segment.subsegments_count()), to_wstring(segment_total));
     }
 
     void print_nt_heap_lfh_segments_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
@@ -367,7 +369,7 @@ namespace
 
         data.printed_subsegment = true;
         bytes const total{ data.subsegment.address() ? data.subsegment.block_count() * data.subsegment.block_stride() : 0 };
-        log << std::format(L"{0}LFH Segment: {1}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index));
+        log << std::format(L"{0}LFH Segment: {1} @ {2}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index), stream_hex_dump::to_hex(data.segment->segment.address(), hex_length));
         log << std::format(L"{0}  Subsegment: {1}\n", indent_str, stream_hex_dump::to_hex(data.subsegment.address(), hex_length));
         log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(data.subsegment.block_count()));
         log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(data.subsegment.block_size()), stream_hex_dump::to_hex(data.subsegment.block_size()));
@@ -392,9 +394,10 @@ namespace
         }
     }
 
-    bool is_lfh_subsegment_in_entry(heap::heap_entry const& entry, LfhSubsegmentData const& data)
+    bool is_lfh_subsegment_in_entry(heap::heap_entry const& entry, LfhSubsegmentData const& data, bool const match_any_entry = false)
     {
-        return !data.printed_subsegment && data.subsegment.entry_start_address() > entry.address() && data.subsegment.entry_start_address() < entry.address() + entry.size().count();
+        auto const is_internal_entry = match_any_entry || (entry.flags() & (heap::heap_entry::FlagBusy | heap::heap_entry::FlagVirtualAlloc)) == (heap::heap_entry::FlagBusy | heap::heap_entry::FlagVirtualAlloc);
+        return !data.printed_subsegment && is_internal_entry && data.subsegment.entry_start_address() > entry.address() && data.subsegment.entry_start_address() < entry.address() + entry.size().count();
     }
 
     void print_heap_segment(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, vector<LfhSubsegmentData>& lfh_data, dump_file_options const& options, size_t const indent)
@@ -1003,17 +1006,11 @@ namespace
             , to_wstring(lfh_bucket.bucket_granularity())
             , to_wstring(lfh_bucket.max_allocation_size()));
 
-        if(lfh_bucket.is_enabled())
-        {
-            log << std::format(L" TotalBlockCount({0}) TotalSubsegmentCount({1}) Shift({2})"
-                , locale_formatting::to_wstring(lfh_bucket.total_block_count())
-                , locale_formatting::to_wstring(lfh_bucket.total_subsegment_count())
-                , locale_formatting::to_wstring(lfh_bucket.shift()));
-        }
-        else
-        {
-            log << std::format(L" UsageCount({})", locale_formatting::to_wstring(lfh_bucket.usage_count()));
-        }
+        log << (lfh_bucket.is_enabled() ? std::format(L" TotalBlockCount({0}) TotalSubsegmentCount({1}) Shift({2})"
+                                                      , locale_formatting::to_wstring(lfh_bucket.total_block_count())
+                                                      , locale_formatting::to_wstring(lfh_bucket.total_subsegment_count())
+                                                      , locale_formatting::to_wstring(lfh_bucket.shift()))
+            : std::format(L" UsageCount({})", locale_formatting::to_wstring(lfh_bucket.usage_count())));
         log << L'\n';
     }
 
@@ -1234,6 +1231,29 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, dump_fi
             {
                 if(!data.printed_subsegment)
                 {
+                    if(!printed_lfh_output)
+                    {
+                        log << "WARNING: LFH segment(s) not found in any heap allocations!\n";
+                    }
+
+                    for(bool found = false; auto const& segment : nt_heap.value().segments())
+                    {
+                        for(auto const& entry : segment.entries())
+                        {
+                            if(is_lfh_subsegment_in_entry(entry, data, true))
+                            {
+                                found = true;
+                                log << std::format(L"ERROR: LFH Segment found in heap invalid entry: {0}\n", stream_hex_dump::to_hex(entry.address(), hex_length));
+                                break;
+                            }
+                        }
+
+                        if(found)
+                        {
+                            break;
+                        }
+                    }
+
                     print_lfh_heap_segment(log, hex_length, data, options, 4);
                     printed_lfh_output = true;
                 }

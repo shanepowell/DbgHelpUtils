@@ -13,6 +13,7 @@ namespace dlg_help_utils
         stream_thread_context() = default;
         explicit stream_thread_context(mini_dump const& dump, MINIDUMP_LOCATION_DESCRIPTOR const& location);
 
+        // ReSharper disable CommentTypo
 #ifdef _WIN64
 
 #define SIZE_OF_80387_REGISTERS      80
@@ -280,6 +281,7 @@ namespace dlg_help_utils
         using context_x86 = CONTEXT;
         using context_x64 = X64_CONTEXT;
 #endif
+        // ReSharper restore CommentTypo
 
         [[nodiscard]] void const* context() const { return context_; }
         [[nodiscard]] size_t size() const { return size_; }

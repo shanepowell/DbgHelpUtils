@@ -1,10 +1,13 @@
 ﻿#include "lfh_segment.h"
 
 #include "common_symbol_names.h"
+#include "heap_entry.h"
+#include "heap_segment.h"
 #include "heap_subsegment.h"
 #include "lfh_heap.h"
 #include "nt_heap.h"
 #include "process_environment_block.h"
+#include "process_heaps.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::heap
@@ -32,18 +35,31 @@ namespace dlg_help_utils::heap
     size_t lfh_segment::subsegments_count() const
     {
         auto [start_subsegment_address, end_subsegment_address] = get_subsegment_range();
+        // ReSharper disable once CppRedundantCastExpression
         return static_cast<size_t>((end_subsegment_address - start_subsegment_address) / heap_subsegment_size_);
     }
 
     std::experimental::generator<heap_subsegment> lfh_segment::subsegments() const
     {
+        // filter out non-valid lfh segments, segments that are not in a HEAP internal allocated entry
+        std::vector<heap_entry> all_heap_entries;
+        for (auto const& segment : lfh_heap().heap().segments())
+        {
+            for (auto const& entry : segment.entries())
+            {
+                all_heap_entries.emplace_back(entry);
+            }
+        }
+
         auto [subsegment_address, end_subsegment_address] = get_subsegment_range();
 
         while(subsegment_address + heap_subsegment_size_ <= end_subsegment_address)
         {
-            heap_subsegment subsegment{lfh_heap_, subsegment_address, lfh_block_zone_size_};
-
-            co_yield subsegment;
+            if(heap_subsegment subsegment{lfh_heap_, subsegment_address, lfh_block_zone_size_};
+                subsegment.entry_start_address() != 0 && std::ranges::any_of(all_heap_entries, [&subsegment](heap_entry const& entry) { return process_heaps::is_lfh_subsegment_in_entry(entry, subsegment); }))
+            {
+                co_yield subsegment;
+            }
 
             subsegment_address += heap_subsegment_size_;
         }

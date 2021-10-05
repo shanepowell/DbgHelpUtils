@@ -572,7 +572,8 @@ namespace dlg_help_utils::heap
 
     bool process_heaps::is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment)
     {
-        return subsegment.entry_start_address() > entry.address() && subsegment.entry_start_address() < entry.address() + entry.size().count();
+        auto const is_internal_entry = (entry.flags() & (heap_entry::FlagBusy | heap_entry::FlagVirtualAlloc)) == (heap_entry::FlagBusy | heap_entry::FlagVirtualAlloc);
+        return is_internal_entry && subsegment.entry_start_address() > entry.address() && subsegment.entry_start_address() < entry.address() + entry.size().count();
     }
 
     bool process_heaps::contains_address(uint64_t const start_address, uint64_t const size, uint64_t const address)

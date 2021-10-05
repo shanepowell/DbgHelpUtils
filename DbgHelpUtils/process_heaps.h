@@ -42,6 +42,8 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] process_heaps_statistics statistics() const;
 
+        [[nodiscard]] static bool is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment);
+
     private:
         void clear_cache() const;
 
@@ -53,7 +55,6 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] static bool is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry);
         [[nodiscard]] static bool is_address_filtered(std::vector<process_heap_entry> const& filters, uint64_t address, size_units::base_16::bytes size);
-        [[nodiscard]] static bool is_lfh_subsegment_in_entry(heap_entry const& entry, heap_subsegment const& subsegment);
         [[nodiscard]] static bool contains_address(uint64_t start_address, uint64_t size, uint64_t address);
 
     private:
