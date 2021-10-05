@@ -8,6 +8,22 @@ Param
     [switch] $Verbose
 )
 
+Function Test-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+    $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+}
+
+if($Verbose)
+{
+    $VerbosePreference = "continue"
+}
+
+if (!$CheckOnly -and (Test-Admin) -eq $false) 
+{
+    Write-Host "This script can only be run with Administrator"
+    exit
+}
+
 if(!$LastReport)
 {
     Remove-Item $ResultFile -ErrorAction:SilentlyContinue | Out-Null

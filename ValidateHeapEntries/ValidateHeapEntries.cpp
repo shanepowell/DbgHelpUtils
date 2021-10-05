@@ -261,7 +261,7 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
     {
         if(entry.block_use())
         {
-            if(heap_allocations.find(entry.user_address()) == heap_allocations.end())
+            if(!heap_allocations.contains(entry.user_address()))
             {
                 *o_log << std::format(L"ERROR: CRT Allocation Entry [{0}] of [{1}] not found\n"
                     , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address())
@@ -271,7 +271,7 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
         }
         else
         {
-            if(heap_free_entries.find(entry.user_address()) == heap_free_entries.end())
+            if(!heap_free_entries.contains(entry.user_address()))
             {
                 *o_log << std::format(L"ERROR: CRT Free Entry [{0}] of [{1}] not found\n"
                     , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address())
@@ -331,6 +331,13 @@ int main(int const argc, char* argv[])
             auto const log_filename = dlg_help_utils::string_conversation::acp_to_wstring(log_filename_l);
             auto const json_filename = dlg_help_utils::string_conversation::acp_to_wstring(json_filename_l);
 
+            if(dump_filename_1.empty())
+            {
+                std::cerr << "No dmp file specified to process\n";
+                std::cout << cli << '\n';
+                return EXIT_SUCCESS;
+            }
+
             std::unique_ptr<std::wfstream> log;
             std::wostream* o_log{&std::wcout};
             if(!log_filename.empty())
@@ -365,7 +372,7 @@ int main(int const argc, char* argv[])
             }
 
             auto successful = validate_dump_file(stacktrace, dump_filename_1, {}, o_log, set.first_allocations);
-            if(successful)
+            if(successful && !dump_filename_2.empty())
             {
                 successful = validate_dump_file(stacktrace, dump_filename_2, dump_filename_1, o_log, set.second_allocations);
             }

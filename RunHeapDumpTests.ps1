@@ -20,7 +20,10 @@ Param
     [switch] $TestDebug,
     [switch] $ClearResultsLog,
     [string[]] $Filter,
-    [switch] $Verbose
+    [switch] $Verbose,
+    [string] $CheckDumpFileBaseName,
+    [switch] $CheckDumpHasStackTrace,
+    [switch] $SingleDumpOnly
 )
 
 Function RunAllAllocationApplicationArgs($options, $validateoptions)
@@ -51,10 +54,11 @@ Function RunAllocationReleaseDebugApplication($arg, $arch_dir, $arch, $alloc, $o
 
 Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $options, $validateoptions)
 {
-    $dmp_1 = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_1.dmp"
-    $dmp_2 = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_2.dmp"
-    $log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).log"
-    $json = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options).json"
+    $base_name = "$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)"
+    $dmp_1 = "$DumpFolder\$($base_name)_1.dmp"
+    $dmp_2 = "$DumpFolder\$($base_name)_2.dmp"
+    $log = "$DumpFolder\$base_name.log"
+    $json = "$DumpFolder\$base_name.json"
 
     if($Filter -and $null -eq ($Filter | Where-Object { $dmp_1 -match $_ -or $dmp_2 -match $_ }))
     {
@@ -71,13 +75,22 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         Write-Verbose "Run: . `"$ExeFolder\$app_name`" `"--test`" `"$arg`" `"--type`" `"$alloc`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $log `"--json`" $json"
         . "$ExeFolder\$app_name" "--test" "$arg" "--type" "$alloc" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $log "--json" $json
     }
+    
+    RunAllocationApplicationChecks $validateoptions $base_name
+}
+
+Function RunAllocationApplicationChecks($validateoptions, $base_name)
+{
+    $dmp_1 = "$DumpFolder\$($base_name)_1.dmp"
+    $dmp_2 = "$DumpFolder\$($base_name)_2.dmp"
+    $json = "$DumpFolder\$base_name.json"
 
     if($GenerateHeapLogs)
     {
-        $dmp_1_full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_1_full.log"
-        $dmp_1_debug_full_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_1_debugfull.log"
-        $dmp_2_full_diff_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_2_fulldiff.log"
-        $dmp_2_debug_full_diff_log = "$DumpFolder\$($app_name)_$($arch)_$($config)_$($arg)_$($alloc)$($options)_2_debugfulldiff.log"
+        $dmp_1_full_log = "$DumpFolder\$($base_name)_1_full.log"
+        $dmp_1_debug_full_log = "$DumpFolder\$($base_name)_1_debugfull.log"
+        $dmp_2_full_diff_log = "$DumpFolder\$($base_name)_2_fulldiff.log"
+        $dmp_2_debug_full_diff_log = "$DumpFolder\$($base_name)_2_debugfulldiff.log"
 
         Write-Verbose "Remove all files [$dmp_1_full_log] [$dmp_1_debug_full_log] [$dmp_2_full_diff_log] [$dmp_2_debug_full_diff_log]"
         remove-item $dmp_1_full_log -ErrorAction:SilentlyContinue | Out-Null
@@ -99,7 +112,114 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
     . "$ExeFolder\ValidateHeapEntries.exe" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $ResultFile "--json" $json $validateoptions
 }
 
-function Test-Admin {
+Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
+{
+    $dmp = "$DumpFolder\$($base_name).dmp"
+    $json = "$DumpFolder\$base_name.json"
+
+    if($GenerateHeapLogs)
+    {
+        $dmp_full_log = "$DumpFolder\$($base_name)_full.log"
+        $dmp_debug_full_log = "$DumpFolder\$($base_name)_debugfull.log"
+
+        Write-Verbose "Remove all files [$dmp_full_log] [$dmp_debug_full_log]"
+        remove-item $dmp_full_log -ErrorAction:SilentlyContinue | Out-Null
+        remove-item $dmp_debug_full_log -ErrorAction:SilentlyContinue | Out-Null
+
+        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $dmp_full_log"
+        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $dmp_full_log
+        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp > $dmp_debug_full_log"
+        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp > $dmp_debug_full_log
+    }
+    Write-Verbose "Run: . `"$ExeFolder\ValidateHeapEntries.exe`" `"--dmp1`" $dmp `"--log`" $ResultFile `"--json`" $json $validateoptions"
+    . "$ExeFolder\ValidateHeapEntries.exe" "--dmp1" $dmp "--log" $ResultFile "--json" $json $validateoptions
+}
+
+Function RunStandardTests()
+{
+    $app_image_options = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AllocationSetupTests.exe"
+    $global_flag = "GlobalFlag"
+    $page_heap_flags = "PageHeapFlags"
+    $front_end_heap = "FrontEndHeapDebugOptions"
+
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name -ust -hpa
+        Write-Verbose "Clear all gflags"
+        Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+    }
+    RunAllAllocationApplicationArgs "" ""
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name +ust -hpa
+        Write-Verbose "Set GFlags +ust"
+        New-Item $app_image_options | Out-Null
+        New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_ust" $expected_stacetrace
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name +ust +hpa
+        Write-Verbose "Set GFlags +ust +hpa"
+        Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
+        New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_ust_hpa" $expected_stacetrace
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name +hpa
+        Write-Verbose "Set GFlags +hpa"
+        Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_hpa" ""
+    
+    if(!$CheckOnly)
+    {
+        # enable segment heap type
+        Write-Verbose "Set GFlags +segmentheap"
+        Remove-ItemProperty -Path $app_image_options -Name $global_flag | Out-Null
+        Remove-ItemProperty -Path $app_image_options -Name $page_heap_flags | Out-Null
+        New-ItemProperty -Path $app_image_options -Name $front_end_heap -PropertyType DWord -Value 0x08 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_segment" ""
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name +ust -hpa
+        Write-Verbose "Set GFlags +segmentheap +ust"
+        New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_segment_ust" $expected_stacetrace
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name +ust +hpa
+        Write-Verbose "Set GFlags +segmentheap +ust +hpa"
+        Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
+        New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_segment_ust_hpa" $expected_stacetrace
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name +hpa
+        Write-Verbose "Set GFlags +segmentheap +hpa"
+        Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
+    }
+    RunAllAllocationApplicationArgs "_segment_hpa"
+    
+    if(!$CheckOnly)
+    {
+        #. $GFlags /i $app_name -ust -hpa
+        Write-Verbose "Clear all gflags"
+        Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+    }
+}
+
+Function Test-Admin {
     $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
     $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 }
@@ -109,7 +229,7 @@ if($Verbose)
     $VerbosePreference = "continue"
 }
 
-if ((Test-Admin) -eq $false) 
+if (!$CheckOnly -and (Test-Admin) -eq $false) 
 {
     Write-Host "This script can only be run with Administrator"
     exit
@@ -157,84 +277,35 @@ if($ClearResultsLog)
 }
 
 $app_name = "AllocationSetupTests.exe"
-$app_image_options = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AllocationSetupTests.exe"
-$global_flag = "GlobalFlag"
-$page_heap_flags = "PageHeapFlags"
-$front_end_heap = "FrontEndHeapDebugOptions"
 $expected_stacetrace = "--stacktrace"
 
-if(!$CheckOnly)
+if($CheckDumpFileBaseName)
 {
-    #. $GFlags /i $app_name -ust -hpa
-    Write-Verbose "Clear all gflags"
-    Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+    if($SingleDumpOnly)
+    {
+        if($CheckDumpHasStackTrace)
+        {
+            RunAllocationApplicationSingleDumpChecks $expected_stacetrace $CheckDumpFileBaseName 
+        }
+        else
+        {
+            RunAllocationApplicationSingleDumpChecks "" $CheckDumpFileBaseName
+        }
+  
+    }
+    else
+    {
+        if($CheckDumpHasStackTrace)
+        {
+            RunAllocationApplicationChecks $expected_stacetrace $CheckDumpFileBaseName 
+        }
+        else
+        {
+            RunAllocationApplicationChecks "" $CheckDumpFileBaseName
+        }
+    }
 }
-RunAllAllocationApplicationArgs "" ""
-
-if(!$CheckOnly)
+else
 {
-    #. $GFlags /i $app_name +ust -hpa
-    Write-Verbose "Set GFlags +ust"
-    New-Item $app_image_options | Out-Null
-    New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
-}
-RunAllAllocationApplicationArgs "_ust" $expected_stacetrace
-
-if(!$CheckOnly)
-{
-    #. $GFlags /i $app_name +ust +hpa
-    Write-Verbose "Set GFlags +ust +hpa"
-    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
-    New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
-}
-RunAllAllocationApplicationArgs "_ust_hpa" $expected_stacetrace
-
-if(!$CheckOnly)
-{
-    #. $GFlags /i $app_name +hpa
-    Write-Verbose "Set GFlags +hpa"
-    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
-}
-RunAllAllocationApplicationArgs "_hpa" ""
-
-if(!$CheckOnly)
-{
-    # enable segment heap type
-    Write-Verbose "Set GFlags +segmentheap"
-    Remove-ItemProperty -Path $app_image_options -Name $global_flag | Out-Null
-    Remove-ItemProperty -Path $app_image_options -Name $page_heap_flags | Out-Null
-    New-ItemProperty -Path $app_image_options -Name $front_end_heap -PropertyType DWord -Value 0x08 | Out-Null
-}
-RunAllAllocationApplicationArgs "_segment" ""
-
-if(!$CheckOnly)
-{
-    #. $GFlags /i $app_name +ust -hpa
-    Write-Verbose "Set GFlags +segmentheap +ust"
-    New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
-}
-RunAllAllocationApplicationArgs "_segment_ust" $expected_stacetrace
-
-if(!$CheckOnly)
-{
-    #. $GFlags /i $app_name +ust +hpa
-    Write-Verbose "Set GFlags +segmentheap +ust +hpa"
-    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
-    New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
-}
-RunAllAllocationApplicationArgs "_segment_ust_hpa" $expected_stacetrace
-
-if(!$CheckOnly)
-{
-    #. $GFlags /i $app_name +hpa
-    Write-Verbose "Set GFlags +segmentheap +hpa"
-    Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
-}
-RunAllAllocationApplicationArgs "_segment_hpa"
-
-if(!$CheckOnly)
-{
-    #. $GFlags /i $app_name -ust -hpa
-    Write-Verbose "Clear all gflags"
-    Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
+    RunStandardTests
 }
