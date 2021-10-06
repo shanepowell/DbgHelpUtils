@@ -342,40 +342,61 @@ namespace dlg_help_utils::stream_stack_dump
         return nullptr;
     }
 
-    void const* mini_dump_stack_walk::get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    template<typename T>
+    void const* mini_dump_stack_walk::get_memory_range_for_address(T const& memory_list, DWORD64 base_address, DWORD64& size, bool limit_size)
     {
-        if (memory_list_.found())
+        if (memory_list.found())
         {
+            // a memory range can cross boundaries and that is ok...
+            auto base = base_address;
+            auto size_left = size;
             DWORD64 length = size;
-            if (auto const* memory = memory_list_.find_any_address_range(base_address, length); memory != nullptr && (!limit_size || length == size))
+            void const* rv = nullptr;
+
+            if(!limit_size)
             {
-                if(!limit_size)
-                {
-                    size = length;
-                }
-                return memory;
+                size = 0;
             }
+
+            while(size_left > 0)
+            {
+                if (auto const* memory = memory_list.find_any_address_range(base, length); memory != nullptr && (!limit_size || length == size))
+                {
+                    if(!limit_size)
+                    {
+                        size += length;
+                    }
+
+                    size_left -= length;
+                    base += length;
+                    length = size_left;
+
+                    if(rv == nullptr)
+                    {
+                        rv = memory;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return rv;
         }
 
         return nullptr;
     }
 
+
+    void const* mini_dump_stack_walk::get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool const limit_size) const
+    {
+        return get_memory_range_for_address(memory_list_, base_address, size, limit_size);
+    }
+
     void const* mini_dump_stack_walk::get_memory64_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
     {
-        if (memory64_list_.found())
-        {
-            DWORD64 length = size;
-            if (auto const* memory = memory64_list_.find_any_address_range(base_address, length); memory != nullptr && (!limit_size || length == size))
-            {
-                if(!limit_size)
-                {
-                    size = length;
-                }
-                return memory;
-            }
-        }
-
-        return nullptr;
+        return get_memory_range_for_address(memory64_list_, base_address, size, limit_size);
     }
 
     void const* mini_dump_stack_walk::get_memory_from_pe_file(DWORD64 base_address, DWORD64& size, bool limit_size) const

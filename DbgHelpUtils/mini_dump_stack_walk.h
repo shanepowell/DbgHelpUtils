@@ -93,6 +93,9 @@ namespace dlg_help_utils::stream_stack_dump
 
         static DWORD64 find_max_element_size(void const* memory, DWORD64 element_size, DWORD64 max_size, std::function<bool(void const*)> const& pred);
 
+        template<typename T>
+        static void const* get_memory_range_for_address(T const& memory_list, DWORD64 base_address, DWORD64& size, bool limit_size);
+
     private:
         DWORD64 stack_start_range_;
         uint8_t const* stack_;

@@ -281,7 +281,6 @@ namespace dlg_help_utils::heap
         }
 
         auto const min_ust_data_size = heap_entry_length_ + heap_entry_length_;
-        auto const end_address = heap_entry_address_ + size().count();
         auto stream = walker().get_process_memory_stream(heap_entry_address_ + min_ust_data_size, size().count() - min_ust_data_size);
 
         std::array constexpr find_values =
@@ -292,36 +291,12 @@ namespace dlg_help_utils::heap
             static_cast<uint16_t>(0x0502)
         };
 
-        auto reset_stream = stream;
-
-        size_t index = 0;
-        while(!stream.eof() && stream.current_address() < end_address)
+        while(!stream.eof())
         {
-            uint16_t check;
-            if(stream.read(&check, sizeof check) != sizeof check)
+            if (stream.find_pattern<uint16_t>([&find_values](uint16_t const data, size_t const found_index) { return find_values[found_index] == std::numeric_limits<uint16_t>::max() || find_values[found_index] == data; }
+                , [&find_values](size_t const found_index) { return found_index == find_values.size(); }))
             {
-                break;
-            }
-
-            if(find_values[index] == std::numeric_limits<uint16_t>::max() || find_values[index] == check)
-            {
-                if(index == 0)
-                {
-                    reset_stream = stream;
-                }
-                ++index;
-                if(index == find_values.size())
-                {
-                    return stream.current_address();
-                }
-            }
-            else
-            {
-                if(index > 0)
-                {
-                    stream = reset_stream;
-                }
-                index = 0;
+                return stream.current_address();
             }
         }
 
