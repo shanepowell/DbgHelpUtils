@@ -3,7 +3,6 @@
 #include "heap_lfh_context.h"
 #include "process_environment_block.h"
 #include "segment_heap_utils.h"
-#include "stream_utils.h"
 #include "ust_address_stack_trace.h"
 
 namespace dlg_help_utils::heap

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <string>
+#include <string_view>
 
 namespace dlg_help_utils::module_match
 {

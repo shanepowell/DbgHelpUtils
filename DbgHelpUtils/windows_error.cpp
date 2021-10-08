@@ -1,7 +1,6 @@
 #include "windows_error.h"
 
 #include <format>
-#include <stdexcept>
 
 #include "handles.h"
 #include "stream_hex_dump.h"

@@ -1,6 +1,5 @@
 ﻿#include "size_units.h"
 
-#include <charconv>
 #include <sstream>
 
 #include "chrono_unit_convert_to_string.h"

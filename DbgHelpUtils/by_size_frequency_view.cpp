@@ -16,16 +16,16 @@ namespace dlg_help_utils::heap::statistic_views
     std::experimental::generator<process_heaps_statistic_bucket_view> by_size_frequency_view::buckets() const
     {
         std::map<uint64_t, bucket_entries> buckets;
-        for(auto const& entry : allocated_entries())
+        for(const auto& entry : allocated_entries() | std::views::values)
         {
-            auto& bucket = get_bucket(buckets, entry.second);
-            bucket.entries.emplace_back(entry.second);
+            auto& bucket = get_bucket(buckets, entry);
+            bucket.entries.emplace_back(entry);
         }
 
-        for(auto const& entry : free_entries())
+        for(const auto& entry : free_entries() | std::views::values)
         {
-            auto& bucket = get_bucket(buckets, entry.second);
-            bucket.free_entries.emplace_back(entry.second);
+            auto& bucket = get_bucket(buckets, entry);
+            bucket.free_entries.emplace_back(entry);
         }
 
         for(auto bucket : sorted_range(buckets | std::views::transform([this, &buckets](std::pair<uint64_t, bucket_entries> const& data)

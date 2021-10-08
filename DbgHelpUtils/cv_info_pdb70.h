@@ -19,7 +19,7 @@ namespace dlg_help_utils
         // ReSharper disable CppInconsistentNaming
         // ReSharper disable once IdentifierTypo
         // ReSharper disable once CommentTypo
-        static const DWORD CV_SIGNATURE_RSDS{0x53445352}; // 'SDSR'
+        static constexpr DWORD CV_SIGNATURE_RSDS{0x53445352}; // 'SDSR'
 
         struct CV_INFO_PDB70
         {

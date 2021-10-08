@@ -93,13 +93,13 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(display_heap_entries_)["--heapentries"]("heap entries only")
         | lyra::opt(display_crtheap_)["--crtheap"]("crtheap data information")
         | lyra::opt(display_stack_trace_database_)["--std"]("stack trace database")
-        | lyra::opt(heap_statistics_raw_, dlg_help_utils::join(g_heap_statistics_view_options | std::views::keys, "|"sv))["--heapstat"]("display heap statistic").choices([](std::string const& value) { return g_heap_statistics_view_options.find(value) != g_heap_statistics_view_options.end(); })
+        | lyra::opt(heap_statistics_raw_, dlg_help_utils::join(g_heap_statistics_view_options | std::views::keys, "|"sv))["--heapstat"]("display heap statistic").choices([](std::string const& value) { return g_heap_statistics_view_options.contains(value); })
         | lyra::opt(by_range_view_range_raw_, "range")["--viewrange"]("heap size statistic view bucket size")
         | lyra::opt(system_module_list_file_, "filename")["--systemmodules"]("json file holding the list of system modules")
         // ReSharper disable once StringLiteralTypo
-        | lyra::opt(view_sort_column_raw_, dlg_help_utils::join(g_view_sort_column | std::views::keys, "|"sv))["--statsortcolumn"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_column.find(value) != g_view_sort_column.end(); })
+        | lyra::opt(view_sort_column_raw_, dlg_help_utils::join(g_view_sort_column | std::views::keys, "|"sv))["--statsortcolumn"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_column.contains(value); })
         // ReSharper disable once StringLiteralTypo
-        | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_order.find(value) != g_view_sort_order.end(); })
+        | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_order.contains(value); })
     ;
 }
 

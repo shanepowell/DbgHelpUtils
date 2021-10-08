@@ -30,6 +30,6 @@ namespace dlg_help_utils::heap::statistic_views
     bool system_module_list::is_system_module(std::wstring const& module_name) const
     {
         auto const key = string_compare::to_lower(std::filesystem::path{module_name}.filename().wstring());
-        return system_modules_names_.find(key) != system_modules_names_.end();
+        return system_modules_names_.contains(key);
     }
 }

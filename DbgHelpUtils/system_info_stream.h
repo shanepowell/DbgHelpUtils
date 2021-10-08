@@ -2,7 +2,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <string_view>
+#include <string>
 
 namespace dlg_help_utils
 {

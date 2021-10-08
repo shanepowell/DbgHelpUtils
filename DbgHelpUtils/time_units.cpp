@@ -73,7 +73,7 @@ namespace dlg_help_utils::time_units
     } // namespace
 
 
-    std::wstring to_wstring(std::chrono::milliseconds ms)
+    std::wstring to_wstring(std::chrono::milliseconds const ms)
     {
         auto years_months_ms = ms;
         const auto yrs = std::chrono::duration_cast<years>(years_months_ms);
@@ -86,8 +86,8 @@ namespace dlg_help_utils::time_units
         {
             if (yrs.count() > 0)
             {
-                auto const& str = get_label_strings(time_unit_type::year);
-                chrono_unit_utilities::convert_to_string(ss, yrs, mons, str.first, str.second);
+                const auto& [name, plural_name] = get_label_strings(time_unit_type::year);
+                chrono_unit_utilities::convert_to_string(ss, yrs, mons, name, plural_name);
             }
             else
             {

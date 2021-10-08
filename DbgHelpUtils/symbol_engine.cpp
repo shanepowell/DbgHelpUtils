@@ -5,7 +5,6 @@
 #include <charconv>
 #include <filesystem>
 #include <ranges>
-#include <sstream>
 
 #include "cv_info_pdb70.h"
 #include "exit_scope.h"
@@ -32,10 +31,10 @@ namespace
 {
     size_t constexpr trace_max_function_name_length{1000};
     size_t constexpr max_buffer_size = sizeof(SYMBOL_INFOW) + (trace_max_function_name_length * sizeof(wchar_t));
-    auto const progress_xml_start = L"<Progress percent=\""sv;
-    auto const progress_xml_end = L"\"/>\n"sv;
-    auto const downloading_xml_start = L"<Activity name=\"Downloading file "sv;
-    auto const downloading_xml_end = L"\" details=\""sv;
+    auto constexpr progress_xml_start = L"<Progress percent=\""sv;
+    auto constexpr progress_xml_end = L"\"/>\n"sv;
+    auto constexpr downloading_xml_start = L"<Activity name=\"Downloading file "sv;
+    auto constexpr downloading_xml_end = L"\" details=\""sv;
 
     dlg_help_utils::dbg_help::i_stack_walk_callback* g_callback{nullptr};
 

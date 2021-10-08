@@ -3,8 +3,6 @@
 #include "symbol_engine.h"
 #include "windows_error.h"
 
-#include <format>
-
 using namespace std::string_view_literals;
 
 namespace dlg_help_utils::dbg_help

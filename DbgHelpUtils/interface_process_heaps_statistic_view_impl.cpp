@@ -3,7 +3,6 @@
 #include <format>
 #include <functional>
 #include <numeric>
-#include <sstream>
 
 #include "by_application_callsite_frequency_view.h"
 #include "by_size_frequency_view.h"

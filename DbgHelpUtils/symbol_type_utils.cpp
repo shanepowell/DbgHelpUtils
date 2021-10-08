@@ -9,7 +9,6 @@
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
 #include "mini_dump_stack_walk.h"
-#include "mini_dump_stream_type.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
 #include "size_units.h"

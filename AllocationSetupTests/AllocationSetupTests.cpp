@@ -79,8 +79,8 @@ int main(int const argc, char* argv[])
             auto show_help{false};
 
             auto cli = lyra::help(show_help)
-                | lyra::opt(allocation_test, dlg_help_utils::join(test_functions | std::views::keys, "|"sv))["--test"]("generate test of allocations").choices([&test_functions](std::string const& value) { return test_functions.find(value) != test_functions.end(); })
-                | lyra::opt(allocation_type, dlg_help_utils::join(allocation_functions | std::views::keys, "|"sv))["--type"]("application type").choices([&allocation_functions](std::string const& value) { return allocation_functions.find(value) != allocation_functions.end(); })
+                | lyra::opt(allocation_test, dlg_help_utils::join(test_functions | std::views::keys, "|"sv))["--test"]("generate test of allocations").choices([&test_functions](std::string const& value) { return test_functions.contains(value); })
+                | lyra::opt(allocation_type, dlg_help_utils::join(allocation_functions | std::views::keys, "|"sv))["--type"]("application type").choices([&allocation_functions](std::string const& value) { return allocation_functions.contains(value); })
                 | lyra::opt( dump_filename_1_l, "filename" )["-1"]["--dmp1"]("first dump filename")
                 | lyra::opt( dump_filename_2_l, "filename" )["-2"]["--dmp2"]("second dump filename")
                 | lyra::opt( log_filename_l, "filename" )["-l"]["--log"]("log filename")
@@ -227,7 +227,7 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, st
     std::array<std::array<void*, 0xF>, max_rounds> allocation_groups{};
     std::array<std::array<void*, 0xE>, max_rounds - 1> small_allocation_groups{};
 
-    auto const sizes_type = L"sizes"sv;
+    auto constexpr sizes_type = L"sizes"sv;
 
     for(auto index = 0; index < max_rounds; ++index)
     {

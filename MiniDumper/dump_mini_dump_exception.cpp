@@ -9,7 +9,6 @@
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
-#include "DbgHelpUtils/thread_ex_list_stream.h"
 
 using namespace std;
 using namespace dlg_help_utils::stream_hex_dump;

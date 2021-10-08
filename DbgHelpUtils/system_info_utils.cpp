@@ -139,17 +139,14 @@ namespace
     }
 }
 
-namespace std
+template <>
+struct std::hash<windows_version>
 {
-    template <>
-    struct hash<windows_version>
+    std::size_t operator()(windows_version const& v) const noexcept
     {
-        std::size_t operator()(windows_version const& v) const noexcept
-        {
-            return v.hash();
-        }
-    };
-}
+        return v.hash();
+    }
+};
 
 namespace
 {
