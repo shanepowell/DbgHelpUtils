@@ -49,4 +49,6 @@ vcpkg_installed
 /vs2019x86DebugCrashDumps
 /vs2019x86ReleaseCrashDumps
 /report.log
+/ReportVs2019.log
+/ReportVs2022.log
 /build

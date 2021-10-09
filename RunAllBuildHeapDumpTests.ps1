@@ -1,7 +1,7 @@
 Param
 (
     [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
-    [string] $ResultFile = "Report.log",
+    [string] $ResultFile,
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
     [switch] $LastReport,
@@ -22,6 +22,15 @@ if (!$CheckOnly -and (Test-Admin) -eq $false)
 {
     Write-Host "This script can only be run with Administrator"
     exit
+}
+
+if(!$ResultFile)
+{
+    $compilerResultsFile = @{
+        "vs2019" = "ReportVs2019.log";
+        "vs2022" = "ReportVs2022.log";
+    }
+    $ResultFile = $compilerResultsFile[$Compiler]
 }
 
 if(!$LastReport)
