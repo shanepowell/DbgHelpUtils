@@ -4,12 +4,14 @@
 #include <array>
 #include <charconv>
 #include <filesystem>
+#include <format>
 #include <ranges>
 
 #include "cv_info_pdb70.h"
 #include "exit_scope.h"
 #include "guid_utils.h"
 #include "hex_dump.h"
+#include "locale_number_formatting.h"
 #include "module_match.h"
 #include "pe_file.h"
 #include "stream_hex_dump.h"
@@ -68,8 +70,7 @@ namespace
 #pragma pack(pop)
 
     // ReSharper disable CppParameterMayBeConst
-    BOOL CALLBACK read_process_memory_routine([[maybe_unused]] HANDLE h_process, DWORD64 lp_base_address,
-                                              PVOID lp_buffer, DWORD n_size, PDWORD lp_number_of_bytes_read)
+    BOOL CALLBACK read_process_memory_routine([[maybe_unused]] HANDLE h_process, DWORD64 lp_base_address, PVOID lp_buffer, DWORD n_size, PDWORD lp_number_of_bytes_read)
     {
         return g_callback->read_process_memory(lp_base_address, lp_buffer, n_size, lp_number_of_bytes_read);
     }
@@ -87,16 +88,14 @@ namespace
         auto* result = g_callback->function_table_access(address_base);
         if (result != nullptr) return result;
 
-        result = SymFunctionTableAccess64AccessRoutines(h_process, address_base, read_process_memory_routine,
-                                                        get_module_base_routine);
+        result = SymFunctionTableAccess64AccessRoutines(h_process, address_base, read_process_memory_routine, get_module_base_routine);
         return result;
     }
 
     // ReSharper restore CppParameterMayBeConst
 
     // ReSharper disable CppParameterMayBeConst
-    DWORD64 CALLBACK translate_address([[maybe_unused]] _In_ HANDLE h_process, _In_ HANDLE h_thread,
-                                       _In_ LPADDRESS64 lp_address)
+    DWORD64 CALLBACK translate_address([[maybe_unused]] _In_ HANDLE h_process, _In_ HANDLE h_thread, _In_ LPADDRESS64 lp_address)
     {
         return g_callback->translate_address(h_thread, lp_address);
     }
@@ -247,8 +246,7 @@ namespace
 
         if (callback.symbol_load_debug())
         {
-            callback.log_stream() << L"DlgHelp: action_code: " << action_code_to_string(action_code) << L" (" <<
-                to_hex(action_code) << L") callback_data:(" << to_hex(callback_data) << L"]\n";
+            callback.log_stream() << std::format(L"DlgHelp: action_code: {0} ({1} callback_data:({2})\n", action_code_to_string(action_code), to_hex(action_code), to_hex(callback_data));
         }
 
         if (callback_data == 0) return FALSE;
@@ -259,9 +257,7 @@ namespace
             if (callback.symbol_load_debug() && callback_data != 0)
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_EVENTW const*>(callback_data);
-                callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":[" <<
-                    severity_to_string(evt->severity) << L"]:(" << to_hex(evt->code) << L")[" << evt->desc << L"] " <<
-                    evt->object << L'\n';
+                callback.log_stream() << std::format(L"DlgHelp: {0}:[{1}]:({2})[{3}] {4}\n", action_code_to_string(action_code), severity_to_string(evt->severity), to_hex(evt->code), evt->desc, to_hex(evt->object));
             }
             return TRUE;
 
@@ -273,26 +269,40 @@ namespace
                 if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64))
                 {
                     auto const* evt = reinterpret_cast<IMAGEHLP_DEFERRED_SYMBOL_LOADW64 const*>(callback_data);
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":BaseOfImage[" <<
-                        to_hex(evt->BaseOfImage) << L"]:CheckSum[" << to_hex(evt->CheckSum) << L"]:TimeDateStamp:[" <<
-                        to_hex(evt->TimeDateStamp) << L"]:FileName[" << evt->FileName << L"]:Reparse[" << std::boolalpha
-                        << evt->Reparse << L"]:hFile[" << to_hex(evt->hFile) << L"]:Flags[" << to_hex(evt->Flags) <<
-                        L"]\n";
+                    callback.log_stream() << 
+                        std::format(L"DlgHelp: {0}:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:FileName[{4}]:Reparse[{5}]:hFile[{6}]:Flags[{7}]\n"
+                            , action_code_to_string(action_code)
+                            , to_hex(evt->BaseOfImage)
+                            , to_hex(evt->CheckSum)
+                            , to_hex(evt->TimeDateStamp)
+                            , evt->FileName
+                            , evt->Reparse
+                            , to_hex(evt->hFile)
+                            , to_hex(evt->Flags));
                 }
                 else if (size_of_struct == sizeof(symbol_load_w64))
                 {
                     auto const* evt = reinterpret_cast<symbol_load_w64 const*>(callback_data);
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L"[c]:BaseOfImage["
-                        << to_hex(evt->base_of_image) << L"]:CheckSum[" << to_hex(evt->check_sum) <<
-                        L"]:TimeDateStamp:[" << to_hex(evt->time_date_stamp) << L"]:Unknown:[" << to_hex(evt->unknown)
-                        << L"]:FileName[" << evt->file_name << L"]:Reparse[" << evt->reparse << L"]:hFile[" <<
-                        to_hex(evt->h_file) << L"]:Flags[" << to_hex(evt->flags) << L"]\n";
+                    callback.log_stream() << 
+                        std::format(L"DlgHelp: {0}[c]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]:FileName[{5}]:Reparse[{6}]:hFile[{7}]:Flags[{8}]\n"
+                            , action_code_to_string(action_code)
+                            , to_hex(evt->base_of_image)
+                            , to_hex(evt->check_sum)
+                            , to_hex(evt->time_date_stamp)
+                            , to_hex(evt->unknown)
+                            , evt->file_name
+                            , evt->reparse
+                            , to_hex(evt->h_file)
+                            , to_hex(evt->flags));
                 }
                 else
                 {
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) <<
-                        L": unknown event data size: " << size_of_struct << L" != " << sizeof(
-                            IMAGEHLP_DEFERRED_SYMBOL_LOADW64) << L'|' << sizeof(symbol_load_w64) << L'\n';
+                    callback.log_stream() << 
+                        std::format(L"DlgHelp: {0}: unknown event data size: {1} != {2}|{3}\n"
+                            , action_code_to_string(action_code)
+                            , locale_formatting::to_wstring(size_of_struct)
+                            , locale_formatting::to_wstring(sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64))
+                            , locale_formatting::to_wstring(sizeof(symbol_load_w64)));
                 }
             }
             dump_sizeof_struct_data(callback_data, callback);
@@ -328,8 +338,7 @@ namespace
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_READ_MEMORY const*>(callback_data);
                 // ReSharper disable once StringLiteralTypo
-                callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":addr[" <<
-                    to_hex(evt->addr) << L"]:bytes:[" << to_hex(evt->bytes) << L"]\n";
+                callback.log_stream() << std::format(L"DlgHelp: {0}:addr[{1}]:bytes:[{2}]\n", action_code_to_string(action_code), to_hex(evt->addr), to_hex(evt->bytes));
             }
 
             if (g_callback != nullptr && callback_data != 0)
@@ -346,18 +355,15 @@ namespace
                 if (auto const * evt = reinterpret_cast<IMAGEHLP_DUPLICATE_SYMBOL64 const*>(callback_data); evt->SizeOfStruct == sizeof(IMAGEHLP_DUPLICATE_SYMBOL64))
                 {
                     // ReSharper disable once StringLiteralTypo
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":NumberOfDups[" <<
-                        evt->NumberOfDups << L"]:SelectedSymbol[" << evt->SelectedSymbol << L"]\n";
-                    callback.log_stream() << L"    Symbol: Address: [" << to_hex(evt->Symbol->Address) << L"]\n";
-                    callback.log_stream() << L"            Size: [" << evt->Symbol->Size << L"]\n";
-                    callback.log_stream() << L"            Flags: [" << to_hex(evt->Symbol->Flags) << L"]\n";
-                    callback.log_stream() << L"            Name: [" << evt->Symbol->Name << L"]\n";
+                    callback.log_stream() << std::format(L"DlgHelp: {0}:NumberOfDups[{1}]:SelectedSymbol[{2}]\n", action_code_to_string(action_code), locale_formatting::to_wstring(evt->NumberOfDups), locale_formatting::to_wstring(evt->SelectedSymbol));
+                    callback.log_stream() << std::format(L"    Symbol: Address: [{}]\n", to_hex(evt->Symbol->Address));
+                    callback.log_stream() << std::format(L"            Size: [{}]\n", locale_formatting::to_wstring(evt->Symbol->Size));
+                    callback.log_stream() << std::format(L"            Flags: [{}]\n", to_hex(evt->Symbol->Flags));
+                    callback.log_stream() << std::format(L"            Name: [{}]\n", dlg_help_utils::string_conversation::acp_to_wstring(evt->Symbol->Name));
                 }
                 else
                 {
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) <<
-                        L": unknown event data size : " << evt->SizeOfStruct << L" != " << sizeof(
-                            IMAGEHLP_DUPLICATE_SYMBOL64) << L'\n';
+                    callback.log_stream() << std::format(L"DlgHelp: {0}: unknown event data size : {1} != {2}\n", action_code_to_string(action_code), locale_formatting::to_wstring(evt->SizeOfStruct), locale_formatting::to_wstring(sizeof(IMAGEHLP_DUPLICATE_SYMBOL64)));
                 }
             }
             dump_sizeof_struct_data(callback_data, callback);
@@ -370,7 +376,7 @@ namespace
 
                 if (callback.symbol_load_debug())
                 {
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":" << xml;
+                    callback.log_stream() << std::format(L"DlgHelp: {0}:{1}", action_code_to_string(action_code), xml);
                     if (xml.find_first_of(L'\n') == std::wstring_view::npos)
                     {
                         callback.log_stream() << L'\n';
@@ -413,9 +419,7 @@ namespace
             if (callback.symbol_load_debug() && callback_data != 0)
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_EVENTW const*>(callback_data);
-                callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":[" <<
-                    severity_to_string(evt->severity) << L"]:(" << to_hex(evt->code) << L")[" << evt->desc << L"] " <<
-                    evt->object << L'\n';
+                callback.log_stream() << std::format(L"DlgHelp: {0}:[{1}]:({2})[{3}] {4}\n", action_code_to_string(action_code), severity_to_string(evt->severity), to_hex(evt->code), evt->desc, to_hex(evt->object));
             }
             return TRUE;
 
@@ -423,7 +427,7 @@ namespace
             if (callback.symbol_load_debug() && callback_data != 0)
             {
                 std::wstring_view const xml{reinterpret_cast<wchar_t const*>(callback_data)};
-                callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L":" << xml;
+                callback.log_stream() << std::format(L"DlgHelp: {0}:{1}", action_code_to_string(action_code), xml);
                 if (xml.find_first_of(L'\n') == std::wstring_view::npos)
                 {
                     callback.log_stream() << L'\n';
@@ -437,15 +441,11 @@ namespace
                 if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(symbol_load))
                 {
                     auto const* evt = reinterpret_cast<symbol_load const*>(callback_data);
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) << L"[c]:BaseOfImage["
-                        << to_hex(evt->base_of_image) << L"]:CheckSum[" << to_hex(evt->check_sum) <<
-                        L"]:TimeDateStamp:[" << to_hex(evt->time_date_stamp) << L"]:Unknown:[" << to_hex(evt->unknown1)
-                        << L"]\n";
+                    callback.log_stream() << std::format(L"DlgHelp: {0}[c]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]\n", action_code_to_string(action_code), to_hex(evt->base_of_image), to_hex(evt->check_sum), to_hex(evt->time_date_stamp), to_hex(evt->unknown1));
                 }
                 else
                 {
-                    callback.log_stream() << L"DlgHelp: " << action_code_to_string(action_code) <<
-                        L": unknown event data size: " << size_of_struct << L" != " << sizeof(symbol_load) << L'\n';
+                    callback.log_stream() << std::format(L"DlgHelp: {0}: unknown event data size: {1} != {2}\n", action_code_to_string(action_code), locale_formatting::to_wstring(size_of_struct), locale_formatting::to_wstring(sizeof(symbol_load)));
                 }
             }
             dump_sizeof_struct_data(callback_data, callback);
@@ -494,7 +494,7 @@ namespace
 
         if (auto const & callback = symbol_engine.callback(); callback.symbol_load_debug())
         {
-            callback.log_stream() << L"DlgHelp: FindFile: " << filename << L" checksum check failure\n";
+            callback.log_stream() << std::format(L"DlgHelp: FindFile: {} checksum check failure\n", filename);
         }
 
         return TRUE;
@@ -582,8 +582,7 @@ namespace dlg_help_utils::dbg_help
             if (callback().symbol_load_debug())
             {
                 callback().log_stream() << L" loading: DBHHEADER_DEBUGDIRS\n";
-                callback().log_stream() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) <<
-                    L'\n';
+                callback().log_stream() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) << L'\n';
                 callback().log_stream() << L" loading: PdbAge:" << pdb.get_age() << L'\n';
                 callback().log_stream() << L" loading: module_size:" << to_hex(module_size) << L'\n';
                 callback().log_stream() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
@@ -608,8 +607,7 @@ namespace dlg_help_utils::dbg_help
             if (callback().symbol_load_debug())
             {
                 callback().log_stream() << L" loading: DBHHEADER_PDBGUID\n";
-                callback().log_stream() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) <<
-                    L'\n';
+                callback().log_stream() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) << L'\n';
                 callback().log_stream() << L" loading: PdbAge:" << pdb.get_age() << L'\n';
                 callback().log_stream() << L" loading: module_size:" << to_hex(module_size) << L'\n';
                 callback().log_stream() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
@@ -831,8 +829,7 @@ namespace dlg_help_utils::dbg_help
         if (frame.StackFrameSize >= sizeof(STACKFRAME_EX) && frame.InlineFrameContext != INLINE_FRAME_CONTEXT_IGNORE &&
             frame.InlineFrameContext != INLINE_FRAME_CONTEXT_INIT)
         {
-            if (!SymFromInlineContextW(fake_process, address, frame.InlineFrameContext, &info.symbol_displacement,
-                                       symbol_.get()))
+            if (!SymFromInlineContextW(fake_process, address, frame.InlineFrameContext, &info.symbol_displacement, symbol_.get()))
             {
                 return std::move(info);
             }
