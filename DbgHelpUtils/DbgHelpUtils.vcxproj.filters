@@ -393,6 +393,12 @@
     <ClCompile Include="by_application_callsite_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
+    <ClCompile Include="global_variables.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="global_variable.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -805,6 +811,12 @@
     </ClInclude>
     <ClInclude Include="join.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="global_variables.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="global_variable.h">
+      <Filter>Process</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

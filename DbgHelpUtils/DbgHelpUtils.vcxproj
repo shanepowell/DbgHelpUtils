@@ -173,6 +173,8 @@
     <ClCompile Include="find_thread_stack.cpp" />
     <ClCompile Include="function_table_stream.cpp" />
     <ClCompile Include="gflags_utils.cpp" />
+    <ClCompile Include="global_variable.cpp" />
+    <ClCompile Include="global_variables.cpp" />
     <ClCompile Include="guid_utils.cpp" />
     <ClCompile Include="handle_data_stream.cpp" />
     <ClCompile Include="handle_operation_list_stream.cpp" />
@@ -279,6 +281,8 @@
     <ClInclude Include="dph_entry.h" />
     <ClInclude Include="dph_heap.h" />
     <ClInclude Include="gflags_utils.h" />
+    <ClInclude Include="global_variable.h" />
+    <ClInclude Include="global_variables.h" />
     <ClInclude Include="hash_combine.h" />
     <ClInclude Include="heap_entry.h" />
     <ClInclude Include="heap_lfh_affinity_slot.h" />

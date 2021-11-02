@@ -100,9 +100,10 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name) const;
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name) const;
-        [[nodiscard]] std::experimental::generator<symbol_type_info> module_types(std::wstring const& module_name);
+        [[nodiscard]] std::vector<symbol_type_info> module_types(std::wstring const& module_name);
 
         [[nodiscard]] static std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name);
+        [[nodiscard]] static std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {});
 
         [[nodiscard]] static std::experimental::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context);
 

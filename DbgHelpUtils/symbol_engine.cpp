@@ -26,6 +26,7 @@
 
 auto constexpr cba_start_op_maybe = 0xA0000000;
 
+using namespace std::string_literals;
 using namespace std::string_view_literals;
 using namespace dlg_help_utils::stream_hex_dump;
 
@@ -500,6 +501,13 @@ namespace
         return TRUE;
     }
 
+    BOOL CALLBACK find_symbol_callback(_In_ PSYMBOL_INFOW symbol_info, [[maybe_unused]] _In_ ULONG symbol_size, _In_opt_ PVOID user_context)
+    {
+        std::vector<dlg_help_utils::dbg_help::symbol_type_info>& symbols{*static_cast<std::vector<dlg_help_utils::dbg_help::symbol_type_info>*>(user_context)};
+        symbols.emplace_back(symbol_info->ModBase, symbol_info->Index);
+        return TRUE;
+    }
+
     // ReSharper restore CppParameterMayBeConst
 }
 
@@ -903,11 +911,12 @@ namespace dlg_help_utils::dbg_help
         return load_type_info(it->second.base, type_name);
     }
 
-    std::experimental::generator<symbol_type_info> symbol_engine::module_types(std::wstring const& module_name)
+    std::vector<symbol_type_info> symbol_engine::module_types(std::wstring const& module_name)
     {
+        std::vector<symbol_type_info> types;
         if(module_name.empty())
         {
-            co_return;
+            return types;
         }
 
         auto it = modules_.find(module_name);
@@ -918,26 +927,15 @@ namespace dlg_help_utils::dbg_help
 
         if(it == modules_.end())
         {
-            co_return;
+            return types;
         }
 
-        std::vector<symbol_type_info> types;
-        // ReSharper disable CppParameterMayBeConst
-        if(!SymEnumTypesW(fake_process, it->second.base, [](PSYMBOL_INFOW symbol_info, [[maybe_unused]] ULONG symbol_size, PVOID user_context)
-        // ReSharper restore CppParameterMayBeConst
-                          {
-                              std::vector<symbol_type_info>& rv = *static_cast<std::vector<symbol_type_info>*>(user_context);
-                              rv.emplace_back(symbol_info->ModBase, symbol_info->Index);
-                              return TRUE;
-                          }, &types))
+        if(!SymEnumTypesW(fake_process, it->second.base, find_symbol_callback, &types))
         {
             windows_error::throw_windows_api_error(L"SymEnumTypesW"sv, to_hex(it->second.base));
         }
 
-        for (auto const& type : types)
-        {
-            co_yield type;
-        }
+        return types;
     }
 
     std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name)
@@ -954,6 +952,18 @@ namespace dlg_help_utils::dbg_help
         }
 
         return symbol_type_info{info->info.ModBase, info->info.Index};
+    }
+
+    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask)
+    {
+        std::vector<symbol_type_info> symbols;
+
+        if(!SymEnumSymbolsExW(fake_process, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &symbols, SYMENUM_OPTIONS_DEFAULT | SYMENUM_OPTIONS_INLINE))
+        {
+            windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask);
+        }
+
+        return symbols;
     }
 
     std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context)

@@ -7,9 +7,9 @@ namespace dlg_help_utils
     , enable_module_loading_{enable_module_loading}
     , current_address_{base_address}
     , end_address_{base_address + size}
+    , memory_{static_cast<uint8_t const*>(get_process_memory_range_(current_address_, size, enable_module_loading_))}
+    , end_memory_{memory_ + size}
     {
-        memory_ = static_cast<uint8_t const*>(get_process_memory_range_(current_address_, size, enable_module_loading_));
-        end_memory_ = memory_ + size;
     }
 
     bool mini_dump_memory_stream::eof() const

@@ -16,6 +16,8 @@
 #include "symbol_engine.h"
 #include "unloaded_module_list_stream.h"
 
+using namespace std::string_literals;
+
 namespace dlg_help_utils::stream_stack_dump
 {
     mini_dump_stack_walk::mini_dump_stack_walk(DWORD64 const stack_start_range, void const* stack,
@@ -626,10 +628,29 @@ namespace dlg_help_utils::stream_stack_dump
         return dbg_help::symbol_engine::get_symbol_info(symbol_name);
     }
 
-    std::experimental::generator<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
+    std::vector<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
     {
         load_module(module_name);
         return symbol_engine_.module_types(module_name);
+    }
+
+    std::vector<dbg_help::symbol_type_info> mini_dump_stack_walk::symbol_walk(std::wstring const& find_mask) const
+    {
+        if(auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(find_mask);
+            module_name.empty() || module_name == L"*"s)
+        {
+            // load all loaded modules...
+            for (auto const& module : module_list_.list())
+            {
+                load_module(module);
+            }
+        }
+        else
+        {
+            load_module(module_name);
+        }
+
+        return dbg_help::symbol_engine::symbol_walk(find_mask);
     }
 
     void mini_dump_stack_walk::load_module(std::wstring const& module_name) const
