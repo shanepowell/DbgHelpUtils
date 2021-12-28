@@ -73,24 +73,24 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(PlatformToolset)\$(Configuration)\</OutDir>
-    <IncludePath>$(VSINSTALLDIR)DIA SDK\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)x86\$(PlatformToolset)\$(Configuration)\</OutDir>
-    <IncludePath>$(VSINSTALLDIR)DIA SDK\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(PlatformToolset)\$(Configuration)\</OutDir>
-    <IncludePath>$(VSINSTALLDIR)DIA SDK\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)x86\$(PlatformToolset)\$(Configuration)\</OutDir>
-    <IncludePath>$(VSINSTALLDIR)DIA SDK\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
