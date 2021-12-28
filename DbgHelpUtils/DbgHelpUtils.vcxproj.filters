@@ -399,6 +399,9 @@
     <ClCompile Include="global_variable.cpp">
       <Filter>Process</Filter>
     </ClCompile>
+    <ClCompile Include="register_names.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -817,6 +820,12 @@
     </ClInclude>
     <ClInclude Include="global_variable.h">
       <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="local_variable.h">
+      <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="register_names.h">
+      <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

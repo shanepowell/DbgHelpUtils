@@ -10,6 +10,7 @@ namespace dlg_help_utils
     public:
         mini_dump_memory_stream() = default;
         mini_dump_memory_stream(std::function<void const*(uint64_t base_address, uint64_t& size, bool enable_module_loading)> get_process_memory_range, uint64_t base_address, uint64_t size, bool enable_module_loading);
+        mini_dump_memory_stream(void const* memory, uint64_t size);
 
         [[nodiscard]] bool eof() const;
         [[nodiscard]] size_t read(void* buffer, size_t length);

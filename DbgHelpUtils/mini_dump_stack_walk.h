@@ -44,7 +44,7 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] DWORD64 find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, bool enable_module_loading = true) const;
         [[nodiscard]] DWORD64 find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool enable_module_loading = true) const;
 
-        [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(STACKFRAME_EX const& frame) const override;
+        [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(dbg_help::thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context) const override;
         static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(
             uint64_t address, module_list_stream const& module_list,
             unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
@@ -53,6 +53,8 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_symbol_info(std::wstring const& symbol_name) const;
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> module_types(std::wstring const& module_name) const;
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> symbol_walk(std::wstring const& find_mask) const;
+
+        [[nodiscard]] bool load_module_from_address(DWORD64 base_address) const;
 
         [[nodiscard]] dbg_help::symbol_engine& symbol_engine() const { return symbol_engine_; }
         [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }

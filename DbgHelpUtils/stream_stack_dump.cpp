@@ -2,16 +2,17 @@
 
 #include <filesystem>
 
-
 #include "function_table_stream.h"
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
 #include "mini_dump_stack_walk.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
+#include "register_names.h"
 #include "stream_hex_dump.h"
 #include "stream_thread_context.h"
 #include "symbol_engine.h"
+#include "symbol_type_utils.h"
 #include "system_info_stream.h"
 #include "unloaded_module_list_stream.h"
 
@@ -99,12 +100,63 @@ namespace dlg_help_utils::stream_stack_dump
 
             return sizeof(uint64_t) * 2;
         }
+
+        template <typename T>
+        void generate_hex_dump_local_variable(std::wostream& os, mini_dump_stack_walk const& walker, dbg_help::local_variable const& local_variable, size_t const hex_length = sizeof(T) * 2)
+        {
+            auto const name = symbol_type_utils::get_symbol_type_friendly_name(local_variable.symbol_info);
+            os << std::format(L"\n          {0}", name);
+            if(local_variable.registry_value.has_value() || local_variable.frame_data.has_value())
+            {
+                os << (local_variable.registry_value 
+                        ? (local_variable.frame_data 
+                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(local_variable.registry_value->register_type), local_variable.frame_data->data_offset, stream_hex_dump::to_hex(local_variable.frame_data->data_address, hex_length))
+                            : std::format(L" [{}]", register_names::get_register_name(local_variable.registry_value->register_type))
+                          )
+                        : std::format(L" ({})", stream_hex_dump::to_hex(local_variable.frame_data->data_address, hex_length))
+                      );
+
+                if(local_variable.frame_data)
+                {
+                    auto stream = walker.get_process_memory_stream(local_variable.frame_data->data_address, local_variable.frame_data->data_size);
+                    if(stream.eof())
+                    {
+                        os << std::format(L"\nFailed to find {0} address [{1}] in dump file\n", name, stream_hex_dump::to_hex_full(local_variable.frame_data->data_address));
+                        return;
+                    }
+                    dump_variable_symbol_at(os, walker, local_variable.symbol_info, local_variable.symbol_info, local_variable.frame_data->data_address, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
+                }
+                else if(local_variable.registry_value)
+                {
+                    mini_dump_memory_stream stream{&local_variable.registry_value->value, local_variable.registry_value->value_size};
+                    dump_variable_symbol_at(os, walker, local_variable.symbol_info, local_variable.symbol_info, 0, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
+                }
+            }
+            else
+            {
+                os << L": <unknown>";
+            }
+        }
+
+        template <typename T>
+        void generate_hex_dump_local_variables(std::wostream& os, std::wstring_view const title, mini_dump_stack_walk const& walker, std::vector<dbg_help::local_variable> const& local_variables)
+        {
+            if(!local_variables.empty())
+            {
+                os << std::format(L"\n{}:", title);
+                for (auto const& local_variable : local_variables)
+                {
+                    generate_hex_dump_local_variable<T>(os, walker, local_variable);
+                }
+            }
+        }
     }
 
 
     void hex_dump_stack(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine,
                         uint64_t const stack_start_address, void const* stack, const size_t stack_size,
-                        stream_thread_context const& thread_context, const size_t indent)
+                        stream_thread_context const& thread_context, const size_t indent,
+                        dump_stack_options::options const options)
     {
         const std::wstring indent_str(indent, L' ');
 
@@ -114,23 +166,52 @@ namespace dlg_help_utils::stream_stack_dump
         module_list_stream const module_list{mini_dump};
         unloaded_module_list_stream const unloaded_module_list{mini_dump};
         pe_file_memory_mapping pe_file_memory_mappings{};
-        mini_dump_stack_walk walk_callback{
-            stack_start_address, stack, stack_size, memory_list, memory64_list, function_table, module_list,
-            unloaded_module_list, pe_file_memory_mappings, symbol_engine
-        };
+        mini_dump_stack_walk const walker
+            {
+                stack_start_address,
+                stack,
+                stack_size,
+                memory_list,
+                memory64_list,
+                function_table,
+                module_list,
+                unloaded_module_list,
+                pe_file_memory_mappings,
+                symbol_engine
+            };
+
+        auto const display_parameters = (options & dump_stack_options::DisplayStackParameters) == dump_stack_options::DisplayStackParameters;
+        auto const display_variables = (options & dump_stack_options::DisplayStackVariables) == dump_stack_options::DisplayStackVariables;
 
         for (size_t index = 0; auto const& entry : dbg_help::symbol_engine::stack_walk(thread_context))
         {
             os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', false) << L' ';
+            auto constexpr parameters_title = L"Parameters"sv;
+            auto constexpr local_variables_title = L"Local Variables"sv;
 
             if (thread_context.x86_thread_context_available() || thread_context.wow64_thread_context_available())
             {
-                generate_hex_dump_address(os, static_cast<uint32_t>(entry.stack), static_cast<uint32_t>(entry.address),
-                                          entry);
+                generate_hex_dump_address(os, static_cast<uint32_t>(entry.stack), static_cast<uint32_t>(entry.address), entry);
+                if(display_parameters)
+                {
+                    generate_hex_dump_local_variables<uint32_t>(os, parameters_title, walker, entry.parameters);
+                }
+                if(display_variables)
+                {
+                    generate_hex_dump_local_variables<uint32_t>(os, local_variables_title, walker, entry.local_variables);
+                }
             }
             else if (thread_context.x64_thread_context_available())
             {
                 generate_hex_dump_address(os, entry.stack, entry.address, entry);
+                if(display_parameters)
+                {
+                    generate_hex_dump_local_variables<uint64_t>(os, parameters_title, walker, entry.parameters);
+                }
+                if(display_variables)
+                {
+                    generate_hex_dump_local_variables<uint64_t>(os, local_variables_title, walker, entry.local_variables);
+                }
             }
 
             os << L'\n';

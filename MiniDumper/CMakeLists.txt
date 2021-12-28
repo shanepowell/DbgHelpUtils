@@ -86,6 +86,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Include directories
 ################################################################################
 target_include_directories(${PROJECT_NAME} PUBLIC
+    "${MSVC_DIA_SDK_DIR}/include;"
     "${CMAKE_CURRENT_SOURCE_DIR}/../libraries;"
     "${CMAKE_CURRENT_SOURCE_DIR}/../libraries/lyra/include;"
     "${CMAKE_CURRENT_SOURCE_DIR}/.."

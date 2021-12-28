@@ -1,9 +1,14 @@
 #pragma once
-#include "windows_setup.h"
 #include <string>
+#include <vector>
+
+#include "local_variable.h"
 
 namespace dlg_help_utils::dbg_help
 {
+    class symbol_type_info;
+    struct local_variable;
+
     struct symbol_address_info
     {
         std::wstring module_name;
@@ -18,5 +23,7 @@ namespace dlg_help_utils::dbg_help
         bool frame_content_found{false};
         DWORD64 address;
         DWORD64 stack;
+        std::vector<local_variable> local_variables;
+        std::vector<local_variable> parameters;
     };
 }

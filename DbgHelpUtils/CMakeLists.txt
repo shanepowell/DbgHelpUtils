@@ -9,6 +9,7 @@ set(DbgHelp
     "data_kind.h"
     "i_stack_walk_callback.h"
     "i_symbol_load_callback.h"
+    "local_variable.h"
     "sym_tag_enum.h"
     "symbol_address_info.h"
     "symbol_engine.cpp"
@@ -157,6 +158,10 @@ set(PeUtilities
 source_group("PeUtilities" FILES ${PeUtilities})
 
 set(Process
+    "global_variable.cpp"
+    "global_variable.h"
+    "global_variables.cpp"
+    "global_variables.h"
     "process_environment_block.cpp"
     "process_environment_block.h"
     "process_parameters.cpp"
@@ -189,6 +194,8 @@ set(StreamUtilities
     "module_match.h"
     "page_range_flags_utils.cpp"
     "page_range_flags_utils.h"
+    "register_names.cpp"
+    "register_names.h"
     "stream_stack_dump.cpp"
     "stream_stack_dump.h"
     "stream_utils.cpp"
@@ -356,6 +363,12 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+)
+################################################################################
+# Include directories
+################################################################################
+target_include_directories(${PROJECT_NAME} PUBLIC
+    "${MSVC_DIA_SDK_DIR}/include"
 )
 ################################################################################
 # Compile definitions

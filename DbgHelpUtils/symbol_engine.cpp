@@ -7,11 +7,16 @@
 #include <format>
 #include <ranges>
 
+// ReSharper disable once CommentTypo
+// Found in "$(VSINSTALLDIR)\DIA SDK\include"
+#include <cvconst.h>
+
 #include "cv_info_pdb70.h"
 #include "exit_scope.h"
 #include "guid_utils.h"
 #include "hex_dump.h"
 #include "locale_number_formatting.h"
+#include "local_variable.h"
 #include "module_match.h"
 #include "pe_file.h"
 #include "stream_hex_dump.h"
@@ -271,7 +276,7 @@ namespace
                 {
                     auto const* evt = reinterpret_cast<IMAGEHLP_DEFERRED_SYMBOL_LOADW64 const*>(callback_data);
                     callback.log_stream() << 
-                        std::format(L"DlgHelp: {0}:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:FileName[{4}]:Reparse[{5}]:hFile[{6}]:Flags[{7}]\n"
+                        std::format(L"DlgHelp: {0}[default]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp[{3}]:FileName[{4}]:Reparse[{5}]:hFile[{6}]:Flags[{7}]\n"
                             , action_code_to_string(action_code)
                             , to_hex(evt->BaseOfImage)
                             , to_hex(evt->CheckSum)
@@ -285,7 +290,7 @@ namespace
                 {
                     auto const* evt = reinterpret_cast<symbol_load_w64 const*>(callback_data);
                     callback.log_stream() << 
-                        std::format(L"DlgHelp: {0}[c]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]:FileName[{5}]:Reparse[{6}]:hFile[{7}]:Flags[{8}]\n"
+                        std::format(L"DlgHelp: {0}[symbol_load_w64]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp[{3}]:Unknown[{4}]:FileName[{5}]:Reparse[{6}]:hFile[{7}]:Flags[{8}]\n"
                             , action_code_to_string(action_code)
                             , to_hex(evt->base_of_image)
                             , to_hex(evt->check_sum)
@@ -339,7 +344,7 @@ namespace
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_READ_MEMORY const*>(callback_data);
                 // ReSharper disable once StringLiteralTypo
-                callback.log_stream() << std::format(L"DlgHelp: {0}:addr[{1}]:bytes:[{2}]\n", action_code_to_string(action_code), to_hex(evt->addr), to_hex(evt->bytes));
+                callback.log_stream() << std::format(L"DlgHelp: {0}:address[{1}]:bytes:[{2}]\n", action_code_to_string(action_code), to_hex(evt->addr), to_hex(evt->bytes));
             }
 
             if (g_callback != nullptr && callback_data != 0)
@@ -442,7 +447,7 @@ namespace
                 if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(symbol_load))
                 {
                     auto const* evt = reinterpret_cast<symbol_load const*>(callback_data);
-                    callback.log_stream() << std::format(L"DlgHelp: {0}[c]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]\n", action_code_to_string(action_code), to_hex(evt->base_of_image), to_hex(evt->check_sum), to_hex(evt->time_date_stamp), to_hex(evt->unknown1));
+                    callback.log_stream() << std::format(L"DlgHelp: {0}[symbol_load]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]\n", action_code_to_string(action_code), to_hex(evt->base_of_image), to_hex(evt->check_sum), to_hex(evt->time_date_stamp), to_hex(evt->unknown1));
                 }
                 else
                 {
@@ -508,6 +513,465 @@ namespace
         return TRUE;
     }
 
+    struct local_variable_info
+    {
+        local_variable_info(dlg_help_utils::dbg_help::thread_context_type type, uint64_t const frame_address_offset, void const* thread_context, std::vector<dlg_help_utils::dbg_help::local_variable> &locals, std::vector<dlg_help_utils::dbg_help::local_variable> &parameters)
+        : type{type}
+        , frame_address_offset{frame_address_offset}
+        , thread_context{thread_context}
+        , locals{locals}
+        , parameters{parameters}
+        {
+        }
+
+        dlg_help_utils::dbg_help::thread_context_type type;
+        uint64_t frame_address_offset;
+        void const* thread_context;
+        std::vector<dlg_help_utils::dbg_help::local_variable> &locals;
+        std::vector<dlg_help_utils::dbg_help::local_variable> &parameters;
+    };
+
+    template<typename T>
+    std::pair<uint64_t,uint64_t> make_register_value(uint64_t const raw_value)
+    {
+        constexpr uint64_t size_masks[] =
+        {
+            0x0,                        // 0
+            0xFF,                       // 1
+            0xFFFF,                     // 2
+            0xFFFFFF,                   // 3
+            0xFFFFFFFF,                 // 4
+            0xFFFFFFFFFF,               // 5
+            0xFFFFFFFFFFFF,             // 6
+            0xFFFFFFFFFFFFFF,           // 7
+            0xFFFFFFFFFFFFFFFF,         // 8
+        };
+        return std::make_pair<uint64_t,uint64_t>(raw_value & size_masks[sizeof T], sizeof T);
+    }
+
+    std::pair<uint64_t,uint64_t> get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context)
+    {
+        switch(register_type) // NOLINT
+        {
+        case CV_AMD64_AL:
+            return make_register_value<uint8_t>(context.Eax);
+
+        case CV_AMD64_BL:
+            return make_register_value<uint8_t>(context.Ebx);
+
+        case CV_AMD64_CL:
+            return make_register_value<uint8_t>(context.Ecx);
+
+        case CV_AMD64_DL:
+            return make_register_value<uint8_t>(context.Edx);
+
+        case CV_AMD64_AX:
+            return make_register_value<uint16_t>(context.Eax);
+
+        case CV_AMD64_BX:
+            return make_register_value<uint16_t>(context.Ebx);
+
+        case CV_AMD64_CX:
+            return make_register_value<uint16_t>(context.Ecx);
+
+        case CV_AMD64_DX:
+            return make_register_value<uint16_t>(context.Edx);
+
+        case CV_AMD64_SP:
+            return make_register_value<uint16_t>(context.Esp);
+
+        case CV_AMD64_BP:
+            return make_register_value<uint16_t>(context.Ebp);
+
+        case CV_AMD64_SI:
+            return make_register_value<uint16_t>(context.Esi);
+
+        case CV_AMD64_DI:
+            return make_register_value<uint16_t>(context.Edi);
+
+        case CV_AMD64_EAX:
+            return make_register_value<uint32_t>(context.Eax);
+
+        case CV_AMD64_EBX:
+            return make_register_value<uint32_t>(context.Ebx);
+
+        case CV_AMD64_ECX:
+            return make_register_value<uint32_t>(context.Ecx);
+
+        case CV_AMD64_EDX:
+            return make_register_value<uint32_t>(context.Edx);
+
+        case CV_AMD64_ESP:
+            return make_register_value<uint32_t>(context.Esp);
+
+        case CV_AMD64_EBP:
+            return make_register_value<uint32_t>(context.Ebp);
+
+        case CV_AMD64_ESI:
+            return make_register_value<uint32_t>(context.Esi);
+
+        case CV_AMD64_EDI:
+            return make_register_value<uint32_t>(context.Edi);
+
+        default:
+            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Register [{}] unknown or unsupported in x86 context", static_cast<uint32_t>(register_type))};
+        }
+    }
+
+    std::pair<uint64_t,uint64_t> get_wow64_register_value(CV_HREG_e register_type, WOW64_CONTEXT const& context)
+    {
+        switch(register_type) // NOLINT
+        {
+        case CV_AMD64_AL:
+            return make_register_value<uint8_t>(context.Eax);
+
+        case CV_AMD64_BL:
+            return make_register_value<uint8_t>(context.Ebx);
+
+        case CV_AMD64_CL:
+            return make_register_value<uint8_t>(context.Ecx);
+
+        case CV_AMD64_DL:
+            return make_register_value<uint8_t>(context.Edx);
+
+        case CV_AMD64_AX:
+            return make_register_value<uint16_t>(context.Eax);
+
+        case CV_AMD64_BX:
+            return make_register_value<uint16_t>(context.Ebx);
+
+        case CV_AMD64_CX:
+            return make_register_value<uint16_t>(context.Ecx);
+
+        case CV_AMD64_DX:
+            return make_register_value<uint16_t>(context.Edx);
+
+        case CV_AMD64_SP:
+            return make_register_value<uint16_t>(context.Esp);
+
+        case CV_AMD64_BP:
+            return make_register_value<uint16_t>(context.Ebp);
+
+        case CV_AMD64_SI:
+            return make_register_value<uint16_t>(context.Esi);
+
+        case CV_AMD64_DI:
+            return make_register_value<uint16_t>(context.Edi);
+
+        case CV_AMD64_EAX:
+            return make_register_value<uint32_t>(context.Eax);
+
+        case CV_AMD64_EBX:
+            return make_register_value<uint32_t>(context.Ebx);
+
+        case CV_AMD64_ECX:
+            return make_register_value<uint32_t>(context.Ecx);
+
+        case CV_AMD64_EDX:
+            return make_register_value<uint32_t>(context.Edx);
+
+        case CV_AMD64_ESP:
+            return make_register_value<uint32_t>(context.Esp);
+
+        case CV_AMD64_EBP:
+            return make_register_value<uint32_t>(context.Ebp);
+
+        case CV_AMD64_ESI:
+            return make_register_value<uint32_t>(context.Esi);
+
+        case CV_AMD64_EDI:
+            return make_register_value<uint32_t>(context.Edi);
+
+        default:
+            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Register [{}] unknown or unsupported in WOW64 (x86) context", static_cast<uint32_t>(register_type))};
+        }
+    }
+
+    std::pair<uint64_t,uint64_t> get_x64_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x64 const& context)
+    {
+        switch(register_type) // NOLINT
+        {
+        case CV_AMD64_AL:
+            return make_register_value<uint8_t>(context.Rax);
+
+        case CV_AMD64_BL:
+            return make_register_value<uint8_t>(context.Rbx);
+
+        case CV_AMD64_CL:
+            return make_register_value<uint8_t>(context.Rcx);
+
+        case CV_AMD64_DL:
+            return make_register_value<uint8_t>(context.Rdx);
+
+        case CV_AMD64_AX:
+            return make_register_value<uint16_t>(context.Rax);
+
+        case CV_AMD64_BX:
+            return make_register_value<uint16_t>(context.Rbx);
+
+        case CV_AMD64_CX:
+            return make_register_value<uint16_t>(context.Rcx);
+
+        case CV_AMD64_DX:
+            return make_register_value<uint16_t>(context.Rdx);
+
+        case CV_AMD64_SP:
+            return make_register_value<uint16_t>(context.Rsp);
+
+        case CV_AMD64_BP:
+            return make_register_value<uint16_t>(context.Rbp);
+
+        case CV_AMD64_SI:
+            return make_register_value<uint16_t>(context.Rsi);
+
+        case CV_AMD64_DI:
+            return make_register_value<uint16_t>(context.Rdi);
+
+        case CV_AMD64_EAX:
+            return make_register_value<uint32_t>(context.Rax);
+
+        case CV_AMD64_EBX:
+            return make_register_value<uint32_t>(context.Rbx);
+
+        case CV_AMD64_ECX:
+            return make_register_value<uint32_t>(context.Rcx);
+
+        case CV_AMD64_EDX:
+            return make_register_value<uint32_t>(context.Rdx);
+
+        case CV_AMD64_ESP:
+            return make_register_value<uint32_t>(context.Rsp);
+
+        case CV_AMD64_EBP:
+            return make_register_value<uint32_t>(context.Rbp);
+
+        case CV_AMD64_ESI:
+            return make_register_value<uint32_t>(context.Rsi);
+
+        case CV_AMD64_EDI:
+            return make_register_value<uint32_t>(context.Rdi);
+
+        case CV_AMD64_RAX:
+            return make_register_value<uint64_t>(context.Rax);
+
+        case CV_AMD64_RBX:
+            return make_register_value<uint64_t>(context.Rbx);
+
+        case CV_AMD64_RCX:
+            return make_register_value<uint64_t>(context.Rcx);
+
+        case CV_AMD64_RDX:
+            return make_register_value<uint64_t>(context.Rdx);
+
+        case CV_AMD64_RSP:
+            return make_register_value<uint64_t>(context.Rsp);
+
+        case CV_AMD64_RBP:
+            return make_register_value<uint64_t>(context.Rbp);
+
+        case CV_AMD64_RSI:
+            return make_register_value<uint64_t>(context.Rsi);
+
+        case CV_AMD64_RDI:
+            return make_register_value<uint64_t>(context.Rdi);
+
+        case CV_AMD64_R8B:
+            return make_register_value<uint8_t>(context.R8);
+
+        case CV_AMD64_R9B:
+            return make_register_value<uint8_t>(context.R9);
+
+        case CV_AMD64_R10B:
+            return make_register_value<uint8_t>(context.R10);
+
+        case CV_AMD64_R11B:
+            return make_register_value<uint8_t>(context.R11);
+
+        case CV_AMD64_R12B:
+            return make_register_value<uint8_t>(context.R12);
+
+        case CV_AMD64_R13B:
+            return make_register_value<uint8_t>(context.R13);
+
+        case CV_AMD64_R14B:
+            return make_register_value<uint8_t>(context.R14);
+
+        case CV_AMD64_R15B:
+            return make_register_value<uint8_t>(context.R15);
+
+        case CV_AMD64_R8W:
+            return make_register_value<uint16_t>(context.R8);
+
+        case CV_AMD64_R9W:
+            return make_register_value<uint16_t>(context.R9);
+
+        case CV_AMD64_R10W:
+            return make_register_value<uint16_t>(context.R10);
+
+        case CV_AMD64_R11W:
+            return make_register_value<uint16_t>(context.R11);
+
+        case CV_AMD64_R12W:
+            return make_register_value<uint16_t>(context.R12);
+
+        case CV_AMD64_R13W:
+            return make_register_value<uint16_t>(context.R13);
+
+        case CV_AMD64_R14W:
+            return make_register_value<uint16_t>(context.R14);
+
+        case CV_AMD64_R15W:
+            return make_register_value<uint16_t>(context.R15);
+
+        case CV_AMD64_R8D:
+            return make_register_value<uint32_t>(context.R8);
+
+        case CV_AMD64_R9D:
+            return make_register_value<uint32_t>(context.R9);
+
+        case CV_AMD64_R10D:
+            return make_register_value<uint32_t>(context.R10);
+
+        case CV_AMD64_R11D:
+            return make_register_value<uint32_t>(context.R11);
+
+        case CV_AMD64_R12D:
+            return make_register_value<uint32_t>(context.R12);
+
+        case CV_AMD64_R13D:
+            return make_register_value<uint32_t>(context.R13);
+
+        case CV_AMD64_R14D:
+            return make_register_value<uint32_t>(context.R14);
+
+        case CV_AMD64_R15D:
+            return make_register_value<uint32_t>(context.R15);
+
+        case CV_AMD64_R8:
+            return make_register_value<uint64_t>(context.R8);
+
+        case CV_AMD64_R9:
+            return make_register_value<uint64_t>(context.R9);
+
+        case CV_AMD64_R10:
+            return make_register_value<uint64_t>(context.R10);
+
+        case CV_AMD64_R11:
+            return make_register_value<uint64_t>(context.R11);
+
+        case CV_AMD64_R12:
+            return make_register_value<uint64_t>(context.R12);
+
+        case CV_AMD64_R13:
+            return make_register_value<uint64_t>(context.R13);
+
+        case CV_AMD64_R14:
+            return make_register_value<uint64_t>(context.R14);
+
+        case CV_AMD64_R15:
+            return make_register_value<uint64_t>(context.R15);
+
+        default:
+            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Register [{}] unknown or unsupported in x64 context", static_cast<uint32_t>(register_type))};
+        }
+    }
+
+    dlg_help_utils::dbg_help::registry_info get_registry_value_info(dlg_help_utils::dbg_help::thread_context_type const type, CV_HREG_e const registry, void const* thread_context)
+    {
+        uint64_t value{0};
+        uint64_t value_size{0};
+
+        switch(type)
+        {
+        case dlg_help_utils::dbg_help::thread_context_type::x86:
+            std::tie(value, value_size) = get_x86_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x86 const*>(thread_context));
+            break;
+        case dlg_help_utils::dbg_help::thread_context_type::wow64:
+            std::tie(value, value_size) = get_wow64_register_value(registry, *static_cast<WOW64_CONTEXT const*>(thread_context));
+            break;
+        case dlg_help_utils::dbg_help::thread_context_type::x64:
+            std::tie(value, value_size) = get_x64_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x64 const*>(thread_context));
+            break;
+        }
+
+        return {registry, value, value_size};
+    }
+
+    dlg_help_utils::dbg_help::frame_data_info get_frame_data_info(PSYMBOL_INFOW symbol_info, uint64_t const address)
+    {
+        return dlg_help_utils::dbg_help::frame_data_info{static_cast<int>(symbol_info->Address), address + symbol_info->Address, symbol_info->Size};
+    }
+
+    bool is_already_found(std::vector<dlg_help_utils::dbg_help::local_variable> const& variables, PSYMBOL_INFOW symbol_info)
+    {
+        return std::ranges::any_of(variables, [symbol_info](dlg_help_utils::dbg_help::local_variable const& variable)
+        {
+            if(variable.symbol_info.module_base() != symbol_info->ModBase || variable.symbol_info.sym_index() != symbol_info->Index)
+            {
+                return false;
+            }
+
+            if ((symbol_info->Flags & (SYMFLAG_REGREL | SYMFLAG_REGISTER)) != 0 && 
+                (!variable.registry_value.has_value() || static_cast<CV_HREG_e>(symbol_info->Register) != variable.registry_value.value().register_type))
+            {
+                return false;
+            }
+
+
+            if ((symbol_info->Flags & (SYMFLAG_REGREL | SYMFLAG_FRAMEREL)) != 0 && 
+                (!variable.frame_data.has_value() || variable.frame_data.value().data_offset != static_cast<int>(symbol_info->Address)))
+            {
+                return false;
+            }
+
+            return true;
+        });
+    }
+
+    BOOL CALLBACK find_local_variable_callback(_In_ PSYMBOL_INFOW symbol_info, [[maybe_unused]] _In_ ULONG symbol_size, _In_opt_ PVOID user_context)
+    {
+        auto const is_local = (symbol_info->Flags & SYMFLAG_LOCAL) != 0;
+        auto const is_parameter = (symbol_info->Flags & SYMFLAG_PARAMETER) != 0;
+
+        if (!is_local)
+        {
+            // Ignore anything not a local variable
+            return TRUE;
+        }
+
+        if (symbol_info->Flags & SYMFLAG_NULL)
+        {
+            // Ignore 'NULL' objects
+            return TRUE;
+        }
+
+        local_variable_info const& info{*static_cast<local_variable_info*>(user_context)};
+
+        // check for duplicates...
+        if(is_already_found(is_parameter ? info.parameters : info.locals, symbol_info))
+        {
+            return TRUE;
+        }
+
+        auto& variable = is_parameter ? info.parameters.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{symbol_info->ModBase, symbol_info->Index})
+                                      : info.locals.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{symbol_info->ModBase, symbol_info->Index});
+
+        if (symbol_info->Flags & SYMFLAG_REGREL)
+        {
+            variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context);
+            variable.frame_data = get_frame_data_info(symbol_info, variable.registry_value->value);
+        }
+        else if (symbol_info->Flags & SYMFLAG_REGISTER)
+        {
+            variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context);
+        }
+        else if (symbol_info->Flags & SYMFLAG_FRAMEREL)
+        {
+            variable.frame_data = get_frame_data_info(symbol_info, info.frame_address_offset);
+        }
+
+        return TRUE;
+    }
     // ReSharper restore CppParameterMayBeConst
 }
 
@@ -813,7 +1277,7 @@ namespace dlg_help_utils::dbg_help
         return std::move(info);
     }
 
-    std::optional<symbol_address_info> symbol_engine::address_to_info(STACKFRAME_EX const& frame)
+    std::optional<symbol_address_info> symbol_engine::address_to_info(thread_context_type const type, STACKFRAME_EX const& frame, void const* thread_context)
     {
         auto const address = frame.AddrPC.Offset;
         auto const it = find_module_name(address);
@@ -834,8 +1298,26 @@ namespace dlg_help_utils::dbg_help
             return std::move(info);
         }
 
-        if (frame.StackFrameSize >= sizeof(STACKFRAME_EX) && frame.InlineFrameContext != INLINE_FRAME_CONTEXT_IGNORE &&
-            frame.InlineFrameContext != INLINE_FRAME_CONTEXT_INIT)
+        IMAGEHLP_STACK_FRAME image_hlp_frame = {};
+        image_hlp_frame.InstructionOffset = address;
+        image_hlp_frame.ReturnOffset = frame.AddrReturn.Offset;
+        image_hlp_frame.FrameOffset = frame.AddrFrame.Offset;
+        image_hlp_frame.StackOffset = frame.AddrStack.Offset;
+        image_hlp_frame.BackingStoreOffset = frame.AddrBStore.Offset;
+        image_hlp_frame.FuncTableEntry = reinterpret_cast<ULONG64>(frame.FuncTableEntry);
+        image_hlp_frame.Virtual = frame.Virtual;
+
+        SymSetContext(fake_process, &image_hlp_frame, nullptr);
+        if(auto const ec = GetLastError(); ec == ERROR_SUCCESS)
+        {
+            local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context);
+        }
+        else if(ec != ERROR_NOT_SUPPORTED)
+        {
+            windows_error::throw_windows_api_error(L"SymSetContext"sv, ec);
+        }
+
+        if (frame.StackFrameSize >= sizeof(STACKFRAME_EX) && frame.InlineFrameContext != INLINE_FRAME_CONTEXT_IGNORE && frame.InlineFrameContext != INLINE_FRAME_CONTEXT_INIT)
         {
             if (!SymFromInlineContextW(fake_process, address, frame.InlineFrameContext, &info.symbol_displacement, symbol_.get()))
             {
@@ -845,11 +1327,15 @@ namespace dlg_help_utils::dbg_help
             info.symbol_name = symbol_->Name;
             info.in_line = static_cast<sym_tag_enum>(symbol_->Tag) == sym_tag_enum::Inlinee;
 
-            if (SymGetLineFromInlineContextW(fake_process, address, frame.InlineFrameContext, it->second.base,
-                                             &info.line_displacement, &line_))
+            if (SymGetLineFromInlineContextW(fake_process, address, frame.InlineFrameContext, it->second.base, &info.line_displacement, &line_))
             {
                 info.line_number = line_.LineNumber;
                 info.file_name = line_.FileName;
+            }
+
+            if (SymSetScopeFromInlineContext(fake_process, address, frame.InlineFrameContext))
+            {
+                local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context, {}, symbol_walk_options::inline_variables);
             }
         }
         else
@@ -954,11 +1440,10 @@ namespace dlg_help_utils::dbg_help
         return symbol_type_info{info->info.ModBase, info->info.Index};
     }
 
-    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask)
+    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, symbol_walk_options const option)
     {
         std::vector<symbol_type_info> symbols;
-
-        if(!SymEnumSymbolsExW(fake_process, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &symbols, SYMENUM_OPTIONS_DEFAULT | SYMENUM_OPTIONS_INLINE))
+        if(!SymEnumSymbolsExW(fake_process, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &symbols, setup_enum_symbol_options(option)))
         {
             windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask);
         }
@@ -966,8 +1451,21 @@ namespace dlg_help_utils::dbg_help
         return symbols;
     }
 
+    void symbol_engine::local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type const type, uint64_t const frame_address_offset, void const* thread_context, std::wstring const& find_mask, symbol_walk_options const option)
+    {
+        local_variable_info info{type, frame_address_offset, thread_context, locals, parameters};
+        if(!SymEnumSymbolsExW(fake_process, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
+        {
+            if(auto const ec = GetLastError(); ec != ERROR_INVALID_PARAMETER && ec != ERROR_NOT_SUPPORTED)
+            {
+                windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask, ec);
+            }
+        }
+    }
+
     std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context)
     {
+        thread_context_type type;
         DWORD machine_type;
         STACKFRAME_EX frame{};
         frame.StackFrameSize = sizeof(STACKFRAME_EX);
@@ -975,6 +1473,7 @@ namespace dlg_help_utils::dbg_help
         if (thread_context.x86_thread_context_available())
         {
             machine_type = IMAGE_FILE_MACHINE_I386;
+            type = thread_context_type::x86;
             auto const& context = thread_context.x86_thread_context();
             frame.AddrPC.Offset = context.Eip;
             frame.AddrPC.Mode = AddrModeFlat;
@@ -986,6 +1485,7 @@ namespace dlg_help_utils::dbg_help
         else if (thread_context.wow64_thread_context_available())
         {
             machine_type = IMAGE_FILE_MACHINE_I386;
+            type = thread_context_type::wow64;
             auto const& context = thread_context.wow64_thread_context();
             frame.AddrPC.Offset = context.Eip;
             frame.AddrPC.Mode = AddrModeFlat;
@@ -997,6 +1497,7 @@ namespace dlg_help_utils::dbg_help
         else if (thread_context.x64_thread_context_available())
         {
             machine_type = IMAGE_FILE_MACHINE_AMD64;
+            type = thread_context_type::x64;
             auto const& context = thread_context.x64_thread_context();
             frame.AddrPC.Offset = context.Rip;
             frame.AddrPC.Mode = AddrModeFlat;
@@ -1028,11 +1529,12 @@ namespace dlg_help_utils::dbg_help
                 break;
             }
 
-            auto info = g_callback->find_symbol_info(frame);
+            auto const pc = frame.AddrPC.Offset;
+            auto info = g_callback->find_symbol_info(type, frame, thread_context_copy.get());
             if (!info)
             {
                 symbol_address_info rv{};
-                rv.address = frame.AddrPC.Offset;
+                rv.address = pc;
                 rv.stack = frame.AddrStack.Offset;
                 co_yield rv;
             }
@@ -1152,5 +1654,23 @@ namespace dlg_help_utils::dbg_help
     {
         g_callback = &callback;
         return callback_handle{[]() { g_callback = nullptr; }};
+    }
+
+    DWORD symbol_engine::setup_enum_symbol_options(symbol_walk_options const option)
+    {
+        DWORD options = 0;
+
+        switch(option)
+        {
+        case symbol_walk_options::default_symbols:
+            options |= SYMENUM_OPTIONS_DEFAULT;
+            break;
+
+        case symbol_walk_options::inline_variables:
+            options |= SYMENUM_OPTIONS_INLINE;
+            break;
+        }
+
+        return options;
     }
 }

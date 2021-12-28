@@ -38,6 +38,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<DWORD> virtual_base_pointer_offset() const;
         [[nodiscard]] std::optional<DWORD> class_parent_id() const;
         [[nodiscard]] std::optional<DWORD> nested() const;
+        [[nodiscard]] DWORD64 module_base() const { return module_base_; }
         [[nodiscard]] DWORD sym_index() const { return type_index_; }
         [[nodiscard]] std::optional<DWORD> sym_index_raw() const;
         [[nodiscard]] std::optional<DWORD> lexical_parent() const;
@@ -51,6 +52,9 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<calling_convention> calling_convention() const;
 
         [[nodiscard]] std::experimental::generator<symbol_type_info> children() const;
+
+        [[nodiscard]] std::wstring to_address_string() const;
+        static [[nodiscard]] std::optional<symbol_type_info> from_address_string(std::wstring_view address);
 
     private:
         enum class optional_type

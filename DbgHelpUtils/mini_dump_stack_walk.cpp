@@ -511,15 +511,13 @@ namespace dlg_help_utils::stream_stack_dump
         return (*module)->BaseOfImage;
     }
 
-    std::optional<dbg_help::symbol_address_info> mini_dump_stack_walk::find_symbol_info(
-        STACKFRAME_EX const& frame) const
+    std::optional<dbg_help::symbol_address_info> mini_dump_stack_walk::find_symbol_info(dbg_help::thread_context_type const type, STACKFRAME_EX const& frame, void const* thread_context) const
     {
         auto const it_module = module_list_.find_module(frame.AddrPC.Offset);
-        if (!it_module) return find_unloaded_module_symbol_info(frame.AddrPC.Offset, unloaded_module_list_,
-                                                                symbol_engine_);
+        if (!it_module) return find_unloaded_module_symbol_info(frame.AddrPC.Offset, unloaded_module_list_, symbol_engine_);
 
         load_module(it_module.value());
-        return symbol_engine_.address_to_info(frame);
+        return symbol_engine_.address_to_info(type, frame, thread_context);
     }
 
     std::optional<dbg_help::symbol_address_info> mini_dump_stack_walk::find_symbol_info(
@@ -651,6 +649,17 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         return dbg_help::symbol_engine::symbol_walk(find_mask);
+    }
+
+    bool mini_dump_stack_walk::load_module_from_address(DWORD64 const base_address) const
+    {
+        if(auto const module = module_list_.find_module(base_address); module.has_value())
+        {
+            load_module(module.value());
+            return true;
+        }
+
+        return false;
     }
 
     void mini_dump_stack_walk::load_module(std::wstring const& module_name) const

@@ -152,6 +152,8 @@ namespace
 {
     std::unordered_map<windows_version, std::wstring_view> const version_strings =
     {
+        {windows_version{11, 0, 0, VER_NT_WORKSTATION, 0, 0}, L"Windows 11"sv},
+        {windows_version{11, 0, 0, VER_NT_SERVER, 0, 0}, L"Windows Server 2022"sv},
         {windows_version{10, 0, 17764, VER_NT_SERVER, 0, 0}, L"Windows Server vNext"sv},
         {windows_version{10, 0, 17623, VER_NT_SERVER, 0, 0}, L"Windows Server 2019"sv},
         {windows_version{10, 0, 0, VER_NT_WORKSTATION, 0, 0}, L"Windows 10"sv},

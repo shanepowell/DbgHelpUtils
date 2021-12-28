@@ -22,7 +22,7 @@ using namespace std::string_literals;
 
 namespace
 {
-    std::vector<std::wstring> const g_empty_values;
+    std::vector<std::wstring> const g_empty_values{};
 
     map<std::string, uint16_t> const g_heap_statistics_view_options
     {
@@ -78,6 +78,8 @@ lyra::cli dump_file_options::generate_options()
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(dump_all_stream_indexes_)["--dumpallstreams"]("dump all stream indexes")
         | lyra::opt(display_symbols_)["-y"]["--symbols"]("display stack trace symbols")
+        | lyra::opt(display_stack_parameters_)["--parameters"]("display stack trace parameter symbols")
+        | lyra::opt(display_stack_variables_)["--variables"]("display stack trace variables symbols")
         | lyra::opt(filter_values_raw_, "filter" )["--filter"]("filter by supported values")
         | lyra::opt(debug_symbols_)["--symboldebug"]("debug load symbols")
         | lyra::opt(debug_load_symbols_memory_)["--symboldebugmemory"]("debug load symbols memory loading")
@@ -219,6 +221,24 @@ uint64_t dump_file_options::hex_dump_memory_size(uint64_t const size) const
         return std::min(limit_hex_dump_memory_size(), size);
     }
     return size;
+}
+
+dlg_help_utils::stream_stack_dump::dump_stack_options::options dump_file_options::display_stack_options() const
+{
+    using namespace dlg_help_utils::stream_stack_dump;
+    uint32_t options{0};
+
+    if(display_stack_parameters_)
+    {
+        options |= dump_stack_options::DisplayStackParameters;
+    }
+
+    if(display_stack_variables_)
+    {
+        options |= dump_stack_options::DisplayStackVariables;
+    }
+
+    return static_cast<dump_stack_options::options>(options);
 }
 
 std::vector<std::wstring> const& dump_file_options::filter_values(std::wstring const& option) const

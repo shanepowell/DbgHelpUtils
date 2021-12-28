@@ -1,5 +1,7 @@
 ﻿#include "symbol_type_info.h"
 
+#include <format>
+
 #include "symbol_engine.h"
 #include "windows_error.h"
 
@@ -260,12 +262,61 @@ namespace dlg_help_utils::dbg_help
 
         if(!SymGetTypeInfo(fake_process, module_base_, type_index_, TI_FINDCHILDREN, find_children_params))
         {
-            throw_sym_get_type_info_error(L"TI_FINDCHILDREN"sv, optional_type::required);
+            throw_sym_get_type_info_error(L"TI_FINDCHILDREN"sv, optional_type::optional);
+            co_return;
         }
 
         for(ULONG index = 0; index < count.value(); ++index)
         {
             co_yield symbol_type_info{module_base_, find_children_params->ChildId[index]};
         }
+    }
+
+    std::wstring symbol_type_info::to_address_string() const
+    {
+        return std::format(L"[0x{0:X}:0x{1:X}]", module_base_, type_index_);
+    }
+
+    std::optional<symbol_type_info> symbol_type_info::from_address_string(std::wstring_view const address)
+    {
+        if(address.empty())
+        {
+            return std::nullopt;
+        }
+
+        if(!address.starts_with(L'[') || !address.ends_with(L']'))
+        {
+            return std::nullopt;
+        }
+
+        auto const split_position = address.find_first_of(L':');
+        if(split_position == std::wstring_view::npos)
+        {
+            return std::nullopt;
+        }
+
+        auto const module_base_string = address.substr(1, split_position - 2);
+        auto const type_index_string = address.substr(split_position + 1, address.size() - (split_position + 2));
+
+        if(module_base_string.empty() || type_index_string.empty())
+        {
+            return std::nullopt;
+        }
+
+        wchar_t* end_ptr{nullptr};
+        auto const module_base = std::wcstoull(module_base_string.data(), &end_ptr, 0);
+        if(end_ptr == nullptr || *end_ptr != L':')
+        {
+            return std::nullopt;
+        }
+
+        end_ptr = nullptr;
+        auto const type_index = std::wcstoul(type_index_string.data(), &end_ptr, 0);
+        if(end_ptr == nullptr || *end_ptr != L']')
+        {
+            return std::nullopt;
+        }
+
+        return symbol_type_info{module_base, type_index};
     }
 }

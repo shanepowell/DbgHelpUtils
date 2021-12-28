@@ -35,6 +35,14 @@ namespace dlg_help_utils::symbol_type_utils
     std::wstring get_symbol_type_friendly_name(dbg_help::symbol_type_info const& value);
     void dump_variable_type_at(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, std::wstring const& symbol_type_name, uint64_t variable_address, size_t indent = 0, size_t visited_depth = 0);
     void dump_variable_type_at(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, dbg_help::symbol_type_info const& symbol_info, uint64_t variable_address, size_t indent = 0, size_t visited_depth = 0);
-    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, dbg_help::symbol_type_info const& display_type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t indent = 0, size_t visited_depth = 0);
+
+    enum class dump_variable_symbol_options
+    {
+        NoHeader,
+        ForceHeader,
+        AutoHeader
+    };
+
+    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, dbg_help::symbol_type_info const& display_type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t indent = 0, size_t visited_depth = 0, dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);
     std::tuple<uint64_t, std::wstring, uint64_t, std::wstring> parse_address(std::wstring const& address);
 }

@@ -297,7 +297,7 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log, mini_dump const&
             {
                 stream_stack_dump::hex_dump_stack(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,
-                                                  thread.thread_context(), 5);
+                                                  thread.thread_context(), 5, options.display_stack_options());
             }
             else if (options.hex_dump_memory_data())
             {
@@ -360,7 +360,7 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log, mini_dump con
             {
                 stream_stack_dump::hex_dump_stack(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,
-                                                  thread.thread_context(), 5);
+                                                  thread.thread_context(), 5, options.display_stack_options());
             }
             else if (options.hex_dump_memory_data())
             {

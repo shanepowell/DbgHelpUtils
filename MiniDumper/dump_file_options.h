@@ -13,6 +13,7 @@
 
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/statistic_view_options.h"
+#include "DbgHelpUtils/stream_stack_dump.h"
 #include "DbgHelpUtils/system_module_list.h"
 
 namespace heap_statistics_view
@@ -58,6 +59,7 @@ public:
     [[nodiscard]] bool display_crtheap() const { return display_crtheap_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
+    [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options::options display_stack_options() const;
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
     [[nodiscard]] std::vector<std::wstring> const& symbol_names() const { return symbol_names_; }
@@ -95,6 +97,8 @@ private:
     bool display_crtheap_{false};
     bool debug_heap_data_{false};
     bool display_stack_trace_database_{false};
+    bool display_stack_variables_{false};
+    bool display_stack_parameters_{false};
     uint16_t heap_statistics_views_{0};
     std::vector<std::string> filter_values_raw_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;

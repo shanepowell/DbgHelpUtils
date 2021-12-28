@@ -48,20 +48,20 @@ namespace
         return stream_utils::read_machine_size_field_value(peb, address.value()).value_or(0);
     }
 
-    void do_dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& value, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent, std::unordered_set<unsigned long>& visited_types)
+    void do_dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent, std::unordered_set<unsigned long>& visited_types)
     {
-        if(visited_types.contains(value.sym_index()))
+        if(visited_types.contains(type.sym_index()))
         {
             return;
         }
-        visited_types.insert(value.sym_index());
+        visited_types.insert(type.sym_index());
 
-        auto const tag_data = value.sym_tag();
-        auto const offset_data = value.offset();
+        auto const tag_data = type.sym_tag();
+        auto const offset_data = type.offset();
         std::wstring indent_str(indent, ' ');
         log << indent_str;
 
-        auto const bit_position_data = value.bit_position();
+        auto const bit_position_data = type.bit_position();
 
         {
             std::wostringstream ss;
@@ -84,12 +84,12 @@ namespace
             }
         }
 
-        auto name = symbol_type_utils::get_symbol_type_friendly_name(value);
+        auto name = symbol_type_utils::get_symbol_type_friendly_name(type);
         log << std::format(L" {}", name);
 
         if(bit_position_data.has_value())
         {
-            auto const length_data = value.length();
+            auto const length_data = type.length();
             uint64_t bit_mask;
             if(length_data.value_or(1) > 1)
             {
@@ -110,7 +110,7 @@ namespace
         }
         else
         {
-            if(auto const data = value.length(); data.has_value())
+            if(auto const data = type.length(); data.has_value())
             {
                 log << std::format(L", Length: {}", locale_formatting::to_wstring(data.value()));
             }
@@ -120,120 +120,120 @@ namespace
         {
             if(bit_position_data.has_value())
             {
-                if(auto const data = value.length(); data.has_value())
+                if(auto const data = type.length(); data.has_value())
                 {
                     log << std::format(L", Length: {}", locale_formatting::to_wstring(data.value()));
                 }
             }
 
-            log << std::format(L", SymIndex: {}", locale_formatting::to_wstring(value.sym_index()));
+            log << std::format(L", SymIndex: {}", locale_formatting::to_wstring(type.sym_index()));
 
             if(tag_data.has_value())
             {
                 log << std::format(L", tag: {}", symbol_type_utils::sym_tag_to_string(tag_data.value()));
             }
 
-            if(auto const data = value.base_type(); data.has_value())
+            if(auto const data = type.base_type(); data.has_value())
             {
                 log << std::format(L", BaseType: {}",  symbol_type_utils::basic_type_to_string(data.value()));
             }
             
-            if(auto const data = value.data_kind(); data.has_value())
+            if(auto const data = type.data_kind(); data.has_value())
             {
                 log << std::format(L", DataKind: {}", symbol_type_utils::data_kind_convention_to_string(data.value()));
             }
 
-            if(auto const data = value.address_offset(); data.has_value())
+            if(auto const data = type.address_offset(); data.has_value())
             {
                 log << std::format(L", AddressOffset: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.array_index_typeid(); data.has_value())
+            if(auto const data = type.array_index_typeid(); data.has_value())
             {
                 log << std::format(L", ArrayIndexTypeId: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.array_count(); data.has_value())
+            if(auto const data = type.array_count(); data.has_value())
             {
                 log << std::format(L", ArrayCount: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.bit_position(); data.has_value())
+            if(auto const data = type.bit_position(); data.has_value())
             {
                 log << std::format(L", BitPosition: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.is_virtual_base_class(); data.has_value())
+            if(auto const data = type.is_virtual_base_class(); data.has_value())
             {
                 log << std::format(L", IsVirtualBaseClass: {}", data.value());
             }
 
-            if(auto const data = value.virtual_base_pointer_offset(); data.has_value())
+            if(auto const data = type.virtual_base_pointer_offset(); data.has_value())
             {
                 log << std::format(L", VirtualBasePointerOffset: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.class_parent_id(); data.has_value())
+            if(auto const data = type.class_parent_id(); data.has_value())
             {
                 log << std::format(L", ClassParentId: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.nested(); data.has_value())
+            if(auto const data = type.nested(); data.has_value())
             {
                 log << std::format(L", Nested: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.lexical_parent(); data.has_value())
+            if(auto const data = type.lexical_parent(); data.has_value())
             {
                 log << std::format(L", LexicalParent: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.address(); data.has_value())
+            if(auto const data = type.address(); data.has_value())
             {
                 log << std::format(L", Address: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.virtual_base_offset(); data.has_value())
+            if(auto const data = type.virtual_base_offset(); data.has_value())
             {
                 log << std::format(L", VirtualBaseOffset: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.virtual_base_displacement_table_index(); data.has_value())
+            if(auto const data = type.virtual_base_displacement_table_index(); data.has_value())
             {
                 log << std::format(L", VirtualBaseDisplacementTableIndex: {}", locale_formatting::to_wstring(data.value()));
             }
 
-            if(auto const data = value.is_reference(); data.has_value())
+            if(auto const data = type.is_reference(); data.has_value())
             {
                 log << std::format(L", IsReference: {}", data.value());
             }
 
-            if(auto const data = value.indirect_virtual_base_class(); data.has_value())
+            if(auto const data = type.indirect_virtual_base_class(); data.has_value())
             {
                 log << std::format(L", IndirectVirtualBaseClass: {}", data.value());
             }
 
-            if(auto const data = value.const_value(); data.has_value())
+            if(auto const data = type.const_value(); data.has_value())
             {
                 log << std::format(L", ConstValue: {}", static_cast<_bstr_t>(data.value()));
             }
 
-            if(auto const data = value.calling_convention(); data.has_value())
+            if(auto const data = type.calling_convention(); data.has_value())
             {
                 log << std::format(L", CallingConvention: {}", symbol_type_utils::calling_convention_to_string(data.value()));
             }
 
-            if(auto const data = value.type(); data.has_value())
+            if(auto const data = type.type(); data.has_value())
             {
                 log << std::format(L", Type: {}", locale_formatting::to_wstring(data.value().sym_index()));
             }
 
-            if(auto const data = value.type_id(); data.has_value())
+            if(auto const data = type.type_id(); data.has_value())
             {
                 log << std::format(L", TypeId: {}", locale_formatting::to_wstring(data.value().sym_index()));
             }
 
-            if(auto const data = value.children_count(); data.has_value())
+            if(auto const data = type.children_count(); data.has_value())
             {
                 log << std::format(L", ChildrenCount: {}", locale_formatting::to_wstring(data.value()));
             }
@@ -243,24 +243,24 @@ namespace
 
         if(options.debug_type_data())
         {
-            if(auto const type_data = value.type(); type_data.has_value() && !visited_types.contains(type_data.value().sym_index()))
+            if(auto const type_data = type.type(); type_data.has_value() && !visited_types.contains(type_data.value().sym_index()))
             {
                 log << std::format(L"{0} Type: {1}\n", indent_str, locale_formatting::to_wstring(type_data.value().sym_index()));
                 do_dump_symbol_type(log, type_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
             }
 
-            if(auto const typeid_data = value.type_id(); typeid_data.has_value() && !visited_types.contains(typeid_data.value().sym_index()))
+            if(auto const typeid_data = type.type_id(); typeid_data.has_value() && !visited_types.contains(typeid_data.value().sym_index()))
             {
                 log << std::format(L"{0} TypeId: {1}\n", indent_str, locale_formatting::to_wstring(typeid_data.value().sym_index()));
                 do_dump_symbol_type(log, typeid_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
             }
 
-            if(auto const type_data = value.type(); type_data.has_value())
+            if(auto const type_data = type.type(); type_data.has_value())
             {
                 do_dump_symbol_type(log, type_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
             }
         }
-        else if(auto const type_data = value.type(); type_data.has_value())
+        else if(auto const type_data = type.type(); type_data.has_value())
         {
             if(auto const type_tag_data = type_data.value().sym_tag(); type_tag_data.value_or(dbg_help::sym_tag_enum::Null) == dbg_help::sym_tag_enum::UDT)
             {
@@ -271,7 +271,7 @@ namespace
             }
         }
 
-        for (auto const& child : value.children())
+        for (auto const& child : type.children())
         {
             do_dump_symbol_type(log, child, options, base_offset, indent + 2, visited_types);
         }
@@ -291,15 +291,28 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
 
+    if(auto const symbol_info = dbg_help::symbol_type_info::from_address_string(type_name); symbol_info.has_value())
+    {
+        if(walker.load_module_from_address(symbol_info.value().module_base()))
+        {
+            log << std::format(L"Symbol Type Address {}:\n", type_name);
+            dump_symbol_type(log, symbol_info.value(), options);
+        }
+        else
+        {
+            log << std::format(L"No module found for Symbol Type Address {}:\n", type_name);
+        }
+        return;
+    }
+
     if(auto const symbol_info = walker.get_type_info(type_name); symbol_info.has_value())
     {
-        log << std::format(L"Symbol Type [{}] found:\n", type_name);
+        log << std::format(L"Symbol Type [{0}] @ {1} found:\n", type_name, symbol_info.value().to_address_string());
         dump_symbol_type(log, symbol_info.value(), options);
+        return;
     }
-    else
-    {
-        log << std::format(L"Symbol Type [{}] not found\n", type_name);
-    }
+
+    log << std::format(L"Symbol Type [{}] not found\n", type_name);
 }
 
 void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, std::wstring const& symbol_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
@@ -504,10 +517,10 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
 }
 
 
-void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& value, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
+void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
 {
     std::unordered_set<unsigned long> visited_types;
-    do_dump_symbol_type(log, value, options, base_offset, indent, visited_types);
+    do_dump_symbol_type(log, type, options, base_offset, indent, visited_types);
 }
 
 void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)

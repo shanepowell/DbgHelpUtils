@@ -547,9 +547,9 @@ namespace dlg_help_utils::symbol_type_utils
         dump_variable_symbol_at(os, walker, symbol_info, symbol_info, variable_address, stream, indent, visited_depth);
     }
 
-    void dump_unsupported_variable_symbol_at(std::wostream& os, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
+    void dump_unsupported_variable_symbol_at(std::wostream& os, symbol_type_info const& type, sym_tag_enum const tag, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
     {
-        os << std::format(L" : unsupported type [{}]", sym_tag_to_string(type.sym_tag().value()));
+        os << std::format(L" : unsupported type [{0}] on type [{1}]", sym_tag_to_string(tag), sym_tag_to_string(type.sym_tag().value_or(sym_tag_enum::Null)));
     }
 
     void dump_enum_variable_symbol_at(std::wostream& os, [[maybe_unused]] symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
@@ -593,6 +593,10 @@ namespace dlg_help_utils::symbol_type_utils
                 value &= static_cast<T>(bit_mask);
                 os << std::format(L": {0} ({1})", locale_formatting::to_wstring(value), stream_hex_dump::to_hex(value));
             }
+            else
+            {
+                os << L": <unknown>";
+            }
         }
     }
 
@@ -616,6 +620,10 @@ namespace dlg_help_utils::symbol_type_utils
         else if(T value; variable_stream.read(&value, sizeof T) == sizeof T)
         {
             os << std::format(L": {}", value);
+        }
+        else
+        {
+            os << L": <unknown>";
         }
     }
 
@@ -975,14 +983,14 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_data_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, std::optional<symbol_type_info> const data_type, std::optional<sym_tag_enum> const data_type_tag, bool& print_header, unsigned long long bit_mask, size_t const indent, size_t const visited_depth)
+    void dump_data_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, std::optional<symbol_type_info> const data_type, std::optional<sym_tag_enum> const data_type_tag, bool& print_header, unsigned long long bit_mask, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
     {
         dump_bitmask(os, type, bit_mask);
 
         // data member, type the data member type and print based on that type
         if(data_type.has_value())
         {
-            switch(data_type_tag.value_or(sym_tag_enum::Null))  // NOLINT(clang-diagnostic-switch-enum)
+            switch(auto const tag = data_type_tag.value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
             {
             case sym_tag_enum::UDT:
                 if(print_header)
@@ -990,7 +998,7 @@ namespace dlg_help_utils::symbol_type_utils
                     os << L'\n';
                     print_header = false;
                 }
-                dump_variable_symbol_at(os, walker, data_type.value(), type, variable_address, variable_stream, indent, visited_depth + 1);
+                dump_variable_symbol_at(os, walker, data_type.value(), type, variable_address, variable_stream, indent, visited_depth + 1, options);
                 break;
 
             case sym_tag_enum::Enum:
@@ -1013,7 +1021,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             default:
-                dump_unsupported_variable_symbol_at(os, data_type.value(), variable_address, variable_stream);
+                dump_unsupported_variable_symbol_at(os, data_type.value(), tag, variable_address, variable_stream);
                 break;
             }
         }
@@ -1027,11 +1035,29 @@ namespace dlg_help_utils::symbol_type_utils
         dump_pointer_variable_symbol_at(os, walker, type, variable_address, copy_stream, indent, visited_depth);
     }
 
-    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, symbol_type_info const& display_type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth)
+    bool can_dump_tag(sym_tag_enum const tag)
+    {
+        switch(tag)  // NOLINT(clang-diagnostic-switch-enum)
+        {
+        case sym_tag_enum::Data:
+        case sym_tag_enum::Enum:
+        case sym_tag_enum::ArrayType:
+        case sym_tag_enum::BaseType:
+        case sym_tag_enum::PointerType:
+        case sym_tag_enum::UDT:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, symbol_type_info const& display_type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
     {
         auto const data_type = type.type();
         auto const data_type_tag = data_type.has_value() ? data_type.value().sym_tag() : std::nullopt;
-        auto print_header = visited_depth == 0 || data_type_tag.value_or(sym_tag_enum::Null) != sym_tag_enum::UDT;
+        auto print_header = options == dump_variable_symbol_options::ForceHeader
+                                || (options == dump_variable_symbol_options::AutoHeader && (visited_depth == 0 || data_type_tag.value_or(sym_tag_enum::Null) != sym_tag_enum::UDT));
 
         if(print_header)
         {
@@ -1039,10 +1065,10 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         mini_dump_memory_stream copy_variable_stream{variable_stream};
-        switch(type.sym_tag().value_or(sym_tag_enum::Null))  // NOLINT(clang-diagnostic-switch-enum)
+        switch(auto const tag = type.sym_tag().value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
         {
         case sym_tag_enum::Data:
-            dump_data_at(os, walker, type, variable_address, copy_variable_stream, data_type, data_type_tag, print_header, all_bits, indent, visited_depth);
+            dump_data_at(os, walker, type, variable_address, copy_variable_stream, data_type, data_type_tag, print_header, all_bits, indent, visited_depth, options);
             break;
 
         case sym_tag_enum::Enum:
@@ -1053,10 +1079,7 @@ namespace dlg_help_utils::symbol_type_utils
             break;
 
         case sym_tag_enum::ArrayType:
-            if(dump_array_variable_symbol_at(os, walker, type, variable_address, copy_variable_stream, indent + 1, visited_depth))
-            {
-                print_header = false;
-            }
+            dump_array_variable_symbol_at(os, walker, type, variable_address, copy_variable_stream, indent + 1, visited_depth);
             break;
 
         case sym_tag_enum::BaseType:
@@ -1073,29 +1096,27 @@ namespace dlg_help_utils::symbol_type_utils
                 if(print_header)
                 {
                     os << L'\n';
-                    print_header = false;
                 }
                 dump_variable_symbol_at(os, walker, type, data_type.value(), variable_address, copy_variable_stream, indent, visited_depth + 1);
             }
             break;
 
         default:
-            dump_unsupported_variable_symbol_at(os, data_type.value_or(type), variable_address, copy_variable_stream);
+            dump_unsupported_variable_symbol_at(os, data_type.value_or(type), tag, variable_address, copy_variable_stream);
             break;
-        }
-
-        if(print_header)
-        {
-            os << L'\n';
         }
 
         for (auto const& child : type.children())
         {
             if(auto const offset_data = child.offset(); offset_data.has_value())
             {
-                mini_dump_memory_stream copy_stream{variable_stream};
-                copy_stream.skip(offset_data.value());
-                dump_variable_symbol_at(os, walker, child, child, variable_address + offset_data.value(), copy_stream, indent + 1, visited_depth);
+                if(auto const tag = child.sym_tag().value_or(sym_tag_enum::Null); can_dump_tag(tag))
+                {
+                    mini_dump_memory_stream copy_stream{variable_stream};
+                    copy_stream.skip(offset_data.value());
+                    os << L'\n';
+                    dump_variable_symbol_at(os, walker, child, child, variable_address + offset_data.value(), copy_stream, indent + 1, visited_depth);
+                }
             }
         }
     }

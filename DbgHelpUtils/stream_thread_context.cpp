@@ -5,17 +5,16 @@
 
 #ifndef CONTEXT_i386
 // ReSharper disable once CppInconsistentNaming
-#define CONTEXT_i386 0x10000								// NOLINT(cppcoreguidelines-macro-usage)
-#define CONTEXT_EXTENDED_REGISTERS	(CONTEXT_i386 | 0x20L)	// NOLINT(cppcoreguidelines-macro-usage)
+#define CONTEXT_i386 0x10000                                // NOLINT(cppcoreguidelines-macro-usage)
+#define CONTEXT_EXTENDED_REGISTERS	(CONTEXT_i386 | 0x20L)  // NOLINT(cppcoreguidelines-macro-usage)
 #endif
 
 namespace dlg_help_utils
 {
     stream_thread_context::stream_thread_context(mini_dump const& dump, MINIDUMP_LOCATION_DESCRIPTOR const& location)
+    : context_{dump.rva32(location)}
+    , size_{location.DataSize}
     {
-        context_ = dump.rva32(location);
-        size_ = location.DataSize;
-
         if (system_info_stream const system_info{dump}; system_info.found())
         {
             switch (system_info.system_info().ProcessorArchitecture)

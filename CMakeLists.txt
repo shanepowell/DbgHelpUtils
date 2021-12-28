@@ -80,6 +80,12 @@ include(CMake/GlobalSettingsInclude.cmake OPTIONAL)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ################################################################################
+# DIA SDK
+################################################################################
+# See if the DIA SDK is available and usable.
+set(MSVC_DIA_SDK_DIR "$ENV{VSINSTALLDIR}DIA SDK" CACHE PATH "Path to the DIA SDK")
+
+################################################################################
 # Sub-projects
 ################################################################################
 add_subdirectory(AllocationSetupTests)

@@ -5,6 +5,13 @@
 
 namespace dlg_help_utils::dbg_help
 {
+    enum class thread_context_type
+    {
+        x86,
+        wow64,
+        x64
+    };
+
     class i_stack_walk_callback
     {
     public:
@@ -24,6 +31,6 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] virtual DWORD64 get_module_base_routine(DWORD64 address) = 0;
         [[nodiscard]] virtual DWORD64 translate_address(HANDLE h_thread, LPADDRESS64 lp_address) = 0;
 
-        [[nodiscard]] virtual std::optional<symbol_address_info> find_symbol_info(STACKFRAME_EX const& frame) const = 0;
+        [[nodiscard]] virtual std::optional<symbol_address_info> find_symbol_info(thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context) const = 0;
     };
 }
