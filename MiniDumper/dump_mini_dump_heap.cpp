@@ -77,7 +77,7 @@ namespace
     void print_nt_heap_line(std::wostream& log, std::wstring_view const& process_heap_marker, heap::nt_heap const& nt_heap)
     {
         using namespace size_units::base_16;
-        log << std::format(L" NT Heap      {1} {2:<{0}} {3:<{0}} {4:<{0}} {5:<{0}} {6:<{0}} {7:<8} {8:<4}{9}{10}{11}\n"
+        log << std::format(L" NT Heap      {1} {2:<{0}} {3:<{0}} {4:<{0}} {5:<{0}} {6:<{0}} {7:<8} {8:<4}{9}{10}\n"
             , units_max_width
             , stream_hex_dump::to_hex_full(nt_heap.flags())
             , to_wstring(nt_heap.reserved())
@@ -86,7 +86,6 @@ namespace
             , to_wstring(nt_heap.virtual_blocks())
             , to_wstring(nt_heap.total_free_size())
             , locale_formatting::to_wstring(nt_heap.total_segments())
-            , locale_formatting::to_wstring(nt_heap.total_ucrs())
             , locale_formatting::to_wstring(nt_heap.total_ucrs())
             , (nt_heap.is_low_fragment_heap_enabled() ? L" (LFH)"sv : L""sv)
             , (nt_heap.debug_page_heap().has_value() ? L" (DPH)"sv : L""sv)
@@ -1160,7 +1159,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, dump_fi
     auto const hex_length = peb.machine_hex_printable_length();
 
     log << L"Heaps:\n";
-    log << std::format(L"{1:<{0}} NT/Segment   Flags      {3:<{2}} {4:<{2}} {5:<{2}} {6:<{2}} {7:<{2}} {8:<8} {9:<4}\n"
+    log << std::format(L"{1:<{0}} NT/Segment   Flags      {3:<{2}} {4:<{2}} {5:<{2}} {6:<{2}} {7:<{2}} {8:<9} {9:<4}\n"
         , hex_length + 2, L"Address"sv
         , units_max_width
         , L"Reserved"sv
@@ -1553,9 +1552,16 @@ void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_du
     heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
     [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
 
+    auto const loading_heap_statistics = L"Loading heap statistics..."s;
+    std::wstring const clear(loading_heap_statistics.size(), L'\b');
+    std::wcerr << loading_heap_statistics;
+
     auto const hex_length = heaps.peb().machine_hex_printable_length();
     auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();
+
+    std::wcerr << clear;
+
     log << L"Heap Statistics:\n";
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))
     {
