@@ -39,6 +39,11 @@ namespace dlg_help_utils::heap
 
     uint64_t segment_heap_utils::read_ust_address(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size, uint64_t const unused_bytes)
     {
+        if(!ust_address_stack_trace::has_ust_setup(peb))
+        {
+            return 0;
+        }
+
         // find the UST data marker...
         auto const end_address = block_address + block_size;
         auto const ust_field_address = end_address - unused_bytes;

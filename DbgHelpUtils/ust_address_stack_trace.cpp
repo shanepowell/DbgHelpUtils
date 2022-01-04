@@ -22,7 +22,7 @@ namespace dlg_help_utils::heap
     std::vector<uint64_t> ust_address_stack_trace::read_allocation_stack_trace(process::process_environment_block const& peb, uint64_t const ust_address) const
     {
         std::vector<uint64_t> trace;
-        if(ust_address == 0)
+        if(ust_address == 0 || !has_ust_setup(peb))
         {
             return trace;
         }
@@ -58,7 +58,7 @@ namespace dlg_help_utils::heap
 
     bool ust_address_stack_trace::is_valid_ust_address(process::process_environment_block const& peb, uint64_t const ust_address)
     {
-        if(ust_address == 0 || ust_address == 0x01010000 || ust_address == 0x0101000000000000)
+        if(!has_ust_setup(peb) || ust_address == 0 || ust_address == 0x01010000 || ust_address == 0x0101000000000000)
         {
             return false;
         }
@@ -105,5 +105,10 @@ namespace dlg_help_utils::heap
         }
 
         throw exceptions::wide_runtime_error{L"Error: ust or hpa not enabled"s};
+    }
+
+    bool ust_address_stack_trace::has_ust_setup(process::process_environment_block const& peb)
+    {
+        return peb.heap_page_alloc_enabled() || peb.user_stack_db_enabled();
     }
 }

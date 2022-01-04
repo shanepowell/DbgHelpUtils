@@ -259,7 +259,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_entry::get_ust_address() const
     {
-        if(ust_user_address_ == 0 || is_heap_allocation() || !is_busy())
+        if(!ust_address_stack_trace::has_ust_setup(peb()) || ust_user_address_ == 0 || is_heap_allocation() || !is_busy())
         {
             return 0;
         }
@@ -275,7 +275,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_entry::get_ust_user_address() const
     {
-        if(is_heap_allocation())
+        if(!ust_address_stack_trace::has_ust_setup(peb()) || is_heap_allocation())
         {
             return 0;
         }
