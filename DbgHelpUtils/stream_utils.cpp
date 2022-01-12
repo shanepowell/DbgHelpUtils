@@ -5,7 +5,6 @@
 #include "mini_dump.h"
 #include "process_environment_block.h"
 #include "stream_hex_dump.h"
-#include "string_compare.h"
 #include "symbol_type_info.h"
 #include "sym_tag_enum.h"
 #include "wide_runtime_error.h"
@@ -35,50 +34,6 @@ namespace dlg_help_utils::stream_utils
         }
 
         return std::nullopt;
-    }
-
-    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_in_type(dbg_help::symbol_type_info type, std::wstring_view field_name)
-    {
-        uint64_t offset{0};
-        while(true)
-        {
-            auto const pos = field_name.find_first_of(L'.');
-            auto const find_name_part = pos == std::wstring_view::npos ? field_name : field_name.substr(0, pos);
-            auto const find_name_rest = pos == std::wstring_view::npos ? std::wstring_view{} : field_name.substr(pos + 1);
-            if(auto const type_tag_data = type.sym_tag(); type_tag_data.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::UDT)
-            {
-                return std::nullopt;
-            }
-
-            auto found = false;
-            for (auto const& child : type.children())
-            {
-                if(auto const name_data = child.name(); name_data.has_value() && string_compare::iequals(find_name_part, name_data.value()))
-                {
-                    if(find_name_rest.empty())
-                    {
-                        return std::make_pair(child, offset);
-                    }
-
-                    if(auto const child_type = child.type(); child_type.has_value())
-                    {
-                        if(auto const child_offset = child.offset(); child_offset.has_value())
-                        {
-                            found = true;
-                            field_name = find_name_rest;
-                            type = child_type.value();
-                            offset += child_offset.value();
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if(!found)
-            {
-                return std::nullopt;
-            }
-        }
     }
 
     std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> get_field_pointer_type_and_value(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& pointer_type, uint64_t memory_address, size_t const index)
@@ -194,7 +149,7 @@ namespace dlg_help_utils::stream_utils
 
     std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_type_and_offset_in_type(dbg_help::symbol_type_info const& type, std::wstring_view const field_name, dbg_help::sym_tag_enum const tag)
     {
-        auto const field_data = find_field_in_type(type, field_name);
+        auto const field_data = type.find_field_in_type(field_name);
         if(!field_data.has_value())
         {
             return std::nullopt;
@@ -222,15 +177,14 @@ namespace dlg_help_utils::stream_utils
         return std::make_pair(data_type.value(), offset_data.value() + base_offset);
     }
 
-    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_type_and_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
+    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_type_and_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, uint64_t const memory_address)
     {
-        auto const type_and_offset = find_field_type_and_offset_in_type(type, field_name, dbg_help::sym_tag_enum::PointerType);
-        if(!type_and_offset.has_value())
+        if(!field_data.has_value())
         {
             return std::nullopt;
         }
 
-        auto const& [data_type, offset] = type_and_offset.value();
+        auto const& [data_type, offset] = field_data.value();
 
         auto const data_type_length = data_type.length();
         if(!data_type_length.has_value())
@@ -261,9 +215,9 @@ namespace dlg_help_utils::stream_utils
         return std::make_pair(data_type, value.value());
     }
 
-    std::optional<uint64_t> find_field_pointer_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
+    std::optional<uint64_t> find_field_pointer_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, uint64_t const memory_address)
     {
-        auto const value = find_field_pointer_type_and_value_in_type(walker, type, field_name, memory_address);
+        auto const value = find_field_pointer_type_and_value_in_type(walker, field_data, memory_address);
         if(!value.has_value())
         {
             return std::nullopt;
@@ -272,15 +226,14 @@ namespace dlg_help_utils::stream_utils
         return std::get<1>(value.value());
     }
 
-    std::optional<uint64_t> find_basic_type_field_address_in_type(dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address, size_t const field_size)
+    std::optional<uint64_t> find_basic_type_field_address_in_type(std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, uint64_t const memory_address, size_t const field_size)
     {
-        auto const type_and_offset = find_field_type_and_offset_in_type(type, field_name, dbg_help::sym_tag_enum::BaseType);
-        if(!type_and_offset.has_value())
+        if(!field_data.has_value())
         {
             return std::nullopt;
         }
 
-        auto const& [data_type, offset] = type_and_offset.value();
+        auto const& [data_type, offset] = field_data.value();
 
         auto const data_type_length = data_type.length();
         if(!data_type_length.has_value())
@@ -296,9 +249,8 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    std::optional<std::tuple<uint64_t, uint32_t, uint32_t>> find_bit_type_field_address_in_type(dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address, size_t const field_size)
+    std::optional<std::tuple<uint64_t, uint32_t, uint32_t>> find_bit_type_field_address_in_type(std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, uint64_t const memory_address, size_t const field_size)
     {
-        auto const field_data = find_field_in_type(type, field_name);
         if(!field_data.has_value())
         {
             return std::nullopt;
@@ -346,15 +298,14 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    std::optional<std::tuple<std::unique_ptr<uint8_t[]>, uint64_t, uint64_t>> read_udt_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
+    std::optional<std::tuple<std::unique_ptr<uint8_t[]>, uint64_t, uint64_t>> read_udt_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, uint64_t const memory_address)
     {
-        auto const type_and_offset = find_field_type_and_offset_in_type(type, field_name, dbg_help::sym_tag_enum::UDT);
-        if(!type_and_offset.has_value())
+        if(!field_data.has_value())
         {
             return std::nullopt;
         }
 
-        auto const& [data_type, offset] = type_and_offset.value();
+        auto const& [data_type, offset] = field_data.value();
 
         auto const data_type_length = data_type.length();
         if(!data_type_length.has_value())
@@ -413,16 +364,16 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    std::optional<uint64_t> find_machine_size_field_value(process::process_environment_block const& peb, dbg_help::symbol_type_info const& type, std::wstring_view const field_name, uint64_t const memory_address)
+    std::optional<uint64_t> find_machine_size_field_value(process::process_environment_block const& peb, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, uint64_t const memory_address)
     {
         if(peb.is_x86_target())
         {
-            return find_basic_type_field_value_in_type<uint32_t>(peb.walker(), type, field_name, memory_address);
+            return find_basic_type_field_value_in_type<uint32_t>(peb.walker(), field_data, memory_address);
         }
 
         if(peb.is_x64_target())
         {
-            return find_basic_type_field_value_in_type<uint64_t>(peb.walker(), type, field_name, memory_address);
+            return find_basic_type_field_value_in_type<uint64_t>(peb.walker(), field_data, memory_address);
         }
 
         return std::nullopt;
@@ -449,9 +400,9 @@ namespace dlg_help_utils::stream_utils
         throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} length not found", type_name)};
     }
 
-    uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name)
+    uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, std::wstring const& type_name, std::wstring const& field_name)
     {
-        auto const address_value = find_field_pointer_type_and_value_in_type(walker, type, field_name, address);
+        auto const address_value = find_field_pointer_type_and_value_in_type(walker, field_data, address);
         if(!address_value.has_value())
         {
             throw_cant_get_field_data(type_name, field_name);
@@ -460,9 +411,9 @@ namespace dlg_help_utils::stream_utils
         return std::get<1>(address_value.value());
     }
 
-    uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, dbg_help::symbol_type_info const& type, std::wstring const& type_name, std::wstring const& field_name)
+    uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, std::wstring const& type_name, std::wstring const& field_name)
     {
-        auto const pointer_value = get_field_pointer_raw(walker, address, type, type_name, field_name);
+        auto const pointer_value = get_field_pointer_raw(walker, address, field_data, type_name, field_name);
         if(pointer_value == 0)
         {
             throw_cant_get_field_is_null(type_name, field_name);
@@ -471,13 +422,26 @@ namespace dlg_help_utils::stream_utils
         return pointer_value;
     }
 
-    uint64_t get_field_offset(dbg_help::symbol_type_info const& symbol_type, std::wstring const& symbol_name, std::wstring const& field_name)
+    uint64_t get_field_offset_from_type(dbg_help::symbol_type_info const& symbol_type, std::wstring const& symbol_name, std::wstring const& field_name)
     {
-        if(auto const segment_entry = find_field_in_type(symbol_type, field_name); segment_entry.has_value())
+        if(auto const segment_entry = symbol_type.find_field_in_type(field_name); segment_entry.has_value())
         {
             if(auto const offset_data = segment_entry.value().first.offset(); offset_data.has_value())
             {
                 return segment_entry.value().second + offset_data.value();
+            }
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} {1} field has no offset", symbol_name, field_name)};
+        }
+        throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} has no {1} field", symbol_name, field_name)};
+    }
+
+    uint64_t get_field_offset(std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, std::wstring const& symbol_name, std::wstring const& field_name)
+    {
+        if(field_data.has_value())
+        {
+            if(auto const offset_data = field_data.value().first.offset(); offset_data.has_value())
+            {
+                return field_data.value().second + offset_data.value();
             }
             throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} {1} field has no offset", symbol_name, field_name)};
         }

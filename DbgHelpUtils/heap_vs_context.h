@@ -37,16 +37,26 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_vs_entry> free_entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_vs_context_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_vs_context_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_vs_context_symbol_type; }
 
         static std::wstring const& symbol_name;
         static std::wstring const& free_chunk_symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_vs_context_symbol_type;
+            dbg_help::symbol_type_info heap_vs_chunk_free_symbol_type;
+            size_t heap_vs_chunk_header_length{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_total_committed_units_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_free_committed_units_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_subsegment_list_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_free_chunk_tree_field_data;
+        };
+
+        cache_data const& cache_data_;
         segment_heap const& heap_;
         uint64_t const heap_vs_context_address_;
-        dbg_help::symbol_type_info const heap_vs_context_symbol_type_;
-        dbg_help::symbol_type_info const heap_vs_chunk_free_symbol_type_;
-        size_t const heap_vs_chunk_header_length_;
     };
 }

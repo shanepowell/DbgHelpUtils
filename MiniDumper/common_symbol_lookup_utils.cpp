@@ -12,7 +12,7 @@ using namespace dlg_help_utils;
 
 std::optional<dbg_help::symbol_type_info> get_type_info(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name)
 {
-    auto const type_symbol_info = walker.get_type_info(symbol_type_name);
+    auto type_symbol_info = walker.get_type_info(symbol_type_name);
     if(!type_symbol_info.has_value())
     {
         log << std::format(L"Failed to find symbol type: {0}\n", symbol_type_name);
@@ -23,7 +23,7 @@ std::optional<dbg_help::symbol_type_info> get_type_info(std::wostream& log, stre
 
 std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_and_type(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type_symbol_info, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
 {
-    auto address_value = stream_utils::find_field_pointer_type_and_value_in_type(walker, type_symbol_info, field_name, address);
+    auto address_value = stream_utils::find_field_pointer_type_and_value_in_type(walker, stream_utils::find_field_type_and_offset_in_type(type_symbol_info, field_name, dbg_help::sym_tag_enum::PointerType), address);
     if(!address_value.has_value())
     {
         log << std::format(L"Failed to find field {0} in {1}\n", field_name, symbol_type_name);
@@ -63,7 +63,7 @@ std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump
 
 std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name, uint64_t const address)
 {
-    auto const type_symbol_info = get_type_info(log, walker, symbol_type_name);
+    auto type_symbol_info = get_type_info(log, walker, symbol_type_name);
     if(!type_symbol_info.has_value())
     {
         return std::nullopt;

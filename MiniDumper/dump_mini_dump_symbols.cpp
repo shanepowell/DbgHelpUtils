@@ -4,6 +4,7 @@
 
 #include "common_symbol_lookup_utils.h"
 #include "dump_file_options.h"
+#include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/common_symbol_names.h"
 #include "DbgHelpUtils/common_symbol_utils.h"
 #include "DbgHelpUtils/print_utils.h"
@@ -523,9 +524,9 @@ void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type
     do_dump_symbol_type(log, type, options, base_offset, indent, visited_types);
 }
 
-void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    process::process_environment_block const peb{mini_dump, symbol_engine};
+    process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
     [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), common_symbol_names::peb_structure_symbol_name, peb.peb_address());
 
@@ -558,9 +559,9 @@ void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, [[maybe_
     }
 }
 
-void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mini_dump, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mini_dump, dlg_help_utils::cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    process::process_environment_block const peb{mini_dump, symbol_engine};
+    process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
     auto const stack_database_address = get_stack_database_address(peb);
     if(stack_database_address == 0)

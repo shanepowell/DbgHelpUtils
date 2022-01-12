@@ -17,6 +17,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class segment_heap;
     class heap_segment_context;
 
     class page_range_descriptor
@@ -48,9 +49,10 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_start_of_range() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return page_range_descriptor_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_page_range_descriptor_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_page_range_descriptor_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
         [[nodiscard]] int64_t read_front_padding_size() const;
@@ -58,11 +60,23 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_page_range_descriptor_symbol_type;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_unused_bytes_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_range_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_committed_page_count_field_data_x64;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_unit_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_extra_present_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_range_flags_bits_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_committed_page_count_field_data_x86;
+        };
+
+        cache_data const& cache_data_;
         heap_segment_context const& heap_;
         uint64_t const page_range_descriptor_address_;
         size_t const index_;
         uint64_t const heap_page_segment_address_;
-        dbg_help::symbol_type_info const heap_page_range_descriptor_symbol_type_;
         uint8_t unit_shift_;
         uint64_t const ust_address_{0};
         std::vector<uint64_t> const allocation_stack_trace_{};

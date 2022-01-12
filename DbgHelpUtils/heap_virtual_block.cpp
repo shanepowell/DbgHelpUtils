@@ -1,5 +1,6 @@
 ﻿#include "heap_virtual_block.h"
 
+#include "cache_manager.h"
 #include "common_symbol_names.h"
 #include "heap_entry.h"
 #include "nt_heap.h"
@@ -11,11 +12,10 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_virtual_block::symbol_name = common_symbol_names::heap_virtual_alloc_entry_structure_symbol_name;
 
     heap_virtual_block::heap_virtual_block(nt_heap const& heap, uint64_t const heap_virtual_block_address)
-    : heap_{heap}
+    : cache_data_{heap.cache().get_cache<cache_data>()}
+    , heap_{heap}
     , heap_virtual_block_address_(heap_virtual_block_address)
-    , heap_virtual_block_symbol_type_{stream_utils::get_type(walker(), symbol_name)}
-    , data_address_{heap_virtual_block_address + stream_utils::get_type_length(heap_virtual_block_symbol_type_, symbol_name)}
-    , busy_block_offset_{stream_utils::get_field_offset(heap_virtual_block_symbol_type_, symbol_name, common_symbol_names::heap_virtual_alloc_entry_busy_block_field_symbol_name)}
+    , data_address_{heap_virtual_block_address + cache_data_.heap_virtual_block_length}
     {
     }
 
@@ -31,12 +31,12 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes heap_virtual_block::reserved() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_virtual_alloc_entry_reserve_size_field_data, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name) };
     }
 
     size_units::base_16::bytes heap_virtual_block::committed() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
+        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_virtual_alloc_entry_commit_size_field_data, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
     }
 
     std::experimental::generator<heap_entry> heap_virtual_block::entries() const
@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
         auto const committed_size = committed();
         if(auto const reserved_size = reserved(); committed_size > size_units::base_16::bytes{0})
         {
-            auto const entry_address = descriptor_address() + busy_block_offset_;
+            auto const entry_address = descriptor_address() + cache_data_.busy_block_offset;
             auto const last_address = address() + committed_size.count();
             auto const last_committed_address = address() + reserved_size.count();
 
@@ -86,6 +86,19 @@ namespace dlg_help_utils::heap
         else if(reserved_size > size_units::base_16::bytes{0})
         {
             co_yield heap_entry{heap(), address(), static_cast<uint64_t>(reserved_size.count())};
+        }
+    }
+
+    void heap_virtual_block::setup_globals(nt_heap const& heap)
+    {
+        if(!heap.cache().has_cache<cache_data>())
+        {
+            auto& data = heap.cache().get_cache<cache_data>();
+            data.heap_virtual_block_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
+            data.heap_virtual_block_length = stream_utils::get_type_length(data.heap_virtual_block_symbol_type, symbol_name);
+            data.busy_block_offset = stream_utils::get_field_offset_from_type(data.heap_virtual_block_symbol_type, symbol_name, common_symbol_names::heap_virtual_alloc_entry_busy_block_field_symbol_name);
+            data.heap_virtual_alloc_entry_reserve_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_virtual_block_symbol_type, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_virtual_alloc_entry_commit_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_virtual_block_symbol_type, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
     }
 }

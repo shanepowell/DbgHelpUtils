@@ -15,6 +15,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class segment_heap;
     class heap_lfh_context;
     class heap_lfh_subsegment;
 
@@ -36,14 +37,25 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_lfh_subsegment> subsegments() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_affinity_slot_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_lfh_affinity_slot_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_lfh_affinity_slot_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_lfh_affinity_slot_symbol_type;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_affinity_slot_bucket_index_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_affinity_slot_slot_index_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_affinity_slot_available_subsegment_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_affinity_slot_available_subsegment_list_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_affinity_slot_full_subsegment_list_field_data;
+        };
+
+        cache_data const& cache_data_;
         heap_lfh_context const& heap_;
         uint64_t const heap_lfh_affinity_slot_address_;
-        dbg_help::symbol_type_info const heap_lfh_affinity_slot_symbol_type_;
     };
 }
 

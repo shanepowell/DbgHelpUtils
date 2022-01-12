@@ -40,20 +40,28 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_lfh_bucket> active_buckets() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_context_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_lfh_context_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_lfh_context_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
-        [[nodiscard]] std::pair<dbg_help::symbol_type_info, uint64_t> get_heap_lfh_context_buckets_array_data() const;
-        [[nodiscard]] dbg_help::symbol_type_info get_heap_lfh_context_buckets_array_field_symbol_type() const;
-        [[nodiscard]] uint64_t get_heap_lfh_context_buckets_array_field_offset() const;
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_lfh_context_symbol_type;
+            dbg_help::symbol_type_info heap_lfh_context_buckets_field_symbol_type;
+            uint64_t heap_lfh_context_buckets_field_offset{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_max_affinity_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_config_max_block_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_config_with_old_page_crossing_blocks_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_config_disable_randomization_field_data;
+        };
+
+        [[nodiscard]] static std::pair<dbg_help::symbol_type_info, uint64_t> get_heap_lfh_context_buckets_array_data(cache_data const& data);
 
     private:
+        cache_data const& cache_data_;
         segment_heap const& heap_;
         uint64_t const heap_lfh_context_address_;
-        dbg_help::symbol_type_info const heap_lfh_context_symbol_type_;
-        dbg_help::symbol_type_info const heap_lfh_context_buckets_field_symbol_type_;
-        uint64_t const heap_lfh_context_buckets_field_offset_;
     };
 }

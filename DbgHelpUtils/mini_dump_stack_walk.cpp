@@ -516,7 +516,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const it_module = module_list_.find_module(frame.AddrPC.Offset);
         if (!it_module) return find_unloaded_module_symbol_info(frame.AddrPC.Offset, unloaded_module_list_, symbol_engine_);
 
-        load_module(it_module.value());
+        load_module(*it_module);
         return symbol_engine_.address_to_info(type, frame, thread_context);
     }
 
@@ -527,7 +527,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const it_module = module_list.find_module(address);
         if (!it_module) return find_unloaded_module_symbol_info(address, unloaded_module_list, symbol_engine);
 
-        auto const& module{it_module.value()};
+        auto const& module{*it_module};
 
         if (std::wstring const module_name{module.name()}; !symbol_engine.is_module_loaded(module_name))
         {
@@ -548,7 +548,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const it_module = unloaded_module_list.find_module(address);
         if (!it_module) return std::nullopt;
 
-        auto const& module{it_module.value()};
+        auto const& module{*it_module};
 
         if (std::wstring const module_name{it_module->name()}; !symbol_engine.is_module_loaded(module_name))
         {
@@ -578,6 +578,11 @@ namespace dlg_help_utils::stream_stack_dump
 
     std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_type_info(std::wstring const& type_name) const
     {
+        if(auto const it = cache_type_.find(type_name); it != cache_type_.end())
+        {
+            return it->second;
+        }
+
         auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(type_name);
 
         if(type_name.empty())
@@ -598,7 +603,9 @@ namespace dlg_help_utils::stream_stack_dump
             load_module(module_name);
         }
 
-        return symbol_engine_.get_type_info(module_name, specific_type_name);
+        auto rv = symbol_engine_.get_type_info(module_name, specific_type_name);
+        cache_type_.insert(std::make_pair(type_name, rv));
+        return rv;
     }
 
     std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_symbol_info(std::wstring const& symbol_name) const
@@ -653,9 +660,9 @@ namespace dlg_help_utils::stream_stack_dump
 
     bool mini_dump_stack_walk::load_module_from_address(DWORD64 const base_address) const
     {
-        if(auto const module = module_list_.find_module(base_address); module.has_value())
+        if(auto const module = module_list_.find_module(base_address); module)
         {
-            load_module(module.value());
+            load_module(*module);
             return true;
         }
 
@@ -664,15 +671,15 @@ namespace dlg_help_utils::stream_stack_dump
 
     void mini_dump_stack_walk::load_module(std::wstring const& module_name) const
     {
-        if(auto const & module = module_list_.find_module(module_name); module.has_value())
+        if(auto const & module = module_list_.find_module(module_name); module)
         {
-            load_module(module.value());
+            load_module(*module);
         }
         else
         {
-            if(auto const & unloaded_module = unloaded_module_list_.find_module(module_name); unloaded_module.has_value())
+            if(auto const & unloaded_module = unloaded_module_list_.find_module(module_name); unloaded_module)
             {
-                load_module(unloaded_module.value());
+                load_module(*unloaded_module);
             }
         }
     }

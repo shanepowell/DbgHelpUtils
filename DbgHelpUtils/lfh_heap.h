@@ -30,21 +30,25 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t address() const { return lfh_heap_address_; }
 
-        [[nodiscard]] std::optional<uint64_t> lfh_key() const { return lfh_key_; }
+        [[nodiscard]] std::optional<uint64_t> const& lfh_key() const { return cache_data_.lfh_key; }
         [[nodiscard]] std::experimental::generator<lfh_segment> lfh_segments() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return lfh_heap_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.lfh_heap_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(nt_heap const& heap);
 
     private:
-        [[nodiscard]] std::optional<uint64_t> get_lfh_key() const;
+        struct cache_data
+        {
+            dbg_help::symbol_type_info lfh_heap_symbol_type;
+            std::optional<uint64_t> lfh_key;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> lfh_heap_sub_segment_zones_field_data;
+        };
 
-    private:
+        cache_data const& cache_data_;
         nt_heap const& heap_;
         uint64_t const lfh_heap_address_;
-        dbg_help::symbol_type_info const lfh_heap_symbol_type_;
-        std::optional<uint64_t> lfh_key_{get_lfh_key()};
     };
 }

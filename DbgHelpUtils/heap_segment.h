@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <vector>
+#include <map>
 #include <experimental/generator>
 
 #include "symbol_type_info.h"
@@ -48,16 +48,31 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_ucr_descriptor> uncommitted_ranges() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_segment_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_segment_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_segment_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(nt_heap const& heap);
 
     private:
-        [[nodiscard]] static std::optional<heap_ucr_descriptor> is_uncommitted_range(std::vector<heap_ucr_descriptor> const& ranges, uint64_t heap_entry_address);
+        [[nodiscard]] static std::optional<heap_ucr_descriptor> is_uncommitted_range(std::map<uint64_t, heap_ucr_descriptor> const& ranges, uint64_t heap_entry_address);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_segment_symbol_type;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_segment_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_number_of_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_number_of_un_committed_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_number_of_un_committed_ranges_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_segment_allocator_back_trace_index_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_ucr_segment_list_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_base_address_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_first_entry_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_last_entry_field_data;
+        };
+
+        cache_data const& cache_data_;
         nt_heap const& heap_;
         uint64_t const heap_segment_address_;
-        dbg_help::symbol_type_info const heap_segment_symbol_type_;
     };
 }

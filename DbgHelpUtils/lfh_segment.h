@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
+#include <vector>
 
 #include "symbol_type_info.h"
 
@@ -23,6 +24,7 @@ namespace dlg_help_utils::heap
     {
     public:
         lfh_segment(lfh_heap const& heap, uint64_t lfh_segment_address);
+        ~lfh_segment();
 
         [[nodiscard]] lfh_heap const& lfh_heap() const { return lfh_heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
@@ -30,23 +32,33 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t address() const { return lfh_segment_address_; }
         [[nodiscard]] size_t subsegments_count() const;
-        [[nodiscard]] std::experimental::generator<heap_subsegment> subsegments() const;
+        [[nodiscard]] std::vector<heap_subsegment> const& subsegments() const { return subsegments_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return lfh_block_zone_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.lfh_block_zone_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(nt_heap const& heap);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info lfh_block_zone_symbol_type;
+            size_t heap_subsegment_size{};
+            size_t lfh_block_zone_size{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> lfh_block_zone_next_index_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> lfh_block_zone_free_pointer_field_data;
+        };
+
         [[nodiscard]] std::pair<uint64_t, uint64_t> get_subsegment_range() const;
+        [[nodiscard]] std::vector<heap_subsegment> build_subsegments() const;
 
-        [[nodiscard]] size_t get_lfh_block_zone_size() const;
+        [[nodiscard]] static size_t get_lfh_block_zone_size(cache_data const& cache, nt_heap const& heap);
 
     private:
+        cache_data const& cache_data_;
         heap::lfh_heap const& lfh_heap_;
         uint64_t const lfh_segment_address_;
-        dbg_help::symbol_type_info const lfh_block_zone_symbol_type_;
-        size_t const lfh_block_zone_size_{get_lfh_block_zone_size()};
-        size_t const heap_subsegment_size_;
+        std::vector<heap_subsegment> const subsegments_{build_subsegments()};
     };
 }

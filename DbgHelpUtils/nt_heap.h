@@ -6,6 +6,11 @@
 #include "symbol_type_info.h"
 #include "ust_address_stack_trace.h"
 
+namespace dlg_help_utils
+{
+    class cache_manager;
+}
+
 namespace dlg_help_utils::stream_stack_dump
 {
     class mini_dump_stack_walk;
@@ -27,7 +32,9 @@ namespace dlg_help_utils::heap
     {
     public:
 
-        nt_heap(process::process_environment_block const& peb, uint64_t nt_heap_address);
+        nt_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t nt_heap_address);
+
+        [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
@@ -47,7 +54,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_low_fragment_heap_enabled() const { return front_end_heap_type() == FrontEndHeapTypeLowFragmentationHeap; }
 
         [[nodiscard]] bool is_encoded() const { return encoding_ != nullptr; }
-        [[nodiscard]] uint32_t granularity() const { return granularity_; }
+        [[nodiscard]] uint32_t granularity() const { return cache_data_.granularity; }
 
         [[nodiscard]] std::experimental::generator<heap_segment> segments() const;
         [[nodiscard]] std::experimental::generator<heap_ucr_descriptor> uncommitted_ranges() const;
@@ -64,16 +71,42 @@ namespace dlg_help_utils::heap
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return nt_heap_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_symbol_type; }
 
         static std::wstring const& symbol_name;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_symbol_type;
+            uint32_t granularity{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_encode_flag_mask_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_signature_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_memory_reserved_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_memory_committed_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_memory_large_ucr_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_size_in_virtual_blocks_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_segments_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_ucrs_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_free_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_allocator_back_trace_index_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_front_end_heap_type_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_list_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_ucr_list_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_virtual_allocated_blocks_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_free_lists_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_front_end_heap_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_encoding_field_data;
+        };
+        [[nodiscard]] cache_data const& setup_globals();
+
+    private:
+        cache_manager& cache_manager_;
         uint64_t const nt_heap_address_;
         process::process_environment_block const& peb_;
-        dbg_help::symbol_type_info const heap_symbol_type_;
-        uint32_t const granularity_;
+        cache_data const& cache_data_{setup_globals()};
         std::unique_ptr<uint8_t[]> encoding_;
-        ust_address_stack_trace stack_trace_{walker()};
+        ust_address_stack_trace stack_trace_{cache_manager_, walker()};
     };
 }

@@ -245,6 +245,8 @@ set(Streams
     "stream_handle_object_information.h"
     "stream_module.cpp"
     "stream_module.h"
+    "stream_module_name.cpp"
+    "stream_module_name.h"
     "stream_thread.cpp"
     "stream_thread.h"
     "stream_thread_context.cpp"
@@ -281,6 +283,7 @@ set(Streams
 source_group("Streams" FILES ${Streams})
 
 set(Utility
+    "cache_manager.h"
     "chrono_unit_convert_to_string.h"
     "crc.h"
     "exit_scope.h"

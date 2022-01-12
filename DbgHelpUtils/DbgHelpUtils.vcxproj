@@ -241,6 +241,7 @@
     <ClCompile Include="stream_handle.cpp" />
     <ClCompile Include="stream_handle_object_information.cpp" />
     <ClCompile Include="stream_module.cpp" />
+    <ClCompile Include="stream_module_name.cpp" />
     <ClCompile Include="stream_stack_dump.cpp" />
     <ClCompile Include="stream_thread.cpp" />
     <ClCompile Include="stream_thread_context.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="by_size_frequency_view.h" />
     <ClInclude Include="by_size_ranges_frequency_view.h" />
     <ClInclude Include="by_stacktrace_frequency_view.h" />
+    <ClInclude Include="cache_manager.h" />
     <ClInclude Include="call_convention.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
@@ -374,6 +376,7 @@
     <ClInclude Include="stream_handle_object_information.h" />
     <ClInclude Include="stream_hex_dump.h" />
     <ClInclude Include="stream_module.h" />
+    <ClInclude Include="stream_module_name.h" />
     <ClInclude Include="stream_stack_dump.h" />
     <ClInclude Include="stream_thread.h" />
     <ClInclude Include="stream_thread_context.h" />

@@ -29,8 +29,9 @@
 
 namespace dlg_help_utils::heap
 {
-    process_heaps::process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
-    : peb_{ mini_dump, symbol_engine }
+    process_heaps::process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
+    : cache_manager_{cache}
+    , peb_{ mini_dump, cache, symbol_engine }
     , system_module_list_{system_module_list}
     , statistic_view_options_{statistic_view_options}
     {
@@ -127,7 +128,7 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<process_heap_entry> process_heaps::all_entries() const
     {
-        crt_heap const crt_heap{ peb_ };
+        crt_heap const crt_heap{ cache_manager_, peb_ };
         std::map<uint64_t, crt_entry> crt_entries;
         for (auto const& entry : crt_heap.entries())
         {
@@ -304,7 +305,7 @@ namespace dlg_help_utils::heap
             }
         }
 
-        for (auto const& heap : dph_heap::dph_heaps(peb()))
+        for (auto const& heap : dph_heap::dph_heaps(cache_manager_, peb()))
         {
             for (auto const& entry : heap.busy_entries())
             {
@@ -346,7 +347,7 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<process_heap_entry> process_heaps::all_free_entries() const
     {
-        crt_heap const crt_heap{ peb_ };
+        crt_heap const crt_heap{ cache_manager_, peb_ };
         std::vector<crt_entry> crt_entries;
         for (auto const& entry : crt_heap.entries())
         {
@@ -502,7 +503,7 @@ namespace dlg_help_utils::heap
             }
         }
 
-        for (auto const& heap : dph_heap::dph_heaps(peb()))
+        for (auto const& heap : dph_heap::dph_heaps(cache_manager_, peb()))
         {
             for (auto const& entry : heap.busy_entries())
             {

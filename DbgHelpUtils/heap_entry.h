@@ -48,8 +48,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t address() const { return heap_entry_address_; }
         [[nodiscard]] uint64_t user_address() const { return user_address_; }
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
-        [[nodiscard]] uint64_t block_address() const { return heap_entry_address_ + heap_entry_length_; }
-        [[nodiscard]] uint64_t block_size() const { return size().count() - heap_entry_length_; }
+        [[nodiscard]] uint64_t block_address() const { return heap_entry_address_ + cache_data_.heap_entry_length; }
+        [[nodiscard]] uint64_t block_size() const { return size().count() - cache_data_.heap_entry_length; }
 
         [[nodiscard]] uint8_t flags() const { return flags_; }
         [[nodiscard]] size_units::base_16::bytes size() const { return size_; }
@@ -81,8 +81,9 @@ namespace dlg_help_utils::heap
         static uint8_t constexpr FlagLFHMarker = 0x80;
         static uint8_t constexpr LfhFlagUstBusy = 0xc2;
 
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_entry_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_entry_symbol_type; }
 
+        static void setup_globals(nt_heap const& heap);
         static std::wstring const& symbol_name;
 
     private:
@@ -109,14 +110,23 @@ namespace dlg_help_utils::heap
         [[nodiscard]] static size_units::base_16::bytes get_virtual_alloc_requested_size(uint64_t size, uint16_t unused_bytes);
         [[nodiscard]] size_units::base_16::bytes get_virtual_alloc_end_unused_bytes(uint64_t end_address) const;
 
-        [[nodiscard]] dbg_help::symbol_type_info get_heap_entry_symbol_type() const;
-        [[nodiscard]] size_t get_heap_entry_length() const;
-
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_entry_symbol_type;
+            size_t heap_entry_length{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_previous_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_segment_offset_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_small_tag_index_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_unused_bytes_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_unused_bytes_length_field_data;
+        };
+
+        cache_data const& cache_data_;
         nt_heap const& heap_;
         uint64_t const heap_entry_address_;
-        dbg_help::symbol_type_info const heap_entry_symbol_type_{get_heap_entry_symbol_type()};
-        size_t const heap_entry_length_{get_heap_entry_length()};
         std::shared_ptr<uint8_t[]> buffer_;
         uint8_t const flags_{0};
         size_units::base_16::bytes const size_;

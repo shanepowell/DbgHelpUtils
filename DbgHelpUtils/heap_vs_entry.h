@@ -58,9 +58,10 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint16_t raw_size() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_vs_entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_vs_chunk_header_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_vs_chunk_header_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
         [[nodiscard]] size_units::base_16::bytes get_size() const;
@@ -73,11 +74,25 @@ namespace dlg_help_utils::heap
         void validate_buffer() const;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_vs_chunk_header_symbol_type;
+            size_t heap_vs_chunk_header_length{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_allocated_chunk_bits_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_memory_cost_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_allocated_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_encoded_segment_page_offset_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_unused_bytes_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_skip_during_walk_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_spare_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_unsafe_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_unsafe_prev_size_field_data;
+        };
+
+        cache_data const& cache_data_;
         segment_heap const& heap_;
         uint64_t const heap_vs_entry_address_;
         std::unique_ptr<uint8_t[]> buffer_;
-        dbg_help::symbol_type_info const heap_vs_chunk_header_symbol_type_;
-        size_t const heap_vs_chunk_header_length_;
         size_units::base_16::bytes const size_;
         size_units::base_16::bytes const previous_size_{0};
         bool const is_valid_{true};

@@ -6,6 +6,8 @@ class dump_file_options;
 
 namespace dlg_help_utils
 {
+    class cache_manager;
+
     namespace dbg_help
     {
         class symbol_type_info;
@@ -24,5 +26,5 @@ void dump_mini_dump_module_symbol_types(std::wostream& log, dlg_help_utils::mini
 void dump_mini_dump_address(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, std::wstring const& address, dump_file_options const& options,
                                 dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
 void dump_symbol_type(std::wostream& log, dlg_help_utils::dbg_help::symbol_type_info const& type, dump_file_options const& options, size_t base_offset = 0, size_t indent = 0);
-void dump_mini_dump_peb(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_stack_trace_database(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+void dump_mini_dump_peb(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, dlg_help_utils::cache_manager& cache, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+void dump_mini_dump_stack_trace_database(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, dlg_help_utils::cache_manager& cache, dump_file_options const& options, dlg_help_utils::dbg_help::symbol_engine& symbol_engine);

@@ -2,7 +2,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <experimental/generator>
+#include <vector>
 
 namespace dlg_help_utils
 {
@@ -11,6 +11,7 @@ namespace dlg_help_utils
     struct memory64_entry
     {
         ULONG64 start_of_memory_range;
+        ULONG64 end_of_memory_range;
         MINIDUMP_LOCATION_DESCRIPTOR64 location;
     };
 
@@ -23,15 +24,21 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] MINIDUMP_MEMORY64_LIST const& memory_list() const { return *memory_list_; }
 
-        [[nodiscard]] std::experimental::generator<memory64_entry> list() const;
+        [[nodiscard]] std::vector<memory64_entry> const& list() const { return memory_address_ranges_; }
 
         [[nodiscard]] void const* find_address_range(uint64_t address, uint64_t length) const;
         [[nodiscard]] void const* find_any_address_range(uint64_t address, uint64_t& length) const;
 
     private:
+        [[nodiscard]] std::vector<memory64_entry>::const_iterator memory_address_ranges_upper_bound(uint64_t address) const;
+        [[nodiscard]] static MINIDUMP_MEMORY64_LIST const* get_memory_list(mini_dump const& dump, size_t& index);
+        [[nodiscard]] std::vector<memory64_entry> build_memory_address_ranges() const;
+
+    private:
         mini_dump const& dump_;
-        bool found_{false};
-        size_t index_;
-        MINIDUMP_MEMORY64_LIST const* memory_list_{nullptr};
+        MINIDUMP_MEMORY64_LIST const* memory_list_;
+        size_t const index_;
+        std::vector<memory64_entry> const memory_address_ranges_{build_memory_address_ranges()};
+        bool const found_;
     };
 }

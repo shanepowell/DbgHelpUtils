@@ -4,13 +4,14 @@
 #include <DbgHelp.h>
 #include <comdef.h>
 
+#include <memory>
 #include <optional>
-#include <string_view>
+#include <string>
 #include <experimental/generator>
 
+#include "basic_type.h"
 #include "call_convention.h"
 #include "data_kind.h"
-#include "basic_type.h"
 #include "sym_tag_enum.h"
 #include "udt_kind_type.h"
 
@@ -19,10 +20,11 @@ namespace dlg_help_utils::dbg_help
     class symbol_type_info
     {
     public:
+        symbol_type_info() = default;
         symbol_type_info(DWORD64 module_base, ULONG type_index);
 
-        [[nodiscard]] std::optional<enum sym_tag_enum> sym_tag() const;
-        [[nodiscard]] std::optional<std::wstring> name() const;
+        [[nodiscard]] std::optional<sym_tag_enum> sym_tag() const;
+        [[nodiscard]] std::optional<std::wstring_view> name() const;
         [[nodiscard]] std::optional<ULONG64> length() const;
         [[nodiscard]] std::optional<symbol_type_info> type() const;
         [[nodiscard]] std::optional<symbol_type_info> type_id() const;
@@ -53,6 +55,8 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] std::experimental::generator<symbol_type_info> children() const;
 
+        [[nodiscard]] std::optional<std::pair<symbol_type_info, uint64_t>> find_field_in_type(std::wstring_view field_name) const;
+
         [[nodiscard]] std::wstring to_address_string() const;
         static [[nodiscard]] std::optional<symbol_type_info> from_address_string(std::wstring_view address);
 
@@ -68,7 +72,10 @@ namespace dlg_help_utils::dbg_help
         static void throw_sym_get_type_info_error(std::wstring_view const& function, optional_type optional);
 
     private:
-        DWORD64 module_base_;
-        ULONG type_index_;
+        class cache_type_info;
+
+        DWORD64 module_base_{};
+        ULONG type_index_{};
+        std::shared_ptr<cache_type_info> cache_info_{};
     };
 }

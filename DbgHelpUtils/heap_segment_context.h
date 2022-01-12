@@ -45,13 +45,27 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<page_range_descriptor> free_page_ranges() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_segment_context_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_seg_context_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_seg_context_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_seg_context_symbol_type;
+
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_max_allocation_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_segment_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_segment_mask_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_unit_shift_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_pages_per_unit_shift_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_segment_list_head_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_seg_context_free_page_ranges_field_data;
+        };
+
+        cache_data const& cache_data_;
         segment_heap const& heap_;
         uint64_t const heap_segment_context_address_;
-        dbg_help::symbol_type_info const heap_seg_context_symbol_type_;
     };
 }

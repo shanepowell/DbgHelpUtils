@@ -102,6 +102,7 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(view_sort_column_raw_, dlg_help_utils::join(g_view_sort_column | std::views::keys, "|"sv))["--statsortcolumn"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_column.contains(value); })
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_order.contains(value); })
+        | lyra::opt(output_filename_raw_, "filename")["--out"]("output filename")
     ;
 }
 
@@ -109,6 +110,8 @@ void dump_file_options::process_raw_options()
 {
     dump_files_ = convert_to_wstring(dump_files_raw_);
     base_diff_dump_files_ = convert_to_wstring(base_diff_dump_files_raw_);
+    output_filename_ = dlg_help_utils::string_conversation::acp_to_wstring(output_filename_raw_);
+    output_filename_raw_.clear();
 
     if (!dump_stream_types_raw_.empty())
     {
@@ -199,6 +202,21 @@ void dump_file_options::process_raw_options()
         statistic_view_options_.view_sort_order() = g_view_sort_order.at(view_sort_order_raw_);
         view_sort_order_raw_.clear();
     }
+}
+
+std::wostream& dump_file_options::get_log_stream()
+{
+    if(output_filename_.empty())
+    {
+        return wcout;
+    }
+
+    if(!log_file_.is_open())
+    {
+        log_file_.open(output_filename_, ios_base::app);
+    }
+
+    return log_file_;
 }
 
 std::vector<std::wstring> dump_file_options::convert_to_wstring(std::vector<std::string>& raw)

@@ -112,5 +112,6 @@ namespace dlg_help_utils::stream_stack_dump
         dbg_help::symbol_engine& symbol_engine_;
         dbg_help::i_symbol_load_callback& callback_;
         dbg_help::callback_handle handle_;
+        mutable std::map<std::wstring, std::optional<dbg_help::symbol_type_info>> cache_type_;
     };
 }

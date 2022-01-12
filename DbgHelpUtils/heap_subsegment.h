@@ -16,6 +16,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class nt_heap;
     class heap_entry;
     class lfh_heap;
 
@@ -39,20 +40,31 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_subsegment_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_subsegment_symbol_type; }
 
         static std::wstring const& symbol_name;
         static std::wstring const& user_data_header_symbol_name;
+        static void setup_globals(nt_heap const& heap);
 
     private:
         [[nodiscard]] std::tuple<uint64_t, uint16_t> get_entry_data() const;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_subsegment_symbol_type;
+            dbg_help::symbol_type_info heap_user_data_header_symbol_type;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_subsegment_block_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_subsegment_block_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_subsegment_user_blocks_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_user_data_first_allocation_offset_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_user_data_encoded_offsets_field_data;
+        };
+
+        cache_data const& cache_data_;
         heap::lfh_heap const& lfh_heap_;
         uint64_t const heap_subsegment_address_;
         uint64_t const lfh_block_zone_size_;
-        dbg_help::symbol_type_info const heap_subsegment_symbol_type_;
-        dbg_help::symbol_type_info const heap_user_data_header_symbol_type_;
         uint64_t entry_start_address_;
         uint16_t block_stride_;
     };

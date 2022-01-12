@@ -18,6 +18,7 @@
 
 #include "ResultSet.h"
 #include "symbol_engine_ui.h"
+#include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/crt_entry.h"
 #include "DbgHelpUtils/crt_heap.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
@@ -55,11 +56,12 @@ struct base_dump_file
 {
     base_dump_file(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
     : dump_file{open_mini_dump_file(dump_filename, o_log)}
-    , heaps{dump_file, symbol_engine, system_module_list, statistic_view_options}
-    , crt_heap{heaps.peb()}
+    , heaps{dump_file, cache, symbol_engine, system_module_list, statistic_view_options}
+    , crt_heap{cache, heaps.peb()}
     {
     }
 
+    dlg_help_utils::cache_manager cache;
     dlg_help_utils::mini_dump dump_file;
     dlg_help_utils::heap::process_heaps heaps;
     dlg_help_utils::heap::crt_heap crt_heap;
@@ -115,8 +117,9 @@ bool validate_dump_file(bool stacktrace, std::wstring const& dump_filename, std:
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options;
 
-    dlg_help_utils::heap::process_heaps heaps{dump_file, symbol_engine, system_module_list, statistic_view_options};
-    dlg_help_utils::heap::crt_heap crt_heap{ heaps.peb() };
+    dlg_help_utils::cache_manager cache;
+    dlg_help_utils::heap::process_heaps heaps{dump_file, cache, symbol_engine, system_module_list, statistic_view_options};
+    dlg_help_utils::heap::crt_heap crt_heap{ cache, heaps.peb() };
 
     // ReSharper disable once CppTooWideScopeInitStatement
     auto base_heap = make_base_heap(base_dump_filename, o_log, heaps, crt_heap, symbol_engine, system_module_list, statistic_view_options);

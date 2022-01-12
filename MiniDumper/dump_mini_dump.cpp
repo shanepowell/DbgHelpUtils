@@ -5,6 +5,7 @@
 #include "dump_mini_dump_streams.h"
 #include "dump_mini_dump_symbols.h"
 #include "symbol_engine_ui.h"
+#include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_type.h"
@@ -109,6 +110,7 @@ bool process_dump_file(std::wostream& log, wstring const& file_name, std::wstrin
 
 void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std::unique_ptr<mini_dump> const& base_diff_dump, dump_file_options const& options)
 {
+    cache_manager cache;
     symbol_engine_ui ui{options};
     dbg_help::symbol_engine symbol_engine{ui};
     if (options.dump_header())
@@ -140,32 +142,32 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.display_peb())
     {
-        dump_mini_dump_peb(log, dump_file, options, symbol_engine);
+        dump_mini_dump_peb(log, dump_file, cache, options, symbol_engine);
     }
 
     if(options.display_heap())
     {
-        dump_mini_dump_heap(log, dump_file, options, symbol_engine);
+        dump_mini_dump_heap(log, dump_file, cache, options, symbol_engine);
     }
 
     if(options.display_heap_entries())
     {
-        dump_mini_dump_heap_entries(log, dump_file, base_diff_dump, options, symbol_engine);
+        dump_mini_dump_heap_entries(log, dump_file, cache, base_diff_dump, options, symbol_engine);
     }
 
     if(options.display_crtheap())
     {
-        dump_mini_dump_crtheap(log, dump_file, base_diff_dump, options, symbol_engine);
+        dump_mini_dump_crtheap(log, dump_file, cache, base_diff_dump, options, symbol_engine);
     }
 
     if(options.display_heap_statistic_views())
     {
-        dump_mini_dump_heap_statistics(log, dump_file, base_diff_dump, options, symbol_engine);
+        dump_mini_dump_heap_statistics(log, dump_file, cache, base_diff_dump, options, symbol_engine);
     }
 
     if(options.display_stack_trace_database())
     {
-        dump_mini_dump_stack_trace_database(log, dump_file, options, symbol_engine);
+        dump_mini_dump_stack_trace_database(log, dump_file, cache, options, symbol_engine);
     }
 
     for (auto const& module_name : options.dump_types_modules())

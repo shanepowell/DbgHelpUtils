@@ -31,13 +31,21 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes size() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_ucr_descriptor_address_; }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_ucr_descriptor_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_ucr_descriptor_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(nt_heap const& heap);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_ucr_descriptor_symbol_type;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_ucr_descriptor_address_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_ucr_descriptor_size_field_data;
+        };
+
+        cache_data const& cache_data_;
         nt_heap const& heap_;
         uint64_t const heap_ucr_descriptor_address_;
-        dbg_help::symbol_type_info const heap_ucr_descriptor_symbol_type_;
     };
 }

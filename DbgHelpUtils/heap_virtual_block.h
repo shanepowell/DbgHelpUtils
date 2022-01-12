@@ -36,15 +36,24 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return descriptor_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_virtual_block_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_virtual_block_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(nt_heap const& heap);
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_virtual_block_symbol_type;
+            uint64_t heap_virtual_block_length{};
+            uint64_t busy_block_offset{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_virtual_alloc_entry_reserve_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_virtual_alloc_entry_commit_size_field_data;
+        };
+
+        cache_data const& cache_data_;
         nt_heap const& heap_;
         uint64_t const heap_virtual_block_address_;
-        dbg_help::symbol_type_info const heap_virtual_block_symbol_type_;
         uint64_t const data_address_;
-        uint64_t const busy_block_offset_;
     };
 }

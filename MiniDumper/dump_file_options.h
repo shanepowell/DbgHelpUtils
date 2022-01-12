@@ -11,6 +11,8 @@
 #pragma warning(pop)
 
 
+#include <fstream>
+
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/statistic_view_options.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
@@ -69,6 +71,7 @@ public:
     [[nodiscard]] std::vector<std::wstring> const& base_diff_dump_files() const { return base_diff_dump_files_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list() const { return system_module_list_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options() const { return statistic_view_options_; }
+    [[nodiscard]] std::wostream& get_log_stream();
 
 private:
     static std::vector<std::wstring> convert_to_wstring(std::vector<std::string>& raw);
@@ -119,6 +122,9 @@ private:
     std::string system_module_list_file_;
     std::string view_sort_column_raw_;
     std::string view_sort_order_raw_;
+    std::string output_filename_raw_;
+    std::wstring output_filename_;
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list_;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
+    std::wofstream log_file_;
 };

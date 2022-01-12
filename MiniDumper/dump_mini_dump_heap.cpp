@@ -1,6 +1,7 @@
 ﻿#include "dump_mini_dump_heap.h"
 
 #include "dump_file_options.h"
+#include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/crt_entry.h"
 #include "DbgHelpUtils/crt_heap.h"
 #include "DbgHelpUtils/dph_entry.h"
@@ -50,9 +51,9 @@ namespace
 {
     struct LfhSegmentData
     {
-        LfhSegmentData(size_t const segment_index, heap::lfh_segment segment)
+        LfhSegmentData(size_t const segment_index, heap::lfh_segment const& segment)
             : segment_index{ segment_index }
-            , segment{ std::move(segment) }
+            , segment{ segment }
         {
         }
 
@@ -62,9 +63,9 @@ namespace
 
     struct LfhSubsegmentData
     {
-        LfhSubsegmentData(std::shared_ptr<LfhSegmentData> segment, heap::heap_subsegment subsegment)
+        LfhSubsegmentData(std::shared_ptr<LfhSegmentData> segment, heap::heap_subsegment const& subsegment)
             : segment{ std::move(segment) }
-            , subsegment{ std::move(subsegment) }
+            , subsegment{ subsegment }
         {
         }
 
@@ -1116,14 +1117,14 @@ namespace
         }
     }
 
-    std::unique_ptr<heap::process_heaps> setup_base_diff_dump_heaps(std::unique_ptr<mini_dump> const& base_diff_dump, heap::process_heaps& heaps, dbg_help::symbol_engine& symbol_engine, dump_file_options const& options)
+    std::unique_ptr<heap::process_heaps> setup_base_diff_dump_heaps(std::unique_ptr<mini_dump> const& base_diff_dump, cache_manager& base_cache, heap::process_heaps& heaps, dbg_help::symbol_engine& symbol_engine, dump_file_options const& options)
     {
         if(!base_diff_dump)
         {
             return {};
         }
 
-        auto base_diff_heaps = std::make_unique<heap::process_heaps>(*base_diff_dump, symbol_engine, options.system_module_list(), options.statistic_view_options());
+        auto base_diff_heaps = std::make_unique<heap::process_heaps>(*base_diff_dump, base_cache, symbol_engine, options.system_module_list(), options.statistic_view_options());
         heaps.set_base_diff_filter(*base_diff_heaps);
         return base_diff_heaps;
     }
@@ -1131,11 +1132,12 @@ namespace
     struct diff_crt_data
     {
         diff_crt_data(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine)
-        : peb{mini_dump, symbol_engine}
-        , crtheap{peb}
+        : peb{mini_dump, cache, symbol_engine}
+        , crtheap{cache, peb}
         {
         }
 
+        cache_manager cache;
         process::process_environment_block const peb;
         heap::crt_heap crtheap;
     };
@@ -1153,9 +1155,9 @@ namespace
     }
 }
 
-void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    process::process_environment_block const peb{mini_dump, symbol_engine};
+    process::process_environment_block const peb{mini_dump, cache, symbol_engine};
     auto const hex_length = peb.machine_hex_printable_length();
 
     log << L"Heaps:\n";
@@ -1275,7 +1277,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, dump_fi
         }
     }
 
-    for(auto const& heap : heap::dph_heap::dph_heaps(peb))
+    for(auto const& heap : heap::dph_heap::dph_heaps(cache, peb))
     {
         print_debug_page_heap(log, hex_length, heap, options, 2);
     }
@@ -1318,10 +1320,11 @@ void print_process_entry(std::wostream& log, heap::process_heap_entry const& ent
     }
 }
 
-void dump_mini_dump_heap_entries(std::wostream& log, mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_entries(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
-    [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
+    heap::process_heaps heaps{mini_dump, cache, symbol_engine, options.system_module_list(), options.statistic_view_options()};
+    cache_manager base_cache;
+    [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, base_cache, heaps, symbol_engine, options);
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
     log << L"Heap Allocated Entries:\n";
@@ -1339,12 +1342,12 @@ void dump_mini_dump_heap_entries(std::wostream& log, mini_dump const& mini_dump,
     log << L'\n';
 }
 
-void dump_mini_dump_crtheap(std::wostream& log, mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_crtheap(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    process::process_environment_block const peb{mini_dump, symbol_engine};
+    process::process_environment_block const peb{mini_dump, cache, symbol_engine};
     auto const hex_length = peb.machine_hex_printable_length();
 
-    heap::crt_heap heap{peb};
+    heap::crt_heap heap{cache, peb};
 
     if(!heap.is_using_crt_heap())
     {
@@ -1403,60 +1406,60 @@ void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_en
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        log << std::format(L" {0:<10} ", L"");
+        log << std::format(L" {0:<12} ", L"");
         log << std::format(L"{0:<{1}} ", L"", single_line_range_title_length);
     }
     else
     {
-        log << std::format(L" {0:<10} {1:<10} ", L"range", L"range");
+        log << std::format(L" {0:<12} {1:<12} ", L"range", L"range");
     }
 
-    log << std::format(L"{:<10} ", L"allocated");
-    log << std::format(L"{:<10} ", L"allocated");
-    log << std::format(L"{:<10} ", L"allocated");
-    log << std::format(L"{:<10} ", L"overhead");
-    log << std::format(L"{:<8} ", L"free");
-    log << std::format(L"{:<10} ", L"free");
+    log << std::format(L"{:<12} ", L"allocated");
+    log << std::format(L"{:<12} ", L"allocated");
+    log << std::format(L"{:<12} ", L"allocated");
+    log << std::format(L"{:<12} ", L"overhead");
+    log << std::format(L"{:<12} ", L"free");
+    log << std::format(L"{:<12} ", L"free");
     log << std::format(L"{:<7} ", L"count");
     log << std::format(L"{:<7} ", L"size");
     log << L"\n";
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        log << std::format(L" {0:<10} ", L"size");
+        log << std::format(L" {0:<12} ", L"size");
         log << std::format(L"{0:<{1}} ", L"size hex", single_line_range_title_length);
     }
     else
     {
-        log << std::format(L" {0:<10} {1:<10} ", L"start", L"size");
+        log << std::format(L" {0:<12} {1:<12} ", L"start", L"size");
     }
 
-    log << std::format(L"{:<10} ", L"count");
-    log << std::format(L"{:<10} ", L"total");
-    log << std::format(L"{:<10} ", L"average");
-    log << std::format(L"{:<10} ", L"total");
-    log << std::format(L"{:<8} ", L"count");
-    log << std::format(L"{:<10} ", L"total");
+    log << std::format(L"{:<12} ", L"count");
+    log << std::format(L"{:<12} ", L"total");
+    log << std::format(L"{:<12} ", L"average");
+    log << std::format(L"{:<12} ", L"total");
+    log << std::format(L"{:<12} ", L"count");
+    log << std::format(L"{:<12} ", L"total");
     log << std::format(L"{:<7} ", L"percent");
     log << std::format(L"{:<7} ", L"percent");
     log << L" application call site\n";
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        log << std::format(L"={0:=<10}=", L"");
+        log << std::format(L"={0:=<12}=", L"");
         log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
     }
     else
     {
-        log << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
+        log << std::format(L" {0:=<12}={1:=<12}=", L"", L"");
     }
 
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<8}=", L"");
-    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
     log << std::format(L"{:=<7}=", L"");
     log << std::format(L"{:=<7}=", L"");
     log << L"======================\n";
@@ -1465,19 +1468,19 @@ void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_en
     {
         if(view_by_size_frequency.is_range_single_value())
         {
-            log << std::format(L" {:10} ", to_wstring(bucket.start_range()));
+            log << std::format(L" {:12} ", to_wstring(bucket.start_range()));
             log << std::format(L"{0:{1}} ", stream_hex_dump::to_hex(bucket.start_range()), single_line_range_title_length);
         }
         else
         {
-            log << std::format(L" {0:10} {1:10} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
+            log << std::format(L" {0:12} {1:12} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
         }
-        log << std::format(L"{:10} ", locale_formatting::to_wstring(bucket.allocated_count()));
-        log << std::format(L"{:10} ", to_wstring(bucket.allocated_total()));
-        log << std::format(L"{:10} ", to_wstring(bucket.allocated_average()));
-        log << std::format(L"{:10} ", to_wstring(bucket.overhead_total()));
-        log << std::format(L"{:8} ", locale_formatting::to_wstring(bucket.free_count()));
-        log << std::format(L"{:10} ", to_wstring(bucket.free_total()));
+        log << std::format(L"{:12} ", locale_formatting::to_wstring(bucket.allocated_count()));
+        log << std::format(L"{:12} ", to_wstring(bucket.allocated_total()));
+        log << std::format(L"{:12} ", to_wstring(bucket.allocated_average()));
+        log << std::format(L"{:12} ", to_wstring(bucket.overhead_total()));
+        log << std::format(L"{:12} ", locale_formatting::to_wstring(bucket.free_count()));
+        log << std::format(L"{:12} ", to_wstring(bucket.free_total()));
         log << std::format(L"{:<7.2f} ", bucket.range_count_percent());
         log << std::format(L"{:<7.2f} ", bucket.range_size_percent());
         if(bucket.common_allocation_callsite().has_value())
@@ -1511,56 +1514,60 @@ void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_en
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        log << std::format(L"={0:=<10}=", L"");
+        log << std::format(L"={0:=<12}=", L"");
         log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
     }
     else
     {
-        log << std::format(L" {0:=<10}={1:=<10}=", L"", L"");
+        log << std::format(L" {0:=<12}={1:=<12}=", L"", L"");
     }
 
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<10}=", L"");
-    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
+    log << std::format(L"{:=<12}=", L"");
     log << std::format(L"{:=<8}=", L"");
-    log << std::format(L"{:=<10}=", L"");
+    log << std::format(L"{:=<12}=", L"");
     log << std::format(L"{:=<7}=", L"");
     log << std::format(L"{:=<7}=", L"");
     log << L"======================\n";
 
     if(view_by_size_frequency.is_range_single_value())
     {
-        log << std::format(L" {:10} ", L"");
+        log << std::format(L" {:12} ", L"");
         log << std::format(L"{0:>{1}} ", L"Total:", single_line_range_title_length);
     }
     else
     {
-        log << std::format(L" {0:10} {1:>10} ", L"", L"Total:");
+        log << std::format(L" {0:12} {1:>12} ", L"", L"Total:");
     }
-    log << std::format(L"{:10} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
-    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_total()));
-    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.allocated_average()));
-    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.overhead_total()));
-    log << std::format(L"{:8} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
-    log << std::format(L"{:10} ", to_wstring(view_by_size_frequency.free_total()));
+    log << std::format(L"{:12} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
+    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.allocated_total()));
+    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.allocated_average()));
+    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.overhead_total()));
+    log << std::format(L"{:12} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
+    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.free_total()));
     log << L'\n';
 }
 
-void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_dump, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
-    heap::process_heaps heaps{mini_dump, symbol_engine, options.system_module_list(), options.statistic_view_options()};
-    [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, heaps, symbol_engine, options);
+    heap::process_heaps heaps{mini_dump, cache, symbol_engine, options.system_module_list(), options.statistic_view_options()};
+    cache_manager base_cache;
+    [[maybe_unused]] auto const base_diff_heaps = setup_base_diff_dump_heaps(base_diff_dump, base_cache, heaps, symbol_engine, options);
 
     auto const loading_heap_statistics = L"Loading heap statistics..."s;
-    std::wstring const clear(loading_heap_statistics.size(), L'\b');
+    std::wstring const move_back(loading_heap_statistics.size(), L'\b');
+    std::wstring const clear(loading_heap_statistics.size(), L' ');
     std::wcerr << loading_heap_statistics;
 
     auto const hex_length = heaps.peb().machine_hex_printable_length();
     auto const is_x86_target = heaps.peb().is_x86_target();
     auto const statistics = heaps.statistics();
 
+    std::wcerr << move_back;
     std::wcerr << clear;
+    std::wcerr << move_back;
 
     log << L"Heap Statistics:\n";
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))

@@ -7,11 +7,13 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <experimental/generator>
 
 #include "i_stack_walk_callback.h"
 #include "i_symbol_load_callback.h"
+#include "stream_module_name.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils
@@ -78,10 +80,10 @@ namespace dlg_help_utils::dbg_help
         ~symbol_engine() override;
 
         symbol_engine(symbol_engine const&) = delete;
-        symbol_engine(symbol_engine&&) = default;
+        symbol_engine(symbol_engine&&) = delete;
 
         symbol_engine& operator=(symbol_engine const&) = delete;
-        symbol_engine& operator=(symbol_engine&&) = default;
+        symbol_engine& operator=(symbol_engine&&) = delete;
 
         void clear_modules();
         void load_module(std::wstring module_name, DWORD64 module_base, DWORD module_size, DWORD module_time_stamp,
@@ -98,8 +100,8 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(DWORD64 address);
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context);
 
-        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name) const;
-        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name) const;
+        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name);
+        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name);
         [[nodiscard]] std::vector<symbol_type_info> module_types(std::wstring const& module_name);
 
         [[nodiscard]] static std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name);
@@ -111,7 +113,7 @@ namespace dlg_help_utils::dbg_help
         };
 
         [[nodiscard]] static std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols);
-        [[nodiscard]] static void local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type type, uint64_t frame_address_offset, void const* thread_context, std::wstring const& find_mask = {}, symbol_walk_options const option = symbol_walk_options::default_symbols);
+        static void local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type type, uint64_t frame_address_offset, void const* thread_context, std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols);
 
         [[nodiscard]] static std::experimental::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context);
 
@@ -134,6 +136,7 @@ namespace dlg_help_utils::dbg_help
             DWORD64 base;
             DWORD size;
             std::wstring module_image_path;
+            stream_module_name name;
         };
 
         [[nodiscard]] std::map<std::wstring, module_info>::const_iterator find_module_name(DWORD64 address);
@@ -145,7 +148,11 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] DWORD64 load_module(std::wstring const& module_name, DWORD64 module_base, DWORD module_size,
                             MODLOAD_DATA* module_load_info);
 
-        [[nodiscard]] static std::optional<symbol_type_info> load_type_info(DWORD64 module_base, std::wstring const& type_name);
+        [[nodiscard]] std::optional<std::optional<symbol_type_info>> get_cached_type_info(std::wstring const& type_name);
+        void set_cached_type_info(std::wstring const& type_name, std::optional<symbol_type_info> const& type_info);
+        void clear_cached_type_info();
+
+        [[nodiscard]] std::optional<symbol_type_info> load_type_info(DWORD64 module_base, std::wstring const& type_name);
         [[nodiscard]] static DWORD setup_enum_symbol_options(symbol_walk_options option);
 
     private:
@@ -156,5 +163,6 @@ namespace dlg_help_utils::dbg_help
         DWORD loading_module_check_sum_{};
         bool loading_module_{};
         std::wstring downloading_module_name_{};
+        std::map<std::wstring, std::optional<symbol_type_info>> cache_type_info_{};
     };
 }

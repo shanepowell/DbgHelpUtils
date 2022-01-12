@@ -17,6 +17,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class segment_heap;
     class heap_lfh_context;
     class heap_lfh_entry;
 
@@ -42,20 +43,36 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_lfh_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_subsegment_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_lfh_subsegment_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_lfh_subsegment_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
         template<typename T>
-        T get_field_value_from_block_offsets(std::wstring const& field_name) const;
+        [[nodiscard]] T get_field_value_from_block_offsets(std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, std::wstring const& field_name) const;
 
     private:
+
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_lfh_subsegment_symbol_type;
+            dbg_help::symbol_type_info heap_lfh_subsegment_encoded_offsets_symbol_type;
+            uint64_t heap_lfh_subsegment_bitmap_offset{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_free_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_block_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_location_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_witheld_block_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_commit_unit_shift_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_commit_unit_count_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_encoded_offsets_block_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_block_offsets_field_data;
+        };
+
+        cache_data const& cache_data_;
         heap_lfh_context const& heap_;
         uint64_t const heap_lfh_subsegment_address_;
-        dbg_help::symbol_type_info const heap_lfh_subsegment_symbol_type_;
-        dbg_help::symbol_type_info const heap_lfh_subsegment_encoded_offsets_symbol_type_;
-        uint64_t const heap_lfh_subsegment_bitmap_offset_;
         std::unique_ptr<uint8_t[]> block_offsets_;
     };
 }

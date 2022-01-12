@@ -2,7 +2,6 @@
 #include "symbol_engine.h"
 
 #include <array>
-#include <charconv>
 #include <filesystem>
 #include <format>
 #include <ranges>
@@ -995,8 +994,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | (callback.symbol_load_debug() ? SYMOPT_DEBUG : 0));
-        SymRegisterCallbackW64(fake_process, sym_register_callback_proc64,
-                               reinterpret_cast<ULONG64>(static_cast<i_symbol_callback*>(this)));
+        SymRegisterCallbackW64(fake_process, sym_register_callback_proc64, reinterpret_cast<ULONG64>(static_cast<i_symbol_callback*>(this)));
     }
 
     symbol_engine::~symbol_engine()
@@ -1006,24 +1004,25 @@ namespace dlg_help_utils::dbg_help
 
     void symbol_engine::clear_modules()
     {
-        for (const auto& info : modules_ | std::views::values)
+        for (const auto& [handle, base, size, module_image_path, name] : modules_ | std::views::values)
         {
-            if (info.handle != 0 && !SymUnloadModule64(fake_process, info.handle))
+            if (handle != 0 && !SymUnloadModule64(fake_process, handle))
             {
-                windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(info.handle));
+                windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(handle));
             }
         }
 
         modules_.clear();
+        clear_cached_type_info();
     }
 
     void symbol_engine::load_module(std::wstring module_name, DWORD64 const module_base, DWORD const module_size,
-                                    DWORD module_time_stamp, DWORD const module_check_sum, void const* cv_record,
+                                    DWORD const module_time_stamp, DWORD const module_check_sum, void const* cv_record,
                                     DWORD const cv_record_size, void const* misc_record, DWORD const misc_record_size,
                                     [[maybe_unused]] VS_FIXEDFILEINFO const& version_info)
     {
-        std::filesystem::path path{module_name};
-        auto module = path.filename().wstring();
+        std::filesystem::path const path{module_name};
+        auto const module = path.filename().wstring();
 
         cv_info_pdb70 const pdb{cv_record, cv_record_size};
         DWORD64 handle{0};
@@ -1152,13 +1151,12 @@ namespace dlg_help_utils::dbg_help
         std::wstring module_image_path;
         if (handle != 0)
         {
-            module_image_path =
-                load_module_image_path(module_size, module_time_stamp, module_check_sum, module, handle);
+            module_image_path = load_module_image_path(module_size, module_time_stamp, module_check_sum, module, handle);
             dump_loaded_module_information(handle, module_base, module_image_path);
         }
 
-        modules_.insert(std::make_pair(std::move(module_name),
-                                       module_info{handle, module_base, module_size, std::move(module_image_path)}));
+        stream_module_name name{module_name};
+        modules_.insert(std::make_pair(std::move(module_name), module_info{handle, module_base, module_size, std::move(module_image_path), std::move(name)}));
     }
 
     void symbol_engine::load_module(std::wstring module_name, DWORD64 const module_base, DWORD const module_size,
@@ -1172,13 +1170,12 @@ namespace dlg_help_utils::dbg_help
 
         if (handle != 0)
         {
-            module_image_path =
-                load_module_image_path(module_size, module_time_stamp, module_check_sum, module, handle);
+            module_image_path = load_module_image_path(module_size, module_time_stamp, module_check_sum, module, handle);
             dump_loaded_module_information(handle, module_base, module_image_path);
         }
 
-        modules_.insert(std::make_pair(std::move(module_name),
-                                       module_info{handle, module_base, module_size, std::move(module_image_path)}));
+        stream_module_name name {module_name};
+        modules_.insert(std::make_pair(std::move(module_name), module_info{handle, module_base, module_size, std::move(module_image_path), std::move(name)}));
     }
 
     void symbol_engine::unload_module(std::wstring const& module_name)
@@ -1356,13 +1353,13 @@ namespace dlg_help_utils::dbg_help
         return std::move(info);
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name) const
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name)
     {
         auto [module_name, specific_type_name] = parse_type_info(type_name);
         return get_type_info(module_name, specific_type_name);
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name) const
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name)
     {
         if(type_name.empty())
         {
@@ -1386,7 +1383,7 @@ namespace dlg_help_utils::dbg_help
         auto it = modules_.find(module_name);
         if(it == modules_.end())
         {
-            it = std::ranges::find_if(modules_, [&module_name](std::pair<std::wstring, module_info> const& entry){ return module_match::module_name_match(entry.first, module_name); });
+            it = std::ranges::find_if(modules_, [&module_name](std::pair<std::wstring, module_info> const& entry){ return module_match::module_name_match(entry.second.name, module_name); });
         }
 
         if(it == modules_.end())
@@ -1408,7 +1405,7 @@ namespace dlg_help_utils::dbg_help
         auto it = modules_.find(module_name);
         if(it == modules_.end())
         {
-            it = std::ranges::find_if(modules_, [&module_name](std::pair<std::wstring, module_info> const& entry){ return module_match::module_name_match(entry.first, module_name); });
+            it = std::ranges::find_if(modules_, [&module_name](std::pair<std::wstring, module_info> const& entry){ return module_match::module_name_match(entry.second.name, module_name); });
         }
 
         if(it == modules_.end())
@@ -1556,7 +1553,7 @@ namespace dlg_help_utils::dbg_help
         {
             if (address >= it->second.base && address < it->second.base + it->second.size)
             {
-                return std::move(it);
+                return it;
             }
         }
 
@@ -1628,15 +1625,43 @@ namespace dlg_help_utils::dbg_help
                                 module_load_info, 0);
     }
 
+    std::optional<std::optional<symbol_type_info>> symbol_engine::get_cached_type_info(std::wstring const& type_name)
+    {
+        if(auto const it = cache_type_info_.find(type_name); it != cache_type_info_.end())
+        {
+            return it->second;
+        }
+
+        return std::nullopt;
+    }
+
+    void symbol_engine::set_cached_type_info(std::wstring const& type_name, std::optional<symbol_type_info> const& type_info)
+    {
+        cache_type_info_.insert(std::make_pair(type_name, type_info));
+    }
+
+    void symbol_engine::clear_cached_type_info()
+    {
+        cache_type_info_.clear();
+    }
+
     std::optional<symbol_type_info> symbol_engine::load_type_info(DWORD64 const module_base, std::wstring const& type_name)
     {
+        if(auto const rv = get_cached_type_info(type_name); rv.has_value())
+        {
+            return rv.value();
+        }
+
         auto const info = symbol_info_buffer::make();
         if(!SymGetTypeFromNameW(fake_process, module_base, type_name.c_str(), &info->info))
         {
+            set_cached_type_info(type_name, std::nullopt);
             return std::nullopt;
         }
 
-        return symbol_type_info{module_base, info->info.TypeIndex};
+        auto rv = symbol_type_info{module_base, info->info.TypeIndex};
+        set_cached_type_info(type_name, rv);
+        return rv;
     }
 
     std::tuple<std::wstring, std::wstring> symbol_engine::parse_type_info(std::wstring const& type_name)

@@ -2,6 +2,7 @@
 
 #include <format>
 
+#include "cache_manager.h"
 #include "common_symbol_names.h"
 #include "stream_hex_dump.h"
 #include "stream_utils.h"
@@ -9,16 +10,16 @@
 
 namespace dlg_help_utils::process
 {
-    process_parameters::process_parameters(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const process_parameters_address)
-    : walker_{walker}
+    process_parameters::process_parameters(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const process_parameters_address)
+    : cache_manager_{cache}
+    , walker_{walker}
     , process_parameters_address_{process_parameters_address}
-    , process_parameters_symbol_info_{stream_utils::get_type(walker_, common_symbol_names::rtl_user_process_parameters_structure_symbol_name)}
     {
     }
 
     std::experimental::generator<std::wstring> process_parameters::environment() const
     {
-        const auto environment_address = stream_utils::find_field_pointer_type_and_value_in_type(walker(), process_parameters_symbol_info_, common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name, process_parameters_address());
+        const auto environment_address = stream_utils::find_field_pointer_type_and_value_in_type(walker(), cache_data_.rtl_user_process_parameters_structure_environment_field_data, process_parameters_address());
         if(!environment_address.has_value() || environment_address.value().second == 0)
         {
             co_return;
@@ -66,5 +67,17 @@ namespace dlg_help_utils::process
         {
             co_yield value;
         }
+    }
+
+    process_parameters::cache_data const& process_parameters::setup_globals() const
+    {
+        if(!cache_manager_.has_cache<cache_data>())
+        {
+            auto& data = cache_manager_.get_cache<cache_data>();
+            data.process_parameters_symbol_info = stream_utils::get_type(walker_, common_symbol_names::rtl_user_process_parameters_structure_symbol_name);
+            data.rtl_user_process_parameters_structure_environment_field_data = stream_utils::find_field_type_and_offset_in_type(data.process_parameters_symbol_info, common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+        }
+
+        return cache_manager_.get_cache<cache_data>();
     }
 }

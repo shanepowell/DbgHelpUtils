@@ -15,6 +15,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
+    class segment_heap;
     class heap_segment_context;
     class page_range_descriptor;
 
@@ -35,22 +36,28 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<page_range_descriptor> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_page_segment_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_page_segment_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_page_segment_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
-        [[nodiscard]] std::pair<dbg_help::symbol_type_info, uint64_t> get_desc_array_field_data() const;
-        [[nodiscard]] dbg_help::symbol_type_info get_desc_array_field_symbol_type() const;
-        [[nodiscard]] uint64_t get_desc_array_field_offset() const;
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_page_segment_symbol_type;
+            size_t heap_page_range_descriptor_length{};
+            dbg_help::symbol_type_info desc_array_array_field_symbol_type;
+            uint64_t heap_seg_context_array_field_offset{};
+
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_segment_signature_field_data;
+        };
+
+        [[nodiscard]] static std::pair<dbg_help::symbol_type_info, uint64_t> get_desc_array_field_data(cache_data const& data);
 
     private:
+        cache_data const& cache_data_;
         heap_segment_context const& heap_;
         uint64_t const heap_page_segment_address_;
         uint64_t const heap_segment_context_address_;
-        dbg_help::symbol_type_info const heap_page_segment_symbol_type_;
-        size_t const heap_page_range_descriptor_length_;
-        dbg_help::symbol_type_info const desc_array_array_field_symbol_type_{get_desc_array_field_symbol_type()};
-        uint64_t const heap_seg_context_array_field_offset_{get_desc_array_field_offset()};
     };
 }

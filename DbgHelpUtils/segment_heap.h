@@ -5,6 +5,11 @@
 #include "size_units.h"
 #include "ust_address_stack_trace.h"
 
+namespace dlg_help_utils
+{
+    class cache_manager;
+}
+
 namespace dlg_help_utils::process
 {
     class process_environment_block;
@@ -26,7 +31,9 @@ namespace dlg_help_utils::heap
     class segment_heap
     {
     public:
-        segment_heap(process::process_environment_block const& peb, uint64_t segment_heap_address);
+        segment_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t segment_heap_address);
+
+        [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return peb_.walker(); }
@@ -65,15 +72,11 @@ namespace dlg_help_utils::heap
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return segment_heap_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return segment_heap_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.segment_heap_symbol_type; }
 
         static std::wstring const& symbol_name;
             
     private:
-        [[nodiscard]] std::pair<dbg_help::symbol_type_info, uint64_t> get_heap_seg_context_array_data() const;
-        [[nodiscard]] dbg_help::symbol_type_info get_heap_seg_context_array_field_symbol_type() const;
-        [[nodiscard]] uint64_t get_heap_seg_context_array_field_offset() const;
-
         template<typename T>
         [[nodiscard]] T get_heap_key_value(std::pair<uint64_t, uint64_t> const& address_and_size, uint64_t data_offset) const;
         [[nodiscard]] uint64_t get_heap_key() const;
@@ -84,19 +87,37 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t get_unit_shift_amount() const;
 
+        struct cache_data
+        {
+            dbg_help::symbol_type_info segment_heap_symbol_type;
+            dbg_help::symbol_type_info heap_seg_context_symbol_type;
+            size_t heap_seg_context_symbol_length{};
+            dbg_help::symbol_type_info heap_seg_context_array_field_symbol_type;
+            uint64_t heap_seg_context_array_field_offset{};
+            uint64_t heap_vs_context_offset{};
+            uint64_t heap_lfh_context_offset{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_signature_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_global_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_total_reserved_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_total_committed_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_free_committed_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_lfh_free_committed_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_large_reserved_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_large_committed_pages_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_large_alloc_metadata_field_data;
+        };
+        [[nodiscard]] static std::pair<dbg_help::symbol_type_info, uint64_t> get_heap_seg_context_array_data(cache_data const& data);
+        [[nodiscard]] cache_data const& setup_globals();
+
     private:
+
+        cache_manager& cache_manager_;
         uint64_t const segment_heap_address_;
         process::process_environment_block const& peb_;
-        dbg_help::symbol_type_info const segment_heap_symbol_type_;
-        dbg_help::symbol_type_info const heap_seg_context_symbol_type_;
-        size_t const heap_seg_context_symbol_length_;
-        dbg_help::symbol_type_info const heap_seg_context_array_field_symbol_type_;
-        uint64_t const heap_seg_context_array_field_offset_;
+        cache_data const& cache_data_{setup_globals()};
         uint64_t heap_key_;
         uint32_t lfh_heap_key_;
-        uint64_t const heap_vs_context_offset_;
-        uint64_t const heap_lfh_context_offset_;
         uint64_t const unit_shift_amount_;
-        ust_address_stack_trace stack_trace_{walker()};
+        ust_address_stack_trace stack_trace_{cache_manager_, walker()};
     };
 }

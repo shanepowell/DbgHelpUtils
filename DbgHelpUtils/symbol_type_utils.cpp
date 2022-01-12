@@ -212,10 +212,10 @@ namespace dlg_help_utils::symbol_type_utils
         return bad_result;
     }
 
-    std::wstring get_symbol_name(symbol_type_info const& value)
+    std::wstring_view get_symbol_name(symbol_type_info const& value)
     {
         auto const name_data = value.name();
-        return name_data.value_or(L"(none)"s);
+        return name_data.value_or(L"(none)"sv);
     }
 
     std::wstring get_symbol_type_friendly_name(symbol_type_info const& value)
@@ -237,13 +237,13 @@ namespace dlg_help_utils::symbol_type_utils
                     name += L' ';
                 }
 
-                auto const name_data = value.name();
                 name += get_symbol_name(value);
                 break;
             }
 
             case sym_tag_enum::Enum:
-                name = L"enum "s + get_symbol_name(value);
+                name = L"enum "s;
+                name += get_symbol_name(value);
                 break;
 
             case sym_tag_enum::PointerType:

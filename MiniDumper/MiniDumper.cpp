@@ -59,7 +59,9 @@ int main(int const argc, char* argv[])
             return EXIT_SUCCESS;
         }
 
-        auto const on_error_handler = [&dump_options](std::wstring const& error){ wcout << std::format(L"Dump file: {}\n", error); return dump_options.continue_on_errors(); };
+        auto& log = dump_options.get_log_stream();
+
+        auto const on_error_handler = [&dump_options, &log](std::wstring const& error){ log << std::format(L"Dump file: {}\n", error); return dump_options.continue_on_errors(); };
         // ReSharper disable once CppLocalVariableMayBeConst
         auto base_diff_dump_files = filesystem_utils::enumerate_files(dump_options.base_diff_dump_files(), on_error_handler);
         auto base_diff_dump_files_current = std::begin(base_diff_dump_files);
@@ -73,7 +75,7 @@ int main(int const argc, char* argv[])
                 ++base_diff_dump_files_current;
             }
 
-            if(!process_dump_file(wcout, dump_file, base_diff_dump_file, dump_options) && !dump_options.continue_on_errors())
+            if(!process_dump_file(log, dump_file, base_diff_dump_file, dump_options) && !dump_options.continue_on_errors())
             {
                 return EXIT_FAILURE;
             }
@@ -81,7 +83,7 @@ int main(int const argc, char* argv[])
 
         if(base_diff_dump_files_current != base_diff_dump_files_end)
         {
-            wcout << L"warning: more base diff dump file paths than dump file paths\n";
+            log << L"warning: more base diff dump file paths than dump file paths\n";
         }
 
         return EXIT_SUCCESS;

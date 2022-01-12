@@ -37,7 +37,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t user_address() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return crt_mem_block_header_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.crt_mem_block_header_symbol_type; }
 
         static std::wstring const& symbol_name;
 
@@ -46,14 +46,26 @@ namespace dlg_help_utils::heap
             return request_number() == rhs.request_number() && entry_address() == rhs.entry_address() && data_size() == rhs.data_size();
         }
 
+        static void setup_globals(crt_heap const& heap);
+
     private:
         [[nodiscard]] std::wstring get_filename() const;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info crt_mem_block_header_symbol_type;
+            size_t crt_mem_block_header_length{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_line_number_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_block_use_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_request_number_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_data_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_file_name_field_data;
+        };
+
+        cache_data const& cache_data_;
         crt_heap const& heap_;
         uint64_t const entry_address_;
-        dbg_help::symbol_type_info const crt_mem_block_header_symbol_type_;
-        size_t const crt_mem_block_header_length_;
         std::wstring const file_name_;
     };
 }

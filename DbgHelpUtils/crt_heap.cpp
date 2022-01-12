@@ -1,16 +1,16 @@
 ﻿#include "crt_heap.h"
 
+#include "cache_manager.h"
 #include "common_symbol_names.h"
 #include "crt_entry.h"
 #include "process_environment_block.h"
 #include "stream_utils.h"
 
-#include <ranges>
-
 namespace dlg_help_utils::heap
 {
-    crt_heap::crt_heap(process::process_environment_block const& peb)
-    : peb_{peb}
+    crt_heap::crt_heap(cache_manager& cache, process::process_environment_block const& peb)
+    : cache_manager_{cache}
+    , peb_{peb}
     , crt_first_block_{get_crt_first_block()}
     {
     }
@@ -74,13 +74,17 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<crt_entry> crt_heap::all_entries() const
     {
+        if(!is_using_crt_heap())
+        {
+            co_return;
+        }
+
         auto const block_symbol = stream_utils::get_type(walker(), crt_entry::symbol_name);
         auto address = crt_first_block_;
         while(address != 0)
         {
             co_yield crt_entry{*this, address};
-
-            address = stream_utils::get_field_pointer_raw(walker(), address, block_symbol, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name);
+            address = stream_utils::get_field_pointer_raw(walker(), address, cache_data_.crt_mem_block_header_block_header_next_field_data, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name);
         }
     }
 
@@ -98,5 +102,18 @@ namespace dlg_help_utils::heap
     bool crt_heap::is_filtered(std::vector<crt_entry> const& filters, crt_entry const& entry)
     {
         return std::ranges::find(filters, entry) != filters.end();
+    }
+
+    crt_heap::cache_data const& crt_heap::setup_globals()
+    {
+        if(is_using_crt_heap() && !cache().has_cache<cache_data>())
+        {
+            auto& data = cache().get_cache<cache_data>();
+            data.block_symbol_symbol_type = stream_utils::get_type(walker(), crt_entry::symbol_name);
+            data.crt_mem_block_header_block_header_next_field_data = stream_utils::find_field_type_and_offset_in_type(data.block_symbol_symbol_type, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            crt_entry::setup_globals(*this);
+        }
+
+        return cache().get_cache<cache_data>();
     }
 }

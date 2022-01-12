@@ -28,7 +28,7 @@ namespace dlg_help_utils::heap
     class process_heaps
     {
     public:
-        process_heaps(mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
+        process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
 
@@ -58,6 +58,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] static bool contains_address(uint64_t start_address, uint64_t size, uint64_t address);
 
     private:
+        cache_manager& cache_manager_;
         process::process_environment_block const peb_;
         statistic_views::system_module_list const& system_module_list_;
         statistic_views::statistic_view_options const& statistic_view_options_;

@@ -3,6 +3,11 @@
 #include "symbol_type_info.h"
 #include "ust_address_stack_trace.h"
 
+namespace dlg_help_utils
+{
+    class cache_manager;
+}
+
 namespace dlg_help_utils::process
 {
     class process_environment_block;
@@ -20,7 +25,9 @@ namespace dlg_help_utils::heap
     class dph_heap
     {
     public:
-        dph_heap(process::process_environment_block const& peb, uint64_t dph_heap_address);
+        dph_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t dph_heap_address);
+
+        [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
 
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
@@ -41,7 +48,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint32_t free_allocations() const;
         [[nodiscard]] size_units::base_16::bytes free_allocations_committed() const;
 
-        [[nodiscard]] static std::experimental::generator<dph_heap> dph_heaps(process::process_environment_block const& peb);
+        [[nodiscard]] static std::experimental::generator<dph_heap> dph_heaps(cache_manager& cache, process::process_environment_block const& peb);
 
         [[nodiscard]] std::experimental::generator<dph_entry> busy_entries() const;
         [[nodiscard]] std::experimental::generator<dph_entry> free_entries() const;
@@ -50,17 +57,38 @@ namespace dlg_help_utils::heap
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return dph_heap_root_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.dph_heap_root_symbol_type; }
 
         static std::wstring const& symbol_name;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info dph_heap_root_symbol_type;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_extra_flags_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_seed_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_busy_allocations_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_busy_allocations_bytes_committed_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_ranges_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_bytes_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_free_allocations_bytes_committed_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_normal_heap_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_busy_nodes_table_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_free_allocations_list_head_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_free_allocations_list_tail_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_list_head_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_list_tail_field_data;
+        };
+
         [[nodiscard]] std::experimental::generator<dph_entry> walk_list(uint64_t head, uint64_t tail) const;
-    
+        [[nodiscard]] cache_data const& setup_globals();
+
     private:
+        cache_manager& cache_manager_;
         process::process_environment_block const& peb_;
         uint64_t const dph_heap_address_;
-        dbg_help::symbol_type_info const dph_heap_root_symbol_type_;
-        ust_address_stack_trace stack_trace_{walker()};
+        cache_data const& cache_data_{setup_globals()};
+        ust_address_stack_trace stack_trace_{cache_manager_, walker()};
     };
 }

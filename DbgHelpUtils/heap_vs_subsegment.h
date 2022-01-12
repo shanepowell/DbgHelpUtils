@@ -39,19 +39,29 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_vs_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_vs_subsegment_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return heap_vs_subsegment_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_vs_subsegment_symbol_type; }
 
         static std::wstring const& symbol_name;
+        static void setup_globals(segment_heap const& heap);
 
     private:
         [[nodiscard]] uint16_t last_entry_offset() const;
         [[nodiscard]] uint64_t get_subsegment_offset() const;
 
     private:
+
+        struct cache_data
+        {
+            dbg_help::symbol_type_info heap_vs_subsegment_symbol_type;
+            size_t heap_vs_subsegment_length{};
+            size_t heap_vs_chunk_header_length{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_subsegment_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_subsegment_signature_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_subsegment_full_commit_field_data;
+        };
+
+        cache_data const& cache_data_;
         segment_heap const& heap_;
         uint64_t const heap_vs_subsegment_address_;
-        dbg_help::symbol_type_info const heap_vs_subsegment_symbol_type_;
-        size_t const heap_vs_subsegment_length_;
-        size_t const heap_vs_chunk_header_length_;
    };
 }

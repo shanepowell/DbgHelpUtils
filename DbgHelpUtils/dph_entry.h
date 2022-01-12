@@ -46,10 +46,11 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t next_alloc_address() const { return next_alloc_address_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return dph_heap_block_symbol_type_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.dph_heap_block_symbol_type; }
 
         static std::wstring const& symbol_name;
         static std::wstring const& block_info_symbol_name;
+        static void setup_globals(dph_heap const& heap);
 
     private:
         [[nodiscard]] uint64_t get_virtual_block_address() const;
@@ -62,10 +63,22 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 
     private:
+        struct cache_data
+        {
+            dbg_help::symbol_type_info dph_heap_block_symbol_type;
+            dbg_help::symbol_type_info dph_block_information_symbol_type;
+            size_t dph_block_information_symbol_length{};
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_block_information_start_stamp_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_virtual_block_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_user_requested_size_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_virtual_block_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_user_allocation_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_stack_trace_field_data;
+            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_next_alloc_field_data;
+        };
+
+        cache_data const& cache_data_;
         dph_heap const& heap_;
-        dbg_help::symbol_type_info const dph_heap_block_symbol_type_;
-        dbg_help::symbol_type_info const dph_block_information_symbol_type_;
-        size_t const dph_block_information_symbol_length_;
         uint64_t const entry_address_;
         uint64_t const virtual_block_address_{get_virtual_block_address()};
         size_units::base_16::bytes const virtual_block_size_{get_virtual_block_size()};

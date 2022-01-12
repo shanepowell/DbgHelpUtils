@@ -7,6 +7,7 @@ class dump_file_options;
 
 namespace dlg_help_utils
 {
+    class cache_manager;
     class mini_dump;
 }
 

@@ -402,6 +402,9 @@
     <ClCompile Include="register_names.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="stream_module_name.cpp">
+      <Filter>Streams</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -826,6 +829,12 @@
     </ClInclude>
     <ClInclude Include="register_names.h">
       <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_module_name.h">
+      <Filter>Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="cache_manager.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,57 +5,66 @@
 
 namespace dlg_help_utils
 {
-    module_list_stream::module_list_stream(mini_dump const& dump, size_t const index)
+    module_list_stream::module_list_stream(mini_dump const& dump, size_t index)
         : dump_{dump}
-          , index_{index}
+        , module_list_{get_module_list(dump, index)}
+        , index_{index}
+        , found_{module_list_ != nullptr}
     {
-        auto const* entry = dump.find_stream_type(ModuleListStream, index_);
-        if (entry == nullptr)
-        {
-            return;
-        }
-
-        module_list_ = static_cast<MINIDUMP_MODULE_LIST const*>(dump.rva32(entry->Location));
-        found_ = true;
     }
 
-    std::experimental::generator<stream_module> module_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    stream_module const* module_list_stream::find_module(uint64_t const address) const
     {
-        if (!found()) co_return;
+        if (!found()) return nullptr;
 
-        for (size_t index = 0; index < module_list_->NumberOfModules; ++index)
-        {
-            co_yield stream_module{dump_, module_list_->Modules[index]};
-        }
-    }
-
-    std::optional<stream_module> module_list_stream::find_module(uint64_t const address) const
-    {
-        if (!found()) return std::nullopt;
-
-        for (auto&& module : list())
+        for (auto const& module : list())
         {
             if (address >= module->BaseOfImage && address < module->BaseOfImage + module->SizeOfImage)
             {
-                return module;
+                return &module;
             }
         }
 
-        return std::nullopt;
+        return nullptr;
     }
 
-    std::optional<stream_module> module_list_stream::find_module(std::wstring_view const& module_name) const
+    stream_module const* module_list_stream::find_module(std::wstring_view const& module_name) const
     {
-        if (!found()) return std::nullopt;
+        if (!found()) return nullptr;
 
-        for (auto&& module : list())
+        for (auto const& module : list())
         {
-            if (module_match::module_name_match(module.name(), module_name))
+            if (module_match::module_name_match(module, module_name))
             {
-                return module;
+                return &module;
             }
         }
 
-        return std::nullopt;
+        return nullptr;
+    }
+
+    MINIDUMP_MODULE_LIST const* module_list_stream::get_module_list(mini_dump const& dump, size_t& index)
+    {
+        auto const* entry = dump.find_stream_type(ModuleListStream, index);
+        if (entry == nullptr)
+        {
+            return nullptr;
+        }
+
+        return static_cast<MINIDUMP_MODULE_LIST const*>(dump.rva32(entry->Location));
+    }
+
+    std::vector<stream_module> module_list_stream::build_modules() const
+    {
+        std::vector<stream_module> rv;
+        if (!found()) return rv;
+
+        rv.reserve(module_list_->NumberOfModules);
+        for (size_t index = 0; index < module_list_->NumberOfModules; ++index)
+        {
+            rv.emplace_back(dump_, module_list_->Modules[index]);
+        }
+
+        return rv;
     }
 }
