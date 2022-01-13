@@ -5,7 +5,8 @@ Param
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
     [switch] $LastReport,
-    [switch] $Verbose
+    [switch] $Verbose,
+    [switch] $ExitOnFailure
 )
 
 Function Test-Admin {
@@ -39,19 +40,19 @@ if(!$LastReport)
 
     # run release / x64
     Write-Host "Running $Compiler Release x64 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler
+    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
 
     # run release / x86
     Write-Host "Running $Compiler Release x86 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler
+    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
 
     # run debug / x64
     Write-Host "Running $Compiler Debug x64 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler
+    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
 
     # run debug / x86
     Write-Host "Running $Compiler Debug x86 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler
+    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
 }
 
 

@@ -23,8 +23,41 @@ Param
     [switch] $Verbose,
     [string] $CheckDumpFileBaseName,
     [switch] $CheckDumpHasStackTrace,
-    [switch] $SingleDumpOnly
+    [switch] $SingleDumpOnly,
+    [switch] $ExitOnFailure
 )
+
+Function RunCommand($command, $arguments)
+{
+    $text = "$command $arguments"
+    Write-Verbose "Run: $text"
+
+    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+    $pinfo.FileName = $command
+    $pinfo.UseShellExecute = $false
+    $pinfo.Arguments = $arguments
+    $pinfo.WorkingDirectory = Get-Location
+    $p = New-Object System.Diagnostics.Process
+    $p.StartInfo = $pinfo
+    $p.Start() | Out-Null
+    $p.WaitForExit()
+    $exitCode = $p.ExitCode
+    
+    if($exitCode -ne 0)
+    {
+        $err = "ERROR: command failed: [$text] -- with $exitCode"
+        Add-Content -Path $ResultFile "$err`r`n"
+
+        if($ExitOnFailure)
+        {
+            throw $err
+        }
+        else
+        {
+            Write-Error $err
+        }
+    }
+}
 
 Function RunAllAllocationApplicationArgs($options, $validateoptions)
 {
@@ -72,8 +105,7 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $dmp_2 -ErrorAction:SilentlyContinue | Out-Null
         remove-item $log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $json -ErrorAction:SilentlyContinue | Out-Null
-        Write-Verbose "Run: . `"$PSScriptRoot\$arch_dir\$CompilerDir\$config\$app_name`" `"--test`" `"$arg`" `"--type`" `"$alloc`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $log `"--json`" $json"
-        . "$PSScriptRoot\$arch_dir\$CompilerDir\$config\$app_name" "--test" "$arg" "--type" "$alloc" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $log "--json" $json
+        RunCommand "$PSScriptRoot\$arch_dir\$CompilerDir\$config\$app_name" "--test `"$arg`" --type `"$alloc`" --dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$log`" --json `"$json`""
     }
     
     RunAllocationApplicationChecks $validateoptions $base_name
@@ -98,18 +130,13 @@ Function RunAllocationApplicationChecks($validateoptions, $base_name)
         remove-item $dmp_2_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_2_debug_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
 
-        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log"
-        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_1 > $dmp_1_full_log
-        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log"
-        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_1 > $dmp_1_debug_full_log
-
-        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log"
-        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_full_diff_log
-        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log"
-        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp_2 --basediffdumpfile $dmp_1 > $dmp_2_debug_full_diff_log
+        RunCommand "$ExeFolder\MiniDumper.exe" "--heap --crtheap --heapentries --heapstat all --dumpfile `"$dmp_1`" --out `"$dmp_1_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile `"$dmp_1`" --out `"$dmp_1_debug_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--heap --crtheap --heapentries --heapstat all --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_full_diff_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_debug_full_diff_log`""
     }
-    Write-Verbose "Run: . `"$ExeFolder\ValidateHeapEntries.exe`" `"--dmp1`" $dmp_1 `"--dmp2`" $dmp_2 `"--log`" $ResultFile `"--json`" $json $validateoptions"
-    . "$ExeFolder\ValidateHeapEntries.exe" "--dmp1" $dmp_1 "--dmp2" $dmp_2 "--log" $ResultFile "--json" $json $validateoptions
+    
+    RunCommand "$ExeFolder\ValidateHeapEntries.exe" "--dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$ResultFile`" --json `"$json`" $validateoptions"
 }
 
 Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
@@ -126,13 +153,11 @@ Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
         remove-item $dmp_full_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_debug_full_log -ErrorAction:SilentlyContinue | Out-Null
 
-        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $dmp_full_log"
-        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapstat all --dumpfile $dmp > $dmp_full_log
-        Write-Verbose "Run: . `"$ExeFolder\MiniDumper.exe`" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp > $dmp_debug_full_log"
-        . "$ExeFolder\MiniDumper.exe" --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile $dmp > $dmp_debug_full_log
+        RunCommand "$ExeFolder\MiniDumper.exe" "--heap --crtheap --heapentries --heapstat all --dumpfile `"$dmp`" --out `"$dmp_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile `"$dmp`" --out `"$dmp_debug_full_log`""
     }
-    Write-Verbose "Run: . `"$ExeFolder\ValidateHeapEntries.exe`" `"--dmp1`" $dmp `"--log`" $ResultFile `"--json`" $json $validateoptions"
-    . "$ExeFolder\ValidateHeapEntries.exe" "--dmp1" $dmp "--log" $ResultFile "--json" $json $validateoptions
+
+    RunCommand "$ExeFolder\ValidateHeapEntries.exe" "--dmp1 `"$dmp`" --log `"$ResultFile`" --json `"$json`" $validateoptions"
 }
 
 Function RunStandardTests()
@@ -231,8 +256,7 @@ if($Verbose)
 
 if (!$CheckOnly -and (Test-Admin) -eq $false) 
 {
-    Write-Host "This script can only be run with Administrator"
-    exit
+    throw "This script can only be run with Administrator"
 }
 
 if($TestDebug)
