@@ -630,7 +630,7 @@ namespace dlg_help_utils::stream_stack_dump
             load_module(module_name);
         }
 
-        return dbg_help::symbol_engine::get_symbol_info(symbol_name);
+        return symbol_engine_.get_symbol_info(symbol_name);
     }
 
     std::vector<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
@@ -655,7 +655,7 @@ namespace dlg_help_utils::stream_stack_dump
             load_module(module_name);
         }
 
-        return dbg_help::symbol_engine::symbol_walk(find_mask);
+        return symbol_engine_.symbol_walk(find_mask);
     }
 
     bool mini_dump_stack_walk::load_module_from_address(DWORD64 const base_address) const

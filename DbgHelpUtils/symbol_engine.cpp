@@ -505,17 +505,30 @@ namespace
         return TRUE;
     }
 
+    struct find_symbol_callback_context
+    {
+        find_symbol_callback_context(HANDLE process, std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv)
+        : process{process}
+        , rv{rv}
+        {
+        }
+
+        HANDLE process;
+        std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv;
+    };
+
     BOOL CALLBACK find_symbol_callback(_In_ PSYMBOL_INFOW symbol_info, [[maybe_unused]] _In_ ULONG symbol_size, _In_opt_ PVOID user_context)
     {
-        std::vector<dlg_help_utils::dbg_help::symbol_type_info>& symbols{*static_cast<std::vector<dlg_help_utils::dbg_help::symbol_type_info>*>(user_context)};
-        symbols.emplace_back(symbol_info->ModBase, symbol_info->Index);
+        find_symbol_callback_context& symbols{*static_cast<find_symbol_callback_context*>(user_context)};
+        symbols.rv.emplace_back(symbols.process, symbol_info->ModBase, symbol_info->Index);
         return TRUE;
     }
 
     struct local_variable_info
     {
-        local_variable_info(dlg_help_utils::dbg_help::thread_context_type type, uint64_t const frame_address_offset, void const* thread_context, std::vector<dlg_help_utils::dbg_help::local_variable> &locals, std::vector<dlg_help_utils::dbg_help::local_variable> &parameters)
-        : type{type}
+        local_variable_info(HANDLE process, dlg_help_utils::dbg_help::thread_context_type type, uint64_t const frame_address_offset, void const* thread_context, std::vector<dlg_help_utils::dbg_help::local_variable> &locals, std::vector<dlg_help_utils::dbg_help::local_variable> &parameters)
+        : process{process}
+        , type{type}
         , frame_address_offset{frame_address_offset}
         , thread_context{thread_context}
         , locals{locals}
@@ -523,6 +536,7 @@ namespace
         {
         }
 
+        HANDLE process;
         dlg_help_utils::dbg_help::thread_context_type type;
         uint64_t frame_address_offset;
         void const* thread_context;
@@ -952,8 +966,8 @@ namespace
             return TRUE;
         }
 
-        auto& variable = is_parameter ? info.parameters.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{symbol_info->ModBase, symbol_info->Index})
-                                      : info.locals.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{symbol_info->ModBase, symbol_info->Index});
+        auto& variable = is_parameter ? info.parameters.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{info.process, symbol_info->ModBase, symbol_info->Index})
+                                      : info.locals.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{info.process, symbol_info->ModBase, symbol_info->Index});
 
         if (symbol_info->Flags & SYMFLAG_REGREL)
         {
@@ -976,9 +990,6 @@ namespace
 
 namespace dlg_help_utils::dbg_help
 {
-    HANDLE fake_process{reinterpret_cast<HANDLE>(1)};
-    HANDLE fake_thread{reinterpret_cast<HANDLE>(2)};
-
     symbol_engine::symbol_engine(i_symbol_load_callback& callback)
         : callback_{&callback}
           , symbol_(static_cast<SYMBOL_INFOW*>(malloc(max_buffer_size)))
@@ -988,25 +999,25 @@ namespace dlg_help_utils::dbg_help
         symbol_->SizeOfStruct = sizeof(SYMBOL_INFOW);
         line_.SizeOfStruct = sizeof(IMAGEHLP_LINEW64);
 
-        if (!SymInitializeW(fake_process, nullptr, FALSE))
+        if (!SymInitializeW(process_, nullptr, FALSE))
         {
             windows_error::throw_windows_api_error(L"SymInitialize"sv);
         }
 
         SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | (callback.symbol_load_debug() ? SYMOPT_DEBUG : 0));
-        SymRegisterCallbackW64(fake_process, sym_register_callback_proc64, reinterpret_cast<ULONG64>(static_cast<i_symbol_callback*>(this)));
+        SymRegisterCallbackW64(process_, sym_register_callback_proc64, reinterpret_cast<ULONG64>(static_cast<i_symbol_callback*>(this)));
     }
 
     symbol_engine::~symbol_engine()
     {
-        SymCleanup(fake_process);
+        SymCleanup(process_);
     }
 
     void symbol_engine::clear_modules()
     {
         for (const auto& [handle, base, size, module_image_path, name] : modules_ | std::views::values)
         {
-            if (handle != 0 && !SymUnloadModule64(fake_process, handle))
+            if (handle != 0 && !SymUnloadModule64(process_, handle))
             {
                 windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(handle));
             }
@@ -1182,7 +1193,7 @@ namespace dlg_help_utils::dbg_help
     {
         if (auto const it = modules_.find(module_name); it != modules_.end())
         {
-            if (it->second.handle != 0 && !SymUnloadModule64(fake_process, it->second.handle))
+            if (it->second.handle != 0 && !SymUnloadModule64(process_, it->second.handle))
             {
                 windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(it->second.handle));
             }
@@ -1220,7 +1231,7 @@ namespace dlg_help_utils::dbg_help
     {
         IMAGEHLP_MODULEW64 module{};
         module.SizeOfStruct = sizeof(module);
-        if (!SymGetModuleInfoW64(fake_process, module_base, &module))
+        if (!SymGetModuleInfoW64(process_, module_base, &module))
         {
             windows_error::throw_windows_api_error(L"SymUnloadModule64"sv, to_hex(module_base));
         }
@@ -1258,14 +1269,14 @@ namespace dlg_help_utils::dbg_help
             return std::move(info);
         }
 
-        if (!SymFromAddrW(fake_process, address, &info.symbol_displacement, symbol_.get()))
+        if (!SymFromAddrW(process_, address, &info.symbol_displacement, symbol_.get()))
         {
             return std::move(info);
         }
 
         info.symbol_name = symbol_->Name;
 
-        if (SymGetLineFromAddrW64(fake_process, address, &info.line_displacement, &line_))
+        if (SymGetLineFromAddrW64(process_, address, &info.line_displacement, &line_))
         {
             info.line_number = line_.LineNumber;
             info.file_name = line_.FileName;
@@ -1304,7 +1315,7 @@ namespace dlg_help_utils::dbg_help
         image_hlp_frame.FuncTableEntry = reinterpret_cast<ULONG64>(frame.FuncTableEntry);
         image_hlp_frame.Virtual = frame.Virtual;
 
-        SymSetContext(fake_process, &image_hlp_frame, nullptr);
+        SymSetContext(process_, &image_hlp_frame, nullptr);
         if(auto const ec = GetLastError(); ec == ERROR_SUCCESS)
         {
             local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context);
@@ -1316,7 +1327,7 @@ namespace dlg_help_utils::dbg_help
 
         if (frame.StackFrameSize >= sizeof(STACKFRAME_EX) && frame.InlineFrameContext != INLINE_FRAME_CONTEXT_IGNORE && frame.InlineFrameContext != INLINE_FRAME_CONTEXT_INIT)
         {
-            if (!SymFromInlineContextW(fake_process, address, frame.InlineFrameContext, &info.symbol_displacement, symbol_.get()))
+            if (!SymFromInlineContextW(process_, address, frame.InlineFrameContext, &info.symbol_displacement, symbol_.get()))
             {
                 return std::move(info);
             }
@@ -1324,26 +1335,26 @@ namespace dlg_help_utils::dbg_help
             info.symbol_name = symbol_->Name;
             info.in_line = static_cast<sym_tag_enum>(symbol_->Tag) == sym_tag_enum::Inlinee;
 
-            if (SymGetLineFromInlineContextW(fake_process, address, frame.InlineFrameContext, it->second.base, &info.line_displacement, &line_))
+            if (SymGetLineFromInlineContextW(process_, address, frame.InlineFrameContext, it->second.base, &info.line_displacement, &line_))
             {
                 info.line_number = line_.LineNumber;
                 info.file_name = line_.FileName;
             }
 
-            if (SymSetScopeFromInlineContext(fake_process, address, frame.InlineFrameContext))
+            if (SymSetScopeFromInlineContext(process_, address, frame.InlineFrameContext))
             {
                 local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context, {}, symbol_walk_options::inline_variables);
             }
         }
         else
         {
-            if (!SymFromAddrW(fake_process, address, &info.symbol_displacement, symbol_.get()))
+            if (!SymFromAddrW(process_, address, &info.symbol_displacement, symbol_.get()))
             {
                 return std::move(info);
             }
             info.symbol_name = symbol_->Name;
 
-            if (SymGetLineFromAddrW64(fake_process, frame.AddrPC.Offset, &info.line_displacement, &line_))
+            if (SymGetLineFromAddrW64(process_, frame.AddrPC.Offset, &info.line_displacement, &line_))
             {
                 info.line_number = line_.LineNumber;
                 info.file_name = line_.FileName;
@@ -1413,7 +1424,8 @@ namespace dlg_help_utils::dbg_help
             return types;
         }
 
-        if(!SymEnumTypesW(fake_process, it->second.base, find_symbol_callback, &types))
+        find_symbol_callback_context context{process_, types};
+        if(!SymEnumTypesW(process_, it->second.base, find_symbol_callback, &context))
         {
             windows_error::throw_windows_api_error(L"SymEnumTypesW"sv, to_hex(it->second.base));
         }
@@ -1421,7 +1433,7 @@ namespace dlg_help_utils::dbg_help
         return types;
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name)
+    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name) const
     {
         if(symbol_name.empty())
         {
@@ -1429,18 +1441,19 @@ namespace dlg_help_utils::dbg_help
         }
 
         auto const info = symbol_info_buffer::make();
-        if(!SymFromNameW(fake_process, symbol_name.c_str(), &info->info))
+        if(!SymFromNameW(process_, symbol_name.c_str(), &info->info))
         {
             return std::nullopt;
         }
 
-        return symbol_type_info{info->info.ModBase, info->info.Index};
+        return symbol_type_info{process_, info->info.ModBase, info->info.Index};
     }
 
-    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, symbol_walk_options const option)
+    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, symbol_walk_options const option) const
     {
         std::vector<symbol_type_info> symbols;
-        if(!SymEnumSymbolsExW(fake_process, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &symbols, setup_enum_symbol_options(option)))
+        find_symbol_callback_context context{process_, symbols};
+        if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &context, setup_enum_symbol_options(option)))
         {
             windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask);
         }
@@ -1448,10 +1461,10 @@ namespace dlg_help_utils::dbg_help
         return symbols;
     }
 
-    void symbol_engine::local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type const type, uint64_t const frame_address_offset, void const* thread_context, std::wstring const& find_mask, symbol_walk_options const option)
+    void symbol_engine::local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type const type, uint64_t const frame_address_offset, void const* thread_context, std::wstring const& find_mask, symbol_walk_options const option) const
     {
-        local_variable_info info{type, frame_address_offset, thread_context, locals, parameters};
-        if(!SymEnumSymbolsExW(fake_process, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
+        local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters};
+        if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
         {
             if(auto const ec = GetLastError(); ec != ERROR_INVALID_PARAMETER && ec != ERROR_NOT_SUPPORTED)
             {
@@ -1460,7 +1473,7 @@ namespace dlg_help_utils::dbg_help
         }
     }
 
-    std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context)
+    std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context) const
     {
         thread_context_type type;
         DWORD machine_type;
@@ -1519,7 +1532,7 @@ namespace dlg_help_utils::dbg_help
 
         while (true)
         {
-            if (!StackWalkEx(machine_type, fake_process, fake_thread, &frame, thread_context_copy.get(),
+            if (!StackWalkEx(machine_type, process_, thread_, &frame, thread_context_copy.get(),
                              &read_process_memory_routine, &function_table_access_routine, &get_module_base_routine,
                              &translate_address, flags))
             {
@@ -1592,7 +1605,7 @@ namespace dlg_help_utils::dbg_help
         {
             loading_module_check_sum_ = module_check_sum;
             std::array<wchar_t, MAX_PATH> buffer{};
-            auto const result = SymFindFileInPathW(fake_process, nullptr, module_name.c_str(), &module_time_stamp,
+            auto const result = SymFindFileInPathW(process_, nullptr, module_name.c_str(), &module_time_stamp,
                                                    module_size, 0, SSRVOPT_DWORDPTR, buffer.data(),
                                                    find_file_in_path_callback, static_cast<i_symbol_callback*>(this));
             loading_module_check_sum_ = 0;
@@ -1621,7 +1634,7 @@ namespace dlg_help_utils::dbg_help
             loading_module_ = false;
         });
 
-        return SymLoadModuleExW(fake_process, nullptr, module_name.c_str(), nullptr, module_base, module_size,
+        return SymLoadModuleExW(process_, nullptr, module_name.c_str(), nullptr, module_base, module_size,
                                 module_load_info, 0);
     }
 
@@ -1653,13 +1666,13 @@ namespace dlg_help_utils::dbg_help
         }
 
         auto const info = symbol_info_buffer::make();
-        if(!SymGetTypeFromNameW(fake_process, module_base, type_name.c_str(), &info->info))
+        if(!SymGetTypeFromNameW(process_, module_base, type_name.c_str(), &info->info))
         {
             set_cached_type_info(type_name, std::nullopt);
             return std::nullopt;
         }
 
-        auto rv = symbol_type_info{module_base, info->info.TypeIndex};
+        auto rv = symbol_type_info{process_, module_base, info->info.TypeIndex};
         set_cached_type_info(type_name, rv);
         return rv;
     }
@@ -1697,5 +1710,11 @@ namespace dlg_help_utils::dbg_help
         }
 
         return options;
+    }
+
+    HANDLE symbol_engine::create_fake_id()
+    {
+        static std::atomic_ptrdiff_t next_fake_id{1};
+        return reinterpret_cast<HANDLE>(next_fake_id++);
     }
 }

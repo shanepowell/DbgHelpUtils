@@ -21,7 +21,7 @@ namespace dlg_help_utils::dbg_help
     {
     public:
         symbol_type_info() = default;
-        symbol_type_info(DWORD64 module_base, ULONG type_index);
+        symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index);
 
         [[nodiscard]] std::optional<sym_tag_enum> sym_tag() const;
         [[nodiscard]] std::optional<std::wstring_view> name() const;
@@ -58,7 +58,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<std::pair<symbol_type_info, uint64_t>> find_field_in_type(std::wstring_view field_name) const;
 
         [[nodiscard]] std::wstring to_address_string() const;
-        static [[nodiscard]] std::optional<symbol_type_info> from_address_string(std::wstring_view address);
+        static [[nodiscard]] std::optional<symbol_type_info> from_address_string(HANDLE process, std::wstring_view address);
 
     private:
         enum class optional_type
@@ -74,6 +74,7 @@ namespace dlg_help_utils::dbg_help
     private:
         class cache_type_info;
 
+        HANDLE process_{};
         DWORD64 module_base_{};
         ULONG type_index_{};
         std::shared_ptr<cache_type_info> cache_info_{};

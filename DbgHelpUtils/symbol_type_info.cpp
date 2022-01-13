@@ -80,8 +80,10 @@ namespace dlg_help_utils::dbg_help
     };
 
 
-    symbol_type_info::symbol_type_info(DWORD64 const module_base, ULONG const type_index)
-    : module_base_{module_base}
+    // ReSharper disable once CppParameterMayBeConst
+    symbol_type_info::symbol_type_info(HANDLE process, DWORD64 const module_base, ULONG const type_index)
+    : process_{process}
+    , module_base_{module_base}
     , type_index_{type_index}
     , cache_info_{std::make_shared<cache_type_info>()}
     {
@@ -115,7 +117,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         wchar_t *name;
-        if(!SymGetTypeInfo(fake_process, module_base_, type_index_, TI_GET_SYMNAME, &name))
+        if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_SYMNAME, &name))
         {
             cache_info_->set_name(std::nullopt);
             throw_sym_get_type_info_error(L"TI_GET_SYMNAME"sv, optional_type::optional);
@@ -160,7 +162,7 @@ namespace dlg_help_utils::dbg_help
         }
         else
         {
-            cache_info_->set_type(symbol_type_info{module_base_, type.value()});
+            cache_info_->set_type(symbol_type_info{process_, module_base_, type.value()});
         }
 
         return cache_info_->type();
@@ -174,7 +176,7 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{module_base_, type.value()};
+        return symbol_type_info{process_, module_base_, type.value()};
     }
 
     std::optional<basic_type> symbol_type_info::base_type() const
@@ -309,7 +311,7 @@ namespace dlg_help_utils::dbg_help
     std::optional<_variant_t> symbol_type_info::const_value() const
     {
         _variant_t rv;
-        if(!SymGetTypeInfo(fake_process, module_base_, type_index_, TI_GET_VALUE, &rv))
+        if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_VALUE, &rv))
         {
             throw_sym_get_type_info_error(L"TI_GET_VALUE"sv, optional_type::optional);
             return std::nullopt;
@@ -331,7 +333,7 @@ namespace dlg_help_utils::dbg_help
     std::optional<DWORD> symbol_type_info::get_dword_type(IMAGEHLP_SYMBOL_TYPE_INFO const type, std::wstring_view const& function, optional_type const optional) const
     {
         DWORD rv{0};
-        if(!SymGetTypeInfo(fake_process, module_base_, type_index_, type, &rv))
+        if(!SymGetTypeInfo(process_, module_base_, type_index_, type, &rv))
         {
             throw_sym_get_type_info_error(function, optional);
             return std::nullopt;
@@ -343,7 +345,7 @@ namespace dlg_help_utils::dbg_help
     std::optional<ULONG64> symbol_type_info::get_unlong64_type(IMAGEHLP_SYMBOL_TYPE_INFO const type, std::wstring_view const& function, optional_type const optional) const
     {
         ULONG64 rv{0};
-        if(!SymGetTypeInfo(fake_process, module_base_, type_index_, type, &rv))
+        if(!SymGetTypeInfo(process_, module_base_, type_index_, type, &rv))
         {
             throw_sym_get_type_info_error(function, optional);
             return std::nullopt;
@@ -355,7 +357,7 @@ namespace dlg_help_utils::dbg_help
     std::optional<bool> symbol_type_info::get_bool_type(IMAGEHLP_SYMBOL_TYPE_INFO const type, std::wstring_view const& function, optional_type const optional) const
     {
         BOOL rv{FALSE};
-        if(!SymGetTypeInfo(fake_process, module_base_, type_index_, type, &rv))
+        if(!SymGetTypeInfo(process_, module_base_, type_index_, type, &rv))
         {
             throw_sym_get_type_info_error(function, optional);
             return std::nullopt;
@@ -387,7 +389,7 @@ namespace dlg_help_utils::dbg_help
             auto* find_children_params = reinterpret_cast<TI_FINDCHILDREN_PARAMS*>(buffer.get());
             find_children_params->Count = count.value();
 
-            if(!SymGetTypeInfo(fake_process, module_base_, type_index_, TI_FINDCHILDREN, find_children_params))
+            if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_FINDCHILDREN, find_children_params))
             {
                 throw_sym_get_type_info_error(L"TI_FINDCHILDREN"sv, optional_type::optional);
                 co_return;
@@ -397,7 +399,7 @@ namespace dlg_help_utils::dbg_help
             cache_children.reserve(count.value());
             for(ULONG index = 0; index < count.value(); ++index)
             {
-                cache_children.emplace_back(module_base_, find_children_params->ChildId[index]);
+                cache_children.emplace_back(process_, module_base_, find_children_params->ChildId[index]);
             }
 
             cache_info_->set_children(std::move(cache_children));
@@ -470,7 +472,8 @@ namespace dlg_help_utils::dbg_help
         return std::format(L"[0x{0:X}:0x{1:X}]", module_base_, type_index_);
     }
 
-    std::optional<symbol_type_info> symbol_type_info::from_address_string(std::wstring_view const address)
+    // ReSharper disable once CppParameterMayBeConst
+    std::optional<symbol_type_info> symbol_type_info::from_address_string(HANDLE process, std::wstring_view const address)
     {
         if(address.empty())
         {
@@ -510,6 +513,6 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{module_base, type_index};
+        return symbol_type_info{process, module_base, type_index};
     }
 }

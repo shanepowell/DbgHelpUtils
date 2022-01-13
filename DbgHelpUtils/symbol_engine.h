@@ -23,9 +23,6 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::dbg_help
 {
-    extern HANDLE fake_process;
-    extern HANDLE fake_thread;
-
     class i_symbol_callback
     {
     public:
@@ -104,7 +101,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name);
         [[nodiscard]] std::vector<symbol_type_info> module_types(std::wstring const& module_name);
 
-        [[nodiscard]] static std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name);
+        [[nodiscard]] std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name) const;
 
         enum class symbol_walk_options
         {
@@ -112,12 +109,15 @@ namespace dlg_help_utils::dbg_help
             inline_variables
         };
 
-        [[nodiscard]] static std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols);
-        static void local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type type, uint64_t frame_address_offset, void const* thread_context, std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols);
+        [[nodiscard]] std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols) const;
+        void local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type type, uint64_t frame_address_offset, void const* thread_context, std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols) const;
 
-        [[nodiscard]] static std::experimental::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context);
+        [[nodiscard]] std::experimental::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context) const;
 
         [[nodiscard]] i_symbol_load_callback& callback() const override { return *callback_; }
+
+        [[nodiscard]] HANDLE process() const { return process_; }
+        [[nodiscard]] HANDLE thread() const { return thread_; }
 
         [[nodiscard]] static std::tuple<std::wstring, std::wstring> parse_type_info(std::wstring const& type_name);
 
@@ -155,6 +155,8 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_type_info> load_type_info(DWORD64 module_base, std::wstring const& type_name);
         [[nodiscard]] static DWORD setup_enum_symbol_options(symbol_walk_options option);
 
+        [[nodiscard]] static HANDLE create_fake_id();
+
     private:
         i_symbol_load_callback* callback_;
         std::unique_ptr<SYMBOL_INFOW> symbol_;
@@ -164,5 +166,7 @@ namespace dlg_help_utils::dbg_help
         bool loading_module_{};
         std::wstring downloading_module_name_{};
         std::map<std::wstring, std::optional<symbol_type_info>> cache_type_info_{};
+        HANDLE process_{create_fake_id()};
+        HANDLE thread_{create_fake_id()};
     };
 }

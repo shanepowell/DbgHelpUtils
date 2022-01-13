@@ -183,7 +183,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const display_parameters = (options & dump_stack_options::DisplayStackParameters) == dump_stack_options::DisplayStackParameters;
         auto const display_variables = (options & dump_stack_options::DisplayStackVariables) == dump_stack_options::DisplayStackVariables;
 
-        for (size_t index = 0; auto const& entry : dbg_help::symbol_engine::stack_walk(thread_context))
+        for (size_t index = 0; auto const& entry : symbol_engine.stack_walk(thread_context))
         {
             os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', false) << L' ';
             auto constexpr parameters_title = L"Parameters"sv;
