@@ -59,18 +59,32 @@ namespace dlg_help_utils::heap
         auto start_subsegment_address = lfh_segment_address_ + cache_data_.lfh_block_zone_size;
         auto end_subsegment_address{start_subsegment_address};
 
-        if(auto const next_index = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.lfh_block_zone_next_index_field_data, lfh_segment_address_); next_index.has_value())
+        if(cache_data_.lfh_block_zone_next_index_field_data.has_value())
         {
-            if(lfh_heap_.heap().peb().is_x64_target())
+            if(auto const next_index = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.lfh_block_zone_next_index_field_data.value(), lfh_segment_address_); next_index.has_value())
             {
-                end_subsegment_address = start_subsegment_address = lfh_segment_address_ + 0x20;
-            }
+                if(lfh_heap_.heap().peb().is_x64_target())
+                {
+                    end_subsegment_address = start_subsegment_address = lfh_segment_address_ + 0x20;
+                }
 
-            end_subsegment_address += cache_data_.heap_subsegment_size * next_index.value();
+                end_subsegment_address += cache_data_.heap_subsegment_size * next_index.value();
+            }
+            else
+            {
+                stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::lfh_block_zone_next_index_field_symbol_name);
+            }
         }
-        else if(auto const free_pointer = stream_utils::find_field_pointer_value_in_type(walker(), cache_data_.lfh_block_zone_free_pointer_field_data, lfh_segment_address_); free_pointer.has_value())
+        else if(cache_data_.lfh_block_zone_free_pointer_field_data.has_value())
         {
-            end_subsegment_address = free_pointer.value();
+            if(auto const free_pointer = find_field_pointer_value_in_type(walker(), cache_data_.lfh_block_zone_free_pointer_field_data.value(), lfh_segment_address_); free_pointer.has_value())
+            {
+                end_subsegment_address = free_pointer.value();
+            }
+            else
+            {
+                stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::lfh_block_zone_free_pointer_field_symbol_name);
+            }
         }
 
         return std::make_pair(start_subsegment_address, end_subsegment_address);

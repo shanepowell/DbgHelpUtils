@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -46,8 +47,8 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info lfh_block_zone_symbol_type;
             size_t heap_subsegment_size{};
             size_t lfh_block_zone_size{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> lfh_block_zone_next_index_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> lfh_block_zone_free_pointer_field_data;
+            std::optional<stream_utils::symbol_type_and_base_type_field_offset> lfh_block_zone_next_index_field_data;
+            std::optional<stream_utils::symbol_type_and_base_type_field_offset> lfh_block_zone_free_pointer_field_data;
         };
 
         [[nodiscard]] std::pair<uint64_t, uint64_t> get_subsegment_range() const;

@@ -337,13 +337,13 @@ namespace dlg_help_utils::heap
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_entry_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
             data.heap_entry_length = stream_utils::get_type_length(data.heap_entry_symbol_type, symbol_name);
-            data.heap_entry_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_entry_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_entry_previous_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_previous_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_entry_segment_offset_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_segment_offset_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_entry_small_tag_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_small_tag_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_entry_unused_bytes_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_entry_unused_bytes_length_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_entry_symbol_type, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_previous_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_previous_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_segment_offset_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_segment_offset_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_small_tag_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_small_tag_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_unused_bytes_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_entry_unused_bytes_length_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_entry_symbol_type, symbol_name, common_symbol_names::heap_entry_unused_bytes_length_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
     }
 }

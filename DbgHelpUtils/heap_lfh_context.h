@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -51,13 +52,12 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info heap_lfh_context_symbol_type;
             dbg_help::symbol_type_info heap_lfh_context_buckets_field_symbol_type;
             uint64_t heap_lfh_context_buckets_field_offset{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_max_affinity_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_config_max_block_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_config_with_old_page_crossing_blocks_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_context_config_disable_randomization_field_data;
-        };
 
-        [[nodiscard]] static std::pair<dbg_help::symbol_type_info, uint64_t> get_heap_lfh_context_buckets_array_data(cache_data const& data);
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_context_max_affinity_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_context_config_max_block_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_context_config_with_old_page_crossing_blocks_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_context_config_disable_randomization_field_data;
+        };
 
     private:
         cache_data const& cache_data_;

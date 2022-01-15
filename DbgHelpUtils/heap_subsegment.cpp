@@ -83,12 +83,11 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_subsegment_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
+            data.heap_subsegment_block_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_subsegment_symbol_type, symbol_name, common_symbol_names::heap_subsegment_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_subsegment_block_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_subsegment_symbol_type, symbol_name, common_symbol_names::heap_subsegment_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_subsegment_user_blocks_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_subsegment_symbol_type, symbol_name, common_symbol_names::heap_subsegment_user_blocks_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+
             data.heap_user_data_header_symbol_type = stream_utils::get_type(heap.walker(), user_data_header_symbol_name);
-
-            data.heap_subsegment_block_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_subsegment_symbol_type, common_symbol_names::heap_subsegment_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_subsegment_block_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_subsegment_symbol_type, common_symbol_names::heap_subsegment_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_subsegment_user_blocks_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_subsegment_symbol_type, common_symbol_names::heap_subsegment_user_blocks_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-
             data.heap_user_data_first_allocation_offset_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_user_data_header_symbol_type, common_symbol_names::heap_user_data_first_allocation_offset_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
             data.heap_user_data_encoded_offsets_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_user_data_header_symbol_type, common_symbol_names::heap_user_data_encoded_offsets_field_symbol_name, dbg_help::sym_tag_enum::UDT);
         }
@@ -102,13 +101,13 @@ namespace dlg_help_utils::heap
             return std::make_tuple(0ULL, static_cast<unsigned short>(0));
         }
 
-        auto const user_blocks_value = stream_utils::find_field_pointer_type_and_value_in_type(walker(), cache_data_.heap_subsegment_user_blocks_field_data, heap_subsegment_address_);
+        auto const user_blocks_value = find_field_pointer_type_and_value_in_type(walker(), cache_data_.heap_subsegment_user_blocks_field_data, heap_subsegment_address_);
         if(!user_blocks_value.has_value())
         {
             stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::heap_subsegment_user_blocks_field_symbol_name);
         }
 
-        auto const user_blocks_address = user_blocks_value.value().second;
+        auto const user_blocks_address = user_blocks_value.value().value;
         if(user_blocks_address == 0)
         {
             return std::make_tuple(0ULL, static_cast<unsigned short>(0));
@@ -118,11 +117,17 @@ namespace dlg_help_utils::heap
 
         uint64_t address;
         uint16_t block_stride;
-        if(auto const encoded_offsets = stream_utils::read_udt_value_in_type(walker(), cache_data_.heap_user_data_encoded_offsets_field_data, user_blocks_address);
-            encoded_offsets.has_value())
+        if(cache_data_.heap_user_data_encoded_offsets_field_data.has_value())
         {
-            if(auto const lfh_key = lfh_heap().lfh_key(); lfh_key.has_value())
+            if(auto const encoded_offsets = read_udt_value_in_type(walker(), cache_data_.heap_user_data_encoded_offsets_field_data.value(), user_blocks_address);
+                encoded_offsets.has_value())
             {
+                auto const lfh_key = lfh_heap().lfh_key();
+                if(!lfh_key.has_value())
+                {
+                    throw exceptions::wide_runtime_error{L"Error: Failed to find expected lfh key"s};
+                }
+
                 [[maybe_unused]] auto& [encoded_offsets_buffer, encoded_offsets_length, encoded_offsets_address] = encoded_offsets.value();
 
                 if(encoded_offsets_length < sizeof(uint32_t))
@@ -137,17 +142,22 @@ namespace dlg_help_utils::heap
                 auto const first_allocation_offset = static_cast<uint16_t>(offsets);
                 address = user_blocks_address + first_allocation_offset;
                 block_stride = static_cast<uint16_t>(offsets >> 16);
+                return std::make_tuple(address, block_stride);
+            }
+        }
+
+        if(cache_data_.heap_user_data_first_allocation_offset_field_data.has_value())
+        {
+            if(auto const first_allocation_offset = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), cache_data_.heap_user_data_first_allocation_offset_field_data.value(), user_blocks_address);
+                first_allocation_offset.has_value())
+            {
+                address = user_blocks_address + first_allocation_offset.value();
+                block_stride = block_size_value * static_cast<uint16_t>(lfh_heap().heap().granularity());
             }
             else
             {
-                throw exceptions::wide_runtime_error{L"Error: Failed to find expected lfh key"s};
+                stream_utils::throw_cant_get_field_data(user_data_header_symbol_name, common_symbol_names::heap_user_data_first_allocation_offset_field_symbol_name);
             }
-        }
-        else if(auto const first_allocation_offset = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), cache_data_.heap_user_data_first_allocation_offset_field_data, user_blocks_address);
-            first_allocation_offset.has_value())
-        {
-            address = user_blocks_address + first_allocation_offset.value();
-            block_stride = block_size_value * static_cast<uint16_t>(lfh_heap().heap().granularity());
         }
         else
         {

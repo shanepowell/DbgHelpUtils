@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -49,10 +50,8 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info desc_array_array_field_symbol_type;
             uint64_t heap_seg_context_array_field_offset{};
 
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_segment_signature_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_page_segment_signature_field_data;
         };
-
-        [[nodiscard]] static std::pair<dbg_help::symbol_type_info, uint64_t> get_desc_array_field_data(cache_data const& data);
 
     private:
         cache_data const& cache_data_;

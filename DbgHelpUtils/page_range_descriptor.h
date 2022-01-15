@@ -3,6 +3,7 @@
 
 #include "page_range_flags_utils.h"
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -63,13 +64,14 @@ namespace dlg_help_utils::heap
         struct cache_data
         {
             dbg_help::symbol_type_info heap_page_range_descriptor_symbol_type;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_unused_bytes_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_range_flags_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_committed_page_count_field_data_x64;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_unit_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_extra_present_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_range_flags_bits_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_page_range_descriptor_committed_page_count_field_data_x86;
+            stream_utils::symbol_type_and_base_type_field_offset heap_page_range_descriptor_unused_bytes_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_page_range_descriptor_range_flags_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_page_range_descriptor_committed_page_count_field_data_x64;
+            stream_utils::symbol_type_and_base_type_field_offset heap_page_range_descriptor_unit_size_field_data;
+
+            dbg_help::symbol_type_and_field_offset heap_page_range_descriptor_extra_present_field_data;
+            dbg_help::symbol_type_and_field_offset heap_page_range_descriptor_range_flags_bits_field_data;
+            dbg_help::symbol_type_and_field_offset heap_page_range_descriptor_committed_page_count_field_data_x86;
         };
 
         cache_data const& cache_data_;

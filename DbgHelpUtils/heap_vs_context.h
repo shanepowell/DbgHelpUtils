@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -49,10 +50,12 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info heap_vs_context_symbol_type;
             dbg_help::symbol_type_info heap_vs_chunk_free_symbol_type;
             size_t heap_vs_chunk_header_length{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_total_committed_units_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_free_committed_units_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_subsegment_list_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_context_free_chunk_tree_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_vs_context_total_committed_units_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_vs_context_free_committed_units_field_data;
+
+            dbg_help::symbol_type_and_field_offset heap_vs_context_subsegment_list_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_context_free_chunk_tree_field_data;
         };
 
         cache_data const& cache_data_;

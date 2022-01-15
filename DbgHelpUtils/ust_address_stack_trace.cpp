@@ -30,17 +30,13 @@ namespace dlg_help_utils::heap
             return trace;
         }
 
-        if(!cache_data_.rtl_stack_trace_entry_back_trace_field_data.has_value())
-        {
-            return trace;
-        }
-        auto const back_trace_address = ust_address + cache_data_.rtl_stack_trace_entry_back_trace_field_data.value().second;
+        auto const back_trace_address = ust_address + cache_data_.rtl_stack_trace_entry_back_trace_field_data.field_offset;
 
         trace.reserve(depth.value());
 
         for(uint16_t index = 0; index < depth.value(); ++index)
         {
-            auto const sp = stream_utils::get_field_pointer_array_type_and_value(walker_, cache_data_.rtl_stack_trace_entry_back_trace_field_data.value().first, back_trace_address, index);
+            auto const sp = stream_utils::find_field_pointer_array_type_and_value(walker_, cache_data_.rtl_stack_trace_entry_back_trace_field_data.type, back_trace_address, index);
             if(!sp.has_value())
             {
                 break;
@@ -70,12 +66,7 @@ namespace dlg_help_utils::heap
             return false;
         }
 
-        if(!cache_data_.rtl_stack_trace_entry_back_trace_field_data.has_value())
-        {
-            stream_utils::throw_cant_get_field_data(common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name);
-        }
-
-        auto const array_count = cache_data_.rtl_stack_trace_entry_back_trace_field_data.value().first.array_count();
+        auto const array_count = cache_data_.rtl_stack_trace_entry_back_trace_field_data.type.array_count();
         if(!array_count.has_value())
         {
             stream_utils::throw_cant_get_field_data(common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name);
@@ -84,7 +75,7 @@ namespace dlg_help_utils::heap
         return depth > 0 && depth < array_count.value();
     }
 
-    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& ust_address_stack_trace::get_ust_address_depth_field(process::process_environment_block const& peb) const
+    stream_utils::symbol_type_and_base_type_field_offset const& ust_address_stack_trace::get_ust_address_depth_field(process::process_environment_block const& peb) const
     {
         if(peb.heap_page_alloc_enabled())
         {
@@ -107,9 +98,9 @@ namespace dlg_help_utils::heap
             data.rtl_stack_trace_entry_symbol_type = stream_utils::get_type(walker_, common_symbol_names::rtl_stack_trace_entry_structure_symbol_name);
             data.rtl_stack_trace_entry_symbol_length = stream_utils::get_type_length(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_structure_symbol_name);
 
-            data.rtl_stack_trace_entry_depth_field_data = stream_utils::find_field_type_and_offset_in_type(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_depth_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.rtl_stack_trace_entry_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.rtl_stack_trace_entry_back_trace_field_data = stream_utils::find_field_type_and_offset_in_type(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
+            data.rtl_stack_trace_entry_depth_field_data = stream_utils::get_field_type_and_offset_in_type(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_depth_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.rtl_stack_trace_entry_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.rtl_stack_trace_entry_back_trace_field_data = stream_utils::get_field_type_and_offset_in_type(data.rtl_stack_trace_entry_symbol_type, common_symbol_names::rtl_stack_trace_entry_structure_symbol_name, common_symbol_names::rtl_stack_trace_entry_back_trace_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
         }
 
         return cache_manager_.get_cache<cache_data>();

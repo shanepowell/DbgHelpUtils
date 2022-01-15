@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     {
         if(auto const encode_flag = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.heap_encode_flag_mask_field_data, nt_heap_address_); (encode_flag.value_or(0x0) & HeapEncodeFlagMakeEncodingEnabled) == HeapEncodeFlagMakeEncodingEnabled)
         {
-            if(auto encoding_data = stream_utils::read_udt_value_in_type(walker(), cache_data_.heap_encoding_field_data, nt_heap_address_); encoding_data.has_value())
+            if(auto encoding_data = read_udt_value_in_type(walker(), cache_data_.heap_encoding_field_data, nt_heap_address_); encoding_data.has_value())
             {
                 encoding_ = std::move(std::get<0>(encoding_data.value()));
             }
@@ -50,22 +50,22 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes nt_heap::reserved() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_total_memory_reserved_field_data, common_symbol_names::heap_total_memory_reserved_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_total_memory_reserved_field_data, common_symbol_names::heap_total_memory_reserved_field_symbol_name) };
     }
 
     size_units::base_16::bytes nt_heap::committed() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_total_memory_committed_field_data, common_symbol_names::heap_total_memory_committed_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_total_memory_committed_field_data, common_symbol_names::heap_total_memory_committed_field_symbol_name) };
     }
 
     size_units::base_16::bytes nt_heap::uncommitted() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_total_memory_large_ucr_field_data, common_symbol_names::heap_total_memory_large_ucr_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_total_memory_large_ucr_field_data, common_symbol_names::heap_total_memory_large_ucr_field_symbol_name) };
     }
 
     size_units::base_16::bytes nt_heap::virtual_blocks() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_total_size_in_virtual_blocks_field_data, common_symbol_names::heap_total_size_in_virtual_blocks_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_total_size_in_virtual_blocks_field_data, common_symbol_names::heap_total_size_in_virtual_blocks_field_symbol_name) };
     }
 
     uint32_t nt_heap::total_segments() const
@@ -80,7 +80,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes nt_heap::total_free_size() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.heap_total_free_size_field_data, common_symbol_names::heap_total_free_size_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_total_free_size_field_data, common_symbol_names::heap_total_free_size_field_symbol_name) };
     }
 
     uint16_t nt_heap::allocator_back_trace_index() const
@@ -160,7 +160,7 @@ namespace dlg_help_utils::heap
             return std::nullopt;
         }
 
-        auto const address = stream_utils::get_field_pointer(*this, cache_data_.heap_front_end_heap_field_data, common_symbol_names::heap_front_end_heap_field_symbol_name);
+        auto const address = get_field_pointer(*this, cache_data_.heap_front_end_heap_field_data, common_symbol_names::heap_front_end_heap_field_symbol_name);
         if(address == 0)
         {
             return std::nullopt;
@@ -193,7 +193,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    nt_heap::cache_data const& nt_heap::setup_globals()
+    nt_heap::cache_data const& nt_heap::setup_globals() const
     {
         if(!cache().has_cache<cache_data>())
         {
@@ -201,27 +201,27 @@ namespace dlg_help_utils::heap
             data.heap_symbol_type = stream_utils::get_type(walker(), symbol_name);
             data.granularity = static_cast<uint32_t>(stream_utils::get_type_length(stream_utils::get_type(walker(), heap_entry::symbol_name), heap_entry::symbol_name));
 
-            data.heap_encode_flag_mask_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_encode_flag_mask_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_segment_signature_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_segment_signature_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_memory_reserved_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_memory_reserved_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_memory_committed_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_memory_committed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_memory_large_ucr_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_memory_large_ucr_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_size_in_virtual_blocks_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_size_in_virtual_blocks_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_segments_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_segments_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_ucrs_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_ucrs_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_total_free_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_total_free_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_allocator_back_trace_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_allocator_back_trace_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_front_end_heap_type_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_front_end_heap_type_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_encode_flag_mask_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_encode_flag_mask_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_segment_signature_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_segment_signature_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_memory_reserved_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_memory_reserved_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_memory_committed_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_memory_committed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_memory_large_ucr_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_memory_large_ucr_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_size_in_virtual_blocks_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_size_in_virtual_blocks_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_segments_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_segments_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_ucrs_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_ucrs_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_total_free_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_total_free_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_allocator_back_trace_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_allocator_back_trace_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_front_end_heap_type_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_front_end_heap_type_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_encoding_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_encoding_field_symbol_name, dbg_help::sym_tag_enum::UDT);
+            data.heap_encoding_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_encoding_field_symbol_name, dbg_help::sym_tag_enum::UDT);
 
-            data.heap_front_end_heap_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_symbol_type, common_symbol_names::heap_front_end_heap_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.heap_front_end_heap_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_symbol_type, symbol_name, common_symbol_names::heap_front_end_heap_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
 
-            data.heap_segment_list_field_data = data.heap_symbol_type.find_field_in_type(common_symbol_names::heap_segment_list_field_symbol_name);
-            data.heap_ucr_list_field_data = data.heap_symbol_type.find_field_in_type(common_symbol_names::heap_ucr_list_field_symbol_name);
-            data.heap_virtual_allocated_blocks_field_data = data.heap_symbol_type.find_field_in_type(common_symbol_names::heap_virtual_allocated_blocks_field_symbol_name);
-            data.heap_free_lists_field_data = data.heap_symbol_type.find_field_in_type(common_symbol_names::heap_free_lists_field_symbol_name);
+            data.heap_segment_list_field_data = data.heap_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_segment_list_field_symbol_name);
+            data.heap_ucr_list_field_data = data.heap_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_ucr_list_field_symbol_name);
+            data.heap_virtual_allocated_blocks_field_data = data.heap_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_virtual_allocated_blocks_field_symbol_name);
+            data.heap_free_lists_field_data = data.heap_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_free_lists_field_symbol_name);
 
             heap_segment::setup_globals(*this);
             heap_ucr_descriptor::setup_globals(*this);

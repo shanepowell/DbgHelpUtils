@@ -19,16 +19,16 @@ namespace dlg_help_utils::process
 
     std::experimental::generator<std::wstring> process_parameters::environment() const
     {
-        const auto environment_address = stream_utils::find_field_pointer_type_and_value_in_type(walker(), cache_data_.rtl_user_process_parameters_structure_environment_field_data, process_parameters_address());
-        if(!environment_address.has_value() || environment_address.value().second == 0)
+        const auto environment_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_.rtl_user_process_parameters_structure_environment_field_data, process_parameters_address());
+        if(!environment_address.has_value() || environment_address.value().value == 0)
         {
             co_return;
         }
 
-        auto stream = walker().get_process_memory_stream(environment_address.value().second, std::numeric_limits<uint64_t>::max());
+        auto stream = walker().get_process_memory_stream(environment_address.value().value, std::numeric_limits<uint64_t>::max());
         if(stream.eof())
         {
-            throw exceptions::wide_runtime_error{std::format(L"Can't find process Environment memory address [{0}]", stream_hex_dump::to_hex_full(environment_address.value().second))};
+            throw exceptions::wide_runtime_error{std::format(L"Can't find process Environment memory address [{0}]", stream_hex_dump::to_hex_full(environment_address.value().value))};
         }
 
         auto null_found = false;
@@ -75,7 +75,7 @@ namespace dlg_help_utils::process
         {
             auto& data = cache_manager_.get_cache<cache_data>();
             data.process_parameters_symbol_info = stream_utils::get_type(walker_, common_symbol_names::rtl_user_process_parameters_structure_symbol_name);
-            data.rtl_user_process_parameters_structure_environment_field_data = stream_utils::find_field_type_and_offset_in_type(data.process_parameters_symbol_info, common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.rtl_user_process_parameters_structure_environment_field_data = stream_utils::get_field_type_and_offset_in_type(data.process_parameters_symbol_info, common_symbol_names::rtl_user_process_parameters_structure_symbol_name,common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
         }
 
         return cache_manager_.get_cache<cache_data>();

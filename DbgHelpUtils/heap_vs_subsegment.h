@@ -3,6 +3,7 @@
 #include <string>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -55,9 +56,11 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info heap_vs_subsegment_symbol_type;
             size_t heap_vs_subsegment_length{};
             size_t heap_vs_chunk_header_length{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_subsegment_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_subsegment_signature_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_subsegment_full_commit_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_vs_subsegment_size_field_data;
+
+            dbg_help::symbol_type_and_field_offset heap_vs_subsegment_signature_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_subsegment_full_commit_field_data;
         };
 
         cache_data const& cache_data_;

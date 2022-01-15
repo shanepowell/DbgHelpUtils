@@ -4,6 +4,7 @@
 
 #include "string_compare.h"
 #include "symbol_engine.h"
+#include "wide_runtime_error.h"
 #include "windows_error.h"
 
 using namespace std::string_view_literals;
@@ -17,7 +18,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<std::wstring> const& name() const { return cached_name_info_; }
         void set_name(std::optional<std::wstring> value) { cached_name_info_ = std::move(value); has_cached_name_info_ = true; }
 
-        [[nodiscard]] bool find_field_in_type(std::wstring_view const& field_name, std::optional<std::pair<symbol_type_info, uint64_t>>& rv)
+        [[nodiscard]] bool find_field_in_type(std::wstring_view const& field_name, std::optional<symbol_type_and_field_offset>& rv)
         {
             if(auto const it = cached_find_field_in_type_.find(field_name); it != cached_find_field_in_type_.end())
             {
@@ -28,7 +29,7 @@ namespace dlg_help_utils::dbg_help
             return false;
         }
 
-        void set_find_field_in_type(std::wstring_view const& field_name, std::optional<std::pair<symbol_type_info, uint64_t>> value)
+        void set_find_field_in_type(std::wstring_view const& field_name, std::optional<symbol_type_and_field_offset> value)
         {
             cached_find_field_in_type_.insert(std::make_pair(field_name, std::move(value)));
         }
@@ -64,7 +65,7 @@ namespace dlg_help_utils::dbg_help
         void set_length(std::optional<ULONG64> const value) { cached_length_ = value; has_cached_length_ = true; }
 
     private:
-        std::map<std::wstring_view, std::optional<std::pair<symbol_type_info, uint64_t>>> cached_find_field_in_type_;
+        std::map<std::wstring_view, std::optional<symbol_type_and_field_offset>> cached_find_field_in_type_;
         bool has_cached_name_info_{false};
         std::optional<std::wstring> cached_name_info_;
         bool has_cached_children_{false};
@@ -411,9 +412,9 @@ namespace dlg_help_utils::dbg_help
         }
     }
 
-    std::optional<std::pair<symbol_type_info, uint64_t>> symbol_type_info::find_field_in_type(std::wstring_view field_name) const
+    std::optional<symbol_type_and_field_offset> symbol_type_info::find_field_in_type(std::wstring_view field_name) const
     {
-        std::optional<std::pair<symbol_type_info, uint64_t>>  rv;
+        std::optional<symbol_type_and_field_offset>  rv;
         if(cache_info_->find_field_in_type(field_name, rv))
         {
             return rv;
@@ -440,8 +441,8 @@ namespace dlg_help_utils::dbg_help
                 {
                     if(find_name_rest.empty())
                     {
-                        cache_info_->set_find_field_in_type(lookup_field_name, std::make_pair(child, offset));
-                        rv = std::make_pair(child, offset);
+                        cache_info_->set_find_field_in_type(lookup_field_name, symbol_type_and_field_offset{child, offset});
+                        rv = symbol_type_and_field_offset{child, offset};
                         return rv;
                     }
 
@@ -465,6 +466,16 @@ namespace dlg_help_utils::dbg_help
                 return rv;
             }
         }
+    }
+
+    symbol_type_and_field_offset symbol_type_info::get_field_in_type(std::wstring_view const type_name, std::wstring_view const field_name) const
+    {
+        auto rv = find_field_in_type(field_name);
+        if(!rv.has_value())
+        {
+            throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} has no {1} field", type_name, field_name)};
+        }
+        return rv.value();
     }
 
     std::wstring symbol_type_info::to_address_string() const

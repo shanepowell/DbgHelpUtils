@@ -3,6 +3,7 @@
 #include <functional>
 #include <experimental/generator>
 
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils
@@ -31,7 +32,7 @@ namespace dlg_help_utils::ntdll_utilities
         struct cache_data
         {
             dbg_help::symbol_type_info list_entry_symbol_type;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> flink_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset flink_field_data;
         };
 
         [[nodiscard]] cache_data const& setup_globals() const;

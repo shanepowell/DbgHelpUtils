@@ -89,10 +89,10 @@ namespace dlg_help_utils::heap
             data.heap_vs_subsegment_length = stream_utils::get_type_length(data.heap_vs_subsegment_symbol_type, symbol_name);
             data.heap_vs_chunk_header_length = stream_utils::get_type_length(stream_utils::get_type(heap.walker(), heap_vs_entry::symbol_name), heap_vs_entry::symbol_name);
 
-            data.heap_vs_subsegment_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_vs_subsegment_symbol_type, common_symbol_names::heap_vs_subsegment_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_vs_subsegment_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_vs_subsegment_symbol_type, symbol_name, common_symbol_names::heap_vs_subsegment_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_vs_subsegment_signature_field_data = data.heap_vs_subsegment_symbol_type.find_field_in_type(common_symbol_names::heap_vs_subsegment_signature_field_symbol_name);
-            data.heap_vs_subsegment_full_commit_field_data = data.heap_vs_subsegment_symbol_type.find_field_in_type(common_symbol_names::heap_vs_subsegment_full_commit_field_symbol_name);
+            data.heap_vs_subsegment_signature_field_data = data.heap_vs_subsegment_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_subsegment_signature_field_symbol_name);
+            data.heap_vs_subsegment_full_commit_field_data = data.heap_vs_subsegment_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_subsegment_full_commit_field_symbol_name);
         }
     }
 

@@ -90,23 +90,14 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_lfh_context_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
-            auto [type, offset] = get_heap_lfh_context_buckets_array_data(data);
-            data.heap_lfh_context_buckets_field_symbol_type = std::move(type);
-            data.heap_lfh_context_buckets_field_offset = offset;
-            data.heap_lfh_context_max_affinity_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, common_symbol_names::heap_lfh_context_max_affinity_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_context_config_max_block_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, common_symbol_names::heap_lfh_context_config_max_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_context_config_with_old_page_crossing_blocks_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, common_symbol_names::heap_lfh_context_config_with_old_page_crossing_blocks_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_context_config_disable_randomization_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, common_symbol_names::heap_lfh_context_config_disable_randomization_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-        }
-    }
+            auto const type_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, symbol_name, common_symbol_names::heap_lfh_context_buckets_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
+            data.heap_lfh_context_buckets_field_symbol_type = type_data.type;
+            data.heap_lfh_context_buckets_field_offset = type_data.field_offset;
 
-    std::pair<dbg_help::symbol_type_info, uint64_t> heap_lfh_context::get_heap_lfh_context_buckets_array_data(cache_data const& data)
-    {
-        const auto seg_context_array = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, common_symbol_names::heap_lfh_context_buckets_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
-        if(!seg_context_array.has_value())
-        {
-            stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::heap_lfh_context_buckets_field_symbol_name);
+            data.heap_lfh_context_max_affinity_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, symbol_name, common_symbol_names::heap_lfh_context_max_affinity_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_context_config_max_block_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, symbol_name, common_symbol_names::heap_lfh_context_config_max_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_context_config_with_old_page_crossing_blocks_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, symbol_name, common_symbol_names::heap_lfh_context_config_with_old_page_crossing_blocks_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_context_config_disable_randomization_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_context_symbol_type, symbol_name, common_symbol_names::heap_lfh_context_config_disable_randomization_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
-        return seg_context_array.value();
     }
 }

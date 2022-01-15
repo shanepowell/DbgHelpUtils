@@ -34,14 +34,9 @@ namespace dlg_help_utils::heap
     {
     }
 
-    std::pair<dbg_help::symbol_type_info, uint64_t> segment_heap::get_heap_seg_context_array_data(cache_data const& data)
+    stream_utils::symbol_type_and_base_type_field_offset segment_heap::get_heap_seg_context_array_data(cache_data const& data)
     {
-        const auto seg_context_array = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_segment_contexts_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
-        if(!seg_context_array.has_value())
-        {
-            stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::segment_heap_seg_context_segment_count_field_symbol_name);
-        }
-        return seg_context_array.value();
+        return stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_segment_contexts_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
     }
 
     template <typename T>
@@ -118,7 +113,7 @@ namespace dlg_help_utils::heap
         return 4;
     }
 
-    segment_heap::cache_data const& segment_heap::setup_globals()
+    segment_heap::cache_data const& segment_heap::setup_globals() const
     {
         if(!cache().has_cache<cache_data>())
         {
@@ -127,23 +122,23 @@ namespace dlg_help_utils::heap
             data.heap_seg_context_symbol_type = stream_utils::get_type(walker(), heap_segment_context::symbol_name);
             data.heap_seg_context_symbol_length = stream_utils::get_type_length(data.heap_seg_context_symbol_type, heap_segment_context::symbol_name);
 
-            auto const [type, offset] = get_heap_seg_context_array_data(data);
-            data.heap_seg_context_array_field_symbol_type = type;
-            data.heap_seg_context_array_field_offset = offset;
+            auto const type_data = get_heap_seg_context_array_data(data);
+            data.heap_seg_context_array_field_symbol_type = type_data.type;
+            data.heap_seg_context_array_field_offset = type_data.field_offset;
 
             data.heap_vs_context_offset = stream_utils::get_field_offset_from_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_vs_context_field_symbol_name);
             data.heap_lfh_context_offset = stream_utils::get_field_offset_from_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_lfh_context_field_symbol_name);
 
-            data.segment_heap_signature_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_signature_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_global_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_global_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_mem_stats_total_reserved_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_mem_stats_total_reserved_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_mem_stats_total_committed_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_mem_stats_total_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_mem_stats_free_committed_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_mem_stats_free_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_mem_stats_lfh_free_committed_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_mem_stats_lfh_free_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_large_reserved_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_large_reserved_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_large_committed_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.segment_heap_symbol_type, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_signature_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_signature_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_global_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_global_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_mem_stats_total_reserved_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_mem_stats_total_reserved_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_mem_stats_total_committed_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_mem_stats_total_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_mem_stats_free_committed_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_mem_stats_free_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_mem_stats_lfh_free_committed_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_mem_stats_lfh_free_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_large_reserved_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_large_reserved_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_large_committed_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.segment_heap_symbol_type, symbol_name, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.segment_heap_large_alloc_metadata_field_data = data.segment_heap_symbol_type.find_field_in_type(common_symbol_names::segment_heap_large_alloc_metadata_field_symbol_name);
+            data.segment_heap_large_alloc_metadata_field_data = data.segment_heap_symbol_type.get_field_in_type(symbol_name, common_symbol_names::segment_heap_large_alloc_metadata_field_symbol_name);
 
             heap_lfh_affinity_slot::setup_globals(*this);
             heap_lfh_bucket::setup_globals(*this);
@@ -172,32 +167,32 @@ namespace dlg_help_utils::heap
 
     uint64_t segment_heap::total_reserved_pages() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_total_reserved_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_reserved_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_total_reserved_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_reserved_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::total_committed_pages() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_total_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_total_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_committed_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::free_committed_pages() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_free_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_free_committed_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::lfh_free_committed_pages() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_lfh_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_lfh_free_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_lfh_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_lfh_free_committed_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::large_reserved_pages() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_large_reserved_pages_field_data, common_symbol_names::segment_heap_large_reserved_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_large_reserved_pages_field_data, common_symbol_names::segment_heap_large_reserved_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::large_committed_pages() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_large_committed_pages_field_data, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_large_committed_pages_field_data, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name);
     }
 
     size_units::base_16::bytes segment_heap::reserved() const

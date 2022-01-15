@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::stream_stack_dump
@@ -56,11 +57,11 @@ namespace dlg_help_utils::heap
         {
             dbg_help::symbol_type_info crt_mem_block_header_symbol_type;
             size_t crt_mem_block_header_length{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_line_number_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_block_use_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_request_number_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_data_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> crt_mem_block_header_file_name_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_line_number_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_block_use_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_request_number_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_data_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_file_name_field_data;
         };
 
         cache_data const& cache_data_;

@@ -33,12 +33,12 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_vs_context::total_committed_units() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_vs_context_total_committed_units_field_data, common_symbol_names::heap_vs_context_total_committed_units_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_vs_context_total_committed_units_field_data, common_symbol_names::heap_vs_context_total_committed_units_field_symbol_name);
     }
 
     uint64_t heap_vs_context::free_committed_units() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_vs_context_free_committed_units_field_data, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_vs_context_free_committed_units_field_data, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name);
     }
 
     std::experimental::generator<heap_vs_subsegment> heap_vs_context::subsegments() const
@@ -84,11 +84,11 @@ namespace dlg_help_utils::heap
             data.heap_vs_chunk_free_symbol_type = stream_utils::get_type(heap.walker(), free_chunk_symbol_name);
             data.heap_vs_chunk_header_length = stream_utils::get_type_length(stream_utils::get_type(heap.walker(), heap_vs_entry::symbol_name), heap_vs_entry::symbol_name);
 
-            data.heap_vs_context_total_committed_units_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_vs_context_symbol_type, common_symbol_names::heap_vs_context_total_committed_units_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_vs_context_free_committed_units_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_vs_context_symbol_type, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_vs_context_total_committed_units_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_vs_context_symbol_type, symbol_name, common_symbol_names::heap_vs_context_total_committed_units_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_vs_context_free_committed_units_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_vs_context_symbol_type, symbol_name, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_vs_context_subsegment_list_field_data = data.heap_vs_context_symbol_type.find_field_in_type(common_symbol_names::heap_vs_context_subsegment_list_field_symbol_name);
-            data.heap_vs_context_free_chunk_tree_field_data = data.heap_vs_context_symbol_type.find_field_in_type(common_symbol_names::heap_vs_context_free_chunk_tree_field_symbol_name);
+            data.heap_vs_context_subsegment_list_field_data = data.heap_vs_context_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_context_subsegment_list_field_symbol_name);
+            data.heap_vs_context_free_chunk_tree_field_data = data.heap_vs_context_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_context_free_chunk_tree_field_symbol_name);
         }
     }
 }

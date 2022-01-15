@@ -4,6 +4,7 @@
 #include <string>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -78,15 +79,17 @@ namespace dlg_help_utils::heap
         {
             dbg_help::symbol_type_info heap_vs_chunk_header_symbol_type;
             size_t heap_vs_chunk_header_length{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_allocated_chunk_bits_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_memory_cost_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_allocated_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_encoded_segment_page_offset_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_unused_bytes_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_skip_during_walk_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_spare_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_unsafe_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_vs_chunk_header_sizes_unsafe_prev_size_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_vs_chunk_header_allocated_chunk_bits_field_data;
+
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_sizes_memory_cost_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_sizes_allocated_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_encoded_segment_page_offset_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_unused_bytes_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_skip_during_walk_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_spare_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_sizes_unsafe_size_field_data;
+            dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_sizes_unsafe_prev_size_field_data;
         };
 
         cache_data const& cache_data_;

@@ -19,7 +19,7 @@ namespace dlg_help_utils::ntdll_utilities
 
     std::experimental::generator<uint64_t> rtl_rb_tree_walker::entries() const
     {
-        auto const root_node = stream_utils::get_field_pointer_raw(walker_, rb_tree_address_, cache_data_.root_field_data, symbol_name, common_symbol_names::rtl_rb_tree_root_field_symbol_name);
+        auto const root_node = get_field_pointer_raw(walker_, rb_tree_address_, cache_data_.root_field_data, symbol_name, common_symbol_names::rtl_rb_tree_root_field_symbol_name);
         if(root_node == 0)
         {
             co_return;
@@ -35,13 +35,13 @@ namespace dlg_help_utils::ntdll_utilities
 
             co_yield node_address - rtl_balanced_node_entry_offset_;
             
-            if(auto const right_node = stream_utils::get_field_pointer_raw(walker_, node_address, cache_data_.right_field_data, node_symbol_name, common_symbol_names::rtl_balanced_node_right_field_symbol_name);
+            if(auto const right_node = get_field_pointer_raw(walker_, node_address, cache_data_.right_field_data, node_symbol_name, common_symbol_names::rtl_balanced_node_right_field_symbol_name);
                 right_node != 0)
             {
                 nodes.push_back(right_node);
             }
 
-            if(auto const left_node = stream_utils::get_field_pointer_raw(walker_, node_address, cache_data_.left_field_data, node_symbol_name, common_symbol_names::rtl_balanced_node_left_field_symbol_name);
+            if(auto const left_node = get_field_pointer_raw(walker_, node_address, cache_data_.left_field_data, node_symbol_name, common_symbol_names::rtl_balanced_node_left_field_symbol_name);
                 left_node != 0)
             {
                 nodes.push_back(left_node);
@@ -56,9 +56,9 @@ namespace dlg_help_utils::ntdll_utilities
             auto& data = cache_manager_.get_cache<cache_data>();
             data.rtl_rb_tree_symbol_type = stream_utils::get_type(walker_, symbol_name);
             data.rtl_rb_balanced_node_symbol_type = stream_utils::get_type(walker_, node_symbol_name);
-            data.root_field_data = stream_utils::find_field_type_and_offset_in_type(data.rtl_rb_tree_symbol_type, common_symbol_names::rtl_rb_tree_root_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.right_field_data = stream_utils::find_field_type_and_offset_in_type(data.rtl_rb_balanced_node_symbol_type, common_symbol_names::rtl_balanced_node_right_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.left_field_data = stream_utils::find_field_type_and_offset_in_type(data.rtl_rb_balanced_node_symbol_type, common_symbol_names::rtl_balanced_node_left_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.root_field_data = stream_utils::get_field_type_and_offset_in_type(data.rtl_rb_tree_symbol_type, symbol_name, common_symbol_names::rtl_rb_tree_root_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.right_field_data = stream_utils::get_field_type_and_offset_in_type(data.rtl_rb_balanced_node_symbol_type, symbol_name, common_symbol_names::rtl_balanced_node_right_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.left_field_data = stream_utils::get_field_type_and_offset_in_type(data.rtl_rb_balanced_node_symbol_type, symbol_name, common_symbol_names::rtl_balanced_node_left_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
         }
 
         return cache_manager_.get_cache<cache_data>();

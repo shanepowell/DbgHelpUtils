@@ -84,7 +84,7 @@ namespace dlg_help_utils::heap
         while(address != 0)
         {
             co_yield crt_entry{*this, address};
-            address = stream_utils::get_field_pointer_raw(walker(), address, cache_data_.crt_mem_block_header_block_header_next_field_data, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name);
+            address = get_field_pointer_raw(walker(), address, cache_data_.crt_mem_block_header_block_header_next_field_data, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name);
         }
     }
 
@@ -104,13 +104,13 @@ namespace dlg_help_utils::heap
         return std::ranges::find(filters, entry) != filters.end();
     }
 
-    crt_heap::cache_data const& crt_heap::setup_globals()
+    crt_heap::cache_data const& crt_heap::setup_globals() const
     {
         if(is_using_crt_heap() && !cache().has_cache<cache_data>())
         {
             auto& data = cache().get_cache<cache_data>();
             data.block_symbol_symbol_type = stream_utils::get_type(walker(), crt_entry::symbol_name);
-            data.crt_mem_block_header_block_header_next_field_data = stream_utils::find_field_type_and_offset_in_type(data.block_symbol_symbol_type, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.crt_mem_block_header_block_header_next_field_data = stream_utils::get_field_type_and_offset_in_type(data.block_symbol_symbol_type, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
             crt_entry::setup_globals(*this);
         }
 

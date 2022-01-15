@@ -3,6 +3,7 @@
 
 #include "lfh_subsegment_location_utils.h"
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -50,7 +51,7 @@ namespace dlg_help_utils::heap
 
     private:
         template<typename T>
-        [[nodiscard]] T get_field_value_from_block_offsets(std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, std::wstring const& field_name) const;
+        [[nodiscard]] T get_field_value_from_block_offsets(stream_utils::symbol_type_and_base_type_field_offset const& field_data, std::wstring const& field_name) const;
 
     private:
 
@@ -59,15 +60,17 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info heap_lfh_subsegment_symbol_type;
             dbg_help::symbol_type_info heap_lfh_subsegment_encoded_offsets_symbol_type;
             uint64_t heap_lfh_subsegment_bitmap_offset{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_free_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_block_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_location_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_witheld_block_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_commit_unit_shift_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_commit_unit_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_encoded_offsets_block_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_subsegment_block_offsets_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_free_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_block_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_location_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_witheld_block_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_commit_unit_shift_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_commit_unit_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_block_offsets_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_encoded_offsets_block_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data;
         };
 
         cache_data const& cache_data_;

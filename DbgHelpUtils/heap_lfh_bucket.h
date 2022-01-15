@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -62,15 +63,17 @@ namespace dlg_help_utils::heap
         {
             dbg_help::symbol_type_info heap_lfh_bucket_symbol_type;
             dbg_help::symbol_type_info heap_lfh_ondemand_pointer_symbol_type;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_ondemand_pointer_usage_data_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_slot_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_total_block_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_total_subsegment_count_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_reciprocal_block_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_shift_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_bucket_index_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_proc_affinity_mapping_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_lfh_bucket_affinity_slots_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_slot_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_total_block_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_total_subsegment_count_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_reciprocal_block_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_shift_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_bucket_index_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_proc_affinity_mapping_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_bucket_affinity_slots_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_lfh_ondemand_pointer_usage_data_field_data;
         };
 
         cache_data const& cache_data_;

@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <experimental/generator>
 
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils
@@ -32,9 +33,9 @@ namespace dlg_help_utils::ntdll_utilities
         {
             dbg_help::symbol_type_info rtl_rb_tree_symbol_type;
             dbg_help::symbol_type_info rtl_rb_balanced_node_symbol_type;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> root_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> right_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> left_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset root_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset right_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset left_field_data;
         };
 
         [[nodiscard]] cache_data const& setup_globals() const;

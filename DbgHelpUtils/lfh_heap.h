@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
         {
             dbg_help::symbol_type_info lfh_heap_symbol_type;
             std::optional<uint64_t> lfh_key;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> lfh_heap_sub_segment_zones_field_data;
+            dbg_help::symbol_type_and_field_offset lfh_heap_sub_segment_zones_field_data;
         };
 
         cache_data const& cache_data_;

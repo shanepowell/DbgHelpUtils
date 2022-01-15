@@ -40,7 +40,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes crt_entry::data_size() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.crt_mem_block_header_data_size_field_data, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.crt_mem_block_header_data_size_field_data, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name)};
     }
 
     uint32_t crt_entry::request_number() const
@@ -60,17 +60,17 @@ namespace dlg_help_utils::heap
             auto& data = heap.cache().get_cache<cache_data>();
             data.crt_mem_block_header_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
             data.crt_mem_block_header_length = stream_utils::get_type_length(data.crt_mem_block_header_symbol_type, symbol_name);
-            data.crt_mem_block_header_line_number_field_data = stream_utils::find_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, common_symbol_names::crt_mem_block_header_line_number_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.crt_mem_block_header_block_use_field_data = stream_utils::find_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, common_symbol_names::crt_mem_block_header_block_use_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.crt_mem_block_header_request_number_field_data = stream_utils::find_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, common_symbol_names::crt_mem_block_header_request_number_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.crt_mem_block_header_data_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.crt_mem_block_header_file_name_field_data = stream_utils::find_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, common_symbol_names::crt_mem_block_header_file_name_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.crt_mem_block_header_line_number_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_line_number_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.crt_mem_block_header_block_use_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_block_use_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.crt_mem_block_header_request_number_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_request_number_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.crt_mem_block_header_data_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.crt_mem_block_header_file_name_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_file_name_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
         }
     }
 
     std::wstring crt_entry::get_filename() const
     {
-        auto const address = stream_utils::get_field_pointer_raw(*this, cache_data_.crt_mem_block_header_file_name_field_data, common_symbol_names::crt_mem_block_header_file_name_field_symbol_name);
+        auto const address = get_field_pointer_raw(*this, cache_data_.crt_mem_block_header_file_name_field_data, common_symbol_names::crt_mem_block_header_file_name_field_symbol_name);
         if(address == 0)
         {
             return {};

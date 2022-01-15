@@ -3,6 +3,7 @@
 
 #include "process_environment_block.h"
 #include "size_units.h"
+#include "stream_utils.h"
 #include "ust_address_stack_trace.h"
 
 namespace dlg_help_utils
@@ -96,18 +97,20 @@ namespace dlg_help_utils::heap
             uint64_t heap_seg_context_array_field_offset{};
             uint64_t heap_vs_context_offset{};
             uint64_t heap_lfh_context_offset{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_signature_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_global_flags_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_total_reserved_pages_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_total_committed_pages_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_free_committed_pages_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_mem_stats_lfh_free_committed_pages_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_large_reserved_pages_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_large_committed_pages_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> segment_heap_large_alloc_metadata_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_signature_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_global_flags_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_mem_stats_total_reserved_pages_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_mem_stats_total_committed_pages_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_mem_stats_free_committed_pages_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_mem_stats_lfh_free_committed_pages_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_large_reserved_pages_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset segment_heap_large_committed_pages_field_data;
+
+            dbg_help::symbol_type_and_field_offset segment_heap_large_alloc_metadata_field_data;
         };
-        [[nodiscard]] static std::pair<dbg_help::symbol_type_info, uint64_t> get_heap_seg_context_array_data(cache_data const& data);
-        [[nodiscard]] cache_data const& setup_globals();
+        [[nodiscard]] static stream_utils::symbol_type_and_base_type_field_offset get_heap_seg_context_array_data(cache_data const& data);
+        [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
 

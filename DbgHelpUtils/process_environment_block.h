@@ -7,6 +7,7 @@
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
 #include "process_parameters.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 #include "system_memory_info_stream.h"
 #include "thread_names_list_stream.h"
@@ -71,14 +72,14 @@ namespace dlg_help_utils::process
             dbg_help::symbol_type_info peb_symbol_info;
             dbg_help::symbol_type_info teb_symbol_info;
 
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> peb_structure_process_heaps_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> peb_structure_process_parameters_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> peb_structure_nt_global_flag_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> peb_structure_process_heap_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> peb_structure_number_of_heaps_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> peb_structure_ldr_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset peb_structure_process_heaps_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset peb_structure_process_parameters_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset peb_structure_nt_global_flag_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset peb_structure_process_heap_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset peb_structure_number_of_heaps_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset peb_structure_ldr_field_data;
 
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> teb_structure_process_environment_block_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset teb_structure_process_environment_block_field_data;
         };
         [[nodiscard]] cache_data const& setup_globals() const;
 

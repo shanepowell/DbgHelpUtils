@@ -3,6 +3,7 @@
 #include <experimental/generator>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 #include "ust_address_stack_trace.h"
 
@@ -80,26 +81,28 @@ namespace dlg_help_utils::heap
         {
             dbg_help::symbol_type_info heap_symbol_type;
             uint32_t granularity{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_encode_flag_mask_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_signature_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_flags_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_memory_reserved_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_memory_committed_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_memory_large_ucr_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_size_in_virtual_blocks_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_segments_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_ucrs_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_total_free_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_allocator_back_trace_index_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_front_end_heap_type_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_segment_list_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_ucr_list_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_virtual_allocated_blocks_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_free_lists_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_front_end_heap_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_encoding_field_data;
+
+            stream_utils::symbol_type_and_base_type_field_offset heap_encode_flag_mask_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_segment_signature_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_flags_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_memory_reserved_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_memory_committed_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_memory_large_ucr_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_size_in_virtual_blocks_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_segments_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_ucrs_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_total_free_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_allocator_back_trace_index_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_front_end_heap_type_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_front_end_heap_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_encoding_field_data;
+
+            dbg_help::symbol_type_and_field_offset heap_segment_list_field_data;
+            dbg_help::symbol_type_and_field_offset heap_ucr_list_field_data;
+            dbg_help::symbol_type_and_field_offset heap_virtual_allocated_blocks_field_data;
+            dbg_help::symbol_type_and_field_offset heap_free_lists_field_data;
         };
-        [[nodiscard]] cache_data const& setup_globals();
+        [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
         cache_manager& cache_manager_;

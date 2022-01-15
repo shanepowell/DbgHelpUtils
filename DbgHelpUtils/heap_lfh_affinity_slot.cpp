@@ -41,7 +41,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_lfh_affinity_slot::available_subsegment_count() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_lfh_affinity_slot_available_subsegment_count_field_data, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_count_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_lfh_affinity_slot_available_subsegment_count_field_data, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_count_field_symbol_name);
     }
 
     std::experimental::generator<heap_lfh_subsegment> heap_lfh_affinity_slot::subsegments() const
@@ -67,12 +67,13 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_lfh_affinity_slot_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
-            data.heap_lfh_affinity_slot_bucket_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_affinity_slot_symbol_type, common_symbol_names::heap_lfh_affinity_slot_bucket_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_affinity_slot_slot_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_affinity_slot_symbol_type, common_symbol_names::heap_lfh_affinity_slot_slot_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_affinity_slot_available_subsegment_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_affinity_slot_symbol_type, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_lfh_affinity_slot_available_subsegment_list_field_data = data.heap_lfh_affinity_slot_symbol_type.find_field_in_type(common_symbol_names::heap_lfh_affinity_slot_available_subsegment_list_field_symbol_name);
-            data.heap_lfh_affinity_slot_full_subsegment_list_field_data = data.heap_lfh_affinity_slot_symbol_type.find_field_in_type(common_symbol_names::heap_lfh_affinity_slot_full_subsegment_list_field_symbol_name);
+            data.heap_lfh_affinity_slot_bucket_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_affinity_slot_symbol_type, symbol_name, common_symbol_names::heap_lfh_affinity_slot_bucket_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_affinity_slot_slot_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_affinity_slot_symbol_type, symbol_name, common_symbol_names::heap_lfh_affinity_slot_slot_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_affinity_slot_available_subsegment_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_affinity_slot_symbol_type, symbol_name, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+
+            data.heap_lfh_affinity_slot_available_subsegment_list_field_data = data.heap_lfh_affinity_slot_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_list_field_symbol_name);
+            data.heap_lfh_affinity_slot_full_subsegment_list_field_data = data.heap_lfh_affinity_slot_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_lfh_affinity_slot_full_subsegment_list_field_symbol_name);
         }
     }
 }

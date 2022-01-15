@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -40,8 +41,8 @@ namespace dlg_help_utils::heap
         struct cache_data
         {
             dbg_help::symbol_type_info heap_ucr_descriptor_symbol_type;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_ucr_descriptor_address_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_ucr_descriptor_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_ucr_descriptor_address_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_ucr_descriptor_size_field_data;
         };
 
         cache_data const& cache_data_;

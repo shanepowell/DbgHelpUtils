@@ -135,14 +135,20 @@ namespace dlg_help_utils::heap
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_page_range_descriptor_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
 
-            data.heap_page_range_descriptor_unused_bytes_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, common_symbol_names::heap_page_range_descriptor_unused_bytes_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_page_range_descriptor_range_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_page_range_descriptor_committed_page_count_field_data_x64 = stream_utils::find_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_page_range_descriptor_unit_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_page_range_descriptor_unused_bytes_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, symbol_name, common_symbol_names::heap_page_range_descriptor_unused_bytes_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            if(heap.peb().is_x64_target())
+            {
+                data.heap_page_range_descriptor_range_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, symbol_name, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            }
+            data.heap_page_range_descriptor_committed_page_count_field_data_x64 = stream_utils::get_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, symbol_name, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_page_range_descriptor_unit_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_page_range_descriptor_symbol_type, symbol_name, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_page_range_descriptor_extra_present_field_data = data.heap_page_range_descriptor_symbol_type.find_field_in_type(common_symbol_names::heap_page_range_descriptor_extra_present_field_symbol_name);
-            data.heap_page_range_descriptor_range_flags_bits_field_data = data.heap_page_range_descriptor_symbol_type.find_field_in_type(common_symbol_names::heap_page_range_descriptor_range_flags_bits_field_symbol_name);
-            data.heap_page_range_descriptor_committed_page_count_field_data_x86 = data.heap_page_range_descriptor_symbol_type.find_field_in_type(common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
+            data.heap_page_range_descriptor_extra_present_field_data = data.heap_page_range_descriptor_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_page_range_descriptor_extra_present_field_symbol_name);
+            if(heap.peb().is_x86_target())
+            {
+                data.heap_page_range_descriptor_range_flags_bits_field_data = data.heap_page_range_descriptor_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_page_range_descriptor_range_flags_bits_field_symbol_name);
+            }
+            data.heap_page_range_descriptor_committed_page_count_field_data_x86 = data.heap_page_range_descriptor_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
         }
     }
 

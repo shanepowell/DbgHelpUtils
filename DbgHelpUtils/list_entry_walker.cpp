@@ -21,7 +21,7 @@ namespace dlg_help_utils::ntdll_utilities
     std::experimental::generator<uint64_t> list_entry_walker::entries() const
     {
         auto const& flink_field = common_symbol_names::list_entry_flink_field_symbol_name;
-        auto flink = stream_utils::get_field_pointer_raw(walker_, start_address_, cache_data_.flink_field_data, symbol_name, flink_field);
+        auto flink = get_field_pointer_raw(walker_, start_address_, cache_data_.flink_field_data, symbol_name, flink_field);
         if(address_decoder_)
         {
             flink = address_decoder_(flink, start_address_);
@@ -36,7 +36,7 @@ namespace dlg_help_utils::ntdll_utilities
             co_yield flink - list_entry_entry_offset_;
 
             auto const parent = flink;
-            flink = stream_utils::get_field_pointer(walker_, parent, cache_data_.flink_field_data, symbol_name, flink_field);
+            flink = get_field_pointer(walker_, parent, cache_data_.flink_field_data, symbol_name, flink_field);
             if(address_decoder_)
             {
                 flink = address_decoder_(flink, parent);
@@ -50,7 +50,7 @@ namespace dlg_help_utils::ntdll_utilities
         {
             auto& data = cache_manager_.get_cache<cache_data>();
             data.list_entry_symbol_type = stream_utils::get_type(walker_, symbol_name);
-            data.flink_field_data = stream_utils::find_field_type_and_offset_in_type(data.list_entry_symbol_type, common_symbol_names::list_entry_flink_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.flink_field_data = stream_utils::get_field_type_and_offset_in_type(data.list_entry_symbol_type, symbol_name, common_symbol_names::list_entry_flink_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
         }
 
         return cache_manager_.get_cache<cache_data>();

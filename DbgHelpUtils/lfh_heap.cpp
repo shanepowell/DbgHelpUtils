@@ -46,7 +46,7 @@ namespace dlg_help_utils::heap
             data.lfh_heap_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
             data.lfh_key = stream_utils::read_static_variable_machine_size_value(heap.walker(), common_symbol_names::rtl_p_lfh_key_global_symbol_name);
 
-            data.lfh_heap_sub_segment_zones_field_data = data.lfh_heap_symbol_type.find_field_in_type(common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name);
+            data.lfh_heap_sub_segment_zones_field_data = data.lfh_heap_symbol_type.get_field_in_type(symbol_name, common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name);
         }
     }
 }

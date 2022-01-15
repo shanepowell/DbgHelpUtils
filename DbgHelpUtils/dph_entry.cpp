@@ -34,47 +34,47 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.dph_heap_block_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
+            data.dph_heap_block_virtual_block_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, symbol_name, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_block_user_requested_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, symbol_name, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_block_virtual_block_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, symbol_name, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_block_user_allocation_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, symbol_name, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_block_stack_trace_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, symbol_name, common_symbol_names::dph_heap_block_stack_trace_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_block_next_alloc_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, symbol_name, common_symbol_names::dph_heap_block_next_alloc_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+
             data.dph_block_information_symbol_type = stream_utils::get_type(heap.walker(), block_info_symbol_name);
             data.dph_block_information_symbol_length = stream_utils::get_type_length(data.dph_block_information_symbol_type, block_info_symbol_name);
-            data.dph_block_information_start_stamp_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_block_information_symbol_type, common_symbol_names::dph_block_information_start_stamp_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-
-            data.dph_heap_block_virtual_block_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_block_user_requested_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_block_virtual_block_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_block_user_allocation_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_block_stack_trace_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, common_symbol_names::dph_heap_block_stack_trace_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_block_next_alloc_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_block_symbol_type, common_symbol_names::dph_heap_block_next_alloc_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_block_information_start_stamp_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_block_information_symbol_type, block_info_symbol_name, common_symbol_names::dph_block_information_start_stamp_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
     }
 
     uint64_t dph_entry::get_virtual_block_address() const
     {
-        return stream_utils::get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_virtual_block_field_data, symbol_name, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_virtual_block_field_data, symbol_name, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name);
     }
 
     size_units::base_16::bytes dph_entry::get_virtual_block_size() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.dph_heap_block_virtual_block_size_field_data, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_block_virtual_block_size_field_data, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name)};
     }
 
     uint64_t dph_entry::get_user_address() const
     {
-        return stream_utils::get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_user_allocation_field_data, symbol_name, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_user_allocation_field_data, symbol_name, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name);
     }
 
     size_units::base_16::bytes dph_entry::get_user_requested_size() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.dph_heap_block_user_requested_size_field_data, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_block_user_requested_size_field_data, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name)};
     }
 
     uint64_t dph_entry::get_ust_address() const
     {
-        return stream_utils::get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_stack_trace_field_data, symbol_name, common_symbol_names::dph_heap_block_stack_trace_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_stack_trace_field_data, symbol_name, common_symbol_names::dph_heap_block_stack_trace_field_symbol_name);
     }
 
     uint64_t dph_entry::get_next_alloc_address() const
     {
-        return stream_utils::get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_next_alloc_field_data, symbol_name, common_symbol_names::dph_heap_block_next_alloc_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_next_alloc_field_data, symbol_name, common_symbol_names::dph_heap_block_next_alloc_field_symbol_name);
     }
 
     bool dph_entry::get_is_allocated() const

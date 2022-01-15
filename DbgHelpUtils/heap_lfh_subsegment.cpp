@@ -16,7 +16,7 @@ namespace dlg_help_utils::heap
     , heap_{heap}
     , heap_lfh_subsegment_address_{heap_lfh_subsegment_address}
     {
-        if(auto block_offsets = stream_utils::read_udt_value_in_type(walker(), cache_data_.heap_lfh_subsegment_block_offsets_field_data, heap_lfh_subsegment_address);
+        if(auto block_offsets = read_udt_value_in_type(walker(), cache_data_.heap_lfh_subsegment_block_offsets_field_data, heap_lfh_subsegment_address);
             block_offsets.has_value())
         {
             block_offsets_ = std::move(std::get<0>(block_offsets.value()));
@@ -69,7 +69,7 @@ namespace dlg_help_utils::heap
     }
 
     template <typename T>
-    [[nodiscard]] T heap_lfh_subsegment::get_field_value_from_block_offsets(std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& field_data, std::wstring const& field_name) const
+    [[nodiscard]] T heap_lfh_subsegment::get_field_value_from_block_offsets(stream_utils::symbol_type_and_base_type_field_offset const& field_data, std::wstring const& field_name) const
     {
         if(!block_offsets_)
         {
@@ -141,18 +141,19 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_lfh_subsegment_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
-            data.heap_lfh_subsegment_encoded_offsets_symbol_type = stream_utils::get_type(heap.walker(), common_symbol_names::heap_lfh_subsegment_encoded_offsets_structure_symbol_name);
             data.heap_lfh_subsegment_bitmap_offset = stream_utils::get_field_offset_from_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_block_bitmap_field_symbol_name);
-            data.heap_lfh_subsegment_free_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_free_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_block_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_location_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_location_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_witheld_block_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_witheld_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_commit_unit_shift_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_commit_unit_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_commit_unit_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_commit_unit_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_block_offsets_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, common_symbol_names::heap_lfh_subsegment_block_offsets_field_symbol_name, dbg_help::sym_tag_enum::UDT);
 
-            data.heap_lfh_subsegment_encoded_offsets_block_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_encoded_offsets_symbol_type, common_symbol_names::heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_subsegment_encoded_offsets_symbol_type, common_symbol_names::heap_lfh_subsegment_encoded_offsets_first_block_offset_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_free_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_free_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_block_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_location_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_location_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_witheld_block_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_witheld_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_commit_unit_shift_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_commit_unit_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_commit_unit_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_commit_unit_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_block_offsets_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_symbol_type, symbol_name, common_symbol_names::heap_lfh_subsegment_block_offsets_field_symbol_name, dbg_help::sym_tag_enum::UDT);
+
+            data.heap_lfh_subsegment_encoded_offsets_symbol_type = stream_utils::get_type(heap.walker(), common_symbol_names::heap_lfh_subsegment_encoded_offsets_structure_symbol_name);
+            data.heap_lfh_subsegment_encoded_offsets_block_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_encoded_offsets_symbol_type, common_symbol_names::heap_lfh_subsegment_encoded_offsets_structure_symbol_name, common_symbol_names::heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_subsegment_encoded_offsets_symbol_type, common_symbol_names::heap_lfh_subsegment_encoded_offsets_structure_symbol_name, common_symbol_names::heap_lfh_subsegment_encoded_offsets_first_block_offset_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
     }
 }

@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -47,8 +48,8 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info heap_virtual_block_symbol_type;
             uint64_t heap_virtual_block_length{};
             uint64_t busy_block_offset{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_virtual_alloc_entry_reserve_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_virtual_alloc_entry_commit_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_virtual_alloc_entry_reserve_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_virtual_alloc_entry_commit_size_field_data;
         };
 
         cache_data const& cache_data_;

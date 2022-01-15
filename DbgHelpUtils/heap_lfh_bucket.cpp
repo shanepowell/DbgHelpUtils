@@ -77,13 +77,13 @@ namespace dlg_help_utils::heap
     uint64_t heap_lfh_bucket::total_block_count() const
     {
         validate_enabled();
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_lfh_bucket_total_block_count_field_data, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_lfh_bucket_total_block_count_field_data, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name);
     }
 
     uint64_t heap_lfh_bucket::total_subsegment_count() const
     {
         validate_enabled();
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_lfh_bucket_total_subsegment_count_field_data, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_lfh_bucket_total_subsegment_count_field_data, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name);
     }
 
     size_units::base_16::bytes heap_lfh_bucket::reciprocal_block_size() const
@@ -101,7 +101,7 @@ namespace dlg_help_utils::heap
     std::vector<uint8_t> heap_lfh_bucket::processor_affinity_mapping() const
     {
         validate_enabled();
-        auto const proc_affinity_mapping_address = stream_utils::get_field_pointer(*this, cache_data_.heap_lfh_bucket_proc_affinity_mapping_field_data, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
+        auto const proc_affinity_mapping_address = get_field_pointer(*this, cache_data_.heap_lfh_bucket_proc_affinity_mapping_field_data, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
 
         std::vector<uint8_t> rv;
         rv.resize(heap().max_affinity());
@@ -118,7 +118,7 @@ namespace dlg_help_utils::heap
     {
         validate_enabled();
         auto const max_slots{slot_count()};
-        auto affinity_slots_address = stream_utils::get_field_pointer(*this, cache_data_.heap_lfh_bucket_affinity_slots_field_data, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name);
+        auto affinity_slots_address = get_field_pointer(*this, cache_data_.heap_lfh_bucket_affinity_slots_field_data, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name);
         auto const pointer_size{peb().is_x86_target() ? sizeof uint32_t : sizeof uint64_t};
 
         for(size_t index = 0; index < max_slots; ++index)
@@ -157,17 +157,17 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_lfh_bucket_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
-            data.heap_lfh_bucket_slot_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_slot_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_bucket_total_block_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_bucket_total_subsegment_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_bucket_reciprocal_block_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_bucket_shift_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_bucket_bucket_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_bucket_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_lfh_bucket_proc_affinity_mapping_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.heap_lfh_bucket_affinity_slots_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.heap_lfh_bucket_slot_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_slot_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_bucket_total_block_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_bucket_total_subsegment_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_bucket_reciprocal_block_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_bucket_shift_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_bucket_bucket_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_bucket_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_bucket_proc_affinity_mapping_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.heap_lfh_bucket_affinity_slots_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_bucket_symbol_type, symbol_name, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
 
             data.heap_lfh_ondemand_pointer_symbol_type = stream_utils::get_type(heap.walker(), common_symbol_names::heap_lfh_ondemand_pointer_structure_symbol_name);
-            data.heap_lfh_ondemand_pointer_usage_data_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_lfh_ondemand_pointer_symbol_type, common_symbol_names::heap_lfh_ondemand_pointer_usage_data_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_lfh_ondemand_pointer_usage_data_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_lfh_ondemand_pointer_symbol_type, common_symbol_names::heap_lfh_ondemand_pointer_structure_symbol_name, common_symbol_names::heap_lfh_ondemand_pointer_usage_data_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
     }
 

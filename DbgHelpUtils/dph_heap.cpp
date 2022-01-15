@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
 
     uint64_t dph_heap::normal_heap() const
     {
-        return stream_utils::get_field_pointer(walker(), dph_heap_address_, cache_data_.dph_heap_root_normal_heap_field_data, symbol_name, common_symbol_names::dph_heap_root_normal_heap_field_symbol_name);
+        return get_field_pointer(walker(), dph_heap_address_, cache_data_.dph_heap_root_normal_heap_field_data, symbol_name, common_symbol_names::dph_heap_root_normal_heap_field_symbol_name);
     }
 
     uint32_t dph_heap::flags() const
@@ -51,7 +51,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes dph_heap::busy_allocations_committed() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.dph_heap_root_busy_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_root_busy_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name)};
     }
 
     uint32_t dph_heap::virtual_storage_ranges() const
@@ -61,7 +61,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes dph_heap::virtual_storage_total() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.dph_heap_root_virtual_storage_bytes_field_data, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_root_virtual_storage_bytes_field_data, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name)};
     }
 
     uint32_t dph_heap::free_allocations() const
@@ -78,7 +78,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes dph_heap::free_allocations_committed() const
     {
-        return size_units::base_16::bytes{stream_utils::get_machine_size_field_value(*this, cache_data_.dph_heap_root_free_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_root_free_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
     }
 
     std::experimental::generator<dph_heap> dph_heap::dph_heaps(cache_manager& cache, process::process_environment_block const& peb)
@@ -113,13 +113,13 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<dph_entry> dph_heap::free_entries() const
     {
-        auto const head = stream_utils::get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_free_allocations_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name);
+        auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_free_allocations_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name);
         if(head == 0)
         {
             co_return;
         }
 
-        auto const tail = stream_utils::get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_free_allocations_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_tail_field_symbol_name);
+        auto const tail = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_free_allocations_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_tail_field_symbol_name);
         if(tail == 0)
         {
             co_return;
@@ -133,13 +133,13 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<dph_entry> dph_heap::virtual_ranges() const
     {
-        auto const head = stream_utils::get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_virtual_storage_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name);
+        auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_virtual_storage_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name);
         if(head == 0)
         {
             co_return;
         }
 
-        auto const tail = stream_utils::get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_virtual_storage_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_tail_field_symbol_name);
+        auto const tail = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_virtual_storage_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_tail_field_symbol_name);
         if(tail == 0)
         {
             co_return;
@@ -164,28 +164,28 @@ namespace dlg_help_utils::heap
         co_yield dph_entry{*this, entry_address};
     }
 
-    dph_heap::cache_data const& dph_heap::setup_globals()
+    dph_heap::cache_data const& dph_heap::setup_globals() const
     {
         if(!cache().has_cache<cache_data>())
         {
             auto& data = cache().get_cache<cache_data>();
             data.dph_heap_root_symbol_type = stream_utils::get_type(walker(), symbol_name);
 
-            data.dph_heap_root_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_extra_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_extra_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_seed_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_seed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_busy_allocations_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_busy_allocations_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_busy_allocations_bytes_committed_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_virtual_storage_ranges_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_virtual_storage_ranges_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_virtual_storage_bytes_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_free_allocations_bytes_committed_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.dph_heap_root_normal_heap_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_normal_heap_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_root_free_allocations_list_head_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_root_free_allocations_list_tail_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_free_allocations_list_tail_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_root_virtual_storage_list_head_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.dph_heap_root_virtual_storage_list_tail_field_data = stream_utils::find_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, common_symbol_names::dph_heap_root_virtual_storage_list_tail_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_root_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_extra_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_extra_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_seed_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_seed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_busy_allocations_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_busy_allocations_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_busy_allocations_bytes_committed_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_virtual_storage_ranges_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_ranges_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_virtual_storage_bytes_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_free_allocations_bytes_committed_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.dph_heap_root_normal_heap_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_normal_heap_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_root_free_allocations_list_head_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_root_free_allocations_list_tail_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_tail_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_root_virtual_storage_list_head_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.dph_heap_root_virtual_storage_list_tail_field_data = stream_utils::get_field_type_and_offset_in_type(data.dph_heap_root_symbol_type, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_tail_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
 
-            data.dph_heap_root_busy_nodes_table_field_data = data.dph_heap_root_symbol_type.find_field_in_type(common_symbol_names::dph_heap_root_busy_nodes_table_field_symbol_name);
+            data.dph_heap_root_busy_nodes_table_field_data = data.dph_heap_root_symbol_type.get_field_in_type(symbol_name, common_symbol_names::dph_heap_root_busy_nodes_table_field_symbol_name);
 
             dph_entry::setup_globals(*this);
         }

@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -115,13 +116,13 @@ namespace dlg_help_utils::heap
         {
             dbg_help::symbol_type_info heap_entry_symbol_type;
             size_t heap_entry_length{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_flags_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_previous_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_segment_offset_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_small_tag_index_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_unused_bytes_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> heap_entry_unused_bytes_length_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_flags_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_previous_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_segment_offset_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_small_tag_index_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_unused_bytes_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset heap_entry_unused_bytes_length_field_data;
         };
 
         cache_data const& cache_data_;

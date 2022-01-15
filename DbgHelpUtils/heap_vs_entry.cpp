@@ -149,16 +149,16 @@ namespace dlg_help_utils::heap
             data.heap_vs_chunk_header_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
             data.heap_vs_chunk_header_length = stream_utils::get_type_length(data.heap_vs_chunk_header_symbol_type, symbol_name);
 
-            data.heap_vs_chunk_header_allocated_chunk_bits_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_vs_chunk_header_symbol_type, common_symbol_names::heap_vs_chunk_header_allocated_chunk_bits_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_vs_chunk_header_allocated_chunk_bits_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_vs_chunk_header_symbol_type, symbol_name, common_symbol_names::heap_vs_chunk_header_allocated_chunk_bits_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_vs_chunk_header_sizes_memory_cost_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_sizes_memory_cost_field_symbol_name);
-            data.heap_vs_chunk_header_sizes_allocated_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_sizes_allocated_field_symbol_name);
-            data.heap_vs_chunk_header_encoded_segment_page_offset_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_encoded_segment_page_offset_field_symbol_name);
-            data.heap_vs_chunk_header_unused_bytes_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_unused_bytes_field_symbol_name);
-            data.heap_vs_chunk_header_skip_during_walk_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_skip_during_walk_field_symbol_name);
-            data.heap_vs_chunk_header_spare_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_spare_field_symbol_name);
-            data.heap_vs_chunk_header_sizes_unsafe_size_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_sizes_unsafe_size_field_symbol_name);
-            data.heap_vs_chunk_header_sizes_unsafe_prev_size_field_data = data.heap_vs_chunk_header_symbol_type.find_field_in_type(common_symbol_names::heap_vs_chunk_header_sizes_unsafe_prev_size_field_symbol_name);
+            data.heap_vs_chunk_header_sizes_memory_cost_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_sizes_memory_cost_field_symbol_name);
+            data.heap_vs_chunk_header_sizes_allocated_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_sizes_allocated_field_symbol_name);
+            data.heap_vs_chunk_header_encoded_segment_page_offset_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_encoded_segment_page_offset_field_symbol_name);
+            data.heap_vs_chunk_header_unused_bytes_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_unused_bytes_field_symbol_name);
+            data.heap_vs_chunk_header_skip_during_walk_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_skip_during_walk_field_symbol_name);
+            data.heap_vs_chunk_header_spare_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_spare_field_symbol_name);
+            data.heap_vs_chunk_header_sizes_unsafe_size_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_sizes_unsafe_size_field_symbol_name);
+            data.heap_vs_chunk_header_sizes_unsafe_prev_size_field_data = data.heap_vs_chunk_header_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_vs_chunk_header_sizes_unsafe_prev_size_field_symbol_name);
         }
     }
 

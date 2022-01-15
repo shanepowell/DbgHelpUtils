@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 #include "ust_address_stack_trace.h"
 
@@ -65,24 +66,25 @@ namespace dlg_help_utils::heap
         struct cache_data
         {
             dbg_help::symbol_type_info dph_heap_root_symbol_type;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_flags_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_extra_flags_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_seed_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_busy_allocations_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_busy_allocations_bytes_committed_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_ranges_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_bytes_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_free_allocations_bytes_committed_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_normal_heap_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_busy_nodes_table_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_free_allocations_list_head_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_free_allocations_list_tail_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_list_head_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_root_virtual_storage_list_tail_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_flags_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_extra_flags_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_seed_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_busy_allocations_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_busy_allocations_bytes_committed_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_virtual_storage_ranges_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_virtual_storage_bytes_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_free_allocations_bytes_committed_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_normal_heap_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_free_allocations_list_head_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_free_allocations_list_tail_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_virtual_storage_list_head_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_root_virtual_storage_list_tail_field_data;
+
+            dbg_help::symbol_type_and_field_offset dph_heap_root_busy_nodes_table_field_data;
         };
 
         [[nodiscard]] std::experimental::generator<dph_entry> walk_list(uint64_t head, uint64_t tail) const;
-        [[nodiscard]] cache_data const& setup_globals();
+        [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
         cache_manager& cache_manager_;

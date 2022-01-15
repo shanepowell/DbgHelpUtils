@@ -17,6 +17,8 @@
 
 namespace dlg_help_utils::dbg_help
 {
+    struct symbol_type_and_field_offset;
+
     class symbol_type_info
     {
     public:
@@ -55,7 +57,8 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] std::experimental::generator<symbol_type_info> children() const;
 
-        [[nodiscard]] std::optional<std::pair<symbol_type_info, uint64_t>> find_field_in_type(std::wstring_view field_name) const;
+        [[nodiscard]] std::optional<symbol_type_and_field_offset> find_field_in_type(std::wstring_view field_name) const;
+        [[nodiscard]] symbol_type_and_field_offset get_field_in_type(std::wstring_view type_name, std::wstring_view field_name) const;
 
         [[nodiscard]] std::wstring to_address_string() const;
         static [[nodiscard]] std::optional<symbol_type_info> from_address_string(HANDLE process, std::wstring_view address);
@@ -78,5 +81,11 @@ namespace dlg_help_utils::dbg_help
         DWORD64 module_base_{};
         ULONG type_index_{};
         std::shared_ptr<cache_type_info> cache_info_{};
+    };
+
+    struct symbol_type_and_field_offset
+    {
+        symbol_type_info type;
+        uint64_t field_offset{};
     };
 }

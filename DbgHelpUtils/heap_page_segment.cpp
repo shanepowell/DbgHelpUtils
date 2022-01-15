@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_page_segment::signature() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_page_segment_signature_field_data, common_symbol_names::heap_page_segment_signature_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_page_segment_signature_field_data, common_symbol_names::heap_page_segment_signature_field_symbol_name);
     }
 
     bool heap_page_segment::is_signature_valid() const
@@ -85,20 +85,10 @@ namespace dlg_help_utils::heap
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_page_segment_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
             data.heap_page_range_descriptor_length = stream_utils::get_type_length(stream_utils::get_type(heap.walker(), page_range_descriptor::symbol_name), page_range_descriptor::symbol_name);
-            auto [type, offset] = get_desc_array_field_data(data);
-            data.desc_array_array_field_symbol_type = std::move(type);
-            data.heap_seg_context_array_field_offset = offset;
-            data.heap_page_segment_signature_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_page_segment_symbol_type, common_symbol_names::heap_page_segment_signature_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            auto const type_data = stream_utils::get_field_type_and_offset_in_type(data.heap_page_segment_symbol_type, symbol_name, common_symbol_names::heap_page_segment_desc_array_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
+            data.desc_array_array_field_symbol_type = type_data.type;
+            data.heap_seg_context_array_field_offset = type_data.field_offset;
+            data.heap_page_segment_signature_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_page_segment_symbol_type, symbol_name, common_symbol_names::heap_page_segment_signature_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
         }
-    }
-
-    std::pair<dbg_help::symbol_type_info, uint64_t> heap_page_segment::get_desc_array_field_data(cache_data const& data)
-    {
-        const auto desc_array = stream_utils::find_field_type_and_offset_in_type(data.heap_page_segment_symbol_type, common_symbol_names::heap_page_segment_desc_array_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
-        if(!desc_array.has_value())
-        {
-            stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::heap_page_segment_desc_array_field_symbol_name);
-        }
-        return desc_array.value();
     }
 }

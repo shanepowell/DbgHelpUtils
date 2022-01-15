@@ -36,7 +36,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_segment::base_address() const
     {
-        return stream_utils::get_field_pointer(*this, cache_data_.heap_segment_base_address_field_data, common_symbol_names::heap_segment_base_address_field_symbol_name);
+        return get_field_pointer(*this, cache_data_.heap_segment_base_address_field_data, common_symbol_names::heap_segment_base_address_field_symbol_name);
     }
 
     uint32_t heap_segment::number_of_pages() const
@@ -46,12 +46,12 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_segment::first_entry() const
     {
-        return stream_utils::get_field_pointer(*this, cache_data_.heap_segment_first_entry_field_data, common_symbol_names::heap_segment_first_entry_field_symbol_name);
+        return get_field_pointer(*this, cache_data_.heap_segment_first_entry_field_data, common_symbol_names::heap_segment_first_entry_field_symbol_name);
     }
 
     uint64_t heap_segment::last_entry() const
     {
-        return stream_utils::get_field_pointer(*this, cache_data_.heap_segment_last_entry_field_data, common_symbol_names::heap_segment_last_entry_field_symbol_name);
+        return get_field_pointer(*this, cache_data_.heap_segment_last_entry_field_data, common_symbol_names::heap_segment_last_entry_field_symbol_name);
     }
 
     uint32_t heap_segment::number_of_uncommitted_pages() const
@@ -136,16 +136,17 @@ namespace dlg_help_utils::heap
         {
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_segment_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
-            data.heap_segment_segment_flags_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_segment_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_segment_number_of_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_number_of_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_segment_number_of_un_committed_pages_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_number_of_un_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_segment_number_of_un_committed_ranges_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_number_of_un_committed_ranges_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_segment_segment_allocator_back_trace_index_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_segment_allocator_back_trace_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.heap_segment_base_address_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_base_address_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.heap_segment_first_entry_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_first_entry_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
-            data.heap_segment_last_entry_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_segment_symbol_type, common_symbol_names::heap_segment_last_entry_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
 
-            data.heap_segment_ucr_segment_list_field_data = data.heap_segment_symbol_type.find_field_in_type(common_symbol_names::heap_segment_ucr_segment_list_field_symbol_name);
+            data.heap_segment_segment_flags_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_segment_flags_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_segment_number_of_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_number_of_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_segment_number_of_un_committed_pages_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_number_of_un_committed_pages_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_segment_number_of_un_committed_ranges_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_number_of_un_committed_ranges_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_segment_segment_allocator_back_trace_index_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_segment_allocator_back_trace_index_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_segment_base_address_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_base_address_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.heap_segment_first_entry_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_first_entry_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            data.heap_segment_last_entry_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_segment_symbol_type, symbol_name, common_symbol_names::heap_segment_last_entry_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+
+            data.heap_segment_ucr_segment_list_field_data = data.heap_segment_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_segment_ucr_segment_list_field_symbol_name);
         }
     }
 

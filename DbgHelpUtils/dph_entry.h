@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "size_units.h"
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -68,13 +69,13 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_info dph_heap_block_symbol_type;
             dbg_help::symbol_type_info dph_block_information_symbol_type;
             size_t dph_block_information_symbol_length{};
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_block_information_start_stamp_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_virtual_block_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_user_requested_size_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_virtual_block_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_user_allocation_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_stack_trace_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> dph_heap_block_next_alloc_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_block_information_start_stamp_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_virtual_block_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_user_requested_size_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_virtual_block_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_user_allocation_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_stack_trace_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_next_alloc_field_data;
         };
 
         cache_data const& cache_data_;

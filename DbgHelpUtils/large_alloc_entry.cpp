@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
 
     uint64_t large_alloc_entry::virtual_address() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.heap_large_alloc_virtual_address_field_data, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.heap_large_alloc_virtual_address_field_data, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name);
     }
 
     size_units::base_16::bytes large_alloc_entry::unused_bytes() const
@@ -93,14 +93,14 @@ namespace dlg_help_utils::heap
             data.heap_large_alloc_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
             data.heap_large_alloc_length = stream_utils::get_type_length(data.heap_large_alloc_symbol_type, symbol_name);
 
-            data.heap_large_alloc_virtual_address_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_large_alloc_symbol_type, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.heap_large_alloc_virtual_address_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_large_alloc_symbol_type, symbol_name, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.heap_large_alloc_unused_bytes_field_data = data.heap_large_alloc_symbol_type.find_field_in_type(common_symbol_names::heap_large_alloc_unused_bytes_field_symbol_name);
-            data.heap_large_alloc_extra_present_field_data = data.heap_large_alloc_symbol_type.find_field_in_type(common_symbol_names::heap_large_alloc_extra_present_field_symbol_name);
-            data.heap_large_alloc_guard_page_count_field_data = data.heap_large_alloc_symbol_type.find_field_in_type(common_symbol_names::heap_large_alloc_guard_page_count_field_symbol_name);
-            data.heap_large_alloc_guard_page_alignment_field_data = data.heap_large_alloc_symbol_type.find_field_in_type(common_symbol_names::heap_large_alloc_guard_page_alignment_field_symbol_name);
-            data.heap_large_alloc_spare_field_data = data.heap_large_alloc_symbol_type.find_field_in_type(common_symbol_names::heap_large_alloc_spare_field_symbol_name);
-            data.heap_large_alloc_allocated_pages_field_data = data.heap_large_alloc_symbol_type.find_field_in_type(common_symbol_names::heap_large_alloc_allocated_pages_field_symbol_name);
+            data.heap_large_alloc_unused_bytes_field_data = data.heap_large_alloc_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_large_alloc_unused_bytes_field_symbol_name);
+            data.heap_large_alloc_extra_present_field_data = data.heap_large_alloc_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_large_alloc_extra_present_field_symbol_name);
+            data.heap_large_alloc_guard_page_count_field_data = data.heap_large_alloc_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_large_alloc_guard_page_count_field_symbol_name);
+            data.heap_large_alloc_guard_page_alignment_field_data = data.heap_large_alloc_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_large_alloc_guard_page_alignment_field_symbol_name);
+            data.heap_large_alloc_spare_field_data = data.heap_large_alloc_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_large_alloc_spare_field_symbol_name);
+            data.heap_large_alloc_allocated_pages_field_data = data.heap_large_alloc_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_large_alloc_allocated_pages_field_symbol_name);
         }
     }
 

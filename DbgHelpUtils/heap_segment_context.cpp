@@ -37,12 +37,12 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_segment_context::segment_count() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_seg_context_segment_count_field_data, common_symbol_names::segment_heap_seg_context_segment_count_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_seg_context_segment_count_field_data, common_symbol_names::segment_heap_seg_context_segment_count_field_symbol_name);
     }
 
     uint64_t heap_segment_context::segment_mask() const
     {
-        return stream_utils::get_machine_size_field_value(*this, cache_data_.segment_heap_seg_context_segment_mask_field_data, common_symbol_names::segment_heap_seg_context_segment_mask_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_.segment_heap_seg_context_segment_mask_field_data, common_symbol_names::segment_heap_seg_context_segment_mask_field_symbol_name);
     }
 
     uint8_t heap_segment_context::unit_shift() const
@@ -98,14 +98,14 @@ namespace dlg_help_utils::heap
             auto& data = heap.cache().get_cache<cache_data>();
             data.heap_seg_context_symbol_type = stream_utils::get_type(heap.walker(), symbol_name);
 
-            data.segment_heap_seg_context_max_allocation_size_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, common_symbol_names::segment_heap_seg_context_max_allocation_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_seg_context_segment_count_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, common_symbol_names::segment_heap_seg_context_segment_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_seg_context_segment_mask_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, common_symbol_names::segment_heap_seg_context_segment_mask_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_seg_context_unit_shift_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, common_symbol_names::segment_heap_seg_context_unit_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
-            data.segment_heap_seg_context_pages_per_unit_shift_field_data = stream_utils::find_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, common_symbol_names::segment_heap_seg_context_pages_per_unit_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_seg_context_max_allocation_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, symbol_name, common_symbol_names::segment_heap_seg_context_max_allocation_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_seg_context_segment_count_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, symbol_name, common_symbol_names::segment_heap_seg_context_segment_count_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_seg_context_segment_mask_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, symbol_name, common_symbol_names::segment_heap_seg_context_segment_mask_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_seg_context_unit_shift_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, symbol_name, common_symbol_names::segment_heap_seg_context_unit_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
+            data.segment_heap_seg_context_pages_per_unit_shift_field_data = stream_utils::get_field_type_and_offset_in_type(data.heap_seg_context_symbol_type, symbol_name, common_symbol_names::segment_heap_seg_context_pages_per_unit_shift_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
 
-            data.segment_heap_seg_context_segment_list_head_field_data = data.heap_seg_context_symbol_type.find_field_in_type(common_symbol_names::segment_heap_seg_context_segment_list_head_field_symbol_name);
-            data.segment_heap_seg_context_free_page_ranges_field_data = data.heap_seg_context_symbol_type.find_field_in_type(common_symbol_names::segment_heap_seg_context_free_page_ranges_field_symbol_name);
+            data.segment_heap_seg_context_segment_list_head_field_data = data.heap_seg_context_symbol_type.get_field_in_type(symbol_name, common_symbol_names::segment_heap_seg_context_segment_list_head_field_symbol_name);
+            data.segment_heap_seg_context_free_page_ranges_field_data = data.heap_seg_context_symbol_type.get_field_in_type(symbol_name, common_symbol_names::segment_heap_seg_context_free_page_ranges_field_symbol_name);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 
+#include "stream_utils.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils
@@ -36,16 +37,16 @@ namespace dlg_help_utils::heap
         [[nodiscard]] static bool has_ust_setup(process::process_environment_block const& peb);
 
     private:
-        [[nodiscard]] std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> const& get_ust_address_depth_field(process::process_environment_block const& peb) const;
+        [[nodiscard]] stream_utils::symbol_type_and_base_type_field_offset const& get_ust_address_depth_field(process::process_environment_block const& peb) const;
 
         struct cache_data
         {
             dbg_help::symbol_type_info rtl_stack_trace_entry_symbol_type;
             size_t rtl_stack_trace_entry_symbol_length{};
 
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> rtl_stack_trace_entry_depth_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> rtl_stack_trace_entry_index_field_data;
-            std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> rtl_stack_trace_entry_back_trace_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset rtl_stack_trace_entry_depth_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset rtl_stack_trace_entry_index_field_data;
+            stream_utils::symbol_type_and_base_type_field_offset rtl_stack_trace_entry_back_trace_field_data;
         };
         [[nodiscard]] cache_data const& setup_globals() const;
 
