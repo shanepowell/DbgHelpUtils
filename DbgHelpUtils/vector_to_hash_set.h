@@ -7,6 +7,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include <compare>
 
+#include "assert_value.h"
 #include "string_utils.h"
 #include "wide_runtime_error.h"
 
@@ -35,9 +36,7 @@ namespace dlg_help_utils
         template <typename T, typename Rt>
         Rt string_converter([[maybe_unused]] std::wstring const& value)
         {
-            auto constexpr unsupported_string_convert_type = false;
-            // ReSharper disable once CppStaticAssertFailure
-            static_assert(unsupported_string_convert_type);
+            static_assert(assert_value<false, T, Rt>::value, "string type not supported");
             return Rt{};
         }
 

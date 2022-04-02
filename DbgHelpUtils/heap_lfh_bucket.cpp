@@ -119,7 +119,7 @@ namespace dlg_help_utils::heap
         validate_enabled();
         auto const max_slots{slot_count()};
         auto affinity_slots_address = get_field_pointer(*this, cache_data_.heap_lfh_bucket_affinity_slots_field_data, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name);
-        auto const pointer_size{peb().is_x86_target() ? sizeof uint32_t : sizeof uint64_t};
+        auto const pointer_size{peb().is_x86_target() ? sizeof(uint32_t) : sizeof(uint64_t)};
 
         for(size_t index = 0; index < max_slots; ++index)
         {

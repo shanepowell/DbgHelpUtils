@@ -850,7 +850,7 @@ namespace
             , stream_hex_dump::to_hex(entry.virtual_address(), hex_length)
             , to_wstring(entry.unused_bytes())
             , stream_hex_dump::to_hex(entry.user_address(), hex_length)
-            , entry.user_requested_size());
+            , to_wstring(entry.user_requested_size()));
     }
 
     void print_heap_large_entry_debug(std::wostream& log, streamsize const hex_length, heap::large_alloc_entry const& entry, size_t const indent)
@@ -909,7 +909,7 @@ namespace
             , to_wstring(entry.block_size())
             , entry.has_unused_bytes() ? std::format(L" UnusedBytes({})", to_wstring(entry.unused_bytes())) : L""s
             , stream_hex_dump::to_hex(entry.user_address(), hex_length)
-            , entry.user_requested_size());
+            , to_wstring(entry.user_requested_size()));
     }
 
     void print_lfh_entry_debug(std::wostream& log, streamsize const hex_length, heap::heap_lfh_entry const& entry, size_t const indent)

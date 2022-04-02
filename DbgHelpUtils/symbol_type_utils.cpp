@@ -588,10 +588,17 @@ namespace dlg_help_utils::symbol_type_utils
         else 
         {
             T value;
-            if(variable_stream.read(&value, sizeof T) == sizeof T)
+            if(variable_stream.read(&value, sizeof(T)) == sizeof(T))
             {
                 value &= static_cast<T>(bit_mask);
-                os << std::format(L": {0} ({1})", locale_formatting::to_wstring(value), stream_hex_dump::to_hex(value));
+                if constexpr (std::is_floating_point_v<T>)
+                {
+                    os << std::format(L": {0}", locale_formatting::to_wstring(value));
+                }
+                else
+                {
+                    os << std::format(L": {0} ({1})", locale_formatting::to_wstring(value), stream_hex_dump::to_hex(value));
+                }
             }
             else
             {
@@ -617,7 +624,7 @@ namespace dlg_help_utils::symbol_type_utils
                 print_utils::print_stream_array_lines<T>(os, variable_stream, max_size, 2, 24, indent);
             }
         }
-        else if(T value; variable_stream.read(&value, sizeof T) == sizeof T)
+        else if(T value; variable_stream.read(&value, sizeof(T)) == sizeof(T))
         {
             os << std::format(L": {}", value);
         }

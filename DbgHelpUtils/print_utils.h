@@ -65,7 +65,7 @@ namespace dlg_help_utils::print_utils
         for(uint64_t i = 0; i < max_size; ++i)
         {
             T ch;
-            if(stream.read(&ch, sizeof T) != sizeof T)
+            if(stream.read(&ch, sizeof(T)) != sizeof(T))
             {
                 return;
             }
@@ -135,7 +135,7 @@ namespace dlg_help_utils::print_utils
         for(uint64_t i = 0; i < max_size; ++i)
         {
             T ch;
-            if(stream.read(&ch, sizeof T) != sizeof T)
+            if(stream.read(&ch, sizeof(T)) != sizeof(T))
             {
                 break;
             }
@@ -186,13 +186,20 @@ namespace dlg_help_utils::print_utils
             {
                 os << L", ";
             }
-            if(dump_hex)
+            if constexpr (std::is_floating_point_v<T>)
             {
-                os << stream_hex_dump::to_hex_full(values[i]);
+                os << std::to_wstring(values[i]);
             }
             else
             {
-                os << std::to_wstring(values[i]);
+                if(dump_hex)
+                {
+                    os << stream_hex_dump::to_hex_full(values[i]);
+                }
+                else
+                {
+                    os << std::to_wstring(values[i]);
+                }
             }
         }
     }
@@ -213,18 +220,25 @@ namespace dlg_help_utils::print_utils
             }
 
             T value;
-            if(stream.read(&value, sizeof T) != sizeof T)
+            if(stream.read(&value, sizeof(T)) != sizeof(T))
             {
                 break;
             }
 
-            if(dump_hex)
+            if constexpr (std::is_floating_point_v<T>)
             {
-                os << stream_hex_dump::to_hex_full(value);
+                os << std::to_wstring(value);
             }
             else
             {
-                os << std::to_wstring(value);
+                if(dump_hex)
+                {
+                    os << stream_hex_dump::to_hex_full(value);
+                }
+                else
+                {
+                    os << std::to_wstring(value);
+                }
             }
         }
     }
@@ -277,13 +291,20 @@ namespace dlg_help_utils::print_utils
             }
 
             std::wostringstream ss;
-            if(dump_hex)
+            if constexpr (std::is_floating_point_v<T>)
             {
-                ss << stream_hex_dump::to_hex_full(values[i]);
+                ss << std::to_wstring(values[i]);
             }
             else
             {
-                ss << std::to_wstring(values[i]);
+                if(dump_hex)
+                {
+                    ss << stream_hex_dump::to_hex_full(values[i]);
+                }
+                else
+                {
+                    ss << std::to_wstring(values[i]);
+                }
             }
 
             os << std::setw(static_cast<std::streamsize>(element_width)) << std::setfill(L' ') << std::move(ss).str();
@@ -300,7 +321,7 @@ namespace dlg_help_utils::print_utils
         for(uint64_t i = 0; i < max_size; ++i)
         {
             T value;
-            if(stream.read(&value, sizeof T) != sizeof T)
+            if(stream.read(&value, sizeof(T)) != sizeof(T))
             {
                 break;
             }
@@ -320,13 +341,20 @@ namespace dlg_help_utils::print_utils
             }
 
             std::wostringstream ss;
-            if(dump_hex)
+            if constexpr (std::is_floating_point_v<T>)
             {
-                ss << stream_hex_dump::to_hex_full(value);
+                ss << std::to_wstring(value);
             }
             else
             {
-                ss << std::to_wstring(value);
+                if(dump_hex)
+                {
+                    ss << stream_hex_dump::to_hex_full(value);
+                }
+                else
+                {
+                    ss << std::to_wstring(value);
+                }
             }
 
             os << std::setw(static_cast<std::streamsize>(element_width)) << std::setfill(L' ') << std::move(ss).str();

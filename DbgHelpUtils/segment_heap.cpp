@@ -87,12 +87,12 @@ namespace dlg_help_utils::heap
 
         if(peb().is_x64_target())
         {
-            return get_heap_key_value<uint32_t>(address_and_size.value(), sizeof uint64_t);
+            return get_heap_key_value<uint32_t>(address_and_size.value(), sizeof(uint64_t));
         }
 
         if(peb().is_x86_target())
         {
-            return get_heap_key_value<uint32_t>(address_and_size.value(), sizeof uint32_t);
+            return get_heap_key_value<uint32_t>(address_and_size.value(), sizeof(uint32_t));
         }
 
         stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::rtl_p_hp_heap_globals_global_symbol_name);
@@ -281,12 +281,12 @@ namespace dlg_help_utils::heap
     void segment_heap::decode_vs_check_header_type(uint64_t header_address, void* header) const
     {
         T sizes;
-        memcpy(&sizes, header, sizeof T);
+        memcpy(&sizes, header, sizeof(T));
 
         auto decoded_sizes = sizes ^ static_cast<T>(header_address) ^ static_cast<T>(heap_key());
-        memcpy(header, &decoded_sizes, sizeof T);
+        memcpy(header, &decoded_sizes, sizeof(T));
 
-        auto* segment_page_offset = static_cast<uint8_t*>(header) + sizeof T;
+        auto* segment_page_offset = static_cast<uint8_t*>(header) + sizeof(T);
         *segment_page_offset ^= static_cast<uint8_t>(header_address) ^ static_cast<uint8_t>(heap_key());
     }
 

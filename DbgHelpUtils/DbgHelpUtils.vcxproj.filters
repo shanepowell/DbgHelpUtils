@@ -836,5 +836,8 @@
     <ClInclude Include="cache_manager.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="assert_value.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

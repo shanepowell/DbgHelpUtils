@@ -66,10 +66,10 @@ namespace dlg_help_utils::heap
                         std::optional<uint64_t> bucket_address;
                         switch(length.value())
                         {
-                        case sizeof uint32_t:
+                        case sizeof(uint32_t):
                             bucket_address = stream_utils::read_field_value<uint32_t>(walker(), array_field_address);
                             break;
-                        case sizeof uint64_t:
+                        case sizeof(uint64_t):
                             bucket_address = stream_utils::read_field_value<uint64_t>(walker(), array_field_address);
                             break;
 

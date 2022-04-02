@@ -370,7 +370,7 @@ int main(int const argc, char* argv[])
             ResultSet set;
             if (context.parseTo(set) != JS::Error::NoError)
             {
-                *o_log << std::format(L"failed to parse json result set file: {1} with {2}\n", json_filename, dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()));
+                *o_log << std::format(L"failed to parse json result set file: {0} with {1}\n", json_filename, dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()));
                 return EXIT_FAILURE;
             }
 

@@ -28,7 +28,7 @@ namespace dlg_help_utils
             while(!eof() && !is_found(index))
             {
                 T check;
-                if(read(&check, sizeof T) != sizeof T)
+                if(read(&check, sizeof(T)) != sizeof(T))
                 {
                     break;
                 }

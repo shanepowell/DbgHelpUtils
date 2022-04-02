@@ -261,14 +261,14 @@ void dump_mini_dump_process_vm_counters_stream_data(std::wostream& log, mini_dum
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS) == MINIDUMP_PROCESS_VM_COUNTERS)
         {
             log << std::format(L"  PageFaultCount: {}\n", locale_formatting::to_wstring(counters.PageFaultCount));
-            log << std::format(L"  PeakWorkingSetSize: {1} ({2})\n", locale_formatting::to_wstring(counters.PeakWorkingSetSize), to_wstring(bytes{counters.PeakWorkingSetSize}));
-            log << std::format(L"  WorkingSetSize: {1} ({2})\n", locale_formatting::to_wstring(counters.WorkingSetSize), to_wstring(bytes{counters.WorkingSetSize}));
-            log << std::format(L"  QuotaPeakPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaPeakPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakPagedPoolUsage}));
-            log << std::format(L"  QuotaPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaPagedPoolUsage), to_wstring(bytes{counters.QuotaPagedPoolUsage}));
-            log << std::format(L"  QuotaPeakNonPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaPeakNonPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakNonPagedPoolUsage}));
-            log << std::format(L"  QuotaNonPagedPoolUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.QuotaNonPagedPoolUsage), to_wstring(bytes{counters.QuotaNonPagedPoolUsage}));
-            log << std::format(L"  PagefileUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.PagefileUsage), to_wstring(bytes{counters.PagefileUsage}));
-            log << std::format(L"  PeakPagefileUsage: {1} ({2})\n", locale_formatting::to_wstring(counters.PeakPagefileUsage), to_wstring(bytes{counters.PeakPagefileUsage}));
+            log << std::format(L"  PeakWorkingSetSize: {0} ({1})\n", locale_formatting::to_wstring(counters.PeakWorkingSetSize), to_wstring(bytes{counters.PeakWorkingSetSize}));
+            log << std::format(L"  WorkingSetSize: {0} ({1})\n", locale_formatting::to_wstring(counters.WorkingSetSize), to_wstring(bytes{counters.WorkingSetSize}));
+            log << std::format(L"  QuotaPeakPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaPeakPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakPagedPoolUsage}));
+            log << std::format(L"  QuotaPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaPagedPoolUsage), to_wstring(bytes{counters.QuotaPagedPoolUsage}));
+            log << std::format(L"  QuotaPeakNonPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaPeakNonPagedPoolUsage), to_wstring(bytes{counters.QuotaPeakNonPagedPoolUsage}));
+            log << std::format(L"  QuotaNonPagedPoolUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.QuotaNonPagedPoolUsage), to_wstring(bytes{counters.QuotaNonPagedPoolUsage}));
+            log << std::format(L"  PagefileUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.PagefileUsage), to_wstring(bytes{counters.PagefileUsage}));
+            log << std::format(L"  PeakPagefileUsage: {0} ({1})\n", locale_formatting::to_wstring(counters.PeakPagefileUsage), to_wstring(bytes{counters.PeakPagefileUsage}));
         }
         if ((counters.Flags & MINIDUMP_PROCESS_VM_COUNTERS_VIRTUALSIZE) == MINIDUMP_PROCESS_VM_COUNTERS_VIRTUALSIZE)
         {

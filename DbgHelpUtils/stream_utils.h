@@ -63,7 +63,7 @@ namespace dlg_help_utils::stream_utils
         }
 
         T value;
-        if(stream.read(&value, sizeof T) != sizeof T)
+        if(stream.read(&value, sizeof(T)) != sizeof(T))
         {
             return std::nullopt;
         }
