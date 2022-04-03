@@ -60,10 +60,10 @@ namespace dlg_help_utils::heap
         {
             for (auto const& entry : all_entries())
             {
-                if(!is_filtered(entry_filters_cache_, entry))
+                if(!is_filtered(entry_filters_cache_, entry.second))
                 {
-                    entry_cache_.emplace_back(entry);
-                    co_yield entry;
+                    entry_cache_.emplace_back(entry.second);
+                    co_yield entry.second;
                 }
             }
         }
@@ -126,8 +126,10 @@ namespace dlg_help_utils::heap
         free_entry_cache_.clear();
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::all_entries() const
+    std::map<uint64_t, process_heap_entry> process_heaps::all_entries() const
     {
+        std::map<uint64_t, process_heap_entry> all_entries;
+
         crt_heap const crt_heap{ cache_manager_, peb_ };
         std::map<uint64_t, crt_entry> crt_entries;
         for (auto const& entry : crt_heap.entries())
@@ -150,16 +152,16 @@ namespace dlg_help_utils::heap
                             {
                                 if (entry.is_busy())
                                 {
-                                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                                     {
-                                        if (it->second.block_use())
+                                        if (crt_entry->block_use())
                                         {
-                                            co_yield process_heap_entry{ entry, it->second };
+                                            add_heap_entry(all_entries, process_heap_entry{entry, *crt_entry});
                                         }
                                     }
                                     else
                                     {
-                                        co_yield process_heap_entry{ entry };
+                                        add_heap_entry(all_entries, process_heap_entry{entry});
                                     }
                                 }
                             }
@@ -175,16 +177,16 @@ namespace dlg_help_utils::heap
                     {
                         if (entry.is_busy() && !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
                         {
-                            if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                             {
-                                if (it->second.block_use())
+                                if (crt_entry->block_use())
                                 {
-                                    co_yield process_heap_entry{ entry, it->second };
+                                    add_heap_entry(all_entries, process_heap_entry{entry, *crt_entry});
                                 }
                             }
                             else
                             {
-                                co_yield process_heap_entry{ entry };
+                                add_heap_entry(all_entries, process_heap_entry{entry});
                             }
                         }
                     }
@@ -196,16 +198,16 @@ namespace dlg_help_utils::heap
                     {
                         if (entry.is_busy())
                         {
-                            if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                             {
-                                if (it->second.block_use())
+                                if (crt_entry->block_use())
                                 {
-                                    co_yield process_heap_entry{ entry, it->second };
+                                    add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                                 }
                             }
                             else
                             {
-                                co_yield process_heap_entry{ entry };
+                                add_heap_entry(all_entries, process_heap_entry{ entry });
                             }
                         }
                     }
@@ -221,16 +223,16 @@ namespace dlg_help_utils::heap
                         {
                             if (entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT)
                             {
-                                if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                                if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                                 {
-                                    if (it->second.block_use())
+                                    if (crt_entry->block_use())
                                     {
-                                        co_yield process_heap_entry{ entry, it->second };
+                                        add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                                     }
                                 }
                                 else
                                 {
-                                    co_yield process_heap_entry{ entry };
+                                    add_heap_entry(all_entries, process_heap_entry{ entry });
                                 }
                             }
                         }
@@ -243,16 +245,16 @@ namespace dlg_help_utils::heap
                     {
                         if (!entry.uncommitted_range() && entry.allocated())
                         {
-                            if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                             {
-                                if (it->second.block_use())
+                                if (crt_entry->block_use())
                                 {
-                                    co_yield process_heap_entry{ entry, it->second };
+                                    add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                                 }
                             }
                             else
                             {
-                                co_yield process_heap_entry{ entry };
+                                add_heap_entry(all_entries, process_heap_entry{ entry });
                             }
                         }
                     }
@@ -270,16 +272,16 @@ namespace dlg_help_utils::heap
                                 {
                                     if (entry.allocated())
                                     {
-                                        if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                                        if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                                         {
-                                            if (it->second.block_use())
+                                            if (crt_entry->block_use())
                                             {
-                                                co_yield process_heap_entry{ entry, it->second };
+                                                add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                                             }
                                         }
                                         else
                                         {
-                                            co_yield process_heap_entry{ entry };
+                                            add_heap_entry(all_entries, process_heap_entry{ entry });
                                         }
                                     }
                                 }
@@ -290,16 +292,16 @@ namespace dlg_help_utils::heap
 
                 for (auto const& entry : segment_heap.value().large_entries())
                 {
-                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                     {
-                        if (it->second.block_use())
+                        if (crt_entry->block_use())
                         {
-                            co_yield process_heap_entry{ entry, it->second };
+                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                         }
                     }
                     else
                     {
-                        co_yield process_heap_entry{ entry };
+                        add_heap_entry(all_entries, process_heap_entry{ entry });
                     }
                 }
             }
@@ -311,16 +313,16 @@ namespace dlg_help_utils::heap
             {
                 if (entry.is_allocated())
                 {
-                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                     {
-                        if (it->second.block_use())
+                        if (crt_entry->block_use())
                         {
-                            co_yield process_heap_entry{ entry, it->second };
+                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                         }
                     }
                     else
                     {
-                        co_yield process_heap_entry{ entry };
+                        add_heap_entry(all_entries, process_heap_entry{ entry });
                     }
                 }
             }
@@ -329,20 +331,22 @@ namespace dlg_help_utils::heap
             {
                 if (entry.is_allocated())
                 {
-                    if (auto const it = crt_entries.find(entry.user_address()); it != crt_entries.end())
+                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                     {
-                        if (it->second.block_use())
+                        if (crt_entry->block_use())
                         {
-                            co_yield process_heap_entry{ entry, it->second };
+                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                         }
                     }
                     else
                     {
-                        co_yield process_heap_entry{ entry };
+                        add_heap_entry(all_entries, process_heap_entry{ entry });
                     }
                 }
             }
         }
+
+        return all_entries;
     }
 
     std::experimental::generator<process_heap_entry> process_heaps::all_free_entries() const
@@ -559,6 +563,75 @@ namespace dlg_help_utils::heap
                 co_yield entry;
             }
         }
+    }
+
+    crt_entry const* process_heaps::match_crt_entry(uint64_t const user_address, size_units::base_16::bytes const size, std::map<uint64_t, crt_entry> const& crt_entries) const
+    {
+        auto it = crt_entries.lower_bound(user_address);
+        if(it != crt_entries.end())
+        {
+            switch(heap_match_utils::does_memory_match_to_range(peb_.walker(), user_address, size, it->second.user_address(), it->second.data_size()))
+            {
+            case block_range_match_result::block_match:
+                return &it->second;
+
+            case block_range_match_result::block_contains:
+            case block_range_match_result::user_contains_block:
+            case block_range_match_result::block_partially_contains:
+            case block_range_match_result::block_no_match:
+                break;
+            }
+        }
+
+        if(it != crt_entries.begin())
+        {
+            --it;
+
+            switch(heap_match_utils::does_memory_match_to_range(peb_.walker(), user_address, size, it->second.user_address(), it->second.data_size()))
+            {
+            case block_range_match_result::block_match:
+            case block_range_match_result::block_contains:
+                return &it->second;
+
+            case block_range_match_result::user_contains_block:
+            case block_range_match_result::block_partially_contains:
+            case block_range_match_result::block_no_match:
+                break;
+            }
+        }
+
+        return nullptr;
+    }
+
+    void process_heaps::add_heap_entry(std::map<uint64_t, process_heap_entry>& entries, process_heap_entry&& process_heap_entry)
+    {
+        auto it = entries.lower_bound(process_heap_entry.user_address());
+        if(it != entries.begin() && (it == entries.end() || it->first > process_heap_entry.user_address()))
+        {
+            --it;
+        }
+
+        if(it != entries.end())
+        {
+            if(does_entry_contain_entry(it->second, process_heap_entry))
+            {
+                // remove containing entry
+                entries.erase(it);
+            }
+            else if(does_entry_contain_entry(process_heap_entry, it->second))
+            {
+                // don't add containing entry
+                return;
+            }
+        }
+
+        entries.emplace(std::make_pair(process_heap_entry.user_address(), std::move(process_heap_entry)));
+    }
+
+    bool process_heaps::does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry)
+    {
+        return heap_entry.user_address() >= container_heap_entry.user_address() &&
+            heap_entry.user_address() + heap_entry.user_requested_size().count() <= container_heap_entry.user_address() + container_heap_entry.user_requested_size().count();
     }
 
     bool process_heaps::is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry)

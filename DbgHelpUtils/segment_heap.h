@@ -113,7 +113,6 @@ namespace dlg_help_utils::heap
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
-
         cache_manager& cache_manager_;
         uint64_t const segment_heap_address_;
         process::process_environment_block const& peb_;

@@ -56,7 +56,6 @@ namespace dlg_help_utils::heap
         static void setup_globals(segment_heap const& heap);
 
     private:
-        [[nodiscard]] int64_t read_front_padding_size() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 

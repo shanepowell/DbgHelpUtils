@@ -101,7 +101,7 @@ namespace dlg_help_utils::heap
 
     uint64_t page_range_descriptor::user_address() const
     {
-        return block_address() + read_front_padding_size();
+        return block_address();
     }
 
     size_units::base_16::bytes page_range_descriptor::block_size() const
@@ -111,7 +111,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes page_range_descriptor::user_requested_size() const
     {
-        auto const size = (unit_size().count() << unit_shift_) - read_front_padding_size();
+        auto const size = (unit_size().count() << unit_shift_);
         auto const extra = extra_bytes().count();
 
         if(extra >= size)
@@ -150,16 +150,6 @@ namespace dlg_help_utils::heap
             }
             data.heap_page_range_descriptor_committed_page_count_field_data_x86 = data.heap_page_range_descriptor_symbol_type.get_field_in_type(symbol_name, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
         }
-    }
-
-    int64_t page_range_descriptor::read_front_padding_size() const
-    {
-        if(range_flags() != page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT)
-        {
-            return 0;
-        }
-
-        return stream_utils::read_field_value<uint32_t>(walker(), block_address()).value_or(0);
     }
 
     uint64_t page_range_descriptor::get_ust_address() const

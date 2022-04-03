@@ -57,7 +57,6 @@ namespace dlg_help_utils::heap
 
     private:
         [[nodiscard]] size_units::base_16::bytes get_size() const;
-        [[nodiscard]] uint64_t read_front_padding() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 

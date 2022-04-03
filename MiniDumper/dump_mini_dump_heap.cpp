@@ -188,7 +188,7 @@ namespace
         }
         if ((entry.flags() & heap::heap_entry::FlagExtraPresent) == heap::heap_entry::FlagExtraPresent)
         {
-            log << L", Tail ill";
+            log << L", Tail fill";
         }
         if ((entry.flags() & heap::heap_entry::FlagFillPattern) == heap::heap_entry::FlagFillPattern)
         {
@@ -502,9 +502,9 @@ namespace
         log << std::format(L"{0}{1} @ {2}\n", indent_str, locale_formatting::to_wstring(index), stream_hex_dump::to_hex(entry.entry_address(), hex_length));
         log << std::format(L"{0}  Is Allocated: {1}\n", indent_str, entry.is_allocated());
         log << std::format(L"{0}  Virtual Block: {1}\n", indent_str, stream_hex_dump::to_hex(entry.virtual_block_address(), hex_length));
-        log << std::format(L"{0}  Virtual Block Size: {1} ({2})\n", indent_str, entry.virtual_block_size(), stream_hex_dump::to_hex(entry.virtual_block_size().count()));
+        log << std::format(L"{0}  Virtual Block Size: {1} ({2})\n", indent_str, to_wstring(entry.virtual_block_size()), stream_hex_dump::to_hex(entry.virtual_block_size().count()));
         log << std::format(L"{0}  User Allocation: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
-        log << std::format(L"{0}  User Requested Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size().count()));
+        log << std::format(L"{0}  User Requested Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size().count()));
         log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
@@ -548,7 +548,7 @@ namespace
         log << std::format(L"{0}  Seed: {1}\n", indent_str, stream_hex_dump::to_hex(heap.seed()));
         log << std::format(L"{0}  Normal Heap: {1}\n", indent_str, stream_hex_dump::to_hex(heap.normal_heap(), hex_length));
         log << std::format(L"{0}  Busy Allocations: {1}\n", indent_str, locale_formatting::to_wstring(heap.busy_allocations()));
-        log << std::format(L"{0}  Busy Allocations Committed Total: {1} ({2})\n", indent_str, heap.busy_allocations_committed(), stream_hex_dump::to_hex(heap.busy_allocations_committed()));
+        log << std::format(L"{0}  Busy Allocations Committed Total: {1} ({2})\n", indent_str, to_wstring(heap.busy_allocations_committed()), stream_hex_dump::to_hex(heap.busy_allocations_committed()));
         log << std::format(L"{0}  Virtual Ranges: {1}\n", indent_str, locale_formatting::to_wstring(heap.virtual_storage_ranges()));
         log << std::format(L"{0}  Virtual Ranges Total: {1} ({2})\n", indent_str, to_wstring(heap.virtual_storage_total()), stream_hex_dump::to_hex(heap.virtual_storage_total()));
         log << std::format(L"{0}  Free Allocations: {1}\n", indent_str, locale_formatting::to_wstring(heap.free_allocations()));
@@ -599,7 +599,7 @@ namespace
     {
         using namespace size_units::base_16;
         auto const range_flags = entry.range_flags();
-        log << std::format(L"{0:{1}}Page Entry: {2} : {3} Extra({4}) BlockPtr({5}) BlockSize({6}) UserPtr({7}) ReqSize({8}) Flags({9}){10}\n", ' ', indent
+        log << std::format(L"{0:{1}}Page Entry: {2} : {3} Extra({4}) BlockPtr({5}) BlockSize({6}) UserPtr({7}) ReqSize({8}) Flags({9}) {10}\n", ' ', indent
             , locale_formatting::to_wstring(entry.index())
             , stream_hex_dump::to_hex(entry.page_range_descriptor_address(), hex_length)
             , to_wstring(entry.extra_bytes())
@@ -626,7 +626,7 @@ namespace
         log << std::format(L"{0}  Block Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.block_address(), hex_length));
         log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(entry.block_size()), stream_hex_dump::to_hex(entry.block_size()));
         log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
-        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size()));
+        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
         log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
@@ -860,14 +860,14 @@ namespace
         log << std::format(L"{0}Large Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.large_alloc_entry_address(), hex_length));
         log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
         log << std::format(L"{0}  Virtual Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.virtual_address(), hex_length));
-        log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, entry.unused_bytes(), stream_hex_dump::to_hex(entry.unused_bytes()));
+        log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
         log << std::format(L"{0}  Spare: {1}\n", indent_str, stream_hex_dump::to_hex(entry.spare()));
         log << std::format(L"{0}  Extra Present: {1}\n", indent_str, entry.extra_present());
         log << std::format(L"{0}  Guard Page Count: {1}\n", indent_str, locale_formatting::to_wstring(entry.guard_page_count()));
         log << std::format(L"{0}  Guard Page Alignment: {1}\n", indent_str, locale_formatting::to_wstring(entry.guard_page_alignment()));
         log << std::format(L"{0}  Allocated Pages: {1}\n", indent_str, locale_formatting::to_wstring(entry.allocated_pages()));
         log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
-        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size()));
+        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
         log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
@@ -925,7 +925,7 @@ namespace
             log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
         }
         log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
-        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, entry.user_requested_size(), stream_hex_dump::to_hex(entry.user_requested_size()));
+        log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
         log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
     }
 
@@ -1312,7 +1312,7 @@ void print_process_entry(std::wostream& log, heap::process_heap_entry const& ent
 
     if(options.hex_dump_memory_data())
     {
-        if(auto stream = entry.user_data(); !stream.eof())
+        if(auto stream = entry.all_user_data(); !stream.eof())
         {
             hex_dump::hex_dump(log, stream, options.hex_dump_memory_size(entry.user_requested_size().count()), indent + 4);
             log << L'\n';

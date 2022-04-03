@@ -61,6 +61,7 @@ public:
     [[nodiscard]] bool display_crtheap() const { return display_crtheap_; }
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
+    [[nodiscard]] bool disable_symbol_load_cancel_keyboard_check() const { return disable_symbol_load_cancel_keyboard_check_; }
     [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options::options display_stack_options() const;
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
@@ -100,6 +101,7 @@ private:
     bool display_crtheap_{false};
     bool debug_heap_data_{false};
     bool display_stack_trace_database_{false};
+    bool disable_symbol_load_cancel_keyboard_check_{false};
     bool display_stack_variables_{false};
     bool display_stack_parameters_{false};
     uint16_t heap_statistics_views_{0};

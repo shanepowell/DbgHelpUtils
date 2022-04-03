@@ -42,7 +42,7 @@ namespace dlg_help_utils::stream_utils
         uint64_t value{};
     };
 
-    [[nodiscard]] std::optional<std::tuple<size_t, MINIDUMP_DIRECTORY const&>> find_stream_for_type(mini_dump const& dump_file, MINIDUMP_STREAM_TYPE type);
+    [[nodiscard]] std::optional<std::tuple<size_t, MINIDUMP_DIRECTORY const*>> find_stream_for_type(mini_dump const& dump_file, MINIDUMP_STREAM_TYPE type);
     [[nodiscard]] std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_type_and_value(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& pointer_type, uint64_t memory_address, size_t index = 0);
     [[nodiscard]] std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_array_type_and_value(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& array_type, uint64_t memory_address, size_t index = 0);
     [[nodiscard]] std::optional<symbol_type_and_base_type_field_offset> find_field_type_and_offset_in_type(dbg_help::symbol_type_info const& type, std::wstring_view field_name, dbg_help::sym_tag_enum tag);
@@ -138,7 +138,7 @@ namespace dlg_help_utils::stream_utils
     }
 
     [[nodiscard]] std::optional<uint64_t> find_machine_size_field_value(process::process_environment_block const& peb, symbol_type_and_base_type_field_offset const& field_data, uint64_t memory_address);
-    [[nodiscard]] dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& name);
+    [[nodiscard]] dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& name, bool throw_on_error = true);
     [[nodiscard]] size_t get_type_length(dbg_help::symbol_type_info const& type, std::wstring const& type_name);
     [[nodiscard]] uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t address, symbol_type_and_base_type_field_offset const& field_data, std::wstring const& type_name, std::wstring const& field_name);
     [[nodiscard]] uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t address, symbol_type_and_base_type_field_offset const& field_data, std::wstring const& type_name, std::wstring const& field_name);

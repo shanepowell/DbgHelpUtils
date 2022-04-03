@@ -8,6 +8,7 @@
 #include "large_alloc_entry.h"
 #include "page_range_descriptor.h"
 #include "process_environment_block.h"
+#include "wide_runtime_error.h"
 
 namespace dlg_help_utils::heap
 {
@@ -197,15 +198,45 @@ namespace dlg_help_utils::heap
         return user_size_;
     }
 
-    mini_dump_memory_stream process_heap_entry::user_data() const
+    mini_dump_memory_stream process_heap_entry::user_data(uint64_t const range_address, size_units::base_16::bytes const range_size) const
     {
-        uint64_t const size = user_requested_size().count();
-        return peb_.walker().get_process_memory_stream(user_address(), size);
+        switch(match_range(range_address, range_size))
+        {
+        case block_range_match_result::block_match:
+        case block_range_match_result::block_contains:
+            return peb_.walker().get_process_memory_stream(range_address, range_size.count());
+
+        case block_range_match_result::user_contains_block:
+            return peb_.walker().get_process_memory_stream(user_address(), user_requested_size().count());
+
+        case block_range_match_result::block_partially_contains:
+            {
+                auto const start_range = std::max(range_address, user_address());
+                auto const end_range = std::min(range_address + range_size.count(), user_address() + user_requested_size().count());
+                return peb_.walker().get_process_memory_stream(start_range, end_range - start_range);
+            }
+
+        case block_range_match_result::block_no_match:
+            break;
+        }
+
+        using namespace size_units::base_16;
+        throw exceptions::wide_runtime_error{std::format(L"not a range user data range [{0} - {1}]", range_address, to_wstring(range_size))};
     }
 
-    bool process_heap_entry::contains_address(uint64_t const address) const
+    mini_dump_memory_stream process_heap_entry::all_user_data() const
     {
-        return address >= check_block_start_address_ && address < check_block_end_address_;
+        return peb_.walker().get_process_memory_stream(user_address(), user_requested_size().count());
+    }
+
+    bool process_heap_entry::contains_address_range(uint64_t const address, size_units::base_16::bytes const size) const
+    {
+        return address + size.count() > check_block_start_address_ && address < check_block_end_address_;
+    }
+
+    block_range_match_result process_heap_entry::match_range(uint64_t const range_address, size_units::base_16::bytes const range_size) const
+    {
+        return heap_match_utils::does_memory_match_to_range(peb_.walker(), range_address, range_size, user_address(), user_requested_size());
     }
 
     uint64_t process_heap_entry::get_nt_heap_entry_check_block_start(heap_entry const& entry) const

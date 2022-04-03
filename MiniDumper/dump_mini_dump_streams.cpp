@@ -85,7 +85,7 @@ void dump_mini_dump_stream_type(std::wostream& log, mini_dump const& dump_file, 
     }
 
     auto const& [index, entry] = stream.value();
-    dump_mini_dump_stream_data(log, dump_file, index, entry, options, symbol_engine);
+    dump_mini_dump_stream_data(log, dump_file, index, *entry, options, symbol_engine);
 }
 
 void dump_mini_dump_all_stream_indexes(std::wostream& log, mini_dump const& dump_file, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)

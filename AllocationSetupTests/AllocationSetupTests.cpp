@@ -272,7 +272,15 @@ bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const
             log << std::format(L"Failed to allocate {} allocation\n", type);
             return false;
         }
+        
         memset(allocation, fill_value, allocation_size);
+
+        // make start uint32_t be a small value
+        if(allocation_size > sizeof(uint32_t))
+        {
+            uint32_t constexpr fake_offset{0x20};
+            memcpy(allocation, &fake_offset, sizeof fake_offset);
+        }
 
         set.emplace_back(Allocation{reinterpret_cast<uint64_t>(allocation), allocation_size, fill_value, true});
 

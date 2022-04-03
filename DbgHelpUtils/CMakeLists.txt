@@ -25,6 +25,8 @@ source_group("DbgHelp" FILES ${DbgHelp})
 set(Heap
     "ust_address_stack_trace.cpp"
     "ust_address_stack_trace.h"
+    "heap_match_utils.cpp"
+    "heap_match_utils.h"
 )
 source_group("Heap" FILES ${Heap})
 

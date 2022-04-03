@@ -20,6 +20,7 @@ namespace dlg_help_utils::heap
         class system_module_list;
     }
 
+    class crt_entry;
     class heap_subsegment;
     class heap_entry;
     class process_heap_entry;
@@ -47,12 +48,16 @@ namespace dlg_help_utils::heap
     private:
         void clear_cache() const;
 
-        [[nodiscard]] std::experimental::generator<process_heap_entry> all_entries() const;
+        [[nodiscard]] std::map<uint64_t, process_heap_entry> all_entries() const;
         [[nodiscard]] std::experimental::generator<process_heap_entry> all_free_entries() const;
 
         [[nodiscard]] std::experimental::generator<process_heap_entry> filter_entries() const;
         [[nodiscard]] std::experimental::generator<process_heap_entry> filter_free_entries() const;
 
+        [[nodiscard]] crt_entry const* match_crt_entry(uint64_t user_address, size_units::base_16::bytes size, std::map<uint64_t, crt_entry> const& crt_entries) const;
+
+        static void add_heap_entry(std::map<uint64_t, process_heap_entry> & entries, process_heap_entry&& process_heap_entry);
+        [[nodiscard]] static bool does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry);
         [[nodiscard]] static bool is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry);
         [[nodiscard]] static bool is_address_filtered(std::vector<process_heap_entry> const& filters, uint64_t address, size_units::base_16::bytes size);
         [[nodiscard]] static bool contains_address(uint64_t start_address, uint64_t size, uint64_t address);

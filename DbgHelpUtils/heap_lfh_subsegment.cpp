@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
             if(auto const data_length = std::get<1>(block_offsets.value()); data_length >= sizeof key)
             {
                 auto* data = block_offsets_.get();
-                auto* end_data = block_offsets_.get() + sizeof(key);
+                auto const* end_data = block_offsets_.get() + sizeof(key);
                 auto const* key_data = reinterpret_cast<uint8_t const*>(&key);
                 while(data != end_data)
                 {

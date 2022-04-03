@@ -92,7 +92,7 @@ namespace dlg_help_utils::process
         {
             return std::nullopt;
         }
-        return std::optional{std::move(heap)};
+        return std::optional{heap};
     }
 
     bool process_environment_block::is_x86_target() const
@@ -186,9 +186,9 @@ namespace dlg_help_utils::process
         if(!cache_manager_.has_cache<cache_data>())
         {
             auto& data = cache_manager_.get_cache<cache_data>();
-            data.heap_symbol_type = stream_utils::get_type(walker(), common_symbol_names::heap_structure_symbol_name);
-            data.peb_symbol_info = stream_utils::get_type(walker(), common_symbol_names::peb_structure_symbol_name);
-            data.teb_symbol_info = stream_utils::get_type(walker(), common_symbol_names::teb_structure_symbol_name);
+            data.heap_symbol_type = stream_utils::get_type(walker(), common_symbol_names::heap_structure_symbol_name, true);
+            data.peb_symbol_info = stream_utils::get_type(walker(), common_symbol_names::peb_structure_symbol_name, true);
+            data.teb_symbol_info = stream_utils::get_type(walker(), common_symbol_names::teb_structure_symbol_name, true);
 
             data.peb_structure_process_heaps_field_data = stream_utils::get_field_type_and_offset_in_type(data.peb_symbol_info, common_symbol_names::peb_structure_symbol_name, common_symbol_names::peb_structure_process_heaps_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
             data.peb_structure_process_parameters_field_data = stream_utils::get_field_type_and_offset_in_type(data.peb_symbol_info, common_symbol_names::peb_structure_symbol_name, common_symbol_names::peb_structure_process_heaps_field_symbol_name, dbg_help::sym_tag_enum::PointerType);

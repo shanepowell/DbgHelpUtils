@@ -9,7 +9,7 @@ symbol_engine_ui::symbol_engine_ui(dump_file_options const& options)
 
 bool symbol_engine_ui::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module_name)
 {
-    if ((GetAsyncKeyState(VK_LCONTROL) & 0x8000) == 0x8000 || (GetAsyncKeyState(VK_RCONTROL) & 0x8000) == 0x8000)
+    if (!options_.disable_symbol_load_cancel_keyboard_check() && ((GetAsyncKeyState(VK_LCONTROL) & 0x8000) == 0x8000 || (GetAsyncKeyState(VK_RCONTROL) & 0x8000) == 0x8000))
     {
         return true;
     }

@@ -69,7 +69,6 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes get_previous_size() const;
         [[nodiscard]] uint16_t get_previous_size_raw() const;
         [[nodiscard]] bool get_is_valid(uint16_t previous_size) const;
-        [[nodiscard]] uint64_t read_front_padding_size() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
         void validate_buffer() const;

@@ -31,12 +31,12 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_lfh_entry::user_address() const
     {
-        return heap_lfh_entry_address() + read_front_padding_size();
+        return heap_lfh_entry_address();
     }
 
     size_units::base_16::bytes heap_lfh_entry::user_requested_size() const
     {
-        return size_units::base_16::bytes{block_size().count() - unused_bytes_.count() - read_front_padding_size()};
+        return size_units::base_16::bytes{block_size().count() - unused_bytes().count()};
     }
 
     size_units::base_16::bytes heap_lfh_entry::get_unused_bytes() const
@@ -49,19 +49,9 @@ namespace dlg_help_utils::heap
         return size_units::base_16::bytes{segment_heap_utils::read_extra_data(peb(), heap().stack_trace(), block_address(), block_size().count()).unused_bytes};
     }
 
-    uint64_t heap_lfh_entry::read_front_padding_size() const
-    {
-        if(!allocated())
-        {
-            return 0;
-        }
-
-        return segment_heap_utils::read_front_padding_size(peb(), block_address());
-    }
-
     uint64_t heap_lfh_entry::get_ust_address() const
     {
-        if(!peb().user_stack_db_enabled() || !allocated())
+        if(!peb().user_stack_db_enabled() || !allocated() || !has_unused_bytes())
         {
             return 0;
         }

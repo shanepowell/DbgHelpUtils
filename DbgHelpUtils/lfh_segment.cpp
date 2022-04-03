@@ -115,7 +115,7 @@ namespace dlg_help_utils::heap
         auto [subsegment_address, end_subsegment_address] = get_subsegment_range();
 
         std::vector<heap_subsegment> rv;
-        while(subsegment_address + cache_data_.heap_subsegment_size <= end_subsegment_address)
+        while(subsegment_address + cache_data_.heap_subsegment_size < end_subsegment_address)
         {
             if(heap_subsegment subsegment{lfh_heap_, subsegment_address, cache_data_.lfh_block_zone_size};
                 subsegment.entry_start_address() != 0 && std::ranges::any_of(all_heap_entries, [&subsegment](heap_entry const& entry) { return process_heaps::is_lfh_subsegment_in_entry(entry, subsegment); }))

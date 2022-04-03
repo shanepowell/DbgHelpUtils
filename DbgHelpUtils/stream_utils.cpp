@@ -11,7 +11,7 @@
 
 namespace dlg_help_utils::stream_utils
 {
-    std::optional<std::tuple<size_t, MINIDUMP_DIRECTORY const&>> find_stream_for_type(mini_dump const& dump_file, MINIDUMP_STREAM_TYPE const type)
+    std::optional<std::tuple<size_t, MINIDUMP_DIRECTORY const*>> find_stream_for_type(mini_dump const& dump_file, MINIDUMP_STREAM_TYPE const type)
     {
         auto const* header = dump_file.header();
         if (header == nullptr)
@@ -29,7 +29,7 @@ namespace dlg_help_utils::stream_utils
         {
             if (auto const & entry = directory[index]; static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType) == type)
             {
-                return std::make_tuple(index, entry);
+                return std::make_tuple(index, &entry);
             }
         }
 
@@ -362,9 +362,9 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& name)
+    dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& name, bool const throw_on_error)
     {
-        auto const symbol_info = walker.get_type_info(name);
+        auto const symbol_info = walker.get_type_info(name, throw_on_error);
         if(!symbol_info.has_value())
         {
             throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} not found", name)};

@@ -559,7 +559,7 @@ namespace
             0xFFFFFFFFFFFFFF,           // 7
             0xFFFFFFFFFFFFFFFF,         // 8
         };
-        return std::make_pair<uint64_t,uint64_t>(raw_value & size_masks[sizeof T], sizeof T);
+        return std::make_pair<uint64_t,uint64_t>(raw_value & size_masks[sizeof(T)], sizeof(T));
     }
 
     std::pair<uint64_t,uint64_t> get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context)
@@ -1030,7 +1030,7 @@ namespace dlg_help_utils::dbg_help
     void symbol_engine::load_module(std::wstring module_name, DWORD64 const module_base, DWORD const module_size,
                                     DWORD const module_time_stamp, DWORD const module_check_sum, void const* cv_record,
                                     DWORD const cv_record_size, void const* misc_record, DWORD const misc_record_size,
-                                    [[maybe_unused]] VS_FIXEDFILEINFO const& version_info)
+                                    [[maybe_unused]] VS_FIXEDFILEINFO const& version_info, bool const throw_on_error)
     {
         std::filesystem::path const path{module_name};
         auto const module = path.filename().wstring();
@@ -1071,7 +1071,7 @@ namespace dlg_help_utils::dbg_help
                 callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
-            handle = load_module(module, module_base, module_size, &module_load_info);
+            handle = load_module(module, module_base, module_size, &module_load_info, throw_on_error);
         }
 
         if (pdb.is_valid() && handle == 0)
@@ -1096,7 +1096,7 @@ namespace dlg_help_utils::dbg_help
                 callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
-            handle = load_module(module, module_base, module_size, &module_load_info);
+            handle = load_module(module, module_base, module_size, &module_load_info, throw_on_error);
         }
 
         if (handle == 0)
@@ -1143,7 +1143,7 @@ namespace dlg_help_utils::dbg_help
                 callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
-            handle = load_module(module, module_base, module_size, &module_load_info);
+            handle = load_module(module, module_base, module_size, &module_load_info, throw_on_error);
         }
 
         if (handle == 0)
@@ -1156,7 +1156,7 @@ namespace dlg_help_utils::dbg_help
                 callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
-            handle = load_module(module, module_base, module_size, nullptr);
+            handle = load_module(module, module_base, module_size, nullptr, throw_on_error);
         }
 
         std::wstring module_image_path;
@@ -1171,12 +1171,12 @@ namespace dlg_help_utils::dbg_help
     }
 
     void symbol_engine::load_module(std::wstring module_name, DWORD64 const module_base, DWORD const module_size,
-                                    DWORD const module_time_stamp, DWORD const module_check_sum)
+                                    DWORD const module_time_stamp, DWORD const module_check_sum, bool const throw_on_error)
     {
         std::filesystem::path const path{module_name};
         auto const module = path.filename().wstring();
 
-        auto const handle = load_module(module, module_base, module_size, nullptr);
+        auto const handle = load_module(module, module_base, module_size, nullptr, throw_on_error);
         std::wstring module_image_path;
 
         if (handle != 0)
@@ -1364,13 +1364,13 @@ namespace dlg_help_utils::dbg_help
         return std::move(info);
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name)
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name, bool const throw_on_error)
     {
         auto [module_name, specific_type_name] = parse_type_info(type_name);
-        return get_type_info(module_name, specific_type_name);
+        return get_type_info(module_name, specific_type_name, throw_on_error);
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name)
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name, bool const throw_on_error)
     {
         if(type_name.empty())
         {
@@ -1382,7 +1382,7 @@ namespace dlg_help_utils::dbg_help
             // search all currently loaded symbols....
             for (const auto& module : modules_ | std::views::values)
             {
-                if(auto rv = load_type_info(module.base, type_name); rv.has_value())
+                if(auto rv = load_type_info(module.base, type_name, throw_on_error); rv.has_value())
                 {
                     return rv;
                 }
@@ -1402,7 +1402,7 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return load_type_info(it->second.base, type_name);
+        return load_type_info(it->second.base, type_name, throw_on_error);
     }
 
     std::vector<symbol_type_info> symbol_engine::module_types(std::wstring const& module_name)
@@ -1433,7 +1433,7 @@ namespace dlg_help_utils::dbg_help
         return types;
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name) const
+    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name, bool const throw_on_error) const
     {
         if(symbol_name.empty())
         {
@@ -1443,6 +1443,10 @@ namespace dlg_help_utils::dbg_help
         auto const info = symbol_info_buffer::make();
         if(!SymFromNameW(process_, symbol_name.c_str(), &info->info))
         {
+            if(throw_on_error)
+            {
+                windows_error::throw_windows_api_error(L"SymFromNameW"sv, symbol_name);
+            }
             return std::nullopt;
         }
 
@@ -1626,7 +1630,7 @@ namespace dlg_help_utils::dbg_help
     }
 
     DWORD64 symbol_engine::load_module(std::wstring const& module_name, DWORD64 const module_base, DWORD const module_size,
-                                       MODLOAD_DATA* module_load_info)
+                                       MODLOAD_DATA* module_load_info, bool const throw_on_error)
     {
         loading_module_ = true;
         auto loading_module_handle = make_scope_exit([this]()
@@ -1634,8 +1638,21 @@ namespace dlg_help_utils::dbg_help
             loading_module_ = false;
         });
 
-        return SymLoadModuleExW(process_, nullptr, module_name.c_str(), nullptr, module_base, module_size,
-                                module_load_info, 0);
+        auto rv = SymLoadModuleExW(process_, nullptr, module_name.c_str(), nullptr, module_base, module_size, module_load_info, 0);
+
+        if(rv == 0)
+        {
+            if(auto const ec = GetLastError(); ec == ERROR_SUCCESS)
+            {
+                rv = module_base;
+            }
+            else if(throw_on_error)
+            {
+                windows_error::throw_windows_api_error(L"SymLoadModuleExW"sv, module_name, ec);
+            }
+        }
+
+        return rv;
     }
 
     std::optional<std::optional<symbol_type_info>> symbol_engine::get_cached_type_info(std::wstring const& type_name)
@@ -1658,7 +1675,7 @@ namespace dlg_help_utils::dbg_help
         cache_type_info_.clear();
     }
 
-    std::optional<symbol_type_info> symbol_engine::load_type_info(DWORD64 const module_base, std::wstring const& type_name)
+    std::optional<symbol_type_info> symbol_engine::load_type_info(DWORD64 const module_base, std::wstring const& type_name, bool const throw_on_error)
     {
         if(auto const rv = get_cached_type_info(type_name); rv.has_value())
         {
@@ -1668,6 +1685,11 @@ namespace dlg_help_utils::dbg_help
         auto const info = symbol_info_buffer::make();
         if(!SymGetTypeFromNameW(process_, module_base, type_name.c_str(), &info->info))
         {
+            if(throw_on_error)
+            {
+                windows_error::throw_windows_api_error(L"SymGetTypeFromNameW"sv, type_name);
+            }
+
             set_cached_type_info(type_name, std::nullopt);
             return std::nullopt;
         }

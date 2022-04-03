@@ -77,12 +77,12 @@ namespace dlg_help_utils::heap
 
     uint64_t large_alloc_entry::user_address() const
     {
-        return block_address() + read_front_padding();
+        return block_address();
     }
 
     size_units::base_16::bytes large_alloc_entry::user_requested_size() const
     {
-        return size_units::base_16::bytes{block_size() - unused_bytes().count() - read_front_padding()};
+        return size_units::base_16::bytes{block_size() - unused_bytes().count()};
     }
 
     void large_alloc_entry::setup_globals(segment_heap const& heap)
@@ -107,11 +107,6 @@ namespace dlg_help_utils::heap
     size_units::base_16::bytes large_alloc_entry::get_size() const
     {
         return size_units::base_16::bytes{allocated_pages() * heap().peb().page_size()};
-    }
-
-    uint64_t large_alloc_entry::read_front_padding() const
-    {
-        return segment_heap_utils::read_front_padding_size(peb(), block_address());
     }
 
     uint64_t large_alloc_entry::get_ust_address() const

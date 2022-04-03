@@ -121,15 +121,20 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_vs_entry::user_address() const
     {
-        return block_address() + read_front_padding_size();
+        return block_address();
     }
 
     size_units::base_16::bytes heap_vs_entry::user_requested_size() const
     {
-        auto requested_user_size = block_size() - read_front_padding_size();
+        auto requested_user_size = block_size();
+
         if(has_unused_bytes())
         {
-            requested_user_size -= unused_bytes().count();
+            if(auto const unused_bytes_amount = static_cast<uint64_t>(unused_bytes().count());
+                requested_user_size >= unused_bytes_amount)
+            {
+                requested_user_size -= unused_bytes_amount;
+            }
         }
 
         return size_units::base_16::bytes{requested_user_size};
@@ -183,19 +188,9 @@ namespace dlg_help_utils::heap
         return get_previous_size_raw() == previous_size;
     }
 
-    uint64_t heap_vs_entry::read_front_padding_size() const
-    {
-        if(!allocated())
-        {
-            return 0;
-        }
-
-        return segment_heap_utils::read_front_padding_size(peb(), block_address());
-    }
-
     uint64_t heap_vs_entry::get_ust_address() const
     {
-        if(!peb().user_stack_db_enabled() || !allocated())
+        if(!peb().user_stack_db_enabled() || !allocated() || !has_unused_bytes())
         {
             return 0;
         }

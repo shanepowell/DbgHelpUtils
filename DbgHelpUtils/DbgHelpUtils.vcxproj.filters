@@ -405,6 +405,9 @@
     <ClCompile Include="stream_module_name.cpp">
       <Filter>Streams</Filter>
     </ClCompile>
+    <ClCompile Include="heap_match_utils.cpp">
+      <Filter>Heap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -838,6 +841,9 @@
     </ClInclude>
     <ClInclude Include="assert_value.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_match_utils.h">
+      <Filter>Heap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

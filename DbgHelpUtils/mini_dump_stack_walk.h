@@ -49,8 +49,8 @@ namespace dlg_help_utils::stream_stack_dump
             uint64_t address, module_list_stream const& module_list,
             unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
 
-        [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_type_info(std::wstring const& type_name) const;
-        [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_symbol_info(std::wstring const& symbol_name) const;
+        [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_type_info(std::wstring const& type_name, bool throw_on_error = false) const;
+        [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_symbol_info(std::wstring const& symbol_name, bool throw_on_error = false) const;
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> module_types(std::wstring const& module_name) const;
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> symbol_walk(std::wstring const& find_mask) const;
 
@@ -86,9 +86,9 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] DWORD64 get_loaded_module_base_routine(DWORD64 address) const;
         [[nodiscard]] DWORD64 get_unloaded_module_base_routine(DWORD64 address) const;
 
-        void load_module(std::wstring const& module_name) const;
-        void load_module(stream_module const& module) const;
-        void load_module(stream_unloaded_module const& module) const;
+        void load_module(std::wstring const& module_name, bool throw_on_error = false) const;
+        void load_module(stream_module const& module, bool throw_on_error = false) const;
+        void load_module(stream_unloaded_module const& module, bool throw_on_error = false) const;
 
         static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_unloaded_module_symbol_info(
             uint64_t address, unloaded_module_list_stream const& unloaded_module_list,

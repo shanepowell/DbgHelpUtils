@@ -576,7 +576,7 @@ namespace dlg_help_utils::stream_stack_dump
 
     // ReSharper restore CppParameterMayBeConst
 
-    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_type_info(std::wstring const& type_name) const
+    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_type_info(std::wstring const& type_name, bool const throw_on_error) const
     {
         if(auto const it = cache_type_.find(type_name); it != cache_type_.end())
         {
@@ -595,20 +595,20 @@ namespace dlg_help_utils::stream_stack_dump
             // load all loaded modules...
             for (auto const& module : module_list_.list())
             {
-                load_module(module);
+                load_module(module, throw_on_error);
             }
         }
         else
         {
-            load_module(module_name);
+            load_module(module_name, throw_on_error);
         }
 
-        auto rv = symbol_engine_.get_type_info(module_name, specific_type_name);
+        auto rv = symbol_engine_.get_type_info(module_name, specific_type_name, throw_on_error);
         cache_type_.insert(std::make_pair(type_name, rv));
         return rv;
     }
 
-    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_symbol_info(std::wstring const& symbol_name) const
+    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_symbol_info(std::wstring const& symbol_name, bool const throw_on_error) const
     {
         auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(symbol_name);
 
@@ -622,15 +622,15 @@ namespace dlg_help_utils::stream_stack_dump
             // load all loaded modules...
             for (auto const& module : module_list_.list())
             {
-                load_module(module);
+                load_module(module, throw_on_error);
             }
         }
         else
         {
-            load_module(module_name);
+            load_module(module_name, throw_on_error);
         }
 
-        return symbol_engine_.get_symbol_info(symbol_name);
+        return symbol_engine_.get_symbol_info(symbol_name, throw_on_error);
     }
 
     std::vector<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
@@ -669,37 +669,37 @@ namespace dlg_help_utils::stream_stack_dump
         return false;
     }
 
-    void mini_dump_stack_walk::load_module(std::wstring const& module_name) const
+    void mini_dump_stack_walk::load_module(std::wstring const& module_name, bool const throw_on_error) const
     {
         if(auto const & module = module_list_.find_module(module_name); module)
         {
-            load_module(*module);
+            load_module(*module, throw_on_error);
         }
         else
         {
             if(auto const & unloaded_module = unloaded_module_list_.find_module(module_name); unloaded_module)
             {
-                load_module(*unloaded_module);
+                load_module(*unloaded_module, throw_on_error);
             }
         }
     }
 
-    void mini_dump_stack_walk::load_module(stream_module const& module) const
+    void mini_dump_stack_walk::load_module(stream_module const& module, bool const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {
             symbol_engine_.load_module(name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
                                        module->CheckSum, module.cv_record(), module->CvRecord.DataSize,
-                                       module.misc_record(), module->MiscRecord.DataSize, module->VersionInfo);
+                                       module.misc_record(), module->MiscRecord.DataSize, module->VersionInfo, throw_on_error);
         }
     }
 
-    void mini_dump_stack_walk::load_module(stream_unloaded_module const& module) const
+    void mini_dump_stack_walk::load_module(stream_unloaded_module const& module, bool const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {
             symbol_engine_.load_module(name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
-                                       module->CheckSum);
+                                       module->CheckSum, throw_on_error);
         }
     }
 

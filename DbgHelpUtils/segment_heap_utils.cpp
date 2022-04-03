@@ -6,11 +6,6 @@
 
 namespace dlg_help_utils::heap
 {
-    uint64_t segment_heap_utils::read_front_padding_size(process::process_environment_block const& peb, uint64_t const block_address)
-    {
-        return stream_utils::read_field_value<uint32_t>(peb.walker(), block_address).value_or(0);
-    }
-
     segment_heap_entry_extra_data segment_heap_utils::read_extra_data(process::process_environment_block const& peb, ust_address_stack_trace const& stack_trace, uint64_t const block_address, uint64_t const block_size)
     {
         auto const unused_bytes_address = block_address + block_size - 0x02;
@@ -33,7 +28,6 @@ namespace dlg_help_utils::heap
         }
 
         auto const unused_bytes = static_cast<uint64_t>(unused_bytes_value.value() & 0x3FFF);
-
         return {unused_bytes, read_ust_address(peb, stack_trace, block_address, block_size, unused_bytes)};
     }
 

@@ -15,6 +15,7 @@ if(!$LastReport)
     foreach ($dmp in $dmps)
     {
         $CheckDumpHasStackTrace = $dmp.BaseName -match '_ust'
+        $SkipFakeOffsetCheck = Test-Path -path ("$($dmp.DirectoryName)\skip_fake_offset_check.txt") -PathType Leaf
 
         if($Filter -and $null -eq ($Filter | Where-Object { $dmp -match $_ }))
         {
@@ -30,37 +31,37 @@ if(!$LastReport)
             $name = $dmp.BaseName.SubString(0, $dmp.BaseName.Length - 2)
             # run release / x64
             Write-Host "Running $Compiler Release x64 test on set $name"
-            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -DumpFolder $dmp.Directory
 
             # run release / x86
             Write-Host "Running $Compiler Release x86 tests on set $name"
-            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -DumpFolder $dmp.Directory
 
             # run debug / x64
             Write-Host "Running $Compiler Debug x64 tests on set $name"
-            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -DumpFolder $dmp.Directory
 
             # run debug / x86
             Write-Host "Running $Compiler Debug x86 tests on set $name"
-            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $name -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -DumpFolder $dmp.Directory
         }
         else
         {
             # run release / x64
             Write-Host "Running $Compiler Release x64 test on single $dmp"
-            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SingleDumpOnly -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -SingleDumpOnly -DumpFolder $dmp.Directory
 
             # run release / x86
             Write-Host "Running $Compiler Release x86 tests on single $dmp"
-            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SingleDumpOnly -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -SingleDumpOnly -DumpFolder $dmp.Directory
 
             # run debug / x64
             Write-Host "Running $Compiler Debug x64 tests on single $dmp"
-            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SingleDumpOnly -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -SingleDumpOnly -DumpFolder $dmp.Directory
 
             # run debug / x86
             Write-Host "Running $Compiler Debug x86 tests on single $dmp"
-            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SingleDumpOnly -DumpFolder $dmp.Directory
+            .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -CheckDumpFileBaseName $dmp.BaseName -CheckDumpHasStackTrace:$CheckDumpHasStackTrace -SkipFakeOffsetCheck:$SkipFakeOffsetCheck -SingleDumpOnly -DumpFolder $dmp.Directory
         }
     }
 }
