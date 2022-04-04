@@ -21,7 +21,7 @@ jobs:
         config:
         - {
             name: "Windows Visual Studio Build", artifact: "Windows-Vs2019x64.7z",
-            os: windows-latest,
+            os: windows-2019,
             cc: "cl", cxx: "cl",
             environment_script: "$ENV{VSVARSBAT}"
           }
