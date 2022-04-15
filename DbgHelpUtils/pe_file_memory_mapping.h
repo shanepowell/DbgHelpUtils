@@ -22,5 +22,6 @@ namespace dlg_help_utils
 
     private:
         std::map<uint64_t, pe_file> loaded_pe_files_;
+        std::map<uint64_t, uint64_t> loaded_module_range_;
     };
 }

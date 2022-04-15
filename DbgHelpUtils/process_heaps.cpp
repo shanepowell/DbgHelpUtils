@@ -134,7 +134,7 @@ namespace dlg_help_utils::heap
         std::map<uint64_t, crt_entry> crt_entries;
         for (auto const& entry : crt_heap.entries())
         {
-            crt_entries.insert(std::make_pair(entry.entry_address(), entry));
+            crt_entries.insert(std::make_pair(entry.end_entry_address() - 1, entry));
         }
 
         for (uint32_t heap_index = 0; heap_index < peb().number_of_heaps(); ++heap_index)
@@ -567,7 +567,7 @@ namespace dlg_help_utils::heap
 
     crt_entry const* process_heaps::match_crt_entry(uint64_t const user_address, size_units::base_16::bytes const size, std::map<uint64_t, crt_entry> const& crt_entries) const
     {
-        auto it = crt_entries.lower_bound(user_address);
+        const auto it = crt_entries.lower_bound(user_address);
         if(it != crt_entries.end())
         {
             switch(heap_match_utils::does_memory_match_to_range(peb_.walker(), user_address, size, it->second.user_address(), it->second.data_size()))
@@ -583,35 +583,12 @@ namespace dlg_help_utils::heap
             }
         }
 
-        if(it != crt_entries.begin())
-        {
-            --it;
-
-            switch(heap_match_utils::does_memory_match_to_range(peb_.walker(), user_address, size, it->second.user_address(), it->second.data_size()))
-            {
-            case block_range_match_result::block_match:
-            case block_range_match_result::block_contains:
-                return &it->second;
-
-            case block_range_match_result::user_contains_block:
-            case block_range_match_result::block_partially_contains:
-            case block_range_match_result::block_no_match:
-                break;
-            }
-        }
-
         return nullptr;
     }
 
     void process_heaps::add_heap_entry(std::map<uint64_t, process_heap_entry>& entries, process_heap_entry&& process_heap_entry)
     {
-        auto it = entries.lower_bound(process_heap_entry.user_address());
-        if(it != entries.begin() && (it == entries.end() || it->first > process_heap_entry.user_address()))
-        {
-            --it;
-        }
-
-        if(it != entries.end())
+        if(auto const it = entries.lower_bound(process_heap_entry.user_address()); it != entries.end())
         {
             if(does_entry_contain_entry(it->second, process_heap_entry))
             {
@@ -625,7 +602,7 @@ namespace dlg_help_utils::heap
             }
         }
 
-        entries.emplace(std::make_pair(process_heap_entry.user_address(), std::move(process_heap_entry)));
+        entries.emplace(std::make_pair(process_heap_entry.user_address() + process_heap_entry.user_requested_size().count() - 1, std::move(process_heap_entry)));
     }
 
     bool process_heaps::does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry)

@@ -28,6 +28,11 @@ namespace dlg_help_utils::heap
         return heap().walker();
     }
 
+    uint64_t crt_entry::end_entry_address() const
+    {
+        return user_address() + data_size().count();
+    }
+
     uint32_t crt_entry::line_number() const
     {
         return stream_utils::get_field_value<uint32_t>(*this, cache_data_.crt_mem_block_header_line_number_field_data, common_symbol_names::crt_mem_block_header_line_number_field_symbol_name);

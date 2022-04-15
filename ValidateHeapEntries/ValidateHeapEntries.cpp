@@ -163,20 +163,9 @@ bool is_allocation_matched(dlg_help_utils::heap::process_heap_entry const& heap_
 
 [[nodiscard]] bool find_crt_allocation_in_heap_map(std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> const& heap_allocations, dlg_help_utils::heap::crt_entry const& crt_entry)
 {
-    auto it = heap_allocations.lower_bound(crt_entry.user_address());
-    if(it != heap_allocations.end())
+    if(const auto it = heap_allocations.lower_bound(crt_entry.user_address()); it != heap_allocations.end())
     {
         if(is_allocation_matched(it->second, crt_entry))
-        {
-            return true;
-        }
-    }
-
-    // try previous allocation as lower_bound will find the 'next' allocation
-    if(it != heap_allocations.begin())
-    {
-        --it;
-        if (is_allocation_matched(it->second, crt_entry))
         {
             return true;
         }
@@ -197,7 +186,7 @@ std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> make_allocation_map
         }
         else
         {
-            heap_allocations.insert(std::make_pair(entry.user_address(), entry));
+            heap_allocations.insert(std::make_pair(entry.user_address() + entry.user_requested_size().count() - 1, entry));
         }
     }
 
@@ -209,7 +198,7 @@ std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> make_free_allocatio
     std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> heap_free_entries;
     for(auto const& entry : heaps.free_entries())
     {
-        heap_free_entries.insert(std::make_pair(entry.user_address(), entry));
+        heap_free_entries.insert(std::make_pair(entry.user_address() + entry.user_requested_size().count() - 1, entry));
     }
     return heap_free_entries;
 }
@@ -285,10 +274,6 @@ std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> make_free_allocatio
             if(allocation.allocated)
             {
                 auto it_closest = heap_allocations.lower_bound(allocation.pointer);
-                if (it_closest != heap_allocations.begin())
-                {
-                    --it_closest;
-                }
 
                 // this happens when the base dmp has a allocation address/size that is reused between the first dmp and the second dump and
                 // we don't have any record of it and it's not a crt heap (i.e. we can't tell they are different by the request number) then

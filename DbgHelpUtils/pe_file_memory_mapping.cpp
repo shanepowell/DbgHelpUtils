@@ -31,12 +31,18 @@ namespace dlg_help_utils
             throw wide_runtime_error{std::format(L"Error: module {} not a valid pe file", path)};
         }
 
+        loaded_module_range_.insert(std::make_pair(module_base + file.file_length() - 1, module_base));
         loaded_pe_files_.insert(std::make_pair(module_base, std::move(file)));
     }
 
     void pe_file_memory_mapping::unload_pe_file(uint64_t const module_base)
     {
-        loaded_pe_files_.erase(module_base);
+        
+        if(auto const it = loaded_pe_files_.find(module_base); it != loaded_pe_files_.end())
+        {
+            loaded_module_range_.erase(module_base + it->second.file_length() - 1);
+            loaded_pe_files_.erase(it);
+        }
     }
 
     void const* pe_file_memory_mapping::find_address_range(uint64_t const address, uint64_t const length) const
@@ -74,16 +80,13 @@ namespace dlg_help_utils
         return static_cast<uint8_t const*>(it->second.data()) + (address - it->first);
     }
 
-    std::map<uint64_t, pe_file>::const_iterator pe_file_memory_mapping::find_loaded_pe_file(
-        uint64_t const address) const
+    std::map<uint64_t, pe_file>::const_iterator pe_file_memory_mapping::find_loaded_pe_file(uint64_t const address) const
     {
         if (loaded_pe_files_.empty()) return loaded_pe_files_.end();
 
-        auto it = loaded_pe_files_.lower_bound(address);
-        if (it != loaded_pe_files_.end() && it->first == address) return it;
-        if (it == loaded_pe_files_.begin()) return loaded_pe_files_.end();
-        --it;
-        if (auto const end_range = it->first + it->second.file_length(); address < it->first || address >= end_range) return loaded_pe_files_.end();
-        return it;
+        const auto it = loaded_module_range_.lower_bound(address);
+        if(it == loaded_module_range_.end()) return loaded_pe_files_.end();
+        if (address < it->second || address > it->first) return loaded_pe_files_.end();
+        return loaded_pe_files_.find(it->second);
     }
 }

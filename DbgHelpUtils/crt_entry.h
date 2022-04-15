@@ -29,6 +29,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
 
         [[nodiscard]] uint64_t entry_address() const { return entry_address_; }
+        [[nodiscard]] uint64_t end_entry_address() const;
 
         [[nodiscard]] std::wstring filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const;
