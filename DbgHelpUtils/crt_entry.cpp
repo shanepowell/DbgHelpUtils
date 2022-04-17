@@ -23,7 +23,7 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& crt_entry::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& crt_entry::walker() const
     {
         return heap().walker();
     }

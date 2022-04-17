@@ -13,7 +13,7 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::process
@@ -35,7 +35,7 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
+        [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
 
         [[nodiscard]] bool is_using_crt_heap() const { return crt_first_block_ != 0; }
 

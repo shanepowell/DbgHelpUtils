@@ -8,7 +8,7 @@
 #include "locale_number_formatting.h"
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
-#include "mini_dump_stack_walk.h"
+#include "mini_dump_memory_walker.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
 #include "size_units.h"
@@ -488,7 +488,7 @@ namespace dlg_help_utils::symbol_type_utils
         module_list_stream const module_list{ mini_dump };
         unloaded_module_list_stream const unloaded_module_list{ mini_dump };
         pe_file_memory_mapping pe_file_memory_mappings{};
-        stream_stack_dump::mini_dump_stack_walk const walker{
+        stream_stack_dump::mini_dump_memory_walker const walker{
             0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
             unloaded_module_list, pe_file_memory_mappings, symbol_engine
         };
@@ -525,7 +525,7 @@ namespace dlg_help_utils::symbol_type_utils
         module_list_stream const module_list{ mini_dump };
         unloaded_module_list_stream const unloaded_module_list{ mini_dump };
         pe_file_memory_mapping pe_file_memory_mappings{};
-        stream_stack_dump::mini_dump_stack_walk const walker{
+        stream_stack_dump::mini_dump_memory_walker const walker{
             0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
             unloaded_module_list, pe_file_memory_mappings, symbol_engine
         };
@@ -558,7 +558,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_array_inline(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t max_size, bool const dump_hex = false)
+    void dump_array_inline(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t max_size, bool const dump_hex = false)
     {
         if(max_size == 0)
         {
@@ -569,7 +569,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_number_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, bool const dump_hex, size_t const indent)
+    void dump_number_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, bool const dump_hex, size_t const indent)
     {
         if(is_pointer)
         {
@@ -608,7 +608,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_float_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, bool const is_pointer, size_t const max_size, size_t const indent)
+    void dump_float_variable(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, bool const is_pointer, size_t const max_size, size_t const indent)
     {
         if(is_pointer)
         {
@@ -635,7 +635,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_string(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t variable_address, mini_dump_memory_stream& variable_stream, uint64_t max_size, uint64_t const limit_size = 256)
+    void dump_string(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t variable_address, mini_dump_memory_stream& variable_stream, uint64_t max_size, uint64_t const limit_size = 256)
     {
         if(max_size == 0)
         {
@@ -647,7 +647,7 @@ namespace dlg_help_utils::symbol_type_utils
 
 
     template<typename T>
-    void dump_char_variable(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, bool const is_pointer, size_t const max_size)
+    void dump_char_variable(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, bool const is_pointer, size_t const max_size)
     {
         if(is_pointer)
         {
@@ -665,7 +665,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_base_type_variable_symbol_at(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, size_t const indent)
+    void dump_base_type_variable_symbol_at(std::wostream& os, [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, uint64_t const bit_mask, bool const is_pointer, size_t const max_size, size_t const indent)
     {
         if(auto const base_type_data = type.base_type(); base_type_data.has_value())
         {
@@ -811,7 +811,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_udt_array(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t const max_size, size_t const indent, size_t const visited_depth)
+    void dump_udt_array(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t const max_size, size_t const indent, size_t const visited_depth)
     {
         if(auto const length_data = type.length(); length_data.value_or(0) > 0)
         {
@@ -830,7 +830,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     template<typename T>
-    void dump_pointer_memory_value(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, T const& pointer_value, size_t const indent, size_t const visited_depth)
+    void dump_pointer_memory_value(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, T const& pointer_value, size_t const indent, size_t const visited_depth)
     {
         os << std::format(L": {}", stream_hex_dump::to_hex_full(pointer_value));
         if(auto const pointer_type = type.type(); pointer_type.has_value())
@@ -891,7 +891,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_pointer_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth)
+    void dump_pointer_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth)
     {
         if(auto const length = type.length(); length.has_value())
         {
@@ -918,7 +918,7 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
 
-    bool dump_array_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth)
+    bool dump_array_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth)
     {
         if(auto const data_type = type.type(); data_type.has_value())
         {
@@ -990,7 +990,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_data_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, std::optional<symbol_type_info> const data_type, std::optional<sym_tag_enum> const data_type_tag, bool& print_header, unsigned long long bit_mask, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
+    void dump_data_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, std::optional<symbol_type_info> const data_type, std::optional<sym_tag_enum> const data_type_tag, bool& print_header, unsigned long long bit_mask, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
     {
         dump_bitmask(os, type, bit_mask);
 
@@ -1034,7 +1034,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_point_type_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, unsigned long long bit_mask, size_t const indent, size_t const visited_depth)
+    void dump_point_type_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, unsigned long long bit_mask, size_t const indent, size_t const visited_depth)
     {
         dump_bitmask(os, type, bit_mask);
 
@@ -1059,7 +1059,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_info const& type, symbol_type_info const& display_type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
+    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, symbol_type_info const& display_type, uint64_t const variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
     {
         auto const data_type = type.type();
         auto const data_type_tag = data_type.has_value() ? data_type.value().sym_tag() : std::nullopt;

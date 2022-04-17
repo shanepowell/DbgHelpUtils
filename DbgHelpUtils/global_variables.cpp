@@ -1,12 +1,12 @@
 ﻿#include "global_variables.h"
 
 #include "global_variable.h"
-#include "mini_dump_stack_walk.h"
+#include "mini_dump_memory_walker.h"
 #include "symbol_engine.h"
 
 namespace dlg_help_utils::process
 {
-    global_variables::global_variables(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& match_pattern)
+    global_variables::global_variables(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& match_pattern)
     : walker_{walker}
     , symbols_{walker.symbol_walk(match_pattern)}
     {

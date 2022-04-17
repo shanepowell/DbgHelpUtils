@@ -13,7 +13,7 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::ntdll_utilities
@@ -22,7 +22,7 @@ namespace dlg_help_utils::ntdll_utilities
     class list_entry_walker
     {
     public:
-        list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t start_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name, std::function<uint64_t (uint64_t, uint64_t)> address_decoder = {});
+        list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t start_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name, std::function<uint64_t (uint64_t, uint64_t)> address_decoder = {});
 
         [[nodiscard]] std::experimental::generator<uint64_t> entries() const;
 
@@ -39,7 +39,7 @@ namespace dlg_help_utils::ntdll_utilities
 
     private:
         cache_manager& cache_manager_;
-        stream_stack_dump::mini_dump_stack_walk const& walker_;
+        stream_stack_dump::mini_dump_memory_walker const& walker_;
         uint64_t const start_address_;
         std::function<uint64_t (uint64_t, uint64_t)> address_decoder_;
         uint64_t const list_entry_entry_offset_;

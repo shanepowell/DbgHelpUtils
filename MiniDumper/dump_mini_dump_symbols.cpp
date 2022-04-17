@@ -16,7 +16,7 @@
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/memory64_list_stream.h"
 #include "DbgHelpUtils/memory_list_stream.h"
-#include "DbgHelpUtils/mini_dump_stack_walk.h"
+#include "DbgHelpUtils/mini_dump_memory_walker.h"
 #include "DbgHelpUtils/module_list_stream.h"
 #include "DbgHelpUtils/pe_file_memory_mapping.h"
 #include "DbgHelpUtils/process_environment_block.h"
@@ -287,7 +287,7 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
     module_list_stream const module_list{ mini_dump };
     unloaded_module_list_stream const unloaded_module_list{ mini_dump };
     pe_file_memory_mapping pe_file_memory_mappings{};
-    stream_stack_dump::mini_dump_stack_walk const walker{
+    stream_stack_dump::mini_dump_memory_walker const walker{
         0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
@@ -324,7 +324,7 @@ void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, 
     module_list_stream const module_list{ mini_dump };
     unloaded_module_list_stream const unloaded_module_list{ mini_dump };
     pe_file_memory_mapping pe_file_memory_mappings{};
-    stream_stack_dump::mini_dump_stack_walk const walker{
+    stream_stack_dump::mini_dump_memory_walker const walker{
         0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
@@ -371,7 +371,7 @@ void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& min
     module_list_stream const module_list{ mini_dump };
     unloaded_module_list_stream const unloaded_module_list{ mini_dump };
     pe_file_memory_mapping pe_file_memory_mappings{};
-    stream_stack_dump::mini_dump_stack_walk const walker{
+    stream_stack_dump::mini_dump_memory_walker const walker{
         0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
@@ -410,7 +410,7 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
     module_list_stream const module_list{ mini_dump };
     unloaded_module_list_stream const unloaded_module_list{ mini_dump };
     pe_file_memory_mapping pe_file_memory_mappings{};
-    stream_stack_dump::mini_dump_stack_walk const walker{
+    stream_stack_dump::mini_dump_memory_walker const walker{
         0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };

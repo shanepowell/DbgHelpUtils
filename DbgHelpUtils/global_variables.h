@@ -12,7 +12,7 @@ namespace dlg_help_utils::dbg_help
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::process
@@ -22,7 +22,7 @@ namespace dlg_help_utils::process
     class global_variables
     {
     public:
-        global_variables(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& match_pattern = {});
+        global_variables(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& match_pattern = {});
 
         [[nodiscard]] std::experimental::generator<global_variable> all_variables() const;
 
@@ -30,7 +30,7 @@ namespace dlg_help_utils::process
         static bool is_variable_symbol(dbg_help::sym_tag_enum tag);
 
     private:
-        stream_stack_dump::mini_dump_stack_walk const& walker_;
+        stream_stack_dump::mini_dump_memory_walker const& walker_;
         std::vector<dbg_help::symbol_type_info> symbols_;
     };
 }

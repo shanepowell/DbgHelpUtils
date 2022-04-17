@@ -1,18 +1,19 @@
 ﻿#pragma once
 #include <cstdint>
 #include <optional>
-
-#include "i_stack_walk_callback.h"
-#include "symbol_type_info.h"
-
-#include <DbgHelp.h>
 #include <experimental/generator>
 
+#include "i_stack_walk_callback.h"
 #include "mini_dump_memory_stream.h"
+#include "symbol_type_info.h"
 #include "symbol_engine.h"
+
+#include <DbgHelp.h>
+
 
 namespace dlg_help_utils
 {
+    struct memory_range;
     class stream_unloaded_module;
     class stream_module;
     class pe_file_memory_mapping;
@@ -25,17 +26,16 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk : public dbg_help::i_stack_walk_callback
+    class mini_dump_memory_walker : public dbg_help::i_stack_walk_callback
     {
     public:
-        mini_dump_stack_walk(DWORD64 stack_start_range, void const* stack, size_t stack_size,
+        mini_dump_memory_walker(DWORD64 stack_start_range, void const* stack, size_t stack_size,
                              memory_list_stream const& memory_list, memory64_list_stream const& memory64_list,
                              function_table_stream const& function_table, module_list_stream const& module_list,
                              unloaded_module_list_stream const& unloaded_module_list,
                              pe_file_memory_mapping& pe_file_memory_mappings, dbg_help::symbol_engine& symbol_engine);
 
-        [[nodiscard]] bool read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                               LPDWORD number_of_bytes_read, bool enable_module_loading) override;
+        [[nodiscard]] bool read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size, LPDWORD number_of_bytes_read, bool enable_module_loading) override;
         [[nodiscard]] PVOID function_table_access(DWORD64 base_address) override;
         [[nodiscard]] DWORD64 get_module_base_routine(DWORD64 address) override;
         [[nodiscard]] DWORD64 translate_address(HANDLE h_thread, LPADDRESS64 lp_address) override;
@@ -45,9 +45,7 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] DWORD64 find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool enable_module_loading = true) const;
 
         [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(dbg_help::thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context) const override;
-        static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(
-            uint64_t address, module_list_stream const& module_list,
-            unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
+        static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(uint64_t address, module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
 
         [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_type_info(std::wstring const& type_name, bool throw_on_error = false) const;
         [[nodiscard]] std::optional<dbg_help::symbol_type_info> get_symbol_info(std::wstring const& symbol_name, bool throw_on_error = false) const;
@@ -55,6 +53,7 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> symbol_walk(std::wstring const& find_mask) const;
 
         [[nodiscard]] bool load_module_from_address(DWORD64 base_address) const;
+        [[nodiscard]] std::experimental::generator<memory_range> memory_ranges() const;
 
         [[nodiscard]] dbg_help::symbol_engine& symbol_engine() const { return symbol_engine_; }
         [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }
@@ -65,16 +64,11 @@ namespace dlg_help_utils::stream_stack_dump
     private:
         [[nodiscard]] void const* get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const;
 
-        [[nodiscard]] bool do_read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                  LPDWORD number_of_bytes_read, bool enable_module_loading) const;
-        [[nodiscard]] bool read_stack_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                             LPDWORD number_of_bytes_read) const;
-        [[nodiscard]] bool read_memory_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                   LPDWORD number_of_bytes_read) const;
-        [[nodiscard]] bool read_memory64_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                     LPDWORD number_of_bytes_read) const;
-        [[nodiscard]] bool read_memory_from_pe_file(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                    LPDWORD number_of_bytes_read) const;
+        [[nodiscard]] bool do_read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size, LPDWORD number_of_bytes_read, bool enable_module_loading) const;
+        [[nodiscard]] bool read_stack_memory(DWORD64 base_address, PVOID buffer, DWORD size, LPDWORD number_of_bytes_read) const;
+        [[nodiscard]] bool read_memory_list_memory(DWORD64 base_address, PVOID buffer, DWORD size, LPDWORD number_of_bytes_read) const;
+        [[nodiscard]] bool read_memory64_list_memory(DWORD64 base_address, PVOID buffer, DWORD size, LPDWORD number_of_bytes_read) const;
+        [[nodiscard]] bool read_memory_from_pe_file(DWORD64 base_address, PVOID buffer, DWORD size, LPDWORD number_of_bytes_read) const;
         [[nodiscard]] void const* get_stack_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const;
         [[nodiscard]] void const* get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const;
         [[nodiscard]] void const* get_memory64_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const;
@@ -90,9 +84,7 @@ namespace dlg_help_utils::stream_stack_dump
         void load_module(stream_module const& module, bool throw_on_error = false) const;
         void load_module(stream_unloaded_module const& module, bool throw_on_error = false) const;
 
-        static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_unloaded_module_symbol_info(
-            uint64_t address, unloaded_module_list_stream const& unloaded_module_list,
-            dbg_help::symbol_engine& symbol_engine);
+        static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_unloaded_module_symbol_info(uint64_t address, unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
 
         static DWORD64 find_max_element_size(void const* memory, DWORD64 element_size, DWORD64 max_size, std::function<bool(void const*)> const& pred);
 

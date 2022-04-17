@@ -26,7 +26,8 @@
 #include "DbgHelpUtils/lfh_heap.h"
 #include "DbgHelpUtils/lfh_segment.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
-#include "DbgHelpUtils/mini_dump_stack_walk.h"
+#include "DbgHelpUtils/memory_range.h"
+#include "DbgHelpUtils/mini_dump_memory_walker.h"
 #include "DbgHelpUtils/nt_heap.h"
 #include "DbgHelpUtils/page_range_descriptor.h"
 #include "DbgHelpUtils/page_range_flags_utils.h"
@@ -1161,8 +1162,8 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
     auto const hex_length = peb.machine_hex_printable_length();
 
     log << L"Heaps:\n";
-    log << std::format(L"{1:<{0}} NT/Segment   Flags      {3:<{2}} {4:<{2}} {5:<{2}} {6:<{2}} {7:<{2}} {8:<9} {9:<4}\n"
-        , hex_length + 2, L"Address"sv
+    log << std::format(L"{1:<{0}} NT/Segment   Flags      {3:<{2}} {4:<{2}} {5:<{2}} {6:<{2}} {7:<{2}} {8:<8} {9:<4}\n"
+        , hex_length + 3, L"Address"sv
         , units_max_width
         , L"Reserved"sv
         , L"Committed"sv
@@ -1280,6 +1281,14 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
     for(auto const& heap : heap::dph_heap::dph_heaps(cache, peb))
     {
         print_debug_page_heap(log, hex_length, heap, options, 2);
+    }
+
+    log << L"\nVirtual Allocation Memory Ranges:\n";
+    log << std::format(L" {1:<{0}} {2:<{0}} {3:<{0}}\n", hex_length + 2, L"Start"sv, L"End"sv, L"Size"sv);
+    using namespace size_units::base_16;
+    for(auto const& range : peb.walker().memory_ranges())
+    {
+        log << std::format(L" {0} {1} {2} ({3})\n", stream_hex_dump::to_hex(range.start_range, hex_length), stream_hex_dump::to_hex(range.end_range, hex_length), stream_hex_dump::to_hex(range.end_range - range.start_range, hex_length), to_wstring(bytes{range.end_range - range.start_range}));
     }
 
     log << L'\n';

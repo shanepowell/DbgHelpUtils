@@ -1,4 +1,4 @@
-﻿#include "mini_dump_stack_walk.h"
+﻿#include "mini_dump_memory_walker.h"
 
 #include <filesystem>
 #include <format>
@@ -9,6 +9,7 @@
 #include "locale_number_formatting.h"
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
+#include "memory_range.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
 #include "range_units.h"
@@ -20,7 +21,7 @@ using namespace std::string_literals;
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    mini_dump_stack_walk::mini_dump_stack_walk(DWORD64 const stack_start_range, void const* stack,
+    mini_dump_memory_walker::mini_dump_memory_walker(DWORD64 const stack_start_range, void const* stack,
                                                size_t const stack_size, memory_list_stream const& memory_list,
                                                memory64_list_stream const& memory64_list,
                                                function_table_stream const& function_table,
@@ -44,7 +45,7 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
     // ReSharper disable CppParameterMayBeConst
-    bool mini_dump_stack_walk::read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
+    bool mini_dump_memory_walker::read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
                                                    LPDWORD number_of_bytes_read, bool const enable_module_loading)
     {
         if (!range_utils::validate_range(base_address, size))
@@ -89,7 +90,7 @@ namespace dlg_help_utils::stream_stack_dump
         return result;
     }
 
-    PVOID mini_dump_stack_walk::function_table_access(DWORD64 base_address)
+    PVOID mini_dump_memory_walker::function_table_access(DWORD64 base_address)
     {
         if (callback_.symbol_load_debug())
         {
@@ -98,7 +99,7 @@ namespace dlg_help_utils::stream_stack_dump
         return get_mini_dump_function_table(base_address);
     }
 
-    DWORD64 mini_dump_stack_walk::get_module_base_routine(DWORD64 address)
+    DWORD64 mini_dump_memory_walker::get_module_base_routine(DWORD64 address)
     {
         if (callback_.symbol_load_debug())
         {
@@ -108,18 +109,18 @@ namespace dlg_help_utils::stream_stack_dump
         return get_unloaded_module_base_routine(address);
     }
 
-    DWORD64 mini_dump_stack_walk::translate_address([[maybe_unused]] HANDLE h_thread, LPADDRESS64 lp_address)
+    DWORD64 mini_dump_memory_walker::translate_address([[maybe_unused]] HANDLE h_thread, LPADDRESS64 lp_address)
     {
         if (lp_address == nullptr) return 0;
         return lp_address->Offset;
     }
 
-    mini_dump_memory_stream mini_dump_stack_walk::get_process_memory_stream(DWORD64 base_address, DWORD64 size, bool enable_module_loading) const
+    mini_dump_memory_stream mini_dump_memory_walker::get_process_memory_stream(DWORD64 base_address, DWORD64 size, bool enable_module_loading) const
     {
         return mini_dump_memory_stream{[this](uint64_t base_address, uint64_t& size, bool enable_module_loading) { return get_process_memory_range(base_address, size, enable_module_loading); }, base_address, size, enable_module_loading};
     }
 
-    void const* mini_dump_stack_walk::get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const
+    void const* mini_dump_memory_walker::get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const
     {
         auto max_size = size;
         auto const* memory = get_stack_memory(base_address, max_size, false);
@@ -167,7 +168,7 @@ namespace dlg_help_utils::stream_stack_dump
         return nullptr;
     }
 
-    DWORD64 mini_dump_stack_walk::find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, bool enable_module_loading) const
+    DWORD64 mini_dump_memory_walker::find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, bool enable_module_loading) const
     {
         DWORD64 max_size = element_size * max_elements;
         auto const* memory = get_stack_memory(base_address, max_size, false);
@@ -206,7 +207,7 @@ namespace dlg_help_utils::stream_stack_dump
         return 0;
     }
 
-    DWORD64 mini_dump_stack_walk::find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool const enable_module_loading) const
+    DWORD64 mini_dump_memory_walker::find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool const enable_module_loading) const
     {
         DWORD64 max_size = element_size * max_elements;
         auto const* memory = get_stack_memory(base_address, max_size, false);
@@ -245,7 +246,7 @@ namespace dlg_help_utils::stream_stack_dump
         return 0;
     }
 
-    bool mini_dump_stack_walk::do_read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
+    bool mini_dump_memory_walker::do_read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
                                                       LPDWORD number_of_bytes_read,
                                                       bool const enable_module_loading) const
     {
@@ -284,7 +285,7 @@ namespace dlg_help_utils::stream_stack_dump
         return false;
     }
 
-    bool mini_dump_stack_walk::read_stack_memory(DWORD64 const base_address, PVOID buffer, DWORD size,
+    bool mini_dump_memory_walker::read_stack_memory(DWORD64 const base_address, PVOID buffer, DWORD size,
                                                  LPDWORD number_of_bytes_read) const
     {
         if(stack_size_ == 0) return false;
@@ -296,7 +297,7 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_stack_walk::read_memory_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
+    bool mini_dump_memory_walker::read_memory_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
                                                        LPDWORD number_of_bytes_read) const
     {
         DWORD64 length = size;
@@ -307,7 +308,7 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_stack_walk::read_memory64_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
+    bool mini_dump_memory_walker::read_memory64_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
                                                          LPDWORD number_of_bytes_read) const
     {
         DWORD64 length = size;
@@ -318,7 +319,7 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_stack_walk::read_memory_from_pe_file(DWORD64 base_address, PVOID buffer, DWORD size,
+    bool mini_dump_memory_walker::read_memory_from_pe_file(DWORD64 base_address, PVOID buffer, DWORD size,
                                                         LPDWORD number_of_bytes_read) const
     {
         DWORD64 length = size;
@@ -329,7 +330,7 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    void const* mini_dump_stack_walk::get_stack_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    void const* mini_dump_memory_walker::get_stack_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
     {
         if(stack_size_ == 0) return nullptr;
         if (DWORD64 length = size; range_utils::range_union(stack_start_range_, stack_size_, base_address, length) && (!limit_size || length == size))
@@ -345,7 +346,7 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
     template<typename T>
-    void const* mini_dump_stack_walk::get_memory_range_for_address(T const& memory_list, DWORD64 base_address, DWORD64& size, bool limit_size)
+    void const* mini_dump_memory_walker::get_memory_range_for_address(T const& memory_list, DWORD64 base_address, DWORD64& size, bool limit_size)
     {
         if (memory_list.found())
         {
@@ -390,18 +391,17 @@ namespace dlg_help_utils::stream_stack_dump
         return nullptr;
     }
 
-
-    void const* mini_dump_stack_walk::get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool const limit_size) const
+    void const* mini_dump_memory_walker::get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool const limit_size) const
     {
         return get_memory_range_for_address(memory_list_, base_address, size, limit_size);
     }
 
-    void const* mini_dump_stack_walk::get_memory64_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    void const* mini_dump_memory_walker::get_memory64_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
     {
         return get_memory_range_for_address(memory64_list_, base_address, size, limit_size);
     }
 
-    void const* mini_dump_stack_walk::get_memory_from_pe_file(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    void const* mini_dump_memory_walker::get_memory_from_pe_file(DWORD64 base_address, DWORD64& size, bool limit_size) const
     {
         DWORD64 length = size;
         auto const* memory = pe_file_memory_mappings_.find_any_address_range(base_address, length);
@@ -413,7 +413,7 @@ namespace dlg_help_utils::stream_stack_dump
         return memory;
     }
 
-    bool mini_dump_stack_walk::load_pe_file(DWORD64 base_address) const
+    bool mini_dump_memory_walker::load_pe_file(DWORD64 base_address) const
     {
         if (load_loaded_module(base_address))
         {
@@ -423,7 +423,7 @@ namespace dlg_help_utils::stream_stack_dump
         return load_unloaded_module(base_address);
     }
 
-    bool mini_dump_stack_walk::load_loaded_module(DWORD64 base_address) const
+    bool mini_dump_memory_walker::load_loaded_module(DWORD64 base_address) const
     {
         auto const module = module_list_.find_module(base_address);
         if (!module)
@@ -444,7 +444,7 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_stack_walk::load_unloaded_module(DWORD64 base_address) const
+    bool mini_dump_memory_walker::load_unloaded_module(DWORD64 base_address) const
     {
         auto const module = unloaded_module_list_.find_module(base_address);
         if (!module)
@@ -464,7 +464,7 @@ namespace dlg_help_utils::stream_stack_dump
         return false;
     }
 
-    PVOID mini_dump_stack_walk::get_mini_dump_function_table(DWORD64 base_address) const
+    PVOID mini_dump_memory_walker::get_mini_dump_function_table(DWORD64 base_address) const
     {
         if (!function_table_.found() || !function_table_.is_valid()) return nullptr;
 
@@ -479,7 +479,7 @@ namespace dlg_help_utils::stream_stack_dump
         return nullptr;
     }
 
-    DWORD64 mini_dump_stack_walk::get_loaded_module_base_routine(DWORD64 address) const
+    DWORD64 mini_dump_memory_walker::get_loaded_module_base_routine(DWORD64 address) const
     {
         if (!module_list_.found()) return 0;
 
@@ -495,7 +495,7 @@ namespace dlg_help_utils::stream_stack_dump
         return (*module)->BaseOfImage;
     }
 
-    DWORD64 mini_dump_stack_walk::get_unloaded_module_base_routine(DWORD64 address) const
+    DWORD64 mini_dump_memory_walker::get_unloaded_module_base_routine(DWORD64 address) const
     {
         if (!unloaded_module_list_.found()) return 0;
 
@@ -511,7 +511,7 @@ namespace dlg_help_utils::stream_stack_dump
         return (*module)->BaseOfImage;
     }
 
-    std::optional<dbg_help::symbol_address_info> mini_dump_stack_walk::find_symbol_info(dbg_help::thread_context_type const type, STACKFRAME_EX const& frame, void const* thread_context) const
+    std::optional<dbg_help::symbol_address_info> mini_dump_memory_walker::find_symbol_info(dbg_help::thread_context_type const type, STACKFRAME_EX const& frame, void const* thread_context) const
     {
         auto const it_module = module_list_.find_module(frame.AddrPC.Offset);
         if (!it_module) return find_unloaded_module_symbol_info(frame.AddrPC.Offset, unloaded_module_list_, symbol_engine_);
@@ -520,7 +520,7 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine_.address_to_info(type, frame, thread_context);
     }
 
-    std::optional<dbg_help::symbol_address_info> mini_dump_stack_walk::find_symbol_info(
+    std::optional<dbg_help::symbol_address_info> mini_dump_memory_walker::find_symbol_info(
         uint64_t address, module_list_stream const& module_list,
         unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine)
     {
@@ -539,9 +539,7 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine.address_to_info(address);
     }
 
-    std::optional<dbg_help::symbol_address_info> mini_dump_stack_walk::find_unloaded_module_symbol_info(
-        uint64_t address, unloaded_module_list_stream const& unloaded_module_list,
-        dbg_help::symbol_engine& symbol_engine)
+    std::optional<dbg_help::symbol_address_info> mini_dump_memory_walker::find_unloaded_module_symbol_info(uint64_t address, unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine)
     {
         if (!unloaded_module_list.found()) return std::nullopt;
 
@@ -559,7 +557,7 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine.address_to_info(address);
     }
 
-    DWORD64 mini_dump_stack_walk::find_max_element_size(void const* memory, DWORD64 element_size, DWORD64 max_size, std::function<bool(void const*)> const& pred)
+    DWORD64 mini_dump_memory_walker::find_max_element_size(void const* memory, DWORD64 element_size, DWORD64 max_size, std::function<bool(void const*)> const& pred)
     {
         auto const element_max = max_size / element_size;
         DWORD64 index = 0;
@@ -575,8 +573,7 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
     // ReSharper restore CppParameterMayBeConst
-
-    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_type_info(std::wstring const& type_name, bool const throw_on_error) const
+    std::optional<dbg_help::symbol_type_info> mini_dump_memory_walker::get_type_info(std::wstring const& type_name, bool const throw_on_error) const
     {
         if(auto const it = cache_type_.find(type_name); it != cache_type_.end())
         {
@@ -608,7 +605,7 @@ namespace dlg_help_utils::stream_stack_dump
         return rv;
     }
 
-    std::optional<dbg_help::symbol_type_info> mini_dump_stack_walk::get_symbol_info(std::wstring const& symbol_name, bool const throw_on_error) const
+    std::optional<dbg_help::symbol_type_info> mini_dump_memory_walker::get_symbol_info(std::wstring const& symbol_name, bool const throw_on_error) const
     {
         auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(symbol_name);
 
@@ -633,13 +630,13 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine_.get_symbol_info(symbol_name, throw_on_error);
     }
 
-    std::vector<dbg_help::symbol_type_info> mini_dump_stack_walk::module_types(std::wstring const& module_name) const
+    std::vector<dbg_help::symbol_type_info> mini_dump_memory_walker::module_types(std::wstring const& module_name) const
     {
         load_module(module_name);
         return symbol_engine_.module_types(module_name);
     }
 
-    std::vector<dbg_help::symbol_type_info> mini_dump_stack_walk::symbol_walk(std::wstring const& find_mask) const
+    std::vector<dbg_help::symbol_type_info> mini_dump_memory_walker::symbol_walk(std::wstring const& find_mask) const
     {
         if(auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(find_mask);
             module_name.empty() || module_name == L"*"s)
@@ -658,7 +655,7 @@ namespace dlg_help_utils::stream_stack_dump
         return symbol_engine_.symbol_walk(find_mask);
     }
 
-    bool mini_dump_stack_walk::load_module_from_address(DWORD64 const base_address) const
+    bool mini_dump_memory_walker::load_module_from_address(DWORD64 const base_address) const
     {
         if(auto const module = module_list_.find_module(base_address); module)
         {
@@ -669,7 +666,25 @@ namespace dlg_help_utils::stream_stack_dump
         return false;
     }
 
-    void mini_dump_stack_walk::load_module(std::wstring const& module_name, bool const throw_on_error) const
+    std::experimental::generator<memory_range> mini_dump_memory_walker::memory_ranges() const
+    {
+        if(memory_list_.found())
+        {
+            for (auto const& range : memory_list_.memory_ranges())
+            {
+                co_yield range;
+            }
+        }
+        else if(memory64_list_.found())
+        {
+            for (auto const& range : memory64_list_.memory_ranges())
+            {
+                co_yield range;
+            }
+        }
+    }
+
+    void mini_dump_memory_walker::load_module(std::wstring const& module_name, bool const throw_on_error) const
     {
         if(auto const & module = module_list_.find_module(module_name); module)
         {
@@ -684,7 +699,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void mini_dump_stack_walk::load_module(stream_module const& module, bool const throw_on_error) const
+    void mini_dump_memory_walker::load_module(stream_module const& module, bool const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {
@@ -694,7 +709,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void mini_dump_stack_walk::load_module(stream_unloaded_module const& module, bool const throw_on_error) const
+    void mini_dump_memory_walker::load_module(stream_unloaded_module const& module, bool const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {

@@ -28,7 +28,7 @@ namespace dlg_help_utils::heap
         block_stride_ = block_stride;  // NOLINT(cppcoreguidelines-prefer-member-initializer)
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& heap_subsegment::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& heap_subsegment::walker() const
     {
         return lfh_heap().walker();
     }

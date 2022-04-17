@@ -4,6 +4,7 @@
 #include <map>
 #include <ranges>
 
+#include "memory_range.h"
 #include "mini_dump.h"
 #include "range_units.h"
 
@@ -49,6 +50,14 @@ namespace dlg_help_utils
         }
 
         return nullptr;
+    }
+
+    std::experimental::generator<memory_range> memory64_list_stream::memory_ranges() const
+    {
+        for (auto const& range : memory_address_ranges_)
+        {
+            co_yield {range.start_of_memory_range, range.end_of_memory_range};
+        }
     }
 
     std::vector<memory64_entry>::const_iterator memory64_list_stream::memory_address_ranges_upper_bound(uint64_t const address) const

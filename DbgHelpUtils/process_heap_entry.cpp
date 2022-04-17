@@ -6,6 +6,7 @@
 #include "heap_lfh_entry.h"
 #include "heap_vs_entry.h"
 #include "large_alloc_entry.h"
+#include "memory_range.h"
 #include "page_range_descriptor.h"
 #include "process_environment_block.h"
 #include "wide_runtime_error.h"
@@ -81,6 +82,17 @@ namespace dlg_help_utils::heap
     , check_block_start_address_{entry.block_address()}
     , check_block_end_address_{check_block_start_address_ + entry.block_size()}
     , overhead_size_{entry.block_size() - user_size_.count()}
+    {
+    }
+
+    process_heap_entry::process_heap_entry(process::process_environment_block const& peb, memory_range const& entry)
+    : peb_{peb}
+    , user_address_{entry.start_range}
+    , user_size_{entry.end_range - entry.start_range}
+    , ust_address_{0}
+    , check_block_start_address_{entry.start_range}
+    , check_block_end_address_{entry.end_range}
+    , overhead_size_{0}
     {
     }
 

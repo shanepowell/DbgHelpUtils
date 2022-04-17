@@ -36,7 +36,7 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_type_and_value(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& pointer_type, uint64_t memory_address, size_t const index)
+    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_type_and_value(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& pointer_type, uint64_t memory_address, size_t const index)
     {
         if(auto const type_tag_data = pointer_type.sym_tag(); type_tag_data.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::PointerType)
         {
@@ -80,7 +80,7 @@ namespace dlg_help_utils::stream_utils
         return std::make_pair(data_type.value(), value.value());
     }
 
-    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_array_type_and_value(stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& array_type, uint64_t memory_address, size_t const index)
+    std::optional<std::pair<dbg_help::symbol_type_info, uint64_t>> find_field_pointer_array_type_and_value(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& array_type, uint64_t memory_address, size_t const index)
     {
         if(auto const type_tag_data = array_type.sym_tag(); type_tag_data.value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::ArrayType)
         {
@@ -188,7 +188,7 @@ namespace dlg_help_utils::stream_utils
         return rv.value();
     }
 
-    std::optional<symbol_type_and_value> find_field_pointer_type_and_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)
+    std::optional<symbol_type_and_value> find_field_pointer_type_and_value_in_type(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)
     {
         auto const data_type_length = field_data.type.length();
         if(!data_type_length.has_value())
@@ -219,7 +219,7 @@ namespace dlg_help_utils::stream_utils
         return symbol_type_and_value{field_data.type, value.value()};
     }
 
-    std::optional<uint64_t> find_field_pointer_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)
+    std::optional<uint64_t> find_field_pointer_value_in_type(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)
     {
         auto const value = find_field_pointer_type_and_value_in_type(walker, field_data, memory_address);
         if(!value.has_value())
@@ -288,7 +288,7 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    std::optional<std::tuple<std::unique_ptr<uint8_t[]>, uint64_t, uint64_t>> read_udt_value_in_type(stream_stack_dump::mini_dump_stack_walk const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)
+    std::optional<std::tuple<std::unique_ptr<uint8_t[]>, uint64_t, uint64_t>> read_udt_value_in_type(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)
     {
         auto const data_type_length = field_data.type.length();
         if(!data_type_length.has_value())
@@ -362,7 +362,7 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& name, bool const throw_on_error)
+    dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& name, bool const throw_on_error)
     {
         auto const symbol_info = walker.get_type_info(name, throw_on_error);
         if(!symbol_info.has_value())
@@ -383,7 +383,7 @@ namespace dlg_help_utils::stream_utils
         throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} length not found", type_name)};
     }
 
-    uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, symbol_type_and_base_type_field_offset const& field_data, std::wstring const& type_name, std::wstring const& field_name)
+    uint64_t get_field_pointer_raw(stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const address, symbol_type_and_base_type_field_offset const& field_data, std::wstring const& type_name, std::wstring const& field_name)
     {
         auto const address_value = find_field_pointer_type_and_value_in_type(walker, field_data, address);
         if(!address_value.has_value())
@@ -394,7 +394,7 @@ namespace dlg_help_utils::stream_utils
         return address_value.value().value;
     }
 
-    uint64_t get_field_pointer(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const address, symbol_type_and_base_type_field_offset const& field_data, std::wstring const& type_name, std::wstring const& field_name)
+    uint64_t get_field_pointer(stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const address, symbol_type_and_base_type_field_offset const& field_data, std::wstring const& type_name, std::wstring const& field_name)
     {
         auto const pointer_value = get_field_pointer_raw(walker, address, field_data, type_name, field_name);
         if(pointer_value == 0)
@@ -427,7 +427,7 @@ namespace dlg_help_utils::stream_utils
         throw exceptions::wide_runtime_error{std::format(L"Error: symbol {0} {1} field has no offset", symbol_name, field_name)};
     }
 
-    std::optional<uint64_t> read_static_variable_machine_size_value(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
+    std::optional<uint64_t> read_static_variable_machine_size_value(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& symbol_name)
     {
         auto const symbol = walker.get_symbol_info(symbol_name);
         if(!symbol.has_value())
@@ -468,7 +468,7 @@ namespace dlg_help_utils::stream_utils
         }
     }
 
-    std::optional<std::pair<uint64_t, uint64_t>> get_static_variable_address_and_size(stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_name)
+    std::optional<std::pair<uint64_t, uint64_t>> get_static_variable_address_and_size(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& symbol_name)
     {
         auto const symbol = walker.get_symbol_info(symbol_name);
         if(!symbol.has_value())

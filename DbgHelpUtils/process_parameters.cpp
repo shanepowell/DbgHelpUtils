@@ -10,7 +10,7 @@
 
 namespace dlg_help_utils::process
 {
-    process_parameters::process_parameters(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const process_parameters_address)
+    process_parameters::process_parameters(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const process_parameters_address)
     : cache_manager_{cache}
     , walker_{walker}
     , process_parameters_address_{process_parameters_address}

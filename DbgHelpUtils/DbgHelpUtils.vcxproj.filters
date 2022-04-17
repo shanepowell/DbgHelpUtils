@@ -213,7 +213,7 @@
     <ClCompile Include="stream_stack_dump.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="mini_dump_stack_walk.cpp">
+    <ClCompile Include="mini_dump_memory_walker.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="pe_file.cpp">
@@ -590,7 +590,7 @@
     <ClInclude Include="i_stack_walk_callback.h">
       <Filter>DbgHelp</Filter>
     </ClInclude>
-    <ClInclude Include="mini_dump_stack_walk.h">
+    <ClInclude Include="mini_dump_memory_walker.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="pe_file.h">
@@ -844,6 +844,9 @@
     </ClInclude>
     <ClInclude Include="heap_match_utils.h">
       <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_range.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

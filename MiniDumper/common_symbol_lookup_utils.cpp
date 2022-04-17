@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include "DbgHelpUtils/mini_dump_stack_walk.h"
+#include "DbgHelpUtils/mini_dump_memory_walker.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_utils.h"
 #include "DbgHelpUtils/symbol_type_info.h"
@@ -10,7 +10,7 @@
 
 using namespace dlg_help_utils;
 
-std::optional<dbg_help::symbol_type_info> get_type_info(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name)
+std::optional<dbg_help::symbol_type_info> get_type_info(std::wostream& log, stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& symbol_type_name)
 {
     auto type_symbol_info = walker.get_type_info(symbol_type_name);
     if(!type_symbol_info.has_value())
@@ -21,7 +21,7 @@ std::optional<dbg_help::symbol_type_info> get_type_info(std::wostream& log, stre
     return type_symbol_info;
 }
 
-std::optional<stream_utils::symbol_type_and_value> find_field_pointer_and_type(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type_symbol_info, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
+std::optional<stream_utils::symbol_type_and_value> find_field_pointer_and_type(std::wostream& log, stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type_symbol_info, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
 {
     auto address_value = find_field_pointer_type_and_value_in_type(walker, stream_utils::get_field_type_and_offset_in_type(type_symbol_info, symbol_type_name, field_name, dbg_help::sym_tag_enum::PointerType), address);
     if(!address_value.has_value())
@@ -39,7 +39,7 @@ std::optional<stream_utils::symbol_type_and_value> find_field_pointer_and_type(s
     return address_value;
 }
 
-std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type_symbol_info, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
+std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type_symbol_info, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
 {
     auto address_value = find_field_pointer_and_type(log, walker, type_symbol_info, symbol_type_name, address, field_name);
     if(!address_value.has_value())
@@ -50,7 +50,7 @@ std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump
     return address_value.value().value;
 }
 
-std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
+std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& symbol_type_name, uint64_t const address, std::wstring_view const field_name)
 {
     auto const type_symbol_info = get_type_info(log, walker, symbol_type_name);
     if(!type_symbol_info.has_value())
@@ -61,7 +61,7 @@ std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump
     return find_field_pointer(log, walker, type_symbol_info.value(), symbol_type_name, address, field_name);
 }
 
-std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log, stream_stack_dump::mini_dump_stack_walk const& walker, std::wstring const& symbol_type_name, uint64_t const address)
+std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log, stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& symbol_type_name, uint64_t const address)
 {
     auto type_symbol_info = get_type_info(log, walker, symbol_type_name);
     if(!type_symbol_info.has_value())

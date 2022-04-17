@@ -11,7 +11,7 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::process
@@ -20,9 +20,9 @@ namespace dlg_help_utils::process
     class process_parameters
     {
     public:
-        process_parameters(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t process_parameters_address);
+        process_parameters(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t process_parameters_address);
 
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return walker_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return walker_; }
         [[nodiscard]] uint64_t process_parameters_address() const { return process_parameters_address_; }
 
         [[nodiscard]] std::experimental::generator<std::wstring> environment() const;
@@ -39,7 +39,7 @@ namespace dlg_help_utils::process
     private:
         cache_manager& cache_manager_;
         cache_data const& cache_data_{setup_globals()};
-        stream_stack_dump::mini_dump_stack_walk const& walker_;
+        stream_stack_dump::mini_dump_memory_walker const& walker_;
         uint64_t process_parameters_address_;
     };
 

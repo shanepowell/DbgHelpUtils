@@ -24,22 +24,25 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
-int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
-int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set);
+using allocator_func = std::function<void*(size_t)>;
+using deallocator_func = std::function<void(void*)>;
+
+int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
+int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
+int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, std::wstring_view const& type, std::vector<Allocation>& set);
+bool AllocateBuffers(std::wostream& log, allocator_func const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, std::wstring_view const& type, std::vector<Allocation>& set);
 template<size_t N>
-void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations);
+void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations);
 
 template<size_t N, typename ...Args>
-void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations, Args... args)
+void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations, Args... args)
 {
     DeallocateSomeBuffers(log, set, deallocator, allocations);
     DeallocateSomeBuffers(log, set, deallocator, args...);
 }
 
-void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, void* allocation);
+void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, void* allocation);
 
 void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation);
 
@@ -52,17 +55,18 @@ int main(int const argc, char* argv[])
     {
         try
         {
-            using allocator_type = std::function<void*(size_t)>;
-            using deallocator_type = std::function<void(void*)>;
+            using allocator_type = allocator_func;
+            using deallocator_type = deallocator_func;
             using allocation_functions_data = std::pair<allocator_type, deallocator_type>;
             std::map<std::string, allocation_functions_data> const allocation_functions
             {
                 { "heapalloc"s, {[](size_t const size) { return HeapAlloc(GetProcessHeap(), 0x0, size); }, [](void* memory) { HeapFree(GetProcessHeap(), 0x0, memory); }}},
                 { "malloc"s, {[](size_t const size) { return malloc(size); }, [](void* memory) { free(memory); }}},
-                { "new"s, {[](size_t const size) { return new char[size]; }, [](void* memory) { delete[] static_cast<char*>(memory); }}}
+                { "new"s, {[](size_t const size) { return new char[size]; }, [](void* memory) { delete[] static_cast<char*>(memory); }}},
+                { "virtual"s, {[](size_t const size) { return VirtualAlloc(nullptr, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE); }, [](void* memory) { VirtualFree(memory, 0, MEM_RELEASE); }}}
             };
 
-            using test_type = std::function<int(std::wostream&, std::wstring const&, std::function<void*(size_t)> const&, std::function<void(void*)> const&, std::vector<Allocation>&)>;
+            using test_type = std::function<int(std::wostream&, std::wstring const&, allocator_func const&, deallocator_func const&, std::vector<Allocation>&)>;
             std::map<std::string, test_type> const test_functions
             {
                 { "lfh"s, LfhAllocations},
@@ -176,7 +180,7 @@ int main(int const argc, char* argv[])
     return EXIT_FAILURE;
 }
 
-int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
+int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
 {
     std::array<void*, 0x12> backend_allocations{};
     constexpr size_t allocation_size = 0x10;
@@ -201,7 +205,7 @@ int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, std::f
 }
 
 
-int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
+int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
 {
     std::array<void*, 0x5> large_allocations{};
     
@@ -218,7 +222,7 @@ int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, std:
     return EXIT_SUCCESS;
 }
 
-int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, std::function<void*(size_t size)> const& allocator, std::function<void(void*)> const& deallocator, std::vector<Allocation>& set)
+int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
 {
     size_t allocation_size = 0x1;
 
@@ -261,7 +265,7 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, st
 }
 
 template<size_t N>
-bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, std::wstring_view const& type, std::vector<Allocation>& set)
+bool AllocateBuffers(std::wostream& log, allocator_func const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, std::wstring_view const& type, std::vector<Allocation>& set)
 {
     for (auto& allocation : allocations)
     {
@@ -291,13 +295,13 @@ bool AllocateBuffers(std::wostream& log, std::function<void*(size_t size)> const
 }
 
 template<size_t N>
-void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, std::array<void*, N>& allocations)
+void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations)
 {
     DeallocateSomeBuffer(log, set, deallocator, allocations[1]);
     DeallocateSomeBuffer(log, set, deallocator, allocations[3]);
 }
 
-void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, std::function<void(void*)> const& deallocator, void* allocation)
+void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, void* allocation)
 {
     deallocator(allocation);
     log << std::format(L"deallocate [0x{0:x} / {0}]\n", reinterpret_cast<uint64_t>(allocation));

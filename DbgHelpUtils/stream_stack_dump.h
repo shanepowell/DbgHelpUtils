@@ -20,7 +20,7 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 
     namespace dump_stack_options
     {
@@ -34,7 +34,7 @@ namespace dlg_help_utils::stream_stack_dump
     void hex_dump_stack(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine,
                         uint64_t stack_start_address, void const* stack, size_t stack_size,
                         stream_thread_context const& thread_context, size_t indent, dump_stack_options::options options);
-    void hex_dump_stack(std::wostream& os, mini_dump_stack_walk const& walker, std::vector<uint64_t> const& stack, bool is_x86_target, size_t indent);
+    void hex_dump_stack(std::wostream& os, mini_dump_memory_walker const& walker, std::vector<uint64_t> const& stack, bool is_x86_target, size_t indent);
     void hex_dump_stack_raw(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine,
                             uint64_t stack_start_address, uint64_t const* stack, size_t stack_size, bool is_x86_target, size_t indent);
     void hex_dump_address(std::wostream& os, mini_dump const& mini_dump, module_list_stream const& module_list,

@@ -126,56 +126,18 @@ namespace dlg_help_utils::heap
         free_entry_cache_.clear();
     }
 
-    std::map<uint64_t, process_heap_entry> process_heaps::all_entries() const
+    std::vector<heap_subsegment> process_heaps::get_all_nt_heap_lfh_entries(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, nt_heap const& nt_heap) const
     {
-        std::map<uint64_t, process_heap_entry> all_entries;
-
-        crt_heap const crt_heap{ cache_manager_, peb_ };
-        std::map<uint64_t, crt_entry> crt_entries;
-        for (auto const& entry : crt_heap.entries())
+        std::vector<heap_subsegment> lfh_data;
+        if (auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())
         {
-            crt_entries.insert(std::make_pair(entry.end_entry_address() - 1, entry));
-        }
-
-        for (uint32_t heap_index = 0; heap_index < peb().number_of_heaps(); ++heap_index)
-        {
-            if (auto const nt_heap = peb().nt_heap(heap_index); nt_heap.has_value())
+            for (auto const& segment : lfh_heap.value().lfh_segments())
             {
-                std::vector<heap_subsegment> lfh_data;
-                if (auto const lfh_heap = nt_heap.value().lfh_heap(); lfh_heap.has_value())
+                for (auto const& subsegment : segment.subsegments())
                 {
-                    for (auto const& segment : lfh_heap.value().lfh_segments())
+                    for (auto const& entry : subsegment.entries())
                     {
-                        for (auto const& subsegment : segment.subsegments())
-                        {
-                            for (auto const& entry : subsegment.entries())
-                            {
-                                if (entry.is_busy())
-                                {
-                                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
-                                    {
-                                        if (crt_entry->block_use())
-                                        {
-                                            add_heap_entry(all_entries, process_heap_entry{entry, *crt_entry});
-                                        }
-                                    }
-                                    else
-                                    {
-                                        add_heap_entry(all_entries, process_heap_entry{entry});
-                                    }
-                                }
-                            }
-
-                            lfh_data.emplace_back(subsegment);
-                        }
-                    }
-                }
-
-                for (auto const& segment : nt_heap.value().segments())
-                {
-                    for (auto const& entry : segment.entries())
-                    {
-                        if (entry.is_busy() && !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
+                        if (entry.is_busy())
                         {
                             if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                             {
@@ -190,38 +152,127 @@ namespace dlg_help_utils::heap
                             }
                         }
                     }
-                }
 
-                for (auto const& virtual_block : nt_heap.value().heap_virtual_blocks())
+                    lfh_data.emplace_back(subsegment);
+                }
+            }
+        }
+
+        return lfh_data;
+    }
+
+    void process_heaps::get_all_nt_heap_segment_entries(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, nt_heap const& nt_heap, std::vector<heap_subsegment> const& lfh_data) const
+    {
+        for (auto const& segment : nt_heap.segments())
+        {
+            for (auto const& entry : segment.entries())
+            {
+                if (entry.is_busy() && !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
                 {
-                    for (auto const& entry : virtual_block.entries())
+                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                     {
-                        if (entry.is_busy())
+                        if (crt_entry->block_use())
                         {
-                            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                            add_heap_entry(all_entries, process_heap_entry{entry, *crt_entry});
+                        }
+                    }
+                    else
+                    {
+                        add_heap_entry(all_entries, process_heap_entry{entry});
+                    }
+                }
+            }
+        }
+    }
+
+    void process_heaps::get_all_nt_heap_virtual_entries(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, nt_heap const& nt_heap) const
+    {
+        for (auto const& virtual_block : nt_heap.heap_virtual_blocks())
+        {
+            for (auto const& entry : virtual_block.entries())
+            {
+                if (entry.is_busy())
+                {
+                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                    {
+                        if (crt_entry->block_use())
+                        {
+                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
+                        }
+                    }
+                    else
+                    {
+                        add_heap_entry(all_entries, process_heap_entry{ entry });
+                    }
+                }
+            }
+        }
+    }
+
+    void process_heaps::get_all_segment_backend_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const
+    {
+        for (auto const& segment_context : segment_heap.segment_contexts())
+        {
+            for (auto const& page : segment_context.pages())
+            {
+                for (auto const& entry : page.entries())
+                {
+                    if (entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT)
+                    {
+                        if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                        {
+                            if (crt_entry->block_use())
                             {
-                                if (crt_entry->block_use())
-                                {
-                                    add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
-                                }
+                                add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                             }
-                            else
-                            {
-                                add_heap_entry(all_entries, process_heap_entry{ entry });
-                            }
+                        }
+                        else
+                        {
+                            add_heap_entry(all_entries, process_heap_entry{ entry });
                         }
                     }
                 }
             }
-            else if (auto const segment_heap = peb().segment_heap(heap_index); segment_heap.has_value())
+        }
+    }
+
+    void process_heaps::get_all_segment_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const
+    {
+        for (auto const& subsegment : segment_heap.vs_context().subsegments())
+        {
+            for (auto const& entry : subsegment.entries())
             {
-                for (auto const& segment_context : segment_heap.value().segment_contexts())
+                if (!entry.uncommitted_range() && entry.allocated())
                 {
-                    for (auto const& page : segment_context.pages())
+                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                     {
-                        for (auto const& entry : page.entries())
+                        if (crt_entry->block_use())
                         {
-                            if (entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT)
+                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
+                        }
+                    }
+                    else
+                    {
+                        add_heap_entry(all_entries, process_heap_entry{ entry });
+                    }
+                }
+            }
+        }
+    }
+
+    void process_heaps::get_all_segment_lfh_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const
+    {
+        for (auto const& bucket : segment_heap.lfh_context().active_buckets())
+        {
+            if (bucket.is_enabled())
+            {
+                for (auto const& affinity_slot : bucket.affinity_slots())
+                {
+                    for (auto const& subsegment : affinity_slot.subsegments())
+                    {
+                        for (auto const& entry : subsegment.entries())
+                        {
+                            if (entry.allocated())
                             {
                                 if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
                                 {
@@ -238,112 +289,112 @@ namespace dlg_help_utils::heap
                         }
                     }
                 }
+            }
+        }
+    }
 
-                for (auto const& subsegment : segment_heap.value().vs_context().subsegments())
+    void process_heaps::get_all_segment_large_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const
+    {
+        for (auto const& entry : segment_heap.large_entries())
+        {
+            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+            {
+                if (crt_entry->block_use())
                 {
-                    for (auto const& entry : subsegment.entries())
+                    add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
+                }
+            }
+            else
+            {
+                add_heap_entry(all_entries, process_heap_entry{ entry });
+            }
+        }
+    }
+
+    void process_heaps::get_all_dph_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const
+    {
+        for (auto const& entry : heap.busy_entries())
+        {
+            if (entry.is_allocated())
+            {
+                if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                {
+                    if (crt_entry->block_use())
                     {
-                        if (!entry.uncommitted_range() && entry.allocated())
-                        {
-                            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
-                            {
-                                if (crt_entry->block_use())
-                                {
-                                    add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
-                                }
-                            }
-                            else
-                            {
-                                add_heap_entry(all_entries, process_heap_entry{ entry });
-                            }
-                        }
+                        add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                     }
                 }
-
-                for (auto const& bucket : segment_heap.value().lfh_context().active_buckets())
+                else
                 {
-                    if (bucket.is_enabled())
+                    add_heap_entry(all_entries, process_heap_entry{ entry });
+                }
+            }
+        }
+    }
+
+    void process_heaps::get_all_dph_virtual_entities(std::map<uint64_t, process_heap_entry> & all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const
+    {
+        for (auto const& entry : heap.virtual_ranges())
+        {
+            if (entry.is_allocated())
+            {
+                if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                {
+                    if (crt_entry->block_use())
                     {
-                        for (auto const& affinity_slot : bucket.affinity_slots())
-                        {
-                            for (auto const& subsegment : affinity_slot.subsegments())
-                            {
-                                for (auto const& entry : subsegment.entries())
-                                {
-                                    if (entry.allocated())
-                                    {
-                                        if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
-                                        {
-                                            if (crt_entry->block_use())
-                                            {
-                                                add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
-                                            }
-                                        }
-                                        else
-                                        {
-                                            add_heap_entry(all_entries, process_heap_entry{ entry });
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
                     }
                 }
-
-                for (auto const& entry : segment_heap.value().large_entries())
+                else
                 {
-                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
-                    {
-                        if (crt_entry->block_use())
-                        {
-                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
-                        }
-                    }
-                    else
-                    {
-                        add_heap_entry(all_entries, process_heap_entry{ entry });
-                    }
+                    add_heap_entry(all_entries, process_heap_entry{ entry });
                 }
+            }
+        }
+    }
+
+    void process_heaps::get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const
+    {
+        for (auto const& range : peb().walker().memory_ranges())
+        {
+            add_heap_entry(all_entries, process_heap_entry{peb(), range});
+        }
+    }
+
+    std::map<uint64_t, process_heap_entry> process_heaps::all_entries() const
+    {
+        std::map<uint64_t, process_heap_entry> all_entries;
+
+        crt_heap const crt_heap{ cache_manager_, peb_ };
+        std::map<uint64_t, crt_entry> crt_entries;
+        for (auto const& entry : crt_heap.entries())
+        {
+            crt_entries.insert(std::make_pair(entry.end_entry_address() - 1, entry));
+        }
+
+        get_all_virtual_alloc_entities(all_entries);
+
+        for (uint32_t heap_index = 0; heap_index < peb().number_of_heaps(); ++heap_index)
+        {
+            if (auto const nt_heap = peb().nt_heap(heap_index); nt_heap.has_value())
+            {
+                auto const lfh_data{get_all_nt_heap_lfh_entries(all_entries, crt_entries, nt_heap.value())};
+                get_all_nt_heap_segment_entries(all_entries, crt_entries, nt_heap.value(), lfh_data);
+                get_all_nt_heap_virtual_entries(all_entries, crt_entries, nt_heap.value());
+            }
+            else if (auto const segment_heap = peb().segment_heap(heap_index); segment_heap.has_value())
+            {
+                get_all_segment_backend_entities(all_entries, crt_entries, segment_heap.value());
+                get_all_segment_entities(all_entries, crt_entries, segment_heap.value());
+                get_all_segment_lfh_entities(all_entries, crt_entries, segment_heap.value());
+                get_all_segment_large_entities(all_entries, crt_entries, segment_heap.value());
             }
         }
 
         for (auto const& heap : dph_heap::dph_heaps(cache_manager_, peb()))
         {
-            for (auto const& entry : heap.busy_entries())
-            {
-                if (entry.is_allocated())
-                {
-                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
-                    {
-                        if (crt_entry->block_use())
-                        {
-                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
-                        }
-                    }
-                    else
-                    {
-                        add_heap_entry(all_entries, process_heap_entry{ entry });
-                    }
-                }
-            }
-
-            for (auto const& entry : heap.virtual_ranges())
-            {
-                if (entry.is_allocated())
-                {
-                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
-                    {
-                        if (crt_entry->block_use())
-                        {
-                            add_heap_entry(all_entries, process_heap_entry{ entry, *crt_entry });
-                        }
-                    }
-                    else
-                    {
-                        add_heap_entry(all_entries, process_heap_entry{ entry });
-                    }
-                }
-            }
+            get_all_dph_entities(all_entries, crt_entries, heap);
+            get_all_dph_virtual_entities(all_entries, crt_entries, heap);
         }
 
         return all_entries;

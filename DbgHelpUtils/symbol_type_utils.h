@@ -13,7 +13,7 @@ namespace dlg_help_utils
 
     namespace stream_stack_dump
     {
-        class mini_dump_stack_walk;
+        class mini_dump_memory_walker;
     }
 
     class mini_dump;
@@ -43,6 +43,6 @@ namespace dlg_help_utils::symbol_type_utils
         AutoHeader
     };
 
-    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_stack_walk const& walker, dbg_help::symbol_type_info const& type, dbg_help::symbol_type_info const& display_type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t indent = 0, size_t visited_depth = 0, dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);
+    void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type, dbg_help::symbol_type_info const& display_type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t indent = 0, size_t visited_depth = 0, dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);
     std::tuple<uint64_t, std::wstring, uint64_t, std::wstring> parse_address(std::wstring const& address);
 }

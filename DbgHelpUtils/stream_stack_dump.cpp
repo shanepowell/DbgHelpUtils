@@ -5,7 +5,7 @@
 #include "function_table_stream.h"
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
-#include "mini_dump_stack_walk.h"
+#include "mini_dump_memory_walker.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
 #include "register_names.h"
@@ -85,7 +85,7 @@ namespace dlg_help_utils::stream_stack_dump
                 generate_hex_dump_address(os
                     , stack_start_address == 0 ? 0 : stack_start_address + (index * sizeof(T))
                     , stack[index]
-                    , mini_dump_stack_walk::find_symbol_info(stack[index], module_list, unloaded_module_list, symbol_engine)
+                    , mini_dump_memory_walker::find_symbol_info(stack[index], module_list, unloaded_module_list, symbol_engine)
                     , hex_length);
                 os << L'\n';
             }
@@ -102,7 +102,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         template <typename T>
-        void generate_hex_dump_local_variable(std::wostream& os, mini_dump_stack_walk const& walker, dbg_help::local_variable const& local_variable, size_t const hex_length = sizeof(T) * 2)
+        void generate_hex_dump_local_variable(std::wostream& os, mini_dump_memory_walker const& walker, dbg_help::local_variable const& local_variable, size_t const hex_length = sizeof(T) * 2)
         {
             auto const name = symbol_type_utils::get_symbol_type_friendly_name(local_variable.symbol_info);
             os << std::format(L"\n          {0}", name);
@@ -139,7 +139,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         template <typename T>
-        void generate_hex_dump_local_variables(std::wostream& os, std::wstring_view const title, mini_dump_stack_walk const& walker, std::vector<dbg_help::local_variable> const& local_variables)
+        void generate_hex_dump_local_variables(std::wostream& os, std::wstring_view const title, mini_dump_memory_walker const& walker, std::vector<dbg_help::local_variable> const& local_variables)
         {
             if(!local_variables.empty())
             {
@@ -166,7 +166,7 @@ namespace dlg_help_utils::stream_stack_dump
         module_list_stream const module_list{mini_dump};
         unloaded_module_list_stream const unloaded_module_list{mini_dump};
         pe_file_memory_mapping pe_file_memory_mappings{};
-        mini_dump_stack_walk const walker
+        mini_dump_memory_walker const walker
             {
                 stack_start_address,
                 stack,
@@ -219,7 +219,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void hex_dump_stack(std::wostream& os, mini_dump_stack_walk const& walker, std::vector<uint64_t> const& stack, bool const is_x86_target, size_t const indent)
+    void hex_dump_stack(std::wostream& os, mini_dump_memory_walker const& walker, std::vector<uint64_t> const& stack, bool const is_x86_target, size_t const indent)
     {
         generate_hex_dump_stack_raw(os
             , walker.symbol_engine()
@@ -259,13 +259,13 @@ namespace dlg_help_utils::stream_stack_dump
         if (system_info_stream const system_info{mini_dump}; system_info.is_x86())
         {
             generate_hex_dump_address(os, static_cast<uint32_t>(0), static_cast<uint32_t>(address),
-                                      mini_dump_stack_walk::find_symbol_info(
+                                      mini_dump_memory_walker::find_symbol_info(
                                           address, module_list, unloaded_module_list, symbol_engine));
         }
         else if (system_info.is_x64())
         {
             generate_hex_dump_address(os, static_cast<uint64_t>(0), address,
-                                      mini_dump_stack_walk::find_symbol_info(
+                                      mini_dump_memory_walker::find_symbol_info(
                                           address, module_list, unloaded_module_list, symbol_engine));
         }
 

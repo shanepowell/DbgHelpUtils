@@ -5,7 +5,7 @@
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::heap
@@ -22,8 +22,8 @@ namespace dlg_help_utils::heap
     class heap_match_utils
     {
     public:
-        static [[nodiscard]] block_range_match_result does_memory_match_to_range(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t user_address, size_units::base_16::bytes user_size, uint64_t block_address, size_units::base_16::bytes block_size);
-        static [[nodiscard]] uint64_t read_front_padding_size(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t block_address, size_units::base_16::bytes block_size);
+        static [[nodiscard]] block_range_match_result does_memory_match_to_range(stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t user_address, size_units::base_16::bytes user_size, uint64_t block_address, size_units::base_16::bytes block_size);
+        static [[nodiscard]] uint64_t read_front_padding_size(stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t block_address, size_units::base_16::bytes block_size);
         
     };
 }

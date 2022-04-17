@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     {
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& page_range_descriptor::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& page_range_descriptor::walker() const
     {
         return heap().walker();
     }

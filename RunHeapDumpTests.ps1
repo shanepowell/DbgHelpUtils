@@ -60,18 +60,22 @@ Function RunCommand($command, $arguments)
     }
 }
 
-Function RunAllAllocationApplicationArgs($options, $validateoptions)
+Function RunAllAllocationApplicationArgs($options, $validateoptions, $ust_test)
 {
-    RunAllocationAllocationTypesApplication "lfh" $options $validateoptions
-    RunAllocationAllocationTypesApplication "large" $options $validateoptions
-    RunAllocationAllocationTypesApplication "sizes" $options $validateoptions
+    RunAllocationAllocationTypesApplication "lfh" $options $validateoptions $false $ust_test
+    RunAllocationAllocationTypesApplication "large" $options $validateoptions $true $ust_test
+    RunAllocationAllocationTypesApplication "sizes" $options $validateoptions $false $ust_test
 }
 
-Function RunAllocationAllocationTypesApplication($arg, $options, $validateoptions)
+Function RunAllocationAllocationTypesApplication($arg, $options, $validateoptions, $run_virtual, $ust_test)
 {
     RunAllocationX86X64Application $arg "heapalloc" $options $validateoptions
     RunAllocationX86X64Application $arg "malloc" $options $validateoptions
     RunAllocationX86X64Application $arg "new" $options $validateoptions
+    if($run_virtual -and !$ust_test)
+    {
+        RunAllocationX86X64Application $arg "virtual" $options $validateoptions
+    }
 }
 
 Function RunAllocationX86X64Application($arg, $alloc, $options, $validateoptions)
@@ -174,7 +178,7 @@ Function RunStandardTests()
         Write-Verbose "Clear all gflags"
         Remove-Item $app_image_options -Recurse -ErrorAction:SilentlyContinue | Out-Null
     }
-    RunAllAllocationApplicationArgs "" ""
+    RunAllAllocationApplicationArgs "" "" $false
     
     if(!$CheckOnly)
     {
@@ -183,7 +187,7 @@ Function RunStandardTests()
         New-Item $app_image_options | Out-Null
         New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_ust" $expected_stacetrace
+    RunAllAllocationApplicationArgs "_ust" $expected_stacetrace $true
     
     if(!$CheckOnly)
     {
@@ -192,7 +196,7 @@ Function RunStandardTests()
         Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
         New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_ust_hpa" $expected_stacetrace
+    RunAllAllocationApplicationArgs "_ust_hpa" $expected_stacetrace $true
     
     if(!$CheckOnly)
     {
@@ -200,7 +204,7 @@ Function RunStandardTests()
         Write-Verbose "Set GFlags +hpa"
         Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_hpa" ""
+    RunAllAllocationApplicationArgs "_hpa" "" $false
     
     if(!$CheckOnly)
     {
@@ -210,7 +214,7 @@ Function RunStandardTests()
         Remove-ItemProperty -Path $app_image_options -Name $page_heap_flags | Out-Null
         New-ItemProperty -Path $app_image_options -Name $front_end_heap -PropertyType DWord -Value 0x08 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_segment" ""
+    RunAllAllocationApplicationArgs "_segment" "" $false
     
     if(!$CheckOnly)
     {
@@ -218,7 +222,7 @@ Function RunStandardTests()
         Write-Verbose "Set GFlags +segmentheap +ust"
         New-ItemProperty -Path $app_image_options -Name $global_flag -PropertyType DWord -Value 0x1000 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_segment_ust" $expected_stacetrace
+    RunAllAllocationApplicationArgs "_segment_ust" $expected_stacetrace $true
     
     if(!$CheckOnly)
     {
@@ -227,7 +231,7 @@ Function RunStandardTests()
         Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2001000 | Out-Null
         New-ItemProperty -Path $app_image_options -Name $page_heap_flags -PropertyType DWord -Value 0x3 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_segment_ust_hpa" $expected_stacetrace
+    RunAllAllocationApplicationArgs "_segment_ust_hpa" $expected_stacetrace $true
     
     if(!$CheckOnly)
     {
@@ -235,7 +239,7 @@ Function RunStandardTests()
         Write-Verbose "Set GFlags +segmentheap +hpa"
         Set-ItemProperty -Path $app_image_options -Name $global_flag -Value 0x2000000 | Out-Null
     }
-    RunAllAllocationApplicationArgs "_segment_hpa"
+    RunAllAllocationApplicationArgs "_segment_hpa" "" $false
     
     if(!$CheckOnly)
     {

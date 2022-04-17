@@ -12,7 +12,7 @@ namespace dlg_help_utils::process
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::heap
@@ -43,7 +43,7 @@ namespace dlg_help_utils::heap
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t unknown_size, UnknownSizeType);
 
         [[nodiscard]] nt_heap const& heap() const { return heap_; }
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const;
+        [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
         [[nodiscard]] bool is_valid() const { return is_valid_; }
         [[nodiscard]] uint64_t address() const { return heap_entry_address_; }

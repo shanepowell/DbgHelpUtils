@@ -25,7 +25,7 @@ namespace dlg_help_utils::heap
         base_diff_filter_ = nullptr;
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& crt_heap::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& crt_heap::walker() const
     {
         return peb().walker();
     }

@@ -11,7 +11,7 @@
 #include "lfh_heap.h"
 #include "lfh_segment.h"
 #include "list_entry_walker.h"
-#include "mini_dump_stack_walk.h"
+#include "mini_dump_memory_walker.h"
 #include "process_environment_block.h"
 #include "stream_utils.h"
 
@@ -33,7 +33,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& nt_heap::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& nt_heap::walker() const
     {
         return peb().walker();
     }

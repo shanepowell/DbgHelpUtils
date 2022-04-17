@@ -212,7 +212,7 @@
     <ClCompile Include="memory_list_stream.cpp" />
     <ClCompile Include="mini_dump.cpp" />
     <ClCompile Include="mini_dump_memory_stream.cpp" />
-    <ClCompile Include="mini_dump_stack_walk.cpp" />
+    <ClCompile Include="mini_dump_memory_walker.cpp" />
     <ClCompile Include="mini_dump_stream_type.cpp" />
     <ClCompile Include="mini_dump_type.cpp" />
     <ClCompile Include="misc_info_stream.cpp" />
@@ -317,6 +317,7 @@
     <ClInclude Include="lfh_subsegment_location_utils.h" />
     <ClInclude Include="list_entry_walker.h" />
     <ClInclude Include="local_variable.h" />
+    <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />
     <ClInclude Include="nt_heap.h" />
     <ClInclude Include="page_range_descriptor.h" />
@@ -349,7 +350,7 @@
     <ClInclude Include="memory_info_utils.h" />
     <ClInclude Include="memory_list_stream.h" />
     <ClInclude Include="mini_dump.h" />
-    <ClInclude Include="mini_dump_stack_walk.h" />
+    <ClInclude Include="mini_dump_memory_walker.h" />
     <ClInclude Include="mini_dump_stream_type.h" />
     <ClInclude Include="mini_dump_type.h" />
     <ClInclude Include="misc_info_stream.h" />

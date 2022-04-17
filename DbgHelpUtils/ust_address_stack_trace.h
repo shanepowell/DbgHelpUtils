@@ -21,7 +21,7 @@ namespace dlg_help_utils::gflags_utils
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    class mini_dump_stack_walk;
+    class mini_dump_memory_walker;
 }
 
 namespace dlg_help_utils::heap
@@ -29,7 +29,7 @@ namespace dlg_help_utils::heap
     class ust_address_stack_trace
     {
     public:
-        ust_address_stack_trace(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker);
+        ust_address_stack_trace(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker);
 
         [[nodiscard]] std::vector<uint64_t> read_allocation_stack_trace(process::process_environment_block const& peb, uint64_t ust_address) const;
 
@@ -52,7 +52,7 @@ namespace dlg_help_utils::heap
 
     private:
         cache_manager& cache_manager_;
-        stream_stack_dump::mini_dump_stack_walk const& walker_;
+        stream_stack_dump::mini_dump_memory_walker const& walker_;
         cache_data const& cache_data_{setup_globals()};
     };
 }

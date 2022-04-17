@@ -5,6 +5,11 @@
 #include "mini_dump_memory_stream.h"
 #include "size_units.h"
 
+namespace dlg_help_utils
+{
+    struct memory_range;
+}
+
 namespace dlg_help_utils::process
 {
     class process_environment_block;
@@ -29,6 +34,7 @@ namespace dlg_help_utils::heap
         process_heap_entry(page_range_descriptor const& entry);
         process_heap_entry(heap_vs_entry const& entry);
         process_heap_entry(large_alloc_entry const& entry);
+        process_heap_entry(process::process_environment_block const& peb, memory_range const& entry);
 
         process_heap_entry(dph_entry const& entry, crt_entry const& crt_block);
         process_heap_entry(heap_entry const& entry, crt_entry const& crt_block);

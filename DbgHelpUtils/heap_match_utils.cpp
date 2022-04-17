@@ -11,7 +11,7 @@ namespace dlg_help_utils::heap
         uint64_t constexpr maximum_front_crt_heap_memory_padding = 1024;
     }
 
-    block_range_match_result heap_match_utils::does_memory_match_to_range(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const user_address, size_units::base_16::bytes const user_size, uint64_t const block_address, size_units::base_16::bytes const block_size)
+    block_range_match_result heap_match_utils::does_memory_match_to_range(stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const user_address, size_units::base_16::bytes const user_size, uint64_t const block_address, size_units::base_16::bytes const block_size)
     {
         if(user_address == block_address && user_size == block_size)
         {
@@ -42,7 +42,7 @@ namespace dlg_help_utils::heap
         return block_range_match_result::block_no_match;
     }
 
-    uint64_t heap_match_utils::read_front_padding_size(stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const block_address, size_units::base_16::bytes const block_size)
+    uint64_t heap_match_utils::read_front_padding_size(stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const block_address, size_units::base_16::bytes const block_size)
     {
         auto const value = stream_utils::read_field_value<uint32_t>(walker, block_address).value_or(0);
         if(value >= block_size.count() ||

@@ -3,7 +3,7 @@
 #include "gflags_utils.h"
 #include "memory64_list_stream.h"
 #include "memory_list_stream.h"
-#include "mini_dump_stack_walk.h"
+#include "mini_dump_memory_walker.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
 #include "process_parameters.h"
@@ -34,7 +34,7 @@ namespace dlg_help_utils::process
         process_environment_block(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine);
 
         [[nodiscard]] mini_dump const& mini_dump() const { return mini_dump_; }
-        [[nodiscard]] stream_stack_dump::mini_dump_stack_walk const& walker() const { return walker_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return walker_; }
 
         [[nodiscard]] uint64_t peb_address() const { return peb_address_; }
         [[nodiscard]] gflags_utils::gflags nt_global_flag() const { return nt_global_flag_; }
@@ -94,7 +94,7 @@ namespace dlg_help_utils::process
         unloaded_module_list_stream unloaded_module_list_;
         system_memory_info_stream system_memory_info_;
         pe_file_memory_mapping pe_file_memory_mappings_{};
-        stream_stack_dump::mini_dump_stack_walk const walker_;
+        stream_stack_dump::mini_dump_memory_walker const walker_;
         cache_data const& cache_data_{setup_globals()};
         uint64_t const teb_address_{get_teb_address()};
         uint64_t const peb_address_{get_peb_address()};

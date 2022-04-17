@@ -10,7 +10,7 @@ using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
-    ust_address_stack_trace::ust_address_stack_trace(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker)
+    ust_address_stack_trace::ust_address_stack_trace(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker)
     : cache_manager_{cache}
     , walker_{walker}
     {

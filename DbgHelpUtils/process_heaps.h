@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "dph_heap.h"
 #include "process_environment_block.h"
 #include "size_units.h"
 
@@ -47,6 +48,16 @@ namespace dlg_help_utils::heap
 
     private:
         void clear_cache() const;
+        [[nodiscard]] std::vector<heap_subsegment> get_all_nt_heap_lfh_entries(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, nt_heap const& nt_heap) const;
+        void get_all_nt_heap_segment_entries(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, nt_heap const& nt_heap, std::vector<heap_subsegment> const& lfh_data) const;
+        void get_all_nt_heap_virtual_entries(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, nt_heap const& nt_heap) const;
+        void get_all_segment_backend_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
+        void get_all_segment_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
+        void get_all_segment_lfh_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
+        void get_all_segment_large_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
+        void get_all_dph_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
+        void get_all_dph_virtual_entities(std::map<uint64_t, process_heap_entry> & all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
+        void get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const;
 
         [[nodiscard]] std::map<uint64_t, process_heap_entry> all_entries() const;
         [[nodiscard]] std::experimental::generator<process_heap_entry> all_free_entries() const;

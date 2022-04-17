@@ -3,9 +3,11 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <vector>
+#include <experimental/generator>
 
 namespace dlg_help_utils
 {
+    struct memory_range;
     class mini_dump;
 
     class memory_list_stream
@@ -21,6 +23,7 @@ namespace dlg_help_utils
 
         [[nodiscard]] void const* find_address_range(uint64_t address, uint64_t length) const;
         [[nodiscard]] void const* find_any_address_range(uint64_t address, uint64_t& length) const;
+        [[nodiscard]] std::experimental::generator<memory_range> memory_ranges() const;
 
     private:
         [[nodiscard]] std::vector<MINIDUMP_MEMORY_DESCRIPTOR const*>::const_iterator memory_address_ranges_upper_bound(uint64_t address) const;

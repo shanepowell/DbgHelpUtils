@@ -19,7 +19,7 @@ namespace dlg_help_utils::heap
     {
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& lfh_heap::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& lfh_heap::walker() const
     {
         return heap().walker();
     }

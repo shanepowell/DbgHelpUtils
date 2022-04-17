@@ -9,7 +9,7 @@ namespace dlg_help_utils::ntdll_utilities
 {
     std::wstring const& list_entry_walker::symbol_name = common_symbol_names::list_entry_structure_symbol_name;
 
-    list_entry_walker::list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const start_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name, std::function<uint64_t (uint64_t, uint64_t)> address_decoder)
+    list_entry_walker::list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const start_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name, std::function<uint64_t (uint64_t, uint64_t)> address_decoder)
     : cache_manager_{cache}
     , walker_{walker}
     , start_address_{start_address}

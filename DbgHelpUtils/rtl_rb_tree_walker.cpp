@@ -9,7 +9,7 @@ namespace dlg_help_utils::ntdll_utilities
     std::wstring const& rtl_rb_tree_walker::symbol_name = common_symbol_names::rtl_rb_tree_structure_symbol_name;
     std::wstring const& rtl_rb_tree_walker::node_symbol_name = common_symbol_names::rtl_balanced_node_structure_symbol_name;
 
-    rtl_rb_tree_walker::rtl_rb_tree_walker(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const rb_tree_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name)
+    rtl_rb_tree_walker::rtl_rb_tree_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const rb_tree_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name)
     : cache_manager_{cache}
     , walker_{walker}
     , rb_tree_address_{rb_tree_address}

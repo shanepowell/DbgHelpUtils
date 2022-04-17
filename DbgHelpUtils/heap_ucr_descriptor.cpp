@@ -16,7 +16,7 @@ namespace dlg_help_utils::heap
     {
     }
 
-    stream_stack_dump::mini_dump_stack_walk const& heap_ucr_descriptor::walker() const
+    stream_stack_dump::mini_dump_memory_walker const& heap_ucr_descriptor::walker() const
     {
         return heap().walker();
     }

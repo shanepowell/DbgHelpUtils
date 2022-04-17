@@ -9,7 +9,7 @@ namespace dlg_help_utils::ntdll_utilities
 {
     std::wstring const& rtl_balanced_links_walker::symbol_name = common_symbol_names::rtl_balanced_links_structure_symbol_name;
 
-    rtl_balanced_links_walker::rtl_balanced_links_walker(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const head_node_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name)
+    rtl_balanced_links_walker::rtl_balanced_links_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const head_node_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name)
     : cache_manager_{cache}
     , walker_{walker}
     , head_node_address_{head_node_address}
@@ -17,7 +17,7 @@ namespace dlg_help_utils::ntdll_utilities
     {
     }
 
-    rtl_balanced_links_walker::rtl_balanced_links_walker(cache_manager& cache, stream_stack_dump::mini_dump_stack_walk const& walker, uint64_t const head_node_address)
+    rtl_balanced_links_walker::rtl_balanced_links_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const head_node_address)
     : cache_manager_{cache}
     , walker_{walker}
     , head_node_address_{head_node_address}
