@@ -204,6 +204,8 @@ set(StreamUtilities
     "stream_utils.h"
     "symbol_type_utils.cpp"
     "symbol_type_utils.h"
+    "symbol_type_walker.cpp"
+    "symbol_type_walker.h"
     "system_info_utils.cpp"
     "system_info_utils.h"
     "thread_info_utils.cpp"
