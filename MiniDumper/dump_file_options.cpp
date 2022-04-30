@@ -22,6 +22,7 @@ using namespace std::string_literals;
 
 namespace
 {
+    // ReSharper disable once CppVariableCanBeMadeConstexpr
     std::vector<std::wstring> const g_empty_values{};
 
     map<std::string, uint16_t> const g_heap_statistics_view_options

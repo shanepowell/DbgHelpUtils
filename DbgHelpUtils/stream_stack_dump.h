@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <ostream>
+#include <iosfwd>
 #include <vector>
 
 #include "symbol_address_info.h"

@@ -17,7 +17,7 @@ namespace dlg_help_utils::crc
             // make exclusive-or pattern from polynomial (0xedb88320L)
             uint32_t poly = 0L;
 
-            for (auto n : p)
+            for (auto const n : p)
             {
                 poly |= 1L << (31 - n);
             }
@@ -35,7 +35,7 @@ namespace dlg_help_utils::crc
             return crc_table;
         }
 
-        auto const crc_table = make_crc_table();
+        static auto constexpr crc_table = make_crc_table();
     }
 
     constexpr uint32_t crc32(void const* data, size_t const length, uint32_t crc = ~0UL)

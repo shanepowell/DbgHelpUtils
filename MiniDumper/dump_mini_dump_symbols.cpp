@@ -588,7 +588,7 @@ void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_ma
     }
 }
 
-void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mini_dump, dlg_help_utils::cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 

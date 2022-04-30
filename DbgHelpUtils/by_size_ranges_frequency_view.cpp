@@ -30,7 +30,7 @@ namespace dlg_help_utils::heap::statistic_views
             bucket.free_entries.emplace_back(entry);
         }
 
-        for(auto bucket : sorted_range(buckets | std::views::transform([this, &buckets](std::pair<uint64_t, bucket_entries> const& data)
+        for(auto const& bucket : sorted_range(buckets | std::views::transform([this, &buckets](std::pair<uint64_t, bucket_entries> const& data)
             {
                 auto const& [key, bucket] = data;
                 const auto common_allocation_callsite = helper().find_common_allocation_callsite(bucket.entries);

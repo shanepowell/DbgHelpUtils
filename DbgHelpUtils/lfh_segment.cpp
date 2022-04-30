@@ -22,8 +22,6 @@ namespace dlg_help_utils::heap
     {
     }
 
-    lfh_segment::~lfh_segment() = default;
-
     stream_stack_dump::mini_dump_memory_walker const& lfh_segment::walker() const
     {
         return lfh_heap().walker();

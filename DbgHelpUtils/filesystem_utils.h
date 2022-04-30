@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <functional>
-#include <string_view>
 #include <vector>
 #include <experimental/generator>
 

@@ -52,9 +52,9 @@ namespace
 {
     struct LfhSegmentData
     {
-        LfhSegmentData(size_t const segment_index, heap::lfh_segment const& segment)
+        LfhSegmentData(size_t const segment_index, heap::lfh_segment segment)
             : segment_index{ segment_index }
-            , segment{ segment }
+            , segment{std::move(segment)}
         {
         }
 

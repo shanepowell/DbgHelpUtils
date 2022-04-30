@@ -4,9 +4,9 @@
 
 namespace dlg_help_utils::process
 {
-    global_variable::global_variable(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& symbol_info)
+    global_variable::global_variable(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info symbol_info)
     : walker_{walker}
-    , symbol_info_{symbol_info}
+    , symbol_info_{std::move(symbol_info)}
     {
     }
 

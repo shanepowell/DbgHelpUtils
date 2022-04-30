@@ -2,7 +2,6 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <string_view>
 
 #include "stream_module_name.h"
 

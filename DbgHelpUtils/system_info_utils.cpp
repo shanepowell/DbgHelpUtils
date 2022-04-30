@@ -450,7 +450,7 @@ namespace dlg_help_utils::system_info_utils
             return {};
         }
 
-        return std::wstring(static_cast<LPCWSTR>(pv_product_version));
+        return {static_cast<LPCWSTR>(pv_product_version)};
     }
 
     std::wstring_view process_integrity_level_to_string(uint32_t const process_integrity_level)

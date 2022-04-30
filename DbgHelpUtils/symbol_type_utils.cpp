@@ -999,7 +999,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    void dump_data_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, std::optional<symbol_type_info> const data_type, std::optional<sym_tag_enum> const data_type_tag, bool& print_header, unsigned long long bit_mask, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
+    void dump_data_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, uint64_t const variable_address, mini_dump_memory_stream& variable_stream, std::optional<symbol_type_info> const& data_type, std::optional<sym_tag_enum> const data_type_tag, bool& print_header, unsigned long long bit_mask, size_t const indent, size_t const visited_depth, dump_variable_symbol_options const options)
     {
         dump_bitmask(os, type, bit_mask);
 

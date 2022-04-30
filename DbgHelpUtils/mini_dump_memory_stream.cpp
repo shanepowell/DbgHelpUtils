@@ -13,8 +13,7 @@ namespace dlg_help_utils
     }
 
     mini_dump_memory_stream::mini_dump_memory_stream(void const* memory, uint64_t const size)
-    : get_process_memory_range_{}
-    , end_address_{size}
+    : end_address_{size}
     , memory_{static_cast<uint8_t const*>(memory)}
     , end_memory_{memory_ + size}
     {

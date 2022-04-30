@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
-#include <experimental/generator>
 
 namespace dlg_help_utils::dbg_help
 {
@@ -21,7 +20,6 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> const& all_symbols() const { return symbols_; }
 
     private:
-        mini_dump_memory_walker const& walker_;
         std::vector<dbg_help::symbol_type_info> symbols_;
     };
 }

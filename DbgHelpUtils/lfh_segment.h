@@ -25,7 +25,6 @@ namespace dlg_help_utils::heap
     {
     public:
         lfh_segment(lfh_heap const& heap, uint64_t lfh_segment_address);
-        ~lfh_segment();
 
         [[nodiscard]] lfh_heap const& lfh_heap() const { return lfh_heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;

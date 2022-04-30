@@ -110,10 +110,10 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 os << (local_variable.registry_value 
                         ? (local_variable.frame_data 
-                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(local_variable.registry_value->register_type), local_variable.frame_data->data_offset, stream_hex_dump::to_hex(local_variable.frame_data->data_address, hex_length))
+                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(local_variable.registry_value->register_type), local_variable.frame_data->data_offset, stream_hex_dump::to_hex(local_variable.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
                             : std::format(L" [{}]", register_names::get_register_name(local_variable.registry_value->register_type))
                           )
-                        : std::format(L" ({})", stream_hex_dump::to_hex(local_variable.frame_data->data_address, hex_length))
+                        : std::format(L" ({})", stream_hex_dump::to_hex(local_variable.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
                       );
 
                 if(local_variable.frame_data)
