@@ -414,6 +414,15 @@ namespace dlg_help_utils::symbol_type_utils
                 if (auto const func_type_data = value.type(); func_type_data.has_value())
                 {
                     name = get_symbol_type_friendly_name(func_type_data.value());
+                    if(auto const calling_convention = value.calling_convention(); calling_convention.has_value())
+                    {
+                        if (!name.empty())
+                        {
+                            name += L' ';
+                        }
+                        name += calling_convention_to_string(calling_convention.value());
+                    }
+
                     if (auto const name_data = value.name(); name_data.has_value())
                     {
                         if (!name.empty())

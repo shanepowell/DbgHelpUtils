@@ -89,6 +89,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(dump_types_modules_raw_, "moduletype" )["--moduletypes"]("dump module symbol types")
         | lyra::opt(dump_address_types_raw_, "address" )["--address"]("dump address with type")
         | lyra::opt(debug_type_data_)["--typedebug"]("debug type data")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(debug_type_parent_data_)["--typeparentdebug"]("debug type parent data")
         | lyra::opt(debug_heap_data_)["--heapdebug"]("debug heap data")
         | lyra::opt(display_peb_)["--peb"]("process environment block")
         | lyra::opt(display_heap_)["--heap"]("heap data information")

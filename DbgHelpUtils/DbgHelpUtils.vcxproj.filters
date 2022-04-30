@@ -408,6 +408,9 @@
     <ClCompile Include="heap_match_utils.cpp">
       <Filter>Heap</Filter>
     </ClCompile>
+    <ClCompile Include="symbol_type_walker.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -847,6 +850,9 @@
     </ClInclude>
     <ClInclude Include="memory_range.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_walker.h">
+      <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

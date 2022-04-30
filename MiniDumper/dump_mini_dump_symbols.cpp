@@ -25,6 +25,7 @@
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/symbol_type_info.h"
 #include "DbgHelpUtils/symbol_type_utils.h"
+#include "DbgHelpUtils/symbol_type_walker.h"
 #include "DbgHelpUtils/unloaded_module_list_stream.h"
 
 using namespace std;
@@ -176,7 +177,7 @@ namespace
 
             if(auto const data = type.class_parent_id(); data.has_value())
             {
-                log << std::format(L", ClassParentId: {}", locale_formatting::to_wstring(data.value()));
+                log << std::format(L", ClassParentId: {}", locale_formatting::to_wstring(data.value().sym_index()));
             }
 
             if(auto const data = type.nested(); data.has_value())
@@ -186,7 +187,7 @@ namespace
 
             if(auto const data = type.lexical_parent(); data.has_value())
             {
-                log << std::format(L", LexicalParent: {}", locale_formatting::to_wstring(data.value()));
+                log << std::format(L", LexicalParent: {}", locale_formatting::to_wstring(data.value().sym_index()));
             }
 
             if(auto const data = type.address(); data.has_value())
@@ -214,9 +215,12 @@ namespace
                 log << std::format(L", IndirectVirtualBaseClass: {}", data.value());
             }
 
-            if(auto const data = type.const_value(); data.has_value())
+            if(auto data = type.const_value(); V_VT(&data) != VT_EMPTY)
             {
-                log << std::format(L", ConstValue: {}", static_cast<_bstr_t>(data.value()));
+                _variant_t vt;
+                vt.Attach(data);
+                auto const string_const_value = static_cast<_bstr_t>(data);
+                log << std::format(L", ConstValue: {}", static_cast<wchar_t const*>(string_const_value));
             }
 
             if(auto const data = type.calling_convention(); data.has_value())
@@ -256,9 +260,24 @@ namespace
                 do_dump_symbol_type(log, typeid_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
             }
 
-            if(auto const type_data = type.type(); type_data.has_value())
+            if(options.debug_type_parent_data())
             {
-                do_dump_symbol_type(log, type_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                if(auto const parent_typeid_data = type.class_parent_id(); parent_typeid_data.has_value() && !visited_types.contains(parent_typeid_data.value().sym_index()))
+                {
+                    log << std::format(L"{0} ClassParentId: {1}\n", indent_str, locale_formatting::to_wstring(parent_typeid_data.value().sym_index()));
+                    do_dump_symbol_type(log, parent_typeid_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                }
+
+                if(auto const parent_id_data = type.lexical_parent(); parent_id_data.has_value() && !visited_types.contains(parent_id_data.value().sym_index()))
+                {
+                    log << std::format(L"{0} LexicalParentId: {1}\n", indent_str, locale_formatting::to_wstring(parent_id_data.value().sym_index()));
+                    do_dump_symbol_type(log, parent_id_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                }
+            }
+
+            if(auto const data = type.children_count(); data.value_or(0) > 0)
+            {
+                log << std::format(L"{0} Children: {1}\n", indent_str, locale_formatting::to_wstring(data.value()));
             }
         }
         else if(auto const type_data = type.type(); type_data.has_value())
@@ -310,6 +329,16 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
     {
         log << std::format(L"Symbol Type [{0}] @ {1} found:\n", type_name, symbol_info.value().to_address_string());
         dump_symbol_type(log, symbol_info.value(), options);
+        return;
+    }
+
+    if(stream_stack_dump::symbol_type_walker const symbol_walker{walker, type_name}; !symbol_walker.all_symbols().empty())
+    {
+        for(auto const& symbol_info : symbol_walker.all_symbols())
+        {
+            log << std::format(L"Symbol Type [{0}] @ {1} found:\n", symbol_info.name().value_or(L"<unknown name>"sv), symbol_info.to_address_string());
+            dump_symbol_type(log, symbol_info, options);
+        }
         return;
     }
 

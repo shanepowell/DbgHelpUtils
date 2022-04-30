@@ -53,6 +53,7 @@ public:
     [[nodiscard]] bool debug_symbols() const { return debug_symbols_ || debug_load_symbols_memory_; }
     [[nodiscard]] bool debug_load_symbols_memory() const { return debug_load_symbols_memory_; }
     [[nodiscard]] bool debug_type_data() const { return debug_type_data_; }
+    [[nodiscard]] bool debug_type_parent_data() const { return debug_type_parent_data_; }
     [[nodiscard]] bool display_peb() const { return display_peb_; }
     [[nodiscard]] bool display_heap() const { return display_heap_; }
     [[nodiscard]] bool display_heap_entries() const { return display_heap_entries_; }
@@ -95,6 +96,7 @@ private:
     bool debug_symbols_{false};
     bool debug_load_symbols_memory_{false};
     bool debug_type_data_{false};
+    bool debug_type_parent_data_{false};
     bool display_peb_{false};
     bool display_heap_{false};
     bool display_heap_entries_{false};

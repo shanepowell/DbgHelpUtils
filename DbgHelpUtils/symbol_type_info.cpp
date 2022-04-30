@@ -128,7 +128,7 @@ namespace dlg_help_utils::dbg_help
         cache_info_->set_name(name);
         LocalFree(name);
 
-            return cache_info_->name();
+        return cache_info_->name();
     }
 
     std::optional<ULONG64> symbol_type_info::length() const
@@ -254,9 +254,15 @@ namespace dlg_help_utils::dbg_help
         return get_dword_type(TI_GET_VIRTUALBASEPOINTEROFFSET, L"TI_GET_VIRTUALBASEPOINTEROFFSET"sv, optional_type::optional);
     }
 
-    std::optional<DWORD> symbol_type_info::class_parent_id() const
+    std::optional<symbol_type_info> symbol_type_info::class_parent_id() const
     {
-        return get_dword_type(TI_GET_CLASSPARENTID, L"TI_GET_CLASSPARENTID"sv, optional_type::optional);
+        auto const type = get_dword_type(TI_GET_CLASSPARENTID, L"TI_GET_CLASSPARENTID"sv, optional_type::optional);
+        if(!type.has_value())
+        {
+            return std::nullopt;
+        }
+
+        return symbol_type_info{process_, module_base_, type.value()};
     }
 
     std::optional<DWORD> symbol_type_info::nested() const
@@ -269,9 +275,15 @@ namespace dlg_help_utils::dbg_help
         return get_dword_type(TI_GET_SYMINDEX, L"TI_GET_SYMINDEX"sv, optional_type::optional);
     }
 
-    std::optional<DWORD> symbol_type_info::lexical_parent() const
+    std::optional<symbol_type_info> symbol_type_info::lexical_parent() const
     {
-        return get_dword_type(TI_GET_LEXICALPARENT, L"TI_GET_LEXICALPARENT"sv, optional_type::optional);
+        auto const type = get_dword_type(TI_GET_LEXICALPARENT, L"TI_GET_LEXICALPARENT"sv, optional_type::optional);
+        if(!type.has_value())
+        {
+            return std::nullopt;
+        }
+
+        return symbol_type_info{process_, module_base_, type.value()};
     }
 
     std::optional<ULONG64> symbol_type_info::address() const
@@ -309,16 +321,16 @@ namespace dlg_help_utils::dbg_help
         return get_bool_type(TI_GET_INDIRECTVIRTUALBASECLASS, L"TI_GET_INDIRECTVIRTUALBASECLASS"sv, optional_type::optional);
     }
 
-    std::optional<_variant_t> symbol_type_info::const_value() const
+    VARIANT symbol_type_info::const_value() const
     {
-        _variant_t rv;
+        VARIANT rv;
         if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_VALUE, &rv))
         {
             throw_sym_get_type_info_error(L"TI_GET_VALUE"sv, optional_type::optional);
-            return std::nullopt;
+            V_VT(&rv) = VT_EMPTY;
         }
 
-        return std::move(rv);
+        return rv;
     }
 
     std::optional<calling_convention> symbol_type_info::calling_convention() const

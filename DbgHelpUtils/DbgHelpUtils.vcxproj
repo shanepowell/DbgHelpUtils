@@ -257,6 +257,7 @@
     <ClCompile Include="symbol_engine.cpp" />
     <ClCompile Include="symbol_info_buffer.cpp" />
     <ClCompile Include="symbol_type_utils.cpp" />
+    <ClCompile Include="symbol_type_walker.cpp" />
     <ClCompile Include="system_info_stream.cpp" />
     <ClCompile Include="system_info_utils.cpp" />
     <ClCompile Include="system_memory_info_stream.cpp" />
@@ -399,6 +400,7 @@
     <ClInclude Include="symbol_engine.h" />
     <ClInclude Include="symbol_info_buffer.h" />
     <ClInclude Include="symbol_type_utils.h" />
+    <ClInclude Include="symbol_type_walker.h" />
     <ClInclude Include="sym_tag_enum.h" />
     <ClInclude Include="system_info_stream.h" />
     <ClInclude Include="system_info_utils.h" />

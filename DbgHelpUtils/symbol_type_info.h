@@ -40,19 +40,19 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<DWORD> bit_position() const;
         [[nodiscard]] std::optional<bool> is_virtual_base_class() const;
         [[nodiscard]] std::optional<DWORD> virtual_base_pointer_offset() const;
-        [[nodiscard]] std::optional<DWORD> class_parent_id() const;
+        [[nodiscard]] std::optional<symbol_type_info> class_parent_id() const;
         [[nodiscard]] std::optional<DWORD> nested() const;
         [[nodiscard]] DWORD64 module_base() const { return module_base_; }
         [[nodiscard]] DWORD sym_index() const { return type_index_; }
         [[nodiscard]] std::optional<DWORD> sym_index_raw() const;
-        [[nodiscard]] std::optional<DWORD> lexical_parent() const;
+        [[nodiscard]] std::optional<symbol_type_info> lexical_parent() const;
         [[nodiscard]] std::optional<ULONG64> address() const;
         [[nodiscard]] std::optional<udt_kind_type> udt_kind() const;
         [[nodiscard]] std::optional<DWORD> virtual_base_offset() const;
         [[nodiscard]] std::optional<DWORD> virtual_base_displacement_table_index() const;
         [[nodiscard]] std::optional<bool> is_reference() const;
         [[nodiscard]] std::optional<bool> indirect_virtual_base_class() const;
-        [[nodiscard]] std::optional<_variant_t> const_value() const;
+        [[nodiscard]] VARIANT const_value() const;
         [[nodiscard]] std::optional<calling_convention> calling_convention() const;
 
         [[nodiscard]] std::experimental::generator<symbol_type_info> children() const;
