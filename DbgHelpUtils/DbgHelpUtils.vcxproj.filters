@@ -258,7 +258,7 @@
     <ClCompile Include="process_environment_block.cpp">
       <Filter>Process</Filter>
     </ClCompile>
-    <ClCompile Include="process_parameters.cpp">
+    <ClCompile Include="process_environment_variables.cpp">
       <Filter>Process</Filter>
     </ClCompile>
     <ClCompile Include="page_range_flags_utils.cpp">
@@ -680,7 +680,7 @@
     <ClInclude Include="process_environment_block.h">
       <Filter>Process</Filter>
     </ClInclude>
-    <ClInclude Include="process_parameters.h">
+    <ClInclude Include="process_environment_variables.h">
       <Filter>Process</Filter>
     </ClInclude>
     <ClInclude Include="page_range_flags_utils.h">

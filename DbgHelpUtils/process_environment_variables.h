@@ -17,10 +17,10 @@ namespace dlg_help_utils::stream_stack_dump
 namespace dlg_help_utils::process
 {
 
-    class process_parameters
+    class process_environment_variables
     {
     public:
-        process_parameters(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t process_parameters_address);
+        process_environment_variables(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t process_parameters_address);
 
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return walker_; }
         [[nodiscard]] uint64_t process_parameters_address() const { return process_parameters_address_; }

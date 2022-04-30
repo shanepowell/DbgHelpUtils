@@ -6,7 +6,7 @@
 #include "mini_dump_memory_walker.h"
 #include "module_list_stream.h"
 #include "pe_file_memory_mapping.h"
-#include "process_parameters.h"
+#include "process_environment_variables.h"
 #include "stream_utils.h"
 #include "symbol_type_info.h"
 #include "system_memory_info_stream.h"
@@ -43,7 +43,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] uint64_t ldr_address() const { return ldr_address_; }
         [[nodiscard]] std::streamsize machine_hex_printable_length() const { return machine_hex_printable_length_; }
 
-        [[nodiscard]] std::optional<process_parameters> process_parameters() const;
+        [[nodiscard]] std::optional<process_environment_variables> process_environment_variables() const;
 
         [[nodiscard]] uint64_t heap_address(uint32_t heap_index) const;
         [[nodiscard]] uint32_t segment_signature(uint32_t heap_index) const;

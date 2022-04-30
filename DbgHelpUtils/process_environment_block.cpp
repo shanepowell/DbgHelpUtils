@@ -7,7 +7,7 @@
 #include "common_symbol_utils.h"
 #include "heap_segment.h"
 #include "nt_heap.h"
-#include "process_parameters.h"
+#include "process_environment_variables.h"
 #include "segment_heap.h"
 #include "stream_utils.h"
 #include "wide_runtime_error.h"
@@ -47,7 +47,7 @@ namespace dlg_help_utils::process
         machine_hex_printable_length_ = machine_pointer_size_ * 2;
     }
 
-    std::optional<process_parameters> process_environment_block::process_parameters() const
+    std::optional<process_environment_variables> process_environment_block::process_environment_variables() const
     {
         const auto process_parameters_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_.peb_structure_process_parameters_field_data, peb_address());
         if(!process_parameters_address.has_value() || process_parameters_address.value().value == 0)
@@ -55,7 +55,7 @@ namespace dlg_help_utils::process
             return std::nullopt;
         }
 
-        return process::process_parameters{cache_manager_, walker(), process_parameters_address.value().value};
+        return process::process_environment_variables{cache_manager_, walker(), process_parameters_address.value().value};
     }
 
     uint64_t process_environment_block::heap_address(uint32_t const heap_index) const

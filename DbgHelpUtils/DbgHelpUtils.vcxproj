@@ -228,7 +228,7 @@
     <ClCompile Include="process_heaps_statistic_bucket_view.cpp" />
     <ClCompile Include="process_heaps_statistic_view.cpp" />
     <ClCompile Include="process_heap_entry.cpp" />
-    <ClCompile Include="process_parameters.cpp" />
+    <ClCompile Include="process_environment_variables.cpp" />
     <ClCompile Include="process_heaps_statistics.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
     <ClCompile Include="register_names.cpp" />
@@ -364,7 +364,7 @@
     <ClInclude Include="process_heaps_statistic_bucket_view.h" />
     <ClInclude Include="process_heaps_statistic_view.h" />
     <ClInclude Include="process_heap_entry.h" />
-    <ClInclude Include="process_parameters.h" />
+    <ClInclude Include="process_environment_variables.h" />
     <ClInclude Include="process_heaps_statistics.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
     <ClInclude Include="range_units.h" />

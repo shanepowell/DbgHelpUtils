@@ -166,8 +166,8 @@ set(Process
     "global_variables.h"
     "process_environment_block.cpp"
     "process_environment_block.h"
-    "process_parameters.cpp"
-    "process_parameters.h"
+    "process_environment_variables.cpp"
+    "process_environment_variables.h"
 )
 source_group("Process" FILES ${Process})
 

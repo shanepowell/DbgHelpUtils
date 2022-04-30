@@ -573,13 +573,13 @@ void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_ma
         [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
     }
 
-    if(auto const process_parameters = peb.process_parameters(); process_parameters.has_value())
+    if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {
         log << L'\n';
-        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, process_parameters.value().process_parameters_address());
+        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, environment_variables.value().process_parameters_address());
 
         log << L"\nProcess Environment Variables:\n";
-        for(auto const& value : process_parameters.value().environment())
+        for(auto const& value : environment_variables.value().environment())
         {
             log << L"  ";
             print_utils::print_str(log, value.data(), value.size(), false);
