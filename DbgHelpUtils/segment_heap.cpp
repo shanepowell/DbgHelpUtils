@@ -25,9 +25,9 @@ namespace dlg_help_utils::heap
     std::wstring const& segment_heap::symbol_name = common_symbol_names::segment_heap_structure_symbol_name;
 
     segment_heap::segment_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t const segment_heap_address)
-    : cache_manager_{cache}
+    : cache_manager_{&cache}
     , segment_heap_address_{segment_heap_address}
-    , peb_{peb}
+    , peb_{&peb}
     , heap_key_{get_heap_key()}
     , lfh_heap_key_{get_lfh_heap_key()}
     , unit_shift_amount_{get_unit_shift_amount()}
@@ -157,42 +157,42 @@ namespace dlg_help_utils::heap
 
     uint32_t segment_heap::segment_signature() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.segment_heap_signature_field_data, common_symbol_names::segment_heap_signature_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->segment_heap_signature_field_data, common_symbol_names::segment_heap_signature_field_symbol_name);
     }
 
     uint32_t segment_heap::global_flags() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.segment_heap_global_flags_field_data, common_symbol_names::segment_heap_global_flags_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->segment_heap_global_flags_field_data, common_symbol_names::segment_heap_global_flags_field_symbol_name);
     }
 
     uint64_t segment_heap::total_reserved_pages() const
     {
-        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_total_reserved_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_reserved_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->segment_heap_mem_stats_total_reserved_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_reserved_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::total_committed_pages() const
     {
-        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_total_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->segment_heap_mem_stats_total_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_total_committed_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::free_committed_pages() const
     {
-        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_free_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->segment_heap_mem_stats_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_free_committed_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::lfh_free_committed_pages() const
     {
-        return get_machine_size_field_value(*this, cache_data_.segment_heap_mem_stats_lfh_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_lfh_free_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->segment_heap_mem_stats_lfh_free_committed_pages_field_data, common_symbol_names::segment_heap_mem_stats_lfh_free_committed_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::large_reserved_pages() const
     {
-        return get_machine_size_field_value(*this, cache_data_.segment_heap_large_reserved_pages_field_data, common_symbol_names::segment_heap_large_reserved_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->segment_heap_large_reserved_pages_field_data, common_symbol_names::segment_heap_large_reserved_pages_field_symbol_name);
     }
 
     uint64_t segment_heap::large_committed_pages() const
     {
-        return get_machine_size_field_value(*this, cache_data_.segment_heap_large_committed_pages_field_data, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->segment_heap_large_committed_pages_field_data, common_symbol_names::segment_heap_large_committed_pages_field_symbol_name);
     }
 
     size_units::base_16::bytes segment_heap::reserved() const
@@ -227,10 +227,10 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<heap_segment_context> segment_heap::segment_contexts() const
     {
-        if(auto const array_count = cache_data_.heap_seg_context_array_field_symbol_type.array_count(); array_count.has_value())
+        if(auto const array_count = cache_data_->heap_seg_context_array_field_symbol_type.array_count(); array_count.has_value())
         {
-            auto array_field_address = segment_heap_address() + cache_data_.heap_seg_context_array_field_offset;
-            for(size_t index = 0; index < array_count.value(); ++index, array_field_address += cache_data_.heap_seg_context_symbol_length)
+            auto array_field_address = segment_heap_address() + cache_data_->heap_seg_context_array_field_offset;
+            for(size_t index = 0; index < array_count.value(); ++index, array_field_address += cache_data_->heap_seg_context_symbol_length)
             {
                 co_yield heap_segment_context{*this, array_field_address};
             }
@@ -239,12 +239,12 @@ namespace dlg_help_utils::heap
 
     heap_vs_context segment_heap::vs_context() const
     {
-        return heap_vs_context{*this, segment_heap_address() + cache_data_.heap_vs_context_offset};
+        return heap_vs_context{*this, segment_heap_address() + cache_data_->heap_vs_context_offset};
     }
 
     heap_lfh_context segment_heap::lfh_context() const
     {
-        return heap_lfh_context{*this, segment_heap_address() + cache_data_.heap_lfh_context_offset};
+        return heap_lfh_context{*this, segment_heap_address() + cache_data_->heap_lfh_context_offset};
     }
 
     std::optional<dph_heap> segment_heap::debug_page_heap() const
@@ -254,7 +254,7 @@ namespace dlg_help_utils::heap
             return std::nullopt;
         }
 
-        for(auto const& heap : dph_heap::dph_heaps(cache_manager_, peb()))
+        for(auto const& heap : dph_heap::dph_heaps(cache(), peb()))
         {
             if(heap.normal_heap() == segment_heap_address())
             {
@@ -268,7 +268,7 @@ namespace dlg_help_utils::heap
     std::experimental::generator<large_alloc_entry> segment_heap::large_entries() const
     {
         for(ntdll_utilities::rtl_rb_tree_walker const rb_tree_walker{cache(), walker()
-            , segment_heap_address() + stream_utils::get_field_offset(cache_data_.segment_heap_large_alloc_metadata_field_data, symbol_name, common_symbol_names::segment_heap_large_alloc_metadata_field_symbol_name)
+            , segment_heap_address() + stream_utils::get_field_offset(cache_data_->segment_heap_large_alloc_metadata_field_data, symbol_name, common_symbol_names::segment_heap_large_alloc_metadata_field_symbol_name)
             , large_alloc_entry::symbol_name
             , common_symbol_names::heap_large_alloc_tree_node_field_symbol_name};
             auto const entry_address : rb_tree_walker.entries())

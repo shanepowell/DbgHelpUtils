@@ -13,8 +13,8 @@ namespace dlg_help_utils::heap
     std::wstring const& lfh_heap::symbol_name = common_symbol_names::lfh_heap_structure_symbol_name;
 
     lfh_heap::lfh_heap(nt_heap const& heap, uint64_t const lfh_heap_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , lfh_heap_address_{lfh_heap_address}
     {
     }
@@ -31,7 +31,7 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<lfh_segment> lfh_heap::lfh_segments() const
     {
-        for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_.lfh_heap_sub_segment_zones_field_data, common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name), lfh_segment::symbol_name, common_symbol_names::lfh_block_zone_list_entry_field_symbol_name}; 
+        for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_->lfh_heap_sub_segment_zones_field_data, common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name), lfh_segment::symbol_name, common_symbol_names::lfh_block_zone_list_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
         {
             co_yield lfh_segment{*this, entry_address};

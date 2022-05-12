@@ -44,7 +44,7 @@ void dump_mini_dump_streams(std::wostream& log, mini_dump const& dump_file)
         auto const& entry = directory[index];
         log << std::format(L"Stream: [{0}] {1} - RVA: [{2}] - [{3}]({4})\n"
             , locale_formatting::to_wstring(index)
-            , mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType))
+            , mini_dump_stream_type::to_wstring(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType))
             , locale_formatting::to_wstring(entry.Location.Rva)
             , to_hex(entry.Location.DataSize)
             , to_wstring(bytes{entry.Location.DataSize}));
@@ -81,7 +81,7 @@ void dump_mini_dump_stream_type(std::wostream& log, mini_dump const& dump_file, 
     auto const stream = stream_utils::find_stream_for_type(dump_file, type);
     if(!stream.has_value())
     {
-        throw wide_runtime_error{std::format(L"stream type [{}] not found", mini_dump_stream_type::to_string(type))};
+        throw wide_runtime_error{std::format(L"stream type [{}] not found", mini_dump_stream_type::to_wstring(type))};
     }
 
     auto const& [index, entry] = stream.value();
@@ -108,7 +108,7 @@ void dump_mini_dump_all_stream_indexes(std::wostream& log, mini_dump const& dump
         auto const& entry = directory[index];
         log << std::format(L"Stream: [{0}] {1} - RVA: [{2}] - [{3}]({4}):\n"
             , locale_formatting::to_wstring(index)
-            , mini_dump_stream_type::to_string(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType))
+            , mini_dump_stream_type::to_wstring(static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType))
             , locale_formatting::to_wstring(entry.Location.Rva)
             , to_hex(entry.Location.DataSize)
             , to_wstring(bytes{entry.Location.DataSize}));
@@ -121,7 +121,7 @@ void dump_mini_dump_stream_data(std::wostream& log, mini_dump const& mini_dump, 
 {
     auto hex_dump_stream = false;
     auto const type = static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType);
-    log << std::format(L"{}:\n", mini_dump_stream_type::to_string(type));
+    log << std::format(L"{}:\n", mini_dump_stream_type::to_wstring(type));
     switch (type)
     {
     case UnusedStream:

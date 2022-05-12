@@ -58,7 +58,7 @@ namespace
 
 namespace dlg_help_utils::mini_dump_stream_type
 {
-    std::wstring to_string(MINIDUMP_STREAM_TYPE const type)
+    std::wstring to_wstring(MINIDUMP_STREAM_TYPE const type)
     {
         if (type > LastReservedStream)
         {
@@ -74,7 +74,7 @@ namespace dlg_help_utils::mini_dump_stream_type
         return std::get<0>(it->second);
     }
 
-    std::wstring to_enum_string(MINIDUMP_STREAM_TYPE const type)
+    std::wstring to_enum_wstring(MINIDUMP_STREAM_TYPE const type)
     {
         if (type > LastReservedStream)
         {
@@ -90,7 +90,7 @@ namespace dlg_help_utils::mini_dump_stream_type
         return std::get<1>(it->second);
     }
 
-    MINIDUMP_STREAM_TYPE from_string(std::wstring const& type)
+    MINIDUMP_STREAM_TYPE from_wstring(std::wstring const& type)
     {
         if (!type.empty() && isdigit(type[0]))
         {
@@ -113,7 +113,7 @@ namespace dlg_help_utils::mini_dump_stream_type
 
         for (size_t i = 0; i <= LastReservedStream; ++i)
         {
-            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); string_compare::iequals(type, to_string(enum_type)) || string_compare::iequals(type, to_enum_string(enum_type)))
+            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); string_compare::iequals(type, to_wstring(enum_type)) || string_compare::iequals(type, to_enum_wstring(enum_type)))
             {
                 return enum_type;
             }

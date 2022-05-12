@@ -411,6 +411,18 @@
     <ClCompile Include="symbol_type_walker.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="process_heap_entry_reference.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_graph.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_graph_heap_entry.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_graph_node.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -854,5 +866,26 @@
     <ClInclude Include="symbol_type_walker.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
+    <ClInclude Include="overload.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heaps_options.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_entry_reference.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_heap_entry.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_node.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

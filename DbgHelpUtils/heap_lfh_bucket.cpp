@@ -16,8 +16,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_lfh_bucket::symbol_name = common_symbol_names::heap_lfh_bucket_structure_symbol_name;
 
     heap_lfh_bucket::heap_lfh_bucket(heap_lfh_context const& heap, uint64_t const heap_lfh_bucket_address, int16_t const bucket_index)
-    : cache_data_{heap.heap().cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.heap().cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_lfh_bucket_address_{heap_lfh_bucket_address}
     , is_enabled_{(heap_lfh_bucket_address_ & 0x01) == 0x0}
     , bucket_index_{bucket_index == -1 ? get_bucket_index() : bucket_index}
@@ -59,7 +59,7 @@ namespace dlg_help_utils::heap
             throw exceptions::wide_runtime_error{L"Unsupported platform"s};
         }
 
-        auto const usage_data = stream_utils::find_basic_type_field_value_in_type<uint16_t>(cache_data_.heap_lfh_ondemand_pointer_usage_data_field_data, buffer);
+        auto const usage_data = stream_utils::find_basic_type_field_value_in_type<uint16_t>(cache_data_->heap_lfh_ondemand_pointer_usage_data_field_data, buffer);
         if(!usage_data.has_value())
         {
             stream_utils::throw_cant_get_field_data(common_symbol_names::heap_lfh_ondemand_pointer_structure_symbol_name, common_symbol_names::heap_lfh_ondemand_pointer_usage_data_field_symbol_name);
@@ -71,37 +71,37 @@ namespace dlg_help_utils::heap
     size_t heap_lfh_bucket::slot_count() const
     {
         validate_enabled();
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_bucket_slot_count_field_data, common_symbol_names::heap_lfh_bucket_slot_count_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_bucket_slot_count_field_data, common_symbol_names::heap_lfh_bucket_slot_count_field_symbol_name);
     }
 
     uint64_t heap_lfh_bucket::total_block_count() const
     {
         validate_enabled();
-        return get_machine_size_field_value(*this, cache_data_.heap_lfh_bucket_total_block_count_field_data, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->heap_lfh_bucket_total_block_count_field_data, common_symbol_names::heap_lfh_bucket_total_block_count_field_symbol_name);
     }
 
     uint64_t heap_lfh_bucket::total_subsegment_count() const
     {
         validate_enabled();
-        return get_machine_size_field_value(*this, cache_data_.heap_lfh_bucket_total_subsegment_count_field_data, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->heap_lfh_bucket_total_subsegment_count_field_data, common_symbol_names::heap_lfh_bucket_total_subsegment_count_field_symbol_name);
     }
 
     size_units::base_16::bytes heap_lfh_bucket::reciprocal_block_size() const
     {
         validate_enabled();
-        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, cache_data_.heap_lfh_bucket_reciprocal_block_size_field_data, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, cache_data_->heap_lfh_bucket_reciprocal_block_size_field_data, common_symbol_names::heap_lfh_bucket_reciprocal_block_size_field_symbol_name)};
     }
 
     uint8_t heap_lfh_bucket::shift() const
     {
         validate_enabled();
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_bucket_shift_field_data, common_symbol_names::heap_lfh_bucket_shift_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_bucket_shift_field_data, common_symbol_names::heap_lfh_bucket_shift_field_symbol_name);
     }
 
     std::vector<uint8_t> heap_lfh_bucket::processor_affinity_mapping() const
     {
         validate_enabled();
-        auto const proc_affinity_mapping_address = get_field_pointer(*this, cache_data_.heap_lfh_bucket_proc_affinity_mapping_field_data, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
+        auto const proc_affinity_mapping_address = get_field_pointer(*this, cache_data_->heap_lfh_bucket_proc_affinity_mapping_field_data, common_symbol_names::heap_lfh_bucket_proc_affinity_mapping_field_symbol_name);
 
         std::vector<uint8_t> rv;
         rv.resize(heap().max_affinity());
@@ -118,7 +118,7 @@ namespace dlg_help_utils::heap
     {
         validate_enabled();
         auto const max_slots{slot_count()};
-        auto affinity_slots_address = get_field_pointer(*this, cache_data_.heap_lfh_bucket_affinity_slots_field_data, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name);
+        auto affinity_slots_address = get_field_pointer(*this, cache_data_->heap_lfh_bucket_affinity_slots_field_data, common_symbol_names::heap_lfh_bucket_affinity_slots_field_symbol_name);
         auto const pointer_size{peb().is_x86_target() ? sizeof(uint32_t) : sizeof(uint64_t)};
 
         for(size_t index = 0; index < max_slots; ++index)
@@ -182,7 +182,7 @@ namespace dlg_help_utils::heap
     size_t heap_lfh_bucket::get_bucket_index() const
     {
         validate_enabled();
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_bucket_bucket_index_field_data, common_symbol_names::heap_lfh_bucket_bucket_index_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_bucket_bucket_index_field_data, common_symbol_names::heap_lfh_bucket_bucket_index_field_symbol_name);
     }
 
     size_units::base_16::bytes heap_lfh_bucket::get_bucket_granularity() const

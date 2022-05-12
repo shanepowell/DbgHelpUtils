@@ -25,7 +25,7 @@ namespace dlg_help_utils::heap
     public:
         heap_virtual_block(nt_heap const& heap, uint64_t heap_virtual_block_address);
 
-        [[nodiscard]] nt_heap const& heap() const { return heap_; }
+        [[nodiscard]] nt_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -37,7 +37,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return descriptor_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_virtual_block_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_virtual_block_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(nt_heap const& heap);
@@ -52,9 +52,9 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset heap_virtual_alloc_entry_commit_size_field_data;
         };
 
-        cache_data const& cache_data_;
-        nt_heap const& heap_;
-        uint64_t const heap_virtual_block_address_;
-        uint64_t const data_address_;
+        cache_data const* cache_data_;
+        nt_heap const* heap_;
+        uint64_t heap_virtual_block_address_;
+        uint64_t data_address_;
     };
 }

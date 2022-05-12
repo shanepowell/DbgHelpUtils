@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     public:
         heap_lfh_context(segment_heap const& heap, uint64_t heap_lfh_context_address);
 
-        [[nodiscard]] segment_heap const& heap() const { return heap_; }
+        [[nodiscard]] segment_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const;
@@ -41,7 +41,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_lfh_bucket> active_buckets() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_context_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_lfh_context_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_context_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -60,8 +60,8 @@ namespace dlg_help_utils::heap
         };
 
     private:
-        cache_data const& cache_data_;
-        segment_heap const& heap_;
-        uint64_t const heap_lfh_context_address_;
+        cache_data const* cache_data_;
+        segment_heap const* heap_;
+        uint64_t heap_lfh_context_address_;
     };
 }

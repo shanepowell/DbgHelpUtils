@@ -5,7 +5,7 @@
 namespace dlg_help_utils::process
 {
     global_variable::global_variable(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info symbol_info)
-    : walker_{walker}
+    : walker_{&walker}
     , symbol_info_{std::move(symbol_info)}
     {
     }
@@ -15,7 +15,7 @@ namespace dlg_help_utils::process
         auto const address = symbol_type().address();
         if(auto const length = symbol_type().length(); address.has_value() && length.has_value())
         {
-            return walker_.get_process_memory_stream(address.value(), length.value());
+            return walker_->get_process_memory_stream(address.value(), length.value());
         }
 
         return {};

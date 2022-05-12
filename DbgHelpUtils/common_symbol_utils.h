@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include <optional>
+#include <set>
+#include <vector>
 
 namespace dlg_help_utils
 {
@@ -12,6 +13,7 @@ namespace dlg_help_utils
 namespace dlg_help_utils::common_symbol_utils
 {
 
-    std::optional<uint64_t> get_teb_address(mini_dump const& mini_dump, thread_names_list_stream const& names_list, memory_list_stream const& memory_list, memory64_list_stream const& memory64_list);
+    std::vector<uint64_t> get_teb_addresses(mini_dump const& mini_dump, thread_names_list_stream const& names_list, memory_list_stream const& memory_list, memory64_list_stream const& memory64_list);
+    void gather_system_addresses(mini_dump const& mini_dump, thread_names_list_stream const& names_list, memory_list_stream const& memory_list, memory64_list_stream const& memory64_list, std::set<uint64_t>& system_area_addresses);
 
 }

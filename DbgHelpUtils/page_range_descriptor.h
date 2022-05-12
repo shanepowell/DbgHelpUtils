@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     public:
         page_range_descriptor(heap_segment_context const& heap, uint64_t page_range_descriptor_address, size_t index, uint64_t heap_page_segment_address);
 
-        [[nodiscard]] heap_segment_context const& heap() const { return heap_; }
+        [[nodiscard]] heap_segment_context const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_start_of_range() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return page_range_descriptor_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_page_range_descriptor_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_page_range_descriptor_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -73,14 +73,14 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_and_field_offset heap_page_range_descriptor_committed_page_count_field_data_x86;
         };
 
-        cache_data const& cache_data_;
-        heap_segment_context const& heap_;
-        uint64_t const page_range_descriptor_address_;
-        size_t const index_;
-        uint64_t const heap_page_segment_address_;
+        cache_data const* cache_data_;
+        heap_segment_context const* heap_;
+        uint64_t page_range_descriptor_address_;
+        size_t index_;
+        uint64_t heap_page_segment_address_;
         uint8_t unit_shift_;
-        uint64_t const ust_address_{0};
-        std::vector<uint64_t> const allocation_stack_trace_{};
+        uint64_t ust_address_{0};
+        std::vector<uint64_t> allocation_stack_trace_{};
     };
 }
 

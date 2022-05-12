@@ -25,10 +25,10 @@ namespace dlg_help_utils::heap
 
     process_heaps_statistic_view::interface_process_heaps_statistic_view_impl::interface_process_heaps_statistic_view_impl(view_type const view, statistic_views::allocation_stack_trace_helper const& helper, statistic_views::statistic_view_options const& statistic_view_options, process_heaps const& process, std::map<uint64_t, process_heap_entry> const& allocated_entries, std::map<uint64_t, process_heap_entry> const& free_entries)
     : view_{view}
-    , helper_{helper}
-    , process_{process}
-    , allocated_entries_{allocated_entries}
-    , free_entries_{free_entries}
+    , helper_{&helper}
+    , process_{&process}
+    , allocated_entries_{&allocated_entries}
+    , free_entries_{&free_entries}
     , sort_column_{statistic_view_options.view_sort_column()}
     , sort_order_{statistic_view_options.view_sort_order()}
     {

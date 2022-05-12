@@ -230,6 +230,10 @@
     <ClCompile Include="process_heap_entry.cpp" />
     <ClCompile Include="process_environment_variables.cpp" />
     <ClCompile Include="process_heaps_statistics.cpp" />
+    <ClCompile Include="process_heap_entry_reference.cpp" />
+    <ClCompile Include="process_heap_graph.cpp" />
+    <ClCompile Include="process_heap_graph_heap_entry.cpp" />
+    <ClCompile Include="process_heap_graph_node.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
     <ClCompile Include="register_names.cpp" />
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
@@ -321,6 +325,7 @@
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />
     <ClInclude Include="nt_heap.h" />
+    <ClInclude Include="overload.h" />
     <ClInclude Include="page_range_descriptor.h" />
     <ClInclude Include="page_range_flags_utils.h" />
     <ClInclude Include="print_utils.h" />
@@ -361,11 +366,16 @@
     <ClInclude Include="pe_file_memory_mapping.h" />
     <ClInclude Include="process_environment_block.h" />
     <ClInclude Include="process_heaps.h" />
+    <ClInclude Include="process_heaps_options.h" />
     <ClInclude Include="process_heaps_statistic_bucket_view.h" />
     <ClInclude Include="process_heaps_statistic_view.h" />
     <ClInclude Include="process_heap_entry.h" />
+    <ClInclude Include="process_heap_entry_reference.h" />
     <ClInclude Include="process_environment_variables.h" />
     <ClInclude Include="process_heaps_statistics.h" />
+    <ClInclude Include="process_heap_graph.h" />
+    <ClInclude Include="process_heap_graph_heap_entry.h" />
+    <ClInclude Include="process_heap_graph_node.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
     <ClInclude Include="range_units.h" />
     <ClInclude Include="register_names.h" />
@@ -423,6 +433,9 @@
     <ClInclude Include="windows_error.h" />
     <ClInclude Include="wide_runtime_error.h" />
     <ClInclude Include="windows_setup.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

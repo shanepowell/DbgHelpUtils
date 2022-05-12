@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
         dph_entry(dph_heap const& heap, uint64_t entry_address);
 
         [[nodiscard]] uint64_t entry_address() const { return entry_address_; }
-        [[nodiscard]] dph_heap const& heap() const { return heap_; }
+        [[nodiscard]] dph_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -47,7 +47,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t next_alloc_address() const { return next_alloc_address_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.dph_heap_block_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->dph_heap_block_symbol_type; }
 
         static std::wstring const& symbol_name;
         static std::wstring const& block_info_symbol_name;
@@ -78,17 +78,17 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset dph_heap_block_next_alloc_field_data;
         };
 
-        cache_data const& cache_data_;
-        dph_heap const& heap_;
-        uint64_t const entry_address_;
-        uint64_t const virtual_block_address_{get_virtual_block_address()};
-        size_units::base_16::bytes const virtual_block_size_{get_virtual_block_size()};
-        uint64_t const user_address_{get_user_address()};
-        size_units::base_16::bytes const user_requested_size_{get_user_requested_size()};
-        uint64_t const ust_address_{get_ust_address()};
+        cache_data const* cache_data_;
+        dph_heap const* heap_;
+        uint64_t entry_address_;
+        uint64_t virtual_block_address_{get_virtual_block_address()};
+        size_units::base_16::bytes virtual_block_size_{get_virtual_block_size()};
+        uint64_t user_address_{get_user_address()};
+        size_units::base_16::bytes user_requested_size_{get_user_requested_size()};
+        uint64_t ust_address_{get_ust_address()};
         uint64_t next_alloc_address_{get_next_alloc_address()};
-        bool const allocated_{get_is_allocated()};
-        std::vector<uint64_t> const allocation_stack_trace_{get_allocation_stack_trace()};
+        bool allocated_{get_is_allocated()};
+        std::vector<uint64_t> allocation_stack_trace_{get_allocation_stack_trace()};
     };
 
 }

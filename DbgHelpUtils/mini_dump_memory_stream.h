@@ -21,7 +21,7 @@ namespace dlg_help_utils
         [[nodiscard]] std::experimental::generator<std::pair<void const*,size_t>> ranges();
 
         template<typename T>
-        [[nodiscard]] bool find_pattern(std::function<bool(T, size_t)> const& check_data, std::function<bool(size_t)> const& is_found)
+        [[nodiscard]] bool find_pattern(std::function<bool(T, size_t, size_t&)> const& check_data, std::function<bool(size_t)> const& is_found)
         {
             auto reset_stream = *this;
             size_t index = 0;
@@ -33,13 +33,13 @@ namespace dlg_help_utils
                     break;
                 }
 
-                if(check_data(check, index))
+                if(size_t jump_amount{1}; check_data(check, index, jump_amount))
                 {
                     if(index == 0)
                     {
                         reset_stream = *this;
                     }
-                    ++index;
+                    index += jump_amount;
                     if(is_found(index))
                     {
                         return true;

@@ -7,7 +7,7 @@
 namespace dlg_help_utils::process
 {
     global_variables::global_variables(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& match_pattern)
-    : walker_{walker}
+    : walker_{&walker}
     , symbols_{walker.symbol_walk(match_pattern)}
     {
     }
@@ -18,7 +18,7 @@ namespace dlg_help_utils::process
         {
             if(auto tag = symbol.sym_tag(); is_variable_symbol(tag.value_or(dbg_help::sym_tag_enum::Null)))
             {
-                co_yield global_variable{walker_, symbol};
+                co_yield global_variable{*walker_, symbol};
             }
         }
     }

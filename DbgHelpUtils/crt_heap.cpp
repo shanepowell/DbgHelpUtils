@@ -9,8 +9,8 @@
 namespace dlg_help_utils::heap
 {
     crt_heap::crt_heap(cache_manager& cache, process::process_environment_block const& peb)
-    : cache_manager_{cache}
-    , peb_{peb}
+    : cache_manager_{&cache}
+    , peb_{&peb}
     , crt_first_block_{get_crt_first_block()}
     {
     }
@@ -84,7 +84,7 @@ namespace dlg_help_utils::heap
         while(address != 0)
         {
             co_yield crt_entry{*this, address};
-            address = get_field_pointer_raw(walker(), address, cache_data_.crt_mem_block_header_block_header_next_field_data, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name);
+            address = get_field_pointer_raw(walker(), address, cache_data_->crt_mem_block_header_block_header_next_field_data, crt_entry::symbol_name, common_symbol_names::crt_mem_block_header_block_header_next_field_symbol_name);
         }
     }
 

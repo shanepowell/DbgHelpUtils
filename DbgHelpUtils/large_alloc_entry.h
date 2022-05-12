@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     public:
         large_alloc_entry(segment_heap const& heap, uint64_t large_alloc_entry_address);
 
-        [[nodiscard]] segment_heap const& heap() const { return heap_; }
+        [[nodiscard]] segment_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return large_alloc_entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_large_alloc_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_large_alloc_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -76,11 +76,11 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_and_field_offset heap_large_alloc_allocated_pages_field_data;
         };
 
-        cache_data const& cache_data_;
-        segment_heap const& heap_;
-        uint64_t const large_alloc_entry_address_;
-        size_units::base_16::bytes const size_;
-        uint64_t const ust_address_{0};
-        std::vector<uint64_t> const allocation_stack_trace_{};
+        cache_data const* cache_data_;
+        segment_heap const* heap_;
+        uint64_t large_alloc_entry_address_;
+        size_units::base_16::bytes size_;
+        uint64_t ust_address_{0};
+        std::vector<uint64_t> allocation_stack_trace_{};
    };
 }

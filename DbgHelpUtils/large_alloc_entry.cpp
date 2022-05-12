@@ -11,8 +11,8 @@ namespace dlg_help_utils::heap
     std::wstring const& large_alloc_entry::symbol_name = common_symbol_names::heap_large_alloc_structure_symbol_name;
 
     large_alloc_entry::large_alloc_entry(segment_heap const& heap, uint64_t const large_alloc_entry_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , large_alloc_entry_address_{large_alloc_entry_address}
     , size_{get_size()}
     , ust_address_{get_ust_address()}
@@ -32,37 +32,37 @@ namespace dlg_help_utils::heap
 
     uint64_t large_alloc_entry::virtual_address() const
     {
-        return get_machine_size_field_value(*this, cache_data_.heap_large_alloc_virtual_address_field_data, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->heap_large_alloc_virtual_address_field_data, common_symbol_names::heap_large_alloc_virtual_address_field_symbol_name);
     }
 
     size_units::base_16::bytes large_alloc_entry::unused_bytes() const
     {
-        return size_units::base_16::bytes{stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_.heap_large_alloc_unused_bytes_field_data, common_symbol_names::heap_large_alloc_unused_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_->heap_large_alloc_unused_bytes_field_data, common_symbol_names::heap_large_alloc_unused_bytes_field_symbol_name)};
     }
 
     bool large_alloc_entry::extra_present() const
     {
-        return stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_.heap_large_alloc_extra_present_field_data, common_symbol_names::heap_large_alloc_extra_present_field_symbol_name) != 0x0;
+        return stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_->heap_large_alloc_extra_present_field_data, common_symbol_names::heap_large_alloc_extra_present_field_symbol_name) != 0x0;
     }
 
     uint32_t large_alloc_entry::guard_page_count() const
     {
-        return static_cast<uint32_t>(stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_.heap_large_alloc_guard_page_count_field_data, common_symbol_names::heap_large_alloc_guard_page_count_field_symbol_name));
+        return static_cast<uint32_t>(stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_->heap_large_alloc_guard_page_count_field_data, common_symbol_names::heap_large_alloc_guard_page_count_field_symbol_name));
     }
 
     uint32_t large_alloc_entry::guard_page_alignment() const
     {
-        return static_cast<uint32_t>(stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_.heap_large_alloc_guard_page_alignment_field_data, common_symbol_names::heap_large_alloc_guard_page_alignment_field_symbol_name));
+        return static_cast<uint32_t>(stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_->heap_large_alloc_guard_page_alignment_field_data, common_symbol_names::heap_large_alloc_guard_page_alignment_field_symbol_name));
     }
 
     uint32_t large_alloc_entry::spare() const
     {
-        return static_cast<uint32_t>(stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_.heap_large_alloc_spare_field_data, common_symbol_names::heap_large_alloc_spare_field_symbol_name));
+        return static_cast<uint32_t>(stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_->heap_large_alloc_spare_field_data, common_symbol_names::heap_large_alloc_spare_field_symbol_name));
     }
 
     uint64_t large_alloc_entry::allocated_pages() const
     {
-        return stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_.heap_large_alloc_allocated_pages_field_data, common_symbol_names::heap_large_alloc_allocated_pages_field_symbol_name);
+        return stream_utils::get_bit_field_value<uint64_t>(*this, cache_data_->heap_large_alloc_allocated_pages_field_data, common_symbol_names::heap_large_alloc_allocated_pages_field_symbol_name);
     }
 
     uint64_t large_alloc_entry::block_address() const

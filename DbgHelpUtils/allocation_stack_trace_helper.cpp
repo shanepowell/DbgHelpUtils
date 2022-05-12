@@ -34,9 +34,9 @@ namespace dlg_help_utils::heap::statistic_views
 
     }
 
-    allocation_stack_trace_helper::allocation_stack_trace_helper(stream_stack_dump::mini_dump_memory_walker const& walker, system_module_list const& system_module_list)
-    : walker_{walker}
-    , system_module_list_{system_module_list}
+    allocation_stack_trace_helper::allocation_stack_trace_helper(stream_stack_dump::mini_dump_memory_walker const& walker, system_module_list const& system_module)
+    : walker_{&walker}
+    , system_module_{&system_module}
     {
     }
 
@@ -47,15 +47,15 @@ namespace dlg_help_utils::heap::statistic_views
             return std::nullopt;
         }
 
-        auto is_application_module_filter = [this](uint64_t const& address) { return is_application_module(walker_, system_module_list_, address); };
+        auto is_application_module_filter = [this](uint64_t const& address) { return is_application_module(walker(), system_module(), address); };
 
         //
-        // find the first return stack function return pointer that doesn't exist in the "system" modules as listed in system_module_list_
+        // find the first return stack function return pointer that doesn't exist in the "system" modules as listed in system_module_
         //
         if(auto application_call_sites = entry.allocation_stack_trace() | std::views::filter(is_application_module_filter);
             std::ranges::begin(application_call_sites) != std::ranges::end(application_call_sites))
         {
-            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker_.module_list(), walker_.unloaded_module_list(), walker_.symbol_engine()).value();
+            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker().module_list(), walker().unloaded_module_list(), walker().symbol_engine()).value();
         }
 
         return std::nullopt;
@@ -77,7 +77,7 @@ namespace dlg_help_utils::heap::statistic_views
             return find_common_allocation_callsite(entries.front());
         }
 
-        auto is_application_module_filter = [this](uint64_t const& address) { return is_application_module(walker_, system_module_list_, address); };
+        auto is_application_module_filter = [this](uint64_t const& address) { return is_application_module(walker(), system_module(), address); };
 
         // ReSharper disable once CppTooWideScopeInitStatement
         auto find_application_module_in_all_other_stacks_filter = [&entries](uint64_t const address)
@@ -89,7 +89,7 @@ namespace dlg_help_utils::heap::statistic_views
         if(auto application_call_sites = entries.front().allocation_stack_trace() | std::views::filter(is_application_module_filter) | std::views::filter(find_application_module_in_all_other_stacks_filter);
             std::ranges::begin(application_call_sites) != std::ranges::end(application_call_sites))
         {
-            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker_.module_list(), walker_.unloaded_module_list(), walker_.symbol_engine()).value();
+            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker().module_list(), walker().unloaded_module_list(), walker().symbol_engine()).value();
         }
 
         return std::nullopt;

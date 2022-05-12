@@ -22,7 +22,7 @@ namespace dlg_help_utils::heap
     public:
         heap_lfh_entry(heap_lfh_context const& heap, uint64_t heap_lfh_entry_address, size_units::base_16::bytes block_size, bool allocated, bool has_unused_bytes);
 
-        [[nodiscard]] heap_lfh_context const& heap() const { return heap_; }
+        [[nodiscard]] heap_lfh_context const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -46,14 +46,14 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 
     private:
-        heap_lfh_context const& heap_;
-        uint64_t const heap_lfh_entry_address_;
-        size_units::base_16::bytes const block_size_;
-        bool const allocated_;
-        bool const has_unused_bytes_;
-        size_units::base_16::bytes const unused_bytes_;
-        uint64_t const ust_address_{0};
-        std::vector<uint64_t> const allocation_stack_trace_{};
+        heap_lfh_context const* heap_;
+        uint64_t heap_lfh_entry_address_;
+        size_units::base_16::bytes block_size_;
+        bool allocated_;
+        bool has_unused_bytes_;
+        size_units::base_16::bytes unused_bytes_;
+        uint64_t ust_address_{0};
+        std::vector<uint64_t> allocation_stack_trace_{};
     };
 }
 

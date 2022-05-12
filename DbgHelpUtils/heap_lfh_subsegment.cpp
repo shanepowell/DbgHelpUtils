@@ -12,11 +12,11 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_lfh_subsegment::symbol_name = common_symbol_names::heap_lfh_subsegment_structure_symbol_name;
 
     heap_lfh_subsegment::heap_lfh_subsegment(heap_lfh_context const& heap, const uint64_t heap_lfh_subsegment_address)
-    : cache_data_{heap.heap().cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.heap().cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_lfh_subsegment_address_{heap_lfh_subsegment_address}
     {
-        if(auto block_offsets = read_udt_value_in_type(walker(), cache_data_.heap_lfh_subsegment_block_offsets_field_data, heap_lfh_subsegment_address);
+        if(auto block_offsets = read_udt_value_in_type(walker(), cache_data_->heap_lfh_subsegment_block_offsets_field_data, heap_lfh_subsegment_address);
             block_offsets.has_value())
         {
             block_offsets_ = std::move(std::get<0>(block_offsets.value()));
@@ -50,22 +50,22 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_lfh_subsegment::free_count() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_lfh_subsegment_free_count_field_data, common_symbol_names::heap_lfh_subsegment_free_count_field_symbol_name);
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_lfh_subsegment_free_count_field_data, common_symbol_names::heap_lfh_subsegment_free_count_field_symbol_name);
     }
 
     uint16_t heap_lfh_subsegment::block_count() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_lfh_subsegment_block_count_field_data, common_symbol_names::heap_lfh_subsegment_block_count_field_symbol_name);
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_lfh_subsegment_block_count_field_data, common_symbol_names::heap_lfh_subsegment_block_count_field_symbol_name);
     }
 
     lfh_subsegment_location_utils::location heap_lfh_subsegment::location() const
     {
-        return static_cast<lfh_subsegment_location_utils::location>(stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_subsegment_location_field_data, common_symbol_names::heap_lfh_subsegment_location_field_symbol_name));
+        return static_cast<lfh_subsegment_location_utils::location>(stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_subsegment_location_field_data, common_symbol_names::heap_lfh_subsegment_location_field_symbol_name));
     }
 
     uint8_t heap_lfh_subsegment::witheld_block_count() const
     {
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_subsegment_witheld_block_count_field_data, common_symbol_names::heap_lfh_subsegment_witheld_block_count_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_subsegment_witheld_block_count_field_data, common_symbol_names::heap_lfh_subsegment_witheld_block_count_field_symbol_name);
     }
 
     template <typename T>
@@ -87,25 +87,25 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes heap_lfh_subsegment::block_size() const
     {
-        return size_units::base_16::bytes{get_field_value_from_block_offsets<uint16_t>(cache_data_.heap_lfh_subsegment_encoded_offsets_block_size_field_data, common_symbol_names::heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_field_value_from_block_offsets<uint16_t>(cache_data_->heap_lfh_subsegment_encoded_offsets_block_size_field_data, common_symbol_names::heap_lfh_subsegment_encoded_offsets_block_size_field_symbol_name)};
     }
 
     uint8_t heap_lfh_subsegment::commit_unit_shift() const
     {
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_subsegment_commit_unit_shift_field_data, common_symbol_names::heap_lfh_subsegment_commit_unit_shift_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_subsegment_commit_unit_shift_field_data, common_symbol_names::heap_lfh_subsegment_commit_unit_shift_field_symbol_name);
     }
 
     uint8_t heap_lfh_subsegment::commit_unit_count() const
     {
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_subsegment_commit_unit_count_field_data, common_symbol_names::heap_lfh_subsegment_commit_unit_count_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_subsegment_commit_unit_count_field_data, common_symbol_names::heap_lfh_subsegment_commit_unit_count_field_symbol_name);
     }
 
     std::experimental::generator<heap_lfh_entry> heap_lfh_subsegment::entries() const
     {
         auto const block_count_data = block_count();
         auto const block_size_data = block_size();
-        auto block_address = heap_lfh_subsegment_address() + get_field_value_from_block_offsets<uint16_t>(cache_data_.heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data, common_symbol_names::heap_lfh_subsegment_encoded_offsets_first_block_offset_field_symbol_name);
-        auto block_bitmap_address = heap_lfh_subsegment_address() + cache_data_.heap_lfh_subsegment_bitmap_offset;
+        auto block_address = heap_lfh_subsegment_address() + get_field_value_from_block_offsets<uint16_t>(cache_data_->heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data, common_symbol_names::heap_lfh_subsegment_encoded_offsets_first_block_offset_field_symbol_name);
+        auto block_bitmap_address = heap_lfh_subsegment_address() + cache_data_->heap_lfh_subsegment_bitmap_offset;
         uint32_t mask = 0x00;
         uint32_t data{};
 

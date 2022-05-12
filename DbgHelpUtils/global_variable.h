@@ -18,7 +18,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] mini_dump_memory_stream stream() const;
 
     private:
-        stream_stack_dump::mini_dump_memory_walker const& walker_;
+        stream_stack_dump::mini_dump_memory_walker const* walker_;
         dbg_help::symbol_type_info symbol_info_;
     };
 }

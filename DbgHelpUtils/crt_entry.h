@@ -24,7 +24,7 @@ namespace dlg_help_utils::heap
     public:
         crt_entry(crt_heap const& heap, uint64_t entry_address);
 
-        [[nodiscard]] crt_heap const& heap() const { return heap_; }
+        [[nodiscard]] crt_heap const& heap() const { return *heap_; }
         [[nodiscard]] process::process_environment_block const& peb() const;
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
 
@@ -39,7 +39,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t user_address() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.crt_mem_block_header_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->crt_mem_block_header_symbol_type; }
 
         static std::wstring const& symbol_name;
 
@@ -65,9 +65,9 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_file_name_field_data;
         };
 
-        cache_data const& cache_data_;
-        crt_heap const& heap_;
-        uint64_t const entry_address_;
-        std::wstring const file_name_;
+        cache_data const* cache_data_;
+        crt_heap const* heap_;
+        uint64_t entry_address_;
+        std::wstring file_name_;
     };
 }

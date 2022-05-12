@@ -27,7 +27,7 @@ namespace dlg_help_utils::heap
     public:
         heap_segment_context(segment_heap const& heap, uint64_t heap_segment_context_address);
 
-        [[nodiscard]] segment_heap const& heap() const { return heap_; }
+        [[nodiscard]] segment_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -46,7 +46,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<page_range_descriptor> free_page_ranges() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_segment_context_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_seg_context_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_seg_context_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -66,8 +66,8 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_and_field_offset segment_heap_seg_context_free_page_ranges_field_data;
         };
 
-        cache_data const& cache_data_;
-        segment_heap const& heap_;
-        uint64_t const heap_segment_context_address_;
+        cache_data const* cache_data_;
+        segment_heap const* heap_;
+        uint64_t heap_segment_context_address_;
     };
 }

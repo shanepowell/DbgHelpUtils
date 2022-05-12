@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     public:
         lfh_segment(lfh_heap const& heap, uint64_t lfh_segment_address);
 
-        [[nodiscard]] lfh_heap const& lfh_heap() const { return lfh_heap_; }
+        [[nodiscard]] lfh_heap const& lfh_heap() const { return *lfh_heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -35,7 +35,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<heap_subsegment> const& subsegments() const { return subsegments_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.lfh_block_zone_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->lfh_block_zone_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(nt_heap const& heap);
@@ -56,9 +56,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] static size_t get_lfh_block_zone_size(cache_data const& cache, nt_heap const& heap);
 
     private:
-        cache_data const& cache_data_;
-        heap::lfh_heap const& lfh_heap_;
-        uint64_t const lfh_segment_address_;
-        std::vector<heap_subsegment> const subsegments_{build_subsegments()};
+        cache_data const* cache_data_;
+        heap::lfh_heap const* lfh_heap_;
+        uint64_t lfh_segment_address_;
+        std::vector<heap_subsegment> subsegments_{build_subsegments()};
     };
 }

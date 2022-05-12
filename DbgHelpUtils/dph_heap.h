@@ -28,10 +28,10 @@ namespace dlg_help_utils::heap
     public:
         dph_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t dph_heap_address);
 
-        [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
+        [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
 
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
-        [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
+        [[nodiscard]] process::process_environment_block const& peb() const { return *peb_; }
         
         [[nodiscard]] uint64_t address() const { return dph_heap_address_; }
 
@@ -58,7 +58,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.dph_heap_root_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->dph_heap_root_symbol_type; }
 
         static std::wstring const& symbol_name;
 
@@ -87,10 +87,10 @@ namespace dlg_help_utils::heap
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
-        cache_manager& cache_manager_;
-        process::process_environment_block const& peb_;
-        uint64_t const dph_heap_address_;
-        cache_data const& cache_data_{setup_globals()};
-        ust_address_stack_trace stack_trace_{cache_manager_, walker()};
+        cache_manager* cache_manager_;
+        process::process_environment_block const* peb_;
+        uint64_t dph_heap_address_;
+        cache_data const* cache_data_{&setup_globals()};
+        ust_address_stack_trace stack_trace_{cache(), walker()};
     };
 }

@@ -28,7 +28,7 @@ namespace dlg_help_utils::heap
         heap_vs_entry(segment_heap const& heap, uint64_t heap_vs_entry_address, std::unique_ptr<uint8_t[]> buffer);
         heap_vs_entry(segment_heap const& heap, uint64_t heap_vs_entry_address, uint64_t uncommitted_size);
 
-        [[nodiscard]] segment_heap const& heap() const { return heap_; }
+        [[nodiscard]] segment_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -59,7 +59,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint16_t raw_size() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_vs_entry_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_vs_chunk_header_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_vs_chunk_header_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -91,15 +91,15 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_and_field_offset heap_vs_chunk_header_sizes_unsafe_prev_size_field_data;
         };
 
-        cache_data const& cache_data_;
-        segment_heap const& heap_;
-        uint64_t const heap_vs_entry_address_;
+        cache_data const* cache_data_;
+        segment_heap const* heap_;
+        uint64_t heap_vs_entry_address_;
         std::unique_ptr<uint8_t[]> buffer_;
-        size_units::base_16::bytes const size_;
-        size_units::base_16::bytes const previous_size_{0};
-        bool const is_valid_{true};
-        bool const uncommitted_range_{false};
-        uint64_t const ust_address_{0};
-        std::vector<uint64_t> const allocation_stack_trace_{};
+        size_units::base_16::bytes size_;
+        size_units::base_16::bytes previous_size_{0};
+        bool is_valid_{true};
+        bool uncommitted_range_{false};
+        uint64_t ust_address_{0};
+        std::vector<uint64_t> allocation_stack_trace_{};
    };
 }

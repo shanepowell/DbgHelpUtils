@@ -33,8 +33,8 @@ namespace dlg_help_utils::heap
         void set_base_diff_filter(crt_heap& base_diff_filter);
         void clear_base_diff_filter();
 
-        [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
-        [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
+        [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
+        [[nodiscard]] process::process_environment_block const& peb() const { return *peb_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
 
         [[nodiscard]] bool is_using_crt_heap() const { return crt_first_block_ != 0; }
@@ -58,10 +58,10 @@ namespace dlg_help_utils::heap
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
-        cache_manager& cache_manager_;
-        process::process_environment_block const& peb_;
-        uint64_t const crt_first_block_;
-        cache_data const& cache_data_{setup_globals()};
+        cache_manager* cache_manager_;
+        process::process_environment_block const* peb_;
+        uint64_t crt_first_block_;
+        cache_data const* cache_data_{&setup_globals()};
         crt_heap* base_diff_filter_{nullptr};
     };
 }

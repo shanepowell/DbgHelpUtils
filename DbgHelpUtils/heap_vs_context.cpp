@@ -15,8 +15,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_vs_context::free_chunk_symbol_name = common_symbol_names::heap_vs_chunk_free_header_structure_symbol_name;
 
     heap_vs_context::heap_vs_context(segment_heap const& heap, uint64_t const heap_vs_context_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_vs_context_address_{heap_vs_context_address}
     {
     }
@@ -33,38 +33,38 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_vs_context::total_committed_units() const
     {
-        return get_machine_size_field_value(*this, cache_data_.heap_vs_context_total_committed_units_field_data, common_symbol_names::heap_vs_context_total_committed_units_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->heap_vs_context_total_committed_units_field_data, common_symbol_names::heap_vs_context_total_committed_units_field_symbol_name);
     }
 
     uint64_t heap_vs_context::free_committed_units() const
     {
-        return get_machine_size_field_value(*this, cache_data_.heap_vs_context_free_committed_units_field_data, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->heap_vs_context_free_committed_units_field_data, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name);
     }
 
     std::experimental::generator<heap_vs_subsegment> heap_vs_context::subsegments() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), 
-            stream_utils::get_field_address(*this, cache_data_.heap_vs_context_subsegment_list_field_data, common_symbol_names::heap_vs_context_subsegment_list_field_symbol_name),
+            stream_utils::get_field_address(*this, cache_data_->heap_vs_context_subsegment_list_field_data, common_symbol_names::heap_vs_context_subsegment_list_field_symbol_name),
             heap_vs_subsegment::symbol_name,
             common_symbol_names::heap_vs_subsegment_list_entry_field_symbol_name,
             [](uint64_t const address, uint64_t const parent_address){ return address ^ parent_address; }}; 
             auto const entry_address : list_walker.entries())
         {
-            co_yield heap_vs_subsegment{heap_, entry_address};
+            co_yield heap_vs_subsegment{heap(), entry_address};
         }
     }
 
     std::experimental::generator<heap_vs_entry> heap_vs_context::free_entries() const
     {
         for(ntdll_utilities::rtl_rb_tree_walker const rb_tree_walker{heap().cache(), walker()
-            , heap_vs_context_address() + stream_utils::get_field_offset(cache_data_.heap_vs_context_free_chunk_tree_field_data, symbol_name, common_symbol_names::heap_vs_context_free_chunk_tree_field_symbol_name)
+            , heap_vs_context_address() + stream_utils::get_field_offset(cache_data_->heap_vs_context_free_chunk_tree_field_data, symbol_name, common_symbol_names::heap_vs_context_free_chunk_tree_field_symbol_name)
             , free_chunk_symbol_name
             , common_symbol_names::heap_vs_chunk_free_header_node_field_symbol_name};
             auto const entry_address : rb_tree_walker.entries())
         {
-            auto buffer = std::make_unique<uint8_t[]>(cache_data_.heap_vs_chunk_header_length);
-            if(auto stream = walker().get_process_memory_stream(entry_address, cache_data_.heap_vs_chunk_header_length);
-                stream.eof() || stream.read(buffer.get(), cache_data_.heap_vs_chunk_header_length) != cache_data_.heap_vs_chunk_header_length)
+            auto buffer = std::make_unique<uint8_t[]>(cache_data_->heap_vs_chunk_header_length);
+            if(auto stream = walker().get_process_memory_stream(entry_address, cache_data_->heap_vs_chunk_header_length);
+                stream.eof() || stream.read(buffer.get(), cache_data_->heap_vs_chunk_header_length) != cache_data_->heap_vs_chunk_header_length)
             {
                 continue;
             }

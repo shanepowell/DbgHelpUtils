@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
+#include "memory_range.h"
 #include "size_units.h"
 #include "stream_utils.h"
 #include "symbol_type_info.h"
@@ -42,15 +43,15 @@ namespace dlg_help_utils::heap
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t uncommitted_size);
         heap_entry(nt_heap const& heap, uint64_t heap_entry_address, uint64_t unknown_size, UnknownSizeType);
 
-        [[nodiscard]] nt_heap const& heap() const { return heap_; }
+        [[nodiscard]] nt_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
         [[nodiscard]] bool is_valid() const { return is_valid_; }
         [[nodiscard]] uint64_t address() const { return heap_entry_address_; }
         [[nodiscard]] uint64_t user_address() const { return user_address_; }
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
-        [[nodiscard]] uint64_t block_address() const { return heap_entry_address_ + cache_data_.heap_entry_length; }
-        [[nodiscard]] uint64_t block_size() const { return size().count() - cache_data_.heap_entry_length; }
+        [[nodiscard]] uint64_t block_address() const { return heap_entry_address_ + cache_data_->heap_entry_length; }
+        [[nodiscard]] uint64_t block_size() const { return size().count() - cache_data_->heap_entry_length; }
 
         [[nodiscard]] uint8_t flags() const { return flags_; }
         [[nodiscard]] size_units::base_16::bytes size() const { return size_; }
@@ -70,7 +71,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_busy() const { return !is_uncommitted() && !is_unknown() && (is_lfh_entry() ? is_lfh_busy() : (flags() & FlagBusy) == FlagBusy); }
 
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
-        
+        [[nodiscard]] memory_range memory_range() const { return dlg_help_utils::memory_range{ address(), address() + static_cast<uint64_t>(size().count()) }; }
+
         static uint8_t constexpr FlagBusy = 0x01;
         static uint8_t constexpr FlagExtraPresent = 0x02;
         static uint8_t constexpr FlagFillPattern = 0x04;
@@ -82,7 +84,7 @@ namespace dlg_help_utils::heap
         static uint8_t constexpr FlagLFHMarker = 0x80;
         static uint8_t constexpr LfhFlagUstBusy = 0xc2;
 
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_entry_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_entry_symbol_type; }
 
         static void setup_globals(nt_heap const& heap);
         static std::wstring const& symbol_name;
@@ -125,25 +127,25 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset heap_entry_unused_bytes_length_field_data;
         };
 
-        cache_data const& cache_data_;
-        nt_heap const& heap_;
-        uint64_t const heap_entry_address_;
+        cache_data const* cache_data_;
+        nt_heap const* heap_;
+        uint64_t heap_entry_address_;
         std::shared_ptr<uint8_t[]> buffer_;
-        uint8_t const flags_{0};
-        size_units::base_16::bytes const size_;
-        size_units::base_16::bytes const previous_size_{0};
-        uint8_t const small_tag_index_{0};
-        uint8_t const segment_offset_{0};
-        uint8_t const raw_unused_bytes_{0};
-        uint64_t const ust_user_address_{0};
+        uint8_t flags_{0};
+        size_units::base_16::bytes size_;
+        size_units::base_16::bytes previous_size_{0};
+        uint8_t small_tag_index_{0};
+        uint8_t segment_offset_{0};
+        uint8_t raw_unused_bytes_{0};
+        uint64_t ust_user_address_{0};
         size_units::base_16::bytes unused_bytes_{0};
         size_units::base_16::bytes requested_size_{0};
-        uint64_t const user_address_{0};
+        uint64_t user_address_{0};
         size_units::base_16::bytes end_unused_bytes_{0};
-        uint64_t const ust_address_{0};
-        bool const is_valid_{true};
-        bool const is_virtual_alloc_{false};
-        std::vector<uint64_t> const allocation_stack_trace_{};
+        uint64_t ust_address_{0};
+        bool is_valid_{true};
+        bool is_virtual_alloc_{false};
+        std::vector<uint64_t> allocation_stack_trace_{};
     };
 
 }

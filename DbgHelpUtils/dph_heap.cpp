@@ -13,8 +13,8 @@ namespace dlg_help_utils::heap
     std::wstring const& dph_heap::symbol_name = common_symbol_names::dph_heap_root_structure_symbol_name;
 
     dph_heap::dph_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t const dph_heap_address)
-    : cache_manager_{cache}
-    , peb_{peb}
+    : cache_manager_{&cache}
+    , peb_{&peb}
     , dph_heap_address_{dph_heap_address}
     {
     }
@@ -26,42 +26,42 @@ namespace dlg_help_utils::heap
 
     uint64_t dph_heap::normal_heap() const
     {
-        return get_field_pointer(walker(), dph_heap_address_, cache_data_.dph_heap_root_normal_heap_field_data, symbol_name, common_symbol_names::dph_heap_root_normal_heap_field_symbol_name);
+        return get_field_pointer(walker(), dph_heap_address_, cache_data_->dph_heap_root_normal_heap_field_data, symbol_name, common_symbol_names::dph_heap_root_normal_heap_field_symbol_name);
     }
 
     uint32_t dph_heap::flags() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.dph_heap_root_flags_field_data, common_symbol_names::dph_heap_root_flags_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->dph_heap_root_flags_field_data, common_symbol_names::dph_heap_root_flags_field_symbol_name);
     }
 
     uint32_t dph_heap::extra_flags() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.dph_heap_root_extra_flags_field_data, common_symbol_names::dph_heap_root_extra_flags_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->dph_heap_root_extra_flags_field_data, common_symbol_names::dph_heap_root_extra_flags_field_symbol_name);
     }
 
     uint32_t dph_heap::seed() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.dph_heap_root_seed_field_data, common_symbol_names::dph_heap_root_seed_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->dph_heap_root_seed_field_data, common_symbol_names::dph_heap_root_seed_field_symbol_name);
     }
 
     uint32_t dph_heap::busy_allocations() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.dph_heap_root_busy_allocations_field_data, common_symbol_names::dph_heap_root_busy_allocations_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->dph_heap_root_busy_allocations_field_data, common_symbol_names::dph_heap_root_busy_allocations_field_symbol_name);
     }
 
     size_units::base_16::bytes dph_heap::busy_allocations_committed() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_root_busy_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->dph_heap_root_busy_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_busy_allocations_bytes_committed_field_symbol_name)};
     }
 
     uint32_t dph_heap::virtual_storage_ranges() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.dph_heap_root_virtual_storage_ranges_field_data, common_symbol_names::dph_heap_root_virtual_storage_ranges_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->dph_heap_root_virtual_storage_ranges_field_data, common_symbol_names::dph_heap_root_virtual_storage_ranges_field_symbol_name);
     }
 
     size_units::base_16::bytes dph_heap::virtual_storage_total() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_root_virtual_storage_bytes_field_data, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->dph_heap_root_virtual_storage_bytes_field_data, common_symbol_names::dph_heap_root_virtual_storage_bytes_field_symbol_name)};
     }
 
     uint32_t dph_heap::free_allocations() const
@@ -78,7 +78,7 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes dph_heap::free_allocations_committed() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_root_free_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->dph_heap_root_free_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
     }
 
     std::experimental::generator<dph_heap> dph_heap::dph_heaps(cache_manager& cache, process::process_environment_block const& peb)
@@ -104,7 +104,7 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<dph_entry> dph_heap::busy_entries() const
     {
-        for(ntdll_utilities::rtl_balanced_links_walker const balanced_link_walker{cache_manager_, walker(), address() + stream_utils::get_field_offset(cache_data_.dph_heap_root_busy_nodes_table_field_data, symbol_name, common_symbol_names::dph_heap_root_busy_nodes_table_field_symbol_name)};
+        for(ntdll_utilities::rtl_balanced_links_walker const balanced_link_walker{cache(), walker(), address() + stream_utils::get_field_offset(cache_data_->dph_heap_root_busy_nodes_table_field_data, symbol_name, common_symbol_names::dph_heap_root_busy_nodes_table_field_symbol_name)};
             auto const entry_address : balanced_link_walker.entries())
         {
             co_yield dph_entry{*this, entry_address};
@@ -113,13 +113,13 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<dph_entry> dph_heap::free_entries() const
     {
-        auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_free_allocations_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name);
+        auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_->dph_heap_root_free_allocations_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name);
         if(head == 0)
         {
             co_return;
         }
 
-        auto const tail = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_free_allocations_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_tail_field_symbol_name);
+        auto const tail = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_->dph_heap_root_free_allocations_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_tail_field_symbol_name);
         if(tail == 0)
         {
             co_return;
@@ -133,13 +133,13 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<dph_entry> dph_heap::virtual_ranges() const
     {
-        auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_virtual_storage_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name);
+        auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_->dph_heap_root_virtual_storage_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name);
         if(head == 0)
         {
             co_return;
         }
 
-        auto const tail = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_.dph_heap_root_virtual_storage_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_tail_field_symbol_name);
+        auto const tail = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_->dph_heap_root_virtual_storage_list_tail_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_tail_field_symbol_name);
         if(tail == 0)
         {
             co_return;

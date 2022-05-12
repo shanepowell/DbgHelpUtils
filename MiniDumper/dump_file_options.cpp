@@ -98,14 +98,20 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(display_heap_entries_)["--heapentries"]("heap entries only")
         | lyra::opt(display_crtheap_)["--crtheap"]("crtheap data information")
         | lyra::opt(display_stack_trace_database_)["--std"]("stack trace database")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(process_heaps_options_.no_filter_heap_entries())["--nofilterheapentries"]("don't filter heap entries for OS usages")
         | lyra::opt(disable_symbol_load_cancel_keyboard_check_)["--disable-symbol-load-cancel-keyboard-check"]("disable the keyboard check when loading symbols")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(display_heap_graph_)["--heapgraph"]("calculate heap graph")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(display_heap_graph_to_reference_limit_raw_, "100")["--heapgraphtoxreflimit"]("limit the display of to references to x limit (default 100)")
         | lyra::opt(heap_statistics_raw_, dlg_help_utils::join(g_heap_statistics_view_options | std::views::keys, "|"sv))["--heapstat"]("display heap statistic").choices([](std::string const& value) { return g_heap_statistics_view_options.contains(value); })
         | lyra::opt(by_range_view_range_raw_, "range")["--viewrange"]("heap size statistic view bucket size")
         | lyra::opt(system_module_list_file_, "filename")["--systemmodules"]("json file holding the list of system modules")
         // ReSharper disable once StringLiteralTypo
-        | lyra::opt(view_sort_column_raw_, dlg_help_utils::join(g_view_sort_column | std::views::keys, "|"sv))["--statsortcolumn"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_column.contains(value); })
+        | lyra::opt(view_sort_column_raw_, dlg_help_utils::join(g_view_sort_column | std::views::keys, "|"sv))["--statsortcolumn"]("heap statistic sort column").choices([](std::string const& value) { return g_view_sort_column.contains(value); })
         // ReSharper disable once StringLiteralTypo
-        | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("display heap statistic").choices([](std::string const& value) { return g_view_sort_order.contains(value); })
+        | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("heap statistic sort order").choices([](std::string const& value) { return g_view_sort_order.contains(value); })
         | lyra::opt(output_filename_raw_, "filename")["--out"]("output filename")
     ;
 }
@@ -122,7 +128,7 @@ void dump_file_options::process_raw_options()
         dump_stream_types_.reserve(dump_stream_types_raw_.size());
         for (auto const& stream_type : dump_stream_types_raw_)
         {
-            dump_stream_types_.emplace_back(dlg_help_utils::mini_dump_stream_type::from_string(dlg_help_utils::string_conversation::acp_to_wstring(stream_type)));
+            dump_stream_types_.emplace_back(dlg_help_utils::mini_dump_stream_type::from_wstring(dlg_help_utils::string_conversation::acp_to_wstring(stream_type)));
         }
         dump_stream_types_raw_.clear();
     }
@@ -154,6 +160,12 @@ void dump_file_options::process_raw_options()
     {
         limit_hex_dump_memory_size_ = dlg_help_utils::size_units::base_16::from_wstring(dlg_help_utils::string_conversation::acp_to_wstring(limit_hex_dump_memory_size_raw_)).count();
         limit_hex_dump_memory_size_raw_.clear();
+    }
+
+    if(!display_heap_graph_to_reference_limit_raw_.empty())
+    {
+        display_heap_graph_to_reference_limit_ = static_cast<size_t>(dlg_help_utils::size_units::base_16::from_wstring(dlg_help_utils::string_conversation::acp_to_wstring(display_heap_graph_to_reference_limit_raw_)).count());
+        display_heap_graph_to_reference_limit_raw_.clear();
     }
 
     symbol_types_ = convert_to_wstring(symbol_types_raw_);

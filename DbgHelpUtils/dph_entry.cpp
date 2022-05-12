@@ -12,8 +12,8 @@ namespace dlg_help_utils::heap
     std::wstring const& dph_entry::block_info_symbol_name = common_symbol_names::dph_block_information_structure_symbol_name;
 
     dph_entry::dph_entry(dph_heap const& heap, uint64_t const entry_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , entry_address_{entry_address}
     {
     }
@@ -49,32 +49,32 @@ namespace dlg_help_utils::heap
 
     uint64_t dph_entry::get_virtual_block_address() const
     {
-        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_virtual_block_field_data, symbol_name, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_->dph_heap_block_virtual_block_field_data, symbol_name, common_symbol_names::dph_heap_block_virtual_block_field_symbol_name);
     }
 
     size_units::base_16::bytes dph_entry::get_virtual_block_size() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_block_virtual_block_size_field_data, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->dph_heap_block_virtual_block_size_field_data, common_symbol_names::dph_heap_block_virtual_block_size_field_symbol_name)};
     }
 
     uint64_t dph_entry::get_user_address() const
     {
-        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_user_allocation_field_data, symbol_name, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_->dph_heap_block_user_allocation_field_data, symbol_name, common_symbol_names::dph_heap_block_user_allocation_field_symbol_name);
     }
 
     size_units::base_16::bytes dph_entry::get_user_requested_size() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.dph_heap_block_user_requested_size_field_data, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name)};
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->dph_heap_block_user_requested_size_field_data, common_symbol_names::dph_heap_block_user_requested_size_field_symbol_name)};
     }
 
     uint64_t dph_entry::get_ust_address() const
     {
-        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_stack_trace_field_data, symbol_name, common_symbol_names::dph_heap_block_stack_trace_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_->dph_heap_block_stack_trace_field_data, symbol_name, common_symbol_names::dph_heap_block_stack_trace_field_symbol_name);
     }
 
     uint64_t dph_entry::get_next_alloc_address() const
     {
-        return get_field_pointer_raw(walker(), entry_address(), cache_data_.dph_heap_block_next_alloc_field_data, symbol_name, common_symbol_names::dph_heap_block_next_alloc_field_symbol_name);
+        return get_field_pointer_raw(walker(), entry_address(), cache_data_->dph_heap_block_next_alloc_field_data, symbol_name, common_symbol_names::dph_heap_block_next_alloc_field_symbol_name);
     }
 
     bool dph_entry::get_is_allocated() const
@@ -84,13 +84,13 @@ namespace dlg_help_utils::heap
             return false;
         }
 
-        auto const value = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.dph_block_information_start_stamp_field_data, user_address() - cache_data_.dph_block_information_symbol_length);
+        auto const value = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_->dph_block_information_start_stamp_field_data, user_address() - cache_data_->dph_block_information_symbol_length);
         auto const start_stamp = value.value_or(0);
         return start_stamp == StampAllocFullPageMode || start_stamp == StampAllocNormalPageMode;
     }
 
     std::vector<uint64_t> dph_entry::get_allocation_stack_trace() const
     {
-        return heap_.stack_trace().read_allocation_stack_trace(peb(), ust_address());
+        return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
     }
 }

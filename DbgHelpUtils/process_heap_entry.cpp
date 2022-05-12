@@ -14,7 +14,7 @@
 namespace dlg_help_utils::heap
 {
     process_heap_entry::process_heap_entry(dph_entry const& entry)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(heap_entry const& entry)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
@@ -38,7 +38,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(heap_lfh_entry const& entry)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(page_range_descriptor const& entry)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
@@ -62,7 +62,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(heap_vs_entry const& entry)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{entry.uncommitted_range() ? entry.block_address() : entry.user_address()}
     , user_size_{entry.uncommitted_range() ? size_units::base_16::bytes{entry.block_size()} : entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
@@ -74,7 +74,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(large_alloc_entry const& entry)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{entry.user_address()}
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
@@ -86,7 +86,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(process::process_environment_block const& peb, memory_range const& entry)
-    : peb_{peb}
+    : peb_{&peb}
     , user_address_{entry.start_range}
     , user_size_{entry.end_range - entry.start_range}
     , ust_address_{0}
@@ -97,7 +97,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(dph_entry const& entry, crt_entry const& crt_block)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
     , ust_address_{entry.ust_address()}
@@ -113,7 +113,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(heap_entry const& entry, crt_entry const& crt_block)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
     , ust_address_{entry.ust_address()}
@@ -129,7 +129,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(heap_lfh_entry const& entry, crt_entry const& crt_block)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
     , ust_address_{entry.ust_address()}
@@ -145,7 +145,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(page_range_descriptor const& entry, crt_entry const& crt_block)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
     , ust_address_{entry.ust_address()}
@@ -161,7 +161,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(heap_vs_entry const& entry, crt_entry const& crt_block)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
     , ust_address_{entry.ust_address()}
@@ -177,7 +177,7 @@ namespace dlg_help_utils::heap
     }
 
     process_heap_entry::process_heap_entry(large_alloc_entry const& entry, crt_entry const& crt_block)
-    : peb_{entry.peb()}
+    : peb_{&entry.peb()}
     , user_address_{crt_block.user_address()}
     , user_size_{crt_block.data_size()}
     , ust_address_{entry.ust_address()}
@@ -216,16 +216,16 @@ namespace dlg_help_utils::heap
         {
         case block_range_match_result::block_match:
         case block_range_match_result::block_contains:
-            return peb_.walker().get_process_memory_stream(range_address, range_size.count());
+            return peb_->walker().get_process_memory_stream(range_address, range_size.count());
 
         case block_range_match_result::user_contains_block:
-            return peb_.walker().get_process_memory_stream(user_address(), user_requested_size().count());
+            return peb_->walker().get_process_memory_stream(user_address(), user_requested_size().count());
 
         case block_range_match_result::block_partially_contains:
             {
                 auto const start_range = std::max(range_address, user_address());
                 auto const end_range = std::min(range_address + range_size.count(), user_address() + user_requested_size().count());
-                return peb_.walker().get_process_memory_stream(start_range, end_range - start_range);
+                return peb_->walker().get_process_memory_stream(start_range, end_range - start_range);
             }
 
         case block_range_match_result::block_no_match:
@@ -238,7 +238,7 @@ namespace dlg_help_utils::heap
 
     mini_dump_memory_stream process_heap_entry::all_user_data() const
     {
-        return peb_.walker().get_process_memory_stream(user_address(), user_requested_size().count());
+        return peb_->walker().get_process_memory_stream(user_address(), user_requested_size().count());
     }
 
     bool process_heap_entry::contains_address_range(uint64_t const address, size_units::base_16::bytes const size) const
@@ -248,7 +248,7 @@ namespace dlg_help_utils::heap
 
     block_range_match_result process_heap_entry::match_range(uint64_t const range_address, size_units::base_16::bytes const range_size) const
     {
-        return heap_match_utils::does_memory_match_to_range(peb_.walker(), range_address, range_size, user_address(), user_requested_size());
+        return heap_match_utils::does_memory_match_to_range(peb_->walker(), range_address, range_size, user_address(), user_requested_size());
     }
 
     uint64_t process_heap_entry::get_nt_heap_entry_check_block_start(heap_entry const& entry) const

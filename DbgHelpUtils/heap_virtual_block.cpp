@@ -12,10 +12,10 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_virtual_block::symbol_name = common_symbol_names::heap_virtual_alloc_entry_structure_symbol_name;
 
     heap_virtual_block::heap_virtual_block(nt_heap const& heap, uint64_t const heap_virtual_block_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_virtual_block_address_(heap_virtual_block_address)
-    , data_address_{heap_virtual_block_address + cache_data_.heap_virtual_block_length}
+    , data_address_{heap_virtual_block_address + cache_data_->heap_virtual_block_length}
     {
     }
 
@@ -31,12 +31,12 @@ namespace dlg_help_utils::heap
 
     size_units::base_16::bytes heap_virtual_block::reserved() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_virtual_alloc_entry_reserve_size_field_data, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->heap_virtual_alloc_entry_reserve_size_field_data, common_symbol_names::heap_virtual_alloc_entry_reserve_size_field_symbol_name) };
     }
 
     size_units::base_16::bytes heap_virtual_block::committed() const
     {
-        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_.heap_virtual_alloc_entry_commit_size_field_data, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
+        return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->heap_virtual_alloc_entry_commit_size_field_data, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
     }
 
     std::experimental::generator<heap_entry> heap_virtual_block::entries() const
@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
         auto const committed_size = committed();
         if(auto const reserved_size = reserved(); committed_size > size_units::base_16::bytes{0})
         {
-            auto const entry_address = descriptor_address() + cache_data_.busy_block_offset;
+            auto const entry_address = descriptor_address() + cache_data_->busy_block_offset;
             auto const last_address = address() + committed_size.count();
             auto const last_committed_address = address() + reserved_size.count();
 

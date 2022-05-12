@@ -27,7 +27,7 @@ namespace dlg_help_utils::heap
     public:
         heap_lfh_subsegment(heap_lfh_context const& heap, uint64_t heap_lfh_subsegment_address);
 
-        [[nodiscard]] heap_lfh_context const& heap() const { return heap_; }
+        [[nodiscard]] heap_lfh_context const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_lfh_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_subsegment_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_lfh_subsegment_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_subsegment_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -73,9 +73,9 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset heap_lfh_subsegment_encoded_offsets_first_block_offset_field_data;
         };
 
-        cache_data const& cache_data_;
-        heap_lfh_context const& heap_;
-        uint64_t const heap_lfh_subsegment_address_;
+        cache_data const* cache_data_;
+        heap_lfh_context const* heap_;
+        uint64_t heap_lfh_subsegment_address_;
         std::unique_ptr<uint8_t[]> block_offsets_;
     };
 }

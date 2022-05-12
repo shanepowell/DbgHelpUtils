@@ -22,7 +22,7 @@ namespace dlg_help_utils::process
     public:
         process_environment_variables(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t process_parameters_address);
 
-        [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return walker_; }
+        [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return *walker_; }
         [[nodiscard]] uint64_t process_parameters_address() const { return process_parameters_address_; }
 
         [[nodiscard]] std::experimental::generator<std::wstring> environment() const;
@@ -37,9 +37,9 @@ namespace dlg_help_utils::process
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
-        cache_manager& cache_manager_;
-        cache_data const& cache_data_{setup_globals()};
-        stream_stack_dump::mini_dump_memory_walker const& walker_;
+        cache_manager* cache_manager_;
+        cache_data const* cache_data_{&setup_globals()};
+        stream_stack_dump::mini_dump_memory_walker const* walker_;
         uint64_t process_parameters_address_;
     };
 

@@ -12,7 +12,7 @@ namespace dlg_help_utils
                                  thread_names_list_stream const& names_list, memory_list_stream const& memory_list,
                                  memory64_list_stream const& memory64_list)
         : thread_{thread}
-          , thread_name_{names_list.get_thread_name_for_thread_id(thread.ThreadId)}
+        , thread_name_{names_list.get_thread_name_for_thread_id(thread.ThreadId)}
     {
         if (thread_.Stack.Memory.Rva != 0)
         {

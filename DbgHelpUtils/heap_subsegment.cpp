@@ -18,8 +18,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_subsegment::user_data_header_symbol_name = common_symbol_names::heap_user_data_header_structure_symbol_name;
 
     heap_subsegment::heap_subsegment(heap::lfh_heap const& heap, uint64_t const heap_subsegment_address, uint64_t const lfh_block_zone_size)
-    : cache_data_{heap.heap().cache().get_cache<cache_data>()}
-    , lfh_heap_{heap}
+    : cache_data_{&heap.heap().cache().get_cache<cache_data>()}
+    , lfh_heap_{&heap}
     , heap_subsegment_address_{heap_subsegment_address}
     , lfh_block_zone_size_{lfh_block_zone_size}
     {
@@ -45,12 +45,12 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_subsegment::block_size_raw() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_subsegment_block_size_field_data, common_symbol_names::heap_subsegment_block_size_field_symbol_name);
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_subsegment_block_size_field_data, common_symbol_names::heap_subsegment_block_size_field_symbol_name);
     }
 
     uint16_t heap_subsegment::block_count() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_subsegment_block_count_field_data, common_symbol_names::heap_subsegment_block_count_field_symbol_name);
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_subsegment_block_count_field_data, common_symbol_names::heap_subsegment_block_count_field_symbol_name);
     }
 
     std::experimental::generator<heap_entry> heap_subsegment::entries() const
@@ -101,7 +101,7 @@ namespace dlg_help_utils::heap
             return std::make_tuple(0ULL, static_cast<unsigned short>(0));
         }
 
-        auto const user_blocks_value = find_field_pointer_type_and_value_in_type(walker(), cache_data_.heap_subsegment_user_blocks_field_data, heap_subsegment_address_);
+        auto const user_blocks_value = find_field_pointer_type_and_value_in_type(walker(), cache_data_->heap_subsegment_user_blocks_field_data, heap_subsegment_address_);
         if(!user_blocks_value.has_value())
         {
             stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::heap_subsegment_user_blocks_field_symbol_name);
@@ -117,9 +117,9 @@ namespace dlg_help_utils::heap
 
         uint64_t address;
         uint16_t block_stride;
-        if(cache_data_.heap_user_data_encoded_offsets_field_data.has_value())
+        if(cache_data_->heap_user_data_encoded_offsets_field_data.has_value())
         {
-            if(auto const encoded_offsets = read_udt_value_in_type(walker(), cache_data_.heap_user_data_encoded_offsets_field_data.value(), user_blocks_address);
+            if(auto const encoded_offsets = read_udt_value_in_type(walker(), cache_data_->heap_user_data_encoded_offsets_field_data.value(), user_blocks_address);
                 encoded_offsets.has_value())
             {
                 auto const lfh_key = lfh_heap().lfh_key();
@@ -146,9 +146,9 @@ namespace dlg_help_utils::heap
             }
         }
 
-        if(cache_data_.heap_user_data_first_allocation_offset_field_data.has_value())
+        if(cache_data_->heap_user_data_first_allocation_offset_field_data.has_value())
         {
-            if(auto const first_allocation_offset = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), cache_data_.heap_user_data_first_allocation_offset_field_data.value(), user_blocks_address);
+            if(auto const first_allocation_offset = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), cache_data_->heap_user_data_first_allocation_offset_field_data.value(), user_blocks_address);
                 first_allocation_offset.has_value())
             {
                 address = user_blocks_address + first_allocation_offset.value();

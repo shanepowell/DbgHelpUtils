@@ -16,8 +16,8 @@ namespace dlg_help_utils::heap
     std::wstring const& lfh_segment::symbol_name = common_symbol_names::lfh_block_zone_structure_symbol_name;
 
     lfh_segment::lfh_segment(heap::lfh_heap const& heap, uint64_t const lfh_segment_address)
-    : cache_data_{heap.heap().cache().get_cache<cache_data>()}
-    , lfh_heap_{heap}
+    : cache_data_{&heap.heap().cache().get_cache<cache_data>()}
+    , lfh_heap_{&heap}
     , lfh_segment_address_{lfh_segment_address}
     {
     }
@@ -36,7 +36,7 @@ namespace dlg_help_utils::heap
     {
         auto [start_subsegment_address, end_subsegment_address] = get_subsegment_range();
         // ReSharper disable once CppRedundantCastExpression
-        return static_cast<size_t>((end_subsegment_address - start_subsegment_address) / cache_data_.heap_subsegment_size);
+        return static_cast<size_t>((end_subsegment_address - start_subsegment_address) / cache_data_->heap_subsegment_size);
     }
 
     void lfh_segment::setup_globals(nt_heap const& heap)
@@ -54,28 +54,28 @@ namespace dlg_help_utils::heap
 
     std::pair<uint64_t, uint64_t> lfh_segment::get_subsegment_range() const
     {
-        auto start_subsegment_address = lfh_segment_address_ + cache_data_.lfh_block_zone_size;
+        auto start_subsegment_address = lfh_segment_address_ + cache_data_->lfh_block_zone_size;
         auto end_subsegment_address{start_subsegment_address};
 
-        if(cache_data_.lfh_block_zone_next_index_field_data.has_value())
+        if(cache_data_->lfh_block_zone_next_index_field_data.has_value())
         {
-            if(auto const next_index = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.lfh_block_zone_next_index_field_data.value(), lfh_segment_address_); next_index.has_value())
+            if(auto const next_index = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_->lfh_block_zone_next_index_field_data.value(), lfh_segment_address_); next_index.has_value())
             {
-                if(lfh_heap_.heap().peb().is_x64_target())
+                if(lfh_heap().heap().peb().is_x64_target())
                 {
                     end_subsegment_address = start_subsegment_address = lfh_segment_address_ + 0x20;
                 }
 
-                end_subsegment_address += cache_data_.heap_subsegment_size * next_index.value();
+                end_subsegment_address += cache_data_->heap_subsegment_size * next_index.value();
             }
             else
             {
                 stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::lfh_block_zone_next_index_field_symbol_name);
             }
         }
-        else if(cache_data_.lfh_block_zone_free_pointer_field_data.has_value())
+        else if(cache_data_->lfh_block_zone_free_pointer_field_data.has_value())
         {
-            if(auto const free_pointer = find_field_pointer_value_in_type(walker(), cache_data_.lfh_block_zone_free_pointer_field_data.value(), lfh_segment_address_); free_pointer.has_value())
+            if(auto const free_pointer = find_field_pointer_value_in_type(walker(), cache_data_->lfh_block_zone_free_pointer_field_data.value(), lfh_segment_address_); free_pointer.has_value())
             {
                 end_subsegment_address = free_pointer.value();
             }
@@ -113,15 +113,15 @@ namespace dlg_help_utils::heap
         auto [subsegment_address, end_subsegment_address] = get_subsegment_range();
 
         std::vector<heap_subsegment> rv;
-        while(subsegment_address + cache_data_.heap_subsegment_size < end_subsegment_address)
+        while(subsegment_address + cache_data_->heap_subsegment_size < end_subsegment_address)
         {
-            if(heap_subsegment subsegment{lfh_heap_, subsegment_address, cache_data_.lfh_block_zone_size};
+            if(heap_subsegment subsegment{lfh_heap(), subsegment_address, cache_data_->lfh_block_zone_size};
                 subsegment.entry_start_address() != 0 && std::ranges::any_of(all_heap_entries, [&subsegment](heap_entry const& entry) { return process_heaps::is_lfh_subsegment_in_entry(entry, subsegment); }))
             {
                 rv.emplace_back(subsegment);
             }
 
-            subsegment_address += cache_data_.heap_subsegment_size;
+            subsegment_address += cache_data_->heap_subsegment_size;
         }
 
         return rv;

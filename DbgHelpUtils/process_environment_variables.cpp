@@ -11,15 +11,15 @@
 namespace dlg_help_utils::process
 {
     process_environment_variables::process_environment_variables(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const process_parameters_address)
-    : cache_manager_{cache}
-    , walker_{walker}
+    : cache_manager_{&cache}
+    , walker_{&walker}
     , process_parameters_address_{process_parameters_address}
     {
     }
 
     std::experimental::generator<std::wstring> process_environment_variables::environment() const
     {
-        const auto environment_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_.rtl_user_process_parameters_structure_environment_field_data, process_parameters_address());
+        const auto environment_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_->rtl_user_process_parameters_structure_environment_field_data, process_parameters_address());
         if(!environment_address.has_value() || environment_address.value().value == 0)
         {
             co_return;
@@ -71,13 +71,13 @@ namespace dlg_help_utils::process
 
     process_environment_variables::cache_data const& process_environment_variables::setup_globals() const
     {
-        if(!cache_manager_.has_cache<cache_data>())
+        if(!cache_manager_->has_cache<cache_data>())
         {
-            auto& data = cache_manager_.get_cache<cache_data>();
-            data.process_parameters_symbol_info = stream_utils::get_type(walker_, common_symbol_names::rtl_user_process_parameters_structure_symbol_name);
+            auto& data = cache_manager_->get_cache<cache_data>();
+            data.process_parameters_symbol_info = stream_utils::get_type(walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name);
             data.rtl_user_process_parameters_structure_environment_field_data = stream_utils::get_field_type_and_offset_in_type(data.process_parameters_symbol_info, common_symbol_names::rtl_user_process_parameters_structure_symbol_name,common_symbol_names::rtl_user_process_parameters_structure_environment_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
         }
 
-        return cache_manager_.get_cache<cache_data>();
+        return cache_manager_->get_cache<cache_data>();
     }
 }

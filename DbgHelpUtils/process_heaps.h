@@ -25,14 +25,19 @@ namespace dlg_help_utils::heap
     class heap_subsegment;
     class heap_entry;
     class process_heap_entry;
+    class process_heaps_options;
     class process_heaps_statistics;
 
     class process_heaps
     {
     public:
-        process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
+        process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, process_heaps_options const& options, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
+        [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
+        [[nodiscard]] process_heaps_options const& options() const { return *options_; }
+        [[nodiscard]] statistic_views::system_module_list const& system_module() const { return *system_module_list_; }
+        [[nodiscard]] statistic_views::statistic_view_options const& statistic_view_options() const { return *statistic_view_options_; }
 
         void set_base_diff_filter(process_heaps& base_diff_filter);
         void clear_base_diff_filter();
@@ -57,6 +62,7 @@ namespace dlg_help_utils::heap
         void get_all_segment_large_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
         void get_all_dph_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
         void get_all_dph_virtual_entities(std::map<uint64_t, process_heap_entry> & all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
+        bool is_heap_entry_allowed(memory_range const& range) const;
         void get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const;
 
         [[nodiscard]] std::map<uint64_t, process_heap_entry> all_entries() const;
@@ -74,14 +80,16 @@ namespace dlg_help_utils::heap
         [[nodiscard]] static bool contains_address(uint64_t start_address, uint64_t size, uint64_t address);
 
     private:
-        cache_manager& cache_manager_;
-        process::process_environment_block const peb_;
-        statistic_views::system_module_list const& system_module_list_;
-        statistic_views::statistic_view_options const& statistic_view_options_;
+        process_heaps_options const* options_;
+        cache_manager* cache_manager_;
+        process::process_environment_block peb_;
+        statistic_views::system_module_list const* system_module_list_;
+        statistic_views::statistic_view_options const* statistic_view_options_;
         process_heaps* base_diff_filter_{nullptr};
         mutable std::vector<process_heap_entry> entry_filters_cache_;
         mutable std::vector<process_heap_entry> free_entry_filters_cache_;
         mutable std::vector<process_heap_entry> entry_cache_;
         mutable std::vector<process_heap_entry> free_entry_cache_;
+        mutable std::set<uint64_t> system_area_addresses_;
     };
 }

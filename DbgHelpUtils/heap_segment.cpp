@@ -13,8 +13,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_segment::symbol_name = common_symbol_names::heap_segment_structure_symbol_name;
 
     heap_segment::heap_segment(nt_heap const& heap, uint64_t const heap_segment_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_segment_address_{heap_segment_address}
     {
     }
@@ -31,42 +31,42 @@ namespace dlg_help_utils::heap
 
     uint32_t heap_segment::segment_flags() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.heap_segment_segment_flags_field_data, common_symbol_names::heap_segment_segment_flags_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->heap_segment_segment_flags_field_data, common_symbol_names::heap_segment_segment_flags_field_symbol_name);
     }
 
     uint64_t heap_segment::base_address() const
     {
-        return get_field_pointer(*this, cache_data_.heap_segment_base_address_field_data, common_symbol_names::heap_segment_base_address_field_symbol_name);
+        return get_field_pointer(*this, cache_data_->heap_segment_base_address_field_data, common_symbol_names::heap_segment_base_address_field_symbol_name);
     }
 
     uint32_t heap_segment::number_of_pages() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.heap_segment_number_of_pages_field_data, common_symbol_names::heap_segment_number_of_pages_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->heap_segment_number_of_pages_field_data, common_symbol_names::heap_segment_number_of_pages_field_symbol_name);
     }
 
     uint64_t heap_segment::first_entry() const
     {
-        return get_field_pointer(*this, cache_data_.heap_segment_first_entry_field_data, common_symbol_names::heap_segment_first_entry_field_symbol_name);
+        return get_field_pointer(*this, cache_data_->heap_segment_first_entry_field_data, common_symbol_names::heap_segment_first_entry_field_symbol_name);
     }
 
     uint64_t heap_segment::last_entry() const
     {
-        return get_field_pointer(*this, cache_data_.heap_segment_last_entry_field_data, common_symbol_names::heap_segment_last_entry_field_symbol_name);
+        return get_field_pointer(*this, cache_data_->heap_segment_last_entry_field_data, common_symbol_names::heap_segment_last_entry_field_symbol_name);
     }
 
     uint32_t heap_segment::number_of_uncommitted_pages() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.heap_segment_number_of_un_committed_pages_field_data, common_symbol_names::heap_segment_number_of_un_committed_pages_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->heap_segment_number_of_un_committed_pages_field_data, common_symbol_names::heap_segment_number_of_un_committed_pages_field_symbol_name);
     }
 
     uint32_t heap_segment::number_of_uncommitted_ranges() const
     {
-        return stream_utils::get_field_value<uint32_t>(*this, cache_data_.heap_segment_number_of_un_committed_ranges_field_data, common_symbol_names::heap_segment_number_of_un_committed_ranges_field_symbol_name);
+        return stream_utils::get_field_value<uint32_t>(*this, cache_data_->heap_segment_number_of_un_committed_ranges_field_data, common_symbol_names::heap_segment_number_of_un_committed_ranges_field_symbol_name);
     }
 
     uint16_t heap_segment::segment_allocator_back_trace_index() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_segment_segment_allocator_back_trace_index_field_data, common_symbol_names::heap_segment_segment_allocator_back_trace_index_field_symbol_name);
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_segment_segment_allocator_back_trace_index_field_data, common_symbol_names::heap_segment_segment_allocator_back_trace_index_field_symbol_name);
     }
 
     std::experimental::generator<heap_entry> heap_segment::entries() const
@@ -123,7 +123,7 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<heap_ucr_descriptor> heap_segment::uncommitted_ranges() const
     {
-        for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_.heap_segment_ucr_segment_list_field_data, common_symbol_names::heap_segment_ucr_segment_list_field_symbol_name), heap_ucr_descriptor::symbol_name, common_symbol_names::heap_ucr_descriptor_segment_entry_field_symbol_name}; 
+        for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_segment_ucr_segment_list_field_data, common_symbol_names::heap_segment_ucr_segment_list_field_symbol_name), heap_ucr_descriptor::symbol_name, common_symbol_names::heap_ucr_descriptor_segment_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
         {
             co_yield heap_ucr_descriptor{heap(), entry_address};

@@ -24,7 +24,7 @@ namespace dlg_help_utils::heap
     public:
         heap_ucr_descriptor(nt_heap const& heap, uint64_t heap_ucr_descriptor_address);
 
-        [[nodiscard]] nt_heap const& heap() const { return heap_; }
+        [[nodiscard]] nt_heap const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes size() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_ucr_descriptor_address_; }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_ucr_descriptor_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_ucr_descriptor_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(nt_heap const& heap);
@@ -45,8 +45,8 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset heap_ucr_descriptor_size_field_data;
         };
 
-        cache_data const& cache_data_;
-        nt_heap const& heap_;
-        uint64_t const heap_ucr_descriptor_address_;
+        cache_data const* cache_data_;
+        nt_heap const* heap_;
+        uint64_t heap_ucr_descriptor_address_;
     };
 }

@@ -8,6 +8,7 @@
 #include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
+#include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/mini_dump_type.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/symbol_engine.h"
@@ -131,12 +132,34 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     {
         for (auto const index : options.dump_stream_indexes())
         {
-            dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine);
+            try
+            {
+                dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine);
+            }
+            catch (wide_runtime_error const& e)
+            {
+                throw wide_runtime_error{std::format(L"Failure to dump stream index: [{}]", index), e};
+            }
+            catch (exception const& e)
+            {
+                throw wide_runtime_error{std::format(L"Failure to dump stream index: [{}]", index), e};
+            }
         }
 
         for (auto const& type : options.dump_stream_types())
         {
-            dump_mini_dump_stream_type(log, dump_file, type, options, symbol_engine);
+            try
+            {
+                dump_mini_dump_stream_type(log, dump_file, type, options, symbol_engine);
+            }
+            catch (wide_runtime_error const& e)
+            {
+                throw wide_runtime_error{std::format(L"Failure to dump stream type: [{}]", mini_dump_stream_type::to_wstring(type)), e};
+            }
+            catch (exception const& e)
+            {
+                throw wide_runtime_error{std::format(L"Failure to dump stream type: [{}]", mini_dump_stream_type::to_wstring(type)), e};
+            }
         }
     }
 
@@ -165,6 +188,11 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
         dump_mini_dump_heap_statistics(log, dump_file, cache, base_diff_dump, options, symbol_engine);
     }
 
+    if(options.display_heap_graph())
+    {
+        dump_mini_dump_heap_graph(log, dump_file, cache, options, symbol_engine);
+    }
+
     if(options.display_stack_trace_database())
     {
         dump_mini_dump_stack_trace_database(log, dump_file, cache, options, symbol_engine);
@@ -172,22 +200,66 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     for (auto const& module_name : options.dump_types_modules())
     {
-        dump_mini_dump_module_symbol_types(log, dump_file, module_name, options, symbol_engine);
+        try
+        {
+            dump_mini_dump_module_symbol_types(log, dump_file, module_name, options, symbol_engine);
+        }
+        catch (wide_runtime_error const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump module: [{}]", module_name), e};
+        }
+        catch (exception const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump module: [{}]", module_name), e};
+        }
     }
 
     for (auto const& type : options.symbol_types())
     {
-        dump_mini_dump_symbol_type(log, dump_file, type, options, symbol_engine);
+        try
+        {
+            dump_mini_dump_symbol_type(log, dump_file, type, options, symbol_engine);
+        }
+        catch (wide_runtime_error const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump type: [{}]", type), e};
+        }
+        catch (exception const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump type: [{}]", type), e};
+        }
     }
 
     for (auto const& symbol_name : options.symbol_names())
     {
-        dump_mini_dump_symbol_name(log, dump_file, symbol_name, options, symbol_engine);
+        try
+        {
+            dump_mini_dump_symbol_name(log, dump_file, symbol_name, options, symbol_engine);
+        }
+        catch (wide_runtime_error const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump symbol: [{}]", symbol_name), e};
+        }
+        catch (exception const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump symbol: [{}]", symbol_name), e};
+        }
     }
 
     for (auto const& address_type : options.dump_address_types())
     {
-        dump_mini_dump_address(log, dump_file, address_type, options, symbol_engine);
+        try
+        {
+            dump_mini_dump_address(log, dump_file, address_type, options, symbol_engine);
+        }
+        catch (wide_runtime_error const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump address: [{}]", address_type), e};
+        }
+        catch (exception const& e)
+        {
+            throw wide_runtime_error{std::format(L"Failure to dump address: [{}]", address_type), e};
+        }
     }
 }
 

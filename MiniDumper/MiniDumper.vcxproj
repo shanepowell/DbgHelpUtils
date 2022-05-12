@@ -171,6 +171,13 @@
     <ClCompile Include="dump_mini_dump_comment.cpp" />
     <ClCompile Include="dump_mini_dump_exception.cpp" />
     <ClCompile Include="dump_mini_dump_heap.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_crt.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_debug_page_heap.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_graph.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_nt_heap.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_segment_heap.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_statistics.cpp" />
+    <ClCompile Include="dump_mini_dump_heap_utils.cpp" />
     <ClCompile Include="dump_mini_dump_info.cpp" />
     <ClCompile Include="dump_mini_dump_memory.cpp" />
     <ClCompile Include="dump_mini_dump_module.cpp" />
@@ -210,6 +217,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="system_modules.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,8 +13,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_page_segment::symbol_name = common_symbol_names::heap_page_segment_structure_symbol_name;
 
     heap_page_segment::heap_page_segment(heap_segment_context const& heap, uint64_t const heap_page_segment_address, uint64_t const heap_segment_context_address)
-    : cache_data_{heap.heap().cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.heap().cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_page_segment_address_{heap_page_segment_address}
     , heap_segment_context_address_{heap_segment_context_address}
     {
@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_page_segment::signature() const
     {
-        return get_machine_size_field_value(*this, cache_data_.heap_page_segment_signature_field_data, common_symbol_names::heap_page_segment_signature_field_symbol_name);
+        return get_machine_size_field_value(*this, cache_data_->heap_page_segment_signature_field_data, common_symbol_names::heap_page_segment_signature_field_symbol_name);
     }
 
     bool heap_page_segment::is_signature_valid() const
@@ -52,10 +52,10 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<page_range_descriptor> heap_page_segment::all_entries() const
     {
-        if(auto const array_count = cache_data_.desc_array_array_field_symbol_type.array_count(); array_count.has_value())
+        if(auto const array_count = cache_data_->desc_array_array_field_symbol_type.array_count(); array_count.has_value())
         {
-            auto array_field_address = heap_page_segment_address() + cache_data_.heap_seg_context_array_field_offset;
-            for(size_t index = 0; index < array_count.value(); ++index, array_field_address += cache_data_.heap_page_range_descriptor_length)
+            auto array_field_address = heap_page_segment_address() + cache_data_->heap_seg_context_array_field_offset;
+            for(size_t index = 0; index < array_count.value(); ++index, array_field_address += cache_data_->heap_page_range_descriptor_length)
             {
                 co_yield page_range_descriptor{heap(), array_field_address, index, heap_page_segment_address()};
             }
@@ -64,10 +64,10 @@ namespace dlg_help_utils::heap
 
     std::experimental::generator<page_range_descriptor> heap_page_segment::entries() const
     {
-        if(auto const array_count = cache_data_.desc_array_array_field_symbol_type.array_count(); array_count.has_value())
+        if(auto const array_count = cache_data_->desc_array_array_field_symbol_type.array_count(); array_count.has_value())
         {
-            auto array_field_address = heap_page_segment_address() + cache_data_.heap_seg_context_array_field_offset;
-            for(size_t index = 0; index < array_count.value(); ++index, array_field_address += cache_data_.heap_page_range_descriptor_length)
+            auto array_field_address = heap_page_segment_address() + cache_data_->heap_seg_context_array_field_offset;
+            for(size_t index = 0; index < array_count.value(); ++index, array_field_address += cache_data_->heap_page_range_descriptor_length)
             {
                 if(page_range_descriptor const entry{heap(), array_field_address, index, heap_page_segment_address()};
                     entry.is_start_of_range())

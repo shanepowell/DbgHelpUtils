@@ -11,8 +11,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_lfh_context::symbol_name = common_symbol_names::heap_lfh_context_structure_symbol_name;
 
     heap_lfh_context::heap_lfh_context(segment_heap const& heap, uint64_t const heap_lfh_context_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_lfh_context_address_{heap_lfh_context_address}
     {
     }
@@ -34,33 +34,33 @@ namespace dlg_help_utils::heap
 
     uint8_t heap_lfh_context::max_affinity() const
     {
-        return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_lfh_context_max_affinity_field_data, common_symbol_names::heap_lfh_context_max_affinity_field_symbol_name);
+        return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_context_max_affinity_field_data, common_symbol_names::heap_lfh_context_max_affinity_field_symbol_name);
     }
 
     size_units::base_16::bytes heap_lfh_context::max_block_size() const
     {
-        return size_units::base_16::bytes{stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_lfh_context_config_max_block_size_field_data, common_symbol_names::heap_lfh_context_config_max_block_size_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_lfh_context_config_max_block_size_field_data, common_symbol_names::heap_lfh_context_config_max_block_size_field_symbol_name)};
     }
 
     bool heap_lfh_context::with_old_page_crossing_blocks() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_lfh_context_config_with_old_page_crossing_blocks_field_data, common_symbol_names::heap_lfh_context_config_with_old_page_crossing_blocks_field_symbol_name) != 0x0;
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_lfh_context_config_with_old_page_crossing_blocks_field_data, common_symbol_names::heap_lfh_context_config_with_old_page_crossing_blocks_field_symbol_name) != 0x0;
     }
 
     bool heap_lfh_context::disable_randomization() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_lfh_context_config_disable_randomization_field_data, common_symbol_names::heap_lfh_context_config_disable_randomization_field_symbol_name) != 0x0;
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_lfh_context_config_disable_randomization_field_data, common_symbol_names::heap_lfh_context_config_disable_randomization_field_symbol_name) != 0x0;
     }
 
     std::experimental::generator<heap_lfh_bucket> heap_lfh_context::active_buckets() const
     {
-        if(auto const array_count = cache_data_.heap_lfh_context_buckets_field_symbol_type.array_count(); array_count.has_value())
+        if(auto const array_count = cache_data_->heap_lfh_context_buckets_field_symbol_type.array_count(); array_count.has_value())
         {
-            if(auto const type = cache_data_.heap_lfh_context_buckets_field_symbol_type.type(); type.has_value() && type.value().sym_tag() == dbg_help::sym_tag_enum::PointerType)
+            if(auto const type = cache_data_->heap_lfh_context_buckets_field_symbol_type.type(); type.has_value() && type.value().sym_tag() == dbg_help::sym_tag_enum::PointerType)
             {
                 if(auto const length = type.value().length(); length.has_value())
                 {
-                    auto array_field_address = heap_lfh_context_address() + cache_data_.heap_lfh_context_buckets_field_offset;
+                    auto array_field_address = heap_lfh_context_address() + cache_data_->heap_lfh_context_buckets_field_offset;
                     for(size_t index = 0; index < array_count.value(); ++index, array_field_address += length.value())
                     {
                         std::optional<uint64_t> bucket_address;

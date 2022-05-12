@@ -46,7 +46,7 @@ namespace dlg_help_utils::heap
         auto stream = peb.walker().get_process_memory_stream(ust_field_address, unused_bytes);
         while(!stream.eof())
         {
-            if(!stream.find_pattern<uint8_t>([](uint8_t const data, size_t const found_index) { return data == (found_index < 2 ? 0x01 : 0x0); }
+            if(!stream.find_pattern<uint8_t>([](uint8_t const data, size_t const found_index, size_t&) { return data == (found_index < 2 ? 0x01 : 0x0); }
                 , [header_size = peb.is_x64_target() ? static_cast<size_t>(0xE) : static_cast<size_t>(0x6)](size_t const found_index) { return found_index == header_size; }))
             {
                 return 0;

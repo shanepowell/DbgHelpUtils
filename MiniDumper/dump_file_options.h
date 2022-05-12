@@ -13,6 +13,7 @@
 
 #include <fstream>
 
+#include "DbgHelpUtils/process_heaps_options.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/statistic_view_options.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
@@ -63,6 +64,8 @@ public:
     [[nodiscard]] bool debug_heap_data() const { return debug_heap_data_; }
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
     [[nodiscard]] bool disable_symbol_load_cancel_keyboard_check() const { return disable_symbol_load_cancel_keyboard_check_; }
+    [[nodiscard]] bool display_heap_graph() const { return display_heap_graph_; }
+    [[nodiscard]] size_t display_heap_graph_to_reference_limit() const { return display_heap_graph_to_reference_limit_; }
     [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options::options display_stack_options() const;
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
@@ -73,6 +76,7 @@ public:
     [[nodiscard]] std::vector<std::wstring> const& base_diff_dump_files() const { return base_diff_dump_files_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list() const { return system_module_list_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options() const { return statistic_view_options_; }
+    [[nodiscard]] dlg_help_utils::heap::process_heaps_options const& process_heaps_options() const { return process_heaps_options_; }
     [[nodiscard]] std::wostream& get_log_stream();
 
 private:
@@ -106,6 +110,9 @@ private:
     bool disable_symbol_load_cancel_keyboard_check_{false};
     bool display_stack_variables_{false};
     bool display_stack_parameters_{false};
+    bool display_heap_graph_{false};
+    std::string display_heap_graph_to_reference_limit_raw_;
+    size_t display_heap_graph_to_reference_limit_{100};
     uint16_t heap_statistics_views_{0};
     std::vector<std::string> filter_values_raw_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;
@@ -130,5 +137,6 @@ private:
     std::wstring output_filename_;
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list_;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
+    dlg_help_utils::heap::process_heaps_options process_heaps_options_;
     std::wofstream log_file_;
 };

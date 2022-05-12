@@ -30,7 +30,7 @@ namespace dlg_help_utils::process
         static bool is_variable_symbol(dbg_help::sym_tag_enum tag);
 
     private:
-        stream_stack_dump::mini_dump_memory_walker const& walker_;
+        stream_stack_dump::mini_dump_memory_walker const* walker_;
         std::vector<dbg_help::symbol_type_info> symbols_;
     };
 }

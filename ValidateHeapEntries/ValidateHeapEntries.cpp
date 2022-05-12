@@ -24,6 +24,7 @@
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/process_heaps.h"
+#include "DbgHelpUtils/process_heaps_options.h"
 #include "DbgHelpUtils/process_heap_entry.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/statistic_view_options.h"
@@ -54,9 +55,9 @@ namespace ConsoleForeground
 
 struct base_dump_file
 {
-    base_dump_file(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
+    base_dump_file(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::process_heaps_options const& options, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
     : dump_file{open_mini_dump_file(dump_filename, o_log)}
-    , heaps{dump_file, cache, symbol_engine, system_module_list, statistic_view_options}
+    , heaps{dump_file, cache, symbol_engine, options, system_module_list, statistic_view_options}
     , crt_heap{cache, heaps.peb()}
     {
     }
@@ -81,7 +82,7 @@ private:
     }
 };
 
-[[nodiscard]] std::unique_ptr<base_dump_file> make_base_heap(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::heap::process_heaps& heaps, dlg_help_utils::heap::crt_heap& crt_heap, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
+[[nodiscard]] std::unique_ptr<base_dump_file> make_base_heap(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::heap::process_heaps& heaps, dlg_help_utils::heap::crt_heap& crt_heap, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::process_heaps_options const& options, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
 {
     if(dump_filename.empty())
     {
@@ -90,7 +91,7 @@ private:
 
     try
     {
-        auto rv = std::make_unique<base_dump_file>(dump_filename, o_log, symbol_engine, system_module_list, statistic_view_options);
+        auto rv = std::make_unique<base_dump_file>(dump_filename, o_log, symbol_engine, options, system_module_list, statistic_view_options);
         heaps.set_base_diff_filter(rv->heaps);
         crt_heap.set_base_diff_filter(rv->crt_heap);
         return rv;
@@ -218,9 +219,10 @@ std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> make_free_allocatio
     dlg_help_utils::dbg_help::symbol_engine symbol_engine{ui};
     dlg_help_utils::heap::statistic_views::system_module_list system_module_list;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options;
+    dlg_help_utils::heap::process_heaps_options process_options;
 
     dlg_help_utils::cache_manager cache;
-    dlg_help_utils::heap::process_heaps heaps{dump_file, cache, symbol_engine, system_module_list, statistic_view_options};
+    dlg_help_utils::heap::process_heaps heaps{dump_file, cache, symbol_engine, process_options, system_module_list, statistic_view_options};
     dlg_help_utils::heap::crt_heap crt_heap{ cache, heaps.peb() };
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
@@ -230,7 +232,7 @@ std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> make_free_allocatio
     auto const all_heap_free_allocations = make_free_allocation_map(heaps);
 
     // ReSharper disable once CppTooWideScopeInitStatement
-    auto base_heap = make_base_heap(base_dump_filename, o_log, heaps, crt_heap, symbol_engine, system_module_list, statistic_view_options);
+    auto base_heap = make_base_heap(base_dump_filename, o_log, heaps, crt_heap, symbol_engine, process_options, system_module_list, statistic_view_options);
 
     if(!base_dump_filename.empty() && !base_heap)
     {

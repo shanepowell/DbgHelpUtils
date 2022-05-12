@@ -11,8 +11,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_vs_subsegment::symbol_name = common_symbol_names::heap_vs_subsegment_structure_symbol_name;
 
     heap_vs_subsegment::heap_vs_subsegment(segment_heap const& heap, uint64_t const heap_vs_subsegment_address)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_vs_subsegment_address_{heap_vs_subsegment_address}
     {
     }
@@ -40,7 +40,7 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_vs_subsegment::signature() const
     {
-        return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_.heap_vs_subsegment_signature_field_data, common_symbol_names::heap_vs_subsegment_signature_field_symbol_name);
+        return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_->heap_vs_subsegment_signature_field_data, common_symbol_names::heap_vs_subsegment_signature_field_symbol_name);
     }
 
     bool heap_vs_subsegment::is_signature_valid() const
@@ -50,20 +50,20 @@ namespace dlg_help_utils::heap
 
     bool heap_vs_subsegment::full_commit() const
     {
-        return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_.heap_vs_subsegment_full_commit_field_data, common_symbol_names::heap_vs_subsegment_full_commit_field_symbol_name) == 0x01;
+        return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_->heap_vs_subsegment_full_commit_field_data, common_symbol_names::heap_vs_subsegment_full_commit_field_symbol_name) == 0x01;
     }
 
     std::experimental::generator<heap_vs_entry> heap_vs_subsegment::entries() const
     {
         uint16_t previous_size = 0;
-        auto chunk_header_address = heap_vs_subsegment_address() + cache_data_.heap_vs_subsegment_length + get_subsegment_offset();
+        auto chunk_header_address = heap_vs_subsegment_address() + cache_data_->heap_vs_subsegment_length + get_subsegment_offset();
         const auto last_entry_address = heap_vs_subsegment_address() + size().count();
 
         while(chunk_header_address < last_entry_address)
         {
-            auto buffer = std::make_unique<uint8_t[]>(cache_data_.heap_vs_chunk_header_length);
-            if(auto stream = walker().get_process_memory_stream(chunk_header_address, cache_data_.heap_vs_chunk_header_length);
-                stream.eof() || stream.read(buffer.get(), cache_data_.heap_vs_chunk_header_length) != cache_data_.heap_vs_chunk_header_length)
+            auto buffer = std::make_unique<uint8_t[]>(cache_data_->heap_vs_chunk_header_length);
+            if(auto stream = walker().get_process_memory_stream(chunk_header_address, cache_data_->heap_vs_chunk_header_length);
+                stream.eof() || stream.read(buffer.get(), cache_data_->heap_vs_chunk_header_length) != cache_data_->heap_vs_chunk_header_length)
             {
                 co_yield heap_vs_entry{heap(), chunk_header_address, last_entry_address - chunk_header_address};
                 break;
@@ -98,7 +98,7 @@ namespace dlg_help_utils::heap
 
     uint16_t heap_vs_subsegment::last_entry_offset() const
     {
-        return stream_utils::get_field_value<uint16_t>(*this, cache_data_.heap_vs_subsegment_size_field_data, common_symbol_names::heap_vs_subsegment_size_field_symbol_name);
+        return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_vs_subsegment_size_field_data, common_symbol_names::heap_vs_subsegment_size_field_symbol_name);
     }
 
     uint64_t heap_vs_subsegment::get_subsegment_offset() const

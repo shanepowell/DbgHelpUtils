@@ -1,5 +1,7 @@
 ﻿#pragma once
+#include <set>
 #include <string>
+#include <vector>
 
 #include "call_convention.h"
 #include "data_kind.h"
@@ -45,4 +47,6 @@ namespace dlg_help_utils::symbol_type_utils
 
     void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type, dbg_help::symbol_type_info const& display_type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t indent = 0, size_t visited_depth = 0, dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);
     std::tuple<uint64_t, std::wstring, uint64_t, std::wstring> parse_address(std::wstring const& address);
+
+    void gather_all_pointers_from_symbol(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type, uint64_t variable_address, std::set<uint64_t>& pointers);
 }

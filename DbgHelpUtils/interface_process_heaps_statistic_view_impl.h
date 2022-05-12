@@ -26,8 +26,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes allocated_total() const;
         [[nodiscard]] size_units::base_16::bytes free_total() const;
         [[nodiscard]] size_units::base_16::bytes overhead_total() const;
-        [[nodiscard]] size_t allocated_count() const { return allocated_entries_.size(); }
-        [[nodiscard]] size_t free_count() const { return free_entries_.size(); }
+        [[nodiscard]] size_t allocated_count() const { return allocated_entries().size(); }
+        [[nodiscard]] size_t free_count() const { return free_entries().size(); }
 
         [[nodiscard]] view_type view() const { return view_; }
         [[nodiscard]] sort_column_type sort_column() const { return sort_column_; }
@@ -35,12 +35,12 @@ namespace dlg_help_utils::heap
         [[nodiscard]] sort_order_type sort_order() const { return sort_order_; }
         void sort_order(sort_order_type const value) { sort_order_ = value; }
         [[nodiscard]] virtual bool is_range_single_value() const = 0;
-        [[nodiscard]] process_heaps const& process() const { return process_; }
-        [[nodiscard]] std::map<uint64_t, process_heap_entry> const& allocated_entries() const { return allocated_entries_; }
-        [[nodiscard]] std::map<uint64_t, process_heap_entry> const& free_entries() const { return free_entries_; }
+        [[nodiscard]] process_heaps const& process() const { return *process_; }
+        [[nodiscard]] std::map<uint64_t, process_heap_entry> const& allocated_entries() const { return *allocated_entries_; }
+        [[nodiscard]] std::map<uint64_t, process_heap_entry> const& free_entries() const { return *free_entries_; }
 
     protected:
-        [[nodiscard]] statistic_views::allocation_stack_trace_helper const& helper() const { return helper_; }
+        [[nodiscard]] statistic_views::allocation_stack_trace_helper const& helper() const { return *helper_; }
         template<typename T>
         [[nodiscard]] bool bucket_data_compare(T const& a, T const& b) const;
         template<typename T, typename ...Args>
@@ -71,11 +71,11 @@ namespace dlg_help_utils::heap
         static std::map<view_type, std::function<std::unique_ptr<interface_process_heaps_statistic_view_impl>(view_type, statistic_views::allocation_stack_trace_helper const&, statistic_views::statistic_view_options const&, process_heaps const&, std::map<uint64_t, process_heap_entry> const&, std::map<uint64_t, process_heap_entry> const&)>> const Factory;
 
     private:
-        view_type const view_;
-        statistic_views::allocation_stack_trace_helper const& helper_;
-        process_heaps const& process_;
-        std::map<uint64_t, process_heap_entry> const& allocated_entries_;
-        std::map<uint64_t, process_heap_entry> const& free_entries_;
+        view_type view_;
+        statistic_views::allocation_stack_trace_helper const* helper_;
+        process_heaps const* process_;
+        std::map<uint64_t, process_heap_entry> const* allocated_entries_;
+        std::map<uint64_t, process_heap_entry> const* free_entries_;
         sort_column_type sort_column_;
         sort_order_type sort_order_;
     };

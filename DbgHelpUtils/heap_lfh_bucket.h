@@ -26,7 +26,7 @@ namespace dlg_help_utils::heap
     public:
         heap_lfh_bucket(heap_lfh_context const& heap, uint64_t heap_lfh_bucket_address, int16_t bucket_index);
 
-        [[nodiscard]] heap_lfh_context const& heap() const { return heap_; }
+        [[nodiscard]] heap_lfh_context const& heap() const { return *heap_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
         [[nodiscard]] process::process_environment_block const& peb() const;
 
@@ -47,7 +47,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<heap_lfh_affinity_slot> affinity_slots() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_bucket_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_lfh_bucket_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_bucket_symbol_type; }
 
         static std::wstring const& symbol_name;
         static void setup_globals(segment_heap const& heap);
@@ -76,12 +76,12 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset heap_lfh_ondemand_pointer_usage_data_field_data;
         };
 
-        cache_data const& cache_data_;
-        heap_lfh_context const& heap_;
-        uint64_t const heap_lfh_bucket_address_;
-        bool const is_enabled_;
-        size_t const bucket_index_;
-        size_units::base_16::bytes const bucket_granularity_;
-        size_units::base_16::bytes const max_allocation_size_;
+        cache_data const* cache_data_;
+        heap_lfh_context const* heap_;
+        uint64_t heap_lfh_bucket_address_;
+        bool is_enabled_;
+        size_t bucket_index_;
+        size_units::base_16::bytes bucket_granularity_;
+        size_units::base_16::bytes max_allocation_size_;
     };
 }

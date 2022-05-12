@@ -31,6 +31,6 @@ namespace dlg_help_utils::heap::statistic_views
         [[nodiscard]] static uint64_t sum_entries(std::vector<process_heap_entry> const& entries);
 
     private:
-        size_units::base_16::bytes const range_size_;
+        size_units::base_16::bytes range_size_;
     };
 }

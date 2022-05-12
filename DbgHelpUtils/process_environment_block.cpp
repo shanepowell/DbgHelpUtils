@@ -10,6 +10,7 @@
 #include "process_environment_variables.h"
 #include "segment_heap.h"
 #include "stream_utils.h"
+#include "symbol_type_utils.h"
 #include "wide_runtime_error.h"
 
 using namespace std::string_literals;
@@ -17,8 +18,8 @@ using namespace std::string_literals;
 namespace dlg_help_utils::process
 {
     process_environment_block::process_environment_block(dlg_help_utils::mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine)
-    : cache_manager_{cache}
-    , mini_dump_{mini_dump}
+    : cache_manager_{&cache}
+    , mini_dump_{&mini_dump}
     , names_list_{mini_dump}
     , memory_list_{mini_dump}
     , memory64_list_{mini_dump}
@@ -28,7 +29,7 @@ namespace dlg_help_utils::process
     , system_memory_info_{mini_dump}
     , walker_{0, nullptr, 0, memory_list_, memory64_list_, function_table_, module_list_, unloaded_module_list_, pe_file_memory_mappings_, symbol_engine}
     {
-        const auto process_environment_block_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_.peb_structure_process_heaps_field_data, peb_address_);
+        const auto process_environment_block_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_->peb_structure_process_heaps_field_data, peb_address_);
         if(!process_environment_block_address.has_value() || process_environment_block_address.value().value == 0)
         {
             stream_utils::throw_cant_get_symbol_field(common_symbol_names::peb_structure_process_heaps_field_symbol_name);
@@ -49,13 +50,13 @@ namespace dlg_help_utils::process
 
     std::optional<process_environment_variables> process_environment_block::process_environment_variables() const
     {
-        const auto process_parameters_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_.peb_structure_process_parameters_field_data, peb_address());
+        const auto process_parameters_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_->peb_structure_process_parameters_field_data, peb_address());
         if(!process_parameters_address.has_value() || process_parameters_address.value().value == 0)
         {
             return std::nullopt;
         }
 
-        return process::process_environment_variables{cache_manager_, walker(), process_parameters_address.value().value};
+        return process::process_environment_variables{cache(), walker(), process_parameters_address.value().value};
     }
 
     uint64_t process_environment_block::heap_address(uint32_t const heap_index) const
@@ -71,13 +72,13 @@ namespace dlg_help_utils::process
 
     uint32_t process_environment_block::segment_signature(uint32_t const heap_index) const
     {
-        heap::nt_heap const nt_heap{cache_manager_, *this, heap_address(heap_index)};
+        heap::nt_heap const nt_heap{cache(), *this, heap_address(heap_index)};
         return nt_heap.segment_signature();
     }
 
     std::optional<heap::nt_heap> process_environment_block::nt_heap(uint32_t const heap_index) const
     {
-        heap::nt_heap heap{cache_manager_, *this, heap_address(heap_index)};
+        heap::nt_heap heap{cache(), *this, heap_address(heap_index)};
         if(heap.segment_signature() != heap::SegmentSignatureNtHeap)
         {
             return std::nullopt;
@@ -87,7 +88,7 @@ namespace dlg_help_utils::process
 
     std::optional<heap::segment_heap> process_environment_block::segment_heap(uint32_t const heap_index) const
     {
-        heap::segment_heap heap{cache_manager_, *this, heap_address(heap_index)};
+        heap::segment_heap heap{cache(), *this, heap_address(heap_index)};
         if(heap.segment_signature() != heap::SegmentSignatureSegmentHeap)
         {
             return std::nullopt;
@@ -115,20 +116,31 @@ namespace dlg_help_utils::process
         return (static_cast<uint32_t>(nt_global_flag_) & static_cast<uint32_t>(gflags_utils::gflags::FLG_HEAP_PAGE_ALLOCS)) == static_cast<uint32_t>(gflags_utils::gflags::FLG_HEAP_PAGE_ALLOCS);
     }
 
+    void process_environment_block::gather_system_area_addresses(std::set<uint64_t>& system_area_addresses) const
+    {
+        common_symbol_utils::gather_system_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list(), system_area_addresses);
+
+        for(auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list());
+            auto const teb_address : teb_addresses)
+        {
+            symbol_type_utils::gather_all_pointers_from_symbol(walker(), cache_data_->teb_symbol_info, teb_address, system_area_addresses);
+        }
+    }
+
     uint64_t process_environment_block::get_teb_address() const
     {
-        auto const teb_address = common_symbol_utils::get_teb_address(mini_dump_, names_list_, walker().memory_list(), walker().memory64_list());
-        if(!teb_address.has_value())
+        auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list());
+        if(teb_addresses.empty())
         {
             throw exceptions::wide_runtime_error{L"Error: No TEB address found"s};
         }
 
-        return teb_address.value();
+        return teb_addresses[0];
     }
 
     uint64_t process_environment_block::get_peb_address() const
     {
-        const auto peb_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_.teb_structure_process_environment_block_field_data, teb_address_);
+        const auto peb_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_->teb_structure_process_environment_block_field_data, teb_address_);
         if(!peb_address.has_value() || peb_address.value().value == 0)
         {
             throw exceptions::wide_runtime_error{L"Error: No PEB address found"s};
@@ -139,7 +151,7 @@ namespace dlg_help_utils::process
 
     gflags_utils::gflags process_environment_block::get_nt_global_flag() const
     {
-        auto const nt_global_flag_value = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.peb_structure_nt_global_flag_field_data, peb_address());
+        auto const nt_global_flag_value = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_->peb_structure_nt_global_flag_field_data, peb_address());
         if(!nt_global_flag_value.has_value())
         {
             stream_utils::throw_cant_get_symbol_field(common_symbol_names::peb_structure_nt_global_flag_field_symbol_name);
@@ -150,7 +162,7 @@ namespace dlg_help_utils::process
 
     uint64_t process_environment_block::get_main_process_heap() const
     {
-        const auto process_heap = find_field_pointer_type_and_value_in_type(walker(), cache_data_.peb_structure_process_heaps_field_data, peb_address());
+        const auto process_heap = find_field_pointer_type_and_value_in_type(walker(), cache_data_->peb_structure_process_heaps_field_data, peb_address());
         if(!process_heap.has_value() || process_heap.value().value == 0)
         {
             stream_utils::throw_cant_get_symbol_field(common_symbol_names::peb_structure_process_heap_field_symbol_name);
@@ -161,7 +173,7 @@ namespace dlg_help_utils::process
 
     uint32_t process_environment_block::get_number_of_heaps() const
     {
-        auto const number_of_heaps = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_.peb_structure_number_of_heaps_field_data, peb_address());
+        auto const number_of_heaps = stream_utils::find_basic_type_field_value_in_type<uint32_t>(walker(), cache_data_->peb_structure_number_of_heaps_field_data, peb_address());
         if(!number_of_heaps.has_value())
         {
             stream_utils::throw_cant_get_symbol_field(common_symbol_names::peb_structure_number_of_heaps_field_symbol_name);
@@ -172,7 +184,7 @@ namespace dlg_help_utils::process
 
     uint64_t process_environment_block::get_ldr_address() const
     {
-        const auto process_heap = find_field_pointer_type_and_value_in_type(walker(), cache_data_.peb_structure_ldr_field_data, peb_address());
+        const auto process_heap = find_field_pointer_type_and_value_in_type(walker(), cache_data_->peb_structure_ldr_field_data, peb_address());
         if(!process_heap.has_value())
         {
             stream_utils::throw_cant_get_symbol_field(common_symbol_names::peb_structure_ldr_field_symbol_name);
@@ -183,9 +195,9 @@ namespace dlg_help_utils::process
 
     process_environment_block::cache_data const& process_environment_block::setup_globals() const
     {
-        if(!cache_manager_.has_cache<cache_data>())
+        if(!cache_manager_->has_cache<cache_data>())
         {
-            auto& data = cache_manager_.get_cache<cache_data>();
+            auto& data = cache_manager_->get_cache<cache_data>();
             data.heap_symbol_type = stream_utils::get_type(walker(), common_symbol_names::heap_structure_symbol_name, true);
             data.peb_symbol_info = stream_utils::get_type(walker(), common_symbol_names::peb_structure_symbol_name, true);
             data.teb_symbol_info = stream_utils::get_type(walker(), common_symbol_names::teb_structure_symbol_name, true);
@@ -200,6 +212,6 @@ namespace dlg_help_utils::process
             data.teb_structure_process_environment_block_field_data = stream_utils::get_field_type_and_offset_in_type(data.teb_symbol_info, common_symbol_names::teb_structure_symbol_name, common_symbol_names::teb_structure_process_environment_block_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
         }
 
-        return cache_manager_.get_cache<cache_data>();
+        return cache_manager_->get_cache<cache_data>();
     }
 }

@@ -35,9 +35,9 @@ namespace dlg_help_utils::heap
 
         nt_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t nt_heap_address);
 
-        [[nodiscard]] cache_manager& cache() const { return cache_manager_; }
+        [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
 
-        [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
+        [[nodiscard]] process::process_environment_block const& peb() const { return *peb_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const;
 
         [[nodiscard]] uint64_t nt_heap_address() const { return nt_heap_address_; }
@@ -55,13 +55,14 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_low_fragment_heap_enabled() const { return front_end_heap_type() == FrontEndHeapTypeLowFragmentationHeap; }
 
         [[nodiscard]] bool is_encoded() const { return encoding_ != nullptr; }
-        [[nodiscard]] uint32_t granularity() const { return cache_data_.granularity; }
+        [[nodiscard]] uint32_t granularity() const { return cache_data_->granularity; }
 
         [[nodiscard]] std::experimental::generator<heap_segment> segments() const;
         [[nodiscard]] std::experimental::generator<heap_ucr_descriptor> uncommitted_ranges() const;
         [[nodiscard]] std::experimental::generator<heap_virtual_block> heap_virtual_blocks() const;
         [[nodiscard]] std::experimental::generator<heap_entry> free_entries() const;
         [[nodiscard]] std::optional<dph_heap> debug_page_heap() const;
+        [[nodiscard]] bool debug_page_heap_available() const;
 
         [[nodiscard]] std::optional<lfh_heap> lfh_heap() const;
 
@@ -72,7 +73,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
         [[nodiscard]] uint64_t symbol_address() const { return nt_heap_address(); }
-        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_.heap_symbol_type; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_symbol_type; }
 
         static std::wstring const& symbol_name;
 
@@ -105,11 +106,11 @@ namespace dlg_help_utils::heap
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:
-        cache_manager& cache_manager_;
-        uint64_t const nt_heap_address_;
-        process::process_environment_block const& peb_;
-        cache_data const& cache_data_{setup_globals()};
+        cache_manager* cache_manager_;
+        uint64_t nt_heap_address_;
+        process::process_environment_block const* peb_;
+        cache_data const* cache_data_{&setup_globals()};
         std::unique_ptr<uint8_t[]> encoding_;
-        ust_address_stack_trace stack_trace_{cache_manager_, walker()};
+        ust_address_stack_trace stack_trace_{cache(), walker()};
     };
 }

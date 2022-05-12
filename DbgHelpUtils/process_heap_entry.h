@@ -71,17 +71,17 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t get_nt_heap_entry_check_block_size(heap_entry const& entry) const;
 
     private:
-        process::process_environment_block const& peb_;
-        uint64_t const user_address_;
-        size_units::base_16::bytes const user_size_;
-        uint64_t const ust_address_;
-        std::vector<uint64_t> const allocation_stack_trace_;
-        std::wstring const file_name_;
-        uint32_t const line_number_{0};
-        bool const has_request_number_{false};
-        uint32_t const request_number_{0};
-        uint64_t const check_block_start_address_;
-        uint64_t const check_block_end_address_;
-        size_units::base_16::bytes const overhead_size_;
+        process::process_environment_block const* peb_;
+        uint64_t user_address_;
+        size_units::base_16::bytes user_size_;
+        uint64_t ust_address_;
+        std::vector<uint64_t> allocation_stack_trace_;
+        std::wstring file_name_;
+        uint32_t line_number_{0};
+        bool has_request_number_{false};
+        uint32_t request_number_{0};
+        uint64_t check_block_start_address_;
+        uint64_t check_block_end_address_;
+        size_units::base_16::bytes overhead_size_;
     };
 }

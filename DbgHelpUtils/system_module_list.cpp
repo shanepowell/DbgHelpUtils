@@ -19,7 +19,6 @@ namespace dlg_help_utils::heap::statistic_views
     system_module_list::system_module_list(std::vector<std::wstring> const& system_modules_names)
     : system_modules_names_{vector_to_hash_set<wstring_to_lower>(system_modules_names)}
     {
-        ;
     }
 
     system_module_list::system_module_list()

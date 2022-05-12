@@ -15,8 +15,8 @@ namespace dlg_help_utils::heap
     std::wstring const& page_range_descriptor::symbol_name = common_symbol_names::heap_page_range_descriptor_structure_symbol_name;
 
     page_range_descriptor::page_range_descriptor(heap_segment_context const& heap, uint64_t const page_range_descriptor_address, size_t const index, uint64_t const heap_page_segment_address)
-    : cache_data_{heap.heap().cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.heap().cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , page_range_descriptor_address_{page_range_descriptor_address}
     , index_{index}
     , heap_page_segment_address_{heap_page_segment_address}
@@ -38,23 +38,23 @@ namespace dlg_help_utils::heap
 
     bool page_range_descriptor::extra_present() const
     {
-        return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_.heap_page_range_descriptor_extra_present_field_data, common_symbol_names::heap_page_range_descriptor_extra_present_field_symbol_name) == 0x1;
+        return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_->heap_page_range_descriptor_extra_present_field_data, common_symbol_names::heap_page_range_descriptor_extra_present_field_symbol_name) == 0x1;
     }
 
     size_units::base_16::bytes page_range_descriptor::extra_bytes() const
     {
-        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, cache_data_.heap_page_range_descriptor_unused_bytes_field_data, common_symbol_names::heap_page_range_descriptor_unused_bytes_field_symbol_name)};
+        return size_units::base_16::bytes{stream_utils::get_field_value<uint32_t>(*this, cache_data_->heap_page_range_descriptor_unused_bytes_field_data, common_symbol_names::heap_page_range_descriptor_unused_bytes_field_symbol_name)};
     }
 
     page_range_flags_utils::page_range_flags page_range_descriptor::range_flags() const
     {
         if(peb().is_x64_target())
         {
-            return static_cast<page_range_flags_utils::page_range_flags>(stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_page_range_descriptor_range_flags_field_data, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name));
+            return static_cast<page_range_flags_utils::page_range_flags>(stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_page_range_descriptor_range_flags_field_data, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name));
         }
         if(peb().is_x86_target())
         {
-            return static_cast<page_range_flags_utils::page_range_flags>(stream_utils::get_bit_field_value<uint8_t>(*this, cache_data_.heap_page_range_descriptor_range_flags_bits_field_data, common_symbol_names::heap_page_range_descriptor_range_flags_bits_field_symbol_name));
+            return static_cast<page_range_flags_utils::page_range_flags>(stream_utils::get_bit_field_value<uint8_t>(*this, cache_data_->heap_page_range_descriptor_range_flags_bits_field_data, common_symbol_names::heap_page_range_descriptor_range_flags_bits_field_symbol_name));
         }
 
         stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name);
@@ -64,11 +64,11 @@ namespace dlg_help_utils::heap
     {
         if(heap().peb().is_x64_target())
         {
-            return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_page_range_descriptor_committed_page_count_field_data_x64, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
+            return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_page_range_descriptor_committed_page_count_field_data_x64, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
         }
         if(heap().peb().is_x86_target())
         {
-            return stream_utils::get_bit_field_value<uint8_t>(*this, cache_data_.heap_page_range_descriptor_committed_page_count_field_data_x86, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
+            return stream_utils::get_bit_field_value<uint8_t>(*this, cache_data_->heap_page_range_descriptor_committed_page_count_field_data_x86, common_symbol_names::heap_page_range_descriptor_committed_page_count_field_symbol_name);
         }
 
         stream_utils::throw_cant_get_field_data(symbol_name, common_symbol_names::heap_page_range_descriptor_range_flags_field_symbol_name);
@@ -78,7 +78,7 @@ namespace dlg_help_utils::heap
     {
         if(!is_start_of_range())
         {
-            return stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_page_range_descriptor_unit_size_field_data, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name);
+            return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_page_range_descriptor_unit_size_field_data, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name);
         }
 
         return 0;
@@ -88,7 +88,7 @@ namespace dlg_help_utils::heap
     {
         if(is_start_of_range())
         {
-            return size_units::base_16::bytes{stream_utils::get_field_value<uint8_t>(*this, cache_data_.heap_page_range_descriptor_unit_size_field_data, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name)};
+            return size_units::base_16::bytes{stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_page_range_descriptor_unit_size_field_data, common_symbol_names::heap_page_range_descriptor_unit_size_field_symbol_name)};
         }
 
         return size_units::base_16::bytes{1};

@@ -7,7 +7,7 @@
 
 namespace dlg_help_utils::mini_dump_stream_type
 {
-    std::wstring to_string(MINIDUMP_STREAM_TYPE type);
-    std::wstring to_enum_string(MINIDUMP_STREAM_TYPE type);
-    MINIDUMP_STREAM_TYPE from_string(std::wstring const& type);
+    std::wstring to_wstring(MINIDUMP_STREAM_TYPE type);
+    std::wstring to_enum_wstring(MINIDUMP_STREAM_TYPE type);
+    MINIDUMP_STREAM_TYPE from_wstring(std::wstring const& type);
 }

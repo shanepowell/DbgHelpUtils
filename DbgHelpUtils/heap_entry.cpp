@@ -18,8 +18,8 @@ namespace dlg_help_utils::heap
     std::wstring const& heap_entry::symbol_name = common_symbol_names::heap_entry_structure_symbol_name;
 
     heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
     , flags_{get_flags()}
@@ -40,8 +40,8 @@ namespace dlg_help_utils::heap
     }
 
     heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer, uint16_t const block_size, LfhEntryType)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
     , flags_{get_flags()}
@@ -61,8 +61,8 @@ namespace dlg_help_utils::heap
     }
 
     heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, uint64_t const end_address, std::shared_ptr<uint8_t[]> buffer, uint64_t const size, uint16_t const unused_bytes, VirtualAllocType)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
     , flags_{get_flags()}
@@ -83,8 +83,8 @@ namespace dlg_help_utils::heap
     }
 
     heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, std::shared_ptr<uint8_t[]> buffer, size_units::base_16::bytes const previous_size)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_entry_address_{heap_entry_address}
     , buffer_{std::move(buffer)}
     , flags_{get_flags()}
@@ -105,16 +105,16 @@ namespace dlg_help_utils::heap
     }
 
     heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, uint64_t const uncommitted_size)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_entry_address_{heap_entry_address}
     , size_{uncommitted_size}
     {
     }
 
     heap_entry::heap_entry(nt_heap const& heap, uint64_t const heap_entry_address, uint64_t const unknown_size, UnknownSizeType)
-    : cache_data_{heap.cache().get_cache<cache_data>()}
-    , heap_{heap}
+    : cache_data_{&heap.cache().get_cache<cache_data>()}
+    , heap_{&heap}
     , heap_entry_address_{heap_entry_address}
     , flags_{FlagBusy}
     , size_{unknown_size}
@@ -171,32 +171,32 @@ namespace dlg_help_utils::heap
 
     uint8_t heap_entry::get_flags()  const
     {
-        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_.heap_entry_flags_field_data, common_symbol_names::heap_entry_flags_field_symbol_name, buffer_.get());
+        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_->heap_entry_flags_field_data, common_symbol_names::heap_entry_flags_field_symbol_name, buffer_.get());
     }
 
     uint64_t heap_entry::get_size()  const
     {
-        return static_cast<uint64_t>(stream_utils::get_field_value_from_buffer<uint16_t, heap_entry>(cache_data_.heap_entry_size_field_data, common_symbol_names::heap_entry_size_field_symbol_name, buffer_.get())) * heap().granularity();
+        return static_cast<uint64_t>(stream_utils::get_field_value_from_buffer<uint16_t, heap_entry>(cache_data_->heap_entry_size_field_data, common_symbol_names::heap_entry_size_field_symbol_name, buffer_.get())) * heap().granularity();
     }
 
     uint64_t heap_entry::get_previous_size() const
     {
-        return static_cast<uint64_t>(stream_utils::get_field_value_from_buffer<uint16_t, heap_entry>(cache_data_.heap_entry_previous_size_field_data, common_symbol_names::heap_entry_previous_size_field_symbol_name, buffer_.get())) * heap().granularity();
+        return static_cast<uint64_t>(stream_utils::get_field_value_from_buffer<uint16_t, heap_entry>(cache_data_->heap_entry_previous_size_field_data, common_symbol_names::heap_entry_previous_size_field_symbol_name, buffer_.get())) * heap().granularity();
     }
 
     uint8_t heap_entry::get_segment_offset() const
     {
-        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_.heap_entry_segment_offset_field_data, common_symbol_names::heap_entry_segment_offset_field_symbol_name, buffer_.get());
+        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_->heap_entry_segment_offset_field_data, common_symbol_names::heap_entry_segment_offset_field_symbol_name, buffer_.get());
     }
 
     uint8_t heap_entry::get_small_tag_index() const
     {
-        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_.heap_entry_small_tag_index_field_data, common_symbol_names::heap_entry_small_tag_index_field_symbol_name, buffer_.get());
+        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_->heap_entry_small_tag_index_field_data, common_symbol_names::heap_entry_small_tag_index_field_symbol_name, buffer_.get());
     }
 
     uint8_t heap_entry::get_raw_unused_bytes()  const
     {
-        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_.heap_entry_unused_bytes_field_data, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, buffer_.get());
+        return stream_utils::get_field_value_from_buffer<uint8_t, heap_entry>(cache_data_->heap_entry_unused_bytes_field_data, common_symbol_names::heap_entry_unused_bytes_field_symbol_name, buffer_.get());
     }
 
     size_units::base_16::bytes heap_entry::get_unused_bytes() const
@@ -204,7 +204,7 @@ namespace dlg_help_utils::heap
         size_units::base_16::bytes unused_bytes_data;
         if(ust_user_address_ != 0)
         {
-            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), cache_data_.heap_entry_unused_bytes_length_field_data, ust_user_address_ - cache_data_.heap_entry_length);
+            const auto unused_bytes_value = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker(), cache_data_->heap_entry_unused_bytes_length_field_data, ust_user_address_ - cache_data_->heap_entry_length);
             unused_bytes_data = size_units::base_16::bytes{unused_bytes_value.value()};
         }
         else
@@ -254,7 +254,7 @@ namespace dlg_help_utils::heap
                 return get_ust_user_address();
             }
 
-            return heap_entry_address_ + cache_data_.heap_entry_length + (is_front_padded() ? cache_data_.heap_entry_length : 0);
+            return heap_entry_address_ + cache_data_->heap_entry_length + (is_front_padded() ? cache_data_->heap_entry_length : 0);
         }
         return 0;
     }
@@ -276,7 +276,7 @@ namespace dlg_help_utils::heap
             return 0;
         }
 
-        auto const value = stream_utils::read_machine_size_field_value(peb(), heap_entry_address_ + cache_data_.heap_entry_length);
+        auto const value = stream_utils::read_machine_size_field_value(peb(), heap_entry_address_ + cache_data_->heap_entry_length);
         if(!value.has_value())
         {
             throw exceptions::wide_runtime_error{std::format(L"Error: symbol {} can't get ust address field data", symbol_name)};
@@ -292,7 +292,7 @@ namespace dlg_help_utils::heap
             return 0;
         }
 
-        auto const min_ust_data_size = cache_data_.heap_entry_length + cache_data_.heap_entry_length;
+        auto const min_ust_data_size = cache_data_->heap_entry_length + cache_data_->heap_entry_length;
         auto stream = walker().get_process_memory_stream(heap_entry_address_ + min_ust_data_size, size().count() - min_ust_data_size);
 
         std::array constexpr find_values =
@@ -305,7 +305,7 @@ namespace dlg_help_utils::heap
 
         while(!stream.eof())
         {
-            if (stream.find_pattern<uint16_t>([&find_values](uint16_t const data, size_t const found_index) { return find_values[found_index] == std::numeric_limits<uint16_t>::max() || find_values[found_index] == data; }
+            if (stream.find_pattern<uint16_t>([&find_values](uint16_t const data, size_t const found_index, size_t&) { return find_values[found_index] == std::numeric_limits<uint16_t>::max() || find_values[found_index] == data; }
                 , [&find_values](size_t const found_index) { return found_index == find_values.size(); }))
             {
                 return stream.current_address();
