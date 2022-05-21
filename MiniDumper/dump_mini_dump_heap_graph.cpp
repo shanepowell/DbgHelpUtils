@@ -241,6 +241,11 @@ namespace
         display_nodes.emplace_back(node, false, false, false, indent, std::nullopt, std::nullopt);
         expand_all_child_nodes(options, nodes_index, printed_nodes, display_nodes);
     }
+
+    auto get_sort_key(heap::process_heap_graph_entry_type const& entry)
+    {
+        return std::make_tuple(!is_root_node(entry), node_start_address(entry));
+    }
 }
 
 void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
@@ -254,13 +259,7 @@ void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, c
     auto nodes = graph.nodes();
     std::ranges::sort(nodes, [](auto const& a, auto const& b)
         {
-            auto const a_root_node = is_root_node(a);
-            if(a_root_node == is_root_node(b))
-            {
-                return node_start_address(a) < node_start_address(b);
-            }
-
-            return a_root_node;
+            return get_sort_key(a) < get_sort_key(b);
         });
 
     nodes_index_map nodes_index;

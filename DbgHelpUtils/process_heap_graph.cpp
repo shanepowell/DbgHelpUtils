@@ -33,7 +33,12 @@ namespace dlg_help_utils::heap
         void process_heap_graph_generator<PointerType>::operator()(process_heap_graph_heap_entry& entry)
         {
             auto user_data = entry.heap_entry().all_user_data();
-            [[maybe_unused]] auto const found = user_data.find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable { process_entry_reference(entry, data, offset, jump_amount); return true; }, [](size_t) { return false; });
+            [[maybe_unused]] auto const found = user_data.find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable
+                {
+                    process_entry_reference(entry, data, offset, jump_amount);
+                    return true;
+                }
+                , [](size_t) { return false; });
         }
 
         template <typename PointerType>
@@ -67,7 +72,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    process_heap_graph::process_heap_graph(heap::process_heaps const& process)
+    process_heap_graph::process_heap_graph(process_heaps const& process)
         : process_{&process}
     {
     }
