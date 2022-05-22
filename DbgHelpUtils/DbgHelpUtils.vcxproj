@@ -232,6 +232,7 @@
     <ClCompile Include="process_heaps_statistics.cpp" />
     <ClCompile Include="process_heap_entry_reference.cpp" />
     <ClCompile Include="process_heap_graph.cpp" />
+    <ClCompile Include="process_heap_graph_global_variable_entry.cpp" />
     <ClCompile Include="process_heap_graph_heap_entry.cpp" />
     <ClCompile Include="process_heap_graph_node.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="process_environment_variables.h" />
     <ClInclude Include="process_heaps_statistics.h" />
     <ClInclude Include="process_heap_graph.h" />
+    <ClInclude Include="process_heap_graph_global_variable_entry.h" />
     <ClInclude Include="process_heap_graph_heap_entry.h" />
     <ClInclude Include="process_heap_graph_node.h" />
     <ClInclude Include="process_vm_counters_stream.h" />

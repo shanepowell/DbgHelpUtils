@@ -112,7 +112,7 @@ private:
     bool display_stack_parameters_{false};
     bool display_heap_graph_{false};
     std::string display_heap_graph_to_reference_limit_raw_;
-    size_t display_heap_graph_to_reference_limit_{100};
+    size_t display_heap_graph_to_reference_limit_{10};
     uint16_t heap_statistics_views_{0};
     std::vector<std::string> filter_values_raw_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;

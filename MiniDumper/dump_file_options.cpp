@@ -104,7 +104,7 @@ lyra::cli dump_file_options::generate_options()
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(display_heap_graph_)["--heapgraph"]("calculate heap graph")
         // ReSharper disable once StringLiteralTypo
-        | lyra::opt(display_heap_graph_to_reference_limit_raw_, "100")["--heapgraphtoxreflimit"]("limit the display of to references to x limit (default 100)")
+        | lyra::opt(display_heap_graph_to_reference_limit_raw_, "10")["--heapgraphtoxreflimit"]("limit the display of to references to x limit (default 100)")
         | lyra::opt(heap_statistics_raw_, dlg_help_utils::join(g_heap_statistics_view_options | std::views::keys, "|"sv))["--heapstat"]("display heap statistic").choices([](std::string const& value) { return g_heap_statistics_view_options.contains(value); })
         | lyra::opt(by_range_view_range_raw_, "range")["--viewrange"]("heap size statistic view bucket size")
         | lyra::opt(system_module_list_file_, "filename")["--systemmodules"]("json file holding the list of system modules")

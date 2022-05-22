@@ -580,12 +580,12 @@ namespace dlg_help_utils::stream_stack_dump
             return it->second;
         }
 
-        auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(type_name);
-
         if(type_name.empty())
         {
             return std::nullopt;
         }
+
+        auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(type_name);
 
         if(module_name.empty())
         {

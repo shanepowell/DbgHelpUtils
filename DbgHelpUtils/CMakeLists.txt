@@ -75,6 +75,8 @@ set(Heap__ProcessHeaps
     "process_heap_entry_reference.h"
     "process_heap_graph.cpp"
     "process_heap_graph.h"
+    "process_heap_graph_global_variable_entry.cpp"
+    "process_heap_graph_global_variable_entry.h"
     "process_heap_graph_heap_entry.cpp"
     "process_heap_graph_heap_entry.h"
     "process_heap_graph_node.cpp"
