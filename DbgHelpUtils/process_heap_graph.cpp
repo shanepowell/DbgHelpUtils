@@ -6,6 +6,7 @@
 #include "process_heap_entry.h"
 #include "process_heap_graph_global_variable_entry.h"
 #include "process_heap_graph_heap_entry.h"
+#include "vector_to_hash_set.h"
 
 namespace dlg_help_utils::heap
 {
@@ -101,12 +102,12 @@ namespace dlg_help_utils::heap
     }
 
 
-    void process_heap_graph::generate_global_variable_references()
+    void process_heap_graph::generate_global_variable_references(std::map<uint64_t, size_t> const& heap_entries)
     {
         for(process::global_variables const variables{process_->peb().walker()};
             auto const& global_variable : variables.all_variables())
         {
-            nodes_.emplace_back(process_heap_graph_global_variable_entry{global_variable});
+            nodes_.emplace_back(process_heap_graph_global_variable_entry{global_variable, find_allocation_node_allocation(heap_entries, range{global_variable.symbol_type().address().value_or(0), global_variable.symbol_type().length().value_or(0)})});
         }
     }
 
@@ -120,6 +121,28 @@ namespace dlg_help_utils::heap
         }
 
         return heap_entries;
+    }
+
+    std::optional<process_heap_graph_heap_entry> process_heap_graph::find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, range const& data_range) const
+    {
+        if(data_range.start == 0 || data_range.size == 0)
+        {
+            return std::nullopt;
+        }
+
+        auto const it = heap_entries.find(data_range.start);
+        if(it == heap_entries.end())
+        {
+            return std::nullopt;
+        }
+
+        auto const& node = std::get<process_heap_graph_heap_entry>(nodes_[it->second]);
+        if(!node.heap_entry().contains_address_range(data_range.start, size_units::base_16::bytes{data_range.size}))
+        {
+            return std::nullopt;
+        }
+
+        return node;
     }
 
     void process_heap_graph::generate_node_references(std::map<uint64_t, size_t> const& heap_entries)
@@ -147,8 +170,8 @@ namespace dlg_help_utils::heap
     void process_heap_graph::generate_graph()
     {
         // generate all reference nodes
-        generate_global_variable_references();
         auto const heap_entries = generate_allocation_references();
+        generate_global_variable_references(heap_entries);
 
         // link all reference nodes
         generate_node_references(heap_entries);

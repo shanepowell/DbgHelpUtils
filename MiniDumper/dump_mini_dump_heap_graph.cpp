@@ -38,6 +38,19 @@ namespace
         return std::visit(start_address_of_node, node);
     }
 
+    std::wstring get_base_heap_entry_details(optional<heap::process_heap_graph_heap_entry> const& base_heap_entry, std::streamsize const hex_length)
+    {
+        if(!base_heap_entry.has_value())
+        {
+            return {};
+        }
+
+        auto const& heap_entry = base_heap_entry.value().heap_entry();
+
+        // ReSharper disable once StringLiteralTypo
+        return std::format(L" BaseHeapEntryAddr({0})", stream_hex_dump::to_hex(heap_entry.user_address(), hex_length));
+    }
+
     std::wstring get_node_specific_data(heap::process_heap_graph_global_variable_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
     {
         using namespace size_units::base_16;
@@ -45,9 +58,10 @@ namespace
 
         auto const* module = walker.module_list().find_module(entry.symbol_type().module_base());
         auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+        auto const& base_heap_entry = node.base_heap_entry();
 
         // ReSharper disable once StringLiteralTypo
-        return std::format(L" [Name({0}!{1}) Index({2}) Addr({3}) Size({4})]", module_name, entry.symbol_type().name().value_or(L"<unknown>"sv), entry.symbol_type().sym_index(), stream_hex_dump::to_hex(entry.symbol_type().address().value_or(0), hex_length), to_wstring(bytes{entry.symbol_type().length().value_or(0)}));
+        return std::format(L" [Name({0}!{1}) Index({2}) Addr({3}) Size({4}){5}]", module_name, entry.symbol_type().name().value_or(L"<unknown>"sv), entry.symbol_type().sym_index(), stream_hex_dump::to_hex(entry.symbol_type().address().value_or(0), hex_length), to_wstring(bytes{entry.symbol_type().length().value_or(0)}), get_base_heap_entry_details(base_heap_entry, hex_length));
     }
 
     std::wstring get_node_specific_data(heap::process_heap_graph_heap_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)

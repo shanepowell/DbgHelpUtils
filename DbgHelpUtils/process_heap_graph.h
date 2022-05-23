@@ -5,6 +5,7 @@
 
 #include "process_heap_graph_global_variable_entry.h"
 #include "process_heap_graph_heap_entry.h"
+#include "vector_to_hash_set.h"
 
 namespace dlg_help_utils::heap
 {
@@ -26,8 +27,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<process_heap_graph_entry_type> const& nodes() const { return nodes_; }
 
     private:
-        void generate_global_variable_references();
-        std::map<uint64_t, size_t> generate_allocation_references();
+        [[nodiscard]] std::map<uint64_t, size_t> generate_allocation_references();
+        [[nodiscard]] std::optional<process_heap_graph_heap_entry> find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, range const& data_range) const;
+        void generate_global_variable_references(std::map<uint64_t, size_t> const& heap_entries);
         void generate_node_references(std::map<uint64_t, size_t> const& heap_entries);
         void remove_all_non_allocation_with_empty_to_references();
 

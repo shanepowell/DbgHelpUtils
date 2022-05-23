@@ -6,10 +6,11 @@ using namespace std::string_literals;
 
 namespace dlg_help_utils::heap
 {
-    process_heap_graph_global_variable_entry::process_heap_graph_global_variable_entry(process::global_variable variable)
+    process_heap_graph_global_variable_entry::process_heap_graph_global_variable_entry(process::global_variable variable, std::optional<process_heap_graph_heap_entry> base_heap_entry)
         : process_heap_graph_node{true}
         , variable_{std::move(variable)}
         , name_{generate_global_variable_name()}
+        , base_heap_entry_{std::move(base_heap_entry)}
     {
     }
 
