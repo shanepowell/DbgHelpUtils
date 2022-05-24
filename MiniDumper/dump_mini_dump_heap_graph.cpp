@@ -161,117 +161,158 @@ namespace
         return *it->second;
     }
 
-    struct display_node
+    struct node_display_state
     {
-        std::optional<heap::process_heap_graph_entry_type> node;
-        bool cycle_end_detected;
-        bool to_reference;
-        bool already_logged_children;
+        heap::process_heap_graph_entry_type const* node;
+        size_t print_offset;
+        size_t print_max_size;
         size_t indent;
-        std::optional<uint64_t> parent_offset;
-        std::optional<uint64_t> pointer;
         std::set<uint64_t> parents;
-        bool expanded{false};
-        std::wstring message;
     };
 
-
-    void print_display_node(std::wostream& log, display_node const& display_node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    void print_display_node(std::wostream& log, heap::process_heap_graph_entry_type const& node, size_t const indent, bool const to_reference, std::optional<uint64_t> parent_offset, std::optional<uint64_t> pointer, bool const cycle_end_detected, bool const already_logged_children, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
     {
-        if(display_node.node.has_value())
+        std::visit([&log, indent, to_reference, &parent_offset, &pointer, cycle_end_detected, already_logged_children, hex_length, &walker](auto const& _) mutable
         {
-            std::visit([&log, &display_node, hex_length, &walker](auto const& _) mutable { print_node_line(log, _, display_node.indent, display_node.parent_offset, display_node.pointer, display_node.cycle_end_detected, hex_length, display_node.to_reference, display_node.already_logged_children, walker); }, display_node.node.value());
-        }
-        else
-        {
-            log << std::format(L"{0:{1}}{2}\n", ' ', display_node.indent, display_node.message);
-        }
+            print_node_line(log, _, indent, parent_offset, pointer, cycle_end_detected, hex_length, to_reference, already_logged_children, walker);
+        }, node);
     }
 
-    void expand_all_child_nodes(dump_file_options const& options, nodes_index_map const& nodes_index, std::set<uint64_t>& printed_nodes, std::list<display_node>& display_nodes)
+    void continue_display_node(wostream& log
+        , dump_file_options const& options
+        , nodes_index_map const& nodes_index
+        , std::set<uint64_t>& printed_nodes
+        , streamsize hex_length
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , vector<node_display_state>& node_stack
+        , node_display_state state);
+
+    void display_node(std::wostream& log
+        , dump_file_options const& options
+        , nodes_index_map const& nodes_index
+        , std::set<uint64_t>& printed_nodes
+        , heap::process_heap_graph_entry_type const& node
+        , size_t const indent
+        , bool const to_reference
+        , std::optional<uint64_t> const& parent_offset
+        , std::optional<uint64_t> const& pointer
+        , bool const cycle_end_detected
+        , bool const already_logged_children
+        , std::set<uint64_t> const& parents
+        , std::streamsize const hex_length
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , std::vector<node_display_state>& node_stack)
     {
-        bool all_expanded;
-        do
+        auto const& graph_node = get_graph_node(node);
+        print_display_node(log, node, indent, to_reference, parent_offset, pointer, cycle_end_detected, already_logged_children, hex_length, walker);
+
+        if(cycle_end_detected || already_logged_children)
         {
-            all_expanded = true;
+            return;
+        }
 
-            for (auto it = display_nodes.begin(); it != display_nodes.end(); )
+        if(!to_reference && !graph_node.from_references().empty())
+        {
+            log << std::format(L"{0:{1}}From References: ({2})\n", ' ', indent, graph_node.from_references().size());
+
+            for(auto const& reference : graph_node.from_references())
             {
-                if(!it->expanded && it->node.has_value())
-                {
-                    it->expanded = true;
-                    all_expanded = false;
-
-                    auto const& parent_node{it->node.value()};
-                    auto const& graph_parent_node = get_graph_node(parent_node);
-                    auto const parent_indent = it->indent;
-
-                    if(bool const already_printed{printed_nodes.contains(graph_parent_node.index())};
-                        it->cycle_end_detected || already_printed)
-                    {
-                        ++it;
-                        continue;
-                    }
-
-                    printed_nodes.insert(graph_parent_node.index());
-                    it->parents.insert(graph_parent_node.index());
-
-                    auto const to_reference = it->to_reference;
-                    auto const& copy_parents = it->parents;
-
-                    ++it;
-
-                    if(!to_reference && !graph_parent_node.from_references().empty())
-                    {
-                        it = display_nodes.insert(it, {std::nullopt, false, false, false, parent_indent, std::nullopt, std::nullopt, {}, true, std::format(L"From References: ({})", graph_parent_node.from_references().size())});
-                        ++it;
-
-                        for(auto const& reference : graph_parent_node.from_references())
-                        {
-                            auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
-                            it = display_nodes.insert(it, {child_node, false, false, false, parent_indent+2, reference.offset(), reference.pointer(), {}, true, L""s});
-                            ++it;
-                        }
-                    }
-
-                    if(!graph_parent_node.to_references().empty())
-                    {
-                        if(!to_reference)
-                        {
-                            it = display_nodes.insert(it, {std::nullopt, false, false, false, parent_indent, std::nullopt, std::nullopt, {}, true, std::format(L"To References: ({})", graph_parent_node.to_references().size())});
-                            ++it;
-                        }
-
-                        auto const print_max_size = to_reference ? options.display_heap_graph_to_reference_limit() : graph_parent_node.to_references().size();
-
-                        for(auto const& reference : graph_parent_node.to_references() | std::views::take(print_max_size))
-                        {
-                            auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
-                            auto const& child_node_type = get_graph_node(child_node);
-                            it = display_nodes.insert(it, {child_node, copy_parents.contains(child_node_type.index()), true, printed_nodes.contains(child_node_type.index()) && !child_node_type.to_references().empty(), parent_indent+2, reference.offset(), reference.pointer(), copy_parents, false, L""s});
-                            ++it;
-                        }
-
-                        if(graph_parent_node.to_references().size() > print_max_size)
-                        {
-                            it = display_nodes.insert(it, {std::nullopt, false, false, false, parent_indent+3, std::nullopt, std::nullopt, {}, true, std::format(L"(limited to first {0} of {1})", options.display_heap_graph_to_reference_limit(), graph_parent_node.to_references().size())});
-                            ++it;
-                        }
-                    }
-                }
-                else
-                {
-                    ++it;
-                }
+                auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
+                print_display_node(log, child_node, indent+2, false, reference.offset(), reference.pointer(), false, false, hex_length, walker);
             }
         }
-        while(all_expanded == false);
+
+        if(!graph_node.to_references().empty())
+        {
+            if(!to_reference)
+            {
+                log << std::format(L"{0:{1}}To References: ({2})\n", ' ', indent, graph_node.to_references().size());
+            }
+
+            auto const print_max_size = to_reference ? options.display_heap_graph_to_reference_limit() : graph_node.to_references().size();
+
+            auto node_parents = parents;
+            node_parents.insert(graph_node.index());
+
+            node_display_state state
+            {
+                &node,
+                0,
+                print_max_size,
+                indent+2,
+                std::move(node_parents)
+            };
+            continue_display_node(log, options, nodes_index, printed_nodes, hex_length, walker, node_stack, std::move(state));
+        }
     }
 
-    void generate_display_node_to_print(dump_file_options const& options, heap::process_heap_graph_entry_type const& node, nodes_index_map const& nodes_index, size_t indent, std::set<uint64_t>& printed_nodes, std::list<display_node>& display_nodes)
+    void continue_display_node(wostream& log
+        , dump_file_options const& options
+        , nodes_index_map const& nodes_index
+        , std::set<uint64_t>& printed_nodes
+        , streamsize const hex_length
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , vector<node_display_state>& node_stack
+        , node_display_state state)
     {
-        display_nodes.emplace_back(node, false, false, false, indent, std::nullopt, std::nullopt);
-        expand_all_child_nodes(options, nodes_index, printed_nodes, display_nodes);
+        auto const& graph_node = get_graph_node(*state.node);
+        for(auto const& reference : graph_node.to_references() | std::views::take(state.print_max_size) | std::views::drop(state.print_offset))
+        {
+            auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
+            auto const& child_node_type = get_graph_node(child_node);
+            auto const child_cycle_end_detected = state.parents.contains(child_node_type.index());
+            auto const child_already_logged_children = printed_nodes.contains(child_node_type.index());
+
+            printed_nodes.insert(child_node_type.index());
+            ++state.print_offset;
+
+            auto const& stack_node = node_stack.emplace_back(std::move(state));
+            auto const stack_size = node_stack.size();
+
+            display_node(log
+                , options
+                , nodes_index
+                , printed_nodes
+                , child_node
+                , stack_node.indent
+                , true
+                , reference.offset()
+                , reference.pointer()
+                , child_cycle_end_detected
+                , child_already_logged_children
+                , stack_node.parents
+                , hex_length
+                , walker
+                , node_stack
+            );
+
+            if(node_stack.size() != stack_size)
+            {
+                return;
+            }
+
+            state = std::move(node_stack.back());
+            node_stack.pop_back();
+        }
+
+        if(graph_node.to_references().size() > state.print_max_size)
+        {
+            log << std::format(L"{0:{1}}(limited to first {2} of {3})\n", ' ', state.indent+1, options.display_heap_graph_to_reference_limit(), graph_node.to_references().size());
+        }
+    }
+
+    void generate_display_node_and_print(std::wostream& log, dump_file_options const& options, nodes_index_map const& nodes_index, std::set<uint64_t>& printed_nodes, heap::process_heap_graph_entry_type const& node, size_t const indent, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    {
+        std::vector<node_display_state> node_stack;
+
+        display_node(log, options, nodes_index, printed_nodes, node, indent, false, {}, {}, false, false, {}, hex_length, walker, node_stack);
+
+        while(!node_stack.empty())
+        {
+            auto state = std::move(node_stack.back());
+            node_stack.pop_back();
+            continue_display_node(log, options, nodes_index, printed_nodes, hex_length, walker, node_stack, std::move(state));
+        }
     }
 
     auto get_sort_key(heap::process_heap_graph_entry_type const& entry)
@@ -312,37 +353,13 @@ void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, c
 
     // ReSharper disable once CppTooWideScope
     std::set<uint64_t> printed_nodes;
-    std::list<display_node> display_nodes;
-    size_t index = 0;
-    std::wstring go_back_line;
-    auto constexpr print_update_gap = std::chrono::seconds{5};
-    auto last_start_node_generate = std::chrono::system_clock::now() - print_update_gap - print_update_gap;
 
+    log << L"Memory Allocation Graph:\n";
     for(auto const& node : nodes)
     {
-        if(auto const start_node_generate = std::chrono::system_clock::now();
-            start_node_generate - last_start_node_generate >= print_update_gap)
-        {
-            auto const progress_line = std::format(L"Generating Display Node {0} of {1} - {2}%", index, nodes.size(), static_cast<int>(std::round(100.0 / static_cast<double>(nodes.size()) * static_cast<double>(index+1))));
-            std::wcerr << progress_line;
-            if(go_back_line.size() != progress_line.size())
-            {
-                go_back_line = std::wstring(progress_line.size(), L'\b');
-            }
-            std::wcerr << go_back_line;
-            last_start_node_generate = start_node_generate;
-        }
-        ++index;
-        generate_display_node_to_print(options, node, nodes_index, 2, printed_nodes, display_nodes);
+        generate_display_node_and_print(log, options, nodes_index, printed_nodes, node, 2, hex_length, heaps.peb().walker());
     }
-
-    std::wcerr << std::wstring(go_back_line.size(), L' ') << go_back_line;
 
     end = std::chrono::system_clock::now();
     std::wcerr << std::format(L"Generate Display for Memory Allocation Graph Took ({0:%T})\n", end - start);
-    log << L"Memory Allocation Graph:\n";
-    for(auto const& display_node : display_nodes)
-    {
-        print_display_node(log, display_node, hex_length, heaps.peb().walker());
-    }
 }
