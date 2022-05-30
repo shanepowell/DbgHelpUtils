@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <ranges>
 
+#include "DbgHelpUtils/register_names.h"
+
 using namespace std;
 using namespace dlg_help_utils;
 
@@ -33,6 +35,8 @@ namespace
         auto start_address_of_node = overload {
             [](heap::process_heap_graph_heap_entry const& graph_node) { return graph_node.heap_entry().user_address(); },
             [](heap::process_heap_graph_global_variable_entry const& graph_node) { return graph_node.variable().symbol_type().address().value_or(0); },
+            [](heap::process_heap_graph_thread_stack_entry const& graph_node) { return graph_node.stack_stream().current_address(); },
+            [](heap::process_heap_graph_thread_context_entry const& graph_node) { return static_cast<uint64_t>(graph_node.register_type()); },
         };
 
         return std::visit(start_address_of_node, node);
@@ -90,6 +94,18 @@ namespace
         return std::move(ss).str();
     }
 
+    std::wstring get_node_specific_data(heap::process_heap_graph_thread_stack_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
+    {
+        using namespace size_units::base_16;
+        return std::format(L" [ThreadId({0}) Stack({1}) Size({2}) - {3}]", stream_hex_dump::to_hex(node.thread_id()), stream_hex_dump::to_hex(node.stack_stream().current_address(), hex_length), to_wstring(bytes{node.stack_stream().length()}), node.thread_name());
+    }
+
+    std::wstring get_node_specific_data(heap::process_heap_graph_thread_context_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
+    {
+        using namespace size_units::base_16;
+        return std::format(L" [ThreadId({0}) Register({1}) Data({2}) - {3}]", stream_hex_dump::to_hex(node.thread_id()), register_names::get_register_name(node.register_type()), stream_hex_dump::to_hex(node.register_data(), hex_length), node.thread_name());
+    }
+
     std::wstring get_node_attributes(heap::process_heap_graph_node const& node, std::optional<uint64_t> const& parent_offset, std::optional<uint64_t> const& pointer)
     {
         std::wostringstream ss;
@@ -137,6 +153,14 @@ namespace
         else if constexpr (std::is_same_v<T, heap::process_heap_graph_global_variable_entry>)
         {
             return L"GlobalVaraible"sv;
+        }
+        else if constexpr (std::is_same_v<T, heap::process_heap_graph_thread_stack_entry>)
+        {
+            return L"ThreadStack"sv;
+        }
+        else if constexpr (std::is_same_v<T, heap::process_heap_graph_thread_context_entry>)
+        {
+            return L"ThreadContext"sv;
         }
         else
         {
@@ -324,7 +348,7 @@ namespace
 void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     heap::process_heaps const heaps{mini_dump, cache, symbol_engine, options.process_heaps_options(), options.system_module_list(), options.statistic_view_options()};
-    heap::process_heap_graph graph{heaps};
+    heap::process_heap_graph graph{mini_dump, heaps};
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
     std::wcerr << std::format(L"Generate Memory Allocation Graph\n");

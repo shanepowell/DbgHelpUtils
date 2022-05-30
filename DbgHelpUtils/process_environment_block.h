@@ -61,6 +61,14 @@ namespace dlg_help_utils::process
 
         void gather_system_area_addresses(std::set<uint64_t>& system_area_addresses) const;
 
+        [[nodiscard]] thread_names_list_stream const& names_list() const { return names_list_; }
+        [[nodiscard]] memory_list_stream const& memory_list() const { return memory_list_; }
+        [[nodiscard]] memory64_list_stream const& memory64_list() const { return memory64_list_; }
+        [[nodiscard]] function_table_stream const& function_table() const { return function_table_; }
+        [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }
+        [[nodiscard]] system_memory_info_stream const& system_memory_info() const { return system_memory_info_; }
+
+
     private:
         [[nodiscard]] uint64_t get_teb_address() const;
         [[nodiscard]] uint64_t get_peb_address() const;

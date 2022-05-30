@@ -235,6 +235,8 @@
     <ClCompile Include="process_heap_graph_global_variable_entry.cpp" />
     <ClCompile Include="process_heap_graph_heap_entry.cpp" />
     <ClCompile Include="process_heap_graph_node.cpp" />
+    <ClCompile Include="process_heap_graph_thread_context_entry.cpp" />
+    <ClCompile Include="process_heap_graph_thread_stack_entry.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
     <ClCompile Include="register_names.cpp" />
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
@@ -378,6 +380,8 @@
     <ClInclude Include="process_heap_graph_global_variable_entry.h" />
     <ClInclude Include="process_heap_graph_heap_entry.h" />
     <ClInclude Include="process_heap_graph_node.h" />
+    <ClInclude Include="process_heap_graph_thread_context_entry.h" />
+    <ClInclude Include="process_heap_graph_thread_stack_entry.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
     <ClInclude Include="range_units.h" />
     <ClInclude Include="register_names.h" />

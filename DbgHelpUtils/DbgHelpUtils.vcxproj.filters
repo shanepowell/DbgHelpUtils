@@ -426,6 +426,12 @@
     <ClCompile Include="process_heap_graph_global_variable_entry.cpp">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClCompile>
+    <ClCompile Include="process_heap_graph_thread_context_entry.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_graph_thread_stack_entry.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -888,6 +894,12 @@
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
     <ClInclude Include="process_heap_graph_global_variable_entry.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_thread_context_entry.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_thread_stack_entry.h">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
   </ItemGroup>
