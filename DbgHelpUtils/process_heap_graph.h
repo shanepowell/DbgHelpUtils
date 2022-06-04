@@ -18,6 +18,7 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::heap
 {
+    class system_module_list;
     class process_heaps;
     using process_heap_graph_entry_type = std::variant<process_heap_graph_global_variable_entry, process_heap_graph_thread_stack_entry, process_heap_graph_thread_context_entry, process_heap_graph_heap_entry>;
 
@@ -26,10 +27,15 @@ namespace dlg_help_utils::heap
         return std::visit([](auto const& _) -> process_heap_graph_node const& { return _; }, node);
     }
 
+    [[nodiscard]] inline process_heap_graph_node& get_graph_node(process_heap_graph_entry_type& node)
+    {
+        return std::visit([](auto& _) -> process_heap_graph_node& { return _; }, node);
+    }
+
     class process_heap_graph
     {
     public:
-        process_heap_graph(mini_dump const& mini_dump, process_heaps const& process);
+        process_heap_graph(mini_dump const& mini_dump, process_heaps const& process, system_module_list const& system_module_list);
 
         void generate_graph();
 
@@ -49,10 +55,14 @@ namespace dlg_help_utils::heap
         void generate_thread_stack_references(mini_dump_memory_stream stack_stream, uint32_t thread_id, std::wstring_view const& thread_name);
         void generate_node_references(std::map<uint64_t, size_t> const& heap_entries);
         void remove_all_non_allocation_with_empty_to_references();
+        void remove_all_system_module_global_variables_and_parents();
+        [[nodiscard]] bool is_node_or_children_system_module_global_variable(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
+        [[nodiscard]] process_heap_graph_entry_type const& get_node_from_index(uint64_t node_index) const;
 
     private:
         mini_dump const* mini_dump_;
         process_heaps const* process_;
         std::vector<process_heap_graph_entry_type> nodes_{};
+        std::set<uint64_t> system_module_bases_;
     };
 }

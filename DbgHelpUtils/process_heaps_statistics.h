@@ -18,7 +18,7 @@ namespace dlg_help_utils::heap
     class process_heaps_statistics
     {
     public:
-        process_heaps_statistics(process_heaps const& process, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
+        process_heaps_statistics(process_heaps const& process, system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
 
         [[nodiscard]] process_heaps_statistic_view view_by_size_frequency() const;
         [[nodiscard]] process_heaps_statistic_view view_by_size_ranges_frequency() const;

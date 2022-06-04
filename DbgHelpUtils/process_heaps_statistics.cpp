@@ -6,7 +6,7 @@
 
 namespace dlg_help_utils::heap
 {
-    process_heaps_statistics::process_heaps_statistics(process_heaps const& process, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
+    process_heaps_statistics::process_heaps_statistics(process_heaps const& process, system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
     : process_{process}
     , statistic_view_options_{statistic_view_options}
     , helper_{process.peb().walker(), system_module_list}

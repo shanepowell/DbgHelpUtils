@@ -3,7 +3,13 @@
 #include <string>
 #include <vector>
 
-namespace dlg_help_utils::heap::statistic_views
+namespace dlg_help_utils
+{
+    class unloaded_module_list_stream;
+    class module_list_stream;
+}
+
+namespace dlg_help_utils::heap
 {
     class system_module_list
     {
@@ -12,6 +18,7 @@ namespace dlg_help_utils::heap::statistic_views
         system_module_list();
 
         [[nodiscard]] bool is_system_module(std::wstring const& module_name) const;
+        [[nodiscard]] std::set<uint64_t> generate_system_module_bases(module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list) const;
 
     private:
         std::set<std::wstring> system_modules_names_;

@@ -18,9 +18,9 @@ namespace dlg_help_utils::heap
     namespace statistic_views
     {
         class statistic_view_options;
-        class system_module_list;
     }
 
+    class system_module_list;
     class crt_entry;
     class heap_subsegment;
     class heap_entry;
@@ -31,12 +31,12 @@ namespace dlg_help_utils::heap
     class process_heaps
     {
     public:
-        process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, process_heaps_options const& options, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
+        process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, process_heaps_options const& options, system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options);
 
         [[nodiscard]] process::process_environment_block const& peb() const { return peb_; }
         [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
         [[nodiscard]] process_heaps_options const& options() const { return *options_; }
-        [[nodiscard]] statistic_views::system_module_list const& system_module() const { return *system_module_list_; }
+        [[nodiscard]] system_module_list const& system_module() const { return *system_module_list_; }
         [[nodiscard]] statistic_views::statistic_view_options const& statistic_view_options() const { return *statistic_view_options_; }
 
         void set_base_diff_filter(process_heaps& base_diff_filter);
@@ -83,7 +83,7 @@ namespace dlg_help_utils::heap
         process_heaps_options const* options_;
         cache_manager* cache_manager_;
         process::process_environment_block peb_;
-        statistic_views::system_module_list const* system_module_list_;
+        system_module_list const* system_module_list_;
         statistic_views::statistic_view_options const* statistic_view_options_;
         process_heaps* base_diff_filter_{nullptr};
         mutable std::vector<process_heap_entry> entry_filters_cache_;

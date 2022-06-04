@@ -381,9 +381,6 @@
     <ClCompile Include="allocation_stack_trace_helper.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
-    <ClCompile Include="system_module_list.cpp">
-      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
-    </ClCompile>
     <ClCompile Include="by_size_ranges_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
@@ -430,6 +427,9 @@
       <Filter>Heap\ProcessHeaps</Filter>
     </ClCompile>
     <ClCompile Include="process_heap_graph_thread_stack_entry.cpp">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClCompile>
+    <ClCompile Include="system_module_list.cpp">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClCompile>
   </ItemGroup>
@@ -824,9 +824,6 @@
     <ClInclude Include="allocation_stack_trace_helper.h">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClInclude>
-    <ClInclude Include="system_module_list.h">
-      <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
-    </ClInclude>
     <ClInclude Include="string_utils.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -900,6 +897,9 @@
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
     <ClInclude Include="process_heap_graph_thread_stack_entry.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="system_module_list.h">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
   </ItemGroup>

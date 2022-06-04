@@ -32,7 +32,7 @@
 
 namespace dlg_help_utils::heap
 {
-    process_heaps::process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, process_heaps_options const& options, statistic_views::system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
+    process_heaps::process_heaps(mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine, process_heaps_options const& options, system_module_list const& system_module_list, statistic_views::statistic_view_options const& statistic_view_options)
     : options_{&options}
     , cache_manager_{&cache}
     , peb_{ mini_dump, cache, symbol_engine }

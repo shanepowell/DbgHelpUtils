@@ -66,6 +66,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] memory64_list_stream const& memory64_list() const { return memory64_list_; }
         [[nodiscard]] function_table_stream const& function_table() const { return function_table_; }
         [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }
+        [[nodiscard]] unloaded_module_list_stream const& unloaded_module_list() const { return unloaded_module_list_; }
         [[nodiscard]] system_memory_info_stream const& system_memory_info() const { return system_memory_info_; }
 
 

@@ -203,7 +203,7 @@ void dump_file_options::process_raw_options()
             throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"failed to parse json system modules file: {0} with {1}", dlg_help_utils::string_conversation::acp_to_wstring(system_module_list_file_), dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()))};
         }
 
-        system_module_list_ = dlg_help_utils::heap::statistic_views::system_module_list{convert_to_wstring(values.systemmodules)};
+        system_module_list_ = dlg_help_utils::heap::system_module_list{convert_to_wstring(values.systemmodules)};
         system_module_list_file_.clear();
     }
 

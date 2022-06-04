@@ -1,11 +1,15 @@
 ﻿#include "process_heap_graph.h"
 
+#include <ranges>
+
 #include "global_variable.h"
 #include "global_variables.h"
 #include "process_heaps.h"
+#include "process_heaps_options.h"
 #include "process_heap_entry.h"
 #include "process_heap_graph_global_variable_entry.h"
 #include "process_heap_graph_heap_entry.h"
+#include "system_module_list.h"
 #include "thread_ex_list_stream.h"
 #include "thread_list_stream.h"
 #include "vector_to_hash_set.h"
@@ -118,9 +122,10 @@ namespace dlg_help_utils::heap
         }
     }
 
-    process_heap_graph::process_heap_graph(mini_dump const& mini_dump, process_heaps const& process)
+    process_heap_graph::process_heap_graph(mini_dump const& mini_dump, process_heaps const& process, system_module_list const& system_module_list)
         : mini_dump_{&mini_dump}
         , process_{&process}
+        , system_module_bases_{system_module_list.generate_system_module_bases(process.peb().module_list(), process.peb().unloaded_module_list())}
     {
     }
 
@@ -292,6 +297,69 @@ namespace dlg_help_utils::heap
         nodes_.erase(first, last);
     }
 
+    void process_heap_graph::remove_all_system_module_global_variables_and_parents()
+    {
+        if(process_->options().no_filter_heap_entries())
+        {
+            return;
+        }
+
+        std::unordered_map<uint64_t, bool> result_cache;
+        auto const [first, last] = std::ranges::remove_if(nodes_, [this, &result_cache](auto const& node)
+        {
+            return is_node_or_children_system_module_global_variable(node, result_cache);
+        });
+
+        nodes_.erase(first, last);
+
+        for (auto const removed_node_index : result_cache | std::views::filter([](auto const& kv) { return kv.second; }) | std::views::keys)
+        {
+            for(auto& node : nodes_)
+            {
+                auto& graph_node = get_graph_node(node);
+                graph_node.remove_references(removed_node_index);
+            }
+        }
+    }
+
+    bool process_heap_graph::is_node_or_children_system_module_global_variable(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const
+    {
+        auto const& graph_node = get_graph_node(node);
+        if(auto const cache_result = result_cache.find(graph_node.index()); cache_result != result_cache.end())
+        {
+            return cache_result->second;
+        }
+
+        if(std::holds_alternative<process_heap_graph_global_variable_entry>(node))
+        {
+            if(auto const& global_variable_entry = std::get<process_heap_graph_global_variable_entry>(node);
+                system_module_bases_.contains(global_variable_entry.variable().symbol_type().module_base()))
+            {
+                result_cache.insert(std::make_pair(graph_node.index(), true));
+                return true;
+            }
+        }
+
+        result_cache.insert(std::make_pair(graph_node.index(), false));
+        if(std::ranges::any_of(graph_node.to_references(), [this, &result_cache](auto const& child_node) { return is_node_or_children_system_module_global_variable(get_node_from_index(child_node.node_index()), result_cache); }))
+        {
+            result_cache[graph_node.index()] = true;
+            return true;
+        }
+        return false;
+    }
+
+    process_heap_graph_entry_type const& process_heap_graph::get_node_from_index(uint64_t const node_index) const
+    {
+        auto const it = std::ranges::find_if(nodes_, [node_index](auto const& node) { return get_graph_node(node).index() == node_index; });
+        if(it == nodes_.end())
+        {
+            throw exceptions::wide_runtime_error{std::format(L"Graph Allocation Nodes does not contain node index [{}]", node_index)};
+        }
+
+        return *it;
+    }
+
     void process_heap_graph::generate_graph()
     {
         // generate all reference nodes
@@ -304,5 +372,6 @@ namespace dlg_help_utils::heap
 
         // remove any reference nodes that is not a allocation and has no to references
         remove_all_non_allocation_with_empty_to_references();
+        remove_all_system_module_global_variables_and_parents();
     }
 }

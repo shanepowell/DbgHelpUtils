@@ -5,6 +5,12 @@
         "kernel32.dll",
         "msvcp140.dll",
         "msvcp140d.dll",
-        "ucrtbase.dll"
+        "ucrtbase.dll",
+        "ucrtbased.dll",
+        "vcruntime140.dll",
+        "vcruntime140d.dll",
+        "vcruntime140_1.dll",
+        "vcruntime140_1d.dll",
+        "sechost.dll"
     ]
 }

@@ -97,16 +97,40 @@ namespace
     std::wstring get_node_specific_data(heap::process_heap_graph_thread_stack_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
     {
         using namespace size_units::base_16;
-        return std::format(L" [ThreadId({0}) Stack({1}) Size({2}) - {3}]", stream_hex_dump::to_hex(node.thread_id()), stream_hex_dump::to_hex(node.stack_stream().current_address(), hex_length), to_wstring(bytes{node.stack_stream().length()}), node.thread_name());
+
+        std::wostringstream ss;
+        ss << std::format(L" [ThreadId({})", stream_hex_dump::to_hex(node.thread_id()));
+        if(node.stack_stream().current_address() > 0)
+        {
+            ss << std::format(L" Stack({})", stream_hex_dump::to_hex(node.stack_stream().current_address(), hex_length));
+        }
+
+        ss << std::format(L" StackSize({})", to_wstring(bytes{node.stack_stream().length()}));
+        if(!node.thread_name().empty())
+        {
+            ss << std::format(L" Name({})", node.thread_name());
+        }
+
+        ss << "]";
+        return std::move(ss).str();
     }
 
     std::wstring get_node_specific_data(heap::process_heap_graph_thread_context_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
     {
         using namespace size_units::base_16;
-        return std::format(L" [ThreadId({0}) Register({1}) Data({2}) - {3}]", stream_hex_dump::to_hex(node.thread_id()), register_names::get_register_name(node.register_type()), stream_hex_dump::to_hex(node.register_data(), hex_length), node.thread_name());
+
+        std::wostringstream ss;
+        ss << std::format(L" [ThreadId({0}) Register({1}) Data({2})]", stream_hex_dump::to_hex(node.thread_id()), register_names::get_register_name(node.register_type()), stream_hex_dump::to_hex(node.register_data(), hex_length));
+        if(!node.thread_name().empty())
+        {
+            ss << std::format(L" Name({})", node.thread_name());
+        }
+
+        ss << "]";
+        return std::move(ss).str();
     }
 
-    std::wstring get_node_attributes(heap::process_heap_graph_node const& node, std::optional<uint64_t> const& parent_offset, std::optional<uint64_t> const& pointer)
+    std::wstring get_node_attributes(heap::process_heap_graph_node const& node, std::optional<uint64_t> const& parent_offset, std::optional<uint64_t> const& pointer, std::streamsize const hex_length)
     {
         std::wostringstream ss;
         if(parent_offset.has_value())
@@ -116,7 +140,7 @@ namespace
 
         if(pointer.has_value())
         {
-            ss << std::format(L" ({0})", stream_hex_dump::to_hex(pointer.value(), 4));
+            ss << std::format(L" ({0})", stream_hex_dump::to_hex(pointer.value(), hex_length));
         }
 
         if(node.is_non_allocation_root_node())
@@ -167,12 +191,12 @@ namespace
             static_assert(assert_value<false, T>::value, "unknown type");
             return L"Unknown"sv;
         }
-    }
+    }\
 
     template <typename T>
     void print_node_line(std::wostream& log, T const& node, size_t indent, std::optional<uint64_t> parent_offset, std::optional<uint64_t> pointer, auto const cycle_end_detected, std::streamsize const hex_length, bool const to_reference, bool const already_logged_children, stream_stack_dump::mini_dump_memory_walker const& walker)
     {
-        log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", ' ', indent, parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(), get_node_attributes(node, parent_offset, pointer), get_node_specific_data(node, hex_length, walker), cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
+        log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", ' ', indent, parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(), get_node_attributes(node, parent_offset, pointer, hex_length), get_node_specific_data(node, hex_length, walker), cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
     }
 
     heap::process_heap_graph_entry_type const& get_node_from_index(nodes_index_map const& nodes_index, uint64_t const index)
@@ -283,11 +307,11 @@ namespace
         for(auto const& reference : graph_node.to_references() | std::views::take(state.print_max_size) | std::views::drop(state.print_offset))
         {
             auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
-            auto const& child_node_type = get_graph_node(child_node);
-            auto const child_cycle_end_detected = state.parents.contains(child_node_type.index());
-            auto const child_already_logged_children = printed_nodes.contains(child_node_type.index());
+            auto const& child_graph_node = get_graph_node(child_node);
+            auto const child_cycle_end_detected = state.parents.contains(child_graph_node.index());
+            auto const child_already_logged_children = printed_nodes.contains(child_graph_node.index()) && !child_graph_node.to_references().empty();
 
-            printed_nodes.insert(child_node_type.index());
+            printed_nodes.insert(child_graph_node.index());
             ++state.print_offset;
 
             auto const& stack_node = node_stack.emplace_back(std::move(state));
@@ -348,7 +372,7 @@ namespace
 void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
 {
     heap::process_heaps const heaps{mini_dump, cache, symbol_engine, options.process_heaps_options(), options.system_module_list(), options.statistic_view_options()};
-    heap::process_heap_graph graph{mini_dump, heaps};
+    heap::process_heap_graph graph{mini_dump, heaps, options.system_module_list()};
     auto const hex_length = heaps.peb().machine_hex_printable_length();
 
     std::wcerr << std::format(L"Generate Memory Allocation Graph\n");

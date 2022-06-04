@@ -55,7 +55,7 @@ namespace ConsoleForeground
 
 struct base_dump_file
 {
-    base_dump_file(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::process_heaps_options const& options, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
+    base_dump_file(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::process_heaps_options const& options, dlg_help_utils::heap::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
     : dump_file{open_mini_dump_file(dump_filename, o_log)}
     , heaps{dump_file, cache, symbol_engine, options, system_module_list, statistic_view_options}
     , crt_heap{cache, heaps.peb()}
@@ -82,7 +82,7 @@ private:
     }
 };
 
-[[nodiscard]] std::unique_ptr<base_dump_file> make_base_heap(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::heap::process_heaps& heaps, dlg_help_utils::heap::crt_heap& crt_heap, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::process_heaps_options const& options, dlg_help_utils::heap::statistic_views::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
+[[nodiscard]] std::unique_ptr<base_dump_file> make_base_heap(std::wstring const& dump_filename, std::wostream* o_log, dlg_help_utils::heap::process_heaps& heaps, dlg_help_utils::heap::crt_heap& crt_heap, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dlg_help_utils::heap::process_heaps_options const& options, dlg_help_utils::heap::system_module_list const& system_module_list, dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options)
 {
     if(dump_filename.empty())
     {
@@ -217,7 +217,7 @@ std::map<uint64_t, dlg_help_utils::heap::process_heap_entry> make_free_allocatio
     using namespace dlg_help_utils::size_units::base_16;
     symbol_engine_ui ui;
     dlg_help_utils::dbg_help::symbol_engine symbol_engine{ui};
-    dlg_help_utils::heap::statistic_views::system_module_list system_module_list;
+    dlg_help_utils::heap::system_module_list system_module_list;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options;
     dlg_help_utils::heap::process_heaps_options process_options;
 

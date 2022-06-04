@@ -16,12 +16,11 @@ namespace dlg_help_utils::stream_stack_dump
 namespace dlg_help_utils::heap
 {
     class process_heap_entry;
+    class system_module_list;
 }
 
 namespace dlg_help_utils::heap::statistic_views
 {
-    class system_module_list;
-
     class allocation_stack_trace_helper
     {
     public:

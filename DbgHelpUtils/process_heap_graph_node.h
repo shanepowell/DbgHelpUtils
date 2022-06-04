@@ -12,6 +12,7 @@ namespace dlg_help_utils::heap
 
         void add_from_reference(process_heap_entry_reference const& reference);
         void add_to_reference(process_heap_entry_reference const& reference);
+        void remove_references(uint64_t node_index);
 
         [[nodiscard]] uint64_t index() const { return index_; }
 
@@ -29,6 +30,7 @@ namespace dlg_help_utils::heap
 
     private:
         static [[nodiscard]] uint64_t get_next_process_heap_graph_node_index();
+        static void remove_all_references_from(uint64_t node_index, std::vector<process_heap_entry_reference>& references);
 
     private:
         bool is_non_allocation_root_node_{};

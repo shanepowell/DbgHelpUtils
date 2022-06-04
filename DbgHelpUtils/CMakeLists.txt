@@ -94,6 +94,8 @@ set(Heap__ProcessHeaps
     "process_heaps_statistic_view.h"
     "process_heaps_statistics.cpp"
     "process_heaps_statistics.h"
+    "system_module_list.cpp"
+    "system_module_list.h"
 )
 source_group("Heap\\ProcessHeaps" FILES ${Heap__ProcessHeaps})
 
@@ -109,8 +111,6 @@ set(Heap__ProcessHeaps__StatisticViews
     "by_stacktrace_frequency_view.cpp"
     "by_stacktrace_frequency_view.h"
     "statistic_view_options.h"
-    "system_module_list.cpp"
-    "system_module_list.h"
 )
 source_group("Heap\\ProcessHeaps\\StatisticViews" FILES ${Heap__ProcessHeaps__StatisticViews})
 
