@@ -143,6 +143,11 @@ namespace
             ss << std::format(L" ({0})", stream_hex_dump::to_hex(pointer.value(), hex_length));
         }
 
+        if(node.is_system_allocation() || node.is_system())
+        {
+            ss << L" [system]";
+        }
+
         if(node.is_non_allocation_root_node())
         {
             ss << L" [root]";

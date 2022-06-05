@@ -6,6 +6,9 @@
 #include <avrfsdk.h>
 #include <unordered_map>
 
+// ReSharper disable once CppUnusedIncludeDirective
+#include <compare>
+
 #include "flags_string_utils.h"
 #include "hash_combine.h"
 #include "mini_dump.h"
@@ -434,7 +437,7 @@ namespace dlg_help_utils::system_info_utils
         std::vector<BYTE> data(dw_size);
 
         // load the version info
-        if (!GetFileVersionInfoW(filename.c_str(), NULL, dw_size, &data[0]))
+        if (!GetFileVersionInfoW(filename.c_str(), NULL, dw_size, data.data()))
         {
             return {};
         }
@@ -444,7 +447,7 @@ namespace dlg_help_utils::system_info_utils
         unsigned int i_product_version_len = 0;
 
         // replace "040904e4" with the language ID of your resources
-        if (!VerQueryValueW(&data[0], L"\\StringFileInfo\\140904b0\\ProductVersion", &pv_product_version,
+        if (!VerQueryValueW(data.data(), L"\\StringFileInfo\\140904b0\\ProductVersion", &pv_product_version,
                             &i_product_version_len))
         {
             return {};

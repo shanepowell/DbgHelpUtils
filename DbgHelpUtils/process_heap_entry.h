@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "heap_match_utils.h"
+#include "memory_range.h"
 #include "mini_dump_memory_stream.h"
 #include "size_units.h"
 
@@ -50,6 +51,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint32_t line_number() const { return line_number_; }
         [[nodiscard]] bool has_request_number() const { return has_request_number_; }
         [[nodiscard]] uint32_t request_number() const { return request_number_; }
+        [[nodiscard]] memory_range user_memory_range() const { return memory_range{user_address(), user_address() + static_cast<uint64_t>(user_requested_size().count())}; }
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }

@@ -136,15 +136,6 @@ namespace dlg_help_utils::heap::statistic_views
             return {};
         }
 
-#if _MSC_VER > 1929
-        // latest vs2019 fails to compile this line, the result of std::ranges::max_element is std::ranges::dangling
         return (*std::ranges::max_element(common_stacks | std::views::values, [](common_stack_data const& a, common_stack_data const& b) { return a.count < b.count; })).stack_trace;
-
-#else
-        {
-            auto r = common_stacks | std::views::values;
-            return (*std::max_element(std::begin(r), std::end(r), [](common_stack_data const& a, common_stack_data const& b) { return a.count < b.count; })).stack_trace;
-        }
-#endif
     }
 }

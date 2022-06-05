@@ -383,6 +383,7 @@
     <ClInclude Include="process_heap_graph_thread_context_entry.h" />
     <ClInclude Include="process_heap_graph_thread_stack_entry.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
+    <ClInclude Include="user_range.h" />
     <ClInclude Include="range_units.h" />
     <ClInclude Include="register_names.h" />
     <ClInclude Include="rtl_balanced_links_walker.h" />

@@ -32,7 +32,7 @@ void dump_mini_dump_memory_list_stream_data(std::wostream& log, mini_dump const&
     }
 
     auto const memory_areas = vector_to_hash_set<uint64_t>(options.filter_values(L"memory_area"s));
-    auto const memory_ranges = vector_to_hash_set<range>(options.filter_values(L"memory_range"s));
+    auto const memory_ranges = vector_to_hash_set<user_range>(options.filter_values(L"memory_range"s));
 
     log << std::format(L"NumberOfMemoryRanges: {}\n", locale_formatting::to_wstring(memory_list.memory_list().NumberOfMemoryRanges));
     for (size_t i = 0; auto const* entry : memory_list.list())
@@ -98,7 +98,7 @@ void dump_mini_dump_memory64_list_stream_data(std::wostream& log, mini_dump cons
     }
 
     auto const memory_areas = vector_to_hash_set<uint64_t>(options.filter_values(L"memory_area"s));
-    auto const memory_ranges = vector_to_hash_set<range>(options.filter_values(L"memory_range"s));
+    auto const memory_ranges = vector_to_hash_set<user_range>(options.filter_values(L"memory_range"s));
 
     log << std::format(L"NumberOfMemoryRanges: {}\n", locale_formatting::to_wstring(memory_list.memory_list().NumberOfMemoryRanges));
     for (size_t i = 0; auto const& entry : memory_list.list())

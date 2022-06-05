@@ -902,6 +902,9 @@
     <ClInclude Include="system_module_list.h">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
+    <ClInclude Include="user_range.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

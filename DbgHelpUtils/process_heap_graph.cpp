@@ -12,7 +12,7 @@
 #include "system_module_list.h"
 #include "thread_ex_list_stream.h"
 #include "thread_list_stream.h"
-#include "vector_to_hash_set.h"
+#include "wide_runtime_error.h"
 
 namespace dlg_help_utils::heap
 {
@@ -135,7 +135,7 @@ namespace dlg_help_utils::heap
         for(process::global_variables const variables{process_->peb().walker()};
             auto const& global_variable : variables.all_variables())
         {
-            nodes_.emplace_back(process_heap_graph_global_variable_entry{global_variable, find_allocation_node_allocation(heap_entries, range{global_variable.symbol_type().address().value_or(0), global_variable.symbol_type().length().value_or(0)})});
+            nodes_.emplace_back(process_heap_graph_global_variable_entry{global_variable, find_allocation_node_allocation(heap_entries, global_variable.variable_memory_range())});
         }
     }
 
@@ -235,28 +235,28 @@ namespace dlg_help_utils::heap
         std::map<uint64_t, size_t> heap_entries;
         for (auto const& entry : process_->entries())
         {
-            nodes_.emplace_back(entry);
+            nodes_.emplace_back(process_heap_graph_heap_entry{entry, process_->is_system_allocation(entry.user_memory_range()) ? process_heap_graph_heap_entry_type::system_allocation : process_heap_graph_heap_entry_type::allocation});
             heap_entries.insert(std::make_pair(entry.user_address() + entry.user_requested_size().count() - 1, nodes_.size() - 1));
         }
 
         return heap_entries;
     }
 
-    std::optional<process_heap_graph_heap_entry> process_heap_graph::find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, range const& data_range) const
+    std::optional<process_heap_graph_heap_entry> process_heap_graph::find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, memory_range const& data_range) const
     {
-        if(data_range.start == 0 || data_range.size == 0)
+        if(data_range.start_range == data_range.end_range)
         {
             return std::nullopt;
         }
 
-        auto const it = heap_entries.find(data_range.start);
+        auto const it = heap_entries.find(data_range.start_range);
         if(it == heap_entries.end())
         {
             return std::nullopt;
         }
 
         auto const& node = std::get<process_heap_graph_heap_entry>(nodes_[it->second]);
-        if(!node.heap_entry().contains_address_range(data_range.start, size_units::base_16::bytes{data_range.size}))
+        if(!node.heap_entry().contains_address_range(data_range.start_range, size(data_range)))
         {
             return std::nullopt;
         }
@@ -297,17 +297,28 @@ namespace dlg_help_utils::heap
         nodes_.erase(first, last);
     }
 
-    void process_heap_graph::remove_all_system_module_global_variables_and_parents()
+    void process_heap_graph::mark_all_system_module_global_variables_and_parents(std::unordered_map<uint64_t, bool>& result_cache)
     {
-        if(process_->options().no_filter_heap_entries())
+        for(auto& node : nodes_)
         {
-            return;
+            if(is_node_or_children_system_module_global_variable(node, result_cache))
+            {
+                auto& graph_node = get_graph_node(node);
+                graph_node.is_system() = true;
+                if(!graph_node.is_root_node())
+                {
+                    graph_node.mark_as_system_allocation();
+                }
+            }
         }
+    }
 
-        std::unordered_map<uint64_t, bool> result_cache;
-        auto const [first, last] = std::ranges::remove_if(nodes_, [this, &result_cache](auto const& node)
+    void process_heap_graph::remove_all_system_nodes(std::unordered_map<uint64_t, bool> const& result_cache)
+    {
+        auto const [first, last] = std::ranges::remove_if(nodes_, [this](auto const& node)
         {
-            return is_node_or_children_system_module_global_variable(node, result_cache);
+            auto const& graph_node = get_graph_node(node);
+            return graph_node.is_system_allocation() || graph_node.is_system();
         });
 
         nodes_.erase(first, last);
@@ -372,6 +383,11 @@ namespace dlg_help_utils::heap
 
         // remove any reference nodes that is not a allocation and has no to references
         remove_all_non_allocation_with_empty_to_references();
-        remove_all_system_module_global_variables_and_parents();
+        std::unordered_map<uint64_t, bool> result_cache;
+        mark_all_system_module_global_variables_and_parents(result_cache);
+        if(!process_->options().no_filter_heap_entries())
+        {
+            remove_all_system_nodes(result_cache);
+        }
     }
 }

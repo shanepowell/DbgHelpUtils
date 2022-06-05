@@ -393,7 +393,12 @@ namespace dlg_help_utils::heap
             return true;
         }
 
-        return !std::ranges::any_of(system_area_addresses_, [&range](uint64_t const address) { return address >= range.start_range && address < range.end_range; });
+        return !is_system_allocation(range);
+    }
+
+    bool process_heaps::is_system_allocation(memory_range const& range) const
+    {
+        return std::ranges::any_of(system_area_addresses_, [&range](uint64_t const address) { return address >= range.start_range && address < range.end_range; });
     }
 
     void process_heaps::get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const

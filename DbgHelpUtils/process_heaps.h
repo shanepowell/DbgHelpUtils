@@ -46,6 +46,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<process_heap_entry> free_entries() const;
 
         [[nodiscard]] bool is_address_filtered(uint64_t address, size_units::base_16::bytes size) const;
+        [[nodiscard]] bool is_system_allocation(memory_range const& range) const;
 
         [[nodiscard]] process_heaps_statistics statistics() const;
 
@@ -62,7 +63,7 @@ namespace dlg_help_utils::heap
         void get_all_segment_large_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
         void get_all_dph_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
         void get_all_dph_virtual_entities(std::map<uint64_t, process_heap_entry> & all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
-        bool is_heap_entry_allowed(memory_range const& range) const;
+        [[nodiscard]] bool is_heap_entry_allowed(memory_range const& range) const;
         void get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const;
 
         [[nodiscard]] std::map<uint64_t, process_heap_entry> all_entries() const;

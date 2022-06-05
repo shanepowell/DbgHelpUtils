@@ -29,7 +29,10 @@ namespace dlg_help_utils::crc
                 {
                     c = c & 1 ? poly ^ (c >> 1) : c >> 1;
                 }
-                crc_table[n] = c;
+#pragma warning(push)
+#pragma warning(disable : 28020)
+                crc_table[n] = c; //NOLINT
+#pragma warning(pop)
             }
 
             return crc_table;

@@ -1,15 +1,16 @@
 ﻿#pragma once
 #include <cvconst.h>
 #include <map>
+#include <set>
 #include <variant>
 #include <vector>
 
+#include "memory_range.h"
 #include "process_heap_graph_global_variable_entry.h"
 #include "process_heap_graph_heap_entry.h"
 #include "process_heap_graph_thread_context_entry.h"
 #include "process_heap_graph_thread_stack_entry.h"
 #include "stream_thread_context.h"
-#include "vector_to_hash_set.h"
 
 namespace dlg_help_utils
 {
@@ -43,7 +44,7 @@ namespace dlg_help_utils::heap
 
     private:
         [[nodiscard]] std::map<uint64_t, size_t> generate_allocation_references();
-        [[nodiscard]] std::optional<process_heap_graph_heap_entry> find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, range const& data_range) const;
+        [[nodiscard]] std::optional<process_heap_graph_heap_entry> find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, memory_range const& data_range) const;
         void generate_global_variable_references(std::map<uint64_t, size_t> const& heap_entries);
         void generate_thread_context_references();
         template<typename T>
@@ -55,7 +56,8 @@ namespace dlg_help_utils::heap
         void generate_thread_stack_references(mini_dump_memory_stream stack_stream, uint32_t thread_id, std::wstring_view const& thread_name);
         void generate_node_references(std::map<uint64_t, size_t> const& heap_entries);
         void remove_all_non_allocation_with_empty_to_references();
-        void remove_all_system_module_global_variables_and_parents();
+        void mark_all_system_module_global_variables_and_parents(std::unordered_map<uint64_t, bool>& result_cache);
+        void remove_all_system_nodes(std::unordered_map<uint64_t, bool> const& result_cache);
         [[nodiscard]] bool is_node_or_children_system_module_global_variable(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
         [[nodiscard]] process_heap_graph_entry_type const& get_node_from_index(uint64_t node_index) const;
 

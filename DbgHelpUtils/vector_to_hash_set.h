@@ -4,23 +4,13 @@
 #include <type_traits>
 #include <vector>
 
-// ReSharper disable once CppUnusedIncludeDirective
-#include <compare>
-
 #include "assert_value.h"
 #include "string_utils.h"
+#include "user_range.h"
 #include "wide_runtime_error.h"
 
 namespace dlg_help_utils
 {
-    struct range
-    {
-        uint64_t start;
-        uint64_t size;
-
-        auto operator<=>(range const&) const = default; // NOLINT(clang-diagnostic-unused-member-function)
-    };
-
     struct wstring_to_lower
     {
         using Rt = std::wstring;
@@ -69,7 +59,7 @@ namespace dlg_help_utils
         }
 
         template <>
-        inline range string_converter<range, range>(std::wstring const& value)
+        inline user_range string_converter<user_range, user_range>(std::wstring const& value)
         {
             auto const pos = value.find_first_of(L'-');
             if (pos == std::wstring::npos)
@@ -85,7 +75,7 @@ namespace dlg_help_utils
                 throw exceptions::wide_runtime_error{std::format(L"Range value: [{}] format incorrect. Expecting <start>-<size> format", value)};
             }
 
-            return range{string_converter<uint64_t, uint64_t>(start), string_converter<uint64_t, uint64_t>(size)};
+            return user_range{string_converter<uint64_t, uint64_t>(start), string_converter<uint64_t, uint64_t>(size)};
         }
 
         template <>
