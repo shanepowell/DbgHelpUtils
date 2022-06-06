@@ -2,7 +2,7 @@
 
 #include "process_heap_graph_node.h"
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     process_heap_entry_reference::process_heap_entry_reference(uint64_t const offset, uint64_t const pointer, process_heap_graph_node const& heap_entry)
         : offset_{offset}

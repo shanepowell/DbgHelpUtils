@@ -71,20 +71,8 @@ set(Heap__ProcessHeaps
     "interface_process_heaps_statistic_view_impl.h"
     "process_heap_entry.cpp"
     "process_heap_entry.h"
-    "process_heap_entry_reference.cpp"
-    "process_heap_entry_reference.h"
     "process_heap_graph.cpp"
     "process_heap_graph.h"
-    "process_heap_graph_global_variable_entry.cpp"
-    "process_heap_graph_global_variable_entry.h"
-    "process_heap_graph_heap_entry.cpp"
-    "process_heap_graph_heap_entry.h"
-    "process_heap_graph_node.cpp"
-    "process_heap_graph_node.h"
-    "process_heap_graph_thread_context_entry.cpp"
-    "process_heap_graph_thread_context_entry.h"
-    "process_heap_graph_thread_stack_entry.cpp"
-    "process_heap_graph_thread_stack_entry.h"
     "process_heaps.cpp"
     "process_heaps.h"
     "process_heaps_options.h"
@@ -98,6 +86,22 @@ set(Heap__ProcessHeaps
     "system_module_list.h"
 )
 source_group("Heap\\ProcessHeaps" FILES ${Heap__ProcessHeaps})
+
+set(Heap__ProcessHeaps__AllocationGraph
+    "process_heap_entry_reference.cpp"
+    "process_heap_entry_reference.h"
+    "process_heap_graph_global_variable_entry.cpp"
+    "process_heap_graph_global_variable_entry.h"
+    "process_heap_graph_heap_entry.cpp"
+    "process_heap_graph_heap_entry.h"
+    "process_heap_graph_node.cpp"
+    "process_heap_graph_node.h"
+    "process_heap_graph_thread_context_entry.cpp"
+    "process_heap_graph_thread_context_entry.h"
+    "process_heap_graph_thread_stack_entry.cpp"
+    "process_heap_graph_thread_stack_entry.h"
+)
+source_group("Heap\\ProcessHeaps\\AllocationGraph" FILES ${Heap__ProcessHeaps__AllocationGraph})
 
 set(Heap__ProcessHeaps__StatisticViews
     "allocation_stack_trace_helper.cpp"
@@ -352,6 +356,7 @@ set(ALL_FILES
     ${Heap__DebugHeap}
     ${Heap__NtHeap}
     ${Heap__ProcessHeaps}
+    ${Heap__ProcessHeaps__AllocationGraph}
     ${Heap__ProcessHeaps__StatisticViews}
     ${Heap__SegmentHeap}
     ${MiniDump}

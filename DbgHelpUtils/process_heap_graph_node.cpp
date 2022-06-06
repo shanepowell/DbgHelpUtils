@@ -6,7 +6,7 @@
 #include "process_heap_entry_reference.h"
 #include "wide_runtime_error.h"
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     process_heap_graph_node::process_heap_graph_node(process_heap_graph_node_type const type)
     : type_{type}

@@ -21,16 +21,20 @@ namespace dlg_help_utils::heap
 {
     class system_module_list;
     class process_heaps;
-    using process_heap_graph_entry_type = std::variant<process_heap_graph_global_variable_entry, process_heap_graph_thread_stack_entry, process_heap_graph_thread_context_entry, process_heap_graph_heap_entry>;
 
-    [[nodiscard]] inline process_heap_graph_node const& get_graph_node(process_heap_graph_entry_type const& node)
+    namespace allocation_graph
     {
-        return std::visit([](auto const& _) -> process_heap_graph_node const& { return _; }, node);
-    }
+        using process_heap_graph_entry_type = std::variant<process_heap_graph_global_variable_entry, process_heap_graph_thread_stack_entry, process_heap_graph_thread_context_entry, process_heap_graph_heap_entry>;
 
-    [[nodiscard]] inline process_heap_graph_node& get_graph_node(process_heap_graph_entry_type& node)
-    {
-        return std::visit([](auto& _) -> process_heap_graph_node& { return _; }, node);
+        [[nodiscard]] inline process_heap_graph_node const& get_graph_node(process_heap_graph_entry_type const& node)
+        {
+            return std::visit([](auto const& _) -> process_heap_graph_node const& { return _; }, node);
+        }
+
+        [[nodiscard]] inline process_heap_graph_node& get_graph_node(process_heap_graph_entry_type& node)
+        {
+            return std::visit([](auto& _) -> process_heap_graph_node& { return _; }, node);
+        }
     }
 
     class process_heap_graph
@@ -40,11 +44,11 @@ namespace dlg_help_utils::heap
 
         void generate_graph();
 
-        [[nodiscard]] std::vector<process_heap_graph_entry_type> const& nodes() const { return nodes_; }
+        [[nodiscard]] std::vector<allocation_graph::process_heap_graph_entry_type> const& nodes() const { return nodes_; }
 
     private:
         [[nodiscard]] std::map<uint64_t, size_t> generate_allocation_references();
-        [[nodiscard]] std::optional<process_heap_graph_heap_entry> find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, memory_range const& data_range) const;
+        [[nodiscard]] std::optional<allocation_graph::process_heap_graph_heap_entry> find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, memory_range const& data_range) const;
         void generate_global_variable_references(std::map<uint64_t, size_t> const& heap_entries);
         void generate_thread_context_references();
         template<typename T>
@@ -58,13 +62,13 @@ namespace dlg_help_utils::heap
         void remove_all_non_allocation_with_empty_to_references();
         void mark_all_system_module_global_variables_and_parents(std::unordered_map<uint64_t, bool>& result_cache);
         void remove_all_system_nodes(std::unordered_map<uint64_t, bool> const& result_cache);
-        [[nodiscard]] bool is_node_or_children_system_module_global_variable(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
-        [[nodiscard]] process_heap_graph_entry_type const& get_node_from_index(uint64_t node_index) const;
+        [[nodiscard]] bool is_node_or_children_system_module_global_variable(allocation_graph::process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
+        [[nodiscard]] allocation_graph::process_heap_graph_entry_type const& get_node_from_index(uint64_t node_index) const;
 
     private:
         mini_dump const* mini_dump_;
         process_heaps const* process_;
-        std::vector<process_heap_graph_entry_type> nodes_{};
+        std::vector<allocation_graph::process_heap_graph_entry_type> nodes_{};
         std::set<uint64_t> system_module_bases_;
     };
 }

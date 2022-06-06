@@ -19,6 +19,8 @@ namespace dlg_help_utils::heap
 {
     namespace
     {
+        using namespace allocation_graph;
+
         template<typename PointerType>
         class process_heap_graph_generator
         {

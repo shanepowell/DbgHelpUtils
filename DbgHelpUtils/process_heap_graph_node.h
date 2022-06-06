@@ -3,7 +3,7 @@
 
 #include "process_heap_entry_reference.h"
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     enum class process_heap_graph_node_type
     {

@@ -3,7 +3,7 @@
 #include "global_variable.h"
 #include "process_heap_graph_heap_entry.h"
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     class process_heap_graph_global_variable_entry : public process_heap_graph_node
     {

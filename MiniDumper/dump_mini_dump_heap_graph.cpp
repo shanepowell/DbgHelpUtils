@@ -20,29 +20,29 @@ using namespace dlg_help_utils;
 
 namespace
 {
-    [[nodiscard]] bool is_root_node(heap::process_heap_graph_entry_type const& node)
+    [[nodiscard]] bool is_root_node(heap::allocation_graph::process_heap_graph_entry_type const& node)
     {
         return get_graph_node(node).is_root_node();
     }
 
-    [[nodiscard]] uint64_t node_index(heap::process_heap_graph_entry_type const& node)
+    [[nodiscard]] uint64_t node_index(heap::allocation_graph::process_heap_graph_entry_type const& node)
     {
         return get_graph_node(node).index();
     }
 
-    [[nodiscard]] uint64_t node_start_address(heap::process_heap_graph_entry_type const& node)
+    [[nodiscard]] uint64_t node_start_address(heap::allocation_graph::process_heap_graph_entry_type const& node)
     {
         auto start_address_of_node = overload {
-            [](heap::process_heap_graph_heap_entry const& graph_node) { return graph_node.heap_entry().user_address(); },
-            [](heap::process_heap_graph_global_variable_entry const& graph_node) { return graph_node.variable().symbol_type().address().value_or(0); },
-            [](heap::process_heap_graph_thread_stack_entry const& graph_node) { return graph_node.stack_stream().current_address(); },
-            [](heap::process_heap_graph_thread_context_entry const& graph_node) { return static_cast<uint64_t>(graph_node.register_type()); },
+            [](heap::allocation_graph::process_heap_graph_heap_entry const& graph_node) { return graph_node.heap_entry().user_address(); },
+            [](heap::allocation_graph::process_heap_graph_global_variable_entry const& graph_node) { return graph_node.variable().symbol_type().address().value_or(0); },
+            [](heap::allocation_graph::process_heap_graph_thread_stack_entry const& graph_node) { return graph_node.stack_stream().current_address(); },
+            [](heap::allocation_graph::process_heap_graph_thread_context_entry const& graph_node) { return static_cast<uint64_t>(graph_node.register_type()); },
         };
 
         return std::visit(start_address_of_node, node);
     }
 
-    std::wstring get_base_heap_entry_details(optional<heap::process_heap_graph_heap_entry> const& base_heap_entry, std::streamsize const hex_length)
+    std::wstring get_base_heap_entry_details(optional<heap::allocation_graph::process_heap_graph_heap_entry> const& base_heap_entry, std::streamsize const hex_length)
     {
         if(!base_heap_entry.has_value())
         {
@@ -55,7 +55,7 @@ namespace
         return std::format(L" BaseHeapEntryAddr({0})", stream_hex_dump::to_hex(heap_entry.user_address(), hex_length));
     }
 
-    std::wstring get_node_specific_data(heap::process_heap_graph_global_variable_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    std::wstring get_node_specific_data(heap::allocation_graph::process_heap_graph_global_variable_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
     {
         using namespace size_units::base_16;
         auto const& entry = node.variable();
@@ -68,7 +68,7 @@ namespace
         return std::format(L" [Name({0}!{1}) Index({2}) Addr({3}) Size({4}){5}]", module_name, entry.symbol_type().name().value_or(L"<unknown>"sv), entry.symbol_type().sym_index(), stream_hex_dump::to_hex(entry.symbol_type().address().value_or(0), hex_length), to_wstring(bytes{entry.symbol_type().length().value_or(0)}), get_base_heap_entry_details(base_heap_entry, hex_length));
     }
 
-    std::wstring get_node_specific_data(heap::process_heap_graph_heap_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
+    std::wstring get_node_specific_data(heap::allocation_graph::process_heap_graph_heap_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
     {
         std::wostringstream ss;
 
@@ -94,7 +94,7 @@ namespace
         return std::move(ss).str();
     }
 
-    std::wstring get_node_specific_data(heap::process_heap_graph_thread_stack_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
+    std::wstring get_node_specific_data(heap::allocation_graph::process_heap_graph_thread_stack_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
     {
         using namespace size_units::base_16;
 
@@ -115,7 +115,7 @@ namespace
         return std::move(ss).str();
     }
 
-    std::wstring get_node_specific_data(heap::process_heap_graph_thread_context_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
+    std::wstring get_node_specific_data(heap::allocation_graph::process_heap_graph_thread_context_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
     {
         using namespace size_units::base_16;
 
@@ -130,7 +130,7 @@ namespace
         return std::move(ss).str();
     }
 
-    std::wstring get_node_attributes(heap::process_heap_graph_node const& node, std::optional<uint64_t> const& parent_offset, std::optional<uint64_t> const& pointer, std::streamsize const hex_length)
+    std::wstring get_node_attributes(heap::allocation_graph::process_heap_graph_node const& node, std::optional<uint64_t> const& parent_offset, std::optional<uint64_t> const& pointer, std::streamsize const hex_length)
     {
         std::wostringstream ss;
         if(parent_offset.has_value())
@@ -170,24 +170,24 @@ namespace
         return std::move(ss).str();
     }
 
-    using nodes_index_map = std::unordered_map<uint64_t, heap::process_heap_graph_entry_type const*>;
+    using nodes_index_map = std::unordered_map<uint64_t, heap::allocation_graph::process_heap_graph_entry_type const*>;
 
     template<typename T>
     std::wstring_view get_type_name()
     {
-        if constexpr (std::is_same_v<T, heap::process_heap_graph_heap_entry>)
+        if constexpr (std::is_same_v<T, heap::allocation_graph::process_heap_graph_heap_entry>)
         {
             return L"Allocation"sv;
         }
-        else if constexpr (std::is_same_v<T, heap::process_heap_graph_global_variable_entry>)
+        else if constexpr (std::is_same_v<T, heap::allocation_graph::process_heap_graph_global_variable_entry>)
         {
             return L"GlobalVaraible"sv;
         }
-        else if constexpr (std::is_same_v<T, heap::process_heap_graph_thread_stack_entry>)
+        else if constexpr (std::is_same_v<T, heap::allocation_graph::process_heap_graph_thread_stack_entry>)
         {
             return L"ThreadStack"sv;
         }
-        else if constexpr (std::is_same_v<T, heap::process_heap_graph_thread_context_entry>)
+        else if constexpr (std::is_same_v<T, heap::allocation_graph::process_heap_graph_thread_context_entry>)
         {
             return L"ThreadContext"sv;
         }
@@ -204,7 +204,7 @@ namespace
         log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", ' ', indent, parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(), get_node_attributes(node, parent_offset, pointer, hex_length), get_node_specific_data(node, hex_length, walker), cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
     }
 
-    heap::process_heap_graph_entry_type const& get_node_from_index(nodes_index_map const& nodes_index, uint64_t const index)
+    heap::allocation_graph::process_heap_graph_entry_type const& get_node_from_index(nodes_index_map const& nodes_index, uint64_t const index)
     {
         auto const it = nodes_index.find(index);
         if(it == nodes_index.end())
@@ -216,14 +216,14 @@ namespace
 
     struct node_display_state
     {
-        heap::process_heap_graph_entry_type const* node;
+        heap::allocation_graph::process_heap_graph_entry_type const* node;
         size_t print_offset;
         size_t print_max_size;
         size_t indent;
         std::set<uint64_t> parents;
     };
 
-    void print_display_node(std::wostream& log, heap::process_heap_graph_entry_type const& node, size_t const indent, bool const to_reference, std::optional<uint64_t> parent_offset, std::optional<uint64_t> pointer, bool const cycle_end_detected, bool const already_logged_children, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    void print_display_node(std::wostream& log, heap::allocation_graph::process_heap_graph_entry_type const& node, size_t const indent, bool const to_reference, std::optional<uint64_t> parent_offset, std::optional<uint64_t> pointer, bool const cycle_end_detected, bool const already_logged_children, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
     {
         std::visit([&log, indent, to_reference, &parent_offset, &pointer, cycle_end_detected, already_logged_children, hex_length, &walker](auto const& _) mutable
         {
@@ -244,7 +244,7 @@ namespace
         , dump_file_options const& options
         , nodes_index_map const& nodes_index
         , std::set<uint64_t>& printed_nodes
-        , heap::process_heap_graph_entry_type const& node
+        , heap::allocation_graph::process_heap_graph_entry_type const& node
         , size_t const indent
         , bool const to_reference
         , std::optional<uint64_t> const& parent_offset
@@ -354,7 +354,7 @@ namespace
         }
     }
 
-    void generate_display_node_and_print(std::wostream& log, dump_file_options const& options, nodes_index_map const& nodes_index, std::set<uint64_t>& printed_nodes, heap::process_heap_graph_entry_type const& node, size_t const indent, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    void generate_display_node_and_print(std::wostream& log, dump_file_options const& options, nodes_index_map const& nodes_index, std::set<uint64_t>& printed_nodes, heap::allocation_graph::process_heap_graph_entry_type const& node, size_t const indent, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
     {
         std::vector<node_display_state> node_stack;
 
@@ -368,7 +368,7 @@ namespace
         }
     }
 
-    auto get_sort_key(heap::process_heap_graph_entry_type const& entry)
+    auto get_sort_key(heap::allocation_graph::process_heap_graph_entry_type const& entry)
     {
         return std::make_tuple(entry.index(), !is_root_node(entry), node_start_address(entry));
     }

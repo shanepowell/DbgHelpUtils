@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     class process_heap_graph_node;
 

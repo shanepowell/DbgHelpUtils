@@ -4,7 +4,7 @@
 
 using namespace std::string_literals;
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     process_heap_graph_global_variable_entry::process_heap_graph_global_variable_entry(process::global_variable variable, std::optional<process_heap_graph_heap_entry> base_heap_entry)
         : process_heap_graph_node{process_heap_graph_node_type::root}

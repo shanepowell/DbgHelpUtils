@@ -5,7 +5,7 @@
 #include "process_heap_entry.h"
 #include "process_heap_graph_node.h"
 
-namespace dlg_help_utils::heap
+namespace dlg_help_utils::heap::allocation_graph
 {
     enum class process_heap_graph_heap_entry_type
     {

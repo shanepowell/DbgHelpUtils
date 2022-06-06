@@ -58,6 +58,9 @@
     <Filter Include="Heap\ProcessHeaps\StatisticViews">
       <UniqueIdentifier>{dfc928a3-8d9d-4b62-9c07-e628683d8d02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Heap\ProcessHeaps\AllocationGraph">
+      <UniqueIdentifier>{d8f06105-4674-4ad9-8060-15194748ef60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -408,29 +411,29 @@
     <ClCompile Include="symbol_type_walker.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="process_heap_entry_reference.cpp">
+    <ClCompile Include="system_module_list.cpp">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClCompile>
     <ClCompile Include="process_heap_graph.cpp">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClCompile>
-    <ClCompile Include="process_heap_graph_heap_entry.cpp">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClCompile>
-    <ClCompile Include="process_heap_graph_node.cpp">
-      <Filter>Heap\ProcessHeaps</Filter>
+    <ClCompile Include="process_heap_entry_reference.cpp">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClCompile>
     <ClCompile Include="process_heap_graph_global_variable_entry.cpp">
-      <Filter>Heap\ProcessHeaps</Filter>
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_graph_heap_entry.cpp">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_graph_node.cpp">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClCompile>
     <ClCompile Include="process_heap_graph_thread_context_entry.cpp">
-      <Filter>Heap\ProcessHeaps</Filter>
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClCompile>
     <ClCompile Include="process_heap_graph_thread_stack_entry.cpp">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClCompile>
-    <ClCompile Include="system_module_list.cpp">
-      <Filter>Heap\ProcessHeaps</Filter>
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -878,27 +881,6 @@
     <ClInclude Include="process_heaps_options.h">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
-    <ClInclude Include="process_heap_entry_reference.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_graph.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_graph_heap_entry.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_graph_node.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_graph_global_variable_entry.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_graph_thread_context_entry.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
-    <ClInclude Include="process_heap_graph_thread_stack_entry.h">
-      <Filter>Heap\ProcessHeaps</Filter>
-    </ClInclude>
     <ClInclude Include="system_module_list.h">
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
@@ -910,6 +892,27 @@
     </ClInclude>
     <ClInclude Include="chrono_unit_convert_to_string.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph.h">
+      <Filter>Heap\ProcessHeaps</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_entry_reference.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_global_variable_entry.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_heap_entry.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_node.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_thread_context_entry.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_thread_stack_entry.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
