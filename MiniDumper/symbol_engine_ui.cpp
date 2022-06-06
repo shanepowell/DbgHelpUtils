@@ -1,5 +1,6 @@
 ﻿#include "symbol_engine_ui.h"
 
+#include <format>
 #include <iostream>
 
 symbol_engine_ui::symbol_engine_ui(dump_file_options const& options)

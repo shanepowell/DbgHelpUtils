@@ -334,6 +334,8 @@ set(Utility
     "time_units.h"
     "time_utils.cpp"
     "time_utils.h"
+    "unit_convert_to_string.h"
+    "units.h"
     "user_range.h"
     "vector_to_hash_set.h"
     "wide_runtime_error.h"

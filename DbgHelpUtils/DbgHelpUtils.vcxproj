@@ -291,6 +291,7 @@
     <ClInclude Include="by_stacktrace_frequency_view.h" />
     <ClInclude Include="cache_manager.h" />
     <ClInclude Include="call_convention.h" />
+    <ClInclude Include="chrono_unit_convert_to_string.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
     <ClInclude Include="crt_entry.h" />
@@ -332,7 +333,7 @@
     <ClInclude Include="page_range_descriptor.h" />
     <ClInclude Include="page_range_flags_utils.h" />
     <ClInclude Include="print_utils.h" />
-    <ClInclude Include="chrono_unit_convert_to_string.h" />
+    <ClInclude Include="unit_convert_to_string.h" />
     <ClInclude Include="comment_stream_a.h" />
     <ClInclude Include="comment_stream_w.h" />
     <ClInclude Include="crc.h" />
@@ -383,6 +384,7 @@
     <ClInclude Include="process_heap_graph_thread_context_entry.h" />
     <ClInclude Include="process_heap_graph_thread_stack_entry.h" />
     <ClInclude Include="process_vm_counters_stream.h" />
+    <ClInclude Include="units.h" />
     <ClInclude Include="user_range.h" />
     <ClInclude Include="range_units.h" />
     <ClInclude Include="register_names.h" />

@@ -506,7 +506,7 @@
     <ClInclude Include="size_units.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="chrono_unit_convert_to_string.h">
+    <ClInclude Include="unit_convert_to_string.h">
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="time_units.h">
@@ -903,6 +903,12 @@
       <Filter>Heap\ProcessHeaps</Filter>
     </ClInclude>
     <ClInclude Include="user_range.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="units.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="chrono_unit_convert_to_string.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

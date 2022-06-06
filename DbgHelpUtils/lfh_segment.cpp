@@ -1,5 +1,7 @@
 ﻿#include "lfh_segment.h"
 
+#include <algorithm>
+
 #include "cache_manager.h"
 #include "common_symbol_names.h"
 #include "heap_entry.h"

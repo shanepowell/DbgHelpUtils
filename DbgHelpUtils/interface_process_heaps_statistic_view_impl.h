@@ -3,6 +3,7 @@
 #include "process_heaps_statistic_view.h"
 #include "size_units.h"
 
+#include <algorithm>
 #include <ranges>
 
 namespace dlg_help_utils::heap

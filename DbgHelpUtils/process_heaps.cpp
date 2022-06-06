@@ -1,5 +1,7 @@
 ﻿#include "process_heaps.h"
 
+#include <algorithm>
+
 #include "common_symbol_utils.h"
 #include "crt_entry.h"
 #include "crt_heap.h"

@@ -1,5 +1,6 @@
 ﻿#include "process_heap_graph.h"
 
+#include <algorithm>
 #include <ranges>
 
 #include "global_variable.h"

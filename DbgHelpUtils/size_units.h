@@ -1,10 +1,12 @@
 ﻿#pragma once
-#include <chrono>
-#include <ratio>
+// ReSharper disable once CppUnusedIncludeDirective
+#include <compare>
 #include <string>
 // ReSharper disable once CppUnusedIncludeDirective
 #include <ostream>
 #include <unordered_map>
+
+#include "units.h"
 
 namespace dlg_help_utils::size_units
 {
@@ -25,23 +27,36 @@ namespace dlg_help_utils::size_units
         bytes
     };
 
+
+    template<typename T>
+    constexpr auto to(uint64_t units)
+    {
+        using unit_rep = typename T::rep;
+        return T{unit_rep{static_cast<unit_rep>(units)}};
+    }
+
     namespace base_10
     {
+        struct unit_type_base_10 {};
+
+        template<typename Scale>
+        using length = units::length<unit_type_base_10, long long, Scale>;
+
         using byte  = std::ratio<1>;
 
         // size_unit TYPEDEFS
-        using exabytes = std::chrono::duration<long long, std::exa>;
-        using petabytes = std::chrono::duration<long long, std::peta>;
-        using terabytes = std::chrono::duration<long long, std::tera>;
-        using gigabytes = std::chrono::duration<long long, std::giga>;
-        using megabytes = std::chrono::duration<long long, std::mega>;
-        using kilobytes = std::chrono::duration<long long, std::kilo>;
-        using bytes = std::chrono::duration<long long, byte>;
+        using exabytes = length<std::exa>;
+        using petabytes = length<std::peta>;
+        using terabytes = length<std::tera>;
+        using gigabytes = length<std::giga>;
+        using megabytes = length<std::mega>;
+        using kilobytes = length<std::kilo>;
+        using bytes = length<byte>;
 
         std::wstring to_wstring(bytes b, print p = print::compact);
 
-        template <typename T, typename R>
-        std::wostream& operator<<(std::wostream& os, std::chrono::duration<T, R> size)
+        template <typename R>
+        std::wostream& operator<<(std::wostream& os, length<R> size)
         {
             os << to_wstring(size);
             return os;
@@ -54,43 +69,48 @@ namespace dlg_help_utils::size_units
     {
         constexpr base_10::bytes operator "" _b(const unsigned long long val)
         {
-            return (base_10::bytes(val));
+            return to<base_10::bytes>(val);
         }
 
         constexpr base_10::kilobytes operator "" _kb(const unsigned long long val)
         {
-            return (base_10::kilobytes(val));
+            return to<base_10::kilobytes>(val);
         }
 
         constexpr base_10::megabytes operator "" _mb(const unsigned long long val)
         {
-            return (base_10::megabytes(val));
+            return to<base_10::megabytes>(val);
         }
 
         constexpr base_10::gigabytes operator "" _gb(const unsigned long long val)
         {
-            return (base_10::gigabytes(val));
+            return to<base_10::gigabytes>(val);
         }
 
         constexpr base_10::terabytes operator "" _tb(const unsigned long long val)
         {
-            return (base_10::terabytes(val));
+            return to<base_10::terabytes>(val);
         }
 
         constexpr base_10::petabytes operator "" _pb(const unsigned long long val)
         {
-            return (base_10::petabytes(val));
+            return to<base_10::petabytes>(val);
         }
 
         constexpr base_10::exabytes operator "" _eb(const unsigned long long val)
         {
-            return (base_10::exabytes(val));
+            return to<base_10::exabytes>(val);
         }
     }
 
 
     namespace base_16
     {
+        struct unit_type_base_16 {};
+
+        template<typename Scale>
+        using length = units::length<unit_type_base_16, long long, Scale>;
+
         // ReSharper disable IdentifierTypo
         using byte  = std::ratio<1>;
         using kilo  = std::ratio<0x400, 1>;
@@ -102,18 +122,18 @@ namespace dlg_help_utils::size_units
         // ReSharper restore IdentifierTypo
 
         // size_unit TYPEDEFS
-        using exabytes = std::chrono::duration<long long, exa>;
-        using petabytes = std::chrono::duration<long long, peta>;
-        using terabytes = std::chrono::duration<long long, tera>;
-        using gigabytes = std::chrono::duration<long long, giga>;
-        using megabytes = std::chrono::duration<long long, mega>;
-        using kilobytes = std::chrono::duration<long long, kilo>;
-        using bytes = std::chrono::duration<long long, byte>;
+        using exabytes = length<exa>;
+        using petabytes = length<peta>;
+        using terabytes = length<tera>;
+        using gigabytes = length<giga>;
+        using megabytes = length<mega>;
+        using kilobytes = length<kilo>;
+        using bytes = length<byte>;
 
         std::wstring to_wstring(bytes b, print p = print::compact);
 
-        template <typename T, typename R>
-        std::wostream& operator<<(std::wostream& os, std::chrono::duration<T, R> size)
+        template <typename R>
+        std::wostream& operator<<(std::wostream& os, length<R> size)
         {
             os << to_wstring(size);
             return os;
@@ -126,37 +146,37 @@ namespace dlg_help_utils::size_units
     {
         constexpr base_16::bytes operator "" _b(const unsigned long long val)
         {
-            return (base_16::bytes(val));
+            return to<base_16::bytes>(val);
         }
 
         constexpr base_16::kilobytes operator "" _kb(const unsigned long long val)
         {
-            return (base_16::kilobytes(val));
+            return to<base_16::kilobytes>(val);
         }
 
         constexpr base_16::megabytes operator "" _mb(const unsigned long long val)
         {
-            return (base_16::megabytes(val));
+            return to<base_16::megabytes>(val);
         }
 
         constexpr base_16::gigabytes operator "" _gb(const unsigned long long val)
         {
-            return (base_16::gigabytes(val));
+            return to<base_16::gigabytes>(val);
         }
 
         constexpr base_16::terabytes operator "" _tb(const unsigned long long val)
         {
-            return (base_16::terabytes(val));
+            return to<base_16::terabytes>(val);
         }
 
         constexpr base_16::petabytes operator "" _pb(const unsigned long long val)
         {
-            return (base_16::petabytes(val));
+            return to<base_16::petabytes>(val);
         }
 
         constexpr base_16::exabytes operator "" _eb(const unsigned long long val)
         {
-            return (base_16::exabytes(val));
+            return to<base_16::exabytes>(val);
         }
     }
 
@@ -167,6 +187,7 @@ namespace dlg_help_utils::size_units
     template<> struct map_to_size_type<base_10::gigabytes> { static constexpr size_unit_type type = size_unit_type::gigabytes; };
     template<> struct map_to_size_type<base_10::megabytes> { static constexpr size_unit_type type = size_unit_type::megabytes; };
     template<> struct map_to_size_type<base_10::kilobytes> { static constexpr size_unit_type type = size_unit_type::kilobytes; };
+    template<> struct map_to_size_type<base_10::bytes> { static constexpr size_unit_type type = size_unit_type::bytes; };
     template<> struct map_to_size_type<base_16::exabytes> { static constexpr size_unit_type type = size_unit_type::exabytes; };
     template<> struct map_to_size_type<base_16::petabytes> { static constexpr size_unit_type type = size_unit_type::petabytes; };
     template<> struct map_to_size_type<base_16::terabytes> { static constexpr size_unit_type type = size_unit_type::terabytes; };

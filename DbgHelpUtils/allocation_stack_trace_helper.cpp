@@ -1,7 +1,7 @@
 ﻿#include "allocation_stack_trace_helper.h"
 
 #include <numeric>
-// ReSharper disable once CppUnusedIncludeDirective
+#include <algorithm>
 #include <ranges>
 
 #include "hash_combine.h"
@@ -82,7 +82,7 @@ namespace dlg_help_utils::heap::statistic_views
         // ReSharper disable once CppTooWideScopeInitStatement
         auto find_application_module_in_all_other_stacks_filter = [&entries](uint64_t const address)
         {
-            auto find_application_module_in_other_stacks_filter = [address](process_heap_entry const& entry) { return ranges::any_of(entry.allocation_stack_trace(), [address](uint64_t const a) { return a == address; }); };
+            auto find_application_module_in_other_stacks_filter = [address](process_heap_entry const& entry) { return std::ranges::any_of(entry.allocation_stack_trace(), [address](uint64_t const a) { return a == address; }); };
             return std::ranges::all_of(entries | std::views::drop(1), find_application_module_in_other_stacks_filter);
         };
 

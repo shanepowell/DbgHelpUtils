@@ -17,6 +17,6 @@ namespace dlg_help_utils
 
     inline size_units::base_16::bytes size(memory_range const& range)
     {
-        return size_units::base_16::bytes{range.end_range - range.start_range};
+        return size_units::to<size_units::base_16::bytes>(range.end_range - range.start_range);
     }
 }

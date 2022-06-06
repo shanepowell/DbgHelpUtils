@@ -1,8 +1,9 @@
 ﻿#include "size_units.h"
 
+#include <optional>
 #include <sstream>
 
-#include "chrono_unit_convert_to_string.h"
+#include "unit_convert_to_string.h"
 #include "string_compare.h"
 #include "wide_runtime_error.h"
 
@@ -34,11 +35,11 @@ namespace dlg_help_utils::size_units
             std::wstringstream ss;
             if(p == print::compact)
             {
-                chrono_unit_utilities::convert_to_compact_string(ss, us1, us2, std::get<2>(str));
+                unit_utilities::convert_to_compact_string(ss, us1, us2, std::get<2>(str));
             }
             else
             {
-                chrono_unit_utilities::convert_to_string(ss, us1, us2, std::get<0>(str), std::get<1>(str));
+                unit_utilities::convert_to_string(ss, us1, us2, std::get<0>(str), std::get<1>(str));
             }
 
             return std::move(ss).str();
@@ -53,12 +54,12 @@ namespace dlg_help_utils::size_units
         template<typename TBsz, typename Tsz, typename Ysz, typename ...Args>
         std::wstring to_string_internal(TBsz b, print const p)
         {
-            const auto tb = std::chrono::duration_cast<Tsz>(b);
+            const auto tb = units::length_cast<Tsz>(b);
             b -= tb;
 
             if (tb.count() > 0)
             {
-                return print_value(map_to_size_type<Tsz>::type, tb, std::chrono::duration_cast<Ysz>(b), p);
+                return print_value(map_to_size_type<Tsz>::type, tb, units::length_cast<Ysz>(b), p);
             }
 
             return to_string_internal<TBsz, Ysz, Args...>(b, p);
@@ -96,18 +97,18 @@ namespace dlg_help_utils::size_units
 
             if(label.empty())
             {
-                return bytes{units_value};
+                return to<bytes>(units_value);
             }
 
             switch(get_label_type(label))
             {
-            case size_unit_type::exabytes: return exabytes{units_value};
-            case size_unit_type::petabytes: return petabytes(units_value);
-            case size_unit_type::terabytes: return terabytes(units_value);
-            case size_unit_type::gigabytes: return gigabytes(units_value);
-            case size_unit_type::megabytes: return megabytes(units_value);
-            case size_unit_type::kilobytes: return kilobytes(units_value);
-            case size_unit_type::bytes: return bytes(units_value);
+            case size_unit_type::exabytes: return to<exabytes>(units_value);
+            case size_unit_type::petabytes: return to<petabytes>(units_value);
+            case size_unit_type::terabytes: return to<terabytes>(units_value);
+            case size_unit_type::gigabytes: return to<gigabytes>(units_value);
+            case size_unit_type::megabytes: return to<megabytes>(units_value);
+            case size_unit_type::kilobytes: return to<kilobytes>(units_value);
+            case size_unit_type::bytes: return to<bytes>(units_value);
             }
 
             throw exceptions::wide_runtime_error{std::format(L"Unknown units value [{}]", value)};
@@ -129,18 +130,18 @@ namespace dlg_help_utils::size_units
 
             if(label.empty())
             {
-                return bytes{units_value};
+                return to<bytes>(units_value);
             }
 
             switch(get_label_type(label))
             {
-            case size_unit_type::exabytes: return exabytes{units_value};
-            case size_unit_type::petabytes: return petabytes(units_value);
-            case size_unit_type::terabytes: return terabytes(units_value);
-            case size_unit_type::gigabytes: return gigabytes(units_value);
-            case size_unit_type::megabytes: return megabytes(units_value);
-            case size_unit_type::kilobytes: return kilobytes(units_value);
-            case size_unit_type::bytes: return bytes(units_value);
+            case size_unit_type::exabytes: return to<exabytes>(units_value);
+            case size_unit_type::petabytes: return to<petabytes>(units_value);
+            case size_unit_type::terabytes: return to<terabytes>(units_value);
+            case size_unit_type::gigabytes: return to<gigabytes>(units_value);
+            case size_unit_type::megabytes: return to<megabytes>(units_value);
+            case size_unit_type::kilobytes: return to<kilobytes>(units_value);
+            case size_unit_type::bytes: return to<bytes>(units_value);
             }
 
             throw exceptions::wide_runtime_error{std::format(L"Unknown units value [{}]", value)};

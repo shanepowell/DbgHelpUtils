@@ -2,6 +2,7 @@
 #include <chrono>
 #include <format>
 
+#include "units.h"
 #include "windows_setup.h"
 
 namespace dlg_help_utils::stream_hex_dump
@@ -47,8 +48,8 @@ namespace dlg_help_utils::stream_hex_dump
             return result;
         }
 
-        template <typename Rep, typename Period>
-        std::wstring to_hex(std::chrono::duration<Rep, Period> const& value, std::streamsize const width, wchar_t const fill_char = L'0', bool const write_header = true)
+        template <typename UnitType, typename Rep, typename Scale>
+        std::wstring to_hex(units::length<UnitType, Rep, Scale> const& value, std::streamsize const width, wchar_t const fill_char = L'0', bool const write_header = true)
         {
             return to_hex(value.count(), width, fill_char, write_header);
         }
