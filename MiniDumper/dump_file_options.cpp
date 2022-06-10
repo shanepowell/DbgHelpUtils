@@ -100,6 +100,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(display_stack_trace_database_)["--std"]("stack trace database")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(process_heaps_options_.no_filter_heap_entries())["--nofilterheapentries"]("don't filter heap entries for OS usages")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(process_heaps_options_.mark_system_heap_entries_children_as_system())["--marksystemheapentrieschildren"]("make detected system heap reference entry children as a system heap reference")
         | lyra::opt(disable_symbol_load_cancel_keyboard_check_)["--disable-symbol-load-cancel-keyboard-check"]("disable the keyboard check when loading symbols")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(display_heap_graph_)["--heapgraph"]("calculate heap graph")

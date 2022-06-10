@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "memory_range.h"
+#include "overload.h"
 #include "process_heap_graph_global_variable_entry.h"
 #include "process_heap_graph_heap_entry.h"
 #include "process_heap_graph_thread_context_entry.h"
@@ -34,6 +35,29 @@ namespace dlg_help_utils::heap
         [[nodiscard]] inline process_heap_graph_node& get_graph_node(process_heap_graph_entry_type& node)
         {
             return std::visit([](auto& _) -> process_heap_graph_node& { return _; }, node);
+
+        }
+
+        [[nodiscard]] inline bool is_root_node(process_heap_graph_entry_type const& node)
+        {
+            return get_graph_node(node).is_root_node();
+        }
+
+        [[nodiscard]] inline uint64_t node_index(process_heap_graph_entry_type const& node)
+        {
+            return get_graph_node(node).index();
+        }
+
+        [[nodiscard]] inline uint64_t node_start_address(process_heap_graph_entry_type const& node)
+        {
+            auto start_address_of_node = overload {
+                [](process_heap_graph_heap_entry const& graph_node) { return graph_node.heap_entry().user_address(); },
+                [](process_heap_graph_global_variable_entry const& graph_node) { return graph_node.variable().symbol_type().address().value_or(0); },
+                [](process_heap_graph_thread_stack_entry const& graph_node) { return graph_node.stack_stream().current_address(); },
+                [](process_heap_graph_thread_context_entry const& graph_node) { return static_cast<uint64_t>(graph_node.register_type()); },
+            };
+
+            return std::visit(start_address_of_node, node);
         }
     }
 
@@ -60,10 +84,12 @@ namespace dlg_help_utils::heap
         void generate_thread_stack_references(mini_dump_memory_stream stack_stream, uint32_t thread_id, std::wstring_view const& thread_name);
         void generate_node_references(std::map<uint64_t, size_t> const& heap_entries);
         void remove_all_non_allocation_with_empty_to_references();
-        void mark_all_system_module_global_variables_and_parents(std::unordered_map<uint64_t, bool>& result_cache);
+        void mark_all_system_module_global_variables_and_references(std::unordered_map<uint64_t, bool>& result_cache);
         void remove_all_system_nodes(std::unordered_map<uint64_t, bool> const& result_cache);
-        [[nodiscard]] bool is_node_or_children_system_module_global_variable(allocation_graph::process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
+        bool is_node_or_children_system_module_global_variable(allocation_graph::process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
+        void mark_all_children_as_system(allocation_graph::process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
         [[nodiscard]] allocation_graph::process_heap_graph_entry_type const& get_node_from_index(uint64_t node_index) const;
+        [[nodiscard]] allocation_graph::process_heap_graph_entry_type& get_node_from_index(uint64_t node_index);
 
     private:
         mini_dump const* mini_dump_;

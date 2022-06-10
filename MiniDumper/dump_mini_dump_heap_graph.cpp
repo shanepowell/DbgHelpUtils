@@ -3,45 +3,21 @@
 #include "dump_mini_dump_heap.h"
 #include "DbgHelpUtils/assert_value.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
-#include "DbgHelpUtils/overload.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_graph.h"
 #include "DbgHelpUtils/process_heap_graph_heap_entry.h"
+#include "DbgHelpUtils/register_names.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 
 #include <algorithm>
 #include <ranges>
 
-#include "DbgHelpUtils/register_names.h"
-
 using namespace std;
 using namespace dlg_help_utils;
 
 namespace
 {
-    [[nodiscard]] bool is_root_node(heap::allocation_graph::process_heap_graph_entry_type const& node)
-    {
-        return get_graph_node(node).is_root_node();
-    }
-
-    [[nodiscard]] uint64_t node_index(heap::allocation_graph::process_heap_graph_entry_type const& node)
-    {
-        return get_graph_node(node).index();
-    }
-
-    [[nodiscard]] uint64_t node_start_address(heap::allocation_graph::process_heap_graph_entry_type const& node)
-    {
-        auto start_address_of_node = overload {
-            [](heap::allocation_graph::process_heap_graph_heap_entry const& graph_node) { return graph_node.heap_entry().user_address(); },
-            [](heap::allocation_graph::process_heap_graph_global_variable_entry const& graph_node) { return graph_node.variable().symbol_type().address().value_or(0); },
-            [](heap::allocation_graph::process_heap_graph_thread_stack_entry const& graph_node) { return graph_node.stack_stream().current_address(); },
-            [](heap::allocation_graph::process_heap_graph_thread_context_entry const& graph_node) { return static_cast<uint64_t>(graph_node.register_type()); },
-        };
-
-        return std::visit(start_address_of_node, node);
-    }
-
     std::wstring get_base_heap_entry_details(optional<heap::allocation_graph::process_heap_graph_heap_entry> const& base_heap_entry, std::streamsize const hex_length)
     {
         if(!base_heap_entry.has_value())

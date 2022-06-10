@@ -300,15 +300,22 @@ namespace dlg_help_utils::heap
         nodes_.erase(first, last);
     }
 
-    void process_heap_graph::mark_all_system_module_global_variables_and_parents(std::unordered_map<uint64_t, bool>& result_cache)
+    void process_heap_graph::mark_all_system_module_global_variables_and_references(std::unordered_map<uint64_t, bool>& result_cache)
     {
+        // pass one generate results
         for(auto& node : nodes_)
         {
-            if(is_node_or_children_system_module_global_variable(node, result_cache))
+            is_node_or_children_system_module_global_variable(node, result_cache);
+        }
+
+        // pass two, mark discovered system allocations
+        for(auto& node : nodes_)
+        {
+            if(auto& graph_node = get_graph_node(node);
+                result_cache[graph_node.index()])
             {
-                auto& graph_node = get_graph_node(node);
                 graph_node.is_system() = true;
-                if(!graph_node.is_root_node())
+                if(!graph_node.is_root_node() && !graph_node.is_system_allocation())
                 {
                     graph_node.mark_as_system_allocation();
                 }
@@ -350,6 +357,10 @@ namespace dlg_help_utils::heap
                 system_module_bases_.contains(global_variable_entry.variable().symbol_type().module_base()))
             {
                 result_cache.insert(std::make_pair(graph_node.index(), true));
+                if(process_->options().mark_system_heap_entries_children_as_system())
+                {
+                    mark_all_children_as_system(node, result_cache);
+                }
                 return true;
             }
         }
@@ -363,7 +374,32 @@ namespace dlg_help_utils::heap
         return false;
     }
 
+    void process_heap_graph::mark_all_children_as_system(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const
+    {
+        for(auto& to_reference : get_graph_node(node).to_references())
+        {
+            auto const& child_node = get_node_from_index(to_reference.node_index());
+            auto const& child_graph_node = get_graph_node(child_node);
+            if(auto const& cache_result = result_cache.find(child_graph_node.index()); cache_result == result_cache.end() || !cache_result->second)
+            {
+                result_cache[child_graph_node.index()] = true;
+                mark_all_children_as_system(child_node, result_cache);
+            }
+        }
+    }
+
     process_heap_graph_entry_type const& process_heap_graph::get_node_from_index(uint64_t const node_index) const
+    {
+        auto const it = std::ranges::find_if(nodes_, [node_index](auto const& node) { return get_graph_node(node).index() == node_index; });
+        if(it == nodes_.end())
+        {
+            throw exceptions::wide_runtime_error{std::format(L"Graph Allocation Nodes does not contain node index [{}]", node_index)};
+        }
+
+        return *it;
+    }
+
+    process_heap_graph_entry_type& process_heap_graph::get_node_from_index(uint64_t node_index)
     {
         auto const it = std::ranges::find_if(nodes_, [node_index](auto const& node) { return get_graph_node(node).index() == node_index; });
         if(it == nodes_.end())
@@ -386,8 +422,10 @@ namespace dlg_help_utils::heap
 
         // remove any reference nodes that is not a allocation and has no to references
         remove_all_non_allocation_with_empty_to_references();
+
+        // find and optionally remove "system" allocations
         std::unordered_map<uint64_t, bool> result_cache;
-        mark_all_system_module_global_variables_and_parents(result_cache);
+        mark_all_system_module_global_variables_and_references(result_cache);
         if(!process_->options().no_filter_heap_entries())
         {
             remove_all_system_nodes(result_cache);
