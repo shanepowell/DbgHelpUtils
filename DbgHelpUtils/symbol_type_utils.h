@@ -1,11 +1,12 @@
 ﻿#pragma once
-#include <set>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "call_convention.h"
 #include "data_kind.h"
 #include "basic_type.h"
+#include "symbol_type_info.h"
 #include "sym_tag_enum.h"
 #include "udt_kind_type.h"
 
@@ -24,7 +25,6 @@ namespace dlg_help_utils
 namespace dlg_help_utils::dbg_help
 {
     class symbol_engine;
-    class symbol_type_info;
 }
 
 namespace dlg_help_utils::symbol_type_utils
@@ -48,5 +48,15 @@ namespace dlg_help_utils::symbol_type_utils
     void dump_variable_symbol_at(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type, dbg_help::symbol_type_info const& display_type, uint64_t variable_address, mini_dump_memory_stream& variable_stream, size_t indent = 0, size_t visited_depth = 0, dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);
     std::tuple<uint64_t, std::wstring, uint64_t, std::wstring> parse_address(std::wstring const& address);
 
-    void gather_all_pointers_from_symbol(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type, uint64_t variable_address, std::set<uint64_t>& pointers);
+    struct pointer_info
+    {
+        std::wstring name;
+        uint64_t base_address;
+        uint64_t base_variable_address_offset;
+        dbg_help::symbol_type_info base_variable_type;
+        uint64_t pointer_address;
+        dbg_help::symbol_type_info pointer_type;
+    };
+
+    void gather_all_pointers_from_symbol(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& base_type, dbg_help::symbol_type_info const& type, uint64_t base_address, uint64_t variable_address_offset, std::map<uint64_t, pointer_info>& pointers, std::wstring const& name_prefix);
 }

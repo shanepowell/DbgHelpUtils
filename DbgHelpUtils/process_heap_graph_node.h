@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include <vector>
 
+#include "graph_node_variable_symbol_reference_data.h"
 #include "process_heap_entry_reference.h"
+#include "process_heap_entry_symbol_address_reference.h"
 
 namespace dlg_help_utils::heap::allocation_graph
 {
@@ -39,6 +41,11 @@ namespace dlg_help_utils::heap::allocation_graph
         [[nodiscard]] std::vector<process_heap_entry_reference> const& from_references() const { return from_references_; }
         [[nodiscard]] std::vector<process_heap_entry_reference> const& to_references() const { return to_references_; }
 
+        [[nodiscard]] std::vector<process_heap_entry_symbol_address_reference> const& symbol_references() const { return symbol_references_; }
+        [[nodiscard]] std::vector<process_heap_entry_symbol_address_reference>& symbol_references() { return symbol_references_; }
+        process_heap_entry_symbol_address_reference& add_symbol_address_reference(process_heap_entry_symbol_address_reference symbol_reference);
+        [[nodiscard]] std::optional<graph_node_variable_symbol_reference_data> find_symbol_variable_reference(uint64_t address) const;
+
         void mark_as_system_allocation();
 
     private:
@@ -50,6 +57,7 @@ namespace dlg_help_utils::heap::allocation_graph
         uint64_t index_{get_next_process_heap_graph_node_index()};
         std::vector<process_heap_entry_reference> from_references_;
         std::vector<process_heap_entry_reference> to_references_;
+        std::vector<process_heap_entry_symbol_address_reference> symbol_references_;
         bool is_cyclic_node_graphs_only_{false};
         bool is_disconnected_node_graph_{false};
         bool is_system_{false};

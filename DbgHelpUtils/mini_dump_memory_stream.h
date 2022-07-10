@@ -3,13 +3,19 @@
 #include <functional>
 #include <experimental/generator>
 
+#include "enable_module_loading.h"
+#include "tagged_bool.h"
+
 namespace dlg_help_utils
 {
     class mini_dump_memory_stream
     {
     public:
         mini_dump_memory_stream() = default;
-        mini_dump_memory_stream(std::function<void const*(uint64_t base_address, uint64_t& size, bool enable_module_loading)> get_process_memory_range, uint64_t base_address, uint64_t size, bool enable_module_loading);
+        mini_dump_memory_stream(std::function<void const*(uint64_t base_address, uint64_t& size, enable_module_loading_t enable_module_loading)> get_process_memory_range
+            , uint64_t base_address
+            , uint64_t size
+            , enable_module_loading_t enable_module_loading);
         mini_dump_memory_stream(void const* memory, uint64_t size);
 
         [[nodiscard]] bool eof() const;
@@ -28,12 +34,23 @@ namespace dlg_help_utils
             while(!eof() && !is_found(index))
             {
                 T check;
+                auto const before_stream = *this;
                 if(read(&check, sizeof(T)) != sizeof(T))
                 {
                     break;
                 }
 
-                if(size_t jump_amount{1}; check_data(check, index, jump_amount))
+                size_t jump_amount{1};
+                auto const keep_processing_index = check_data(check, index, jump_amount);
+
+                // increment by the jump amount..
+                if(jump_amount != sizeof(T))
+                {
+                    *this = before_stream;
+                    skip(jump_amount);
+                }
+
+                if(keep_processing_index)
                 {
                     if(index == 0)
                     {
@@ -63,8 +80,8 @@ namespace dlg_help_utils
         [[nodiscard]] size_t process_data(size_t length, T op);
 
     private:
-        std::function<void const*(uint64_t base_address, uint64_t& size, bool enable_module_loading)> get_process_memory_range_;
-        bool enable_module_loading_{false};
+        std::function<void const*(uint64_t base_address, uint64_t& size, enable_module_loading_t enable_module_loading)> get_process_memory_range_;
+        enable_module_loading_t enable_module_loading_{false};
         uint64_t current_address_{};
         uint64_t end_address_{};
         uint8_t const* memory_{nullptr};

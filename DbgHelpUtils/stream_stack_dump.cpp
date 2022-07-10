@@ -71,17 +71,21 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         template <typename T>
-        void generate_hex_dump_stack_raw(std::wostream& os, dbg_help::symbol_engine& symbol_engine,
-                                         uint64_t const stack_start_address, T const* stack, size_t const stack_size,
-                                         size_t const indent, module_list_stream const& module_list,
-                                         unloaded_module_list_stream const& unloaded_module_list, 
-                                         size_t const hex_length)
+        void generate_hex_dump_stack_raw(std::wostream& os
+            , dbg_help::symbol_engine& symbol_engine
+            , uint64_t const stack_start_address
+            , T const* stack
+            , size_t const stack_size
+            , size_t const indent
+            , module_list_stream const& module_list
+            , unloaded_module_list_stream const& unloaded_module_list
+            , size_t const hex_length)
         {
             const std::wstring indent_str(indent, L' ');
 
             for (size_t index = 0; index < stack_size; ++index)
             {
-                os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', false) << L' ';
+                os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
                 generate_hex_dump_address(os
                     , stack_start_address == 0 ? 0 : stack_start_address + (index * sizeof(T))
                     , stack[index]
@@ -91,7 +95,7 @@ namespace dlg_help_utils::stream_stack_dump
             }
         }
 
-        size_t get_hex_length(bool const is_x86_target)
+        size_t get_hex_length(is_x86_target_t const is_x86_target)
         {
             if(is_x86_target)
             {
@@ -153,10 +157,15 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
 
-    void hex_dump_stack(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine,
-                        uint64_t const stack_start_address, void const* stack, const size_t stack_size,
-                        stream_thread_context const& thread_context, const size_t indent,
-                        dump_stack_options::options const options)
+    void hex_dump_stack(std::wostream& os
+        , mini_dump const& mini_dump
+        , dbg_help::symbol_engine& symbol_engine
+        , uint64_t const stack_start_address
+        , void const* stack
+        , const size_t stack_size
+        , stream_thread_context const& thread_context
+        , const size_t indent
+        , dump_stack_options::options const options)
     {
         const std::wstring indent_str(indent, L' ');
 
@@ -185,7 +194,7 @@ namespace dlg_help_utils::stream_stack_dump
 
         for (size_t index = 0; auto const& entry : symbol_engine.stack_walk(thread_context))
         {
-            os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', false) << L' ';
+            os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
             auto constexpr parameters_title = L"Parameters"sv;
             auto constexpr local_variables_title = L"Local Variables"sv;
 
@@ -219,7 +228,11 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void hex_dump_stack(std::wostream& os, mini_dump_memory_walker const& walker, std::vector<uint64_t> const& stack, bool const is_x86_target, size_t const indent)
+    void hex_dump_stack(std::wostream& os
+        , mini_dump_memory_walker const& walker
+        , std::vector<uint64_t> const& stack
+        , is_x86_target_t const is_x86_target
+        , size_t const indent)
     {
         generate_hex_dump_stack_raw(os
             , walker.symbol_engine()
@@ -232,9 +245,14 @@ namespace dlg_help_utils::stream_stack_dump
             , get_hex_length(is_x86_target));
     }
 
-    void hex_dump_stack_raw(std::wostream& os, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine,
-                            uint64_t const stack_start_address, uint64_t const* stack, size_t const stack_size,
-                            bool const is_x86_target, size_t const indent)
+    void hex_dump_stack_raw(std::wostream& os
+        , mini_dump const& mini_dump
+        , dbg_help::symbol_engine& symbol_engine
+        , uint64_t const stack_start_address
+        , uint64_t const* stack
+        , size_t const stack_size
+        , is_x86_target_t const is_x86_target
+        , size_t const indent)
     {
         module_list_stream const module_list{mini_dump};
         unloaded_module_list_stream const unloaded_module_list{mini_dump};
@@ -249,30 +267,41 @@ namespace dlg_help_utils::stream_stack_dump
             , get_hex_length(is_x86_target));
     }
 
-    void hex_dump_address(std::wostream& os, mini_dump const& mini_dump, module_list_stream const& module_list,
-                          unloaded_module_list_stream const& unloaded_module_list,
-                          dbg_help::symbol_engine& symbol_engine, uint64_t const address, size_t const indent)
+    void hex_dump_address(std::wostream& os
+        , mini_dump const& mini_dump
+        , module_list_stream const& module_list
+        , unloaded_module_list_stream const& unloaded_module_list
+        , dbg_help::symbol_engine& symbol_engine
+        , uint64_t const address
+        , size_t const indent)
     {
         const std::wstring indent_str(indent, L' ');
         os << indent_str;
 
         if (system_info_stream const system_info{mini_dump}; system_info.is_x86())
         {
-            generate_hex_dump_address(os, static_cast<uint32_t>(0), static_cast<uint32_t>(address),
-                                      mini_dump_memory_walker::find_symbol_info(
-                                          address, module_list, unloaded_module_list, symbol_engine));
+            generate_hex_dump_address(os
+                , static_cast<uint32_t>(0)
+                , static_cast<uint32_t>(address)
+                , mini_dump_memory_walker::find_symbol_info(address
+                    , module_list
+                    , unloaded_module_list
+                    , symbol_engine));
         }
         else if (system_info.is_x64())
         {
-            generate_hex_dump_address(os, static_cast<uint64_t>(0), address,
-                                      mini_dump_memory_walker::find_symbol_info(
-                                          address, module_list, unloaded_module_list, symbol_engine));
+            generate_hex_dump_address(os, static_cast<uint64_t>(0)
+                , address
+                , mini_dump_memory_walker::find_symbol_info(address
+                    , module_list
+                    , unloaded_module_list
+                    , symbol_engine));
         }
 
         os << L'\n';
     }
 
-    std::wstring hex_dump_stack_frame(dbg_help::symbol_address_info const& info, bool const is_x86_address)
+    std::wstring hex_dump_stack_frame(dbg_help::symbol_address_info const& info, is_x86_target_t const is_x86_address)
     {
         std::wstringstream ss;
         if(is_x86_address)

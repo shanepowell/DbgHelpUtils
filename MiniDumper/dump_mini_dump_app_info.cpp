@@ -197,7 +197,7 @@ void dump_mini_dump_handle_operation_list_stream_data(std::wostream& log, mini_d
                 , 0
                 , entry->BackTraceInformation.ReturnAddresses
                 , entry->BackTraceInformation.Depth
-                , system_info.is_x86()
+                , stream_stack_dump::is_x86_target_t{system_info.is_x86()}
                 , 6);
         }
         else

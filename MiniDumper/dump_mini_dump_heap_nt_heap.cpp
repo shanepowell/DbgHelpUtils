@@ -231,7 +231,14 @@ namespace detail
             }
         }
 
-        void print_dump_entry(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, bool const entry_contains_lfh_subsegments, dump_file_options const& options, size_t const indent)
+        using entry_contains_lfh_subsegments_t = tagged_bool<struct entry_contains_lfh_subsegments_type>;
+
+        void print_dump_entry(std::wostream& log
+            , std::streamsize const hex_length
+            , heap::heap_entry const& entry
+            , entry_contains_lfh_subsegments_t const entry_contains_lfh_subsegments
+            , dump_file_options const& options
+            , size_t const indent)
         {
             if(options.debug_heap_data())
             {
@@ -259,7 +266,7 @@ namespace detail
                 if(options.display_symbols() && entry.is_busy() && !entry.allocation_stack_trace().empty())
                 {
                     log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                    hex_dump_stack(log, entry.walker(), entry.allocation_stack_trace(), entry.peb().is_x86_target(), indent + 2);
+                    hex_dump_stack(log, entry.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.peb().is_x86_target()}, indent + 2);
                     log << L'\n';
                 }
 
@@ -319,7 +326,7 @@ namespace detail
 
             for (auto const& entry : data.subsegment.entries())
             {
-                print_dump_entry(log, hex_length, entry, false, options, indent + 2);
+                print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments_t{false}, options, indent + 2);
             }
         }
 
@@ -349,7 +356,7 @@ namespace detail
             log << std::format(L"\n{}Heap Entries\n", indent_str);
             for (auto const& entry : segment.entries())
             {
-                auto const entry_contains_lfh_subsegments = ranges::any_of(lfh_data, [&entry](LfhSubsegmentData const& data) { return is_lfh_subsegment_in_entry(entry, data); });
+                auto const entry_contains_lfh_subsegments = entry_contains_lfh_subsegments_t{ranges::any_of(lfh_data, [&entry](LfhSubsegmentData const& data) { return is_lfh_subsegment_in_entry(entry, data); })};
                 print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments, options, indent + 4);
 
                 for (auto& data : lfh_data)
@@ -390,7 +397,7 @@ namespace detail
                     , to_wstring(virtual_block.committed()));
                 for (auto const& entry : virtual_block.entries())
                 {
-                    print_dump_entry(log, hex_length, entry, false, options, indent + 4);
+                    print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments_t{false}, options, indent + 4);
                 }
             }
             log << L'\n';
@@ -401,7 +408,7 @@ namespace detail
             log << std::format(L"{0:{1}}Free List Entries\n", ' ', indent);
             for (auto const& free_entry : nt_heap.free_entries())
             {
-                print_dump_entry(log, hex_length, free_entry, false, options, indent + 4);
+                print_dump_entry(log, hex_length, free_entry, entry_contains_lfh_subsegments_t{false}, options, indent + 4);
             }
             log << L'\n';
         }
@@ -428,7 +435,7 @@ namespace detail
 
     void print_nt_heap(std::wostream& log, std::streamsize const hex_length, dump_file_options const& options, heap::nt_heap const& nt_heap, process::process_environment_block const& peb)
     {
-        print_nt_heap_header(log, hex_length, get_process_marker(nt_heap.is_process_heap(peb.process_heap())), nt_heap, 0);
+        print_nt_heap_header(log, hex_length, get_process_marker(is_process_heap_t{nt_heap.is_process_heap(peb.process_heap())}), nt_heap, 0);
 
         vector<LfhSubsegmentData> lfh_data;
         if(auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())

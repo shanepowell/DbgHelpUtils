@@ -435,6 +435,12 @@
     <ClCompile Include="process_heap_graph_thread_stack_entry.cpp">
       <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClCompile>
+    <ClCompile Include="process_heap_graph_symbol_entry.cpp">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="process_heap_entry_symbol_address_reference.cpp">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -913,6 +919,30 @@
     </ClInclude>
     <ClInclude Include="process_heap_graph_thread_stack_entry.h">
       <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_graph_symbol_entry.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="process_heap_entry_symbol_address_reference.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="tagged_bool.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="graph_node_variable_symbol_reference_data.h">
+      <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="enable_module_loading.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="throw_on_error.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="write_header.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="dump_hex.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

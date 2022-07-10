@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "enable_module_loading.h"
 #include "symbol_address_info.h"
 #include <DbgHelp.h>
 #include <optional>
@@ -24,9 +25,11 @@ namespace dlg_help_utils::dbg_help
         i_stack_walk_callback& operator=(i_stack_walk_callback const&) = delete;
         i_stack_walk_callback& operator=(i_stack_walk_callback&&) = default;
 
-        [[nodiscard]] virtual bool read_process_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                       LPDWORD number_of_bytes_read,
-                                                       bool enable_module_loading = true) = 0;
+        [[nodiscard]] virtual bool read_process_memory(DWORD64 base_address
+            , PVOID buffer
+            , DWORD size
+            , LPDWORD number_of_bytes_read
+            , enable_module_loading_t enable_module_loading = enable_module_loading_t{true}) = 0;
         [[nodiscard]] virtual PVOID function_table_access(DWORD64 base_address) = 0;
         [[nodiscard]] virtual DWORD64 get_module_base_routine(DWORD64 address) = 0;
         [[nodiscard]] virtual DWORD64 translate_address(HANDLE h_thread, LPADDRESS64 lp_address) = 0;

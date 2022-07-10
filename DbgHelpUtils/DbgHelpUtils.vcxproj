@@ -231,10 +231,12 @@
     <ClCompile Include="process_environment_variables.cpp" />
     <ClCompile Include="process_heaps_statistics.cpp" />
     <ClCompile Include="process_heap_entry_reference.cpp" />
+    <ClCompile Include="process_heap_entry_symbol_address_reference.cpp" />
     <ClCompile Include="process_heap_graph.cpp" />
     <ClCompile Include="process_heap_graph_global_variable_entry.cpp" />
     <ClCompile Include="process_heap_graph_heap_entry.cpp" />
     <ClCompile Include="process_heap_graph_node.cpp" />
+    <ClCompile Include="process_heap_graph_symbol_entry.cpp" />
     <ClCompile Include="process_heap_graph_thread_context_entry.cpp" />
     <ClCompile Include="process_heap_graph_thread_stack_entry.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
@@ -298,9 +300,12 @@
     <ClInclude Include="crt_heap.h" />
     <ClInclude Include="dph_entry.h" />
     <ClInclude Include="dph_heap.h" />
+    <ClInclude Include="dump_hex.h" />
+    <ClInclude Include="enable_module_loading.h" />
     <ClInclude Include="gflags_utils.h" />
     <ClInclude Include="global_variable.h" />
     <ClInclude Include="global_variables.h" />
+    <ClInclude Include="graph_node_variable_symbol_reference_data.h" />
     <ClInclude Include="hash_combine.h" />
     <ClInclude Include="heap_entry.h" />
     <ClInclude Include="heap_lfh_affinity_slot.h" />
@@ -333,6 +338,10 @@
     <ClInclude Include="page_range_descriptor.h" />
     <ClInclude Include="page_range_flags_utils.h" />
     <ClInclude Include="print_utils.h" />
+    <ClInclude Include="process_heap_entry_symbol_address_reference.h" />
+    <ClInclude Include="process_heap_graph_symbol_entry.h" />
+    <ClInclude Include="tagged_bool.h" />
+    <ClInclude Include="throw_on_error.h" />
     <ClInclude Include="unit_convert_to_string.h" />
     <ClInclude Include="comment_stream_a.h" />
     <ClInclude Include="comment_stream_w.h" />
@@ -442,6 +451,7 @@
     <ClInclude Include="windows_error.h" />
     <ClInclude Include="wide_runtime_error.h" />
     <ClInclude Include="windows_setup.h" />
+    <ClInclude Include="write_header.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

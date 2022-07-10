@@ -6,7 +6,6 @@
 #include "dump_file_options.h"
 #include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/common_symbol_names.h"
-#include "DbgHelpUtils/common_symbol_utils.h"
 #include "DbgHelpUtils/print_utils.h"
 #include "DbgHelpUtils/function_table_stream.h"
 #include "DbgHelpUtils/gflags_utils.h"
@@ -421,7 +420,7 @@ void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& min
 }
 
 template<typename T>
-void dump_address_type_array(std::wostream& log, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex)
+void dump_address_type_array(std::wostream& log, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex)
 {
     log << std::format(L"{0} array @ [{1}] for [{2}] elements:\n"
         , dt
@@ -450,7 +449,7 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
     }
     else
     {
-        auto const find_limit = memory_size == 0;
+        auto const find_limit = print_utils::stop_at_null_t{memory_size == 0};
         if(find_limit)
         {
             memory_size = std::numeric_limits<uint64_t>::max();
@@ -492,11 +491,11 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
         }
         else
         {
-            auto display_hex = false;
+            auto display_hex = dump_hex_t{false};
             if(dt.ends_with(L",h"s) || dt.ends_with(L",H"s))
             {
                 dt = dt.substr(0, dt.size() - 2);
-                display_hex = true;
+                display_hex = dump_hex_t{true};
             }
             if(string_compare::iequals(dt, L"uint8"sv))
             {
@@ -582,7 +581,7 @@ void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_ma
         for(auto const& value : environment_variables.value().environment())
         {
             log << L"  ";
-            print_utils::print_str(log, value.data(), value.size(), false);
+            print_str(log, value.data(), value.size(), print_utils::stop_at_null_t{false});
             log << L'\n';
         }
     }

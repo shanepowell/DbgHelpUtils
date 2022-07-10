@@ -27,7 +27,7 @@ namespace dlg_help_utils::hex_dump
 {
     using namespace stream_hex_dump;
 
-    void hex_dump(std::wostream& os, void const* data, uint64_t const length, size_t const indent, bool const write_header, uint64_t const bytes_per_row, uint64_t const offset)
+    void hex_dump(std::wostream& os, void const* data, uint64_t const length, size_t const indent, write_header_t const write_header, uint64_t const bytes_per_row, uint64_t const offset)
     {
         auto const* values = static_cast<uint8_t const*>(data);
 
@@ -42,14 +42,14 @@ namespace dlg_help_utils::hex_dump
 
             for (size_t header_index = 0; header_index < bytes_per_row; ++header_index)
             {
-                os << to_hex(header_index, bytes_per_row_hex_size_bytes, ' ', false) << L' ';
+                os << to_hex(header_index, bytes_per_row_hex_size_bytes, ' ', write_header_t{false}) << L' ';
             }
 
             os << L" ";
 
             for (size_t header_index = 0; header_index < bytes_per_row; ++header_index)
             {
-                os << to_hex(header_index % 0x10, 0, 0, false);
+                os << to_hex(header_index % 0x10, 0, 0, write_header_t{false});
             }
 
             os << L'\n';
@@ -67,7 +67,7 @@ namespace dlg_help_utils::hex_dump
             auto const num_bytes = std::min<>(bytes_per_row, length - row * bytes_per_row);
             for (size_t column = 0; column < num_bytes; ++column)
             {
-                os << to_hex(static_cast<unsigned int>(values[bytes_per_row * row + column]), bytes_per_row_hex_size_bytes, L'0', false) << L' ';
+                os << to_hex(static_cast<unsigned int>(values[bytes_per_row * row + column]), bytes_per_row_hex_size_bytes, L'0', write_header_t{false}) << L' ';
             }
 
             //next, the last row may contain less bytes, so we need to pad the output a bit
@@ -97,7 +97,7 @@ namespace dlg_help_utils::hex_dump
         }
     }
 
-    void hex_dump(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const length, size_t const indent, bool const write_header, uint64_t const bytes_per_row, uint64_t const offset)
+    void hex_dump(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const length, size_t const indent, write_header_t const write_header, uint64_t const bytes_per_row, uint64_t const offset)
     {
         const wstring indent_str(indent, L' ');
 
@@ -110,14 +110,14 @@ namespace dlg_help_utils::hex_dump
 
             for (size_t header_index = 0; header_index < bytes_per_row; ++header_index)
             {
-                os << to_hex(header_index, bytes_per_row_hex_size_bytes, ' ', false) << L' ';
+                os << to_hex(header_index, bytes_per_row_hex_size_bytes, ' ', write_header_t{false}) << L' ';
             }
 
             os << L" ";
 
             for (size_t header_index = 0; header_index < bytes_per_row; ++header_index)
             {
-                os << to_hex(header_index % 0x10, 0, 0, false);
+                os << to_hex(header_index % 0x10, 0, 0, write_header_t{false});
             }
 
             os << L'\n';
@@ -137,7 +137,7 @@ namespace dlg_help_utils::hex_dump
             //first write out the hexadecimal values of the individual bytes
             for (size_t column = 0; column < num_bytes; ++column)
             {
-                os << to_hex(static_cast<unsigned int>(values[column]), bytes_per_row_hex_size_bytes, L'0', false) << L' ';
+                os << to_hex(static_cast<unsigned int>(values[column]), bytes_per_row_hex_size_bytes, L'0', write_header_t{false}) << L' ';
             }
 
             //next, the last row may contain less bytes, so we need to pad the output a bit

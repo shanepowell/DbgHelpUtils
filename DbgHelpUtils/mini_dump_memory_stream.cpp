@@ -2,7 +2,10 @@
 
 namespace dlg_help_utils
 {
-    mini_dump_memory_stream::mini_dump_memory_stream(std::function<void const*(uint64_t base_address, uint64_t& size, bool enable_module_loading)> get_process_memory_range, uint64_t const base_address, uint64_t size, bool const enable_module_loading)
+    mini_dump_memory_stream::mini_dump_memory_stream(std::function<void const*(uint64_t base_address, uint64_t& size, enable_module_loading_t enable_module_loading)> get_process_memory_range
+        , uint64_t const base_address
+        , uint64_t size
+        , enable_module_loading_t const enable_module_loading)
     : get_process_memory_range_{std::move(get_process_memory_range)}
     , enable_module_loading_{enable_module_loading}
     , current_address_{base_address}

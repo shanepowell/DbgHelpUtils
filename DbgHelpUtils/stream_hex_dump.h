@@ -4,6 +4,7 @@
 
 #include "units.h"
 #include "windows_setup.h"
+#include "write_header.h"
 
 namespace dlg_help_utils::stream_hex_dump
 {
@@ -31,7 +32,7 @@ namespace dlg_help_utils::stream_hex_dump
         }
 
         template<typename T>
-        std::wstring to_hex(T const& value, std::streamsize const width, wchar_t const fill_char = L'0', bool const write_header = true)
+        std::wstring to_hex(T const& value, std::streamsize const width, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
         {
             auto result = std::format(L"{0:x}", to_printable_value(value));
             if(auto const result_width = static_cast<std::streamsize>(result.size());
@@ -49,18 +50,18 @@ namespace dlg_help_utils::stream_hex_dump
         }
 
         template <typename UnitType, typename Rep, typename Scale>
-        std::wstring to_hex(units::length<UnitType, Rep, Scale> const& value, std::streamsize const width, wchar_t const fill_char = L'0', bool const write_header = true)
+        std::wstring to_hex(units::length<UnitType, Rep, Scale> const& value, std::streamsize const width, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
         {
             return to_hex(value.count(), width, fill_char, write_header);
         }
 
         template <typename T>
-        std::wstring to_hex(T* value, std::streamsize const width, wchar_t const fill_char = L'0', bool const write_header = true)
+        std::wstring to_hex(T* value, std::streamsize const width, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
         {
             return to_hex(reinterpret_cast<uint64_t>(value), width, fill_char, write_header);
         }
 
-        inline std::wstring to_hex(M128A const& value, std::streamsize const width, wchar_t const fill_char = L'0', bool const write_header = true)
+        inline std::wstring to_hex(M128A const& value, std::streamsize const width, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
         {
             using namespace std::string_view_literals;
             if (value.High)
@@ -73,7 +74,7 @@ namespace dlg_help_utils::stream_hex_dump
     }
 
     template <typename T>
-    std::wstring to_hex(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0', bool const write_header = true)
+    std::wstring to_hex(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
     {
         return details::to_hex(value, width, fill_char, write_header);
     }
@@ -81,11 +82,11 @@ namespace dlg_help_utils::stream_hex_dump
     template <typename T>
     std::wstring to_hex_raw(T value, std::streamsize const width = 0, wchar_t const fill_char = L'0')
     {
-        return details::to_hex(value, width, fill_char, false);
+        return details::to_hex(value, width, fill_char, write_header_t{false});
     }
 
     template <typename T>
-    std::wstring to_hex_full(T value, bool const write_header = true)
+    std::wstring to_hex_full(T value, write_header_t const write_header = write_header_t{true})
     {
         return details::to_hex(value, sizeof(T) * 2, L'0', write_header);
     }

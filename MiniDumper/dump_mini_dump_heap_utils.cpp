@@ -47,7 +47,7 @@ namespace detail
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
         {
             log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-            hex_dump_stack(log, peb.walker(), entry.allocation_stack_trace(), peb.is_x86_target(), indent + 4);
+            hex_dump_stack(log, peb.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{peb.is_x86_target()}, indent + 4);
             log << L'\n';
         }
 
@@ -61,7 +61,7 @@ namespace detail
         }
     }
 
-    std::wstring_view get_process_marker(bool const is_process_heap)
+    std::wstring_view get_process_marker(is_process_heap_t const is_process_heap)
     {
         return is_process_heap ? L" (process heap)"sv : L""sv;
     }

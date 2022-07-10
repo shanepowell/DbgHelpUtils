@@ -362,7 +362,7 @@ namespace dlg_help_utils::stream_utils
         return std::nullopt;
     }
 
-    dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& name, bool const throw_on_error)
+    dbg_help::symbol_type_info get_type(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& name, throw_on_error_t const throw_on_error)
     {
         auto const symbol_info = walker.get_type_info(name, throw_on_error);
         if(!symbol_info.has_value())

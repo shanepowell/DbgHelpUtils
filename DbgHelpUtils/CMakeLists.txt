@@ -88,14 +88,19 @@ set(Heap__ProcessHeaps
 source_group("Heap\\ProcessHeaps" FILES ${Heap__ProcessHeaps})
 
 set(Heap__ProcessHeaps__AllocationGraph
+    "graph_node_variable_symbol_reference_data.h"
     "process_heap_entry_reference.cpp"
     "process_heap_entry_reference.h"
+    "process_heap_entry_symbol_address_reference.cpp"
+    "process_heap_entry_symbol_address_reference.h"
     "process_heap_graph_global_variable_entry.cpp"
     "process_heap_graph_global_variable_entry.h"
     "process_heap_graph_heap_entry.cpp"
     "process_heap_graph_heap_entry.h"
     "process_heap_graph_node.cpp"
     "process_heap_graph_node.h"
+    "process_heap_graph_symbol_entry.cpp"
+    "process_heap_graph_symbol_entry.h"
     "process_heap_graph_thread_context_entry.cpp"
     "process_heap_graph_thread_context_entry.h"
     "process_heap_graph_thread_stack_entry.cpp"
@@ -309,6 +314,8 @@ set(Utility
     "cache_manager.h"
     "chrono_unit_convert_to_string.h"
     "crc.h"
+    "dump_hex.h"
+    "enable_module_loading.h"
     "exit_scope.h"
     "filesystem_utils.cpp"
     "filesystem_utils.h"
@@ -334,6 +341,8 @@ set(Utility
     "string_conversation.h"
     "string_utils.h"
     "system_time_utils.h"
+    "tagged_bool.h"
+    "throw_on_error.h"
     "time_units.cpp"
     "time_units.h"
     "time_utils.cpp"
@@ -346,6 +355,7 @@ set(Utility
     "windows_error.cpp"
     "windows_error.h"
     "windows_setup.h"
+    "write_header.h"
 )
 source_group("Utility" FILES ${Utility})
 

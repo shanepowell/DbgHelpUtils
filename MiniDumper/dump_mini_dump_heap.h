@@ -2,6 +2,8 @@
 #include <memory>
 #include <ostream>
 
+#include "DbgHelpUtils/tagged_bool.h"
+
 class dump_file_options;
 
 namespace dlg_help_utils
@@ -42,7 +44,9 @@ namespace detail
 
     std::unique_ptr<dlg_help_utils::heap::process_heaps> setup_base_diff_dump_heaps(std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dlg_help_utils::cache_manager& base_cache, dlg_help_utils::heap::process_heaps& heaps, dlg_help_utils::dbg_help::symbol_engine& symbol_engine, dump_file_options const& options);
     void print_process_entry(std::wostream& log, dlg_help_utils::heap::process_heap_entry const& entry, dlg_help_utils::process::process_environment_block const& peb, std::streamsize hex_length, dump_file_options const& options, size_t indent);
-    std::wstring_view get_process_marker(bool is_process_heap);
+
+    using is_process_heap_t = dlg_help_utils::tagged_bool<struct is_process_heap_type>;
+    std::wstring_view get_process_marker(is_process_heap_t is_process_heap);
 
     void print_nt_heap_line(std::wostream& log, std::wstring_view const& process_heap_marker, dlg_help_utils::heap::nt_heap const& nt_heap);
     void print_nt_heap(std::wostream& log, std::streamsize hex_length, dump_file_options const& options, dlg_help_utils::heap::nt_heap const& nt_heap, dlg_help_utils::process::process_environment_block const& peb);

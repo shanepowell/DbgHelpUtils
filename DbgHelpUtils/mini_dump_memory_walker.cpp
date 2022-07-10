@@ -21,14 +21,16 @@ using namespace std::string_literals;
 
 namespace dlg_help_utils::stream_stack_dump
 {
-    mini_dump_memory_walker::mini_dump_memory_walker(DWORD64 const stack_start_range, void const* stack,
-                                               size_t const stack_size, memory_list_stream const& memory_list,
-                                               memory64_list_stream const& memory64_list,
-                                               function_table_stream const& function_table,
-                                               module_list_stream const& module_list,
-                                               unloaded_module_list_stream const& unloaded_module_list,
-                                               pe_file_memory_mapping& pe_file_memory_mappings,
-                                               dbg_help::symbol_engine& symbol_engine)
+    mini_dump_memory_walker::mini_dump_memory_walker(DWORD64 const stack_start_range
+        , void const* stack
+        , size_t const stack_size
+        , memory_list_stream const& memory_list
+        , memory64_list_stream const& memory64_list
+        , function_table_stream const& function_table
+        , module_list_stream const& module_list
+        , unloaded_module_list_stream const& unloaded_module_list
+        , pe_file_memory_mapping& pe_file_memory_mappings
+        , dbg_help::symbol_engine& symbol_engine)
         : stack_start_range_{ stack_start_range }
         , stack_{ static_cast<uint8_t const*>(stack) }
         , stack_size_{ stack_size }
@@ -45,8 +47,11 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
     // ReSharper disable CppParameterMayBeConst
-    bool mini_dump_memory_walker::read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
-                                                   LPDWORD number_of_bytes_read, bool const enable_module_loading)
+    bool mini_dump_memory_walker::read_process_memory(DWORD64 const base_address
+        , PVOID buffer
+        , DWORD const size
+        , LPDWORD number_of_bytes_read
+        , enable_module_loading_t const enable_module_loading)
     {
         if (!range_utils::validate_range(base_address, size))
         {
@@ -57,8 +62,11 @@ namespace dlg_help_utils::stream_stack_dump
             return false;
         }
 
-        auto const result = do_read_process_memory(base_address, buffer, size, number_of_bytes_read,
-                                                   enable_module_loading);
+        auto const result = do_read_process_memory(base_address
+            , buffer
+            , size
+            , number_of_bytes_read
+            , enable_module_loading);
 
         if (callback_.symbol_load_debug())
         {
@@ -81,8 +89,7 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 if (callback_.symbol_load_debug_memory())
                 {
-                    hex_dump::hex_dump(callback_.log_stream(), buffer, *number_of_bytes_read, 5, true, 16,
-                                       base_address);
+                    hex_dump::hex_dump(callback_.log_stream(), buffer, *number_of_bytes_read, 5, write_header_t{true}, 16, base_address);
                 }
             }
         }
@@ -115,15 +122,24 @@ namespace dlg_help_utils::stream_stack_dump
         return lp_address->Offset;
     }
 
-    mini_dump_memory_stream mini_dump_memory_walker::get_process_memory_stream(DWORD64 base_address, DWORD64 size, bool enable_module_loading) const
+    mini_dump_memory_stream mini_dump_memory_walker::get_process_memory_stream(DWORD64 base_address, DWORD64 size, enable_module_loading_t enable_module_loading) const
     {
-        return mini_dump_memory_stream{[this](uint64_t base_address, uint64_t& size, bool enable_module_loading) { return get_process_memory_range(base_address, size, enable_module_loading); }, base_address, size, enable_module_loading};
+        return mini_dump_memory_stream
+        {
+            [this](uint64_t const base_address, uint64_t& size, enable_module_loading_t const enable_module_loading)
+            {
+                return get_process_memory_range(base_address, size, enable_module_loading);
+            }
+            , base_address
+            , size
+            , enable_module_loading
+        };
     }
 
-    void const* mini_dump_memory_walker::get_process_memory_range(DWORD64 base_address, DWORD64& size, bool enable_module_loading) const
+    void const* mini_dump_memory_walker::get_process_memory_range(DWORD64 const base_address, DWORD64& size, enable_module_loading_t const enable_module_loading) const
     {
         auto max_size = size;
-        auto const* memory = get_stack_memory(base_address, max_size, false);
+        auto const* memory = get_stack_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             size = max_size;
@@ -131,7 +147,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         max_size = size;
-        memory = get_memory_list_memory(base_address, max_size, false);
+        memory = get_memory_list_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             size = max_size;
@@ -139,7 +155,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         max_size = size;
-        memory = get_memory64_list_memory(base_address, max_size, false);
+        memory = get_memory64_list_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             size = max_size;
@@ -147,7 +163,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         max_size = size;
-        memory = get_memory_from_pe_file(base_address, max_size, false);
+        memory = get_memory_from_pe_file(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             size = max_size;
@@ -157,7 +173,7 @@ namespace dlg_help_utils::stream_stack_dump
         if (enable_module_loading && load_pe_file(base_address))
         {
             max_size = size;
-            memory = get_memory_from_pe_file(base_address, max_size, false);
+            memory = get_memory_from_pe_file(base_address, max_size, limit_size_t{false});
             if (memory != nullptr)
             {
                 size = max_size;
@@ -168,28 +184,28 @@ namespace dlg_help_utils::stream_stack_dump
         return nullptr;
     }
 
-    DWORD64 mini_dump_memory_walker::find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, bool enable_module_loading) const
+    DWORD64 mini_dump_memory_walker::find_memory_range(DWORD64 const base_address, DWORD64 const element_size, DWORD64 const max_elements, enable_module_loading_t const enable_module_loading) const
     {
         DWORD64 max_size = element_size * max_elements;
-        auto const* memory = get_stack_memory(base_address, max_size, false);
+        auto const* memory = get_stack_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return max_size;
         }
 
-        memory = get_memory_list_memory(base_address, max_size, false);
+        memory = get_memory_list_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return max_size;
         }
 
-        memory = get_memory64_list_memory(base_address, max_size, false);
+        memory = get_memory64_list_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return max_size;
         }
 
-        memory = get_memory_from_pe_file(base_address, max_size, false);
+        memory = get_memory_from_pe_file(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return max_size;
@@ -197,7 +213,7 @@ namespace dlg_help_utils::stream_stack_dump
 
         if (enable_module_loading && load_pe_file(base_address))
         {
-            memory = get_memory_from_pe_file(base_address, max_size, false);
+            memory = get_memory_from_pe_file(base_address, max_size, limit_size_t{false});
             if (memory != nullptr)
             {
                 return max_size;
@@ -207,28 +223,32 @@ namespace dlg_help_utils::stream_stack_dump
         return 0;
     }
 
-    DWORD64 mini_dump_memory_walker::find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, bool const enable_module_loading) const
+    DWORD64 mini_dump_memory_walker::find_memory_range_if(DWORD64 const base_address
+        , DWORD64 const element_size
+        , DWORD64 const max_elements
+        , std::function<bool(void const*)> const& pred
+        , enable_module_loading_t const enable_module_loading) const
     {
         DWORD64 max_size = element_size * max_elements;
-        auto const* memory = get_stack_memory(base_address, max_size, false);
+        auto const* memory = get_stack_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return find_max_element_size(memory, element_size, max_size, pred);
         }
 
-        memory = get_memory_list_memory(base_address, max_size, false);
+        memory = get_memory_list_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return find_max_element_size(memory, element_size, max_size, pred);
         }
 
-        memory = get_memory64_list_memory(base_address, max_size, false);
+        memory = get_memory64_list_memory(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return find_max_element_size(memory, element_size, max_size, pred);
         }
 
-        memory = get_memory_from_pe_file(base_address, max_size, false);
+        memory = get_memory_from_pe_file(base_address, max_size, limit_size_t{false});
         if (memory != nullptr)
         {
             return find_max_element_size(memory, element_size, max_size, pred);
@@ -236,7 +256,7 @@ namespace dlg_help_utils::stream_stack_dump
 
         if (enable_module_loading && load_pe_file(base_address))
         {
-            memory = get_memory_from_pe_file(base_address, max_size, false);
+            memory = get_memory_from_pe_file(base_address, max_size, limit_size_t{false});
             if (memory != nullptr)
             {
                 return find_max_element_size(memory, element_size, max_size, pred);
@@ -246,9 +266,11 @@ namespace dlg_help_utils::stream_stack_dump
         return 0;
     }
 
-    bool mini_dump_memory_walker::do_read_process_memory(DWORD64 const base_address, PVOID buffer, DWORD const size,
-                                                      LPDWORD number_of_bytes_read,
-                                                      bool const enable_module_loading) const
+    bool mini_dump_memory_walker::do_read_process_memory(DWORD64 const base_address
+        , PVOID buffer
+        , DWORD const size
+        , LPDWORD number_of_bytes_read
+        , enable_module_loading_t const enable_module_loading) const
     {
         if (read_stack_memory(base_address, buffer, size, number_of_bytes_read))
         {
@@ -285,8 +307,10 @@ namespace dlg_help_utils::stream_stack_dump
         return false;
     }
 
-    bool mini_dump_memory_walker::read_stack_memory(DWORD64 const base_address, PVOID buffer, DWORD size,
-                                                 LPDWORD number_of_bytes_read) const
+    bool mini_dump_memory_walker::read_stack_memory(DWORD64 const base_address
+        , PVOID buffer
+        , DWORD size
+        , LPDWORD number_of_bytes_read) const
     {
         if(stack_size_ == 0) return false;
         uint64_t length = size;
@@ -297,8 +321,10 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_memory_walker::read_memory_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                       LPDWORD number_of_bytes_read) const
+    bool mini_dump_memory_walker::read_memory_list_memory(DWORD64 base_address
+        , PVOID buffer
+        , DWORD size
+        , LPDWORD number_of_bytes_read) const
     {
         DWORD64 length = size;
         auto const* memory = memory_list_.find_any_address_range(base_address, length);
@@ -308,8 +334,10 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_memory_walker::read_memory64_list_memory(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                         LPDWORD number_of_bytes_read) const
+    bool mini_dump_memory_walker::read_memory64_list_memory(DWORD64 base_address
+        , PVOID buffer
+        , DWORD size
+        , LPDWORD number_of_bytes_read) const
     {
         DWORD64 length = size;
         auto const* memory = memory64_list_.find_any_address_range(base_address, length);
@@ -319,8 +347,10 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    bool mini_dump_memory_walker::read_memory_from_pe_file(DWORD64 base_address, PVOID buffer, DWORD size,
-                                                        LPDWORD number_of_bytes_read) const
+    bool mini_dump_memory_walker::read_memory_from_pe_file(DWORD64 base_address
+        , PVOID buffer
+        , DWORD size
+        , LPDWORD number_of_bytes_read) const
     {
         DWORD64 length = size;
         auto const* memory = pe_file_memory_mappings_.find_any_address_range(base_address, length);
@@ -330,7 +360,7 @@ namespace dlg_help_utils::stream_stack_dump
         return true;
     }
 
-    void const* mini_dump_memory_walker::get_stack_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    void const* mini_dump_memory_walker::get_stack_memory(DWORD64 const base_address, DWORD64& size, limit_size_t const limit_size) const
     {
         if(stack_size_ == 0) return nullptr;
         if (DWORD64 length = size; range_utils::range_union(stack_start_range_, stack_size_, base_address, length) && (!limit_size || length == size))
@@ -346,7 +376,7 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
     template<typename T>
-    void const* mini_dump_memory_walker::get_memory_range_for_address(T const& memory_list, DWORD64 base_address, DWORD64& size, bool limit_size)
+    void const* mini_dump_memory_walker::get_memory_range_for_address(T const& memory_list, DWORD64 const base_address, DWORD64& size, limit_size_t const limit_size)
     {
         if (memory_list.found())
         {
@@ -391,17 +421,17 @@ namespace dlg_help_utils::stream_stack_dump
         return nullptr;
     }
 
-    void const* mini_dump_memory_walker::get_memory_list_memory(DWORD64 base_address, DWORD64& size, bool const limit_size) const
+    void const* mini_dump_memory_walker::get_memory_list_memory(DWORD64 const base_address, DWORD64& size, limit_size_t const limit_size) const
     {
         return get_memory_range_for_address(memory_list_, base_address, size, limit_size);
     }
 
-    void const* mini_dump_memory_walker::get_memory64_list_memory(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    void const* mini_dump_memory_walker::get_memory64_list_memory(DWORD64 const base_address, DWORD64& size, limit_size_t const limit_size) const
     {
         return get_memory_range_for_address(memory64_list_, base_address, size, limit_size);
     }
 
-    void const* mini_dump_memory_walker::get_memory_from_pe_file(DWORD64 base_address, DWORD64& size, bool limit_size) const
+    void const* mini_dump_memory_walker::get_memory_from_pe_file(DWORD64 const base_address, DWORD64& size, limit_size_t const limit_size) const
     {
         DWORD64 length = size;
         auto const* memory = pe_file_memory_mappings_.find_any_address_range(base_address, length);
@@ -573,7 +603,7 @@ namespace dlg_help_utils::stream_stack_dump
     }
 
     // ReSharper restore CppParameterMayBeConst
-    std::optional<dbg_help::symbol_type_info> mini_dump_memory_walker::get_type_info(std::wstring const& type_name, bool const throw_on_error) const
+    std::optional<dbg_help::symbol_type_info> mini_dump_memory_walker::get_type_info(std::wstring const& type_name, throw_on_error_t const throw_on_error) const
     {
         if(auto const it = cache_type_.find(type_name); it != cache_type_.end())
         {
@@ -605,7 +635,7 @@ namespace dlg_help_utils::stream_stack_dump
         return rv;
     }
 
-    std::optional<dbg_help::symbol_type_info> mini_dump_memory_walker::get_symbol_info(std::wstring const& symbol_name, bool const throw_on_error) const
+    std::optional<dbg_help::symbol_type_info> mini_dump_memory_walker::get_symbol_info(std::wstring const& symbol_name, throw_on_error_t const throw_on_error) const
     {
         auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(symbol_name);
 
@@ -684,7 +714,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void mini_dump_memory_walker::load_module(std::wstring const& module_name, bool const throw_on_error) const
+    void mini_dump_memory_walker::load_module(std::wstring const& module_name, throw_on_error_t const throw_on_error) const
     {
         if(auto const & module = module_list_.find_module(module_name); module)
         {
@@ -699,7 +729,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void mini_dump_memory_walker::load_module(stream_module const& module, bool const throw_on_error) const
+    void mini_dump_memory_walker::load_module(stream_module const& module, throw_on_error_t const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {
@@ -709,7 +739,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void mini_dump_memory_walker::load_module(stream_unloaded_module const& module, bool const throw_on_error) const
+    void mini_dump_memory_walker::load_module(stream_unloaded_module const& module, throw_on_error_t const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {

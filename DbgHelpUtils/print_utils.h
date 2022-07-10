@@ -5,6 +5,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include <type_traits>
 
+#include "dump_hex.h"
 #include "mini_dump_memory_stream.h"
 #include "stream_hex_dump.h"
 
@@ -38,8 +39,10 @@ namespace dlg_help_utils::print_utils
         return std::isprint(ch) != 0;
     }
 
+    using stop_at_null_t = tagged_bool<struct stop_at_null_type>;
+
     template<typename T>
-    void print_str(std::wostream& os, T const* str, size_t const max_size, bool const stop_at_null)
+    void print_str(std::wostream& os, T const* str, size_t const max_size, stop_at_null_t const stop_at_null)
     {
         for(size_t i = 0; i < max_size; ++i)
         {
@@ -60,7 +63,7 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_stream_str(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const max_size, bool const stop_at_null)
+    void print_stream_str(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const max_size, stop_at_null_t const stop_at_null)
     {
         for(uint64_t i = 0; i < max_size; ++i)
         {
@@ -173,7 +176,7 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_array_inline(std::wostream& os, T const* values, size_t const max_size, bool const dump_hex = false)
+    void print_array_inline(std::wostream& os, T const* values, size_t const max_size, dump_hex_t const dump_hex = dump_hex_t{false})
     {
         auto first = true;
         for(size_t i = 0; i < max_size; ++i)
@@ -205,7 +208,7 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_stream_array_inline(std::wostream& os, mini_dump_memory_stream& stream, size_t const max_size, bool const dump_hex = false)
+    void print_stream_array_inline(std::wostream& os, mini_dump_memory_stream& stream, size_t const max_size, dump_hex_t const dump_hex = dump_hex_t{false})
     {
         auto first = true;
         for(size_t i = 0; i < max_size; ++i)
@@ -268,7 +271,7 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_array_lines(std::wostream& os, T const* values, size_t const max_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex = false)
+    void print_array_lines(std::wostream& os, T const* values, size_t const max_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex = dump_hex_t{false})
     {
         std::wstring const indent_str(indent, ' ');
 
@@ -312,7 +315,7 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_stream_array_lines(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const max_size, size_t const elements_per_line, size_t const element_width, size_t const indent, bool const dump_hex = false)
+    void print_stream_array_lines(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const max_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex = dump_hex_t{false})
     {
         std::wstring const indent_str(indent, ' ');
 

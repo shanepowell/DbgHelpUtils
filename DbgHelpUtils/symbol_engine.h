@@ -15,6 +15,7 @@
 #include "i_symbol_load_callback.h"
 #include "stream_module_name.h"
 #include "symbol_type_info.h"
+#include "throw_on_error.h"
 
 namespace dlg_help_utils
 {
@@ -83,11 +84,23 @@ namespace dlg_help_utils::dbg_help
         symbol_engine& operator=(symbol_engine&&) = delete;
 
         void clear_modules();
-        void load_module(std::wstring module_name, DWORD64 module_base, DWORD module_size, DWORD module_time_stamp,
-                         DWORD module_check_sum, void const* cv_record, DWORD cv_record_size, void const* misc_record,
-                         DWORD misc_record_size, VS_FIXEDFILEINFO const& version_info, bool throw_on_error = false);
-        void load_module(std::wstring module_name, DWORD64 module_base, DWORD module_size, DWORD module_time_stamp,
-                         DWORD module_check_sum, bool throw_on_error = false);
+        void load_module(std::wstring module_name
+            , DWORD64 module_base
+            , DWORD module_size
+            , DWORD module_time_stamp
+            , DWORD module_check_sum
+            , void const* cv_record
+            , DWORD cv_record_size
+            , void const* misc_record
+            , DWORD misc_record_size
+            , VS_FIXEDFILEINFO const& version_info
+            , throw_on_error_t throw_on_error = throw_on_error_t{false});
+        void load_module(std::wstring module_name
+            , DWORD64 module_base
+            , DWORD module_size
+            , DWORD module_time_stamp
+            , DWORD module_check_sum
+            , throw_on_error_t throw_on_error = throw_on_error_t{false});
         void unload_module(std::wstring const& module_name);
         [[nodiscard]] bool is_module_loaded(std::wstring const& module_name) const;
         [[nodiscard]] bool is_module_symbols_available(std::wstring const& module_name) const;
@@ -97,11 +110,11 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(DWORD64 address);
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context);
 
-        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name, bool throw_on_error = false);
-        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name, bool throw_on_error = false);
+        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name, throw_on_error_t throw_on_error = throw_on_error_t{false});
+        [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name, throw_on_error_t throw_on_error = throw_on_error_t{false});
         [[nodiscard]] std::vector<symbol_type_info> module_types(std::wstring const& module_name);
 
-        [[nodiscard]] std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name, bool throw_on_error = false) const;
+        [[nodiscard]] std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
 
         enum class symbol_walk_options
         {
@@ -141,18 +154,25 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] std::map<std::wstring, module_info>::const_iterator find_module_name(DWORD64 address);
 
-        void dump_loaded_module_information(DWORD64 handle, DWORD64 module_base,
-                                            std::wstring const& module_image_path) const;
-        [[nodiscard]] std::wstring load_module_image_path(DWORD module_size, DWORD module_time_stamp, DWORD module_check_sum,
-                                            std::wstring const& module_name, DWORD64 handle);
-        [[nodiscard]] DWORD64 load_module(std::wstring const& module_name, DWORD64 module_base, DWORD module_size,
-                            MODLOAD_DATA* module_load_info, bool throw_on_error);
+        void dump_loaded_module_information(DWORD64 handle
+            , DWORD64 module_base
+            , std::wstring const& module_image_path) const;
+        [[nodiscard]] std::wstring load_module_image_path(DWORD module_size
+            , DWORD module_time_stamp
+            , DWORD module_check_sum
+            , std::wstring const& module_name
+            , DWORD64 handle);
+        [[nodiscard]] DWORD64 load_module(std::wstring const& module_name
+            , DWORD64 module_base
+            , DWORD module_size
+            , MODLOAD_DATA* module_load_info
+            , throw_on_error_t throw_on_error);
 
         [[nodiscard]] std::optional<std::optional<symbol_type_info>> get_cached_type_info(std::wstring const& type_name);
         void set_cached_type_info(std::wstring const& type_name, std::optional<symbol_type_info> const& type_info);
         void clear_cached_type_info();
 
-        [[nodiscard]] std::optional<symbol_type_info> load_type_info(DWORD64 module_base, std::wstring const& type_name, bool throw_on_error);
+        [[nodiscard]] std::optional<symbol_type_info> load_type_info(DWORD64 module_base, std::wstring const& type_name, throw_on_error_t throw_on_error);
         [[nodiscard]] static DWORD setup_enum_symbol_options(symbol_walk_options option);
 
         [[nodiscard]] static HANDLE create_fake_id();

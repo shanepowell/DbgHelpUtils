@@ -44,13 +44,15 @@ void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context con
     }
     else if (thread_context.wow64_thread_context_available())
     {
-        dump_mini_dump_wow64_thread_context(log, thread_context.wow64_thread_context(),
-                                          thread_context.wow64_thread_context_has_extended_registers());
+        dump_mini_dump_wow64_thread_context(log
+            , thread_context.wow64_thread_context()
+            , has_extended_registers_t{thread_context.wow64_thread_context_has_extended_registers()});
     }
     else if (thread_context.x86_thread_context_available())
     {
-        dump_mini_dump_x86_thread_context(log, thread_context.x86_thread_context(),
-                                          thread_context.x86_thread_context_has_extended_registers());
+        dump_mini_dump_x86_thread_context(log
+            , thread_context.x86_thread_context()
+            , has_extended_registers_t{thread_context.x86_thread_context_has_extended_registers()});
     }
     else
     {
@@ -123,7 +125,11 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
     log << std::format(L"      Xmm15: {}\n", to_hex_full(context.Xmm15));
     for (size_t index = 0; index < std::size(context.VectorRegister); index += 2)
     {
-        log << std::format(L"    VectorRegister[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.VectorRegister[index]), to_hex_full(context.VectorRegister[index + 1]));
+        log << std::format(L"    VectorRegister[{0}/{1}]: {2}-{3}\n"
+            , locale_formatting::to_wstring(index)
+            , locale_formatting::to_wstring(index + 1)
+            , to_hex_full(context.VectorRegister[index])
+            , to_hex_full(context.VectorRegister[index + 1]));
     }
     log << std::format(L"    VectorControl: {}\n", to_hex_full(context.VectorControl));
     log << std::format(L"    DebugControl: {}\n", to_hex_full(context.DebugControl));
@@ -133,7 +139,7 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
     log << std::format(L"    LastExceptionFromRip: {}\n", to_hex_full(context.LastExceptionFromRip));
 }
 
-void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context::context_x86 const& context, bool const has_extended_registers)
+void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context::context_x86 const& context, has_extended_registers_t const has_extended_registers)
 {
     log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
     log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
@@ -179,7 +185,7 @@ void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context
     }
 }
 
-void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context, bool const has_extended_registers)
+void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context, has_extended_registers_t const has_extended_registers)
 {
     log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
     log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
@@ -247,8 +253,11 @@ void dump_mini_dump_thread_names_stream_data(std::wostream& log, mini_dump const
     log << L'\n';
 }
 
-void dump_mini_dump_thread_list_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
-                                            dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_thread_list_stream_data(std::wostream& log
+    , mini_dump const& mini_dump
+    , size_t const index
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine)
 {
     thread_list_stream const thread_list{mini_dump, index};
 
@@ -301,8 +310,13 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log, mini_dump const&
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(log, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
-                                   thread->Stack.StartOfMemoryRange);
+                hex_dump::hex_dump(log
+                    , thread.stack()
+                    , options.hex_dump_memory_size(thread->Stack.Memory.DataSize)
+                    , 5
+                    , write_header_t{true}
+                    , 16
+                    , thread->Stack.StartOfMemoryRange);
                 log << L'\n';
             }
         }
@@ -313,8 +327,11 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log, mini_dump const&
 }
 
 
-void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
-                                               dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
+    , mini_dump const& mini_dump
+    , size_t const index
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine)
 {
     thread_ex_list_stream const thread_ex_list{mini_dump, index};
 
@@ -358,14 +375,24 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log, mini_dump con
         {
             if (options.display_symbols())
             {
-                stream_stack_dump::hex_dump_stack(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
-                                                  thread.stack(), thread->Stack.Memory.DataSize,
-                                                  thread.thread_context(), 5, options.display_stack_options());
+                stream_stack_dump::hex_dump_stack(log
+                    , mini_dump
+                    , symbol_engine
+                    , thread->Stack.StartOfMemoryRange
+                    , thread.stack(), thread->Stack.Memory.DataSize
+                    , thread.thread_context()
+                    , 5
+                    , options.display_stack_options());
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(log, thread.stack(), options.hex_dump_memory_size(thread->Stack.Memory.DataSize), 5, true, 16,
-                                   thread->Stack.StartOfMemoryRange);
+                hex_dump::hex_dump(log
+                    , thread.stack()
+                    , options.hex_dump_memory_size(thread->Stack.Memory.DataSize)
+                    , 5
+                    , write_header_t{true}
+                    , 16
+                    , thread->Stack.StartOfMemoryRange);
                 log << L'\n';
             }
         }
@@ -382,8 +409,13 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log, mini_dump con
         {
             if (thread.backing_store() != nullptr)
             {
-                hex_dump::hex_dump(log, thread.backing_store(), options.hex_dump_memory_size(thread->BackingStore.Memory.DataSize), 5, true, 16,
-                                   thread->BackingStore.StartOfMemoryRange);
+                hex_dump::hex_dump(log
+                    , thread.backing_store()
+                    , options.hex_dump_memory_size(thread->BackingStore.Memory.DataSize)
+                    , 5
+                    , write_header_t{true}
+                    , 16
+                    , thread->BackingStore.StartOfMemoryRange);
                 log << L'\n';
             }
         }

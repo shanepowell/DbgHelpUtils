@@ -19,7 +19,7 @@
 using namespace std;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, bool const is_x86_target, streamsize const hex_length)
+void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, stream_stack_dump::is_x86_target_t const is_x86_target, streamsize const hex_length)
 {
     using namespace size_units::base_16;
     log << std::format(L"  {}:\n", heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()));
@@ -106,7 +106,7 @@ void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_en
         log << std::format(L"{:<7.2f} ", bucket.range_size_percent());
         if(bucket.common_allocation_callsite().has_value())
         {
-            log << std::format(L" {0}", stream_stack_dump::hex_dump_stack_frame(bucket.common_allocation_callsite().value(), is_x86_target));
+            log << std::format(L" {0}", hex_dump_stack_frame(bucket.common_allocation_callsite().value(), is_x86_target));
         }
         log << L'\n';
 
@@ -183,7 +183,7 @@ void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_du
     std::wcerr << loading_heap_statistics;
 
     auto const hex_length = heaps.peb().machine_hex_printable_length();
-    auto const is_x86_target = heaps.peb().is_x86_target();
+    auto const is_x86_target = stream_stack_dump::is_x86_target_t{heaps.peb().is_x86_target()};
     auto const statistics = heaps.statistics();
 
     std::wcerr << move_back;

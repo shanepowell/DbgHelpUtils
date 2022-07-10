@@ -29,8 +29,31 @@ namespace dlg_help_utils::heap::allocation_graph
         remove_all_references_from(node_index, to_references_);
     }
 
+    process_heap_entry_symbol_address_reference& process_heap_graph_node::add_symbol_address_reference(process_heap_entry_symbol_address_reference symbol_reference)
+    {
+        return symbol_references_.emplace_back(std::move(symbol_reference));
+    }
+
+    std::optional<graph_node_variable_symbol_reference_data> process_heap_graph_node::find_symbol_variable_reference(uint64_t const address) const
+    {
+        for (auto const& symbol_reference : symbol_references())
+        {
+            auto const it = symbol_reference.variable_symbol_references().lower_bound(address);
+            if(it == symbol_reference.variable_symbol_references().end() || it->second.variable_address > address)
+            {
+                continue;
+            }
+
+            return graph_node_variable_symbol_reference_data{ index(), symbol_reference.address(), it->second.variable_offset, it->second.variable_address, symbol_reference.symbol_type(), it->second.variable_symbol, it->second.name };
+        }
+
+        return std::nullopt;
+    }
+
     void process_heap_graph_node::mark_as_system_allocation()
     {
+        if(type_ == process_heap_graph_node_type::system_allocation) return;
+
         if(type_ != process_heap_graph_node_type::allocation)
         {
             throw exceptions::wide_runtime_error{std::format(L"graph node type not allocation [{}]", static_cast<int>(type_))};

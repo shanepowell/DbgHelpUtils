@@ -7,7 +7,7 @@
 
 namespace dlg_help_utils::heap
 {
-    heap_lfh_entry::heap_lfh_entry(heap_lfh_context const& heap, uint64_t const heap_lfh_entry_address, size_units::base_16::bytes const block_size, bool const allocated, bool const has_unused_bytes)
+    heap_lfh_entry::heap_lfh_entry(heap_lfh_context const& heap, uint64_t const heap_lfh_entry_address, size_units::base_16::bytes const block_size, allocated_t const allocated, has_unused_bytes_t const has_unused_bytes)
     : heap_{&heap}
     , heap_lfh_entry_address_{heap_lfh_entry_address}
     , block_size_{block_size}

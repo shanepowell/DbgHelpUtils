@@ -4,6 +4,8 @@
 #include "windows_setup.h"
 #include <WinNls.h>
 
+#include "tagged_bool.h"
+
 namespace locale_formatting
 {
     namespace detail
@@ -11,8 +13,10 @@ namespace locale_formatting
         NUMBERFMTW get_default_number_format_w();
     } // namespace detail
 
+    using floating_point_formatting_t = dlg_help_utils::tagged_bool<struct floating_point_formatting_type>;
+
     template<typename T>
-    std::wstring to_wstring(T value, const bool floating_point_formatting = false)
+    std::wstring to_wstring(T value, floating_point_formatting_t const floating_point_formatting = floating_point_formatting_t{false})
     {
         auto v = std::to_wstring(value);
         std::wstring rv;

@@ -125,9 +125,9 @@ namespace dlg_help_utils::heap
                 data = data_value.value();
             }
 
-            auto const is_allocated = (data & mask) == mask;
+            auto const is_allocated = allocated_t{(data & mask) == mask};
             mask <<= 1;
-            auto const has_used_bytes = (data & mask) == mask;
+            auto const has_used_bytes = has_unused_bytes_t{(data & mask) == mask};
             mask <<= 1;
             co_yield heap_lfh_entry{heap(), block_address, block_size_data, is_allocated, has_used_bytes};
 

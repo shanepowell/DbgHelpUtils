@@ -57,6 +57,8 @@ namespace dlg_help_utils::process
         [[nodiscard]] bool user_stack_db_enabled() const;
         [[nodiscard]] bool heap_page_alloc_enabled() const;
 
+        [[nodiscard]] std::streamsize machine_pointer_size() const { return machine_pointer_size_; }
+
         [[nodiscard]] uint64_t page_size() const { return system_memory_info_.system_memory_misc_info().BasicInfo.PageSize; }
 
         void gather_system_area_addresses(std::set<uint64_t>& system_area_addresses) const;
@@ -69,6 +71,8 @@ namespace dlg_help_utils::process
         [[nodiscard]] unloaded_module_list_stream const& unloaded_module_list() const { return unloaded_module_list_; }
         [[nodiscard]] system_memory_info_stream const& system_memory_info() const { return system_memory_info_; }
 
+        [[nodiscard]] dbg_help::symbol_type_info const& peb_symbol() const;
+        [[nodiscard]] dbg_help::symbol_type_info const& teb_symbol() const;
 
     private:
         [[nodiscard]] uint64_t get_teb_address() const;

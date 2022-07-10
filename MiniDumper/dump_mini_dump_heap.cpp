@@ -45,7 +45,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
         {
             if(auto const nt_heap = peb.nt_heap(heap_index); nt_heap.has_value())
             {
-                detail::print_nt_heap_line(log, detail::get_process_marker(nt_heap.value().is_process_heap(peb.process_heap())), nt_heap.value());
+                detail::print_nt_heap_line(log, get_process_marker(detail::is_process_heap_t{nt_heap.value().is_process_heap(peb.process_heap())}), nt_heap.value());
                 detail::print_nt_heap_segments_list(log, hex_length, nt_heap.value(), 2);
                 detail::print_nt_heap_lfh_segments_list(log, hex_length, nt_heap.value(), 2);
             }
@@ -54,7 +54,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
         {
             if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
             {
-                detail::print_segment_heap_line(log, detail::get_process_marker(peb.process_heap() == heap_address), segment_heap.value());
+                detail::print_segment_heap_line(log, get_process_marker(detail::is_process_heap_t{peb.process_heap() == heap_address}), segment_heap.value());
             }
         }
         else
@@ -73,7 +73,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
         }
         else if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
         {
-            detail::print_segment_heap(log, hex_length, detail::get_process_marker(peb.process_heap() == segment_heap.value().segment_heap_address()), segment_heap.value(), options, 0);
+            detail::print_segment_heap(log, hex_length, get_process_marker(detail::is_process_heap_t{peb.process_heap() == segment_heap.value().segment_heap_address()}), segment_heap.value(), options, 0);
         }
     }
 

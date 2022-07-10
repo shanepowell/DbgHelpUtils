@@ -227,8 +227,8 @@ namespace
         return {};
     }
 
-    void dump_sizeof_struct_data(ULONG64 const callback_data,
-                                 dlg_help_utils::dbg_help::i_symbol_load_callback const& callback)
+    void dump_sizeof_struct_data(ULONG64 const callback_data
+        , dlg_help_utils::dbg_help::i_symbol_load_callback const& callback)
     {
         if (callback.symbol_load_debug_memory() && callback_data != 0)
         {
@@ -238,9 +238,10 @@ namespace
         }
     }
 
-    BOOL CALLBACK sym_register_callback_proc64([[maybe_unused]] __in HANDLE h_process, __in ULONG const action_code,
-                                               __in_opt ULONG64 const callback_data,
-                                               __in_opt ULONG64 const user_context)
+    BOOL CALLBACK sym_register_callback_proc64([[maybe_unused]] __in HANDLE h_process
+        , __in ULONG const action_code
+        , __in_opt ULONG64 const callback_data
+        , __in_opt ULONG64 const user_context)
     {
         auto& symbol_engine = *reinterpret_cast<dlg_help_utils::dbg_help::i_symbol_callback*>(user_context);
         auto& callback = symbol_engine.callback();
@@ -349,8 +350,11 @@ namespace
             if (g_callback != nullptr && callback_data != 0)
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_READ_MEMORY const*>(callback_data);
-                return g_callback->read_process_memory(evt->addr, evt->buf, evt->bytes, evt->bytesread,
-                                                       !symbol_engine.loading_module());
+                return g_callback->read_process_memory(evt->addr
+                    , evt->buf
+                    , evt->bytes
+                    , evt->bytesread
+                    , dlg_help_utils::enable_module_loading_t{!symbol_engine.loading_module()});
             }
             break;
 
@@ -526,7 +530,12 @@ namespace
 
     struct local_variable_info
     {
-        local_variable_info(HANDLE process, dlg_help_utils::dbg_help::thread_context_type type, uint64_t const frame_address_offset, void const* thread_context, std::vector<dlg_help_utils::dbg_help::local_variable> &locals, std::vector<dlg_help_utils::dbg_help::local_variable> &parameters)
+        local_variable_info(HANDLE process
+            , dlg_help_utils::dbg_help::thread_context_type type
+            , uint64_t const frame_address_offset
+            , void const* thread_context
+            , std::vector<dlg_help_utils::dbg_help::local_variable> &locals
+            , std::vector<dlg_help_utils::dbg_help::local_variable> &parameters)
         : process{process}
         , type{type}
         , frame_address_offset{frame_address_offset}
@@ -1027,10 +1036,17 @@ namespace dlg_help_utils::dbg_help
         clear_cached_type_info();
     }
 
-    void symbol_engine::load_module(std::wstring module_name, DWORD64 const module_base, DWORD const module_size,
-                                    DWORD const module_time_stamp, DWORD const module_check_sum, void const* cv_record,
-                                    DWORD const cv_record_size, void const* misc_record, DWORD const misc_record_size,
-                                    [[maybe_unused]] VS_FIXEDFILEINFO const& version_info, bool const throw_on_error)
+    void symbol_engine::load_module(std::wstring module_name
+        , DWORD64 const module_base
+        , DWORD const module_size
+        , DWORD const module_time_stamp
+        , DWORD const module_check_sum
+        , void const* cv_record
+        , DWORD const cv_record_size
+        , void const* misc_record
+        , DWORD const misc_record_size
+        , [[maybe_unused]] VS_FIXEDFILEINFO const& version_info
+        , throw_on_error_t const throw_on_error)
     {
         std::filesystem::path const path{module_name};
         auto const module = path.filename().wstring();
@@ -1170,8 +1186,12 @@ namespace dlg_help_utils::dbg_help
         modules_.insert(std::make_pair(std::move(module_name), module_info{handle, module_base, module_size, std::move(module_image_path), std::move(name)}));
     }
 
-    void symbol_engine::load_module(std::wstring module_name, DWORD64 const module_base, DWORD const module_size,
-                                    DWORD const module_time_stamp, DWORD const module_check_sum, bool const throw_on_error)
+    void symbol_engine::load_module(std::wstring module_name
+        , DWORD64 const module_base
+        , DWORD const module_size
+        , DWORD const module_time_stamp
+        , DWORD const module_check_sum
+        , throw_on_error_t const throw_on_error)
     {
         std::filesystem::path const path{module_name};
         auto const module = path.filename().wstring();
@@ -1364,13 +1384,13 @@ namespace dlg_help_utils::dbg_help
         return std::move(info);
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name, bool const throw_on_error)
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name, throw_on_error_t const throw_on_error)
     {
         auto [module_name, specific_type_name] = parse_type_info(type_name);
         return get_type_info(module_name, specific_type_name, throw_on_error);
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name, bool const throw_on_error)
+    std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& module_name, std::wstring const& type_name, throw_on_error_t const throw_on_error)
     {
         if(type_name.empty())
         {
@@ -1433,7 +1453,7 @@ namespace dlg_help_utils::dbg_help
         return types;
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name, bool const throw_on_error) const
+    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name, throw_on_error_t const throw_on_error) const
     {
         if(symbol_name.empty())
         {
@@ -1465,7 +1485,13 @@ namespace dlg_help_utils::dbg_help
         return symbols;
     }
 
-    void symbol_engine::local_variables_walk(std::vector<local_variable>& locals, std::vector<local_variable>& parameters, thread_context_type const type, uint64_t const frame_address_offset, void const* thread_context, std::wstring const& find_mask, symbol_walk_options const option) const
+    void symbol_engine::local_variables_walk(std::vector<local_variable>& locals
+        , std::vector<local_variable>& parameters
+        , thread_context_type const type
+        , uint64_t const frame_address_offset
+        , void const* thread_context
+        , std::wstring const& find_mask
+        , symbol_walk_options const option) const
     {
         local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters};
         if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
@@ -1577,8 +1603,9 @@ namespace dlg_help_utils::dbg_help
         return modules_.end();
     }
 
-    void symbol_engine::dump_loaded_module_information(DWORD64 const handle, DWORD64 const module_base,
-                                                       std::wstring const& module_image_path) const
+    void symbol_engine::dump_loaded_module_information(DWORD64 const handle
+        , DWORD64 const module_base
+        , std::wstring const& module_image_path) const
     {
         if (handle != 0 && callback().symbol_load_debug())
         {
@@ -1601,9 +1628,11 @@ namespace dlg_help_utils::dbg_help
         }
     }
 
-    std::wstring symbol_engine::load_module_image_path(DWORD const module_size, DWORD module_time_stamp,
-                                                       DWORD const module_check_sum, std::wstring const& module_name,
-                                                       DWORD64 const handle)
+    std::wstring symbol_engine::load_module_image_path(DWORD const module_size
+        , DWORD module_time_stamp
+        , DWORD const module_check_sum
+        , std::wstring const& module_name
+        , DWORD64 const handle)
     {
         if (handle != 0)
         {
@@ -1629,8 +1658,11 @@ namespace dlg_help_utils::dbg_help
         return {};
     }
 
-    DWORD64 symbol_engine::load_module(std::wstring const& module_name, DWORD64 const module_base, DWORD const module_size,
-                                       MODLOAD_DATA* module_load_info, bool const throw_on_error)
+    DWORD64 symbol_engine::load_module(std::wstring const& module_name
+        , DWORD64 const module_base
+        , DWORD const module_size
+        , MODLOAD_DATA* module_load_info
+        , throw_on_error_t const throw_on_error)
     {
         loading_module_ = true;
         auto loading_module_handle = make_scope_exit([this]()
@@ -1675,7 +1707,7 @@ namespace dlg_help_utils::dbg_help
         cache_type_info_.clear();
     }
 
-    std::optional<symbol_type_info> symbol_engine::load_type_info(DWORD64 const module_base, std::wstring const& type_name, bool const throw_on_error)
+    std::optional<symbol_type_info> symbol_engine::load_type_info(DWORD64 const module_base, std::wstring const& type_name, throw_on_error_t const throw_on_error)
     {
         if(auto const rv = get_cached_type_info(type_name); rv.has_value())
         {

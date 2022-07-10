@@ -84,7 +84,7 @@ namespace
         ss << std::format(L" StackSize({})", to_wstring(bytes{node.stack_stream().length()}));
         if(!node.thread_name().empty())
         {
-            ss << std::format(L" Name({})", node.thread_name());
+            ss << std::format(L" ThreadName({})", node.thread_name());
         }
 
         ss << "]";
@@ -99,24 +99,88 @@ namespace
         ss << std::format(L" [ThreadId({0}) Register({1}) Data({2})]", stream_hex_dump::to_hex(node.thread_id()), register_names::get_register_name(node.register_type()), stream_hex_dump::to_hex(node.register_data(), hex_length));
         if(!node.thread_name().empty())
         {
-            ss << std::format(L" Name({})", node.thread_name());
+            ss << std::format(L" ThreadName({})", node.thread_name());
         }
 
         ss << "]";
         return std::move(ss).str();
     }
 
-    std::wstring get_node_attributes(heap::allocation_graph::process_heap_graph_node const& node, std::optional<uint64_t> const& parent_offset, std::optional<uint64_t> const& pointer, std::streamsize const hex_length)
+    std::wstring get_node_specific_data(heap::allocation_graph::process_heap_graph_symbol_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    {
+        using namespace size_units::base_16;
+
+        std::wostringstream ss;
+        auto const* module = walker.module_list().find_module(node.symbol_type().module_base());
+        auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+
+        // ReSharper disable once StringLiteralTypo
+        ss << std::format(L" [Name({0}!{1}) Index({2}) Addr({3})", module_name, node.symbol_type().name().value_or(L"<unknown>"sv), node.symbol_type().sym_index(), stream_hex_dump::to_hex(node.symbol_type().address().value_or(0), hex_length), to_wstring(bytes{node.symbol_type().length().value_or(0)}));
+        if(node.thread_id().has_value())
+        {
+            ss << std::format(L" ThreadId({})", stream_hex_dump::to_hex(node.thread_id().value()));
+            if(!node.thread_name().empty())
+            {
+                ss << std::format(L" ThreadName({})", node.thread_name());
+            }
+        }
+
+        ss << "]";
+        return std::move(ss).str();
+    }
+
+    std::wstring get_symbol_reference_description(stream_stack_dump::mini_dump_memory_walker const& walker, heap::allocation_graph::process_heap_entry_symbol_address_reference const& symbol_reference)
+    {
+        std::wostringstream ss;
+        auto const* module = walker.module_list().find_module(symbol_reference.symbol_type().module_base());
+        auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+
+        // ReSharper disable once StringLiteralTypo
+        ss << std::format(L" [Name({0}!{1}) Index({2}) Size({3})", module_name, symbol_reference.symbol_type().name().value_or(L"<unknown>"sv), symbol_reference.symbol_type().sym_index(), to_wstring(size_units::base_16::bytes{symbol_reference.symbol_type().length().value_or(0)}));
+        if(symbol_reference.thread_id().has_value())
+        {
+            ss << std::format(L" ThreadId({})", stream_hex_dump::to_hex(symbol_reference.thread_id().value()));
+        }
+
+        if(!symbol_reference.thread_name().empty())
+        {
+            ss << std::format(L" ThreadName({})", symbol_reference.thread_name());
+        }
+
+        ss << "]";
+
+        return std::move(ss).str();
+    }
+
+    using is_self_t = tagged_bool<struct is_self_type>;
+
+    std::wstring get_node_attributes(heap::allocation_graph::process_heap_graph_node const& node
+        , is_self_t const is_self
+        , std::optional<uint64_t> const& parent_offset
+        , std::optional<uint64_t> const& pointer
+        , std::optional<heap::allocation_graph::graph_node_variable_symbol_reference_data> const& variable_symbol_info
+        , std::streamsize const hex_length
+        , stream_stack_dump::mini_dump_memory_walker const& walker)
     {
         std::wostringstream ss;
         if(parent_offset.has_value())
         {
-            ss << std::format(L" +{0}", stream_hex_dump::to_hex(parent_offset.value(), 4));
+            ss << std::format(L" +{}", stream_hex_dump::to_hex(parent_offset.value(), 4));
         }
 
         if(pointer.has_value())
         {
-            ss << std::format(L" ({0})", stream_hex_dump::to_hex(pointer.value(), hex_length));
+            ss << std::format(L" ({})", stream_hex_dump::to_hex(pointer.value(), hex_length));
+        }
+
+        if(is_self)
+        {
+            ss << L" [self]";
+        }
+
+        if(variable_symbol_info.has_value())
+        {
+            ss << std::format(L" {}", variable_symbol_info.value().name);
         }
 
         if(node.is_system_allocation() || node.is_system())
@@ -143,6 +207,11 @@ namespace
             ss << L" [cyclic]";
         }
 
+        if(node.symbol_references().size() == 1)
+        {
+            ss << get_symbol_reference_description(walker, node.symbol_references().front());
+        }
+
         return std::move(ss).str();
     }
 
@@ -167,17 +236,42 @@ namespace
         {
             return L"ThreadContext"sv;
         }
+        else if constexpr (std::is_same_v<T, heap::allocation_graph::process_heap_graph_symbol_entry>)
+        {
+            return L"ThreadSymbol"sv;
+        }
         else
         {
             static_assert(assert_value<false, T>::value, "unknown type");
             return L"Unknown"sv;
         }
-    }\
+    }
+
+    using to_reference_t = tagged_bool<struct to_reference_type>;
+    using already_logged_children_t = tagged_bool<struct already_logged_children_type>;
+    using cycle_end_detected_t = tagged_bool<struct cycle_end_detected_type>;
 
     template <typename T>
-    void print_node_line(std::wostream& log, T const& node, size_t indent, std::optional<uint64_t> parent_offset, std::optional<uint64_t> pointer, auto const cycle_end_detected, std::streamsize const hex_length, bool const to_reference, bool const already_logged_children, stream_stack_dump::mini_dump_memory_walker const& walker)
+    void print_node_line(std::wostream& log
+        , T const& node
+        , size_t indent
+        , std::optional<uint64_t> parent_offset
+        , std::optional<uint64_t> pointer
+        , std::optional<heap::allocation_graph::graph_node_variable_symbol_reference_data> const& variable_symbol_info
+        , cycle_end_detected_t const cycle_end_detected
+        , std::streamsize const hex_length
+        , to_reference_t const to_reference
+        , is_self_t const is_self
+        , already_logged_children_t const already_logged_children
+        , stream_stack_dump::mini_dump_memory_walker const& walker)
     {
-        log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", ' ', indent, parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(), get_node_attributes(node, parent_offset, pointer, hex_length), get_node_specific_data(node, hex_length, walker), cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
+        log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", 
+            ' ',
+            indent,
+            parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(),
+            get_node_attributes(node, is_self, parent_offset, pointer, variable_symbol_info, hex_length, walker),
+            get_node_specific_data(node, hex_length, walker),
+            cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
     }
 
     heap::allocation_graph::process_heap_graph_entry_type const& get_node_from_index(nodes_index_map const& nodes_index, uint64_t const index)
@@ -199,13 +293,25 @@ namespace
         std::set<uint64_t> parents;
     };
 
-    void print_display_node(std::wostream& log, heap::allocation_graph::process_heap_graph_entry_type const& node, size_t const indent, bool const to_reference, std::optional<uint64_t> parent_offset, std::optional<uint64_t> pointer, bool const cycle_end_detected, bool const already_logged_children, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    void print_display_node(std::wostream& log
+        , heap::allocation_graph::process_heap_graph_entry_type const& node
+        , size_t const indent
+        , to_reference_t const to_reference
+        , is_self_t const is_self
+        , std::optional<uint64_t> parent_offset
+        , std::optional<uint64_t> pointer
+        , std::optional<heap::allocation_graph::graph_node_variable_symbol_reference_data> const& variable_symbol_info
+        , cycle_end_detected_t const cycle_end_detected
+        , already_logged_children_t const already_logged_children
+        , std::streamsize const hex_length
+        , stream_stack_dump::mini_dump_memory_walker const& walker)
     {
-        std::visit([&log, indent, to_reference, &parent_offset, &pointer, cycle_end_detected, already_logged_children, hex_length, &walker](auto const& _) mutable
+        std::visit([&log, indent, to_reference, is_self, &parent_offset, &pointer, &variable_symbol_info, cycle_end_detected, already_logged_children, hex_length, &walker](auto const& _) mutable
         {
-            print_node_line(log, _, indent, parent_offset, pointer, cycle_end_detected, hex_length, to_reference, already_logged_children, walker);
+            print_node_line(log, _, indent, parent_offset, pointer, variable_symbol_info, cycle_end_detected, hex_length, to_reference, is_self, already_logged_children, walker);
         }, node);
     }
+
 
     void continue_display_node(wostream& log
         , dump_file_options const& options
@@ -214,7 +320,8 @@ namespace
         , streamsize hex_length
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , vector<node_display_state>& node_stack
-        , node_display_state state);
+        , node_display_state state
+        , size_t call_depth);
 
     void display_node(std::wostream& log
         , dump_file_options const& options
@@ -222,22 +329,42 @@ namespace
         , std::set<uint64_t>& printed_nodes
         , heap::allocation_graph::process_heap_graph_entry_type const& node
         , size_t const indent
-        , bool const to_reference
+        , to_reference_t const to_reference
+        , is_self_t const is_self
         , std::optional<uint64_t> const& parent_offset
         , std::optional<uint64_t> const& pointer
-        , bool const cycle_end_detected
-        , bool const already_logged_children
+        , std::optional<heap::allocation_graph::graph_node_variable_symbol_reference_data> const& variable_symbol_info
+        , cycle_end_detected_t const cycle_end_detected
+        , already_logged_children_t const already_logged_children
         , std::set<uint64_t> const& parents
         , std::streamsize const hex_length
         , stream_stack_dump::mini_dump_memory_walker const& walker
-        , std::vector<node_display_state>& node_stack)
+        , std::vector<node_display_state>& node_stack
+        , size_t const call_depth)
     {
         auto const& graph_node = get_graph_node(node);
-        print_display_node(log, node, indent, to_reference, parent_offset, pointer, cycle_end_detected, already_logged_children, hex_length, walker);
+        print_display_node(log, node, indent, to_reference, is_self, parent_offset, pointer, variable_symbol_info, cycle_end_detected, already_logged_children, hex_length, walker);
 
         if(cycle_end_detected || already_logged_children)
         {
             return;
+        }
+
+        if(!to_reference && !graph_node.symbol_references().empty())
+        {
+            auto const start = node_start_address(node);
+            log << std::format(L"{0:{1}}Symbols: ({2})\n", ' ', indent, graph_node.symbol_references().size());
+
+            for(auto const& reference : graph_node.symbol_references())
+            {
+                log << std::format(L"{0:{1}}", ' ', indent+2);
+                if(reference.address() >= start)
+                {
+                    auto const offset = reference.address() - start;
+                    log << std::format(L" +{0}", stream_hex_dump::to_hex(offset, 4));
+                }
+                log << get_symbol_reference_description(walker, reference) << L'\n';
+            }
         }
 
         if(!to_reference && !graph_node.from_references().empty())
@@ -247,7 +374,18 @@ namespace
             for(auto const& reference : graph_node.from_references())
             {
                 auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
-                print_display_node(log, child_node, indent+2, false, reference.offset(), reference.pointer(), false, false, hex_length, walker);
+                print_display_node(log
+                    , child_node
+                    , indent+2
+                    , to_reference_t{false}
+                    , is_self_t{graph_node.index() == child_node.index()}
+                    , reference.offset()
+                    , reference.pointer()
+                    , reference.variable_symbol_info()
+                    , cycle_end_detected_t{false}
+                    , already_logged_children_t{false}
+                    , hex_length
+                    , walker);
             }
         }
 
@@ -271,7 +409,15 @@ namespace
                 indent+2,
                 std::move(node_parents)
             };
-            continue_display_node(log, options, nodes_index, printed_nodes, hex_length, walker, node_stack, std::move(state));
+
+            if(call_depth > 100)
+            {
+                node_stack.emplace_back(std::move(state));
+            }
+            else
+            {
+                continue_display_node(log, options, nodes_index, printed_nodes, hex_length, walker, node_stack, std::move(state), call_depth);
+            }
         }
     }
 
@@ -282,15 +428,16 @@ namespace
         , streamsize const hex_length
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , vector<node_display_state>& node_stack
-        , node_display_state state)
+        , node_display_state state
+        , size_t const call_depth)
     {
         auto const& graph_node = get_graph_node(*state.node);
         for(auto const& reference : graph_node.to_references() | std::views::take(state.print_max_size) | std::views::drop(state.print_offset))
         {
             auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
             auto const& child_graph_node = get_graph_node(child_node);
-            auto const child_cycle_end_detected = state.parents.contains(child_graph_node.index());
-            auto const child_already_logged_children = printed_nodes.contains(child_graph_node.index()) && !child_graph_node.to_references().empty();
+            auto const child_cycle_end_detected = cycle_end_detected_t{state.parents.contains(child_graph_node.index())};
+            auto const child_already_logged_children = already_logged_children_t{printed_nodes.contains(child_graph_node.index()) && !child_graph_node.to_references().empty()};
 
             printed_nodes.insert(child_graph_node.index());
             ++state.print_offset;
@@ -304,15 +451,18 @@ namespace
                 , printed_nodes
                 , child_node
                 , stack_node.indent
-                , true
+                , to_reference_t{true}
+                , is_self_t{graph_node.index() == child_node.index()}
                 , reference.offset()
                 , reference.pointer()
+                , reference.variable_symbol_info()
                 , child_cycle_end_detected
                 , child_already_logged_children
                 , stack_node.parents
                 , hex_length
                 , walker
                 , node_stack
+                , call_depth + 1
             );
 
             if(node_stack.size() != stack_size)
@@ -334,13 +484,30 @@ namespace
     {
         std::vector<node_display_state> node_stack;
 
-        display_node(log, options, nodes_index, printed_nodes, node, indent, false, {}, {}, false, false, {}, hex_length, walker, node_stack);
+        display_node(log
+            , options
+            , nodes_index
+            , printed_nodes
+            , node
+            , indent
+            , to_reference_t{false}
+            , is_self_t{false}
+            , std::nullopt
+            , std::nullopt
+            , std::nullopt
+            , cycle_end_detected_t{false}
+            , already_logged_children_t{false}
+            , {}
+            , hex_length
+            , walker
+            , node_stack
+            , 1);
 
         while(!node_stack.empty())
         {
             auto state = std::move(node_stack.back());
             node_stack.pop_back();
-            continue_display_node(log, options, nodes_index, printed_nodes, hex_length, walker, node_stack, std::move(state));
+            continue_display_node(log, options, nodes_index, printed_nodes, hex_length, walker, node_stack, std::move(state), 1);
         }
     }
 

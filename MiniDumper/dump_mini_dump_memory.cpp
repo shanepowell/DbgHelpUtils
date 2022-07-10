@@ -68,16 +68,24 @@ void dump_mini_dump_memory_list_stream_data(std::wostream& log, mini_dump const&
         {
             auto range = *memory_ranges_match;
             range_utils::range_union(entry->StartOfMemoryRange, entry->Memory.DataSize, range.start, range.size);
-            hex_dump::hex_dump(
-                log,
-                static_cast<uint8_t const*>(mini_dump.rva32(entry->Memory)) + (range.start - entry->StartOfMemoryRange),
-                range.size, 3, true, 16, range.start);
+            hex_dump::hex_dump(log
+                , static_cast<uint8_t const*>(mini_dump.rva32(entry->Memory)) + (range.start - entry->StartOfMemoryRange)
+                , range.size
+                , 3
+                , write_header_t{true}
+                , 16
+                , range.start);
             log << L'\n';
         }
         else if (options.hex_dump_memory_data())
         {
-            hex_dump::hex_dump(log, mini_dump.rva32(entry->Memory), options.hex_dump_memory_size(entry->Memory.DataSize), 3, true, 16,
-                               entry->StartOfMemoryRange);
+            hex_dump::hex_dump(log
+                , mini_dump.rva32(entry->Memory)
+                , options.hex_dump_memory_size(entry->Memory.DataSize)
+                , 3
+                , write_header_t{true}
+                , 16
+                , entry->StartOfMemoryRange);
             log << L'\n';
         }
 
@@ -134,16 +142,24 @@ void dump_mini_dump_memory64_list_stream_data(std::wostream& log, mini_dump cons
         {
             auto range = *memory_ranges_match;
             range_utils::range_union(entry.start_of_memory_range, entry.location.DataSize, range.start, range.size);
-            hex_dump::hex_dump(
-                log,
-                static_cast<uint8_t const*>(mini_dump.rva64(entry.location)) + (range.start - entry.
-                    start_of_memory_range), range.size, 3, true, 16, range.start);
+            hex_dump::hex_dump(log
+                , static_cast<uint8_t const*>(mini_dump.rva64(entry.location)) + (range.start - entry.start_of_memory_range)
+                , range.size
+                , 3
+                , write_header_t{true}
+                , 16
+                , range.start);
             log << L'\n';
         }
         else if (options.hex_dump_memory_data())
         {
-            hex_dump::hex_dump(log, mini_dump.rva64(entry.location), options.hex_dump_memory_size(entry.location.DataSize), 3, true, 16,
-                               entry.start_of_memory_range);
+            hex_dump::hex_dump(log
+                , mini_dump.rva64(entry.location)
+                , options.hex_dump_memory_size(entry.location.DataSize)
+                , 3
+                , write_header_t{true}
+                , 16
+                , entry.start_of_memory_range);
             log << L'\n';
         }
 
