@@ -169,7 +169,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    void process_heap_graph::generate_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size)
+    void process_heap_graph::generate_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size, std::unordered_set<uint64_t>& ignore_pointers)
     {
         if (auto const stream = stream_utils::find_stream_for_type(*mini_dump_, ThreadListStream); stream.has_value())
         {
@@ -177,7 +177,7 @@ namespace dlg_help_utils::heap
             {
                 if (stream_thread const thread{ *mini_dump_, thread_list.thread_list().Threads[0], process_->peb().names_list(), process_->peb().memory_list(), process_->peb().memory64_list() }; thread->Teb != 0)
                 {
-                    generate_specific_thread_context_references(heap_entries, pointer_size, thread);
+                    generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers);
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace dlg_help_utils::heap
             {
                 if (stream_thread_ex const thread{ *mini_dump_, thread_ex_list.thread_list().Threads[0], process_->peb().names_list() }; thread->Teb != 0)
                 {
-                    generate_specific_thread_context_references(heap_entries, pointer_size, thread);
+                    generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers);
                 }
             }
         }
@@ -239,7 +239,7 @@ namespace dlg_help_utils::heap
     }
 
     template <typename T>
-    void process_heap_graph::generate_specific_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size, T const& thread)
+    void process_heap_graph::generate_specific_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size, T const& thread, std::unordered_set<uint64_t>& ignore_pointers)
     {
         if(process_->options().no_filter_heap_entries())
         {
@@ -247,8 +247,8 @@ namespace dlg_help_utils::heap
             auto const base_address = add_symbol_reference(heap_entries, thread->Teb, process_->peb().teb_symbol(), thread->ThreadId, thread.thread_name(), mark_as_system);
 
             std::map<uint64_t, symbol_type_utils::pointer_info> pointers;
-            gather_all_pointers_from_symbol(process_->peb().walker(), process_->peb().teb_symbol(), process_->peb().teb_symbol(), base_address, thread->Teb - base_address, pointers, {});
-            generate_pointer_symbol_references(heap_entries, pointers, pointer_size, mark_as_system);
+            gather_all_pointers_from_symbol(process_->peb().walker(), process_->peb().teb_symbol(), process_->peb().teb_symbol(), base_address, thread->Teb - base_address, pointers, {}, ignore_pointers);
+            generate_pointer_symbol_references(heap_entries, pointers, pointer_size, mark_as_system, ignore_pointers);
         }
 
         if (thread.thread_context().x64_thread_context_available())
@@ -327,20 +327,26 @@ namespace dlg_help_utils::heap
         }
     }
 
-    void process_heap_graph::generate_pointer_symbol_references(std::map<uint64_t, size_t> const& heap_entries, std::map<uint64_t, symbol_type_utils::pointer_info> const& pointers, size_t const pointer_size, mark_as_system_t const mark_as_system)
+    void process_heap_graph::generate_pointer_symbol_references(std::map<uint64_t, size_t> const& heap_entries, std::map<uint64_t, symbol_type_utils::pointer_info> const& pointers, size_t const pointer_size, mark_as_system_t const mark_as_system, std::unordered_set<uint64_t>& ignore_pointers)
     {
         for (auto const& pointer : pointers | std::views::values)
         {
-            generate_pointer_symbol_reference(heap_entries, pointer, pointer_size, mark_as_system);
+            generate_pointer_symbol_reference(heap_entries, pointer, pointer_size, mark_as_system, ignore_pointers);
         }
     }
 
-    void process_heap_graph::generate_pointer_symbol_reference(std::map<uint64_t, size_t> const& heap_entries, symbol_type_utils::pointer_info const& pointer, size_t const pointer_size, mark_as_system_t const mark_as_system)
+    void process_heap_graph::generate_pointer_symbol_reference(std::map<uint64_t, size_t> const& heap_entries, symbol_type_utils::pointer_info const& pointer, size_t const pointer_size, mark_as_system_t const mark_as_system, std::unordered_set<uint64_t>& ignore_pointers)
     {
+        if(ignore_pointers.contains(pointer.base_address + pointer.base_variable_address_offset))
+        {
+            return;
+        }
+
+        ignore_pointers.insert(pointer.base_address + pointer.base_variable_address_offset);
+
         auto const it = heap_entries.lower_bound(pointer.base_address);
         if(it == heap_entries.end())
         {
-            
             auto& symbol_node = find_or_add_node_symbol_reference(pointer.base_address, pointer.base_variable_type, {}, {}, mark_as_system);
             if(mark_as_system)
             {
@@ -572,8 +578,10 @@ namespace dlg_help_utils::heap
     {
         // generate all reference nodes
         auto const heap_entries = generate_allocation_references();
+        std::unordered_set<uint64_t> ignore_pointers;
         generate_global_variable_references(heap_entries);
-        generate_thread_context_references(heap_entries, machine_pointer_size());
+        generate_thread_context_references(heap_entries, machine_pointer_size(), ignore_pointers);
+        generate_heap_metadata_symbol_references(heap_entries, machine_pointer_size(), ignore_pointers);
 
         // link all reference nodes
         generate_node_references(heap_entries);

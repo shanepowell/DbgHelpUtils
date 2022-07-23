@@ -80,9 +80,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::map<uint64_t, size_t> generate_allocation_references();
         [[nodiscard]] std::optional<allocation_graph::process_heap_graph_heap_entry> find_allocation_node_allocation(std::map<uint64_t, size_t> const& heap_entries, memory_range const& data_range) const;
         void generate_global_variable_references(std::map<uint64_t, size_t> const& heap_entries);
-        void generate_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t pointer_size);
+        void generate_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t pointer_size, std::unordered_set<uint64_t>& ignore_pointers);
         template<typename T>
-        void generate_specific_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t pointer_size, T const& thread);
+        void generate_specific_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t pointer_size, T const& thread, std::unordered_set<uint64_t>& ignore_pointers);
         void generate_x64_thread_context_references(stream_thread_context::context_x64 const& thread_context, uint32_t thread_id, std::wstring_view const& thread_name);
         void generate_wow64_thread_context_references(WOW64_CONTEXT const& thread_context, uint32_t thread_id, std::wstring_view const& thread_name);
         void generate_x86_thread_context_references(stream_thread_context::context_x86 const& thread_context, uint32_t thread_id, std::wstring_view const& thread_name);
@@ -105,7 +105,7 @@ namespace dlg_help_utils::heap
         void mark_all_children_as_system(allocation_graph::process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const;
         [[nodiscard]] allocation_graph::process_heap_graph_entry_type const& get_node_from_index(uint64_t node_index) const;
         [[nodiscard]] allocation_graph::process_heap_graph_entry_type& get_node_from_index(uint64_t node_index);
-        size_t machine_pointer_size() const;
+        [[nodiscard]] size_t machine_pointer_size() const;
 
     private:
         mini_dump const* mini_dump_;

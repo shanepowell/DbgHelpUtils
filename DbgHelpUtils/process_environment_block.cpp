@@ -125,7 +125,8 @@ namespace dlg_help_utils::process
         for(auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list());
             auto const teb_address : teb_addresses)
         {
-            gather_all_pointers_from_symbol(walker(), teb_symbol(), teb_symbol(), teb_address, 0, pointers, {});
+            std::unordered_set<uint64_t> ignore_pointers;
+            gather_all_pointers_from_symbol(walker(), teb_symbol(), teb_symbol(), teb_address, 0, pointers, {}, ignore_pointers);
         }
 
         for (auto const pointer : pointers | std::views::keys)
