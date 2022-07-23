@@ -14,7 +14,7 @@ struct Allocation
     char fill_char;
     bool allocated;
 
-    JS_OBJ(pointer, size, fill_char, allocated);
+    JS_OBJ(pointer, size, fill_char, allocated);  // NOLINT
 };
 
 struct ResultSet

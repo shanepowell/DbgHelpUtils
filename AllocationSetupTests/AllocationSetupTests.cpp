@@ -322,7 +322,7 @@ void CreateOutput(std::wostream& log, std::wstring const& free_dump_filename)
     if(free_dump_filename.empty())
     {
         std::cout << "press enter to exit\n";
-        [[maybe_unused]] auto const ch2 = getchar();
+        std::ignore = getchar();
     }
     else
     {

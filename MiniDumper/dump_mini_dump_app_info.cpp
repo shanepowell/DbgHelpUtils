@@ -191,7 +191,7 @@ void dump_mini_dump_handle_operation_list_stream_data(std::wostream& log, mini_d
 
         if (options.display_symbols())
         {
-            stream_stack_dump::hex_dump_stack_raw(log
+            hex_dump_stack_raw(log
                 , mini_dump
                 , symbol_engine
                 , 0

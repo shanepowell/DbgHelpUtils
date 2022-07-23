@@ -79,7 +79,6 @@ namespace dlg_help_utils::heap
             co_return;
         }
 
-        auto const block_symbol = stream_utils::get_type(walker(), crt_entry::symbol_name);
         auto address = crt_first_block_;
         while(address != 0)
         {

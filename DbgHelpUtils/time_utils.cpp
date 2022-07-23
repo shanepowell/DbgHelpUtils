@@ -9,7 +9,7 @@ namespace dlg_help_utils::time_utils
     std::wstring to_local_time(time_t const timestamp)
     {
         tm local_tm{};
-        localtime_s(&local_tm, &timestamp);
+        std::ignore = localtime_s(&local_tm, &timestamp);
 
         std::wostringstream oss;
         oss << std::put_time(&local_tm, L"%c %Z");
@@ -19,7 +19,7 @@ namespace dlg_help_utils::time_utils
     std::wstring to_utc_time(time_t const timestamp)
     {
         tm utc_tm{};
-        gmtime_s(&utc_tm, &timestamp);
+        std::ignore = gmtime_s(&utc_tm, &timestamp);
         std::wostringstream oss;
         oss << std::put_time(&utc_tm, L"%c");
         return std::move(oss).str();
