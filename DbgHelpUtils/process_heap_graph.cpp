@@ -62,7 +62,7 @@ namespace dlg_help_utils::heap
         {
             auto user_data = entry.heap_entry().all_user_data();
             auto start_address = user_data.current_address();
-            [[maybe_unused]] auto const found = user_data.find_pattern<PointerType>([this, &entry, start_address](PointerType const data, size_t const offset, size_t& jump_amount) mutable
+            std::ignore = user_data.find_pattern<PointerType>([this, &entry, start_address](PointerType const data, size_t const offset, size_t& jump_amount) mutable
                 {
                     process_entry_reference(entry, data, start_address + offset, offset, jump_amount);
                     return true;
@@ -73,7 +73,7 @@ namespace dlg_help_utils::heap
         template <typename PointerType>
         void process_heap_graph_generator<PointerType>::operator()(process_heap_graph_global_variable_entry& entry)
         {
-            [[maybe_unused]] auto const found = entry.variable().stream().find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable
+            std::ignore = entry.variable().stream().find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable
                 {
                     process_entry_reference(entry, data, entry.variable().variable_memory_range().start_range + offset, offset, jump_amount);
                     return true;
@@ -84,7 +84,7 @@ namespace dlg_help_utils::heap
         template <typename PointerType>
         void process_heap_graph_generator<PointerType>::operator()(process_heap_graph_thread_stack_entry& entry)
         {
-            [[maybe_unused]] auto const found = entry.stack_stream().find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable
+            std::ignore = entry.stack_stream().find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable
                 {
                     process_entry_reference(entry, data, offset, offset, jump_amount);
                     return true;
