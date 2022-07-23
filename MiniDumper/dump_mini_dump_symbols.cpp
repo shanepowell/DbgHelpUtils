@@ -310,7 +310,7 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
 
-    if(auto const symbol_info = dbg_help::symbol_type_info::from_address_string(symbol_engine.process(), type_name); symbol_info.has_value())
+    if(auto const symbol_info = dbg_help::symbol_type_info::from_address_string(symbol_engine.symbol_cache(), symbol_engine.process(), type_name); symbol_info.has_value())
     {
         if(walker.load_module_from_address(symbol_info.value().module_base()))
         {

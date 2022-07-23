@@ -441,6 +441,9 @@
     <ClCompile Include="process_heap_entry_symbol_address_reference.cpp">
       <Filter>Heap\ProcessHeaps\AllocationGraph</Filter>
     </ClCompile>
+    <ClCompile Include="symbol_type_info_cache.cpp">
+      <Filter>DbgHelp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -943,6 +946,9 @@
     </ClInclude>
     <ClInclude Include="dump_hex.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_info_cache.h">
+      <Filter>DbgHelp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

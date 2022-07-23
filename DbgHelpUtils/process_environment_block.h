@@ -118,7 +118,7 @@ namespace dlg_help_utils::process
         uint64_t process_heap_{get_main_process_heap()};
         uint32_t number_of_heaps_{get_number_of_heaps()};
         uint64_t ldr_address_{get_ldr_address()};
-        dbg_help::symbol_type_info process_heaps_pointer_type_{nullptr, 0, 0};
+        dbg_help::symbol_type_info process_heaps_pointer_type_{};
         uint64_t process_heaps_address_{};
         std::streamsize machine_pointer_size_{};
         std::streamsize machine_hex_printable_length_{};

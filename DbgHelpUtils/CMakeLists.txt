@@ -16,6 +16,8 @@ set(DbgHelp
     "symbol_engine.h"
     "symbol_info_buffer.cpp"
     "symbol_info_buffer.h"
+    "symbol_type_info_cache.cpp"
+    "symbol_type_info_cache.h"
     "symbol_type_info.cpp"
     "symbol_type_info.h"
     "udt_kind_type.h"

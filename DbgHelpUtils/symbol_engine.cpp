@@ -22,6 +22,7 @@
 #include "stream_thread_context.h"
 #include "symbol_info_buffer.h"
 #include "symbol_type_info.h"
+#include "symbol_type_info_cache.h"
 #include "sym_tag_enum.h"
 #include "wide_runtime_error.h"
 #include "windows_error.h"
@@ -69,8 +70,8 @@ namespace
     };
 
     // ReSharper disable CppStaticAssertFailure
-    static_assert(sizeof(symbol_load) == 24);
-    static_assert(sizeof(symbol_load_w64) == 304);
+    static_assert(sizeof(symbol_load) == 24); // NOLINT
+    static_assert(sizeof(symbol_load_w64) == 304); // NOLINT
     // ReSharper restore CppStaticAssertFailure
 #pragma pack(pop)
 
@@ -511,20 +512,22 @@ namespace
 
     struct find_symbol_callback_context
     {
-        find_symbol_callback_context(HANDLE process, std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv)
+        find_symbol_callback_context(HANDLE process, std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv, dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache)
         : process{process}
         , rv{rv}
+        , symbol_cache{symbol_cache}
         {
         }
 
         HANDLE process;
         std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv;
+        dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
     };
 
     BOOL CALLBACK find_symbol_callback(_In_ PSYMBOL_INFOW symbol_info, [[maybe_unused]] _In_ ULONG symbol_size, _In_opt_ PVOID user_context)
     {
         find_symbol_callback_context& symbols{*static_cast<find_symbol_callback_context*>(user_context)};
-        symbols.rv.emplace_back(symbols.process, symbol_info->ModBase, symbol_info->Index);
+        symbols.rv.emplace_back(symbols.symbol_cache.get_or_create_symbol_type_info(symbols.process, symbol_info->ModBase, symbol_info->Index));
         return TRUE;
     }
 
@@ -535,13 +538,15 @@ namespace
             , uint64_t const frame_address_offset
             , void const* thread_context
             , std::vector<dlg_help_utils::dbg_help::local_variable> &locals
-            , std::vector<dlg_help_utils::dbg_help::local_variable> &parameters)
+            , std::vector<dlg_help_utils::dbg_help::local_variable> &parameters
+            , dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache)
         : process{process}
         , type{type}
         , frame_address_offset{frame_address_offset}
         , thread_context{thread_context}
         , locals{locals}
         , parameters{parameters}
+        , symbol_cache{symbol_cache}
         {
         }
 
@@ -551,6 +556,7 @@ namespace
         void const* thread_context;
         std::vector<dlg_help_utils::dbg_help::local_variable> &locals;
         std::vector<dlg_help_utils::dbg_help::local_variable> &parameters;
+        dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
     };
 
     template<typename T>
@@ -975,8 +981,8 @@ namespace
             return TRUE;
         }
 
-        auto& variable = is_parameter ? info.parameters.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{info.process, symbol_info->ModBase, symbol_info->Index})
-                                      : info.locals.emplace_back(dlg_help_utils::dbg_help::symbol_type_info{info.process, symbol_info->ModBase, symbol_info->Index});
+        auto& variable = is_parameter ? info.parameters.emplace_back(info.symbol_cache.get_or_create_symbol_type_info(info.process, symbol_info->ModBase, symbol_info->Index))
+                                      : info.locals.emplace_back(info.symbol_cache.get_or_create_symbol_type_info(info.process, symbol_info->ModBase, symbol_info->Index));
 
         if (symbol_info->Flags & SYMFLAG_REGREL)
         {
@@ -1001,7 +1007,7 @@ namespace dlg_help_utils::dbg_help
 {
     symbol_engine::symbol_engine(i_symbol_load_callback& callback)
         : callback_{&callback}
-          , symbol_(static_cast<SYMBOL_INFOW*>(malloc(max_buffer_size)))
+        , symbol_(static_cast<SYMBOL_INFOW*>(malloc(max_buffer_size)))
     {
         memset(symbol_.get(), 0, max_buffer_size);
         symbol_->MaxNameLen = trace_max_function_name_length;
@@ -1444,7 +1450,7 @@ namespace dlg_help_utils::dbg_help
             return types;
         }
 
-        find_symbol_callback_context context{process_, types};
+        find_symbol_callback_context context{process_, types, symbol_cache_};
         if(!SymEnumTypesW(process_, it->second.base, find_symbol_callback, &context))
         {
             windows_error::throw_windows_api_error(L"SymEnumTypesW"sv, to_hex(it->second.base));
@@ -1453,7 +1459,7 @@ namespace dlg_help_utils::dbg_help
         return types;
     }
 
-    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name, throw_on_error_t const throw_on_error) const
+    std::optional<symbol_type_info> symbol_engine::get_symbol_info(std::wstring const& symbol_name, throw_on_error_t const throw_on_error)
     {
         if(symbol_name.empty())
         {
@@ -1470,13 +1476,13 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{process_, info->info.ModBase, info->info.Index};
+        return symbol_cache_.get_or_create_symbol_type_info(process_, info->info.ModBase, info->info.Index);
     }
 
-    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, symbol_walk_options const option) const
+    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, symbol_walk_options const option)
     {
         std::vector<symbol_type_info> symbols;
-        find_symbol_callback_context context{process_, symbols};
+        find_symbol_callback_context context{process_, symbols, symbol_cache_};
         if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &context, setup_enum_symbol_options(option)))
         {
             windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask);
@@ -1491,9 +1497,9 @@ namespace dlg_help_utils::dbg_help
         , uint64_t const frame_address_offset
         , void const* thread_context
         , std::wstring const& find_mask
-        , symbol_walk_options const option) const
+        , symbol_walk_options const option)
     {
-        local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters};
+        local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters, symbol_cache_};
         if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
         {
             if(auto const ec = GetLastError(); ec != ERROR_INVALID_PARAMETER && ec != ERROR_NOT_SUPPORTED)
@@ -1552,7 +1558,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         // force the loading of the IP module
-        [[maybe_unused]] auto const base_address = g_callback->get_module_base_routine(frame.AddrPC.Offset);
+        std::ignore = g_callback->get_module_base_routine(frame.AddrPC.Offset);
 
         // StackWalkEx modifies the thread context passed in so always take a copy for it to work with
         auto const thread_context_copy = std::make_unique<uint8_t[]>(thread_context.size());
@@ -1726,7 +1732,7 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        auto rv = symbol_type_info{process_, module_base, info->info.TypeIndex};
+        auto rv = symbol_cache_.get_or_create_symbol_type_info(process_, module_base, info->info.TypeIndex);
         set_cached_type_info(type_name, rv);
         return rv;
     }

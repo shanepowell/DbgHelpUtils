@@ -4,6 +4,7 @@
 
 #include "string_compare.h"
 #include "symbol_engine.h"
+#include "symbol_type_info_cache.h"
 #include "wide_runtime_error.h"
 #include "windows_error.h"
 
@@ -14,6 +15,11 @@ namespace dlg_help_utils::dbg_help
     class symbol_type_info::cache_type_info
     {
     public:
+        cache_type_info(symbol_type_info_cache& cache)
+            : cache_(&cache)
+        {
+        }
+
         [[nodiscard]] bool has_name() const{ return has_cached_name_info_; }
         [[nodiscard]] std::optional<std::wstring> const& name() const { return cached_name_info_; }
         void set_name(std::optional<std::wstring> value) { cached_name_info_ = std::move(value); has_cached_name_info_ = true; }
@@ -35,22 +41,33 @@ namespace dlg_help_utils::dbg_help
         }
 
         [[nodiscard]] bool has_children() const { return has_cached_children_; }
-        [[nodiscard]] std::vector<symbol_type_info> const& children() const { return cached_children_; }
-        void set_children(std::vector<symbol_type_info> value)
+        [[nodiscard]] size_t children_count() const { return cached_children_.size(); }
+        [[nodiscard]] symbol_type_info get_child(size_t const index) const
         {
-            if(has_cached_children_)
-            {
-                // someone beat us to it...
-                return;
-            }
+            return cache_->get_symbol_type_info(cached_children_[index]).value();
+        }
 
-            cached_children_ = std::move(value);
+        void add_child(HANDLE const process, DWORD64 const module_base, ULONG const type_index)
+        {
+            cache_->create_cached_symbol_type_info(process, module_base, type_index);
+            cached_children_.emplace_back(type_index);
             has_cached_children_ = true;
         }
 
         [[nodiscard]] bool has_type() const{ return has_cached_type_; }
-        [[nodiscard]] std::optional<symbol_type_info> const& type() const { return cached_type_; }
-        void set_type(std::optional<symbol_type_info> value) { cached_type_ = std::move(value); has_cached_type_ = true; }
+        [[nodiscard]] std::optional<symbol_type_info> type() const { return get_cached_symbol_type(cached_type_); }
+        void set_type_null()
+        {
+            cached_type_ = std::nullopt;
+            has_cached_type_ = true;
+        }
+
+        void set_type(HANDLE const process, DWORD64 const module_base, ULONG const type_index)
+        {
+            cache_->create_cached_symbol_type_info(process, module_base, type_index);
+            cached_type_ = type_index;
+            has_cached_type_ = true;
+        }
 
         [[nodiscard]] bool has_sym_tag() const{ return has_cached_sym_tag_; }
         [[nodiscard]] std::optional<sym_tag_enum> const& sym_tag() const { return cached_sym_tag_; }
@@ -64,29 +81,46 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<ULONG64> const& length() const { return cached_length_; }
         void set_length(std::optional<ULONG64> const value) { cached_length_ = value; has_cached_length_ = true; }
 
+        [[nodiscard]] symbol_type_info get_cached_type(HANDLE const process, DWORD64 const module_base, ULONG const type_index) const
+        {
+            return cache_->get_or_create_symbol_type_info(process, module_base, type_index);
+        }
+
+    private:
+        [[nodiscard]] std::optional<symbol_type_info> get_cached_symbol_type(std::optional<ULONG> const& symbol_index) const
+        {
+            if(!symbol_index.has_value())
+            {
+                return std::nullopt;
+            }
+
+            return cache_->get_symbol_type_info(symbol_index.value());
+        }
+
     private:
         std::map<std::wstring_view, std::optional<symbol_type_and_field_offset>> cached_find_field_in_type_;
         bool has_cached_name_info_{false};
         std::optional<std::wstring> cached_name_info_;
         bool has_cached_children_{false};
-        std::vector<symbol_type_info> cached_children_;
+        std::vector<ULONG> cached_children_;
         bool has_cached_type_{false};
-        std::optional<symbol_type_info> cached_type_;
+        std::optional<ULONG> cached_type_;
         bool has_cached_sym_tag_{false};
         std::optional<sym_tag_enum> cached_sym_tag_;
         bool has_cached_offset_{false};
         std::optional<DWORD> cached_offset_;
         bool has_cached_length_{false};
         std::optional<ULONG64> cached_length_;
+        symbol_type_info_cache* cache_;
     };
 
 
     // ReSharper disable once CppParameterMayBeConst
-    symbol_type_info::symbol_type_info(HANDLE process, DWORD64 const module_base, ULONG const type_index)
+    symbol_type_info::symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 const module_base, ULONG const type_index)
     : process_{process}
     , module_base_{module_base}
     , type_index_{type_index}
-    , cache_info_{std::make_shared<cache_type_info>()}
+    , cache_info_{std::make_shared<cache_type_info>(cache)}
     {
     }
 
@@ -159,11 +193,11 @@ namespace dlg_help_utils::dbg_help
 
         if(auto const type = get_dword_type(TI_GET_TYPE, L"TI_GET_TYPE"sv, optional_type::optional); !type.has_value())
         {
-            cache_info_->set_type(std::nullopt);
+            cache_info_->set_type_null();
         }
         else
         {
-            cache_info_->set_type(symbol_type_info{process_, module_base_, type.value()});
+            cache_info_->set_type(process_, module_base_, type.value());
         }
 
         return cache_info_->type();
@@ -177,7 +211,7 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{process_, module_base_, type.value()};
+        return cache_info_->get_cached_type(process_, module_base_, type.value());
     }
 
     std::optional<basic_type> symbol_type_info::base_type() const
@@ -262,7 +296,7 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{process_, module_base_, type.value()};
+        return cache_info_->get_cached_type(process_, module_base_, type.value());
     }
 
     std::optional<DWORD> symbol_type_info::nested() const
@@ -283,7 +317,7 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{process_, module_base_, type.value()};
+        return cache_info_->get_cached_type(process_, module_base_, type.value());
     }
 
     std::optional<ULONG64> symbol_type_info::address() const
@@ -412,15 +446,13 @@ namespace dlg_help_utils::dbg_help
             cache_children.reserve(count.value());
             for(ULONG index = 0; index < count.value(); ++index)
             {
-                cache_children.emplace_back(process_, module_base_, find_children_params->ChildId[index]);
+                cache_info_->add_child(process_, module_base_, find_children_params->ChildId[index]);
             }
-
-            cache_info_->set_children(std::move(cache_children));
         }
 
-        for(auto const& child : cache_info_->children())
+        for(size_t index = 0; index < cache_info_->children_count(); ++index)
         {
-            co_yield child;
+            co_yield cache_info_->get_child(index);
         }
     }
 
@@ -496,7 +528,7 @@ namespace dlg_help_utils::dbg_help
     }
 
     // ReSharper disable once CppParameterMayBeConst
-    std::optional<symbol_type_info> symbol_type_info::from_address_string(HANDLE process, std::wstring_view const address)
+    std::optional<symbol_type_info> symbol_type_info::from_address_string(symbol_type_info_cache& cache, HANDLE process, std::wstring_view const address)
     {
         if(address.empty())
         {
@@ -536,6 +568,6 @@ namespace dlg_help_utils::dbg_help
             return std::nullopt;
         }
 
-        return symbol_type_info{process, module_base, type_index};
+        return cache.get_or_create_symbol_type_info(process, module_base, type_index);
     }
 }

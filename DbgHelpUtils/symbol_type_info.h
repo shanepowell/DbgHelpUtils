@@ -17,13 +17,14 @@
 
 namespace dlg_help_utils::dbg_help
 {
+    class symbol_type_info_cache;
     struct symbol_type_and_field_offset;
 
     class symbol_type_info
     {
     public:
         symbol_type_info() = default;
-        symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index);
+        symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 module_base, ULONG type_index);
 
         [[nodiscard]] std::optional<sym_tag_enum> sym_tag() const;
         [[nodiscard]] std::optional<std::wstring_view> name() const;
@@ -61,7 +62,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] symbol_type_and_field_offset get_field_in_type(std::wstring_view type_name, std::wstring_view field_name) const;
 
         [[nodiscard]] std::wstring to_address_string() const;
-        static [[nodiscard]] std::optional<symbol_type_info> from_address_string(HANDLE process, std::wstring_view address);
+        static [[nodiscard]] std::optional<symbol_type_info> from_address_string(symbol_type_info_cache& cache, HANDLE process, std::wstring_view address);
 
     private:
         enum class optional_type

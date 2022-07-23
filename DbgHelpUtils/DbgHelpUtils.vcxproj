@@ -265,6 +265,7 @@
     <ClCompile Include="string_stream.cpp" />
     <ClCompile Include="symbol_engine.cpp" />
     <ClCompile Include="symbol_info_buffer.cpp" />
+    <ClCompile Include="symbol_type_info_cache.cpp" />
     <ClCompile Include="symbol_type_utils.cpp" />
     <ClCompile Include="symbol_type_walker.cpp" />
     <ClCompile Include="system_info_stream.cpp" />
@@ -340,6 +341,7 @@
     <ClInclude Include="print_utils.h" />
     <ClInclude Include="process_heap_entry_symbol_address_reference.h" />
     <ClInclude Include="process_heap_graph_symbol_entry.h" />
+    <ClInclude Include="symbol_type_info_cache.h" />
     <ClInclude Include="tagged_bool.h" />
     <ClInclude Include="throw_on_error.h" />
     <ClInclude Include="unit_convert_to_string.h" />
