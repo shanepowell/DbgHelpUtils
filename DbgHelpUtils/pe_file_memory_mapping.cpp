@@ -64,8 +64,11 @@ namespace dlg_help_utils
 
     void const* pe_file_memory_mapping::find_any_address_range(const uint64_t address, uint64_t& length) const
     {
-        range_utils::limit_range(address, length);
-        if (length == 0) return nullptr;
+        if(length > 0)
+        {
+            range_utils::limit_range(address, length);
+            if (length == 0) return nullptr;
+        }
 
         auto const it = find_loaded_pe_file(address);
         if (it == loaded_pe_files_.end())
