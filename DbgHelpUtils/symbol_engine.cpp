@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <format>
 #include <ranges>
+#include <unordered_set>
 
 // ReSharper disable once CommentTypo
 // Found in "$(VSINSTALLDIR)\DIA SDK\include"
@@ -522,12 +523,17 @@ namespace
         HANDLE process;
         std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv;
         dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
+        std::unordered_set<ULONG> tag_index_found;
     };
 
     BOOL CALLBACK find_symbol_callback(_In_ PSYMBOL_INFOW symbol_info, [[maybe_unused]] _In_ ULONG symbol_size, _In_opt_ PVOID user_context)
     {
-        find_symbol_callback_context& symbols{*static_cast<find_symbol_callback_context*>(user_context)};
-        symbols.rv.emplace_back(symbols.symbol_cache.get_or_create_symbol_type_info(symbols.process, symbol_info->ModBase, symbol_info->Index));
+        if(find_symbol_callback_context& symbols{*static_cast<find_symbol_callback_context*>(user_context)};
+            !symbols.tag_index_found.contains(symbol_info->Index))
+        {
+            symbols.tag_index_found.insert(symbol_info->Index);
+            symbols.rv.emplace_back(symbols.symbol_cache.get_or_create_symbol_type_info(symbols.process, symbol_info->ModBase, symbol_info->Index));
+        }
         return TRUE;
     }
 
