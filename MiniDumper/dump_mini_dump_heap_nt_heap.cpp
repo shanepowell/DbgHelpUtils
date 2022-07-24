@@ -350,7 +350,7 @@ namespace detail
             log << std::format(L"{0}Uncommitted Ranges\n", indent_str);
             for (auto const& uncommitted_range : segment.uncommitted_ranges())
             {
-                log << std::format(L"{0}    Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
+                log << std::format(L"{0}    Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address(), hex_length), to_wstring(uncommitted_range.size()));
             }
 
             log << std::format(L"\n{}Heap Entries\n", indent_str);
@@ -370,14 +370,14 @@ namespace detail
             log << L'\n';
         }
 
-        void print_nt_heap_uncommitted_ranges(std::wostream& log, heap::nt_heap const& nt_heap, size_t const indent)
+        void print_nt_heap_uncommitted_ranges(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
             log << std::format(L"{}Heap Uncommitted ranges\n", indent_str);
             for (auto const& uncommitted_range : nt_heap.uncommitted_ranges())
             {
-                log << std::format(L"{0}  Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
+                log << std::format(L"{0}  Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address(), hex_length), to_wstring(uncommitted_range.size()));
             }
             log << L'\n';
         }
@@ -391,8 +391,8 @@ namespace detail
             {
                 log << std::format(L"{0}  Entry {1} data {2} reversed {3} committed {4}\n"
                     , indent_str
-                    , stream_hex_dump::to_hex(virtual_block.descriptor_address())
-                    , stream_hex_dump::to_hex(virtual_block.address())
+                    , stream_hex_dump::to_hex(virtual_block.descriptor_address(), hex_length)
+                    , stream_hex_dump::to_hex(virtual_block.address(), hex_length)
                     , to_wstring(virtual_block.reserved())
                     , to_wstring(virtual_block.committed()));
                 for (auto const& entry : virtual_block.entries())
@@ -496,7 +496,7 @@ namespace detail
             log << L'\n';
         }
 
-        print_nt_heap_uncommitted_ranges(log, nt_heap, 2);
+        print_nt_heap_uncommitted_ranges(log, hex_length, nt_heap, 2);
 
         print_nt_heap_virtual_allocated_blocks(log, hex_length, nt_heap, options, 2);
 
