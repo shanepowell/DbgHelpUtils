@@ -22,9 +22,14 @@ namespace dlg_help_utils::dbg_help
 
     class symbol_type_info
     {
+    private:
+        struct key_compare_only{};
+        friend class symbol_type_info_cache;
+
     public:
         symbol_type_info() = default;
         symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 module_base, ULONG type_index);
+        symbol_type_info(key_compare_only, HANDLE process, DWORD64 module_base, ULONG type_index);
 
         [[nodiscard]] std::optional<sym_tag_enum> sym_tag() const;
         [[nodiscard]] std::optional<std::wstring_view> name() const;
@@ -64,6 +69,24 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::wstring to_address_string() const;
         static [[nodiscard]] std::optional<symbol_type_info> from_address_string(symbol_type_info_cache& cache, HANDLE process, std::wstring_view address);
 
+
+        [[nodiscard]] bool operator==(symbol_type_info const& other) const
+        {
+            return process_ == other.process_ &&
+                module_base_ == other.module_base_ &&
+                type_index_ == other.type_index_;
+        }
+
+        struct HashFunction
+        {
+            size_t operator()(symbol_type_info const& type) const
+            {
+                return std::hash<HANDLE>()(type.process_) ^
+                        std::hash<DWORD64>()(type.module_base_) ^
+                        std::hash<ULONG>()(type.type_index_);
+            }
+        };
+
     private:
         enum class optional_type
         {
@@ -77,6 +100,7 @@ namespace dlg_help_utils::dbg_help
 
     private:
         class cache_type_info;
+        friend struct HashFunction;
 
         HANDLE process_{};
         DWORD64 module_base_{};

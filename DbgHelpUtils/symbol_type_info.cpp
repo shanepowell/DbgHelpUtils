@@ -44,13 +44,14 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] size_t children_count() const { return cached_children_.size(); }
         [[nodiscard]] symbol_type_info get_child(size_t const index) const
         {
-            return cache_->get_symbol_type_info(cached_children_[index]).value();
+            auto const& key = cached_children_[index];
+            return cache_->get_symbol_type_info(key.process, key.module_base, key.type_index).value();
         }
 
         void add_child(HANDLE const process, DWORD64 const module_base, ULONG const type_index)
         {
             cache_->create_cached_symbol_type_info(process, module_base, type_index);
-            cached_children_.emplace_back(type_index);
+            cached_children_.emplace_back(process, module_base, type_index);
             has_cached_children_ = true;
         }
 
@@ -65,7 +66,7 @@ namespace dlg_help_utils::dbg_help
         void set_type(HANDLE const process, DWORD64 const module_base, ULONG const type_index)
         {
             cache_->create_cached_symbol_type_info(process, module_base, type_index);
-            cached_type_ = type_index;
+            cached_type_ = symbol_key{process, module_base, type_index};
             has_cached_type_ = true;
         }
 
@@ -87,14 +88,22 @@ namespace dlg_help_utils::dbg_help
         }
 
     private:
-        [[nodiscard]] std::optional<symbol_type_info> get_cached_symbol_type(std::optional<ULONG> const& symbol_index) const
+        struct symbol_key
         {
-            if(!symbol_index.has_value())
+            HANDLE process;
+            DWORD64 module_base;
+            ULONG type_index;
+        };
+
+        [[nodiscard]] std::optional<symbol_type_info> get_cached_symbol_type(std::optional<symbol_key> const& symbol_key) const
+        {
+            if(!symbol_key.has_value())
             {
                 return std::nullopt;
             }
+            auto const& key = symbol_key.value();
 
-            return cache_->get_symbol_type_info(symbol_index.value());
+            return cache_->get_symbol_type_info(key.process, key.module_base, key.type_index);
         }
 
     private:
@@ -102,9 +111,9 @@ namespace dlg_help_utils::dbg_help
         bool has_cached_name_info_{false};
         std::optional<std::wstring> cached_name_info_;
         bool has_cached_children_{false};
-        std::vector<ULONG> cached_children_;
+        std::vector<symbol_key> cached_children_;
         bool has_cached_type_{false};
-        std::optional<ULONG> cached_type_;
+        std::optional<symbol_key> cached_type_;
         bool has_cached_sym_tag_{false};
         std::optional<sym_tag_enum> cached_sym_tag_;
         bool has_cached_offset_{false};
@@ -121,6 +130,13 @@ namespace dlg_help_utils::dbg_help
     , module_base_{module_base}
     , type_index_{type_index}
     , cache_info_{std::make_shared<cache_type_info>(cache)}
+    {
+    }
+
+    symbol_type_info::symbol_type_info(key_compare_only, HANDLE const process, DWORD64 const module_base, ULONG const type_index)
+    : process_{process}
+    , module_base_{module_base}
+    , type_index_{type_index}
     {
     }
 
