@@ -123,7 +123,7 @@ namespace dlg_help_utils::dbg_help
             inline_variables
         };
 
-        [[nodiscard]] std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {}, symbol_walk_options option = symbol_walk_options::default_symbols);
+        [[nodiscard]] std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {}, std::optional<ULONG64> module_base = std::nullopt, symbol_walk_options option = symbol_walk_options::default_symbols);
         void local_variables_walk(std::vector<local_variable>& locals
             , std::vector<local_variable>& parameters
             , thread_context_type type

@@ -8,9 +8,9 @@ namespace dlg_help_utils::dbg_help
     class symbol_type_info_cache
     {
     public:
-        void create_cached_symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index);
+        void create_cached_symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index, std::wstring_view export_name = {});
         [[nodiscard]] std::optional<symbol_type_info> get_symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index) const;
-        [[nodiscard]] symbol_type_info get_or_create_symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index);
+        [[nodiscard]] symbol_type_info get_or_create_symbol_type_info(HANDLE process, DWORD64 module_base, ULONG type_index, std::wstring_view export_name = {});
 
     private:
         std::unordered_set<symbol_type_info, symbol_type_info::HashFunction> cache_;

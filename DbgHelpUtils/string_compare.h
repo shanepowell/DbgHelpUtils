@@ -12,5 +12,15 @@ namespace dlg_help_utils::string_compare
 
         return _wcsnicmp(str1.data(), str2.data(), str1.length()) == 0;
     }
+
+    [[nodiscard]] inline bool equals(std::wstring_view const& str1, std::wstring_view const& str2)
+    {
+        if(str1.length() != str2.length())
+        {
+            return false;
+        }
+
+        return wcsncmp(str1.data(), str2.data(), str1.length()) == 0;
+    }
 }
     

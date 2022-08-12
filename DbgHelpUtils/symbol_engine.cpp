@@ -13,6 +13,7 @@
 
 #include "cv_info_pdb70.h"
 #include "exit_scope.h"
+#include "filesystem_utils.h"
 #include "guid_utils.h"
 #include "hex_dump.h"
 #include "locale_number_formatting.h"
@@ -513,10 +514,11 @@ namespace
 
     struct find_symbol_callback_context
     {
-        find_symbol_callback_context(HANDLE process, std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv, dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache)
+        find_symbol_callback_context(HANDLE process, std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv, dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache, std::wstring_view find_mask)
         : process{process}
         , rv{rv}
         , symbol_cache{symbol_cache}
+        , find_mask{find_mask}
         {
         }
 
@@ -524,6 +526,7 @@ namespace
         std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv;
         dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
         std::unordered_set<ULONG> tag_index_found;
+        std::wstring_view find_mask;
     };
 
     BOOL CALLBACK find_symbol_callback(_In_ PSYMBOL_INFOW symbol_info, [[maybe_unused]] _In_ ULONG symbol_size, _In_opt_ PVOID user_context)
@@ -532,7 +535,14 @@ namespace
             !symbols.tag_index_found.contains(symbol_info->Index))
         {
             symbols.tag_index_found.insert(symbol_info->Index);
-            symbols.rv.emplace_back(symbols.symbol_cache.get_or_create_symbol_type_info(symbols.process, symbol_info->ModBase, symbol_info->Index));
+            std::wstring_view export_name{symbol_info->Name, symbol_info->NameLen - 1};
+            if(auto type = symbols.symbol_cache.get_or_create_symbol_type_info(symbols.process, symbol_info->ModBase, symbol_info->Index, export_name);
+                symbols.find_mask.empty() ||
+                (type.name().has_value() && dlg_help_utils::filesystem_utils::wildcard_match(type.name().value(), symbols.find_mask)) ||
+                dlg_help_utils::filesystem_utils::wildcard_match(export_name, symbols.find_mask))
+            {
+                symbols.rv.emplace_back(std::move(type));
+            }
         }
         return TRUE;
     }
@@ -1456,7 +1466,7 @@ namespace dlg_help_utils::dbg_help
             return types;
         }
 
-        find_symbol_callback_context context{process_, types, symbol_cache_};
+        find_symbol_callback_context context{process_, types, symbol_cache_, L""};
         if(!SymEnumTypesW(process_, it->second.base, find_symbol_callback, &context))
         {
             windows_error::throw_windows_api_error(L"SymEnumTypesW"sv, to_hex(it->second.base));
@@ -1481,15 +1491,15 @@ namespace dlg_help_utils::dbg_help
             }
             return std::nullopt;
         }
-
+            
         return symbol_cache_.get_or_create_symbol_type_info(process_, info->info.ModBase, info->info.Index);
     }
 
-    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, symbol_walk_options const option)
+    std::vector<symbol_type_info> symbol_engine::symbol_walk(std::wstring const& find_mask, std::optional<ULONG64> const module_base, symbol_walk_options const option)
     {
         std::vector<symbol_type_info> symbols;
-        find_symbol_callback_context context{process_, symbols, symbol_cache_};
-        if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*!*" : find_mask.c_str(), find_symbol_callback, &context, setup_enum_symbol_options(option)))
+        find_symbol_callback_context context{process_, symbols, symbol_cache_, find_mask};
+        if(!SymEnumSymbolsExW(process_, module_base.value_or(0), L"*!*", find_symbol_callback, &context, setup_enum_symbol_options(option)))
         {
             windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask);
         }

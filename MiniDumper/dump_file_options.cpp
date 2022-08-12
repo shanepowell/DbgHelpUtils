@@ -87,6 +87,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(generate_crc32_)["--crc32"]("generate crc32")
         | lyra::opt(symbol_types_raw_, "type" )["-p"]["--type"]("dump symbol type information")
         | lyra::opt(symbol_names_raw_, "symbol" )["--symbol"]("dump symbol information")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(list_symbol_names_)["--listsymbol"]("only dump symbol names and not full information")
         | lyra::opt(dump_types_modules_raw_, "moduletype" )["--moduletypes"]("dump module symbol types")
         | lyra::opt(dump_address_types_raw_, "address" )["--address"]("dump address with type")
         | lyra::opt(debug_type_data_)["--typedebug"]("debug type data")
@@ -100,8 +102,6 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(display_stack_trace_database_)["--std"]("stack trace database")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(process_heaps_options_.no_filter_heap_entries())["--nofilterheapentries"]("don't filter heap entries for OS usages")
-        // ReSharper disable once StringLiteralTypo
-        | lyra::opt(process_heaps_options_.mark_system_heap_entries_children_as_system())["--marksystemheapentrieschildren"]("make detected system heap reference entry children as a system heap reference")
         | lyra::opt(disable_symbol_load_cancel_keyboard_check_)["--disable-symbol-load-cancel-keyboard-check"]("disable the keyboard check when loading symbols")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(display_heap_graph_)["--heapgraph"]("calculate heap graph")
@@ -115,6 +115,7 @@ lyra::cli dump_file_options::generate_options()
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("heap statistic sort order").choices([](std::string const& value) { return g_view_sort_order.contains(value); })
         | lyra::opt(output_filename_raw_, "filename")["--out"]("output filename")
+        | lyra::opt(verbose_output_)["--verbose"]("verbose console output")
     ;
 }
 

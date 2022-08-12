@@ -49,7 +49,7 @@ namespace
         return stream_utils::read_machine_size_field_value(peb, address.value()).value_or(0);
     }
 
-    void do_dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent, std::unordered_set<unsigned long>& visited_types)
+    void do_dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, module_list_stream const& module_list, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent, std::unordered_set<unsigned long>& visited_types)
     {
         if(visited_types.contains(type.sym_index()))
         {
@@ -86,18 +86,28 @@ namespace
         }
 
         auto name = symbol_type_utils::get_symbol_type_friendly_name(type);
-        log << std::format(L" {}", name);
+        if(!offset_data.has_value())
+        {
+            auto const* module = module_list.find_module(type.module_base());
+            auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+            auto export_name = type.export_name().empty() ? L""s : std::format(L"({})", type.export_name());
+            log << std::format(L" {0} ! {1}{2}", module_name, name, export_name);
+        }
+        else
+        {
+            log << std::format(L" {}", name);
+        }
 
         if(bit_position_data.has_value())
         {
-            auto const length_data = type.length();
+            auto const length_data = type.length().value_or(1);
             uint64_t bit_mask;
-            if(length_data.value_or(1) > 1)
+            if(length_data > 1)
             {
-                bit_mask = (~(std::numeric_limits<uint64_t>::max() << length_data.value())) << bit_position_data.value();
+                bit_mask = (~(std::numeric_limits<uint64_t>::max() << length_data)) << bit_position_data.value();
                 log << std::format(L" bits {0} - {1} ({2})"
                     , locale_formatting::to_wstring(bit_position_data.value())
-                    , locale_formatting::to_wstring(bit_position_data.value() + length_data.value() - 1)
+                    , locale_formatting::to_wstring(bit_position_data.value() + length_data - 1)
                     , stream_hex_dump::to_hex(bit_mask));
             }
             else
@@ -250,13 +260,13 @@ namespace
             if(auto const type_data = type.type(); type_data.has_value() && !visited_types.contains(type_data.value().sym_index()))
             {
                 log << std::format(L"{0} Type: {1}\n", indent_str, locale_formatting::to_wstring(type_data.value().sym_index()));
-                do_dump_symbol_type(log, type_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                do_dump_symbol_type(log, type_data.value(), module_list, options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
             }
 
             if(auto const typeid_data = type.type_id(); typeid_data.has_value() && !visited_types.contains(typeid_data.value().sym_index()))
             {
                 log << std::format(L"{0} TypeId: {1}\n", indent_str, locale_formatting::to_wstring(typeid_data.value().sym_index()));
-                do_dump_symbol_type(log, typeid_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                do_dump_symbol_type(log, typeid_data.value(), module_list, options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
             }
 
             if(options.debug_type_parent_data())
@@ -264,13 +274,13 @@ namespace
                 if(auto const parent_typeid_data = type.class_parent_id(); parent_typeid_data.has_value() && !visited_types.contains(parent_typeid_data.value().sym_index()))
                 {
                     log << std::format(L"{0} ClassParentId: {1}\n", indent_str, locale_formatting::to_wstring(parent_typeid_data.value().sym_index()));
-                    do_dump_symbol_type(log, parent_typeid_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                    do_dump_symbol_type(log, parent_typeid_data.value(), module_list, options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
                 }
 
                 if(auto const parent_id_data = type.lexical_parent(); parent_id_data.has_value() && !visited_types.contains(parent_id_data.value().sym_index()))
                 {
                     log << std::format(L"{0} LexicalParentId: {1}\n", indent_str, locale_formatting::to_wstring(parent_id_data.value().sym_index()));
-                    do_dump_symbol_type(log, parent_id_data.value(), options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                    do_dump_symbol_type(log, parent_id_data.value(), module_list, options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
                 }
             }
 
@@ -285,14 +295,14 @@ namespace
             {
                 for (auto const& child : type_data.value().children())
                 {
-                    do_dump_symbol_type(log, child, options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
+                    do_dump_symbol_type(log, child, module_list, options, base_offset + offset_data.value_or(0), indent + 1, visited_types);
                 }
             }
         }
 
         for (auto const& child : type.children())
         {
-            do_dump_symbol_type(log, child, options, base_offset, indent + 2, visited_types);
+            do_dump_symbol_type(log, child, module_list, options, base_offset, indent + 2, visited_types);
         }
     }
 }
@@ -315,7 +325,7 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
         if(walker.load_module_from_address(symbol_info.value().module_base()))
         {
             log << std::format(L"Symbol Type Address {}:\n", type_name);
-            dump_symbol_type(log, symbol_info.value(), options);
+            dump_symbol_type(log, symbol_info.value(), walker.module_list(), options);
         }
         else
         {
@@ -327,7 +337,7 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
     if(auto const symbol_info = walker.get_type_info(type_name); symbol_info.has_value())
     {
         log << std::format(L"Symbol Type [{0}] @ {1} found:\n", type_name, symbol_info.value().to_address_string());
-        dump_symbol_type(log, symbol_info.value(), options);
+        dump_symbol_type(log, symbol_info.value(), walker.module_list(), options);
         return;
     }
 
@@ -336,7 +346,7 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
         for(auto const& symbol_info : symbol_walker.all_symbols())
         {
             log << std::format(L"Symbol Type [{0}] @ {1} found:\n", symbol_info.name().value_or(L"<unknown name>"sv), symbol_info.to_address_string());
-            dump_symbol_type(log, symbol_info, options);
+            dump_symbol_type(log, symbol_info, walker.module_list(), options);
         }
         return;
     }
@@ -363,11 +373,20 @@ void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, 
     {
         processed_any = true;
         auto const name = symbol_type_utils::get_symbol_type_friendly_name(variable.symbol_type());
-        log << std::format(L"Symbol Name [{}] found:\n", name);
+        auto const* module = walker.module_list().find_module(variable.symbol_type().module_base());
+        auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+        auto export_name = variable.symbol_type().export_name().empty() ? L""s : std::format(L"({})", variable.symbol_type().export_name());
 
+        if(options.list_symbol_names())
+        {
+            log << std::format(L"  [{0} ! {1}{2}]\n", module_name, name, export_name);
+            continue;
+        }
+
+        log << std::format(L"Symbol Name [{0} ! {1}{2}] found:\n", module_name, name, export_name);
         if(options.debug_type_data())
         {
-            dump_symbol_type(log, variable.symbol_type(), options);
+            dump_symbol_type(log, variable.symbol_type(), walker.module_list(), options);
         }
 
         auto const address = variable.symbol_type().address();
@@ -415,7 +434,7 @@ void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& min
             log << L'\n';
         }
 
-        dump_symbol_type(log, type, options);
+        dump_symbol_type(log, type, walker.module_list(), options);
     }
 }
 
@@ -546,10 +565,10 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
 }
 
 
-void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
+void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, module_list_stream const& module_list, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
 {
     std::unordered_set<unsigned long> visited_types;
-    do_dump_symbol_type(log, type, options, base_offset, indent, visited_types);
+    do_dump_symbol_type(log, type, module_list, options, base_offset, indent, visited_types);
 }
 
 void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)

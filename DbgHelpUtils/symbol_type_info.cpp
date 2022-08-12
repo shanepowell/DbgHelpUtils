@@ -87,6 +87,16 @@ namespace dlg_help_utils::dbg_help
             return cache_->get_or_create_symbol_type_info(process, module_base, type_index);
         }
 
+        void set_export_name(std::wstring_view const export_name)
+        {
+            export_name_ = export_name;
+        }
+
+        [[nodiscard]] std::wstring const& export_name() const
+        {
+            return export_name_;
+        }
+
     private:
         struct symbol_key
         {
@@ -120,17 +130,28 @@ namespace dlg_help_utils::dbg_help
         std::optional<DWORD> cached_offset_;
         bool has_cached_length_{false};
         std::optional<ULONG64> cached_length_;
+        std::wstring export_name_;
         symbol_type_info_cache* cache_;
     };
 
 
     // ReSharper disable once CppParameterMayBeConst
-    symbol_type_info::symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 const module_base, ULONG const type_index)
+    symbol_type_info::symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 const module_base, ULONG const type_index, std::wstring_view const export_name)
     : process_{process}
     , module_base_{module_base}
     , type_index_{type_index}
     , cache_info_{std::make_shared<cache_type_info>(cache)}
     {
+        if(!export_name.empty())
+        {
+            if(auto const name_value = name(); name_value.has_value())
+            {
+                if(!string_compare::equals(name_value.value(), export_name))
+                {
+                    cache_info_->set_export_name(export_name);
+                }
+            }
+        }
     }
 
     symbol_type_info::symbol_type_info(key_compare_only, HANDLE const process, DWORD64 const module_base, ULONG const type_index)
@@ -585,5 +606,10 @@ namespace dlg_help_utils::dbg_help
         }
 
         return cache.get_or_create_symbol_type_info(process, module_base, type_index);
+    }
+
+    std::wstring const& symbol_type_info::export_name() const
+    {
+        return cache_info_->export_name();
     }
 }

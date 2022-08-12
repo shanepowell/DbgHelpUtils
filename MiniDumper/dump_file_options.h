@@ -70,6 +70,7 @@ public:
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
     [[nodiscard]] std::vector<std::wstring> const& symbol_names() const { return symbol_names_; }
+    [[nodiscard]] bool list_symbol_names() const { return list_symbol_names_; }
     [[nodiscard]] std::vector<std::wstring> const& dump_types_modules() const { return dump_types_modules_; }
     [[nodiscard]] std::vector<std::wstring> const& dump_address_types() const { return dump_address_types_; }
     [[nodiscard]] std::vector<std::wstring> const& dump_files() const { return dump_files_; }
@@ -77,6 +78,7 @@ public:
     [[nodiscard]] dlg_help_utils::heap::system_module_list const& system_module_list() const { return system_module_list_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options() const { return statistic_view_options_; }
     [[nodiscard]] dlg_help_utils::heap::process_heaps_options const& process_heaps_options() const { return process_heaps_options_; }
+    [[nodiscard]] bool verbose_output() const { return verbose_output_; }
     [[nodiscard]] std::wostream& get_log_stream();
 
 private:
@@ -122,6 +124,7 @@ private:
     std::vector<std::wstring> base_diff_dump_files_;
     std::vector<std::string> symbol_names_raw_;
     std::vector<std::wstring> symbol_names_;
+    bool list_symbol_names_{false};
     std::vector<std::string> symbol_types_raw_;
     std::vector<std::wstring> symbol_types_;
     std::vector<std::string> dump_types_modules_raw_;
@@ -139,4 +142,5 @@ private:
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
     dlg_help_utils::heap::process_heaps_options process_heaps_options_;
     std::wofstream log_file_;
+    bool verbose_output_{false};
 };

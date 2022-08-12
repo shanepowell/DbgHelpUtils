@@ -28,7 +28,7 @@ namespace dlg_help_utils::dbg_help
 
     public:
         symbol_type_info() = default;
-        symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 module_base, ULONG type_index);
+        symbol_type_info(symbol_type_info_cache& cache, HANDLE process, DWORD64 module_base, ULONG type_index, std::wstring_view export_name = {});
         symbol_type_info(key_compare_only, HANDLE process, DWORD64 module_base, ULONG type_index);
 
         [[nodiscard]] std::optional<sym_tag_enum> sym_tag() const;
@@ -69,6 +69,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::wstring to_address_string() const;
         static [[nodiscard]] std::optional<symbol_type_info> from_address_string(symbol_type_info_cache& cache, HANDLE process, std::wstring_view address);
 
+        [[nodiscard]] std::wstring const& export_name() const;
 
         [[nodiscard]] bool operator==(symbol_type_info const& other) const
         {

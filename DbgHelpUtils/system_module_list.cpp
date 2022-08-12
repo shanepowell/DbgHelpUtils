@@ -34,9 +34,9 @@ namespace dlg_help_utils::heap
         return system_modules_names_.contains(key);
     }
 
-    std::set<uint64_t> system_module_list::generate_system_module_bases(module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list) const
+    std::unordered_set<uint64_t> system_module_list::generate_system_module_bases(module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list) const
     {
-        std::set<uint64_t> bases;
+        std::unordered_set<uint64_t> bases;
 
         for (auto const& system_modules_name : system_modules_names_)
         {

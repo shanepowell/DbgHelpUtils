@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace dlg_help_utils
@@ -18,7 +19,7 @@ namespace dlg_help_utils::heap
         system_module_list();
 
         [[nodiscard]] bool is_system_module(std::wstring const& module_name) const;
-        [[nodiscard]] std::set<uint64_t> generate_system_module_bases(module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list) const;
+        [[nodiscard]] std::unordered_set<uint64_t> generate_system_module_bases(module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list) const;
 
     private:
         std::set<std::wstring> system_modules_names_;
