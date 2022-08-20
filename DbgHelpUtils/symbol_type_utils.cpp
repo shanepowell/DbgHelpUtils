@@ -186,7 +186,6 @@ namespace dlg_help_utils::symbol_type_utils
                 {
                     info.pointer_address = value;
                     pointers.insert(std::make_pair(value, info));
-
                     if(pointer_type.has_value())
                     {
                         work.insert(std::make_pair(value, symbol_walker_work{pointer_type.value(), value}));
@@ -852,63 +851,6 @@ namespace dlg_help_utils::symbol_type_utils
                         {
                             do_gather_all_pointers_from_symbol(walker, base_type, data_type.value(), base_address, variable_array_entry_address, pointers, std::format(L"{0} @ [{1}]", name_prefix, i), ignore_pointers, work);
                         }
-                    }
-                }
-                break;
-
-            case sym_tag_enum::BaseType:
-                if(auto const base_type_data = type.base_type(); base_type_data.has_value())
-                {
-                    auto const length = type.length();
-                    if(!length.has_value())
-                    {
-                        return;
-                    }
-
-                    auto variable_stream = walker.get_process_memory_stream(base_address + variable_address_offset, length.value());
-                    if(variable_stream.eof())
-                    {
-                        return;
-                    }
-
-                    switch(base_type_data.value())  // NOLINT(clang-diagnostic-switch-enum)
-                    {
-                    case basic_type::UInt:
-                    case basic_type::ULong:
-                    case basic_type::Int:
-                    case basic_type::Long:
-                        if(auto const type_length = type.length(); type_length.has_value())
-                        {
-                            switch(type_length.value())
-                            {
-                            case 4:
-                                read_possible_pointer_type<uint32_t>(walker
-                                    , variable_stream
-                                    , std::nullopt
-                                    , make_pointer_info(name_prefix, base_address, variable_address_offset, base_type, base_address + variable_address_offset, type)
-                                    , pointers
-                                    , ignore_pointers
-                                    , work);
-                                break;
-
-                            case 8:
-                                read_possible_pointer_type<uint64_t>(walker
-                                    , variable_stream
-                                    , std::nullopt
-                                    , make_pointer_info(name_prefix, base_address, variable_address_offset, base_type, base_address + variable_address_offset, type)
-                                    , pointers
-                                    , ignore_pointers
-                                    , work);
-                                break;
-
-                            default:
-                                break;
-                            }
-                        }
-                        break;
-
-                    default:
-                        break;
                     }
                 }
                 break;
