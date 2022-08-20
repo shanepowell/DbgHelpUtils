@@ -52,7 +52,7 @@ namespace dlg_help_utils::heap
             if(auto stream = walker().get_process_memory_stream(entry_address, heap().granularity()); 
                 stream.eof() || stream.read(buffer.get(), heap().granularity()) != heap().granularity())
             {
-                co_yield heap_entry{heap(), entry_address, last_address - entry_address};
+                co_yield heap_entry{heap(), entry_address, last_address - entry_address, heap_entry::VirtualAllocType{}};
             }
             else
             {
@@ -74,18 +74,18 @@ namespace dlg_help_utils::heap
                 }
                 else
                 {
-                    co_yield heap_entry{heap(), entry_address, last_address, std::move(buffer), static_cast<uint64_t>(committed_size.count()), unused_bytes, heap_entry::VirtualAllocType{} };
+                    co_yield heap_entry{heap(), entry_address, last_address, std::move(buffer), static_cast<uint64_t>(committed_size.count()), unused_bytes, heap_entry::VirtualAllocType{}};
                 }
             }
 
             if(last_address < last_committed_address)
             {
-                co_yield heap_entry{heap(), last_address, last_committed_address -  last_address};
+                co_yield heap_entry{heap(), last_address, last_committed_address -  last_address, heap_entry::VirtualAllocType{}};
             }
         }
         else if(reserved_size > size_units::base_16::bytes{0})
         {
-            co_yield heap_entry{heap(), address(), static_cast<uint64_t>(reserved_size.count())};
+            co_yield heap_entry{heap(), address(), static_cast<uint64_t>(reserved_size.count()), heap_entry::VirtualAllocType{}};
         }
     }
 

@@ -25,10 +25,12 @@ set(DbgHelp
 source_group("DbgHelp" FILES ${DbgHelp})
 
 set(Heap
-    "ust_address_stack_trace.cpp"
-    "ust_address_stack_trace.h"
+    "block_range_match_result.h"
     "heap_match_utils.cpp"
     "heap_match_utils.h"
+    "heap_node_type.h"
+    "ust_address_stack_trace.cpp"
+    "ust_address_stack_trace.h"
 )
 source_group("Heap" FILES ${Heap})
 
@@ -186,10 +188,10 @@ set(PeUtilities
 source_group("PeUtilities" FILES ${PeUtilities})
 
 set(Process
-    "global_variable.cpp"
-    "global_variable.h"
-    "global_variables.cpp"
-    "global_variables.h"
+    "global_symbol.cpp"
+    "global_symbol.h"
+    "global_symbols.cpp"
+    "global_symbols.h"
     "process_environment_block.cpp"
     "process_environment_block.h"
     "process_environment_variables.cpp"
@@ -322,6 +324,7 @@ set(Utility
     "filesystem_utils.cpp"
     "filesystem_utils.h"
     "flags_string_utils.h"
+    "get_last_address.h"
     "guid_utils.cpp"
     "guid_utils.h"
     "handles.h"

@@ -7,7 +7,9 @@
 #include "crt_heap.h"
 #include "dph_entry.h"
 #include "dph_heap.h"
+#include "get_last_address.h"
 #include "heap_entry.h"
+#include "heap_node_type.h"
 #include "heap_lfh_affinity_slot.h"
 #include "heap_lfh_bucket.h"
 #include "heap_lfh_context.h"
@@ -170,9 +172,9 @@ namespace dlg_help_utils::heap
                 {
                     for (auto const& entry : subsegment.entries())
                     {
-                        if (entry.is_busy() && is_heap_entry_allowed(entry.memory_range()))
+                        if (entry.is_busy())
                         {
-                            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                            if (auto const [crt_entry, skip_next_entry_value] = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::nt_heap_lfh_entry); crt_entry != nullptr)
                             {
                                 if (crt_entry->block_use())
                                 {
@@ -201,10 +203,9 @@ namespace dlg_help_utils::heap
             for (auto const& entry : segment.entries())
             {
                 if (entry.is_busy() && 
-                    !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }) &&
-                    is_heap_entry_allowed(entry.memory_range()))
+                    !std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
                 {
-                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                    if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::nt_heap_segment_entry); crt_entry != nullptr)
                     {
                         if (crt_entry->block_use())
                         {
@@ -226,9 +227,9 @@ namespace dlg_help_utils::heap
         {
             for (auto const& entry : virtual_block.entries())
             {
-                if (entry.is_busy() && is_heap_entry_allowed(entry.memory_range()))
+                if (entry.is_busy())
                 {
-                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                    if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::nt_heap_virtual_entry); crt_entry != nullptr)
                     {
                         if (crt_entry->block_use())
                         {
@@ -254,7 +255,7 @@ namespace dlg_help_utils::heap
                 {
                     if (entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT)
                     {
-                        if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                        if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::segment_backend_entry); crt_entry != nullptr)
                         {
                             if (crt_entry->block_use())
                             {
@@ -279,7 +280,7 @@ namespace dlg_help_utils::heap
             {
                 if (!entry.uncommitted_range() && entry.allocated())
                 {
-                    if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                    if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::segment_entry); crt_entry != nullptr)
                     {
                         if (crt_entry->block_use())
                         {
@@ -309,7 +310,7 @@ namespace dlg_help_utils::heap
                         {
                             if (entry.allocated())
                             {
-                                if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                                if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::segment_lfh_entry); crt_entry != nullptr)
                                 {
                                     if (crt_entry->block_use())
                                     {
@@ -332,7 +333,7 @@ namespace dlg_help_utils::heap
     {
         for (auto const& entry : segment_heap.large_entries())
         {
-            if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+            if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::segment_large_entry); crt_entry != nullptr)
             {
                 if (crt_entry->block_use())
                 {
@@ -352,7 +353,7 @@ namespace dlg_help_utils::heap
         {
             if (entry.is_allocated())
             {
-                if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::dph_entry); crt_entry != nullptr)
                 {
                     if (crt_entry->block_use())
                     {
@@ -373,7 +374,7 @@ namespace dlg_help_utils::heap
         {
             if (entry.is_allocated())
             {
-                if (auto const crt_entry = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries); crt_entry != nullptr)
+                if (auto const [crt_entry, skip_next_entry_value]  = match_crt_entry(entry.user_address(), entry.user_requested_size(), crt_entries, heap_node_type::dph_virtual_entry); crt_entry != nullptr)
                 {
                     if (crt_entry->block_use())
                     {
@@ -388,16 +389,6 @@ namespace dlg_help_utils::heap
         }
     }
 
-    bool process_heaps::is_heap_entry_allowed(memory_range const& range) const
-    {
-        if(options().no_filter_heap_entries())
-        {
-            return true;
-        }
-
-        return !is_system_allocation(range);
-    }
-
     bool process_heaps::is_system_allocation(memory_range const& range) const
     {
         return std::ranges::any_of(system_area_addresses_, [&range](uint64_t const address) { return address >= range.start_range && address < range.end_range; });
@@ -407,10 +398,7 @@ namespace dlg_help_utils::heap
     {
         for (auto const& range : peb().walker().memory_ranges())
         {
-            if(is_heap_entry_allowed(range))
-            {
-                add_heap_entry(all_entries, process_heap_entry{peb(), range});
-            }
+            add_heap_entry(all_entries, process_heap_entry{peb(), range});
         }
     }
 
@@ -501,8 +489,7 @@ namespace dlg_help_utils::heap
                 {
                     for (auto const& entry : segment.entries())
                     {
-                        if (!std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }) &&
-                            is_heap_entry_allowed(entry.memory_range()))
+                        if (!std::ranges::any_of(lfh_data, [&entry](heap_subsegment const& subsegment) { return is_lfh_subsegment_in_entry(entry, subsegment); }))
                         {
                             if (entry.is_busy())
                             {
@@ -524,20 +511,17 @@ namespace dlg_help_utils::heap
                 {
                     for (auto const& entry : virtual_block.entries())
                     {
-                        if(is_heap_entry_allowed(entry.memory_range()))
+                        if (entry.is_busy())
                         {
-                            if (entry.is_busy())
+                            if (auto it = std::ranges::find_if(crt_entries, [&entry](auto const& crt_entry) { return contains_address(entry.address(), entry.size().count(), crt_entry.user_address()); });
+                                it != crt_entries.end())
                             {
-                                if (auto it = std::ranges::find_if(crt_entries, [&entry](auto const& crt_entry) { return contains_address(entry.address(), entry.size().count(), crt_entry.user_address()); });
-                                    it != crt_entries.end())
-                                {
-                                    co_yield process_heap_entry{ entry, *it };
-                                }
+                                co_yield process_heap_entry{ entry, *it };
                             }
-                            else
-                            {
-                                co_yield process_heap_entry{ entry };
-                            }
+                        }
+                        else
+                        {
+                            co_yield process_heap_entry{ entry };
                         }
                     }
                 }
@@ -673,17 +657,19 @@ namespace dlg_help_utils::heap
         }
     }
 
-    crt_entry const* process_heaps::match_crt_entry(uint64_t const user_address, size_units::base_16::bytes const size, std::map<uint64_t, crt_entry> const& crt_entries) const
+    std::tuple<crt_entry const*, bool> process_heaps::match_crt_entry(uint64_t const user_address, size_units::base_16::bytes const size, std::map<uint64_t, crt_entry> const& crt_entries, heap_node_type const node_type) const
     {
         const auto it = crt_entries.lower_bound(user_address);
         if(it != crt_entries.end())
         {
-            switch(heap_match_utils::does_memory_match_to_range(peb().walker(), user_address, size, it->second.user_address(), it->second.data_size()))
+            auto const match = heap_match_utils::does_memory_match_to_range(peb().walker(), it->second.entry_address(), it->second.entry_size(), user_address, size);
+            options_->match_result_callback(it->second, user_address, size, match, node_type);
+            switch(match)
             {
             case block_range_match_result::block_match:
-                return &it->second;
-
             case block_range_match_result::block_contains:
+                return std::make_tuple(&it->second, false);
+
             case block_range_match_result::user_contains_block:
             case block_range_match_result::block_partially_contains:
             case block_range_match_result::block_no_match:
@@ -691,10 +677,10 @@ namespace dlg_help_utils::heap
             }
         }
 
-        return nullptr;
+        return std::make_tuple(nullptr, false);
     }
 
-    void process_heaps::add_heap_entry(std::map<uint64_t, process_heap_entry>& entries, process_heap_entry&& process_heap_entry)
+    void process_heaps::add_heap_entry(std::map<uint64_t, process_heap_entry>& entries, process_heap_entry process_heap_entry)
     {
         if(auto const it = entries.lower_bound(process_heap_entry.user_address()); it != entries.end())
         {
@@ -710,7 +696,8 @@ namespace dlg_help_utils::heap
             }
         }
 
-        entries.emplace(std::make_pair(process_heap_entry.user_address() + process_heap_entry.user_requested_size().count() - 1, std::move(process_heap_entry)));
+        auto end_user_address = get_last_address(process_heap_entry);
+        entries.emplace(std::make_pair(end_user_address, std::move(process_heap_entry)));
     }
 
     bool process_heaps::does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry)

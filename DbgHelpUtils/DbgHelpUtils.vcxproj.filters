@@ -444,6 +444,9 @@
     <ClCompile Include="symbol_type_info_cache.cpp">
       <Filter>DbgHelp</Filter>
     </ClCompile>
+    <ClCompile Include="get_last_address.h">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -949,6 +952,12 @@
     </ClInclude>
     <ClInclude Include="symbol_type_info_cache.h">
       <Filter>DbgHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="block_range_match_result.h">
+      <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="heap_node_type.h">
+      <Filter>Heap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

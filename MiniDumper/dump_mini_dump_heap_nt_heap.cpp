@@ -132,7 +132,7 @@ namespace detail
                 log << std::format(L", User Flag {0}", static_cast<uint16_t>(entry.flags() >> heap::heap_entry::FlagUserBitOffset));
             }
 
-            if (entry.is_front_padded())
+            if (entry.has_front_padding())
             {
                 log << L", Front Padded";
             }
@@ -184,6 +184,37 @@ namespace detail
             }
         }
 
+        std::wstring to_wstring(heap::heap_entry::unused_bytes_type const& value)
+        {
+            switch(value)
+            {
+            case heap::heap_entry::unused_bytes_type::none: return L"none"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_gt_data_area_size: return L"unused_bytes_gt_data_area_size"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_gt_data_area_size_plus_offset: return L"unused_bytes_gt_data_area_size_plus_offset"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_gt_data_area_size_offset_diff: return L"unused_bytes_gt_data_area_size_offset_diff"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_gt_data_area_size_gt_data_area_size: return L"unused_bytes_gt_data_area_size_gt_data_area_size"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_lte_data_area_size_minus_offset: return L"unused_bytes_lte_data_area_size_minus_offset"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_lte_data_area_size_plus_offset: return L"unused_bytes_lte_data_area_size_plus_offset"s;
+            case heap::heap_entry::unused_bytes_type::size_gte_ust_unused_bytes_gte_data_area_size: return L"size_gte_ust_unused_bytes_gte_data_area_size"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_ust_header_gap: return L"unused_bytes_ust_header_gap"s;
+            case heap::heap_entry::unused_bytes_type::unused_bytes_eod_size_offset: return L"unused_bytes_eod_size_offset"s;
+            }
+            return L"unknown"s;
+        }
+
+        std::wstring to_wstring(heap::heap_entry::user_requested_size_type const& value)
+        {
+            switch(value)
+            {
+            case heap::heap_entry::user_requested_size_type::none: return L"none"s;
+            case heap::heap_entry::user_requested_size_type::raw_gt_size: return L"raw_gt_size"s;
+            case heap::heap_entry::user_requested_size_type::raw_gt_size_gt_size: return L"raw_gt_size_gt_size"s;
+            case heap::heap_entry::user_requested_size_type::raw_lte_size: return L"raw_lte_size"s;
+            case heap::heap_entry::user_requested_size_type::bad_unused_size: return L"bad_unused_size"s;
+            }
+            return L"unknown"s;
+        }
+
         void print_dump_entry_debug(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
         {
             using namespace size_units::base_16;
@@ -206,8 +237,40 @@ namespace detail
                 {
                     log << std::format(L"{0}  User Requested Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
                     log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
+                    log << std::format(L"{0}  Raw Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes_raw_data()), stream_hex_dump::to_hex(entry.unused_bytes_raw_data()));
+                    if(entry.is_lfh_entry())
+                    {
+                        log << std::format(L"{0}  Raw Unused Data Bytes: {1} ({2})\n", indent_str, to_wstring(bytes{entry.unused_bytes_raw()}), stream_hex_dump::to_hex(entry.unused_bytes_raw()));
+                    }
+                    if(entry.ust_address() != 0)
+                    {
+                        log << std::format(L"{0}  UST Raw Unused Data Bytes: {1} ({2})\n", indent_str, to_wstring(bytes{entry.ust_unused_bytes_raw()}), stream_hex_dump::to_hex(entry.ust_unused_bytes_raw()));
+                    }
+                    log << std::format(L"{0}  Data Area Max Size Bytes: {1} ({2})\n", indent_str, to_wstring(entry.data_area_max_size()), stream_hex_dump::to_hex(entry.data_area_max_size()));
                     log << std::format(L"{0}  Segment Offset: {1} ({2})\n", indent_str, locale_formatting::to_wstring(entry.segment_offset()), stream_hex_dump::to_hex(entry.segment_offset()));
                     log << std::format(L"{0}  Small Tag Index: {1} ({2})\n", indent_str, locale_formatting::to_wstring(entry.small_tag_index()), stream_hex_dump::to_hex(entry.small_tag_index()));
+                    log << std::format(L"{0}  Unused Bytes Method: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes_method()), stream_hex_dump::to_hex(static_cast<unsigned>(entry.unused_bytes_method())));
+                    log << std::format(L"{0}  User Requested Method: {1} ({2})\n", indent_str, to_wstring(entry.requested_size_method()), stream_hex_dump::to_hex(static_cast<unsigned>(entry.requested_size_method())));
+                    if(entry.eod().has_value())
+                    {
+                        log << std::format(L"{0}  EOD: {1} ({2})\n", indent_str, to_wstring(entry.eod().value()), stream_hex_dump::to_hex(entry.eod().value()));
+                    }
+                    if(entry.ust_header_address() != 0)
+                    {
+                        log << std::format(L"{0}  UST Header Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_header_address(), hex_length));
+                    }
+                    if(entry.ust_end_gap_length().has_value())
+                    {
+                        log << std::format(L"{0}  UST Header End Gap Length: {1} ({2})\n", indent_str, to_wstring(entry.ust_end_gap_length().value()), stream_hex_dump::to_hex(entry.ust_end_gap_length().value()));
+                    }
+                    if(entry.is_lfh_entry())
+                    {
+                        log << std::format(L"{0}  LFH Entry Index: {1} ({2})\n", indent_str, locale_formatting::to_wstring(entry.lfh_index()), stream_hex_dump::to_hex(entry.lfh_index()));
+                    }
+                    else
+                    {
+                        log << std::format(L"{0}  Previous Size: {1} ({2})\n", indent_str, to_wstring(entry.previous_size()), stream_hex_dump::to_hex(entry.previous_size()));
+                    }
                     if (entry.end_unused_bytes() > bytes{ 0 })
                     {
                         log << std::format(L"{0}  End Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.end_unused_bytes()), stream_hex_dump::to_hex(entry.end_unused_bytes()));

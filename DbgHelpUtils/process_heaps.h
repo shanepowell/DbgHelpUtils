@@ -20,6 +20,8 @@ namespace dlg_help_utils::heap
         class statistic_view_options;
     }
 
+    enum class heap_node_type;
+
     class system_module_list;
     class crt_entry;
     class heap_subsegment;
@@ -63,7 +65,6 @@ namespace dlg_help_utils::heap
         void get_all_segment_large_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, segment_heap const& segment_heap) const;
         void get_all_dph_entities(std::map<uint64_t, process_heap_entry>& all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
         void get_all_dph_virtual_entities(std::map<uint64_t, process_heap_entry> & all_entries, std::map<uint64_t, crt_entry> const& crt_entries, dph_heap const& heap) const;
-        [[nodiscard]] bool is_heap_entry_allowed(memory_range const& range) const;
         void get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const;
 
         [[nodiscard]] std::map<uint64_t, process_heap_entry> all_entries() const;
@@ -72,9 +73,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::experimental::generator<process_heap_entry> filter_entries() const;
         [[nodiscard]] std::experimental::generator<process_heap_entry> filter_free_entries() const;
 
-        [[nodiscard]] crt_entry const* match_crt_entry(uint64_t user_address, size_units::base_16::bytes size, std::map<uint64_t, crt_entry> const& crt_entries) const;
+        [[nodiscard]] std::tuple<crt_entry const*, bool> match_crt_entry(uint64_t user_address, size_units::base_16::bytes size, std::map<uint64_t, crt_entry> const& crt_entries, heap_node_type node_type) const;
 
-        static void add_heap_entry(std::map<uint64_t, process_heap_entry> & entries, process_heap_entry&& process_heap_entry);
+        static void add_heap_entry(std::map<uint64_t, process_heap_entry> & entries, process_heap_entry process_heap_entry);
         [[nodiscard]] static bool does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry);
         [[nodiscard]] static bool is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry);
         [[nodiscard]] static bool is_address_filtered(std::vector<process_heap_entry> const& filters, uint64_t address, size_units::base_16::bytes size);

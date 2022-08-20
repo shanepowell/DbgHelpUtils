@@ -176,6 +176,7 @@
     <ClCompile Include="filesystem_utils.cpp" />
     <ClCompile Include="find_thread_stack.cpp" />
     <ClCompile Include="function_table_stream.cpp" />
+    <ClCompile Include="get_last_address.h" />
     <ClCompile Include="gflags_utils.cpp" />
     <ClCompile Include="global_symbol.cpp" />
     <ClCompile Include="global_symbols.cpp" />
