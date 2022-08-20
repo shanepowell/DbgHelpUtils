@@ -535,7 +535,7 @@ namespace
             !symbols.tag_index_found.contains(symbol_info->Index))
         {
             symbols.tag_index_found.insert(symbol_info->Index);
-            std::wstring_view export_name{symbol_info->Name, symbol_info->NameLen - 1};
+            std::wstring_view const export_name{symbol_info->Name, symbol_info->NameLen - 1};
             if(auto type = symbols.symbol_cache.get_or_create_symbol_type_info(symbols.process, symbol_info->ModBase, symbol_info->Index, export_name);
                 symbols.find_mask.empty() ||
                 (type.name().has_value() && dlg_help_utils::filesystem_utils::wildcard_match(type.name().value(), symbols.find_mask)) ||

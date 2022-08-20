@@ -31,7 +31,7 @@ namespace locale_formatting
         if (auto const size = GetNumberFormatEx(LOCALE_NAME_USER_DEFAULT, 0, v.c_str(), &fmt, nullptr, 0); size > 0)
         {
             rv.resize(static_cast<std::wstring::size_type>(size) - 1);
-            GetNumberFormatEx(LOCALE_NAME_USER_DEFAULT, 0, v.c_str(), &fmt, &rv[0], size);
+            GetNumberFormatEx(LOCALE_NAME_USER_DEFAULT, 0, v.c_str(), &fmt, rv.data(), size);
         }
 
         return rv;

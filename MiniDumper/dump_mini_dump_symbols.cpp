@@ -286,7 +286,7 @@ namespace
 
             if(auto const data = type.children_count(); data.value_or(0) > 0)
             {
-                log << std::format(L"{0} Children: {1}\n", indent_str, locale_formatting::to_wstring(data.value()));
+                log << std::format(L"{0} Children: {1}\n", indent_str, locale_formatting::to_wstring(data.value_or(0)));
             }
         }
         else if(auto const type_data = type.type(); type_data.has_value())

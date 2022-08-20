@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <memory>
+
+// ReSharper disable once CppUnusedIncludeDirective
 #include <ostream>
 
 #include "DbgHelpUtils/tagged_bool.h"

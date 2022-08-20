@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+// ReSharper disable once CppUnusedIncludeDirective
 #include <ostream>
 
 #include "write_header.h"

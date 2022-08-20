@@ -3,6 +3,8 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <vector>
+
+// ReSharper disable once CppUnusedIncludeDirective
 #include <string_view>
 
 namespace dlg_help_utils::mini_dump_type

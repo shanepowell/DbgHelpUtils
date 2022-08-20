@@ -185,6 +185,7 @@ namespace dlg_help_utils::heap
 
         return is_process_heap;
     }
+
     void nt_heap::decode_heap_entry(void* buffer) const
     {
         if(is_encoded())

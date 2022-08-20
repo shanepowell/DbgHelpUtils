@@ -7,6 +7,7 @@
 #include "heap_entry.h"
 #include "lfh_heap.h"
 #include "nt_heap.h"
+#include "process_environment_block.h"
 #include "stream_utils.h"
 #include "wide_runtime_error.h"
 
@@ -58,7 +59,7 @@ namespace dlg_help_utils::heap
         auto const block_size_value = block_size_raw();
         auto const block_count_value = block_count();
 
-        auto address = entry_start_address_;
+        auto address = entry_start_address();
 
         for(uint16_t index = 0; index < block_count_value; ++index)
         {

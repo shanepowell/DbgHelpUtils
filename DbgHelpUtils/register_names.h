@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+// ReSharper disable once CppUnusedIncludeDirective
 #include <string_view>
 
 // ReSharper disable once CommentTypo
