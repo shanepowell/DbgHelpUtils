@@ -13,17 +13,17 @@ namespace dlg_help_utils::stream_hex_dump
         template<typename T>
         [[nodiscard]] auto constexpr to_printable_value(T const& value)
         {
-            if constexpr (std::is_same_v<T, char> || std::is_same_v<T, int8_t> || std::is_same_v<T, char8_t> || std::is_same_v<T, char16_t> || std::is_same_v<T, wchar_t>)
-            {
-                return static_cast<int16_t>(value);
-            }
-            else if constexpr (std::is_same_v<T, unsigned char> || std::is_same_v<T, uint8_t>)
+            if constexpr (std::is_same_v<T, char> || std::is_same_v<T, int8_t> || std::is_same_v<T, char8_t> || std::is_same_v<T, char16_t> || std::is_same_v<T, wchar_t> || std::is_same_v<T, unsigned char> || std::is_same_v<T, uint8_t>)
             {
                 return static_cast<uint16_t>(value);
             }
             else if constexpr (std::is_same_v<T, char32_t> || std::is_enum_v<T>)
             {
-                return static_cast<int32_t>(value);
+                return static_cast<uint32_t>(value);
+            }
+            else if constexpr (std::is_signed_v<T>)
+            {
+                return static_cast<std::make_unsigned_t<T>>(value);
             }
             else
             {
