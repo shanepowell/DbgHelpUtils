@@ -316,6 +316,7 @@
     <ClInclude Include="heap_lfh_entry.h" />
     <ClInclude Include="heap_lfh_subsegment.h" />
     <ClInclude Include="heap_match_utils.h" />
+    <ClInclude Include="heap_node_type.h" />
     <ClInclude Include="heap_page_segment.h" />
     <ClInclude Include="heap_segment.h" />
     <ClInclude Include="heap_segment_context.h" />
