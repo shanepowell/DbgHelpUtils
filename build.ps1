@@ -1,13 +1,21 @@
 Param
 (
     [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
-    [switch]$GenerateBuildFileOnly
+    [switch]$GenerateBuildFileOnly,
+    [switch]$Clean
 )
 
 $compilers = @{
     "vs2019" = "Visual Studio 16 2019";
     "vs2022" = "Visual Studio 17 2022";
  }
+
+if($Clean)
+{
+    Remove-Item -Force -Recurse -ErrorAction SilentlyContinue x86
+    Remove-Item -Force -Recurse -ErrorAction SilentlyContinue x64
+    Remove-Item -Force -Recurse -ErrorAction SilentlyContinue build
+}
 
 Write-Host Generate build files
 cmake -S . -B build/$($Compiler)x64 -G $compilers[$Compiler] -A x64
