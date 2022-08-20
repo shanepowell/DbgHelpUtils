@@ -393,10 +393,10 @@
     <ClCompile Include="by_application_callsite_frequency_view.cpp">
       <Filter>Heap\ProcessHeaps\StatisticViews</Filter>
     </ClCompile>
-    <ClCompile Include="global_variables.cpp">
+    <ClCompile Include="global_symbols.cpp">
       <Filter>Process</Filter>
     </ClCompile>
-    <ClCompile Include="global_variable.cpp">
+    <ClCompile Include="global_symbol.cpp">
       <Filter>Process</Filter>
     </ClCompile>
     <ClCompile Include="register_names.cpp">
@@ -854,10 +854,10 @@
     <ClInclude Include="join.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="global_variables.h">
+    <ClInclude Include="global_symbols.h">
       <Filter>Process</Filter>
     </ClInclude>
-    <ClInclude Include="global_variable.h">
+    <ClInclude Include="global_symbol.h">
       <Filter>Process</Filter>
     </ClInclude>
     <ClInclude Include="local_variable.h">

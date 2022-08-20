@@ -17,14 +17,14 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::process
 {
-    class global_variable;
+    class global_symbol;
 
-    class global_variables
+    class global_symbols
     {
     public:
-        global_variables(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& match_pattern = {});
+        global_symbols(stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& match_pattern = {});
 
-        [[nodiscard]] std::experimental::generator<global_variable> all_variables() const;
+        [[nodiscard]] std::experimental::generator<global_symbol> all_symbols() const;
 
     private:
         static bool is_variable_symbol(dbg_help::sym_tag_enum tag);

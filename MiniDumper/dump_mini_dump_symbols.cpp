@@ -9,8 +9,8 @@
 #include "DbgHelpUtils/print_utils.h"
 #include "DbgHelpUtils/function_table_stream.h"
 #include "DbgHelpUtils/gflags_utils.h"
-#include "DbgHelpUtils/global_variable.h"
-#include "DbgHelpUtils/global_variables.h"
+#include "DbgHelpUtils/global_symbol.h"
+#include "DbgHelpUtils/global_symbols.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/memory64_list_stream.h"
@@ -368,8 +368,8 @@ void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, 
     };
 
     auto processed_any{false};
-    for (process::global_variables variables{walker, symbol_name};
-        auto const& variable : variables.all_variables())
+    for (process::global_symbols variables{walker, symbol_name};
+        auto const& variable : variables.all_symbols())
     {
         processed_any = true;
         auto const name = symbol_type_utils::get_symbol_type_friendly_name(variable.symbol_type());
