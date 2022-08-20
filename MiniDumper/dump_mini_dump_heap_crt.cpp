@@ -72,11 +72,12 @@ void dump_mini_dump_crtheap(std::wostream& log, mini_dump const& mini_dump, cach
         }
         else
         {
-            log << std::format(L"{0}CRT Entry: {1} {2} {3} UserPtr({4})", indent_str
+            log << std::format(L"{0}CRT Entry: {1} {2} {3} UserPtr({4}) #{5}", indent_str
                 , stream_hex_dump::to_hex(entry.entry_address(), hex_length)
                 , entry.block_use() ? L"in use"sv : L"free"sv
                 , to_wstring(entry.data_size())
-                , stream_hex_dump::to_hex(entry.user_address(), hex_length));
+                , stream_hex_dump::to_hex(entry.user_address(), hex_length)
+                , locale_formatting::to_wstring(entry.request_number()));
             if(!entry.filename().empty())
             {
                 log << std::format(L" : {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));
