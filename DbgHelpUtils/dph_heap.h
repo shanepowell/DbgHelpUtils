@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "dph_entry.h"
 #include "size_units.h"
 #include "stream_utils.h"
 #include "symbol_type_info.h"
@@ -21,8 +22,6 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
-    class dph_entry;
-
     class dph_heap
     {
     public:
@@ -83,7 +82,7 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_and_field_offset dph_heap_root_busy_nodes_table_field_data;
         };
 
-        [[nodiscard]] std::experimental::generator<dph_entry> walk_list(uint64_t head, uint64_t tail) const;
+        [[nodiscard]] std::experimental::generator<dph_entry> walk_list(uint64_t head, uint64_t tail, dph_entry::is_virtual_allocation is_virtual_allocation) const;
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:

@@ -107,7 +107,7 @@ namespace dlg_help_utils::heap
         for(ntdll_utilities::rtl_balanced_links_walker const balanced_link_walker{cache(), walker(), address() + stream_utils::get_field_offset(cache_data_->dph_heap_root_busy_nodes_table_field_data, symbol_name, common_symbol_names::dph_heap_root_busy_nodes_table_field_symbol_name)};
             auto const entry_address : balanced_link_walker.entries())
         {
-            co_yield dph_entry{*this, entry_address};
+            co_yield dph_entry{*this, entry_address, dph_entry::is_virtual_allocation{false}};
         }
     }
 
@@ -125,7 +125,7 @@ namespace dlg_help_utils::heap
             co_return;
         }
 
-        for(auto const& entry : walk_list(head, tail))
+        for(auto const& entry : walk_list(head, tail, dph_entry::is_virtual_allocation{false}))
         {
             co_yield entry;
         }
@@ -145,23 +145,23 @@ namespace dlg_help_utils::heap
             co_return;
         }
 
-        for(auto const& entry : walk_list(head, tail))
+        for(auto const& entry : walk_list(head, tail, dph_entry::is_virtual_allocation{true}))
         {
             co_yield entry;
         }
     }
     
-    std::experimental::generator<dph_entry> dph_heap::walk_list(uint64_t const head, uint64_t const tail) const
+    std::experimental::generator<dph_entry> dph_heap::walk_list(uint64_t const head, uint64_t const tail, dph_entry::is_virtual_allocation const is_virtual_allocation) const
     {
         auto entry_address = head;
         while(entry_address != tail)
         {
-            dph_entry entry{*this, entry_address};
+            dph_entry entry{*this, entry_address, is_virtual_allocation};
             co_yield entry;
             entry_address = entry.next_alloc_address();
         }
 
-        co_yield dph_entry{*this, entry_address};
+        co_yield dph_entry{*this, entry_address, is_virtual_allocation};
     }
 
     dph_heap::cache_data const& dph_heap::setup_globals() const

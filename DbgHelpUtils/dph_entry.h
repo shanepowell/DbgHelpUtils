@@ -28,8 +28,9 @@ namespace dlg_help_utils::heap
         static constexpr uint32_t StampAllocFullPageMode = 0xABCDBBBB;
         static constexpr uint32_t StampFreeFullPageMode = 0xABCDBBBA;
 
+        using is_virtual_allocation = tagged_bool<struct is_virtual_allocation_type>;
 
-        dph_entry(dph_heap const& heap, uint64_t entry_address);
+        dph_entry(dph_heap const& heap, uint64_t entry_address, is_virtual_allocation is_virtual_allocation);
 
         [[nodiscard]] uint64_t entry_address() const { return entry_address_; }
         [[nodiscard]] dph_heap const& heap() const { return *heap_; }
@@ -45,6 +46,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
 
         [[nodiscard]] uint64_t next_alloc_address() const { return next_alloc_address_; }
+        [[nodiscard]] bool is_virtual_allocation_entry() const { return static_cast<bool>(is_virtual_allocation_); }
 
         [[nodiscard]] uint64_t symbol_address() const { return entry_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->dph_heap_block_symbol_type; }
@@ -89,6 +91,7 @@ namespace dlg_help_utils::heap
         uint64_t next_alloc_address_{get_next_alloc_address()};
         bool allocated_{get_is_allocated()};
         std::vector<uint64_t> allocation_stack_trace_{get_allocation_stack_trace()};
+        is_virtual_allocation is_virtual_allocation_;
     };
 
 }

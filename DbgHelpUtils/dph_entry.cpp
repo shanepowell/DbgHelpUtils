@@ -11,10 +11,11 @@ namespace dlg_help_utils::heap
     std::wstring const& dph_entry::symbol_name = common_symbol_names::dph_heap_block_structure_symbol_name;
     std::wstring const& dph_entry::block_info_symbol_name = common_symbol_names::dph_block_information_structure_symbol_name;
 
-    dph_entry::dph_entry(dph_heap const& heap, uint64_t const entry_address)
+    dph_entry::dph_entry(dph_heap const& heap, uint64_t const entry_address, is_virtual_allocation const is_virtual_allocation)
     : cache_data_{&heap.cache().get_cache<cache_data>()}
     , heap_{&heap}
     , entry_address_{entry_address}
+    , is_virtual_allocation_{is_virtual_allocation}
     {
     }
 
