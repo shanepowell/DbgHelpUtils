@@ -461,7 +461,7 @@ namespace dlg_help_utils::stream_stack_dump
             return false;
         }
 
-        load_module(*module);
+        std::ignore = load_module(*module);
 
         std::wstring const name{module->name()};
         auto const& image_path = symbol_engine_.get_module_image_path(name);
@@ -482,7 +482,7 @@ namespace dlg_help_utils::stream_stack_dump
             return false;
         }
 
-        load_module(*module);
+        std::ignore = load_module(*module);
 
         std::wstring const name{module->name()};
         if (auto const & image_path = symbol_engine_.get_module_image_path(name); image_path.empty() && std::filesystem::exists(image_path) && std::filesystem::is_regular_file(image_path))
@@ -516,7 +516,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const module = module_list_.find_module(address);
         if (!module) return 0;
 
-        load_module(*module);
+        std::ignore = load_module(*module);
 
         if (callback_.symbol_load_debug())
         {
@@ -532,7 +532,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const module = unloaded_module_list_.find_module(address);
         if (!module) return 0;
 
-        load_module(*module);
+        std::ignore = load_module(*module);
 
         if (callback_.symbol_load_debug())
         {
@@ -546,7 +546,7 @@ namespace dlg_help_utils::stream_stack_dump
         auto const it_module = module_list_.find_module(frame.AddrPC.Offset);
         if (!it_module) return find_unloaded_module_symbol_info(frame.AddrPC.Offset, unloaded_module_list_, symbol_engine_);
 
-        load_module(*it_module);
+        std::ignore = load_module(*it_module);
         return symbol_engine_.address_to_info(type, frame, thread_context);
     }
 
@@ -622,12 +622,12 @@ namespace dlg_help_utils::stream_stack_dump
             // load all loaded modules...
             for (auto const& module : module_list_.list())
             {
-                load_module(module, throw_on_error);
+                std::ignore = load_module(module, throw_on_error);
             }
         }
         else
         {
-            load_module(module_name, throw_on_error);
+            std::ignore = load_module(module_name, throw_on_error);
         }
 
         auto rv = symbol_engine_.get_type_info(module_name, specific_type_name, throw_on_error);
@@ -649,12 +649,12 @@ namespace dlg_help_utils::stream_stack_dump
             // load all loaded modules...
             for (auto const& module : module_list_.list())
             {
-                load_module(module, throw_on_error);
+                std::ignore = load_module(module, throw_on_error);
             }
         }
         else
         {
-            load_module(module_name, throw_on_error);
+            std::ignore = load_module(module_name, throw_on_error);
         }
 
         return symbol_engine_.get_symbol_info(symbol_name, throw_on_error);
@@ -662,34 +662,35 @@ namespace dlg_help_utils::stream_stack_dump
 
     std::vector<dbg_help::symbol_type_info> mini_dump_memory_walker::module_types(std::wstring const& module_name) const
     {
-        load_module(module_name);
+        std::ignore = load_module(module_name);
         return symbol_engine_.module_types(module_name);
     }
 
     std::vector<dbg_help::symbol_type_info> mini_dump_memory_walker::symbol_walk(std::wstring const& find_mask) const
     {
-        if(auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(find_mask);
-            module_name.empty() || module_name == L"*"s)
+        std::optional<ULONG64> module_base;
+        auto [module_name, specific_type_name] = dbg_help::symbol_engine::parse_type_info(find_mask);
+        if(module_name.empty() || module_name == L"*"s)
         {
             // load all loaded modules...
             for (auto const& module : module_list_.list())
             {
-                load_module(module);
+                std::ignore = load_module(module);
             }
         }
         else
         {
-            load_module(module_name);
+            module_base = load_module(module_name);
         }
 
-        return symbol_engine_.symbol_walk(find_mask);
+        return symbol_engine_.symbol_walk(specific_type_name, module_base);
     }
 
     bool mini_dump_memory_walker::load_module_from_address(DWORD64 const base_address) const
     {
         if(auto const module = module_list_.find_module(base_address); module)
         {
-            load_module(*module);
+            std::ignore = load_module(*module);
             return true;
         }
 
@@ -714,38 +715,46 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    void mini_dump_memory_walker::load_module(std::wstring const& module_name, throw_on_error_t const throw_on_error) const
+    std::optional<ULONG64> mini_dump_memory_walker::load_module(std::wstring const& module_name, throw_on_error_t const throw_on_error) const
     {
         if(auto const & module = module_list_.find_module(module_name); module)
         {
-            load_module(*module, throw_on_error);
+            return load_module(*module, throw_on_error);
         }
         else
         {
             if(auto const & unloaded_module = unloaded_module_list_.find_module(module_name); unloaded_module)
             {
-                load_module(*unloaded_module, throw_on_error);
+                return load_module(*unloaded_module, throw_on_error);
             }
         }
+
+        return std::nullopt;
     }
 
-    void mini_dump_memory_walker::load_module(stream_module const& module, throw_on_error_t const throw_on_error) const
+    std::optional<ULONG64> mini_dump_memory_walker::load_module(stream_module const& module, throw_on_error_t const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {
             symbol_engine_.load_module(name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
                                        module->CheckSum, module.cv_record(), module->CvRecord.DataSize,
                                        module.misc_record(), module->MiscRecord.DataSize, module->VersionInfo, throw_on_error);
+            return module->BaseOfImage;
         }
+
+        return std::nullopt;
     }
 
-    void mini_dump_memory_walker::load_module(stream_unloaded_module const& module, throw_on_error_t const throw_on_error) const
+    std::optional<ULONG64> mini_dump_memory_walker::load_module(stream_unloaded_module const& module, throw_on_error_t const throw_on_error) const
     {
         if (std::wstring const name{module.name()}; !symbol_engine_.is_module_loaded(name))
         {
             symbol_engine_.load_module(name, module->BaseOfImage, module->SizeOfImage, module->TimeDateStamp,
                                        module->CheckSum, throw_on_error);
+            return module->BaseOfImage;
         }
+
+        return std::nullopt;
     }
 
 }

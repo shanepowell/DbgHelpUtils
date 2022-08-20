@@ -88,9 +88,9 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] DWORD64 get_loaded_module_base_routine(DWORD64 address) const;
         [[nodiscard]] DWORD64 get_unloaded_module_base_routine(DWORD64 address) const;
 
-        void load_module(std::wstring const& module_name, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
-        void load_module(stream_module const& module, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
-        void load_module(stream_unloaded_module const& module, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
+        [[nodiscard]] std::optional<ULONG64> load_module(std::wstring const& module_name, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
+        [[nodiscard]] std::optional<ULONG64> load_module(stream_module const& module, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
+        [[nodiscard]] std::optional<ULONG64> load_module(stream_unloaded_module const& module, throw_on_error_t throw_on_error = throw_on_error_t{false}) const;
 
         static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_unloaded_module_symbol_info(uint64_t address, unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);
 
