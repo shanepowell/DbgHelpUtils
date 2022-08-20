@@ -40,8 +40,13 @@ namespace dlg_help_utils
                     break;
                 }
 
-                size_t jump_amount{1};
+                size_t jump_amount{std::numeric_limits<size_t>::max()};
                 auto const keep_processing_index = check_data(check, index, jump_amount);
+
+                if(jump_amount == std::numeric_limits<size_t>::max())
+                {
+                    jump_amount = keep_processing_index ? sizeof(T) : 1;
+                }
 
                 // increment by the jump amount..
                 if(jump_amount != sizeof(T))
@@ -56,7 +61,7 @@ namespace dlg_help_utils
                     {
                         reset_stream = *this;
                     }
-                    index += jump_amount;
+                    index++;
                     if(is_found(index))
                     {
                         return true;
