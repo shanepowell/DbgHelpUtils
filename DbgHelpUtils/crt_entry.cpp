@@ -30,7 +30,12 @@ namespace dlg_help_utils::heap
 
     uint64_t crt_entry::end_entry_address() const
     {
-        return user_address() + data_size().count();
+        return user_address() + data_size().count() + cache_data_->no_mans_land_size;
+    }
+
+    size_units::base_16::bytes crt_entry::entry_size() const
+    {
+        return size_units::base_16::bytes{end_entry_address() - entry_address()};
     }
 
     uint32_t crt_entry::line_number() const
@@ -70,6 +75,10 @@ namespace dlg_help_utils::heap
             data.crt_mem_block_header_request_number_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_request_number_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
             data.crt_mem_block_header_data_size_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_data_size_field_symbol_name, dbg_help::sym_tag_enum::BaseType);
             data.crt_mem_block_header_file_name_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_file_name_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+            auto const gap_field_data = stream_utils::get_field_type_and_offset_in_type(data.crt_mem_block_header_symbol_type, symbol_name, common_symbol_names::crt_mem_block_header_gap_field_symbol_name, dbg_help::sym_tag_enum::ArrayType);
+            auto const gap_array_type = gap_field_data.type;
+            auto const gap_array_base_type = gap_array_type.type().value();
+            data.no_mans_land_size = gap_array_type.array_count().value_or(0) * stream_utils::get_type_length(gap_array_base_type, symbol_name);
         }
     }
 

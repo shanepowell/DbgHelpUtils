@@ -30,6 +30,7 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] uint64_t entry_address() const { return entry_address_; }
         [[nodiscard]] uint64_t end_entry_address() const;
+        [[nodiscard]] size_units::base_16::bytes entry_size() const;
 
         [[nodiscard]] std::wstring filename() const { return file_name_; }
         [[nodiscard]] uint32_t line_number() const;
@@ -63,6 +64,7 @@ namespace dlg_help_utils::heap
             stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_request_number_field_data;
             stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_data_size_field_data;
             stream_utils::symbol_type_and_base_type_field_offset crt_mem_block_header_file_name_field_data;
+            size_t no_mans_land_size{};
         };
 
         cache_data const* cache_data_;

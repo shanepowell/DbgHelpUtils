@@ -41,6 +41,9 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] std::experimental::generator<crt_entry> entries() const;
 
+        [[nodiscard]] uint64_t address() const { return crt_first_block_; }
+        [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->block_symbol_symbol_type; }
+
     private:
         [[nodiscard]] uint64_t get_crt_first_block() const;
 

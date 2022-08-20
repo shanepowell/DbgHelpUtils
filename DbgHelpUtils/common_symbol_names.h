@@ -81,6 +81,7 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const heap_front_end_heap_type_field_symbol_name;
     extern std::wstring const heap_front_end_heap_field_symbol_name;
     extern std::wstring const list_entry_flink_field_symbol_name;
+    extern std::wstring const heap_entry_previous_block_private_data_field_symbol_name;
     extern std::wstring const heap_entry_small_tag_index_field_symbol_name;
     extern std::wstring const heap_entry_size_field_symbol_name;
     extern std::wstring const heap_entry_flags_field_symbol_name;
@@ -241,6 +242,7 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const crt_mem_block_header_block_use_field_symbol_name;
     extern std::wstring const crt_mem_block_header_data_size_field_symbol_name;
     extern std::wstring const crt_mem_block_header_request_number_field_symbol_name;
+    extern std::wstring const crt_mem_block_header_gap_field_symbol_name;
     extern std::wstring const stack_trace_database_entry_index_array_field_symbol_name;
     extern std::wstring const stack_trace_database_number_of_entries_allocated_field_symbol_name;
 }
