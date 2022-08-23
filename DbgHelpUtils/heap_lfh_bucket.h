@@ -35,7 +35,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_t bucket_index() const { return bucket_index_; }
         [[nodiscard]] size_units::base_16::bytes bucket_granularity() const { return bucket_granularity_; }
         [[nodiscard]] size_units::base_16::bytes max_allocation_size() const { return max_allocation_size_; }
-        [[nodiscard]] uint64_t heap_lfh_bucket_address() const { return heap_lfh_bucket_address_; }
+        [[nodiscard]] uint64_t heap_lfh_bucket_address() const { return is_enabled_ ? heap_lfh_bucket_address_ : 0; }
+        [[nodiscard]] uint64_t heap_lfh_bucket_address_raw() const { return heap_lfh_bucket_address_; }
 
         [[nodiscard]] size_t slot_count() const;
         [[nodiscard]] uint64_t total_block_count() const;
