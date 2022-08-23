@@ -135,10 +135,10 @@ Function RunAllocationApplicationChecks($validateoptions, $base_name)
         remove-item $dmp_2_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_2_debug_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
 
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --heapstat all --dumpfile `"$dmp_1`" --out `"$dmp_1_full_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile `"$dmp_1`" --out `"$dmp_1_debug_full_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --heapstat all --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_full_diff_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_debug_full_diff_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --dumpfile `"$dmp_1`" --out `"$dmp_1_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --dumpfile `"$dmp_1`" --out `"$dmp_1_debug_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_full_diff_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_debug_full_diff_log`""
     }
     
     RunCommand "$ExeFolder\ValidateHeapEntries.exe" "--dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$ResultFile`" --json `"$json`" $validateoptions"
@@ -158,8 +158,8 @@ Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
         remove-item $dmp_full_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_debug_full_log -ErrorAction:SilentlyContinue | Out-Null
 
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --heapstat all --dumpfile `"$dmp`" --out `"$dmp_full_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --heapdebug --heapstat all --symbols --dumpfile `"$dmp`" --out `"$dmp_debug_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --dumpfile `"$dmp`" --out `"$dmp_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --dumpfile `"$dmp`" --out `"$dmp_debug_full_log`""
     }
 
     RunCommand "$ExeFolder\ValidateHeapEntries.exe" "--dmp1 `"$dmp`" --log `"$ResultFile`" --json `"$json`" $validateoptions"
