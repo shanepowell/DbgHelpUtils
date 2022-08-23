@@ -102,6 +102,12 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(display_stack_trace_database_)["--std"]("stack trace database")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(process_heaps_options_.no_filter_heap_entries())["--nofilterheapentries"]("don't filter heap entries for OS usages")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(process_heaps_options_.no_mark_global_variable_data_pointers_as_system())["--nomarkgvsystem"]("don't mark all system global variable data pointers as system")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(process_heaps_options_.no_mark_all_crt_entries_as_system())["--nomarknoncrtsystem"]("don't mark all non crt entries as system")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(filtered_system_types_raw_, "symbol" )["--filtersymbol"]("filter symbol to references from being marked as system")
         | lyra::opt(disable_symbol_load_cancel_keyboard_check_)["--disable-symbol-load-cancel-keyboard-check"]("disable the keyboard check when loading symbols")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(display_heap_graph_)["--heapgraph"]("calculate heap graph")
@@ -116,6 +122,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(view_sort_order_raw_, dlg_help_utils::join(g_view_sort_order | std::views::keys, "|"sv))["--statsortorder"]("heap statistic sort order").choices([](std::string const& value) { return g_view_sort_order.contains(value); })
         | lyra::opt(output_filename_raw_, "filename")["--out"]("output filename")
         | lyra::opt(verbose_output_)["--verbose"]("verbose console output")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(graph_display_max_call_depth_raw_, "50")["--hgmaxcalldepth"]("limit the generation of the process graph display to use a call stack depth of 50 (default 50)")
     ;
 }
 
@@ -171,10 +179,17 @@ void dump_file_options::process_raw_options()
         display_heap_graph_to_reference_limit_raw_.clear();
     }
 
+    if(!graph_display_max_call_depth_raw_.empty())
+    {
+        graph_display_max_call_depth_ = static_cast<size_t>(dlg_help_utils::size_units::base_16::from_wstring(dlg_help_utils::string_conversation::acp_to_wstring(graph_display_max_call_depth_raw_)).count());
+        graph_display_max_call_depth_raw_.clear();
+    }
+
     symbol_types_ = convert_to_wstring(symbol_types_raw_);
     symbol_names_ = convert_to_wstring(symbol_names_raw_);
     dump_types_modules_ = convert_to_wstring(dump_types_modules_raw_);
     dump_address_types_ = convert_to_wstring(dump_address_types_raw_);
+    process_heaps_options_.set_filtered_system_types(convert_to_wstring(filtered_system_types_raw_));
 
     auto view_options = heap_statistics_raw_ | std::views::transform([](std::string const& value) { return g_heap_statistics_view_options.at(value); });
     heap_statistics_views_ = std::accumulate(std::begin(view_options), std::end(view_options), static_cast<uint16_t>(0), [](uint16_t const options, uint16_t const value) -> uint16_t { return options | value; });

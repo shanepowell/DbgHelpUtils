@@ -8,8 +8,9 @@
 
 namespace dlg_help_utils::heap::allocation_graph
 {
-    process_heap_graph_node::process_heap_graph_node(process_heap_graph_node_type const type)
-    : type_{type}
+    process_heap_graph_node::process_heap_graph_node(uint64_t const start_address, process_heap_graph_node_type const type)
+    : start_address_{start_address}
+    , type_{type}
     {
     }
 
@@ -27,6 +28,23 @@ namespace dlg_help_utils::heap::allocation_graph
     {
         remove_all_references_from(node_index, from_references_);
         remove_all_references_from(node_index, to_references_);
+        remove_all_symbol_references(node_index);
+    }
+
+    void process_heap_graph_node::remove_metadata_symbol_references()
+    {
+        if(symbol_references_.empty())
+        {
+            return;
+        }
+
+        auto const [first, last] = std::ranges::remove_if(symbol_references_, [](auto const& reference) { return reference.is_metadata_symbol(); });
+        symbol_references_.erase(first, last);
+    }
+
+    void process_heap_graph_node::set_as_system(bool const value)
+    {
+        is_system_ = value;
     }
 
     process_heap_entry_symbol_address_reference& process_heap_graph_node::add_symbol_address_reference(process_heap_entry_symbol_address_reference symbol_reference)
@@ -62,6 +80,17 @@ namespace dlg_help_utils::heap::allocation_graph
         type_ = process_heap_graph_node_type::system_allocation;
     }
 
+    void process_heap_graph_node::remove_all_symbol_references(uint64_t node_index)
+    {
+        if(symbol_references_.empty())
+        {
+            return;
+        }
+
+        auto const [first, last] = std::ranges::remove_if(symbol_references_, [node_index](auto const& reference) { return reference.node_index() == node_index; });
+        symbol_references_.erase(first, last);
+    }
+
     uint64_t process_heap_graph_node::get_next_process_heap_graph_node_index()
     {
         static std::atomic_uint64_t next_index{0};
@@ -70,7 +99,13 @@ namespace dlg_help_utils::heap::allocation_graph
 
     void process_heap_graph_node::remove_all_references_from(uint64_t const node_index, std::vector<process_heap_entry_reference>& references)
     {
+        if(references.empty())
+        {
+            return;
+        }
+
         auto const [first, last] = std::ranges::remove_if(references, [node_index](auto const& reference) { return reference.node_index() == node_index; });
         references.erase(first, last);
     }
 }
+

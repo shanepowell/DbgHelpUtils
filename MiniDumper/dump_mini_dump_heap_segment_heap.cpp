@@ -184,18 +184,33 @@ namespace detail
         void print_lfh_bucket_single_line(std::wostream& log, streamsize const hex_length, heap::heap_lfh_bucket const& lfh_bucket, size_t const indent)
         {
             using namespace size_units::base_16;
-            log << std::format(L"{0:{1}}LFH Bucket: {2} @ {3} {4} Granularity({5}) MaxAllocationSize({6})", L' ', indent
-                , stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length)
+
+            std::wstring bucket_address;
+            if(lfh_bucket.is_enabled())
+            {
+                bucket_address = std::format(L"{} @ ", stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length));
+            }
+
+            log << std::format(L"{0:{1}}LFH Bucket: {2}{3} {4} Granularity({5}) MaxAllocationSize({6})"
+                , L' '
+                , indent
+                , bucket_address
                 , locale_formatting::to_wstring(lfh_bucket.bucket_index())
                 , lfh_bucket.is_enabled() ? L"Enabled"sv : L"Disabled"sv
                 , to_wstring(lfh_bucket.bucket_granularity())
                 , to_wstring(lfh_bucket.max_allocation_size()));
 
-            log << (lfh_bucket.is_enabled() ? std::format(L" TotalBlockCount({0}) TotalSubsegmentCount({1}) Shift({2})"
+            if(lfh_bucket.is_enabled())
+            {
+                log << std::format(L" TotalBlockCount({0}) TotalSubsegmentCount({1}) Shift({2})"
                                                           , locale_formatting::to_wstring(lfh_bucket.total_block_count())
                                                           , locale_formatting::to_wstring(lfh_bucket.total_subsegment_count())
-                                                          , locale_formatting::to_wstring(lfh_bucket.shift()))
-                : std::format(L" UsageCount({})", locale_formatting::to_wstring(lfh_bucket.usage_count())));
+                                                          , locale_formatting::to_wstring(lfh_bucket.shift()));
+            }
+            else
+            {
+                log << std::format(L" UsageCount({})", locale_formatting::to_wstring(lfh_bucket.usage_count()));
+            }
             log << L'\n';
         }
 
@@ -203,7 +218,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}LFH Bucket: {1}\n", indent_str, stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length));
+            log << std::format(L"{0}LFH Bucket: {1}\n", indent_str, lfh_bucket.is_enabled() ? stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address(), hex_length) : std::wstring{});
             log << std::format(L"{0}  Bucket Index: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.bucket_index()));
             log << std::format(L"{0}  Bucket Enabled: {1}\n", indent_str, lfh_bucket.is_enabled());
             log << std::format(L"{0}  Granularity: {1} ({2})\n", indent_str, to_wstring(lfh_bucket.bucket_granularity()), stream_hex_dump::to_hex(lfh_bucket.bucket_granularity()));
@@ -226,6 +241,7 @@ namespace detail
             else
             {
                 log << std::format(L"{0}  Usage Count: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.usage_count()));
+                log << std::format(L"{0}  Bucket Raw Data: {1}\n", indent_str, stream_hex_dump::to_hex(lfh_bucket.heap_lfh_bucket_address_raw(), hex_length));
             }
         }
 

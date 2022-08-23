@@ -78,7 +78,9 @@ public:
     [[nodiscard]] dlg_help_utils::heap::system_module_list const& system_module_list() const { return system_module_list_; }
     [[nodiscard]] dlg_help_utils::heap::statistic_views::statistic_view_options const& statistic_view_options() const { return statistic_view_options_; }
     [[nodiscard]] dlg_help_utils::heap::process_heaps_options const& process_heaps_options() const { return process_heaps_options_; }
+    [[nodiscard]] dlg_help_utils::heap::process_heaps_options& process_heaps_options() { return process_heaps_options_; }
     [[nodiscard]] bool verbose_output() const { return verbose_output_; }
+    [[nodiscard]] size_t graph_display_max_call_depth() const { return graph_display_max_call_depth_; }
     [[nodiscard]] std::wostream& get_log_stream();
 
 private:
@@ -132,6 +134,7 @@ private:
     std::vector<std::string> dump_address_types_raw_;
     std::vector<std::wstring> dump_address_types_;
     std::vector<std::string> heap_statistics_raw_;
+    std::vector<std::string> filtered_system_types_raw_;
     std::string by_range_view_range_raw_;
     std::string system_module_list_file_;
     std::string view_sort_column_raw_;
@@ -143,4 +146,6 @@ private:
     dlg_help_utils::heap::process_heaps_options process_heaps_options_;
     std::wofstream log_file_;
     bool verbose_output_{false};
+    std::string graph_display_max_call_depth_raw_;
+    size_t graph_display_max_call_depth_{50};
 };

@@ -50,7 +50,7 @@ namespace
     }
 }
 
-bool process_dump_file(std::wostream& log, wstring const& file_name, std::wstring const& base_diff_file_name, dump_file_options const& options)
+bool process_dump_file(std::wostream& log, wstring const& file_name, std::wstring const& base_diff_file_name, dump_file_options& options)
 {
     try
     {
@@ -109,7 +109,7 @@ bool process_dump_file(std::wostream& log, wstring const& file_name, std::wstrin
     return false;
 }
 
-void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std::unique_ptr<mini_dump> const& base_diff_dump, dump_file_options const& options)
+void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std::unique_ptr<mini_dump> const& base_diff_dump, dump_file_options& options)
 {
     cache_manager cache;
     symbol_engine_ui ui{options};

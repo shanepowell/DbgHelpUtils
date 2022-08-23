@@ -2,6 +2,9 @@
 
 #include "dump_mini_dump_heap.h"
 #include "DbgHelpUtils/assert_value.h"
+#include "DbgHelpUtils/crt_entry.h"
+#include "DbgHelpUtils/exit_scope.h"
+#include "DbgHelpUtils/heap_node_type.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_graph.h"
@@ -12,6 +15,7 @@
 
 #include <algorithm>
 #include <ranges>
+
 
 using namespace std;
 using namespace dlg_help_utils;
@@ -38,10 +42,18 @@ namespace
 
         auto const* module = walker.module_list().find_module(entry.symbol_type().module_base());
         auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+        auto export_name = entry.symbol_type().export_name().empty() ? L""s : std::format(L"({})", entry.symbol_type().export_name());
         auto const& base_heap_entry = node.base_heap_entry();
 
         // ReSharper disable once StringLiteralTypo
-        return std::format(L" [Name({0}!{1}) Index({2}) Addr({3}) Size({4}){5}]", module_name, entry.symbol_type().name().value_or(L"<unknown>"sv), entry.symbol_type().sym_index(), stream_hex_dump::to_hex(entry.symbol_type().address().value_or(0), hex_length), to_wstring(bytes{entry.symbol_type().length().value_or(0)}), get_base_heap_entry_details(base_heap_entry, hex_length));
+        return std::format(L" [Name({0}!{1}{2}) Index({3}) Addr({4}) Size({5}){6}]"
+            , module_name
+            , entry.symbol_type().name().value_or(L"<unknown>"sv)
+            , export_name
+            , entry.symbol_type().sym_index()
+            , stream_hex_dump::to_hex(entry.symbol_type().address().value_or(0), hex_length)
+            , to_wstring(bytes{entry.symbol_type().length().value_or(0)})
+            , get_base_heap_entry_details(base_heap_entry, hex_length));
     }
 
     std::wstring get_node_specific_data(heap::allocation_graph::process_heap_graph_heap_entry const& node, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const&)
@@ -96,7 +108,10 @@ namespace
         using namespace size_units::base_16;
 
         std::wostringstream ss;
-        ss << std::format(L" [ThreadId({0}) Register({1}) Data({2})]", stream_hex_dump::to_hex(node.thread_id()), register_names::get_register_name(node.register_type()), stream_hex_dump::to_hex(node.register_data(), hex_length));
+        ss << std::format(L" [ThreadId({0}) Register({1}) Data({2})]"
+            , stream_hex_dump::to_hex(node.thread_id())
+            , register_names::get_register_name(node.register_type())
+            , stream_hex_dump::to_hex(node.register_data(), hex_length));
         if(!node.thread_name().empty())
         {
             ss << std::format(L" ThreadName({})", node.thread_name());
@@ -113,9 +128,15 @@ namespace
         std::wostringstream ss;
         auto const* module = walker.module_list().find_module(node.symbol_type().module_base());
         auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+        auto export_name = node.symbol_type().export_name().empty() ? L""s : std::format(L"({})", node.symbol_type().export_name());
 
         // ReSharper disable once StringLiteralTypo
-        ss << std::format(L" [Name({0}!{1}) Index({2}) Addr({3})", module_name, node.symbol_type().name().value_or(L"<unknown>"sv), node.symbol_type().sym_index(), stream_hex_dump::to_hex(node.symbol_type().address().value_or(0), hex_length), to_wstring(bytes{node.symbol_type().length().value_or(0)}));
+        ss << std::format(L" [Name({0}!{1}{2}) Index({3}) Addr({4})"
+            , module_name, node.symbol_type().name().value_or(L"<unknown>"sv)
+            , export_name
+            , node.symbol_type().sym_index()
+            , stream_hex_dump::to_hex(node.symbol_type().address().value_or(0), hex_length)
+            , to_wstring(bytes{node.symbol_type().length().value_or(0)}));
         if(node.thread_id().has_value())
         {
             ss << std::format(L" ThreadId({})", stream_hex_dump::to_hex(node.thread_id().value()));
@@ -129,14 +150,20 @@ namespace
         return std::move(ss).str();
     }
 
-    std::wstring get_symbol_reference_description(stream_stack_dump::mini_dump_memory_walker const& walker, heap::allocation_graph::process_heap_entry_symbol_address_reference const& symbol_reference)
+    std::wstring get_symbol_reference_description(stream_stack_dump::mini_dump_memory_walker const& walker, heap::allocation_graph::process_heap_entry_symbol_address_reference const& symbol_reference, dump_file_options const& options)
     {
         std::wostringstream ss;
         auto const* module = walker.module_list().find_module(symbol_reference.symbol_type().module_base());
         auto module_name = module != nullptr ? module->name() : L"<unknown>"sv;
+        auto export_name = symbol_reference.symbol_type().export_name().empty() ? L""s : std::format(L"({})", symbol_reference.symbol_type().export_name());
 
         // ReSharper disable once StringLiteralTypo
-        ss << std::format(L" [Name({0}!{1}) Index({2}) Size({3})", module_name, symbol_reference.symbol_type().name().value_or(L"<unknown>"sv), symbol_reference.symbol_type().sym_index(), to_wstring(size_units::base_16::bytes{symbol_reference.symbol_type().length().value_or(0)}));
+        ss << std::format(L" [Name({0}!{1}{2}) Index({3}) Size({4})"
+            , module_name
+            , symbol_reference.symbol_type().name().value_or(L"<unknown>"sv)
+            , export_name
+            , symbol_reference.symbol_type().sym_index()
+            , to_wstring(size_units::base_16::bytes{symbol_reference.symbol_type().length().value_or(0)}));
         if(symbol_reference.thread_id().has_value())
         {
             ss << std::format(L" ThreadId({})", stream_hex_dump::to_hex(symbol_reference.thread_id().value()));
@@ -149,6 +176,19 @@ namespace
 
         ss << "]";
 
+        if(options.debug_type_data())
+        {
+            if(symbol_reference.is_root_symbol())
+            {
+                ss << " [root]";
+            }
+
+            if(symbol_reference.is_metadata_symbol())
+            {
+                ss << " [metadata]";
+            }
+        }
+
         return std::move(ss).str();
     }
 
@@ -160,7 +200,8 @@ namespace
         , std::optional<uint64_t> const& pointer
         , std::optional<heap::allocation_graph::graph_node_variable_symbol_reference_data> const& variable_symbol_info
         , std::streamsize const hex_length
-        , stream_stack_dump::mini_dump_memory_walker const& walker)
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , dump_file_options const& options)
     {
         std::wostringstream ss;
         if(parent_offset.has_value())
@@ -185,7 +226,14 @@ namespace
 
         if(node.is_system_allocation() || node.is_system())
         {
-            ss << L" [system]";
+            if(node.can_contain_user_pointers())
+            {
+                ss << L" [system-with-user-pointers]";
+            }
+            else
+            {
+                ss << L" [system]";
+            }
         }
 
         if(node.is_non_allocation_root_node())
@@ -207,9 +255,9 @@ namespace
             ss << L" [cyclic]";
         }
 
-        if(node.symbol_references().size() == 1)
+        if(node.symbol_references().size() == 1 && node.symbol_references().front().is_root_symbol())
         {
-            ss << get_symbol_reference_description(walker, node.symbol_references().front());
+            ss << get_symbol_reference_description(walker, node.symbol_references().front(), options);
         }
 
         return std::move(ss).str();
@@ -263,13 +311,14 @@ namespace
         , to_reference_t const to_reference
         , is_self_t const is_self
         , already_logged_children_t const already_logged_children
-        , stream_stack_dump::mini_dump_memory_walker const& walker)
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , dump_file_options const& options)
     {
         log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", 
             ' ',
             indent,
             parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(),
-            get_node_attributes(node, is_self, parent_offset, pointer, variable_symbol_info, hex_length, walker),
+            get_node_attributes(node, is_self, parent_offset, pointer, variable_symbol_info, hex_length, walker, options),
             get_node_specific_data(node, hex_length, walker),
             cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
     }
@@ -304,11 +353,12 @@ namespace
         , cycle_end_detected_t const cycle_end_detected
         , already_logged_children_t const already_logged_children
         , std::streamsize const hex_length
-        , stream_stack_dump::mini_dump_memory_walker const& walker)
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , dump_file_options const& options)
     {
-        std::visit([&log, indent, to_reference, is_self, &parent_offset, &pointer, &variable_symbol_info, cycle_end_detected, already_logged_children, hex_length, &walker](auto const& _) mutable
+        std::visit([&log, indent, to_reference, is_self, &parent_offset, &pointer, &variable_symbol_info, cycle_end_detected, already_logged_children, hex_length, &walker, &options](auto const& _) mutable
         {
-            print_node_line(log, _, indent, parent_offset, pointer, variable_symbol_info, cycle_end_detected, hex_length, to_reference, is_self, already_logged_children, walker);
+            print_node_line(log, _, indent, parent_offset, pointer, variable_symbol_info, cycle_end_detected, hex_length, to_reference, is_self, already_logged_children, walker, options);
         }, node);
     }
 
@@ -343,7 +393,7 @@ namespace
         , size_t const call_depth)
     {
         auto const& graph_node = get_graph_node(node);
-        print_display_node(log, node, indent, to_reference, is_self, parent_offset, pointer, variable_symbol_info, cycle_end_detected, already_logged_children, hex_length, walker);
+        print_display_node(log, node, indent, to_reference, is_self, parent_offset, pointer, variable_symbol_info, cycle_end_detected, already_logged_children, hex_length, walker, options);
 
         if(cycle_end_detected || already_logged_children)
         {
@@ -352,18 +402,35 @@ namespace
 
         if(!to_reference && !graph_node.symbol_references().empty())
         {
-            auto const start = node_start_address(node);
+            auto const start = graph_node.start_address();
             log << std::format(L"{0:{1}}Symbols: ({2})\n", ' ', indent, graph_node.symbol_references().size());
 
-            for(auto const& reference : graph_node.symbol_references())
+            auto references{graph_node.symbol_references()};
+            auto projection = [](heap::allocation_graph::process_heap_entry_symbol_address_reference const& value) { return value.address(); };
+
+            std::ranges::sort(references, {}, projection);
+            for(auto const& reference : references)
             {
                 log << std::format(L"{0:{1}}", ' ', indent+2);
-                if(reference.address() >= start)
+                if(reference.address() != 0)
                 {
-                    auto const offset = reference.address() - start;
-                    log << std::format(L" +{0}", stream_hex_dump::to_hex(offset, 4));
+                    if(reference.address() >= start)
+                    {
+                        auto const offset = reference.address() - start;
+                        log << std::format(L" +{}", stream_hex_dump::to_hex(offset, 4));
+                    }
+                    else
+                    {
+                        auto const offset = start - reference.address();
+                        log << std::format(L" -{}", stream_hex_dump::to_hex(offset, 4));
+                    }
+
+                    if(options.debug_type_data())
+                    {
+                        log << std::format(L" [{}]", stream_hex_dump::to_hex(reference.address(), hex_length));
+                    }
                 }
-                log << get_symbol_reference_description(walker, reference) << L'\n';
+                log << get_symbol_reference_description(walker, reference, options) << L'\n';
             }
         }
 
@@ -371,7 +438,10 @@ namespace
         {
             log << std::format(L"{0:{1}}From References: ({2})\n", ' ', indent, graph_node.from_references().size());
 
-            for(auto const& reference : graph_node.from_references())
+            auto references = graph_node.from_references();
+            auto projection = [](heap::allocation_graph::process_heap_entry_reference const& value) { return value.to_offset(); };
+            std::ranges::sort(references, {}, projection);
+            for(auto const& reference : references)
             {
                 auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
                 print_display_node(log
@@ -379,13 +449,14 @@ namespace
                     , indent+2
                     , to_reference_t{false}
                     , is_self_t{graph_node.index() == child_node.index()}
-                    , reference.offset()
-                    , reference.pointer()
+                    , reference.from_offset()
+                    , reference.from_pointer()
                     , reference.variable_symbol_info()
                     , cycle_end_detected_t{false}
                     , already_logged_children_t{false}
                     , hex_length
-                    , walker);
+                    , walker
+                    , options);
             }
         }
 
@@ -410,7 +481,7 @@ namespace
                 std::move(node_parents)
             };
 
-            if(call_depth > 100)
+            if(call_depth > options.graph_display_max_call_depth())
             {
                 node_stack.emplace_back(std::move(state));
             }
@@ -432,7 +503,10 @@ namespace
         , size_t const call_depth)
     {
         auto const& graph_node = get_graph_node(*state.node);
-        for(auto const& reference : graph_node.to_references() | std::views::take(state.print_max_size) | std::views::drop(state.print_offset))
+        auto references = graph_node.to_references();
+        auto projection = [](heap::allocation_graph::process_heap_entry_reference const& value) { return value.from_offset(); };
+        std::ranges::sort(references, {}, projection);
+        for(auto const& reference : references | std::views::take(state.print_max_size) | std::views::drop(state.print_offset))
         {
             auto const& child_node = get_node_from_index(nodes_index, reference.node_index());
             auto const& child_graph_node = get_graph_node(child_node);
@@ -445,6 +519,11 @@ namespace
             auto const& stack_node = node_stack.emplace_back(std::move(state));
             auto const stack_size = node_stack.size();
 
+            if(call_depth + 1 >= options.graph_display_max_call_depth())
+            {
+                return;
+            }
+
             display_node(log
                 , options
                 , nodes_index
@@ -453,8 +532,8 @@ namespace
                 , stack_node.indent
                 , to_reference_t{true}
                 , is_self_t{graph_node.index() == child_node.index()}
-                , reference.offset()
-                , reference.pointer()
+                , reference.to_offset()
+                , reference.to_pointer()
                 , reference.variable_symbol_info()
                 , child_cycle_end_detected
                 , child_already_logged_children
@@ -480,7 +559,14 @@ namespace
         }
     }
 
-    void generate_display_node_and_print(std::wostream& log, dump_file_options const& options, nodes_index_map const& nodes_index, std::set<uint64_t>& printed_nodes, heap::allocation_graph::process_heap_graph_entry_type const& node, size_t const indent, std::streamsize const hex_length, stream_stack_dump::mini_dump_memory_walker const& walker)
+    void generate_display_node_and_print(std::wostream& log
+        , dump_file_options const& options
+        , nodes_index_map const& nodes_index
+        , std::set<uint64_t>& printed_nodes
+        , heap::allocation_graph::process_heap_graph_entry_type const& node
+        , size_t const indent
+        , std::streamsize const hex_length
+        , stream_stack_dump::mini_dump_memory_walker const& walker)
     {
         std::vector<node_display_state> node_stack;
 
@@ -515,22 +601,140 @@ namespace
     {
         return std::make_tuple(entry.index(), !is_root_node(entry), node_start_address(entry));
     }
+
+    [[nodiscard]] std::wstring to_wstring(heap::heap_node_type const value)
+    {
+        using namespace std::string_literals;
+        using heap::heap_node_type;
+
+        switch(value)
+        {
+            case heap_node_type::nt_heap_lfh_entry: return L"NT LFH Heap"s;
+            case heap_node_type::nt_heap_segment_entry: return L"NT Heap Segment Entry"s;
+            case heap_node_type::nt_heap_virtual_entry: return L"NT Heap Virtual Entry"s;
+            case heap_node_type::segment_backend_entry: return L"Segment Heap Backend Entry"s;
+            case heap_node_type::segment_entry: return L"Segment Heap Entry"s;
+            case heap_node_type::segment_lfh_entry: return L"Segment Heap LFH Entry"s;
+            case heap_node_type::segment_large_entry: return L"Segment Heap Large Entry"s;
+            case heap_node_type::dph_entry: return L"DPH Entry"s;
+            case heap_node_type::dph_virtual_entry: return L"DPH Virtual Entry"s;
+            case heap_node_type::memory_range: return L"Memory Range"s;
+
+        }
+
+        return L"unknown"s;
+    }
+
+    void on_process_heap_match_crt_entry(std::wostream& log
+        , dump_file_options const& options
+        , heap::crt_entry const& crt_entry
+        , uint64_t const user_address
+        , size_units::base_16::bytes const user_size
+        , heap::block_range_match_result const match
+        , heap::heap_node_type const node_type
+        , std::streamsize const hex_length)
+    {
+        if(!options.verbose_output())
+        {
+            return;
+        }
+
+        using stream_hex_dump::to_hex;
+
+        switch(match)
+        {
+        case heap::block_range_match_result::block_match:
+            if(options.verbose_output())
+            {
+                log << std::format(L"INFO: block [{0}-{1}({2})] ({3}) matches CRT Entry [{4}:{5}-{6}({7})]\n"
+                    , to_hex(user_address, hex_length)
+                    , to_hex(user_address + user_size.count(), hex_length)
+                    , to_hex(user_size)
+                    , to_wstring(node_type)
+                    , to_hex(crt_entry.entry_address(), hex_length)
+                    , locale_formatting::to_wstring(crt_entry.request_number())
+                    , to_hex(crt_entry.end_entry_address(), hex_length)
+                    , to_hex(crt_entry.entry_size()));
+            }
+            break;
+
+        case heap::block_range_match_result::block_contains:
+            log << std::format(L"WARNING: block [{0}-{1}({2})] ({3}) contains CRT Entry [{4}:{5}-{6}({7})]\n"
+                , to_hex(user_address, hex_length)
+                , to_hex(user_address + user_size.count(), hex_length)
+                , to_hex(user_size)
+                , to_wstring(node_type)
+                , to_hex(crt_entry.entry_address(), hex_length)
+                , locale_formatting::to_wstring(crt_entry.request_number())
+                , to_hex(crt_entry.end_entry_address(), hex_length)
+                , to_hex(crt_entry.entry_size()));
+            break;
+
+        case heap::block_range_match_result::user_contains_block:
+            log << std::format(L"ERROR: CRT Entry [{4}:{5}-{6}({7})] contains block [{0}-{1}({2})] ({3})\n"
+                , to_hex(user_address, hex_length)
+                , to_hex(user_address + user_size.count(), hex_length)
+                , to_hex(user_size)
+                , to_wstring(node_type)
+                , to_hex(crt_entry.entry_address(), hex_length)
+                , locale_formatting::to_wstring(crt_entry.request_number())
+                , to_hex(crt_entry.end_entry_address(), hex_length)
+                , to_hex(crt_entry.entry_size()));
+            break;
+
+        case heap::block_range_match_result::block_partially_contains:
+            log << std::format(L"ERROR: block [{0}-{1}({2})] ({3}) partially contains CRT Entry [{4}:{5}-{6}({7})]\n"
+                , to_hex(user_address, hex_length)
+                , to_hex(user_address + user_size.count(), hex_length)
+                , to_hex(user_size)
+                , to_wstring(node_type)
+                , to_hex(crt_entry.entry_address(), hex_length)
+                , locale_formatting::to_wstring(crt_entry.request_number())
+                , to_hex(crt_entry.end_entry_address(), hex_length)
+                , to_hex(crt_entry.entry_size()));
+            break;
+
+        case heap::block_range_match_result::block_no_match:
+            break;
+        }
+    }
 }
 
-void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dump_file_options& options, dbg_help::symbol_engine& symbol_engine)
 {
+    process::process_environment_block const peb{mini_dump, cache, symbol_engine};
+    auto const hex_length = peb.machine_hex_printable_length();
+
+    options.process_heaps_options().set_match_result_callback([&log, &options, hex_length](heap::crt_entry const& crt_entry
+        , uint64_t const user_address
+        , size_units::base_16::bytes const user_size
+        , heap::block_range_match_result const match
+        , heap::heap_node_type const node_type)
+    {
+        on_process_heap_match_crt_entry(log, options, crt_entry, user_address, user_size, match, node_type, hex_length);
+    });
+    auto const cleanup_process_heap_options = make_scope_exit([&options] () mutable { options.process_heaps_options().set_match_result_callback({}); });
+
     heap::process_heaps const heaps{mini_dump, cache, symbol_engine, options.process_heaps_options(), options.system_module_list(), options.statistic_view_options()};
     heap::process_heap_graph graph{mini_dump, heaps, options.system_module_list()};
-    auto const hex_length = heaps.peb().machine_hex_printable_length();
 
-    std::wcerr << std::format(L"Generate Memory Allocation Graph\n");
+    if(options.verbose_output())
+    {
+        std::wclog << std::format(L"Generate Memory Allocation Graph\n");
+    }
     auto start = std::chrono::system_clock::now();
     graph.generate_graph();
 
     auto end = std::chrono::system_clock::now();
-    std::wcerr << std::format(L"Generate Memory Allocation Graph Took ({0:%T})\n", end - start);
+    if(options.verbose_output())
+    {
+        std::wclog << std::format(L"Generate Memory Allocation Graph Took ({0:%T})\n", end - start);
+    }
     start = end;
-    std::wcerr << L"Sort Memory Allocation Graph\n";
+    if(options.verbose_output())
+    {
+        std::wclog << L"Sort Memory Allocation Graph\n";
+    }
     auto nodes = graph.nodes();
     std::ranges::sort(nodes, [](auto const& a, auto const& b)
         {
@@ -538,9 +742,15 @@ void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, c
         });
 
     end = std::chrono::system_clock::now();
-    std::wcerr << std::format(L"Sort Memory Allocation Graph Took ({0:%T})\n", end - start);
+    if(options.verbose_output())
+    {
+        std::wclog << std::format(L"Sort Memory Allocation Graph Took ({0:%T})\n", end - start);
+    }
     start = end;
-    std::wcerr << L"Generate Display for Memory Allocation Graph\n";
+    if(options.verbose_output())
+    {
+        std::wclog << L"Generate Display for Memory Allocation Graph\n";
+    }
     nodes_index_map nodes_index;
     for (auto const& node : nodes)
     {
@@ -557,5 +767,8 @@ void dump_mini_dump_heap_graph(std::wostream& log, mini_dump const& mini_dump, c
     }
 
     end = std::chrono::system_clock::now();
-    std::wcerr << std::format(L"Generate Display for Memory Allocation Graph Took ({0:%T})\n", end - start);
+    if(options.verbose_output())
+    {
+        std::wclog << std::format(L"Generate Display for Memory Allocation Graph Took ({0:%T})\n", end - start);
+    }
 }

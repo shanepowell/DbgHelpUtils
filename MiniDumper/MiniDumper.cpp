@@ -83,22 +83,22 @@ int main(int const argc, char* argv[])
 
         if(base_diff_dump_files_current != base_diff_dump_files_end)
         {
-            log << L"warning: more base diff dump file paths than dump file paths\n";
+            log << L"WARNING: more base diff dump file paths than dump file paths\n";
         }
 
         return EXIT_SUCCESS;
     }
     catch (wide_runtime_error const& e)
     {
-        wcerr << std::format(L"fatal error: {}\n", e.message());
+        wcerr << std::format(L"FATAL ERROR: {}\n", e.message());
     }
     catch (exception const& e)
     {
-        wcerr << std::format(L"fatal error: {}\n", string_conversation::acp_to_wstring(e.what()));
+        wcerr << std::format(L"FATAL ERROR: {}\n", string_conversation::acp_to_wstring(e.what()));
     }
     catch (...)
     {
-        wcerr << L"fatal error: Unknown exception\n";
+        wcerr << L"FATAL ERROR: Unknown exception\n";
     }
     return EXIT_FAILURE;
 }

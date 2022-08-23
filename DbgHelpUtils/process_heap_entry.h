@@ -60,6 +60,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] mini_dump_memory_stream all_user_data() const;
 
         [[nodiscard]] bool contains_address_range(uint64_t address, size_units::base_16::bytes size) const;
+        [[nodiscard]] bool contains_metadata_address_range(uint64_t address, size_units::base_16::bytes size) const;
 
         [[nodiscard]] bool operator==(process_heap_entry const& rhs) const
         {
@@ -68,9 +69,15 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] block_range_match_result match_range(uint64_t range_address, size_units::base_16::bytes range_size) const;
 
+        [[nodiscard]] bool is_crt_heap_entry() const { return is_crt_heap_entry_; }
+        [[nodiscard]] heap_node_type get_heap_entry_type() const { return heap_entry_type_; }
+
     private:
         [[nodiscard]] uint64_t get_nt_heap_entry_check_block_start(heap_entry const& entry) const;
         [[nodiscard]] uint64_t get_nt_heap_entry_check_block_size(heap_entry const& entry) const;
+        [[nodiscard]] static heap_node_type get_heap_entry_node_type(heap_entry const& entry);
+        [[nodiscard]] static heap_node_type get_dph_entry_type(dph_entry const& entry);
+        void validate_entry() const;
 
     private:
         process::process_environment_block const* peb_;
@@ -84,6 +91,10 @@ namespace dlg_help_utils::heap
         uint32_t request_number_{0};
         uint64_t check_block_start_address_;
         uint64_t check_block_end_address_;
+        uint64_t check_metadata_start_address_;
+        uint64_t check_metadata_end_address_;
         size_units::base_16::bytes overhead_size_;
+        bool is_crt_heap_entry_{false};
+        heap_node_type heap_entry_type_;
     };
 }

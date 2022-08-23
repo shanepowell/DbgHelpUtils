@@ -2,16 +2,22 @@
 
 namespace dlg_help_utils::heap::allocation_graph
 {
-    process_heap_entry_symbol_address_reference::process_heap_entry_symbol_address_reference(uint64_t const address, dbg_help::symbol_type_info symbol_type, uint32_t const thread_id, std::wstring thread_name)
+    process_heap_entry_symbol_address_reference::process_heap_entry_symbol_address_reference(is_root_symbol_t const is_root_symbol, is_metadata_symbol_t const is_metadata_symbol, uint64_t const address, uint64_t const node_index, dbg_help::symbol_type_info symbol_type, uint32_t const thread_id, std::wstring thread_name)
         : address_{address}
+        , node_index_{node_index}
+        , is_root_symbol_{is_root_symbol}
+        , is_metadata_symbol_{is_metadata_symbol}
         , symbol_type_{std::move(symbol_type)}
         , thread_id_{thread_id}
         , thread_name_{std::move(thread_name)}
     {
     }
 
-    process_heap_entry_symbol_address_reference::process_heap_entry_symbol_address_reference(uint64_t const address, dbg_help::symbol_type_info symbol_type)
+    process_heap_entry_symbol_address_reference::process_heap_entry_symbol_address_reference(is_root_symbol_t const is_root_symbol, is_metadata_symbol_t const is_metadata_symbol, uint64_t const address, uint64_t const node_index, dbg_help::symbol_type_info symbol_type)
         : address_{address}
+        , node_index_{node_index}
+        , is_root_symbol_{is_root_symbol}
+        , is_metadata_symbol_{is_metadata_symbol}
         , symbol_type_{std::move(symbol_type)}
     {
     }

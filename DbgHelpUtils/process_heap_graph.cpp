@@ -1,10 +1,35 @@
 ﻿#include "process_heap_graph.h"
 
 #include <algorithm>
+#include <array>
 #include <ranges>
 
-#include "global_variable.h"
-#include "global_variables.h"
+#include "common_symbol_names.h"
+#include "crt_entry.h"
+#include "crt_heap.h"
+#include "dph_entry.h"
+#include "get_last_address.h"
+#include "global_symbol.h"
+#include "global_symbols.h"
+#include "heap_entry.h"
+#include "heap_lfh_affinity_slot.h"
+#include "heap_lfh_bucket.h"
+#include "heap_lfh_context.h"
+#include "heap_lfh_entry.h"
+#include "heap_lfh_subsegment.h"
+#include "heap_page_segment.h"
+#include "heap_segment.h"
+#include "heap_segment_context.h"
+#include "heap_subsegment.h"
+#include "heap_virtual_block.h"
+#include "heap_vs_context.h"
+#include "heap_vs_entry.h"
+#include "heap_vs_subsegment.h"
+#include "large_alloc_entry.h"
+#include "lfh_heap.h"
+#include "lfh_segment.h"
+#include "page_range_descriptor.h"
+#include "page_range_flags_utils.h"
 #include "process_heaps.h"
 #include "process_heaps_options.h"
 #include "process_heap_entry.h"
@@ -22,13 +47,58 @@ namespace dlg_help_utils::heap
     {
         using namespace allocation_graph;
 
+        using symbol_type_info_set = std::unordered_set<dbg_help::symbol_type_info, dbg_help::symbol_type_info::HashFunction>;
+
+        symbol_type_info_set build_filtered_system_type_indexes(stream_stack_dump::mini_dump_memory_walker const& walker, process_heaps_options const& options)
+        {
+            static std::array const g_ignored_system_symbols
+            {
+                &common_symbol_names::acrt_first_block,
+            };
+
+            symbol_type_info_set rv;
+
+            for (auto const* symbol_name : g_ignored_system_symbols)
+            {
+                for(process::global_symbols const variables{walker, *symbol_name};
+                    auto const& global_symbol : variables.all_symbols())
+                {
+                    if(global_symbol.symbol_type().sym_tag().value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::PublicSymbol)
+                    {
+                        rv.insert(global_symbol.symbol_type());
+                    }
+                }
+            }
+
+            for (auto const& filtered_system_type : options.filtered_system_types())
+            {
+                for(process::global_symbols const variables{walker, filtered_system_type};
+                    auto const& global_symbol : variables.all_symbols())
+                {
+                    if(global_symbol.symbol_type().sym_tag().value_or(dbg_help::sym_tag_enum::Null) != dbg_help::sym_tag_enum::PublicSymbol)
+                    {
+                        rv.insert(global_symbol.symbol_type());
+                    }
+                }
+            }
+
+            return rv;
+        }
+
         template<typename PointerType>
         class process_heap_graph_generator
         {
         public:
-            process_heap_graph_generator(std::map<uint64_t, size_t> const& heap_entries, std::vector<process_heap_graph_entry_type> & nodes)
+            process_heap_graph_generator(std::map<uint64_t, size_t> const& heap_entries
+                , std::unordered_set<uint64_t> const& system_module_bases
+                , std::vector<process_heap_graph_entry_type> & nodes
+                , symbol_type_info_set filtered_system_type_indexes
+                , process_heaps_options const& options)
                 : heap_entries_{heap_entries}
+                , system_module_bases_{system_module_bases}
                 , nodes_{nodes}
+                , filtered_system_type_indexes_{std::move(filtered_system_type_indexes)}
+                , options_{options}
             {
             }
 
@@ -41,11 +111,16 @@ namespace dlg_help_utils::heap
 
         private:
             template<typename NodeType>
-            void process_entry_reference(NodeType& entry, PointerType data, uint64_t address, size_t offset, size_t& jump_amount);
+            void process_entry_reference(NodeType& entry, PointerType data, uint64_t address, size_t offset, size_t& jump_amount, mark_as_system_t mark_as_system = mark_as_system_t{false});
+
+            [[nodiscard]] mark_as_system_t is_system_global_variable(process_heap_graph_global_variable_entry const& entry) const;
 
         private:
             std::map<uint64_t, size_t> const& heap_entries_;
+            std::unordered_set<uint64_t> const& system_module_bases_;
             std::vector<process_heap_graph_entry_type>& nodes_;
+            symbol_type_info_set filtered_system_type_indexes_;
+            process_heaps_options const& options_;
         };
 
         template <typename PointerType>
@@ -75,7 +150,7 @@ namespace dlg_help_utils::heap
         {
             std::ignore = entry.variable().stream().find_pattern<PointerType>([this, &entry](PointerType const data, size_t const offset, size_t& jump_amount) mutable
                 {
-                    process_entry_reference(entry, data, entry.variable().variable_memory_range().start_range + offset, offset, jump_amount);
+                    process_entry_reference(entry, data, entry.variable().variable_memory_range().start_range + offset, offset, jump_amount, is_system_global_variable(entry));
                     return true;
                 }
                 , [](size_t) { return false; });
@@ -108,8 +183,9 @@ namespace dlg_help_utils::heap
 
         template <typename PointerType>
         template <typename NodeType>
-        void process_heap_graph_generator<PointerType>::process_entry_reference(NodeType& entry, PointerType const data, uint64_t const address, size_t const offset, size_t& jump_amount)
+        void process_heap_graph_generator<PointerType>::process_entry_reference(NodeType& entry, PointerType const data, uint64_t const address, size_t const offset, size_t& jump_amount, mark_as_system_t const mark_as_system)
         {
+            jump_amount = 1;
             auto const it = heap_entries_.lower_bound(data);
             if(it == heap_entries_.end())
             {
@@ -122,19 +198,26 @@ namespace dlg_help_utils::heap
                 return;
             }
 
+            if(mark_as_system && !node.is_system_allocation())
+            {
+                node.mark_as_system_allocation();
+            }
+
             if(auto const variable_symbol_reference = entry.find_symbol_variable_reference(address);
                 !variable_symbol_reference.has_value())
             {
                 // no variable symbol match
-                entry.add_to_reference(process_heap_entry_reference{offset, data, node});
-                node.add_from_reference(process_heap_entry_reference{offset, data, entry});
+                auto const node_offset = data - node.start_address();
+                entry.add_to_reference(process_heap_entry_reference{offset, address, node_offset, data, node});
+                node.add_from_reference(process_heap_entry_reference{offset, address, node_offset, data, entry});
                 jump_amount += sizeof(PointerType);
             }
             else if(variable_symbol_reference->variable_address == address)
             {
                 // symbol variable match
-                entry.add_to_reference(process_heap_entry_reference{offset, data, node, variable_symbol_reference.value()});
-                node.add_from_reference(process_heap_entry_reference{offset, data, entry, variable_symbol_reference.value()});
+                auto const node_offset = data - node.start_address();
+                entry.add_to_reference(process_heap_entry_reference{offset, address, node_offset, data, node, variable_symbol_reference.value()});
+                node.add_from_reference(process_heap_entry_reference{offset, address, node_offset, data, entry, variable_symbol_reference.value()});
                 jump_amount += sizeof(PointerType);
             }
             else
@@ -144,10 +227,25 @@ namespace dlg_help_utils::heap
             }
         }
 
-        template<typename PointerType>
-        void generate_graph_nodes(std::map<uint64_t, size_t> const& heap_entries, std::vector<process_heap_graph_entry_type> & nodes)
+        template <typename PointerType>
+        mark_as_system_t process_heap_graph_generator<PointerType>::is_system_global_variable(process_heap_graph_global_variable_entry const& entry) const
         {
-            process_heap_graph_generator<PointerType> generator{heap_entries, nodes};
+            if (options_.no_mark_global_variable_data_pointers_as_system())
+            {
+                return mark_as_system_t{ false };
+            }
+            auto const& type = entry.variable().symbol_type();
+            return mark_as_system_t{ system_module_bases_.contains(type.module_base()) && !filtered_system_type_indexes_.contains(type) };
+        }
+
+        template<typename PointerType>
+        void generate_graph_nodes(std::map<uint64_t, size_t> const& heap_entries
+            , std::unordered_set<uint64_t> const& system_module_bases
+            , std::vector<process_heap_graph_entry_type> & nodes
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , process_heaps_options const& options)
+        {
+            process_heap_graph_generator<PointerType> generator{heap_entries, system_module_bases, nodes, build_filtered_system_type_indexes(walker, options), options};
             generator.generate_references();
         }
     }
@@ -162,10 +260,22 @@ namespace dlg_help_utils::heap
 
     void process_heap_graph::generate_global_variable_references(std::map<uint64_t, size_t> const& heap_entries)
     {
-        for(process::global_variables const variables{process_->peb().walker()};
-            auto const& global_variable : variables.all_variables())
+        for(process::global_symbols const variables{process_->peb().walker()};
+            auto const& global_symbol : variables.all_symbols())
         {
-            nodes_.emplace_back(process_heap_graph_global_variable_entry{global_variable, find_allocation_node_allocation(heap_entries, global_variable.variable_memory_range())});
+            if(global_symbol.symbol_type().sym_tag().value_or(dbg_help::sym_tag_enum::Null) == dbg_help::sym_tag_enum::Data)
+            {
+                auto heap_entry = find_allocation_node_allocation(heap_entries, global_symbol.variable_memory_range());
+                process_heap_graph_global_variable_entry node{global_symbol, heap_entry};
+                auto const system_global_variable = system_module_bases_.contains(global_symbol.symbol_type().module_base());
+                node.set_as_system(system_global_variable);
+                nodes_.emplace_back(std::move(node));
+
+                if(system_global_variable && heap_entry.has_value() && !heap_entry.value().is_system_allocation())
+                {
+                    heap_entry.value().mark_as_system_allocation();
+                }
+            }
         }
     }
 
@@ -177,7 +287,7 @@ namespace dlg_help_utils::heap
             {
                 if (stream_thread const thread{ *mini_dump_, thread_list.thread_list().Threads[0], process_->peb().names_list(), process_->peb().memory_list(), process_->peb().memory64_list() }; thread->Teb != 0)
                 {
-                    generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers);
+                    generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers, mark_as_system_t{true});
                 }
             }
         }
@@ -188,7 +298,7 @@ namespace dlg_help_utils::heap
             {
                 if (stream_thread_ex const thread{ *mini_dump_, thread_ex_list.thread_list().Threads[0], process_->peb().names_list() }; thread->Teb != 0)
                 {
-                    generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers);
+                    generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers, mark_as_system_t{true});
                 }
             }
         }
@@ -239,17 +349,26 @@ namespace dlg_help_utils::heap
     }
 
     template <typename T>
-    void process_heap_graph::generate_specific_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size, T const& thread, std::unordered_set<uint64_t>& ignore_pointers)
+    void process_heap_graph::generate_specific_thread_context_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size, T const& thread, std::unordered_set<uint64_t>& ignore_pointers, mark_as_system_t const mark_as_system)
     {
-        if(process_->options().no_filter_heap_entries())
-        {
-            mark_as_system_t constexpr mark_as_system{true};
-            auto const base_address = add_symbol_reference(heap_entries, thread->Teb, process_->peb().teb_symbol(), thread->ThreadId, thread.thread_name(), mark_as_system);
+        auto const base_address = add_symbol_reference(heap_entries
+            , thread->Teb
+            , process_->peb().teb_symbol()
+            , thread->ThreadId
+            , thread.thread_name()
+            , mark_as_system
+            , mark_as_can_contain_user_pointers_t{false});
 
-            std::map<uint64_t, symbol_type_utils::pointer_info> pointers;
-            gather_all_pointers_from_symbol(process_->peb().walker(), process_->peb().teb_symbol(), process_->peb().teb_symbol(), base_address, thread->Teb - base_address, pointers, {}, ignore_pointers);
-            generate_pointer_symbol_references(heap_entries, pointers, pointer_size, mark_as_system, ignore_pointers);
-        }
+        std::map<uint64_t, symbol_type_utils::pointer_info> pointers;
+        gather_all_pointers_from_symbol(process_->peb().walker()
+            , process_->peb().teb_symbol()
+            , process_->peb().teb_symbol()
+            , base_address
+            , thread->Teb - base_address
+            , pointers
+            , {}
+            , ignore_pointers);
+        generate_pointer_symbol_references(heap_entries, pointers, pointer_size, mark_as_system, ignore_pointers);
 
         if (thread.thread_context().x64_thread_context_available())
         {
@@ -275,8 +394,12 @@ namespace dlg_help_utils::heap
         std::map<uint64_t, size_t> heap_entries;
         for (auto const& entry : process_->entries())
         {
-            nodes_.emplace_back(process_heap_graph_heap_entry{entry, process_->is_system_allocation(entry.user_memory_range()) ? process_heap_graph_heap_entry_type::system_allocation : process_heap_graph_heap_entry_type::allocation});
-            heap_entries.insert(std::make_pair(entry.user_address() + entry.user_requested_size().count() - 1, nodes_.size() - 1));
+            nodes_.emplace_back(process_heap_graph_heap_entry
+                {
+                    entry
+                    , process_->is_system_allocation(entry.user_memory_range()) ? process_heap_graph_heap_entry_type::system_allocation : process_heap_graph_heap_entry_type::allocation
+                });
+            heap_entries.insert(std::make_pair(get_last_address(entry), nodes_.size() - 1));
         }
 
         return heap_entries;
@@ -315,19 +438,323 @@ namespace dlg_help_utils::heap
         nodes_.emplace_back(process_heap_graph_thread_stack_entry{std::move(stack_stream), thread_id, std::wstring{thread_name}});
     }
 
+    void process_heap_graph::generate_heap_metadata_symbol_references(std::map<uint64_t, size_t> const& heap_entries, size_t const pointer_size, std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        crt_heap const crt_heap{ process_->cache(), process_->peb() };
+        std::map<uint64_t, crt_entry> crt_entries;
+
+        if(crt_heap.is_using_crt_heap())
+        {
+            for (auto const& entry : crt_heap.entries())
+            {
+                crt_entries.insert(std::make_pair(entry.end_entry_address() - 1, entry));
+                std::ignore = add_symbol_reference(heap_entries, entry.symbol_address(), entry.symbol_type(), std::nullopt, {}, mark_as_system_t{false}, mark_as_can_contain_user_pointers_t{false});
+            }
+        }
+
+        for (uint32_t heap_index = 0; heap_index < process_->peb().number_of_heaps(); ++heap_index)
+        {
+            if (auto const nt_heap = process_->peb().nt_heap(heap_index); nt_heap.has_value())
+            {
+                generate_nt_heap_references(nt_heap.value(), heap_entries, pointer_size, crt_entries, ignore_pointers);
+            }
+            else if (auto const segment_heap = process_->peb().segment_heap(heap_index); segment_heap.has_value())
+            {
+                generate_segment_references(segment_heap.value(), heap_entries, pointer_size, crt_entries, ignore_pointers);
+            }
+        }
+
+        for (auto const& heap : dph_heap::dph_heaps(process_->cache(), process_->peb()))
+        {
+            generate_dph_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+        }
+    }
+
+    void process_heap_graph::generate_system_symbol_reference(uint64_t const address
+        , dbg_help::symbol_type_info const& symbol_type
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::unordered_set<uint64_t>& ignore_pointers
+        , mark_as_system_t const mark_as_system
+        , mark_as_can_contain_user_pointers_t const mark_as_can_contain_user_pointers)
+    {
+        auto const base_address = add_symbol_reference(heap_entries, address, symbol_type, std::nullopt, {}, mark_as_system, mark_as_can_contain_user_pointers);
+
+        std::map<uint64_t, symbol_type_utils::pointer_info> pointers;
+        gather_all_pointers_from_symbol(process_->peb().walker(), symbol_type, symbol_type, base_address, address - base_address, pointers, {}, ignore_pointers);
+        generate_pointer_symbol_references(heap_entries, pointers, pointer_size, mark_as_system, ignore_pointers);
+    }
+
+    void process_heap_graph::generate_nt_heap_references(nt_heap const& heap, std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        generate_system_symbol_reference(heap.symbol_address(), heap.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+
+        generate_nt_heap_lfh_metadata_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+        generate_nt_heap_segment_metadata_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+        generate_nt_heap_virtual_metadata_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+    }
+
+    void process_heap_graph::generate_nt_heap_lfh_metadata_symbol_references(nt_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        if (auto const lfh_heap = heap.lfh_heap(); lfh_heap.has_value())
+        {
+            auto const& lfh_heap_value = lfh_heap.value();
+            generate_system_symbol_reference(lfh_heap_value.symbol_address(), lfh_heap_value.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+
+            for (auto const& segment : lfh_heap_value.lfh_segments())
+            {
+                generate_system_symbol_reference(segment.symbol_address(), segment.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+                
+                for (auto const& subsegment : segment.subsegments())
+                {
+                    generate_system_symbol_reference(subsegment.symbol_address(), subsegment.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+                    mark_all_non_crt_entries_as_system(subsegment, heap_entries, crt_entries);
+                }
+            }
+        }
+    }
+
+    void process_heap_graph::generate_nt_heap_segment_metadata_symbol_references(nt_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        for (auto const& segment : heap.segments())
+        {
+            generate_system_symbol_reference(segment.symbol_address(), segment.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+            mark_all_non_crt_entries_as_system(segment, heap_entries, crt_entries);
+        }
+    }
+
+    void process_heap_graph::generate_nt_heap_virtual_metadata_symbol_references(nt_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        for (auto const& virtual_block : heap.heap_virtual_blocks())
+        {
+            generate_system_symbol_reference(virtual_block.symbol_address(), virtual_block.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+            mark_all_non_crt_entries_as_system(virtual_block, heap_entries, crt_entries);
+        }
+    }
+
+    void process_heap_graph::generate_segment_references(segment_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        generate_system_symbol_reference(heap.symbol_address(), heap.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+
+        generate_segment_heap_backend_metadata_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+        generate_segment_heap_entities_metadata_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+        generate_segment_heap_lfh_metadata_symbol_references(heap, heap_entries, pointer_size, crt_entries, ignore_pointers);
+        generate_segment_heap_large_metadata_symbol_references(heap, heap_entries, crt_entries);
+    }
+
+    void process_heap_graph::generate_segment_heap_backend_metadata_symbol_references(segment_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        for (auto const& segment_context : heap.segment_contexts())
+        {
+            generate_system_symbol_reference(heap.symbol_address(), heap.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+
+            for (auto const& page : segment_context.pages())
+            {
+                generate_system_symbol_reference(page.symbol_address(), page.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+
+                if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+                {
+                    continue;
+                }
+
+                for (auto const& entry : page.entries())
+                {
+                    if (entry.range_flags() == page_range_flags_utils::page_range_flags::PAGE_RANGE_BACKEND_SUBSEGMENT || !is_crt_entry(entry.user_address(), crt_entries))
+                    {
+                        mark_heap_node_as_system(entry.user_address(), heap_entries);
+                    }
+                }
+            }
+        }
+    }
+
+    void process_heap_graph::generate_segment_heap_entities_metadata_symbol_references(segment_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        for (auto const& subsegment : heap.vs_context().subsegments())
+        {
+            generate_system_symbol_reference(subsegment.symbol_address(), subsegment.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+
+            if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+            {
+                continue;
+            }
+
+            for (auto const& entry : subsegment.entries())
+            {
+                if (!entry.uncommitted_range() && entry.allocated() && !is_crt_entry(entry.user_address(), crt_entries))
+                {
+                    mark_heap_node_as_system(entry.user_address(), heap_entries);
+                }
+            }
+        }
+    }
+
+    void process_heap_graph::generate_segment_heap_lfh_metadata_symbol_references(segment_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        for (auto const& bucket : heap.lfh_context().active_buckets())
+        {
+            if (bucket.is_enabled())
+            {
+                generate_system_symbol_reference(bucket.symbol_address(), bucket.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+
+                for (auto const& affinity_slot : bucket.affinity_slots())
+                {
+                    generate_system_symbol_reference(affinity_slot.symbol_address(), affinity_slot.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+
+                    for (auto const& subsegment : affinity_slot.subsegments())
+                    {
+                        generate_system_symbol_reference(subsegment.symbol_address(), subsegment.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{true});
+
+                        if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+                        {
+                            continue;
+                        }
+
+                        // anything not in the crt list is marked as system...
+                        for (auto const& entry : subsegment.entries())
+                        {
+                            if(entry.allocated() && !is_crt_entry(entry.user_address(), crt_entries))
+                            {
+                                mark_heap_node_as_system(entry.user_address(), heap_entries);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void process_heap_graph::generate_segment_heap_large_metadata_symbol_references(segment_heap const& heap, std::map<uint64_t, size_t> const& heap_entries, std::map<uint64_t, crt_entry> const& crt_entries)
+    {
+        // anything not in the crt list is marked as system...
+        if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+        {
+            return;
+        }
+
+        for (auto const& entry : heap.large_entries())
+        {
+            if(!is_crt_entry(entry.user_address(), crt_entries))
+            {
+                mark_heap_node_as_system(entry.user_address(), heap_entries);
+            }
+        }
+    }
+
+    void process_heap_graph::generate_dph_symbol_references(dph_heap const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , size_t const pointer_size
+        , std::map<uint64_t, crt_entry> const& crt_entries
+        , std::unordered_set<uint64_t>& ignore_pointers)
+    {
+        generate_system_symbol_reference(heap.symbol_address(), heap.symbol_type(), heap_entries, pointer_size, ignore_pointers, mark_as_system_t{true}, mark_as_can_contain_user_pointers_t{false});
+
+        generate_dph_entities_metadata_symbol_references(heap, heap_entries, crt_entries);
+        generate_dph_virtual_metadata_symbol_references(heap, heap_entries, crt_entries);
+    }
+
+    void process_heap_graph::generate_dph_entities_metadata_symbol_references(dph_heap const& heap, std::map<uint64_t, size_t> const& heap_entries, std::map<uint64_t, crt_entry> const& crt_entries)
+    {
+        if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+        {
+            return;
+        }
+
+        // anything not in the crt list is marked as system...
+        for (auto const& entry : heap.busy_entries())
+        {
+            if (entry.is_allocated() && !is_crt_entry(entry.user_address(), crt_entries))
+            {
+                mark_heap_node_as_system(entry.user_address(), heap_entries);
+            }
+        }
+    }
+
+    void process_heap_graph::generate_dph_virtual_metadata_symbol_references(dph_heap const& heap, std::map<uint64_t, size_t> const& heap_entries, std::map<uint64_t, crt_entry> const& crt_entries)
+    {
+        if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+        {
+            return;
+        }
+
+        // anything not in the crt list is marked as system...
+        for (auto const& entry : heap.virtual_ranges())
+        {
+            if (entry.is_allocated() && !is_crt_entry(entry.user_address(), crt_entries))
+            {
+                mark_heap_node_as_system(entry.user_address(), heap_entries);
+            }
+        }
+    }
+
+    template <typename T>
+    void process_heap_graph::mark_all_non_crt_entries_as_system(T const& heap
+        , std::map<uint64_t, size_t> const& heap_entries
+        , std::map<uint64_t, crt_entry> const& crt_entries)
+    {
+        if(crt_entries.empty() || process_->options().no_mark_all_crt_entries_as_system())
+        {
+            return;
+        }
+
+        // anything not in the crt list is marked as system...
+        for (auto const& entry : heap.entries())
+        {
+            if(entry.is_busy() && !is_crt_entry(entry.address(), crt_entries))
+            {
+                mark_heap_node_as_system(entry.address(), heap_entries);
+            }
+        }
+    }
+
     void process_heap_graph::generate_node_references(std::map<uint64_t, size_t> const& heap_entries)
     {
         if(process_->peb().is_x86_target())
         {
-            generate_graph_nodes<uint32_t>(heap_entries, nodes_);
+            generate_graph_nodes<uint32_t>(heap_entries, system_module_bases_, nodes_, process_->peb().walker(), process_->options());
         }
         else
         {
-            generate_graph_nodes<uint64_t>(heap_entries, nodes_);
+            generate_graph_nodes<uint64_t>(heap_entries, system_module_bases_, nodes_, process_->peb().walker(), process_->options());
         }
     }
 
-    void process_heap_graph::generate_pointer_symbol_references(std::map<uint64_t, size_t> const& heap_entries, std::map<uint64_t, symbol_type_utils::pointer_info> const& pointers, size_t const pointer_size, mark_as_system_t const mark_as_system, std::unordered_set<uint64_t>& ignore_pointers)
+    void process_heap_graph::generate_pointer_symbol_references(std::map<uint64_t, size_t> const& heap_entries
+        , std::map<uint64_t, symbol_type_utils::pointer_info> const& pointers
+        , size_t const pointer_size
+        , mark_as_system_t const mark_as_system
+        , std::unordered_set<uint64_t>& ignore_pointers)
     {
         for (auto const& pointer : pointers | std::views::values)
         {
@@ -335,7 +762,11 @@ namespace dlg_help_utils::heap
         }
     }
 
-    void process_heap_graph::generate_pointer_symbol_reference(std::map<uint64_t, size_t> const& heap_entries, symbol_type_utils::pointer_info const& pointer, size_t const pointer_size, mark_as_system_t const mark_as_system, std::unordered_set<uint64_t>& ignore_pointers)
+    void process_heap_graph::generate_pointer_symbol_reference(std::map<uint64_t, size_t> const& heap_entries
+        , symbol_type_utils::pointer_info const& pointer
+        , size_t const pointer_size
+        , mark_as_system_t const mark_as_system
+        , std::unordered_set<uint64_t>& ignore_pointers)
     {
         if(ignore_pointers.contains(pointer.base_address + pointer.base_variable_address_offset))
         {
@@ -344,56 +775,148 @@ namespace dlg_help_utils::heap
 
         ignore_pointers.insert(pointer.base_address + pointer.base_variable_address_offset);
 
-        auto const it = heap_entries.lower_bound(pointer.base_address);
+        if(auto const it = heap_entries.lower_bound(pointer.base_address);
+            it != heap_entries.end())
+        {
+            if(auto& heap_node = std::get<process_heap_graph_heap_entry>(nodes_[it->second]);
+                heap_node.heap_entry().contains_address_range(pointer.base_address + pointer.base_variable_address_offset, size_units::base_16::bytes{1}))
+            {
+                if(mark_as_system)
+                {
+                    heap_node.mark_as_system_allocation();
+                }
+                find_or_add_node_symbol_variable_reference(heap_node
+                    , is_root_symbol_t{pointer.base_address + pointer.base_variable_address_offset == heap_node.heap_entry().user_address()}
+                    , is_metadata_symbol_t{false}
+                    , pointer.base_address
+                    , pointer.base_variable_address_offset
+                    , pointer_size
+                    , pointer.base_variable_type
+                    , pointer.pointer_type
+                    , pointer.name);
+                return;
+            }
+            else if(heap_node.heap_entry().contains_metadata_address_range(pointer.base_address + pointer.base_variable_address_offset, size_units::base_16::bytes{1}))
+            {
+                find_or_add_node_symbol_variable_reference(heap_node
+                    , is_root_symbol_t{false}
+                    , is_metadata_symbol_t{true}
+                    , pointer.base_address
+                    , pointer.base_variable_address_offset
+                    , pointer_size
+                    , pointer.base_variable_type
+                    , pointer.pointer_type
+                    , pointer.name);
+                return;
+            }
+        }
+
+        auto& symbol_node = find_or_add_node_symbol_reference(pointer.base_address, pointer.base_variable_type, {}, {}, mark_as_system);
+        if(mark_as_system)
+        {
+            symbol_node.set_as_system();
+        }
+
+        find_or_add_node_symbol_variable_reference(symbol_node
+            , is_root_symbol_t{false}
+            , is_metadata_symbol_t{false}
+            , pointer.base_address
+            , pointer.base_variable_address_offset
+            , pointer_size
+            , pointer.base_variable_type
+            , pointer.pointer_type
+            , pointer.name);
+    }
+
+    bool process_heap_graph::is_crt_entry(uint64_t const address, std::map<uint64_t, crt_entry> const& crt_entries)
+    {
+        auto const it = crt_entries.lower_bound(address);
+        return it != crt_entries.end() && it->second.entry_address() <= address;
+    }
+
+    void process_heap_graph::mark_heap_node_as_system(uint64_t const address, std::map<uint64_t, size_t> const& heap_entries)
+    {
+        if(process_->options().no_mark_all_crt_entries_as_system())
+        {
+            return;
+        }
+
+        auto const it = heap_entries.lower_bound(address);
         if(it == heap_entries.end())
         {
-            auto& symbol_node = find_or_add_node_symbol_reference(pointer.base_address, pointer.base_variable_type, {}, {}, mark_as_system);
-            if(mark_as_system)
-            {
-                symbol_node.mark_as_system_allocation();
-            }
-
-            find_or_add_node_symbol_variable_reference(symbol_node, pointer.base_address, pointer.base_variable_address_offset, pointer_size, pointer.base_variable_type, pointer.pointer_type, pointer.name);
             return;
         }
 
         auto& heap_node = std::get<process_heap_graph_heap_entry>(nodes_[it->second]);
-        if(mark_as_system)
+        if(!heap_node.heap_entry().contains_address_range(address, size_units::base_16::bytes{1}))
         {
-            heap_node.mark_as_system_allocation();
+            return;
         }
-        find_or_add_node_symbol_variable_reference(heap_node, pointer.base_address, pointer.base_variable_address_offset, pointer_size, pointer.base_variable_type, pointer.pointer_type, pointer.name);
+
+        heap_node.mark_as_system_allocation();
     }
 
-    uint64_t process_heap_graph::add_symbol_reference(std::map<uint64_t, size_t> const& heap_entries, uint64_t const address, dbg_help::symbol_type_info symbol_type, uint32_t const thread_id, std::wstring_view const& thread_name, mark_as_system_t const mark_as_system)
+    uint64_t process_heap_graph::add_symbol_reference(std::map<uint64_t, size_t> const& heap_entries
+        , uint64_t const address
+        , dbg_help::symbol_type_info symbol_type
+        , std::optional<uint32_t> const& thread_id
+        , std::wstring_view const& thread_name
+        , mark_as_system_t const mark_as_system
+        , mark_as_can_contain_user_pointers_t const mark_as_can_contain_user_pointers)
     {
-        auto const it = heap_entries.lower_bound(address);
-        if(it == heap_entries.end())
+        if(auto const it = heap_entries.lower_bound(address);
+            it != heap_entries.end())
         {
-            add_node_symbol_reference(address, std::move(symbol_type), thread_id, thread_name, mark_as_system);
-            return address;
+            if(auto& node = std::get<process_heap_graph_heap_entry>(nodes_[it->second]);
+                node.heap_entry().contains_address_range(address, size_units::base_16::bytes{1}))
+            {
+                if(mark_as_system)
+                {
+                    node.mark_as_system_allocation();
+                }
+                if(mark_as_can_contain_user_pointers)
+                {
+                    node.can_contain_user_pointers() = true;
+                }
+
+                add_heap_node_symbol_reference(node, is_root_symbol_t{address == node.heap_entry().user_address()}, is_metadata_symbol_t{false}, address, std::move(symbol_type), thread_id, thread_name);
+                return it->first;
+            }
+            else if(node.heap_entry().contains_metadata_address_range(address, size_units::base_16::bytes{1}))
+            {
+                add_heap_node_symbol_reference(node, is_root_symbol_t{false}, is_metadata_symbol_t{true}, address, std::move(symbol_type), thread_id, thread_name);
+                return address;
+            }
         }
 
-        auto& node = std::get<process_heap_graph_heap_entry>(nodes_[it->second]);
-        if(mark_as_system)
+        auto entry = add_node_symbol_reference(address, std::move(symbol_type), thread_id, thread_name, mark_as_system);
+        if(mark_as_can_contain_user_pointers)
         {
-            node.mark_as_system_allocation();
+            entry.can_contain_user_pointers() = true;
         }
-        add_heap_node_symbol_reference(node, address, std::move(symbol_type), thread_id, thread_name);
-        return it->first;
+
+        return address;
     }
 
-    process_heap_graph_symbol_entry& process_heap_graph::add_node_symbol_reference(uint64_t const address, dbg_help::symbol_type_info symbol_type, std::optional<uint32_t> const thread_id, std::wstring_view const& thread_name, mark_as_system_t const mark_as_system)
+    process_heap_graph_symbol_entry& process_heap_graph::add_node_symbol_reference(uint64_t const address
+        , dbg_help::symbol_type_info symbol_type
+        , std::optional<uint32_t> const thread_id
+        , std::wstring_view const& thread_name
+        , mark_as_system_t const mark_as_system)
     {
         process_heap_graph_symbol_entry node{address, std::move(symbol_type), thread_id, std::wstring{thread_name}};
         if(mark_as_system)
         {
-            node.mark_as_system_allocation();
+            node.set_as_system();
         }
         return std::get<process_heap_graph_symbol_entry>(nodes_.emplace_back(std::move(node)));
     }
 
-    process_heap_graph_symbol_entry& process_heap_graph::find_or_add_node_symbol_reference(uint64_t const address, dbg_help::symbol_type_info symbol_type, std::optional<uint32_t> const thread_id, std::wstring_view const& thread_name, mark_as_system_t const mark_as_system)
+    process_heap_graph_symbol_entry& process_heap_graph::find_or_add_node_symbol_reference(uint64_t const address
+        , dbg_help::symbol_type_info symbol_type
+        , std::optional<uint32_t> const& thread_id
+        , std::wstring_view const& thread_name
+        , mark_as_system_t const mark_as_system)
     {
         auto const it = std::ranges::find_if(nodes_, [address](auto const& node)
             {
@@ -418,23 +941,52 @@ namespace dlg_help_utils::heap
         return std::get<process_heap_graph_symbol_entry>(*it);
     }
 
-    void process_heap_graph::add_heap_node_symbol_reference(process_heap_graph_node& node, uint64_t address, dbg_help::symbol_type_info symbol_type, uint32_t thread_id, std::wstring_view const& thread_name) const
+    void process_heap_graph::add_heap_node_symbol_reference(process_heap_graph_node& node
+        , is_root_symbol_t const is_root_symbol
+        , is_metadata_symbol_t const is_metadata_symbol
+        , uint64_t const address
+        , dbg_help::symbol_type_info symbol_type
+        , std::optional<uint32_t> const& thread_id
+        , std::wstring_view const& thread_name) const
     {
-        node.add_symbol_address_reference({address, std::move(symbol_type), thread_id, std::wstring{thread_name}});
+        if(thread_id.has_value())
+        {
+            node.add_symbol_address_reference({is_root_symbol, is_metadata_symbol, address, node.index(), std::move(symbol_type), thread_id.value(), std::wstring{thread_name}});
+        }
+        else
+        {
+            add_heap_node_symbol_reference(node, is_root_symbol, is_metadata_symbol, address, std::move(symbol_type));
+        }
     }
 
-    process_heap_entry_symbol_address_reference& process_heap_graph::add_heap_node_symbol_reference(process_heap_graph_node& node, uint64_t address, dbg_help::symbol_type_info symbol_type) const
+    process_heap_entry_symbol_address_reference& process_heap_graph::add_heap_node_symbol_reference(process_heap_graph_node& node
+        , is_root_symbol_t const is_root_symbol
+        , is_metadata_symbol_t const is_metadata_symbol
+        , uint64_t address
+        , dbg_help::symbol_type_info symbol_type) const
     {
-        return node.add_symbol_address_reference({address, std::move(symbol_type)});
+        return node.add_symbol_address_reference({is_root_symbol, is_metadata_symbol, address, node.index(), std::move(symbol_type)});
     }
 
-    void process_heap_graph::find_or_add_node_symbol_variable_reference(process_heap_graph_node& node, uint64_t const base_address, uint64_t const base_address_offset, size_t const pointer_size, dbg_help::symbol_type_info const& base_symbol_type, dbg_help::symbol_type_info const& pointer_symbol_type, std::wstring const& pointer_name) const
+    void process_heap_graph::find_or_add_node_symbol_variable_reference(process_heap_graph_node& node
+        , is_root_symbol_t const is_root_symbol
+        , is_metadata_symbol_t const is_metadata_symbol
+        , uint64_t const base_address
+        , uint64_t const base_address_offset
+        , size_t const pointer_size
+        , dbg_help::symbol_type_info const& base_symbol_type
+        , dbg_help::symbol_type_info const& pointer_symbol_type
+        , std::wstring const& pointer_name) const
     {
-        auto& node_symbol_reference = get_node_symbol_variable_reference(node, base_address, base_symbol_type);
+        auto& node_symbol_reference = get_node_symbol_variable_reference(node, is_root_symbol, is_metadata_symbol, base_address, base_symbol_type);
         node_symbol_reference.add_variable_symbol_reference(base_address + base_address_offset, base_address_offset, pointer_size, pointer_symbol_type, pointer_name);
     }
 
-    process_heap_entry_symbol_address_reference& process_heap_graph::get_node_symbol_variable_reference(process_heap_graph_node& node, uint64_t const address, dbg_help::symbol_type_info const& symbol_type) const
+    process_heap_entry_symbol_address_reference& process_heap_graph::get_node_symbol_variable_reference(process_heap_graph_node& node
+        , is_root_symbol_t const is_root_symbol
+        , is_metadata_symbol_t const is_metadata_symbol
+        , uint64_t const address
+        , dbg_help::symbol_type_info const& symbol_type) const
     {
         auto const it = std::ranges::find_if(node.symbol_references(), [address](auto const& symbol_reference)
             {
@@ -443,7 +995,7 @@ namespace dlg_help_utils::heap
 
         if(it == node.symbol_references().end())
         {
-            return add_heap_node_symbol_reference(node, address, symbol_type);
+            return add_heap_node_symbol_reference(node, is_root_symbol, is_metadata_symbol, address, symbol_type);
         }
 
         return *it;
@@ -459,12 +1011,23 @@ namespace dlg_help_utils::heap
         nodes_.erase(first, last);
     }
 
-    void process_heap_graph::mark_all_system_module_global_variables_and_references(std::unordered_map<uint64_t, bool>& result_cache)
+    void process_heap_graph::find_and_mark_system_nodes(std::unordered_map<uint64_t, bool>& result_cache)
     {
-        // pass one generate results
-        for(auto& node : nodes_)
+        // pass one, gather all the system nodes
+        auto node_to_process = true;
+        default_mark_as_other_node_t default_mark_as_other_node{false};
+        while(node_to_process)
         {
-            is_node_or_children_system_module_global_variable(node, result_cache);
+            node_to_process = false;
+            for(auto& node : nodes_)
+            {
+                if(get_node_type(node, result_cache, default_mark_as_other_node) == node_type::requires_other_node_processing)
+                {
+                    node_to_process = true;
+                }
+            }
+
+            default_mark_as_other_node = default_mark_as_other_node_t{true};
         }
 
         // pass two, mark discovered system allocations
@@ -473,7 +1036,7 @@ namespace dlg_help_utils::heap
             if(auto& graph_node = get_graph_node(node);
                 result_cache[graph_node.index()])
             {
-                graph_node.is_system() = true;
+                graph_node.set_as_system();
                 if(!graph_node.is_root_node() && !graph_node.is_system_allocation())
                 {
                     graph_node.mark_as_system_allocation();
@@ -482,69 +1045,117 @@ namespace dlg_help_utils::heap
         }
     }
 
-    void process_heap_graph::remove_all_system_nodes(std::unordered_map<uint64_t, bool> const& result_cache)
+    void process_heap_graph::remove_all_system_nodes(std::unordered_map<uint64_t, bool>& result_cache)
     {
-        auto const [first, last] = std::ranges::remove_if(nodes_, [this](auto const& node)
+        auto const [first, last] = std::ranges::remove_if(nodes_, [this, &result_cache](auto const& node)
         {
-            auto const& graph_node = get_graph_node(node);
-            return graph_node.is_system_allocation() || graph_node.is_system();
+            if(auto const& graph_node = get_graph_node(node);
+                graph_node.is_system_allocation() || graph_node.is_system())
+            {
+                auto it = result_cache.find(graph_node.index());
+                if(it == result_cache.end())
+                {
+                    result_cache.insert(std::make_pair(graph_node.index(), true));
+                }
+                else if(!it->second)
+                {
+                    it->second = true;
+                }
+
+                return true;
+            }
+
+            return false;
         });
 
         nodes_.erase(first, last);
 
-        for (auto const removed_node_index : result_cache | std::views::filter([](auto const& kv) { return kv.second; }) | std::views::keys)
+        for(auto& node : nodes_)
         {
-            for(auto& node : nodes_)
+            auto& graph_node = get_graph_node(node);
+            for (auto const removed_node_index : result_cache | std::views::filter([](auto const& kv) { return kv.second; }) | std::views::keys)
             {
-                auto& graph_node = get_graph_node(node);
                 graph_node.remove_references(removed_node_index);
             }
+
+            graph_node.remove_metadata_symbol_references();
         }
     }
 
-    bool process_heap_graph::is_node_or_children_system_module_global_variable(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const
+    process_heap_graph::node_type process_heap_graph::get_node_type(process_heap_graph_entry_type const& node
+        , std::unordered_map<uint64_t, bool>& result_cache
+        , default_mark_as_other_node_t const default_mark_as_other_node
+        , can_contain_user_pointers_t const can_contain_user_pointers) const
     {
         auto const& graph_node = get_graph_node(node);
         if(auto const cache_result = result_cache.find(graph_node.index()); cache_result != result_cache.end())
         {
-            return cache_result->second;
+            if(cache_result->second)
+            {
+                return can_contain_user_pointers ? node_type::system_node : (graph_node.can_contain_user_pointers() ? node_type::system_node_user_container : node_type::system_node);
+            }
+
+            return node_type::other_node;
         }
 
-        if(std::holds_alternative<process_heap_graph_global_variable_entry>(node))
+        if(graph_node.is_system())
         {
-            if(auto const& global_variable_entry = std::get<process_heap_graph_global_variable_entry>(node);
-                system_module_bases_.contains(global_variable_entry.variable().symbol_type().module_base()))
+            result_cache.insert(std::make_pair(graph_node.index(), true));
+            return can_contain_user_pointers ? node_type::system_node : (graph_node.can_contain_user_pointers() ? node_type::system_node_user_container : node_type::system_node);
+        }
+
+        if(!std::holds_alternative<process_heap_graph_heap_entry>(node))
+        {
+            result_cache.insert(std::make_pair(graph_node.index(), false));
+            return node_type::other_node;
+        }
+
+        /*
+        if(!graph_node.from_references().empty() && !std::ranges::all_of(graph_node.from_references()
+            , [this, &result_cache](auto const& child_node)
             {
-                result_cache.insert(std::make_pair(graph_node.index(), true));
-                if(process_->options().mark_system_heap_entries_children_as_system())
+                auto const type = get_node_type(get_node_from_index(child_node.node_index()), result_cache, can_contain_user_pointers_t{false});
+                return type == node_type::other_node || type == node_type::system_node_user_container;
+            }))
+        {
+            result_cache[graph_node.index()] = true;
+            return node_type::system_node;
+        }
+        */
+
+        if(graph_node.can_contain_user_pointers())
+        {
+            result_cache.insert(std::make_pair(graph_node.index(), false));
+            return node_type::other_node;
+        }
+
+        if(!graph_node.to_references().empty())
+        {
+            auto some_require_node_process = false;
+            for(auto const& to_reference : graph_node.to_references())
+            {
+                if(!result_cache.contains(to_reference.node_index()))
                 {
-                    mark_all_children_as_system(node, result_cache);
+                    if(!default_mark_as_other_node)
+                    {
+                        some_require_node_process = true;
+                    }
                 }
-                return true;
+                else if(get_node_type(get_node_from_index(to_reference.node_index()), result_cache, default_mark_as_other_node_t{false}, can_contain_user_pointers_t{true}) == node_type::system_node)
+                {
+                    result_cache.insert(std::make_pair(graph_node.index(), true));
+                    return node_type::system_node;
+                }
+            }
+
+            if(some_require_node_process)
+            {
+                return node_type::requires_other_node_processing;
             }
         }
 
         result_cache.insert(std::make_pair(graph_node.index(), false));
-        if(std::ranges::any_of(graph_node.to_references(), [this, &result_cache](auto const& child_node) { return is_node_or_children_system_module_global_variable(get_node_from_index(child_node.node_index()), result_cache); }))
-        {
-            result_cache[graph_node.index()] = true;
-            return true;
-        }
-        return false;
-    }
-
-    void process_heap_graph::mark_all_children_as_system(process_heap_graph_entry_type const& node, std::unordered_map<uint64_t, bool>& result_cache) const
-    {
-        for(auto& to_reference : get_graph_node(node).to_references())
-        {
-            auto const& child_node = get_node_from_index(to_reference.node_index());
-            auto const& child_graph_node = get_graph_node(child_node);
-            if(auto const& cache_result = result_cache.find(child_graph_node.index()); cache_result == result_cache.end() || !cache_result->second)
-            {
-                result_cache[child_graph_node.index()] = true;
-                mark_all_children_as_system(child_node, result_cache);
-            }
-        }
+        return node_type::other_node;
     }
 
     process_heap_graph_entry_type const& process_heap_graph::get_node_from_index(uint64_t const node_index) const
@@ -591,7 +1202,7 @@ namespace dlg_help_utils::heap
 
         // find and optionally remove "system" allocations
         std::unordered_map<uint64_t, bool> result_cache;
-        mark_all_system_module_global_variables_and_references(result_cache);
+        find_and_mark_system_nodes(result_cache);
         if(!process_->options().no_filter_heap_entries())
         {
             remove_all_system_nodes(result_cache);
