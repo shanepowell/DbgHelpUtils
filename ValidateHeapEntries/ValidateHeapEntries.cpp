@@ -208,41 +208,49 @@ std::wstring get_crt_entry_description(dlg_help_utils::heap::process_heap_entry 
     switch(heap_entry.match_range(allocation.pointer, dlg_help_utils::size_units::base_16::bytes{allocation.size}))
     {
     case dlg_help_utils::heap::block_range_match_result::block_match:
-        *o_log << std::format(L"INFO: found json allocation [{0}] of [{1}] but dmp heap allocation block matches [{2}] of [{3}] - {4}{5}\n"
+        *o_log << std::format(L"INFO: found json allocation [{0}] of [{1}/{2}] matches heap allocation block [{3}] of [{4}/{5}] - {6}{7}\n"
             , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
             , locale_formatting::to_wstring(allocation.size)
+            , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
             , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_address(), hex_length)
             , locale_formatting::to_wstring(heap_entry.user_requested_size().count())
+            , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_requested_size().count())
             , to_wstring(heap_entry.get_heap_entry_type())
             , get_crt_entry_description(heap_entry));
         return true;
 
     case dlg_help_utils::heap::block_range_match_result::block_contains:
-        *o_log << std::format(L"WARNING: found json allocation [{0}] of [{1}] but dmp heap allocation block is contained in [{2}] of [{3}] - {4}{5}\n"
+        *o_log << std::format(L"WARNING: found json allocation [{0}] of [{1}/{2}] but dmp heap allocation block is contained in [{3}] of [{4}/{5}] - {6}{7}\n"
             , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
             , locale_formatting::to_wstring(allocation.size)
+            , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
             , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_address(), hex_length)
             , locale_formatting::to_wstring(heap_entry.user_requested_size().count())
+            , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_requested_size().count())
             , to_wstring(heap_entry.get_heap_entry_type())
             , get_crt_entry_description(heap_entry));
         return true;
 
     case dlg_help_utils::heap::block_range_match_result::user_contains_block:
-        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but user allocation contains the dmp heap allocation block in [{2}] of [{3}] - {4}{5}\n"
+        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}/{2}] but user allocation contains the dmp heap allocation block in [{3}] of [{4}/{5}] - {6}{7}\n"
             , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
             , locale_formatting::to_wstring(allocation.size)
+            , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
             , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_address(), hex_length)
             , locale_formatting::to_wstring(heap_entry.user_requested_size().count())
+            , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_requested_size().count())
             , to_wstring(heap_entry.get_heap_entry_type())
             , get_crt_entry_description(heap_entry));
         return false;
 
     case dlg_help_utils::heap::block_range_match_result::block_partially_contains:
-        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but dmp heap allocation block is partially contained in [{2}] of [{3}] - {4}{5}\n"
+        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}/{2}] but dmp heap allocation block is partially contained in [{3}] of [{4}/{5}] - {6}{7}\n"
             , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
             , locale_formatting::to_wstring(allocation.size)
+            , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
             , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_address(), hex_length)
             , locale_formatting::to_wstring(heap_entry.user_requested_size().count())
+            , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_requested_size().count())
             , to_wstring(heap_entry.get_heap_entry_type())
             , get_crt_entry_description(heap_entry));
         return false;
@@ -251,11 +259,13 @@ std::wstring get_crt_entry_description(dlg_help_utils::heap::process_heap_entry 
         break;
     }
 
-    *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] not matched but dmp heap allocation block closest match is [{2}] of [{3}] - {4}{5}\n"
+    *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}/{2}] not matched but dmp heap allocation block closest match is [{3}] of [{4}/{5}] - {6}{7}\n"
         , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
         , locale_formatting::to_wstring(allocation.size)
+        , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
         , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_address(), hex_length)
         , locale_formatting::to_wstring(heap_entry.user_requested_size().count())
+        , dlg_help_utils::stream_hex_dump::to_hex(heap_entry.user_requested_size().count())
         , to_wstring(heap_entry.get_heap_entry_type())
         , get_crt_entry_description(heap_entry));
     return false;
@@ -353,9 +363,10 @@ bool validate_allocations(std::vector<Allocation> const& allocations
 
             if (found_it)
             {
-                *o_log << std::format(L"INFO: Allocation Entry [{0}] of [{1}] not found in diff allocation list but in all allocation list\n"
+                *o_log << std::format(L"INFO: Allocation Entry [{0}] of [{1}/{2}] not found in diff allocation list but in all allocation list\n"
                                       , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
-                                      , locale_formatting::to_wstring(allocation.size));
+                                      , locale_formatting::to_wstring(allocation.size)
+                                      , dlg_help_utils::stream_hex_dump::to_hex(allocation.size));
             }
         }
 
@@ -371,28 +382,33 @@ bool validate_allocations(std::vector<Allocation> const& allocations
                 // we have the json report of what you expected to have allocated.
                 if(!crt_heap.is_using_crt_heap() && heaps.is_address_filtered(allocation.pointer, dlg_help_utils::size_units::base_16::bytes{allocation.size}))
                 {
-                    *o_log << std::format(L"WARNING: [{0}] of [{1}] is a filtered entry, the address/size is reused from the base dmp file\n"
+                    *o_log << std::format(L"WARNING: [{0}] of [{1}/{2}] is a filtered entry, the address/size is reused from the base dmp file\n"
                                           , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
-                                          , locale_formatting::to_wstring(allocation.size));
+                                          , locale_formatting::to_wstring(allocation.size)
+                                          , dlg_help_utils::stream_hex_dump::to_hex(allocation.size));
                 }
                 else
                 {
-                    *o_log << std::format(L"ERROR: can't find json allocation [{0}] of [{1}], closest dmp heap allocation is [{2}] of [{3}]\n"
+                    *o_log << std::format(L"ERROR: can't find json allocation [{0}] of [{1}/{2}], closest dmp heap allocation is [{3}] of [{4}/{5}]\n"
                                           , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
                                           , locale_formatting::to_wstring(allocation.size)
-                                          , dlg_help_utils::stream_hex_dump::to_hex(it_closest->first, hex_length)
-                                          , locale_formatting::to_wstring(it_closest->second.user_requested_size().count()));
+                                          , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
+                                          , dlg_help_utils::stream_hex_dump::to_hex(it_closest->second.user_address(), hex_length)
+                                          , locale_formatting::to_wstring(it_closest->second.user_requested_size().count())
+                                          , dlg_help_utils::stream_hex_dump::to_hex(it_closest->second.user_requested_size().count()));
                     successful = false;
                 }
             }
         }
         else if(!allocation.allocated)
         {
-            *o_log << std::format(L"INFO: found json allocation [{0}] of [{1}] even though it's free(!), found dmp heap allocation is [{2}] of [{3}]\n"
+            *o_log << std::format(L"INFO: found json allocation [{0}] of [{1}/{2}] even though it's free(!), found dmp heap allocation is [{3}] of [{4}/{5}]\n"
                                   , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
                                   , locale_formatting::to_wstring(allocation.size)
-                                  , dlg_help_utils::stream_hex_dump::to_hex(it->first, hex_length)
-                                  , locale_formatting::to_wstring(it->second.user_requested_size().count()));
+                                  , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
+                                  , dlg_help_utils::stream_hex_dump::to_hex(it->second.user_address(), hex_length)
+                                  , locale_formatting::to_wstring(it->second.user_requested_size().count())
+                                  , dlg_help_utils::stream_hex_dump::to_hex(it->second.user_requested_size().count()));
         }
         else if(!check_allocation_range(allocation, it->second, o_log, hex_length))
         {
@@ -400,9 +416,10 @@ bool validate_allocations(std::vector<Allocation> const& allocations
         }
         else if(stacktrace && it->second.allocation_stack_trace().empty())
         {
-            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but dmp heap allocation has no expected stack trace\n"
+            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}/{2}] but dmp heap allocation has no expected stack trace\n"
                                   , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
-                                  , allocation.size);
+                                  , locale_formatting::to_wstring(allocation.size)
+                                  , dlg_help_utils::stream_hex_dump::to_hex(allocation.size));
             successful = false;
         }
         else
@@ -423,9 +440,10 @@ bool validate_allocations(std::vector<Allocation> const& allocations
                     {
                         uint32_t offset{0};
                         memcpy(&offset, start_data, sizeof fake_offset);
-                        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but failed fake offset of [{2} != {3}] compared to dmp allocation\n"
+                        *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}/{2}] but failed fake offset of [{3} != {4}] compared to dmp allocation\n"
                                               , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
                                               , locale_formatting::to_wstring(allocation.size)
+                                              , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
                                               , dlg_help_utils::stream_hex_dump::to_hex(offset)
                                               , dlg_help_utils::stream_hex_dump::to_hex(fake_offset));
                         successful = false;
@@ -441,9 +459,10 @@ bool validate_allocations(std::vector<Allocation> const& allocations
                     {
                         if(*data != allocation.fill_char)
                         {
-                            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}] but failed fill compare of [{2}] compared to dmp allocation of [{3}] @ [{4}]\n"
+                            *o_log << std::format(L"ERROR: found json allocation [{0}] of [{1}/{2}] but failed fill compare of [{3}] compared to dmp allocation of [{4}] @ [{5}]\n"
                                                   , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
                                                   , locale_formatting::to_wstring(allocation.size)
+                                                  , dlg_help_utils::stream_hex_dump::to_hex(allocation.size)
                                                   , allocation.fill_char
                                                   , *data
                                                   , dlg_help_utils::stream_hex_dump::to_hex(length + (data - start_data)));
@@ -480,15 +499,17 @@ bool validate_crt_entries(dlg_help_utils::heap::crt_heap const& crt_heap
             {
                 if(find_crt_allocation_in_heap_map(all_heap_allocations, entry))
                 {
-                    *o_log << std::format(L"INFO: CRT Allocation Entry [{0}] of [{1}] not found in diff allocation list but in all allocation list\n"
+                    *o_log << std::format(L"INFO: CRT Allocation Entry [{0}] of [{1}/{2}] not found in diff allocation list but in all allocation list\n"
                                           , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address(), hex_length)
-                                          , locale_formatting::to_wstring(entry.data_size().count()));
+                                          , locale_formatting::to_wstring(entry.data_size().count())
+                                          , dlg_help_utils::stream_hex_dump::to_hex(entry.data_size().count()));
                 }
                 else
                 {
-                    *o_log << std::format(L"ERROR: CRT Allocation Entry [{0}] of [{1}] not found\n"
+                    *o_log << std::format(L"ERROR: CRT Allocation Entry [{0}] of [{1}/{2}] not found\n"
                                           , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address(), hex_length)
-                                          , locale_formatting::to_wstring(entry.data_size().count()));
+                                          , locale_formatting::to_wstring(entry.data_size().count())
+                                          , dlg_help_utils::stream_hex_dump::to_hex(entry.data_size().count()));
                     successful = false;
                 }
             }
@@ -499,15 +520,17 @@ bool validate_crt_entries(dlg_help_utils::heap::crt_heap const& crt_heap
             {
                 if (find_crt_allocation_in_heap_map(all_heap_free_allocations, entry))
                 {
-                    *o_log << std::format(L"INFO: CRT Free Entry [{0}] of [{1}] not found in diff free allocation list but in all free allocation list\n"
+                    *o_log << std::format(L"INFO: CRT Free Entry [{0}] of [{1}/{2}] not found in diff free allocation list but in all free allocation list\n"
                                           , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address(), hex_length)
-                                          , locale_formatting::to_wstring(entry.data_size().count()));
+                                          , locale_formatting::to_wstring(entry.data_size().count())
+                                          , dlg_help_utils::stream_hex_dump::to_hex(entry.data_size().count()));
                 }
                 else
                 {
-                    *o_log << std::format(L"ERROR: CRT Free Entry [{0}] of [{1}] not found\n"
+                    *o_log << std::format(L"ERROR: CRT Free Entry [{0}] of [{1}/{2}] not found\n"
                                           , dlg_help_utils::stream_hex_dump::to_hex(entry.user_address(), hex_length)
-                                          , locale_formatting::to_wstring(entry.data_size().count()));
+                                          , locale_formatting::to_wstring(entry.data_size().count())
+                                          , dlg_help_utils::stream_hex_dump::to_hex(entry.data_size().count()));
                     successful = false;
                 }
             }
@@ -551,16 +574,18 @@ bool validate_allocation_graph_entries_are_not_marked_system(std::vector<Allocat
         if(auto const it = graph_allocation_nodes.find(allocation.pointer);
             it == graph_allocation_nodes.end())
         {
-            *o_log << std::format(L"ERROR: Allocation Entry [{0}] of [{1}] size not found in graph allocations list\n"
+            *o_log << std::format(L"ERROR: Allocation Entry [{0}] of [{1}/{2}] size not found in graph allocations list\n"
                                   , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
-                                  , locale_formatting::to_wstring(allocation.size));
+                                  , locale_formatting::to_wstring(allocation.size)
+                                  , dlg_help_utils::stream_hex_dump::to_hex(allocation.size));
             successful = false;
         }
         else if(it->second.is_system_allocation())
         {
-            *o_log << std::format(L"ERROR: Allocation Entry [{0}] of [{1}] size marked as system allocation\n"
+            *o_log << std::format(L"ERROR: Allocation Entry [{0}] of [{1}/{2}] size marked as system allocation\n"
                                   , dlg_help_utils::stream_hex_dump::to_hex(allocation.pointer, hex_length)
-                                  , locale_formatting::to_wstring(allocation.size));
+                                  , locale_formatting::to_wstring(allocation.size)
+                                  , dlg_help_utils::stream_hex_dump::to_hex(allocation.size));
             successful = false;
         }
     }
