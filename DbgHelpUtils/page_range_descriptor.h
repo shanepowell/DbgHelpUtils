@@ -43,6 +43,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes block_size() const;
         [[nodiscard]] uint64_t user_address() const;
         [[nodiscard]] size_units::base_16::bytes user_requested_size() const;
+        [[nodiscard]] std::optional<uint64_t> const& front_padding_size() const { return front_padding_size_; }
 
         [[nodiscard]] uint64_t ust_address() const { return ust_address_; }
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
@@ -56,6 +57,7 @@ namespace dlg_help_utils::heap
         static void setup_globals(segment_heap const& heap);
 
     private:
+        [[nodiscard]] std::optional<uint64_t> get_front_padding_size() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
 
@@ -79,6 +81,7 @@ namespace dlg_help_utils::heap
         size_t index_;
         uint64_t heap_page_segment_address_;
         uint8_t unit_shift_;
+        std::optional<uint64_t> front_padding_size_;
         uint64_t ust_address_{0};
         std::vector<uint64_t> allocation_stack_trace_{};
     };

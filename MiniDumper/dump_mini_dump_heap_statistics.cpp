@@ -104,9 +104,10 @@ void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_en
         log << std::format(L"{:12} ", to_wstring(bucket.free_total()));
         log << std::format(L"{:<7.2f} ", bucket.range_count_percent());
         log << std::format(L"{:<7.2f} ", bucket.range_size_percent());
-        if(bucket.common_allocation_callsite().has_value())
+        if(auto const& common_allocation_callsite = bucket.common_allocation_callsite();
+            common_allocation_callsite.has_value())
         {
-            log << std::format(L" {0}", hex_dump_stack_frame(bucket.common_allocation_callsite().value(), is_x86_target));
+            log << std::format(L" {0}", hex_dump_stack_frame(common_allocation_callsite.value(), is_x86_target));
         }
         log << L'\n';
 

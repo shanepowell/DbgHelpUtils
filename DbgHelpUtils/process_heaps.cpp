@@ -662,7 +662,7 @@ namespace dlg_help_utils::heap
         const auto it = crt_entries.lower_bound(user_address);
         if(it != crt_entries.end())
         {
-            auto const match = heap_match_utils::does_memory_match_to_range(peb().walker(), it->second.entry_address(), it->second.entry_size(), user_address, size);
+            auto const match = heap_match_utils::does_memory_match_to_range(it->second.entry_address(), it->second.entry_size(), user_address, size);
             options_->match_result_callback(it->second, user_address, size, match, node_type);
             switch(match)
             {
@@ -703,7 +703,7 @@ namespace dlg_help_utils::heap
     bool process_heaps::does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry)
     {
         return heap_entry.user_address() >= container_heap_entry.user_address() &&
-            heap_entry.user_address() + heap_entry.user_requested_size().count() <= container_heap_entry.user_address() + container_heap_entry.user_requested_size().count();
+            heap_entry.user_address() + heap_entry.user_requested_size().count() < container_heap_entry.user_address() + container_heap_entry.user_requested_size().count();
     }
 
     bool process_heaps::is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry)

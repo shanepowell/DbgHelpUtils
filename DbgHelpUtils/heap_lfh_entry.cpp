@@ -14,6 +14,7 @@ namespace dlg_help_utils::heap
     , allocated_{allocated}
     , has_unused_bytes_{has_unused_bytes}
     , unused_bytes_{get_unused_bytes()}
+    , front_padding_size_{get_front_padding_size()}
     , ust_address_{get_ust_address()}
     , allocation_stack_trace_{get_allocation_stack_trace()}
     {
@@ -31,12 +32,12 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_lfh_entry::user_address() const
     {
-        return heap_lfh_entry_address();
+        return heap_lfh_entry_address() + front_padding_size().value_or(0);
     }
 
     size_units::base_16::bytes heap_lfh_entry::user_requested_size() const
     {
-        return size_units::base_16::bytes{block_size().count() - unused_bytes().count()};
+        return size_units::base_16::bytes{block_size().count() - unused_bytes().count() - front_padding_size().value_or(0)};
     }
 
     size_units::base_16::bytes heap_lfh_entry::get_unused_bytes() const
@@ -62,5 +63,10 @@ namespace dlg_help_utils::heap
     std::vector<uint64_t> heap_lfh_entry::get_allocation_stack_trace() const
     {
         return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
+    }
+
+    std::optional<uint64_t> heap_lfh_entry::get_front_padding_size() const
+    {
+        return segment_heap_utils::read_front_padding_size(peb(), heap_lfh_entry_address(), block_size().count());
     }
 }

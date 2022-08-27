@@ -100,6 +100,19 @@ namespace dlg_help_utils::heap
         return stream_utils::get_type_length(cache.lfh_block_zone_symbol_type, symbol_name);
     }
 
+    bool lfh_segment::has_any_entries(heap_subsegment const& subsegment)
+    {
+        for (auto const& entry : subsegment.entries())  // NOLINT(readability-use-anyofallof)
+        {
+            if(entry.is_lfh_entry())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     std::vector<heap_subsegment> lfh_segment::build_subsegments() const
     {
         // filter out non-valid lfh segments, segments that are not in a HEAP internal allocated entry
@@ -123,7 +136,9 @@ namespace dlg_help_utils::heap
             }
 
             if(heap_subsegment subsegment{lfh_heap(), subsegment_address, cache_data_->lfh_block_zone_size};
-                subsegment.entry_start_address() != 0 && std::ranges::any_of(all_heap_entries, [&subsegment](heap_entry const& entry) { return process_heaps::is_lfh_subsegment_in_entry(entry, subsegment); }))
+                subsegment.entry_start_address() != 0 
+                && std::ranges::any_of(all_heap_entries, [&subsegment](heap_entry const& entry) { return process_heaps::is_lfh_subsegment_in_entry(entry, subsegment); })
+                && has_any_entries(subsegment))
             {
                 rv.emplace_back(subsegment);
             }

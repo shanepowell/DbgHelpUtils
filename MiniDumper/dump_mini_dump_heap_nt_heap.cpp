@@ -251,17 +251,20 @@ namespace detail
                     log << std::format(L"{0}  Small Tag Index: {1} ({2})\n", indent_str, locale_formatting::to_wstring(entry.small_tag_index()), stream_hex_dump::to_hex(entry.small_tag_index()));
                     log << std::format(L"{0}  Unused Bytes Method: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes_method()), stream_hex_dump::to_hex(static_cast<unsigned>(entry.unused_bytes_method())));
                     log << std::format(L"{0}  User Requested Method: {1} ({2})\n", indent_str, to_wstring(entry.requested_size_method()), stream_hex_dump::to_hex(static_cast<unsigned>(entry.requested_size_method())));
-                    if(entry.eod().has_value())
+                    
+                    if(auto const& eod = entry.eod();
+                        eod.has_value())
                     {
-                        log << std::format(L"{0}  EOD: {1} ({2})\n", indent_str, to_wstring(entry.eod().value()), stream_hex_dump::to_hex(entry.eod().value()));
+                        log << std::format(L"{0}  EOD: {1} ({2})\n", indent_str, to_wstring(eod.value()), stream_hex_dump::to_hex(eod.value()));
                     }
                     if(entry.ust_header_address() != 0)
                     {
                         log << std::format(L"{0}  UST Header Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_header_address(), hex_length));
                     }
-                    if(entry.ust_end_gap_length().has_value())
+                    if(auto const& ust_end_gap_length = entry.ust_end_gap_length();
+                        ust_end_gap_length.has_value())
                     {
-                        log << std::format(L"{0}  UST Header End Gap Length: {1} ({2})\n", indent_str, to_wstring(entry.ust_end_gap_length().value()), stream_hex_dump::to_hex(entry.ust_end_gap_length().value()));
+                        log << std::format(L"{0}  UST Header End Gap Length: {1} ({2})\n", indent_str, to_wstring(ust_end_gap_length.value()), stream_hex_dump::to_hex(ust_end_gap_length.value()));
                     }
                     if(entry.is_lfh_entry())
                     {

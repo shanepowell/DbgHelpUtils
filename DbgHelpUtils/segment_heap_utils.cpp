@@ -1,5 +1,8 @@
 ﻿#include "segment_heap_utils.h"
 
+#include <algorithm>
+#include <array>
+
 #include "process_environment_block.h"
 #include "stream_utils.h"
 #include "ust_address_stack_trace.h"
@@ -63,5 +66,46 @@ namespace dlg_help_utils::heap
         }
 
         return 0;
+    }
+
+    std::optional<uint64_t> segment_heap_utils::read_front_padding_size(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size)
+    {
+        if(peb.is_x64_target())
+        {
+            constexpr std::array x64_front_pad_sizes { 0x10ULL, 0x40ULL };
+            return get_read_front_padding_size(peb, block_address, block_size, x64_front_pad_sizes);
+        }
+        constexpr std::array x86_front_pad_sizes { 0x08ULL };
+        return get_read_front_padding_size(peb, block_address, block_size, x86_front_pad_sizes);
+    }
+
+    std::optional<uint64_t> segment_heap_utils::read_front_padding_size_large(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size)
+    {
+        if(peb.is_x64_target())
+        {
+            constexpr std::array x64_front_pad_sizes { 0x40ULL };
+            return get_read_front_padding_size(peb, block_address, block_size, x64_front_pad_sizes);
+        }
+        constexpr std::array x86_front_pad_sizes { 0x20ULL };
+        return get_read_front_padding_size(peb, block_address, block_size, x86_front_pad_sizes);
+    }
+
+    template<size_t N>
+    std::optional<uint64_t> segment_heap_utils::get_read_front_padding_size(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size, std::array<uint64_t, N> const front_padding_sizes)
+    {
+        if(std::ranges::all_of(front_padding_sizes, [block_size](uint64_t const size) { return block_size < size; }))
+        {
+            return std::nullopt;
+        }
+
+        if(auto const size_value = stream_utils::read_machine_size_field_value(peb, block_address); size_value.has_value())
+        {
+            if(std::ranges::find(front_padding_sizes, size_value.value()) != front_padding_sizes.end())
+            {
+                return size_value.value();
+            }
+        }
+
+        return std::nullopt;
     }
 }

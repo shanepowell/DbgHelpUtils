@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <optional>
+
 #include "size_units.h"
 
 namespace dlg_help_utils::process
@@ -21,5 +23,12 @@ namespace dlg_help_utils::heap
     public:
         static segment_heap_entry_extra_data read_extra_data(process::process_environment_block const& peb, ust_address_stack_trace const& stack_trace, uint64_t block_address, uint64_t block_size);
         static uint64_t read_ust_address(process::process_environment_block const& peb, ust_address_stack_trace const& stack_trace, uint64_t block_address, uint64_t block_size, uint64_t unused_bytes);
+
+        static std::optional<uint64_t> read_front_padding_size(process::process_environment_block const& peb, uint64_t block_address, uint64_t block_size);
+        static std::optional<uint64_t> read_front_padding_size_large(process::process_environment_block const& peb, uint64_t block_address, uint64_t block_size);
+
+    private:
+        template<size_t N>
+        static std::optional<uint64_t> get_read_front_padding_size(process::process_environment_block const& peb, uint64_t block_address, uint64_t block_size, std::array<uint64_t, N> front_padding_sizes);
     };
 }

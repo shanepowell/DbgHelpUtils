@@ -53,6 +53,12 @@ namespace detail
             log << std::format(L"{0}  Allocated Pages: {1}\n", indent_str, locale_formatting::to_wstring(entry.allocated_pages()));
             log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
             log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
+            log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
+            if(auto const& front_padding_size = entry.front_padding_size();
+                front_padding_size.has_value())
+            {
+                log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
+            }
             log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
         }
 
@@ -111,7 +117,16 @@ namespace detail
             }
             log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
             log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
-            log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
+            log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
+            if(auto const& front_padding_size = entry.front_padding_size();
+                front_padding_size.has_value())
+            {
+                log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
+            }
+            if(entry.ust_address() != 0)
+            {
+                log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
+            }
         }
 
         void print_lfh_entry(std::wostream& log, streamsize const hex_length, heap::heap_lfh_entry const& entry, dump_file_options const& options, size_t const indent)
@@ -338,6 +353,12 @@ namespace detail
                 log << std::format(L"{0}  Skip During Walk: {1}\n", indent_str, entry.skip_during_walk());
                 log << std::format(L"{0}  Spare: {1}\n", indent_str, stream_hex_dump::to_hex(entry.spare()));
                 log << std::format(L"{0}  Allocated Chunk Bits: {1}\n", indent_str, stream_hex_dump::to_hex(entry.allocated_chunk_bits()));
+                log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
+                if(auto const& front_padding_size = entry.front_padding_size();
+                    front_padding_size.has_value())
+                {
+                    log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
+                }
                 log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
                 log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
                 log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
@@ -442,6 +463,12 @@ namespace detail
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(entry.block_size()), stream_hex_dump::to_hex(entry.block_size()));
             log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
             log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
+            log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
+            if(auto const& front_padding_size = entry.front_padding_size();
+                front_padding_size.has_value())
+            {
+                log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
+            }
             log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
         }
 

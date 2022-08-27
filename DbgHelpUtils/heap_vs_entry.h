@@ -47,6 +47,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool skip_during_walk() const;
         [[nodiscard]] uint32_t spare() const;
         [[nodiscard]] uint32_t allocated_chunk_bits() const;
+        [[nodiscard]] std::optional<uint64_t> const& front_padding_size() const { return front_padding_size_; }
 
         [[nodiscard]] uint64_t block_address() const;
         [[nodiscard]] uint64_t block_size() const;
@@ -65,12 +66,14 @@ namespace dlg_help_utils::heap
         static void setup_globals(segment_heap const& heap);
 
     private:
+        [[nodiscard]] std::optional<uint64_t> get_front_padding_size() const;
         [[nodiscard]] size_units::base_16::bytes get_size() const;
         [[nodiscard]] size_units::base_16::bytes get_previous_size() const;
         [[nodiscard]] uint16_t get_previous_size_raw() const;
         [[nodiscard]] bool get_is_valid(uint16_t previous_size) const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
+        [[nodiscard]] uint64_t raw_full_size() const;
         void validate_buffer() const;
 
     private:
@@ -95,6 +98,7 @@ namespace dlg_help_utils::heap
         segment_heap const* heap_;
         uint64_t heap_vs_entry_address_;
         std::unique_ptr<uint8_t[]> buffer_;
+        std::optional<uint64_t> front_padding_size_;
         size_units::base_16::bytes size_;
         size_units::base_16::bytes previous_size_{0};
         bool is_valid_{true};

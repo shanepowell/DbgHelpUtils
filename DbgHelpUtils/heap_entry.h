@@ -85,7 +85,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes unused_bytes() const { return unused_bytes_; }
         [[nodiscard]] size_units::base_16::bytes ust_unused_bytes_raw() const;
         [[nodiscard]] size_units::base_16::bytes data_area_max_size() const;
-        [[nodiscard]] std::optional<size_units::base_16::bytes> eod() const { return eod_; }
+        [[nodiscard]] std::optional<size_units::base_16::bytes> const& eod() const { return eod_; }
         [[nodiscard]] uint64_t ust_header_address() const { return ust_header_address_; }
         [[nodiscard]] std::optional<size_units::base_16::bytes> const& ust_end_gap_length() const { return ust_end_gap_length_; }
 

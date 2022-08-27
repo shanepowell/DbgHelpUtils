@@ -18,6 +18,7 @@ namespace dlg_help_utils::heap
     , heap_{&heap}
     , heap_vs_entry_address_{heap_vs_entry_address}
     , buffer_{std::move(buffer)}
+    , front_padding_size_{get_front_padding_size()}
     , size_{get_size()}
     , previous_size_{get_previous_size()}
     , is_valid_{get_is_valid(previous_size)}
@@ -31,6 +32,7 @@ namespace dlg_help_utils::heap
     , heap_{&heap}
     , heap_vs_entry_address_{heap_vs_entry_address}
     , buffer_{std::move(buffer)}
+    , front_padding_size_{get_front_padding_size()}
     , size_{get_size()}
     , previous_size_{get_previous_size()}
     , ust_address_{get_ust_address()}
@@ -121,12 +123,12 @@ namespace dlg_help_utils::heap
 
     uint64_t heap_vs_entry::user_address() const
     {
-        return block_address();
+        return block_address() + front_padding_size().value_or(0);
     }
 
     size_units::base_16::bytes heap_vs_entry::user_requested_size() const
     {
-        auto requested_user_size = block_size();
+        auto requested_user_size = block_size() - front_padding_size().value_or(0);
 
         if(has_unused_bytes())
         {
@@ -167,9 +169,14 @@ namespace dlg_help_utils::heap
         }
     }
 
+    std::optional<uint64_t> heap_vs_entry::get_front_padding_size() const
+    {
+        return segment_heap_utils::read_front_padding_size(peb(), block_address(), block_size());
+    }
+
     size_units::base_16::bytes heap_vs_entry::get_size() const
     {
-        return size_units::base_16::bytes{raw_size() << heap().unit_shift_amount()};
+        return size_units::base_16::bytes{raw_full_size()};
     }
 
     size_units::base_16::bytes heap_vs_entry::get_previous_size() const
@@ -201,6 +208,11 @@ namespace dlg_help_utils::heap
     std::vector<uint64_t> heap_vs_entry::get_allocation_stack_trace() const
     {
         return heap().stack_trace().read_allocation_stack_trace(peb(), ust_address());
+    }
+
+    uint64_t heap_vs_entry::raw_full_size() const
+    {
+        return static_cast<uint64_t>(raw_size()) << heap().unit_shift_amount();
     }
 
     void heap_vs_entry::validate_buffer() const

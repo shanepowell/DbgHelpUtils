@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
+#include <optional>
 
 #include "size_units.h"
 #include "tagged_bool.h"
@@ -36,6 +37,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool allocated() const { return static_cast<bool>(allocated_); }
         [[nodiscard]] bool has_unused_bytes() const { return static_cast<bool>(has_unused_bytes_); }
         [[nodiscard]] size_units::base_16::bytes unused_bytes() const { return unused_bytes_; }
+        [[nodiscard]] std::optional<uint64_t> const& front_padding_size() const { return front_padding_size_; }
 
         [[nodiscard]] uint64_t block_address() const { return heap_lfh_entry_address(); }
         [[nodiscard]] uint64_t user_address() const;
@@ -48,6 +50,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes get_unused_bytes() const;
         [[nodiscard]] uint64_t get_ust_address() const;
         [[nodiscard]] std::vector<uint64_t> get_allocation_stack_trace() const;
+        [[nodiscard]] std::optional<uint64_t> get_front_padding_size() const;
 
     private:
         heap_lfh_context const* heap_;
@@ -56,7 +59,8 @@ namespace dlg_help_utils::heap
         allocated_t allocated_;
         has_unused_bytes_t has_unused_bytes_;
         size_units::base_16::bytes unused_bytes_;
-        uint64_t ust_address_{0};
+        std::optional<uint64_t> front_padding_size_;
+        uint64_t ust_address_;
         std::vector<uint64_t> allocation_stack_trace_{};
     };
 }

@@ -71,8 +71,11 @@ namespace dlg_help_utils::heap
                 break;
             }
 
-            heap_entry entry{lfh_heap().heap(), address, std::move(buffer), block_size_value, heap_entry::LfhEntryType{}};
-            co_yield entry;
+            if(heap_entry entry{lfh_heap().heap(), address, std::move(buffer), block_size_value, heap_entry::LfhEntryType{}};
+                entry.is_lfh_entry())
+            {
+                co_yield entry;
+            }
 
             address += block_stride_;
         }

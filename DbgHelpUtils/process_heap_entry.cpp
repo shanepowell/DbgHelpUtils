@@ -52,9 +52,9 @@ namespace dlg_help_utils::heap
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , check_block_start_address_{entry.block_address()}
+    , check_block_start_address_{entry.user_address()}
     , check_block_end_address_{check_block_start_address_ + entry.user_requested_size().count()}
-    , check_metadata_start_address_{check_block_start_address_}
+    , check_metadata_start_address_{entry.block_address()}
     , check_metadata_end_address_{check_metadata_start_address_ + entry.block_size().count()}
     , overhead_size_{entry.block_size().count() - user_size_.count()}
     , heap_entry_type_{heap_node_type::segment_lfh_entry}
@@ -100,8 +100,8 @@ namespace dlg_help_utils::heap
     , user_size_{entry.user_requested_size()}
     , ust_address_{entry.ust_address()}
     , allocation_stack_trace_{entry.allocation_stack_trace()}
-    , check_block_start_address_{entry.block_address()}
-    , check_block_end_address_{check_block_start_address_ + entry.block_size()}
+    , check_block_start_address_{entry.user_address()}
+    , check_block_end_address_{check_block_start_address_ + entry.user_requested_size().count()}
     , check_metadata_start_address_{entry.large_alloc_entry_address()}
     , check_metadata_end_address_{check_metadata_start_address_ + entry.symbol_type().length().value_or(1)}
     , overhead_size_{entry.block_size() - user_size_.count()}
@@ -311,7 +311,7 @@ namespace dlg_help_utils::heap
 
     block_range_match_result process_heap_entry::match_range(uint64_t const range_address, size_units::base_16::bytes const range_size) const
     {
-        return heap_match_utils::does_memory_match_to_range(peb_->walker(), range_address, range_size, user_address(), user_requested_size());
+        return heap_match_utils::does_memory_match_to_range(range_address, range_size, user_address(), user_requested_size());
     }
 
     uint64_t process_heap_entry::get_nt_heap_entry_check_block_start(heap_entry const& entry) const

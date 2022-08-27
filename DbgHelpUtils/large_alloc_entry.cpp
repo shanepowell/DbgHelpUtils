@@ -15,6 +15,7 @@ namespace dlg_help_utils::heap
     , heap_{&heap}
     , large_alloc_entry_address_{large_alloc_entry_address}
     , size_{get_size()}
+    , front_padding_size_{get_front_padding_size()}
     , ust_address_{get_ust_address()}
     , allocation_stack_trace_{get_allocation_stack_trace()}
     {
@@ -77,12 +78,12 @@ namespace dlg_help_utils::heap
 
     uint64_t large_alloc_entry::user_address() const
     {
-        return block_address();
+        return block_address() + front_padding_size().value_or(0);
     }
 
     size_units::base_16::bytes large_alloc_entry::user_requested_size() const
     {
-        return size_units::base_16::bytes{block_size() - unused_bytes().count()};
+        return size_units::base_16::bytes{block_size() - unused_bytes().count() - front_padding_size().value_or(0)};
     }
 
     void large_alloc_entry::setup_globals(segment_heap const& heap)
@@ -107,6 +108,11 @@ namespace dlg_help_utils::heap
     size_units::base_16::bytes large_alloc_entry::get_size() const
     {
         return size_units::base_16::bytes{allocated_pages() * heap().peb().page_size()};
+    }
+
+    std::optional<uint64_t> large_alloc_entry::get_front_padding_size() const
+    {
+        return segment_heap_utils::read_front_padding_size_large(peb(), block_address(), block_size());
     }
 
     uint64_t large_alloc_entry::get_ust_address() const
