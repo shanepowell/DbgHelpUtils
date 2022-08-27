@@ -107,6 +107,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries/lyra/include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,6 +124,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries/lyra/include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,6 +142,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries/lyra/include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,6 +160,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries/lyra/include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
