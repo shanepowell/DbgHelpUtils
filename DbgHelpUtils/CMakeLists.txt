@@ -154,6 +154,8 @@ set(Heap__SegmentHeap
     "page_range_descriptor.h"
     "segment_heap.cpp"
     "segment_heap.h"
+    "segment_heap_options.cpp"
+    "segment_heap_options.h"
     "segment_heap_utils.cpp"
     "segment_heap_utils.h"
 )

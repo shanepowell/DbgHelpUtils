@@ -20,6 +20,7 @@ namespace dlg_help_utils
     namespace heap
     {
         class segment_heap;
+        class segment_heap_options;
         class nt_heap;
     }
 
@@ -49,7 +50,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] uint64_t heap_address(uint32_t heap_index) const;
         [[nodiscard]] uint32_t segment_signature(uint32_t heap_index) const;
         [[nodiscard]] std::optional<heap::nt_heap> nt_heap(uint32_t heap_index) const;
-        [[nodiscard]] std::optional<heap::segment_heap> segment_heap(uint32_t heap_index) const;
+        [[nodiscard]] std::optional<heap::segment_heap> segment_heap(uint32_t heap_index, heap::segment_heap_options options) const;
 
         [[nodiscard]] bool is_x86_target() const;
         [[nodiscard]] bool is_x64_target() const;

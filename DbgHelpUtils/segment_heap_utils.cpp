@@ -3,9 +3,12 @@
 #include <algorithm>
 #include <array>
 
+#include "file_version_info.h"
 #include "process_environment_block.h"
 #include "stream_utils.h"
 #include "ust_address_stack_trace.h"
+
+using namespace std::string_view_literals;
 
 namespace dlg_help_utils::heap
 {
@@ -68,8 +71,13 @@ namespace dlg_help_utils::heap
         return 0;
     }
 
-    std::optional<uint64_t> segment_heap_utils::read_front_padding_size(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size)
+    std::optional<uint64_t> segment_heap_utils::read_front_padding_size(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size, uint16_t const windows10_min_version, uint16_t const windows10_max_version)
     {
+        if(!may_have_front_padding(peb, windows10_min_version, windows10_max_version))
+        {
+            return std::nullopt;
+        }
+
         if(peb.is_x64_target())
         {
             constexpr std::array x64_front_pad_sizes { 0x10ULL, 0x40ULL };
@@ -79,8 +87,13 @@ namespace dlg_help_utils::heap
         return get_read_front_padding_size(peb, block_address, block_size, x86_front_pad_sizes);
     }
 
-    std::optional<uint64_t> segment_heap_utils::read_front_padding_size_large(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size)
+    std::optional<uint64_t> segment_heap_utils::read_front_padding_size_large(process::process_environment_block const& peb, uint64_t const block_address, uint64_t const block_size, uint16_t const windows10_min_version, uint16_t const windows10_max_version)
     {
+        if(!may_have_front_padding(peb, windows10_min_version, windows10_max_version))
+        {
+            return std::nullopt;
+        }
+
         if(peb.is_x64_target())
         {
             constexpr std::array x64_front_pad_sizes { 0x40ULL };
@@ -88,6 +101,26 @@ namespace dlg_help_utils::heap
         }
         constexpr std::array x86_front_pad_sizes { 0x20ULL };
         return get_read_front_padding_size(peb, block_address, block_size, x86_front_pad_sizes);
+    }
+
+    bool segment_heap_utils::may_have_front_padding(process::process_environment_block const& peb, uint16_t const windows10_min_version, uint16_t const windows10_max_version)
+    {
+        if(windows10_min_version == std::numeric_limits<uint16_t>::max())
+        {
+            return false;
+        }
+
+        auto const* ntdll_module = peb.module_list().find_module(L"NTDLL.DLL"sv);
+        if(ntdll_module == nullptr)
+        {
+            return false;
+        }
+
+        auto const& version_info = (*ntdll_module)->VersionInfo;
+        return HIWORD(version_info.dwProductVersionMS) == 10
+            && LOWORD(version_info.dwProductVersionMS) == 0
+            && HIWORD(version_info.dwProductVersionLS) >= windows10_min_version
+            && HIWORD(version_info.dwProductVersionLS) <= windows10_max_version;
     }
 
     template<size_t N>

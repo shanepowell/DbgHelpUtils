@@ -450,6 +450,9 @@
     <ClCompile Include="file_version_info.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="segment_heap_options.cpp">
+      <Filter>Heap\SegmentHeap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -964,6 +967,9 @@
     </ClInclude>
     <ClInclude Include="file_version_info.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="segment_heap_options.h">
+      <Filter>Heap\SegmentHeap</Filter>
     </ClInclude>
     <ClInclude Include="null_stream.h">
       <Filter>Utility</Filter>

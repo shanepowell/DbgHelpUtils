@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "process_environment_block.h"
+#include "segment_heap_options.h"
 #include "size_units.h"
 #include "stream_utils.h"
 #include "ust_address_stack_trace.h"
@@ -32,12 +33,13 @@ namespace dlg_help_utils::heap
     class segment_heap
     {
     public:
-        segment_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t segment_heap_address);
+        segment_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t segment_heap_address, segment_heap_options options);
 
         [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
 
         [[nodiscard]] process::process_environment_block const& peb() const { return *peb_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return peb().walker(); }
+        [[nodiscard]] segment_heap_options const& options() const { return options_; }
 
         [[nodiscard]] uint64_t segment_heap_address() const { return segment_heap_address_; }
         [[nodiscard]] uint32_t segment_signature() const;
@@ -115,6 +117,7 @@ namespace dlg_help_utils::heap
     private:
         cache_manager* cache_manager_;
         uint64_t segment_heap_address_;
+        segment_heap_options options_;
         process::process_environment_block const* peb_;
         cache_data const* cache_data_{&setup_globals()};
         uint64_t heap_key_;

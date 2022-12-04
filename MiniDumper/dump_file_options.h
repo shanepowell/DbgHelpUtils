@@ -143,6 +143,7 @@ private:
     std::string view_sort_order_raw_;
     std::string output_filename_raw_;
     std::wstring output_filename_;
+    std::string segment_heap_front_padding_options_raw_;
     dlg_help_utils::heap::system_module_list system_module_list_;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options_;
     dlg_help_utils::heap::process_heaps_options process_heaps_options_;

@@ -24,9 +24,10 @@ namespace dlg_help_utils::heap
 {
     std::wstring const& segment_heap::symbol_name = common_symbol_names::segment_heap_structure_symbol_name;
 
-    segment_heap::segment_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t const segment_heap_address)
+    segment_heap::segment_heap(cache_manager& cache, process::process_environment_block const& peb, uint64_t const segment_heap_address, segment_heap_options options)
     : cache_manager_{&cache}
     , segment_heap_address_{segment_heap_address}
+    , options_{options}
     , peb_{&peb}
     , heap_key_{get_heap_key()}
     , lfh_heap_key_{get_lfh_heap_key()}

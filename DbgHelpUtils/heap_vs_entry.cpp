@@ -171,7 +171,8 @@ namespace dlg_help_utils::heap
 
     std::optional<uint64_t> heap_vs_entry::get_front_padding_size() const
     {
-        return segment_heap_utils::read_front_padding_size(peb(), block_address(), block_size());
+        auto const& options{heap().options()};
+        return segment_heap_utils::read_front_padding_size(peb(), block_address(), block_size(), options.front_padding_windows10_min_version(), options.front_padding_windows10_max_version());
     }
 
     size_units::base_16::bytes heap_vs_entry::get_size() const

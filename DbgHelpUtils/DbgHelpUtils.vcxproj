@@ -250,6 +250,7 @@
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
     <ClCompile Include="rtl_rb_tree_walker.cpp" />
     <ClCompile Include="segment_heap.cpp" />
+    <ClCompile Include="segment_heap_options.cpp" />
     <ClCompile Include="segment_heap_utils.cpp" />
     <ClCompile Include="size_units.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
@@ -351,6 +352,7 @@
     <ClInclude Include="print_utils.h" />
     <ClInclude Include="process_heap_entry_symbol_address_reference.h" />
     <ClInclude Include="process_heap_graph_symbol_entry.h" />
+    <ClInclude Include="segment_heap_options.h" />
     <ClInclude Include="symbol_type_info_cache.h" />
     <ClInclude Include="tagged_bool.h" />
     <ClInclude Include="throw_on_error.h" />

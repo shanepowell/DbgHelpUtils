@@ -33,6 +33,7 @@
 #include "process_heaps_statistics.h"
 #include "process_heap_entry.h"
 #include "segment_heap.h"
+#include "wide_runtime_error.h"
 
 namespace dlg_help_utils::heap
 {
@@ -54,7 +55,7 @@ namespace dlg_help_utils::heap
                     system_area_addresses_.insert(nt_heap.value().nt_heap_address());
                 }
             }
-            else if (auto const segment_heap = peb().segment_heap(heap_index); segment_heap.has_value())
+            else if (auto const segment_heap = peb().segment_heap(heap_index, options.segment_heap_options()); segment_heap.has_value())
             {
                 if(!system_area_addresses_.contains(segment_heap.value().segment_heap_address()))
                 {
@@ -423,7 +424,7 @@ namespace dlg_help_utils::heap
                 get_all_nt_heap_segment_entries(all_entries, crt_entries, nt_heap.value(), lfh_data);
                 get_all_nt_heap_virtual_entries(all_entries, crt_entries, nt_heap.value());
             }
-            else if (auto const segment_heap = peb().segment_heap(heap_index); segment_heap.has_value())
+            else if (auto const segment_heap = peb().segment_heap(heap_index, options().segment_heap_options()); segment_heap.has_value())
             {
                 get_all_segment_backend_entities(all_entries, crt_entries, segment_heap.value());
                 get_all_segment_entities(all_entries, crt_entries, segment_heap.value());
@@ -526,7 +527,7 @@ namespace dlg_help_utils::heap
                     }
                 }
             }
-            else if (auto const segment_heap = peb().segment_heap(heap_index); segment_heap.has_value())
+            else if (auto const segment_heap = peb().segment_heap(heap_index, options().segment_heap_options()); segment_heap.has_value())
             {
                 for (auto const& segment_context : segment_heap.value().segment_contexts())
                 {
@@ -696,14 +697,19 @@ namespace dlg_help_utils::heap
             }
         }
 
-        auto end_user_address = get_last_address(process_heap_entry);
-        entries.emplace(std::make_pair(end_user_address, std::move(process_heap_entry)));
+        auto const end_user_address = get_last_address(process_heap_entry);
+        auto const user_address = process_heap_entry.user_address();
+        if(auto const it = entries.emplace(std::make_pair(end_user_address, std::move(process_heap_entry)));
+            !it.second)
+        {
+            throw exceptions::wide_runtime_error{std::format(L"failed to add heap entry into process list [{0}] due existing entry already existing [{1}]", user_address, it.first->second.user_address())};
+        }
     }
 
     bool process_heaps::does_entry_contain_entry(process_heap_entry const& container_heap_entry, process_heap_entry const& heap_entry)
     {
         return heap_entry.user_address() >= container_heap_entry.user_address() &&
-            heap_entry.user_address() + heap_entry.user_requested_size().count() < container_heap_entry.user_address() + container_heap_entry.user_requested_size().count();
+            heap_entry.user_address() + heap_entry.user_requested_size().count() <= container_heap_entry.user_address() + container_heap_entry.user_requested_size().count();
     }
 
     bool process_heaps::is_filtered(std::vector<process_heap_entry> const& filters, process_heap_entry const& entry)

@@ -53,6 +53,13 @@ namespace
         {"descending"s, dlg_help_utils::heap::process_heaps_statistic_view::sort_order_type::descending}
     };
 
+    map<std::string, dlg_help_utils::heap::segment_heap_front_padding_options_type> const g_segment_heap_front_padding_options
+    {
+        {"auto"s, dlg_help_utils::heap::segment_heap_front_padding_options_type::auto_padding_detect},
+        {"disabled"s, dlg_help_utils::heap::segment_heap_front_padding_options_type::padding_disabled},
+        {"enabled"s, dlg_help_utils::heap::segment_heap_front_padding_options_type::padding_enabled},
+    };
+
     struct system_modules_json
     {
         std::vector<std::string> systemmodules;
@@ -126,6 +133,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(graph_display_max_call_depth_raw_, "50")["--hgmaxcalldepth"]("limit the generation of the process graph display to use a call stack depth of 50 (default 50)")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(display_loaded_modules_)["--modules"]("dump loaded modules")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(segment_heap_front_padding_options_raw_, dlg_help_utils::join(g_segment_heap_front_padding_options | std::views::keys, "|"sv))["--segheapfpad"]("segment heap front padding option").choices([](std::string const& value) { return g_segment_heap_front_padding_options.contains(value); })
     ;
 }
 
@@ -237,6 +246,12 @@ void dump_file_options::process_raw_options()
     {
         statistic_view_options_.view_sort_order() = g_view_sort_order.at(view_sort_order_raw_);
         view_sort_order_raw_.clear();
+    }
+
+    if(!segment_heap_front_padding_options_raw_.empty())
+    {
+        process_heaps_options().segment_heap_front_padding_options() = g_segment_heap_front_padding_options.at(segment_heap_front_padding_options_raw_);
+        segment_heap_front_padding_options_raw_.clear();
     }
 }
 

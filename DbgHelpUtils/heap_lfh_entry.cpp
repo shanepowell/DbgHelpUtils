@@ -2,6 +2,7 @@
 
 #include "heap_lfh_context.h"
 #include "process_environment_block.h"
+#include "segment_heap.h"
 #include "segment_heap_utils.h"
 #include "ust_address_stack_trace.h"
 
@@ -67,6 +68,7 @@ namespace dlg_help_utils::heap
 
     std::optional<uint64_t> heap_lfh_entry::get_front_padding_size() const
     {
-        return segment_heap_utils::read_front_padding_size(peb(), heap_lfh_entry_address(), block_size().count());
+        auto const& options{heap().heap().options()};
+        return segment_heap_utils::read_front_padding_size(peb(), heap_lfh_entry_address(), block_size().count(), options.front_padding_windows10_min_version(), options.front_padding_windows10_max_version());
     }
 }

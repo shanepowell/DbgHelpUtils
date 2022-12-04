@@ -52,7 +52,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
         }
         else if(segment_signature == heap::SegmentSignatureSegmentHeap)
         {
-            if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
+            if(auto const segment_heap = peb.segment_heap(heap_index, options.process_heaps_options().segment_heap_options()); segment_heap.has_value())
             {
                 detail::print_segment_heap_line(log, get_process_marker(detail::is_process_heap_t{peb.process_heap() == heap_address}), segment_heap.value());
             }
@@ -71,7 +71,7 @@ void dump_mini_dump_heap(std::wostream& log, mini_dump const& mini_dump, cache_m
         {
             detail::print_nt_heap(log, hex_length, options, nt_heap.value(), peb);
         }
-        else if(auto const segment_heap = peb.segment_heap(heap_index); segment_heap.has_value())
+        else if(auto const segment_heap = peb.segment_heap(heap_index, options.process_heaps_options().segment_heap_options()); segment_heap.has_value())
         {
             detail::print_segment_heap(log, hex_length, get_process_marker(detail::is_process_heap_t{peb.process_heap() == segment_heap.value().segment_heap_address()}), segment_heap.value(), options, 0);
         }

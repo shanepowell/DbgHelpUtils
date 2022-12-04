@@ -155,7 +155,8 @@ namespace dlg_help_utils::heap
 
     std::optional<uint64_t> page_range_descriptor::get_front_padding_size() const
     {
-        return segment_heap_utils::read_front_padding_size(peb(), block_address(), block_size().count());
+        auto const& options{heap().heap().options()};
+        return segment_heap_utils::read_front_padding_size(peb(), block_address(), block_size().count(), options.front_padding_windows10_min_version(), options.front_padding_windows10_max_version());
     }
 
     uint64_t page_range_descriptor::get_ust_address() const

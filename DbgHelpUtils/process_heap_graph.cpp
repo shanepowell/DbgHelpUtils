@@ -458,7 +458,7 @@ namespace dlg_help_utils::heap
             {
                 generate_nt_heap_references(nt_heap.value(), heap_entries, pointer_size, crt_entries, ignore_pointers);
             }
-            else if (auto const segment_heap = process_->peb().segment_heap(heap_index); segment_heap.has_value())
+            else if (auto const segment_heap = process_->peb().segment_heap(heap_index, process_->options().segment_heap_options()); segment_heap.has_value())
             {
                 generate_segment_references(segment_heap.value(), heap_entries, pointer_size, crt_entries, ignore_pointers);
             }

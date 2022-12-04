@@ -112,7 +112,8 @@ namespace dlg_help_utils::heap
 
     std::optional<uint64_t> large_alloc_entry::get_front_padding_size() const
     {
-        return segment_heap_utils::read_front_padding_size_large(peb(), block_address(), block_size());
+        auto const& options{heap().options()};
+        return segment_heap_utils::read_front_padding_size_large(peb(), block_address(), block_size(), options.front_padding_windows10_min_version(), options.front_padding_windows10_max_version());
     }
 
     uint64_t large_alloc_entry::get_ust_address() const
