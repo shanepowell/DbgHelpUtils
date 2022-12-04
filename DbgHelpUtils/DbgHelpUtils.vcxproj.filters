@@ -959,6 +959,9 @@
     <ClInclude Include="heap_node_type.h">
       <Filter>Heap</Filter>
     </ClInclude>
+    <ClInclude Include="null_stream.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -342,6 +342,7 @@
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />
     <ClInclude Include="nt_heap.h" />
+    <ClInclude Include="null_stream.h" />
     <ClInclude Include="overload.h" />
     <ClInclude Include="page_range_descriptor.h" />
     <ClInclude Include="page_range_flags_utils.h" />

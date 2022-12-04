@@ -25,11 +25,115 @@ Param
     [switch] $CheckDumpHasStackTrace,
     [switch] $SkipFakeOffsetCheck,
     [switch] $SingleDumpOnly,
+    [int] $ConcurrentLimit = 0,
     [switch] $ExitOnFailure
 )
 
-Function RunCommand($command, $arguments)
+$runningProcesses = New-Object System.Collections.ArrayList
+$errorsDetected = $false
+
+if ($ConcurrentLimit -le 0)
 {
+    $ConcurrentLimit = $env:NUMBER_OF_PROCESSORS
+}
+
+Function DetectCompletedJobWithErrors()
+{
+    foreach($job in $runningProcesses | Where-Object -FilterScript { $_.Process.HasExited -and $_.Process.ExitCode -ne 0 })
+    {
+        return $true
+    }
+
+    return $false
+}
+
+Function WaitForAllProcessesToComplete()
+{
+    $err = $null
+    foreach($p in $runningProcesses)
+    {
+        Write-Verbose "Waiting for $($p.Process.ProcessName) PID $($p.Process.Id)" 
+        $p.Process.WaitForExit()
+        $exitCode = $p.Process.ExitCode
+
+        if($p.ReportFile)
+        {
+            Write-Verbose "Add $($p.ReportFile) to $ResultFile" 
+            Get-Content -Path $p.ReportFile | Add-Content -Path $ResultFile
+            Remove-Item $p.ReportFile
+        }
+        
+        if($exitCode -ne 0)
+        {
+            Write-Verbose "Add $($p.Process.ProcessName) Command Error to $ResultFile" 
+            $text = "$($p.Process.StartInfo.FileName) $($p.Process.StartInfo.Arguments)"
+            $err = "ERROR: command failed: [$text] -- with $exitCode"
+            Add-Content -Path $ResultFile $err
+            Write-Error $err
+        }
+    }
+}
+
+Function RunCommandNow($command, $arguments)
+{
+    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+    $pinfo.FileName = $command
+    $pinfo.UseShellExecute = $false
+    $pinfo.Arguments = $arguments
+    $pinfo.WorkingDirectory = Get-Location
+    $p = New-Object System.Diagnostics.Process
+    $p.StartInfo = $pinfo
+    $p.Start() | Out-Null
+    $p.WaitForExit()
+}
+
+Function RunCommand($command, $arguments, $reportFile)
+{
+    if($errorsDetected)
+    {
+        return;
+    }
+
+    if($ConcurrentLimit -eq 1)
+    {
+        $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+        $pinfo.FileName = $command
+        $pinfo.UseShellExecute = $false
+        $pinfo.Arguments = $arguments
+        $pinfo.WorkingDirectory = Get-Location
+        $p = New-Object System.Diagnostics.Process
+        $p.StartInfo = $pinfo
+        $p.Start() | Out-Null
+        $p.WaitForExit()
+        $data = New-Object PSObject -Property @{
+            Process = $p
+            ReportFile = $reportFile
+        }
+        $rv = $runningProcesses.Add($data)
+        return
+    }
+
+    # waiting for a job to complete to start another job
+    if(($runningProcesses | Where-Object -FilterScript { -not $_.Process.HasExited }).Count -ge $ConcurrentLimit)
+    {
+        Write-Verbose "Waiting to start process"
+        while(($runningProcesses | Where-Object -FilterScript { -not $_.Process.HasExited }).Count -ge $ConcurrentLimit)
+        {
+            Start-Sleep -Milliseconds 500
+        }
+        Write-Verbose "Wait complete"
+    }
+
+    if($ExitOnFailure)
+    {
+        $errorsDetected = DetectCompletedJobWithErrors
+
+        if($errorsDetected)
+        {
+            return;
+        }
+    }
+
     $text = "$command $arguments"
     Write-Verbose "Run: $text"
 
@@ -41,23 +145,11 @@ Function RunCommand($command, $arguments)
     $p = New-Object System.Diagnostics.Process
     $p.StartInfo = $pinfo
     $p.Start() | Out-Null
-    $p.WaitForExit()
-    $exitCode = $p.ExitCode
-    
-    if($exitCode -ne 0)
-    {
-        $err = "ERROR: command failed: [$text] -- with $exitCode"
-        Add-Content -Path $ResultFile $err
-
-        if($ExitOnFailure)
-        {
-            throw $err
-        }
-        else
-        {
-            Write-Error $err
-        }
+    $data = New-Object PSObject -Property @{
+        Process = $p
+        ReportFile = $reportFile
     }
+    $rv = $runningProcesses.Add($data)
 }
 
 Function RunAllAllocationApplicationArgs($options, $validateoptions, $ust_test)
@@ -110,7 +202,7 @@ Function RunAllocationApplication($arg, $config, $arch_dir, $arch, $alloc, $opti
         remove-item $dmp_2 -ErrorAction:SilentlyContinue | Out-Null
         remove-item $log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $json -ErrorAction:SilentlyContinue | Out-Null
-        RunCommand "$PSScriptRoot\$arch_dir\$CompilerDir\$config\$app_name" "--test `"$arg`" --type `"$alloc`" --dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$log`" --json `"$json`""
+        RunCommandNow "$PSScriptRoot\$arch_dir\$CompilerDir\$config\$app_name" "--test `"$arg`" --type `"$alloc`" --dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$log`" --json `"$json`""
     }
     
     RunAllocationApplicationChecks $validateoptions $base_name
@@ -122,6 +214,17 @@ Function RunAllocationApplicationChecks($validateoptions, $base_name)
     $dmp_2 = "$DumpFolder\$($base_name)_2.dmp"
     $json = "$DumpFolder\$base_name.json"
 
+    if($ConcurrentLimit -eq 1)
+    {
+        $verbose_arg = "--verbose"
+        $no_output_arg = ""
+    }
+    else
+    {
+        $verbose_arg = ""
+        $no_output_arg = "--no-output"
+    }
+    
     if($GenerateHeapLogs)
     {
         $dmp_1_full_log = "$DumpFolder\$($base_name)_1_full.log"
@@ -135,13 +238,15 @@ Function RunAllocationApplicationChecks($validateoptions, $base_name)
         remove-item $dmp_2_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_2_debug_full_diff_log -ErrorAction:SilentlyContinue | Out-Null
 
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --dumpfile `"$dmp_1`" --out `"$dmp_1_full_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --dumpfile `"$dmp_1`" --out `"$dmp_1_debug_full_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_full_diff_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_debug_full_diff_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries $verbose_arg --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --modules --dumpfile `"$dmp_1`" --out `"$dmp_1_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries $verbose_arg --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --modules --dumpfile `"$dmp_1`" --out `"$dmp_1_debug_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries $verbose_arg --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --modules --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_full_diff_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries $verbose_arg --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --modules --dumpfile `"$dmp_2`" --basediffdumpfile `"$dmp_1`" --out `"$dmp_2_debug_full_diff_log`""
     }
     
-    RunCommand "$ExeFolder\ValidateHeapEntries.exe" "--dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$ResultFile`" --json `"$json`" $validateoptions"
+    $tempFile = New-TemporaryFile
+    Write-Verbose "Validating [$base_name]"
+    RunCommand "$ExeFolder\ValidateHeapEntries.exe" "$no_output_arg --dmp1 `"$dmp_1`" --dmp2 `"$dmp_2`" --log `"$tempFile`" --json `"$json`" $validateoptions" $tempFile
 }
 
 Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
@@ -149,6 +254,17 @@ Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
     $dmp = "$DumpFolder\$($base_name).dmp"
     $json = "$DumpFolder\$base_name.json"
 
+    if($ConcurrentLimit -eq 1)
+    {
+        $verbose_arg = "--verbose"
+        $no_output_arg = ""
+    }
+    else
+    {
+        $verbose_arg = ""
+        $no_output_arg = "--no-output"
+    }
+    
     if($GenerateHeapLogs)
     {
         $dmp_full_log = "$DumpFolder\$($base_name)_full.log"
@@ -158,11 +274,13 @@ Function RunAllocationApplicationSingleDumpChecks($validateoptions, $base_name)
         remove-item $dmp_full_log -ErrorAction:SilentlyContinue | Out-Null
         remove-item $dmp_debug_full_log -ErrorAction:SilentlyContinue | Out-Null
 
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --dumpfile `"$dmp`" --out `"$dmp_full_log`""
-        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries --verbose --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --symbols --dumpfile `"$dmp`" --out `"$dmp_debug_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries $verbose_arg --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --modules --dumpfile `"$dmp`" --out `"$dmp_full_log`""
+        RunCommand "$ExeFolder\MiniDumper.exe" "--disable-symbol-load-cancel-keyboard-check --heap --crtheap --heapentries $verbose_arg --heapdebug --heapstat all --heapgraph --nofilterheapentries --nomarknoncrtsystem --modules --symbols --dumpfile `"$dmp`" --out `"$dmp_debug_full_log`""
     }
 
-    RunCommand "$ExeFolder\ValidateHeapEntries.exe" "--dmp1 `"$dmp`" --log `"$ResultFile`" --json `"$json`" $validateoptions"
+    $tempFile = New-TemporaryFile
+    Write-Verbose "Validating [$base_name]"
+    RunCommand "$ExeFolder\ValidateHeapEntries.exe" "$no_output_arg --dmp1 `"$dmp`" --log `"$tempFile`" --json `"$json`" $validateoptions" $tempFile
 }
 
 Function RunStandardTests()
@@ -334,3 +452,5 @@ else
 {
     RunStandardTests
 }
+
+WaitForAllProcessesToComplete

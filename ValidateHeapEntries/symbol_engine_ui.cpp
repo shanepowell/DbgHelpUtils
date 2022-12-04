@@ -3,6 +3,11 @@
 #include <iostream>
 #include <sstream>
 
+symbol_engine_ui::symbol_engine_ui(bool const no_output)
+    : no_output_{no_output}
+{
+}
+
 bool symbol_engine_ui::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module_name)
 {
     return false;
@@ -17,7 +22,10 @@ void symbol_engine_ui::start_download(std::wstring_view const& module_name)
     std::wstringstream ss;
     ss << L"downloading " << module_name << L": ";
     module_ = std::move(ss).str();
-    std::wcerr << module_;
+    if(!no_output_)
+    {
+        std::wcerr << module_;
+    }
     last_percent_.clear();
 }
 
@@ -30,13 +38,16 @@ void symbol_engine_ui::download_percent(unsigned const percent)
 
     std::wstringstream ss;
     ss << percent << L"%";
-    std::wcerr << ss.str();
+    if(!no_output_)
+    {
+        std::wcerr << ss.str();
+    }
     last_percent_ = std::move(ss).str();
 }
 
 void symbol_engine_ui::download_complete()
 {
-    if (!last_percent_.empty() || !module_.empty())
+    if (!no_output_ && (!last_percent_.empty() || !module_.empty()))
     {
         std::wstring const clear(last_percent_.size() + module_.size(), L'\b');
         std::wcerr << clear << std::wstring(last_percent_.size() + module_.size(), L' ') << clear;
@@ -47,7 +58,12 @@ void symbol_engine_ui::download_complete()
 
 std::wostream& symbol_engine_ui::log_stream() const
 {
-    return std::wcerr;
+    if(!no_output_)
+    {
+        return std::wcerr;
+    }
+
+    return null_stream_;
 }
 
 bool symbol_engine_ui::symbol_load_debug() const

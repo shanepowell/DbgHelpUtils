@@ -2,6 +2,7 @@
 
 #include "dump_file_options.h"
 #include "DbgHelpUtils/i_symbol_load_callback.h"
+#include "DbgHelpUtils/null_stream.h"
 
 class symbol_engine_ui : public dlg_help_utils::dbg_help::i_symbol_load_callback
 {
@@ -21,4 +22,5 @@ private:
     dump_file_options const& options_;
     std::wstring module_;
     std::wstring last_percent_;
+    mutable null_stream null_stream_;
 };

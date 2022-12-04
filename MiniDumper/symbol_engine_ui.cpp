@@ -24,24 +24,30 @@ void symbol_engine_ui::deferred_symbol_load_partial([[maybe_unused]] std::wstrin
 void symbol_engine_ui::start_download(std::wstring_view const& module_name)
 {
     module_ = std::format(L"downloading {}: ", module_name);
-    std::wcerr << module_;
-    last_percent_.clear();
+    if(options_.verbose_output())
+    {
+        std::wcerr << module_;
+        last_percent_.clear();
+    }
 }
 
 void symbol_engine_ui::download_percent(unsigned const percent)
 {
-    if (!last_percent_.empty())
+    if (options_.verbose_output() && !last_percent_.empty())
     {
         std::wcerr << std::wstring(last_percent_.size(), L'\b');
     }
 
     last_percent_ = std::format(L"{}%", percent);
-    std::wcerr << last_percent_;
+    if(options_.verbose_output())
+    {
+        std::wcerr << last_percent_;
+    }
 }
 
 void symbol_engine_ui::download_complete()
 {
-    if (!last_percent_.empty() || !module_.empty())
+    if (options_.verbose_output() && (!last_percent_.empty() || !module_.empty()))
     {
         std::wstring const clear(last_percent_.size() + module_.size(), L'\b');
         std::wcerr << clear << std::wstring(last_percent_.size() + module_.size(), L' ') << clear;
@@ -52,7 +58,12 @@ void symbol_engine_ui::download_complete()
 
 std::wostream& symbol_engine_ui::log_stream() const
 {
-    return std::wcerr;
+    if(options_.verbose_output())
+    {
+        return std::wcerr;
+    }
+
+    return null_stream_;
 }
 
 bool symbol_engine_ui::symbol_load_debug() const

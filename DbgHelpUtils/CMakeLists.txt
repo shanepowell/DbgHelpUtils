@@ -333,6 +333,7 @@ set(Utility
     "hex_dump.h"
     "join.h"
     "memory_range.h"
+    "null_stream.h"
     "overload.h"
     "locale_number_formatting.cpp"
     "locale_number_formatting.h"

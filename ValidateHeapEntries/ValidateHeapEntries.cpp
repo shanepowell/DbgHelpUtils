@@ -593,7 +593,7 @@ bool validate_allocation_graph_entries_are_not_marked_system(std::vector<Allocat
     return successful;
 }
 
-[[nodiscard]] bool validate_dump_file(bool stacktrace, bool skip_fake_offset_check, std::wstring const& dump_filename, std::wstring const& base_dump_filename, std::wostream* o_log, std::vector<Allocation> const& allocations)
+[[nodiscard]] bool validate_dump_file(bool stacktrace, bool skip_fake_offset_check, bool no_output, std::wstring const& dump_filename, std::wstring const& base_dump_filename, std::wostream* o_log, std::vector<Allocation> const& allocations)
 {
     *o_log << std::format(L"Processing dmp [{}]\n", dump_filename);
 
@@ -607,7 +607,7 @@ bool validate_allocation_graph_entries_are_not_marked_system(std::vector<Allocat
 
 
     using namespace dlg_help_utils::size_units::base_16;
-    symbol_engine_ui ui;
+    symbol_engine_ui ui{no_output};
     dlg_help_utils::dbg_help::symbol_engine symbol_engine{ui};
     dlg_help_utils::heap::system_module_list system_module_list;
     dlg_help_utils::heap::statistic_views::statistic_view_options statistic_view_options;
@@ -665,12 +665,15 @@ bool validate_allocation_graph_entries_are_not_marked_system(std::vector<Allocat
         successful = false;
     }
 
-    std::wcout << dump_filename << " : ";
-    auto console = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(console, successful ? ConsoleForeground::GREEN : ConsoleForeground::RED);
-    std::wcout << (successful ? L"Passed" : L"Failed");
-    SetConsoleTextAttribute(console, ConsoleForeground::WHITE);
-    std::wcout << L'\n';
+    if(!no_output)
+    {
+        std::wcout << dump_filename << " : ";
+        auto console = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(console, successful ? ConsoleForeground::GREEN : ConsoleForeground::RED);
+        std::wcout << (successful ? L"Passed" : L"Failed");
+        SetConsoleTextAttribute(console, ConsoleForeground::WHITE);
+        std::wcout << L'\n';
+    }
 
     return successful;
 }
@@ -688,6 +691,7 @@ int main(int const argc, char* argv[])
             auto stacktrace{false};
             auto show_help{false};
             auto skip_fake_offset_check{false};
+            auto no_output{false};
             auto cli = lyra::help(show_help)
                 | lyra::opt( dump_filename_1_l, "filename" )["-1"]["--dmp1"]("first dump filename")
                 | lyra::opt( dump_filename_2_l, "filename" )["-2"]["--dmp2"]("second dump filename")
@@ -695,6 +699,7 @@ int main(int const argc, char* argv[])
                 | lyra::opt( json_filename_l, "filename" )["-j"]["--json"]("json filename")
                 | lyra::opt( stacktrace)["-s"]["--stacktrace"]("expects allocation stack trace")
                 | lyra::opt( skip_fake_offset_check)["--skip-fake-offset"]("skip fake offset check (assume older generated dmp test file)")
+                | lyra::opt( no_output)["--no-output"]("don't display output to the console")
                 ;
 
             if (auto const result = cli.parse({ argc, argv });
@@ -725,7 +730,8 @@ int main(int const argc, char* argv[])
             }
 
             std::unique_ptr<std::wfstream> log;
-            std::wostream* o_log{&std::wcout};
+            null_stream null_stream;
+            std::wostream* o_log{no_output ? &null_stream : &std::wcout};
             if(!log_filename.empty())
             {
                 log = std::make_unique<std::wfstream>(log_filename, std::ios_base::out | std::ios_base::app);
@@ -757,10 +763,10 @@ int main(int const argc, char* argv[])
                 return EXIT_FAILURE;
             }
 
-            auto successful = validate_dump_file(stacktrace, skip_fake_offset_check, dump_filename_1, {}, o_log, set.first_allocations);
+            auto successful = validate_dump_file(stacktrace, skip_fake_offset_check, no_output, dump_filename_1, {}, o_log, set.first_allocations);
             if(successful && !dump_filename_2.empty())
             {
-                successful = validate_dump_file(stacktrace, skip_fake_offset_check, dump_filename_2, dump_filename_1, o_log, set.second_allocations);
+                successful = validate_dump_file(stacktrace, skip_fake_offset_check, no_output, dump_filename_2, dump_filename_1, o_log, set.second_allocations);
             }
 
             if(log)

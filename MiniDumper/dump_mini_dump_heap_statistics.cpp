@@ -181,15 +181,21 @@ void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_du
     auto const loading_heap_statistics = L"Loading heap statistics..."s;
     std::wstring const move_back(loading_heap_statistics.size(), L'\b');
     std::wstring const clear(loading_heap_statistics.size(), L' ');
-    std::wcerr << loading_heap_statistics;
+    if(options.verbose_output())
+    {
+        std::wcerr << loading_heap_statistics;
+    }
 
     auto const hex_length = heaps.peb().machine_hex_printable_length();
     auto const is_x86_target = stream_stack_dump::is_x86_target_t{heaps.peb().is_x86_target()};
     auto const statistics = heaps.statistics();
 
-    std::wcerr << move_back;
-    std::wcerr << clear;
-    std::wcerr << move_back;
+    if(options.verbose_output())
+    {
+        std::wcerr << move_back;
+        std::wcerr << clear;
+        std::wcerr << move_back;
+    }
 
     log << L"Heap Statistics:\n";
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))

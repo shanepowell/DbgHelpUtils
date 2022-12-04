@@ -5,6 +5,7 @@ Param
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
     [switch] $LastReport,
+    [int] $ConcurrentLimit = 0,
     [switch] $Verbose,
     [switch] $ExitOnFailure
 )
@@ -40,19 +41,23 @@ if(!$LastReport)
 
     # run release / x64
     Write-Host "Running $Compiler Release x64 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
+    Write-Verbose "Command: \RunHeapDumpTests.ps1 -TestX86:`$false -TestDebug:`$false -CheckOnly:`$$CheckOnly -GenerateHeapLogs:`$$GenerateHeapLogs -Verbose:`$$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:`$$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit"
+    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit
 
     # run release / x86
     Write-Host "Running $Compiler Release x86 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
+    Write-Verbose "Command: \RunHeapDumpTests.ps1 -TestX86:`$true -TestDebug:`$false -CheckOnly:`$$CheckOnly -GenerateHeapLogs:`$$GenerateHeapLogs -Verbose:`$$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:`$$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit"
+    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$false -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit
 
     # run debug / x64
     Write-Host "Running $Compiler Debug x64 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
+    Write-Verbose "Command: \RunHeapDumpTests.ps1 -TestX86:`$false -TestDebug:`$true -CheckOnly:`$$CheckOnly -GenerateHeapLogs:`$$GenerateHeapLogs -Verbose:`$$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:`$$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit"
+    .\RunHeapDumpTests.ps1 -TestX86:$false -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit
 
     # run debug / x86
     Write-Host "Running $Compiler Debug x86 tests"
-    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure
+    Write-Verbose "Command: \RunHeapDumpTests.ps1 -TestX86:`$true -TestDebug:`$true -CheckOnly:`$$CheckOnly -GenerateHeapLogs:`$$GenerateHeapLogs -Verbose:`$$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:`$$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit"
+    .\RunHeapDumpTests.ps1 -TestX86:$true -TestDebug:$true -CheckOnly:$CheckOnly -GenerateHeapLogs:$GenerateHeapLogs -Verbose:$Verbose -ResultFile:$ResultFile -Compiler:$Compiler -ExitOnFailure:$ExitOnFailure -ConcurrentLimit:$ConcurrentLimit
 }
 
 
@@ -74,6 +79,7 @@ if($errorLines)
 {
     Write-Host "Complete with Errors:"
     Write-Host $errorLines
+    Write-Host "Completed with Errors"
 }
 else
 {
