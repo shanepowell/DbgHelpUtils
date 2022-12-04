@@ -65,6 +65,7 @@ public:
     [[nodiscard]] bool display_stack_trace_database() const { return display_stack_trace_database_; }
     [[nodiscard]] bool disable_symbol_load_cancel_keyboard_check() const { return disable_symbol_load_cancel_keyboard_check_; }
     [[nodiscard]] bool display_heap_graph() const { return display_heap_graph_; }
+    [[nodiscard]] bool display_loaded_modules() const { return display_loaded_modules_; }
     [[nodiscard]] size_t display_heap_graph_to_reference_limit() const { return display_heap_graph_to_reference_limit_; }
     [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options::options display_stack_options() const;
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
@@ -115,6 +116,7 @@ private:
     bool display_stack_variables_{false};
     bool display_stack_parameters_{false};
     bool display_heap_graph_{false};
+    bool display_loaded_modules_{false};
     std::string display_heap_graph_to_reference_limit_raw_;
     size_t display_heap_graph_to_reference_limit_{10};
     uint16_t heap_statistics_views_{0};

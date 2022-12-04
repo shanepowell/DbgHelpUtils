@@ -178,6 +178,7 @@
     <ClCompile Include="exception_stream.cpp" />
     <ClCompile Include="exception_utils.cpp" />
     <ClCompile Include="filesystem_utils.cpp" />
+    <ClCompile Include="file_version_info.cpp" />
     <ClCompile Include="find_thread_stack.cpp" />
     <ClCompile Include="function_table_stream.cpp" />
     <ClCompile Include="get_last_address.h" />
@@ -309,6 +310,7 @@
     <ClInclude Include="dph_heap.h" />
     <ClInclude Include="dump_hex.h" />
     <ClInclude Include="enable_module_loading.h" />
+    <ClInclude Include="file_version_info.h" />
     <ClInclude Include="gflags_utils.h" />
     <ClInclude Include="global_symbol.h" />
     <ClInclude Include="global_symbols.h" />

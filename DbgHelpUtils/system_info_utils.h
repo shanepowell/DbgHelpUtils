@@ -18,7 +18,6 @@ namespace dlg_help_utils::system_info_utils
                                                 unsigned char product_type, unsigned short processor_architecture,
                                                 unsigned short suite_mask);
     std::vector<std::wstring_view> suite_mask_to_strings(unsigned short suite_mask);
-    std::wstring get_product_version(std::wstring const& filename);
     std::wstring_view process_integrity_level_to_string(uint32_t process_integrity_level);
     std::wstring vm_counters_2_flags_to_string(uint16_t flags);
     std::vector<std::wstring_view> vm_counters_2_flags_to_strings(uint16_t flags);
@@ -32,6 +31,7 @@ namespace dlg_help_utils::system_info_utils
     std::wstring version_file_os_to_string(uint32_t file_os);
     std::vector<std::wstring_view> version_file_os_to_strings(uint32_t file_os);
     std::wstring_view version_file_type_to_string(uint32_t file_type, uint32_t file_sub_type);
+    std::wstring sym_type_to_string(uint32_t type);
 
     std::filesystem::path const& get_running_application_path();
     std::filesystem::path const& get_run_from_directory();

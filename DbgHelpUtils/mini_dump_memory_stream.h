@@ -26,6 +26,9 @@ namespace dlg_help_utils
 
         [[nodiscard]] std::experimental::generator<std::pair<void const*,size_t>> ranges();
 
+        [[nodiscard]] void const* start_memory_raw() const { return memory_; }
+        [[nodiscard]] void const* end_memory_raw() const { return end_memory_; }
+
         template<typename T>
         [[nodiscard]] bool find_pattern(std::function<bool(T, size_t, size_t&)> const& check_data, std::function<bool(size_t)> const& is_found)
         {

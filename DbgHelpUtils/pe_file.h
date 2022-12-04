@@ -4,6 +4,7 @@
 #include <string>
 
 #include "handles.h"
+#include "mini_dump_memory_stream.h"
 
 namespace dlg_help_utils
 {
@@ -11,6 +12,7 @@ namespace dlg_help_utils
     {
     public:
         pe_file(std::wstring file_path);
+        explicit pe_file(mini_dump_memory_stream stream);
         ~pe_file() = default;
 
         pe_file(pe_file const&) = delete;
@@ -40,10 +42,21 @@ namespace dlg_help_utils
 
         [[nodiscard]] void const* data() const { return dos_header_; }
 
+        [[nodiscard]] std::vector<uint8_t> version_resource_data() const;
+
+    private:
+        void open_pe_file();
+        void open_pe_stream();
+        void load_pe(uint8_t const* start, uint8_t const* end);
+        [[nodiscard]] mini_dump_memory_stream find_resource(WORD type, WORD name) const;
+        static [[nodiscard]] void const* find_entry_by_id(IMAGE_RESOURCE_DIRECTORY const* dir, WORD id, void const* root, bool want_dir);
+        static [[nodiscard]] IMAGE_RESOURCE_DATA_ENTRY const* find_first_entry(IMAGE_RESOURCE_DIRECTORY const* dir, void const* root);
+
     private:
         std::wstring file_path_;
-        handles::windows_handle file_;
-        handles::map_view_handle map_view_;
+        mini_dump_memory_stream stream_{};
+        handles::windows_handle file_{handles::make_empty_windows_handle()};
+        handles::map_view_handle map_view_{handles::make_empty_map_view_handle()};
         size_t file_length_{0};
         bool is_valid_{false};
         IMAGE_DOS_HEADER const* dos_header_{nullptr};
@@ -53,5 +66,7 @@ namespace dlg_help_utils
         IMAGE_OPTIONAL_HEADER32 const* x86_pe_header_{nullptr};
         bool is_x64_pe_{false};
         IMAGE_OPTIONAL_HEADER64 const* x64_pe_header_{nullptr};
+        IMAGE_RESOURCE_DIRECTORY const* resource_data_{nullptr};
+        size_t resource_data_size_{};
     };
 }

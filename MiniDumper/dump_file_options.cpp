@@ -124,6 +124,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(verbose_output_)["--verbose"]("verbose console output")
         // ReSharper disable once StringLiteralTypo
         | lyra::opt(graph_display_max_call_depth_raw_, "50")["--hgmaxcalldepth"]("limit the generation of the process graph display to use a call stack depth of 50 (default 50)")
+        // ReSharper disable once StringLiteralTypo
+        | lyra::opt(display_loaded_modules_)["--modules"]("dump loaded modules")
     ;
 }
 

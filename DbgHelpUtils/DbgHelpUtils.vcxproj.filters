@@ -447,6 +447,9 @@
     <ClCompile Include="get_last_address.h">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="file_version_info.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -958,6 +961,9 @@
     </ClInclude>
     <ClInclude Include="heap_node_type.h">
       <Filter>Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="file_version_info.h">
+      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="null_stream.h">
       <Filter>Utility</Filter>

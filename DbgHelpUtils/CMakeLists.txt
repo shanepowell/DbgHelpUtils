@@ -323,6 +323,8 @@ set(Utility
     "exit_scope.h"
     "filesystem_utils.cpp"
     "filesystem_utils.h"
+    "file_version_info.cpp"
+    "file_version_info.h"
     "flags_string_utils.h"
     "get_last_address.h"
     "guid_utils.cpp"

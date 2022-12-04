@@ -103,6 +103,7 @@ namespace dlg_help_utils::dbg_help
             , DWORD module_check_sum
             , throw_on_error_t throw_on_error = throw_on_error_t{false});
         void unload_module(std::wstring const& module_name);
+        [[nodiscard]] std::wstring find_module_name(std::wstring_view const& base_module_name) const;
         [[nodiscard]] bool is_module_loaded(std::wstring const& module_name) const;
         [[nodiscard]] bool is_module_symbols_available(std::wstring const& module_name) const;
         [[nodiscard]] IMAGEHLP_MODULEW64 get_module_information(std::wstring const& module_name) const;
@@ -110,6 +111,8 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::wstring const& get_module_image_path(std::wstring const& module_name) const;
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(DWORD64 address);
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context);
+
+        [[nodiscard]] std::experimental::generator<std::wstring> loaded_modules() const;
 
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name, throw_on_error_t throw_on_error = throw_on_error_t{false});
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name, throw_on_error_t throw_on_error = throw_on_error_t{false});

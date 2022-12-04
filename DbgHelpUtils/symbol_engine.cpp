@@ -22,6 +22,7 @@
 #include "pe_file.h"
 #include "stream_hex_dump.h"
 #include "stream_thread_context.h"
+#include "string_compare.h"
 #include "symbol_info_buffer.h"
 #include "symbol_type_info.h"
 #include "symbol_type_info_cache.h"
@@ -418,8 +419,7 @@ namespace
                 {
                     if (auto const end_pos = xml.find(downloading_xml_end, downloading_xml_start.size()); end_pos != std::wstring_view::npos)
                     {
-                        auto const module = xml.substr(downloading_xml_start.size(),
-                                                       end_pos - downloading_xml_start.size());
+                        auto const module = xml.substr(downloading_xml_start.size(), end_pos - downloading_xml_start.size());
                         symbol_engine.set_downloading_module(std::wstring{module});
                         callback.start_download(module);
                     }
@@ -1243,6 +1243,17 @@ namespace dlg_help_utils::dbg_help
         }
     }
 
+    std::wstring symbol_engine::find_module_name(std::wstring_view const& base_module_name) const
+    {
+        auto const it = std::ranges::find_if(modules_, [&base_module_name](auto const& value) { return string_compare::i_ends_with(value.first, base_module_name); });
+        if(it == modules_.end())
+        {
+            return {};
+        }
+
+        return it->first;
+    }
+
     bool symbol_engine::is_module_loaded(std::wstring const& module_name) const
     {
         return modules_.contains(module_name);
@@ -1404,6 +1415,14 @@ namespace dlg_help_utils::dbg_help
         }
 
         return std::move(info);
+    }
+
+    std::experimental::generator<std::wstring> symbol_engine::loaded_modules() const
+    {
+        for (const auto& module_name : modules_ | std::views::keys)
+        {
+            co_yield module_name;
+        }
     }
 
     std::optional<symbol_type_info> symbol_engine::get_type_info(std::wstring const& type_name, throw_on_error_t const throw_on_error)
@@ -1662,7 +1681,7 @@ namespace dlg_help_utils::dbg_help
             std::array<wchar_t, MAX_PATH> buffer{};
             auto const result = SymFindFileInPathW(process_, nullptr, module_name.c_str(), &module_time_stamp,
                                                    module_size, 0, SSRVOPT_DWORDPTR, buffer.data(),
-                                                   find_file_in_path_callback, static_cast<i_symbol_callback*>(this));
+                                                   find_file_in_path_callback, this);
             loading_module_check_sum_ = 0;
             if (result)
             {
@@ -1672,8 +1691,7 @@ namespace dlg_help_utils::dbg_help
             if (callback().symbol_load_debug())
             {
                 auto const ec = GetLastError();
-                callback().log_stream() << L"Failed to find module image path for [" << module_name <<
-                    L"] - SymFindFileInPathW: " << ec << L" - " << windows_error::get_windows_error_string(ec) << L'\n';
+                callback().log_stream() << std::format(L"Failed to find module image path for [{0}] - SymFindFileInPathW: {1} - {2}\n", module_name, ec, windows_error::get_windows_error_string(ec));
             }
         }
 

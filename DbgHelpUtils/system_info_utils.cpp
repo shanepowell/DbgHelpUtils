@@ -14,8 +14,6 @@
 #include "mini_dump.h"
 #include "stream_hex_dump.h"
 
-#pragma comment(lib, "Version.lib")
-
 // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
 #define MEM_EXECUTE_OPTION_DISABLE 0x1
 #define MEM_EXECUTE_OPTION_ENABLE 0x2
@@ -420,42 +418,6 @@ namespace dlg_help_utils::system_info_utils
         return rv;
     }
 
-    std::wstring get_product_version(std::wstring const& filename)
-    {
-        if (filename.empty())
-        {
-            return {};
-        }
-
-        // allocate a block of memory for the version info
-        DWORD dummy;
-        const auto dw_size = GetFileVersionInfoSizeW(filename.c_str(), &dummy);
-        if (dw_size == 0)
-        {
-            return {};
-        }
-        std::vector<BYTE> data(dw_size);
-
-        // load the version info
-        if (!GetFileVersionInfoW(filename.c_str(), NULL, dw_size, data.data()))
-        {
-            return {};
-        }
-
-        // get the name and version strings
-        LPVOID pv_product_version = nullptr;
-        unsigned int i_product_version_len = 0;
-
-        // replace "040904e4" with the language ID of your resources
-        if (!VerQueryValueW(data.data(), L"\\StringFileInfo\\140904b0\\ProductVersion", &pv_product_version,
-                            &i_product_version_len))
-        {
-            return {};
-        }
-
-        return {static_cast<LPCWSTR>(pv_product_version)};
-    }
-
     std::wstring_view process_integrity_level_to_string(uint32_t const process_integrity_level)
     {
         switch (process_integrity_level)
@@ -544,12 +506,12 @@ namespace dlg_help_utils::system_info_utils
 
     std::wstring version_info_to_string(uint32_t const version)
     {
-        return std::format(L"{0}.{1}", stream_hex_dump::to_hex_raw(HIWORD(version)), stream_hex_dump::to_hex_raw(LOWORD(version)));
+        return std::format(L"{0}.{1}", HIWORD(version), LOWORD(version));
     }
 
     std::wstring version_info_to_string(uint32_t const version_ms, uint32_t const version_ls)
     {
-        return std::format(L"{0}.{1}.{2}.{3}", stream_hex_dump::to_hex_raw(HIWORD(version_ms)), stream_hex_dump::to_hex_raw(LOWORD(version_ms)), stream_hex_dump::to_hex_raw(HIWORD(version_ls)), stream_hex_dump::to_hex_raw(LOWORD(version_ls)));
+        return std::format(L"{0}.{1}.{2}.{3}", HIWORD(version_ms), LOWORD(version_ms), HIWORD(version_ls), LOWORD(version_ls));
     }
 
     std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t const process_execute_flags)
@@ -695,6 +657,35 @@ namespace dlg_help_utils::system_info_utils
 
         default:
             return L"invalid"sv;
+        }
+    }
+
+    std::wstring sym_type_to_string(uint32_t const type)
+    {
+        switch(static_cast<SYM_TYPE>(type))
+        {
+        case SymNone:
+            return L"SymNone"s;
+        case SymCoff:
+            return L"SymCoff"s;
+        case SymCv:
+            return L"SymCv"s;
+        case SymPdb:
+            return L"SymPdb"s;
+        case SymExport:
+            return L"SymExport"s;
+        case SymDeferred:
+            return L"SymDeferred"s;
+        case SymSym:
+            return L"SymSym"s;
+        case SymDia:
+            return L"SymDia"s;
+        case SymVirtual:
+            return L"SymVirtual"s;
+        case NumSymTypes:
+            return L"NumSymTypes"s;
+        default:  // NOLINT(clang-diagnostic-covered-switch-default)
+            return std::format(L"Unknown:{}", static_cast<int>(type));
         }
     }
 

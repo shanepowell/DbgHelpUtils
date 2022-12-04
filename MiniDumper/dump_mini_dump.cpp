@@ -2,10 +2,12 @@
 
 #include "dump_file_options.h"
 #include "dump_mini_dump_heap.h"
+#include "dump_mini_dump_module.h"
 #include "dump_mini_dump_streams.h"
 #include "dump_mini_dump_symbols.h"
 #include "symbol_engine_ui.h"
 #include "DbgHelpUtils/cache_manager.h"
+#include "DbgHelpUtils/file_version_info.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_stream_type.h"
@@ -261,6 +263,22 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
             throw wide_runtime_error{std::format(L"Failure to dump address: [{}]", address_type), e};
         }
     }
+
+    if(options.display_loaded_modules())
+    {
+        try
+        {
+            dump_mini_dump_loaded_modules(log, dump_file, cache, symbol_engine);
+        }
+        catch (wide_runtime_error const& e)
+        {
+            throw wide_runtime_error{L"Failure to dump loaded modules"s, e};
+        }
+        catch (exception const& e)
+        {
+            throw wide_runtime_error{L"Failure to dump loaded modules"s, e};
+        }
+    }
 }
 
 void process_invalid_user_mode_dump(std::wostream& log, mini_dump const& dump_file, dump_file_options const& options)
@@ -330,7 +348,8 @@ void dump_mini_dump_header(std::wostream& log, mini_dump const& dump_file, dump_
 void display_version_information(std::wostream& log)
 {
     auto const& path = system_info_utils::get_running_application_path();
-    log << std::format(L"MiniDumper Version: {}\n", system_info_utils::get_product_version(path.wstring()));
+    file_version_info const version_info{path.wstring()};
+    log << std::format(L"MiniDumper Version: {}\n", version_info.product_version());
     log << L'\n';
 
     OSVERSIONINFOEXW info{};
