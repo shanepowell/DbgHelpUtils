@@ -87,9 +87,9 @@ namespace dlg_help_utils::process
         return std::move(heap);
     }
 
-    std::optional<heap::segment_heap> process_environment_block::segment_heap(uint32_t const heap_index, heap::segment_heap_options options) const
+    std::optional<heap::segment_heap> process_environment_block::segment_heap(uint32_t const heap_index, heap::segment_heap_options const options) const
     {
-        heap::segment_heap heap{cache(), *this, heap_address(heap_index), std::move(options)};
+        heap::segment_heap heap{cache(), *this, heap_address(heap_index), options};
         if(heap.segment_signature() != heap::SegmentSignatureSegmentHeap)
         {
             return std::nullopt;

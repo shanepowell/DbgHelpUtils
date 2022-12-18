@@ -14,17 +14,21 @@ using namespace dlg_help_utils::windows_error;
 using namespace dlg_help_utils::exceptions;
 using namespace dlg_help_utils::crc;
 
-#define KERNEL_X86_DUMP_SIGNATURE	('EGAP')	// NOLINT(cppcoreguidelines-macro-usage)
-#define KERNEL_X86_VERSION			('PMUD')	// NOLINT(cppcoreguidelines-macro-usage)
 
-#define KERNEL_X64_DUMP_SIGNATURE	('EGAP')	// NOLINT(cppcoreguidelines-macro-usage)
-#define KERNEL_X64_VERSION			('46UD')	// NOLINT(cppcoreguidelines-macro-usage)
+enum
+{
+    KERNEL_X86_DUMP_SIGNATURE = 'EGAP', // NOLINT
+    KERNEL_X86_VERSION = 'PMUD', // NOLINT
+    KERNEL_X64_DUMP_SIGNATURE = 'EGAP', // NOLINT
+    KERNEL_X64_VERSION = '46UD' // NOLINT
+};
+
 
 
 namespace dlg_help_utils
 {
     mini_dump::mini_dump(wstring file_path)
-    : file_path_{move(file_path)}
+    : file_path_{std::move(file_path)}
     , file_{make_empty_windows_handle()}
     , map_view_{make_empty_map_view_handle()}
     {
@@ -75,7 +79,7 @@ namespace dlg_help_utils
             // user mode dump file
             type_ = dump_file_type::user_mode_dump;
             version_string_ = string_conversation::acp_to_wstring(string_view{
-                reinterpret_cast<char const*>(&header_->Signature), sizeof(header_->Signature)
+                reinterpret_cast<char const*>(&header_->Signature), sizeof header_->Signature
             });
         }
         else if (header_->Signature == KERNEL_X86_DUMP_SIGNATURE && header_->Version == KERNEL_X86_VERSION)
@@ -95,8 +99,7 @@ namespace dlg_help_utils
             throw wide_runtime_error{std::format(L"File: {} has invalid MiniDump signature", file_path_)};
         }
 
-        if (header_->StreamDirectoryRva < sizeof(MINIDUMP_HEADER) || header_->StreamDirectoryRva > file_length_ - (
-            sizeof(MINIDUMP_DIRECTORY) * header_->NumberOfStreams))
+        if (header_->StreamDirectoryRva < sizeof(MINIDUMP_HEADER) || header_->StreamDirectoryRva > file_length_ - sizeof(MINIDUMP_DIRECTORY) * header_->NumberOfStreams)
         {
             throw wide_runtime_error{std::format(L"File: {} has invalid StreamDirectoryRva offset", file_path_)};
         }
@@ -177,7 +180,7 @@ namespace dlg_help_utils
     void mini_dump::get_kernel_dump_version_string()
     {
         version_string_ = string_conversation::acp_to_wstring(string_view{
-            reinterpret_cast<char const*>(&header_->Signature), sizeof(header_->Signature) + sizeof(header_->Version)
+            reinterpret_cast<char const*>(&header_->Signature), sizeof header_->Signature + sizeof header_->Version
         });
     }
 }

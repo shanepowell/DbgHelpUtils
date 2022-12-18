@@ -203,7 +203,7 @@ namespace dlg_help_utils::units
 
 
 template <typename UnitType, class _Rep1, class _Scale1, class _Rep2, class _Scale2>
-struct std::common_type<dlg_help_utils::units::length<UnitType, _Rep1, _Scale1>, dlg_help_utils::units::length<UnitType, _Rep2, _Scale2>>
+struct std::common_type<dlg_help_utils::units::length<UnitType, _Rep1, _Scale1>, dlg_help_utils::units::length<UnitType, _Rep2, _Scale2>>  // NOLINT(cert-dcl58-cpp)
 {
     using type = dlg_help_utils::units::length<UnitType, std::common_type_t<_Rep1, _Rep2>, std::ratio<dlg_help_utils::units::_Gcd(_Scale1::num, _Scale2::num), dlg_help_utils::units::_Lcm(_Scale1::den, _Scale2::den)>>;
 };

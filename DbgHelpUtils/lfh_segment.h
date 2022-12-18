@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
             std::optional<stream_utils::symbol_type_and_base_type_field_offset> lfh_block_zone_free_pointer_field_data;
         };
 
-        std::pair<uint64_t, uint64_t> get_subsegment_range() const;
+        [[nodiscard]] std::pair<uint64_t, uint64_t> get_subsegment_range() const;
         [[nodiscard]] std::vector<heap_subsegment> build_subsegments() const;
 
         [[nodiscard]] static size_t get_lfh_block_zone_size(cache_data const& cache, nt_heap const& heap);

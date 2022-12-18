@@ -36,7 +36,7 @@ namespace dlg_help_utils
             list_ = static_cast<uint8_t const*>(data) + sizeof(MINIDUMP_HANDLE_OPERATION_LIST);
             is_valid_ = true;
 
-            for (auto handle : list())
+            for (auto const& handle : list())
             {
                 ++handle_type_totals_[handle.type_name()];
             }

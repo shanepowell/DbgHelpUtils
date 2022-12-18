@@ -3,6 +3,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include <string_view>
 #include <experimental/generator>
 

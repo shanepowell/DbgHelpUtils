@@ -251,8 +251,7 @@ int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allo
 int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
 {
     size_t allocation_size = 0x1;
-
-    auto constexpr max_rounds = 6;
+    size_t constexpr max_rounds = 6;
 
     std::array<void*, 0x1> zero_allocations{};
     std::array<std::array<void*, 0xF>, max_rounds> allocation_groups{};
@@ -267,7 +266,7 @@ int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, al
     }
 
 
-    for(auto index = 0; index < max_rounds; ++index)
+    for(size_t index = 0; index < max_rounds; ++index)
     {
         fill_value = 'A';
         if (!AllocateBuffers(log, allocator, allocation_groups[index], fill_value, allocation_size, allocation_size, sizes_type, set))

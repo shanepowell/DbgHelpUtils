@@ -14,15 +14,17 @@
 #include "mini_dump.h"
 #include "stream_hex_dump.h"
 
-// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
-#define MEM_EXECUTE_OPTION_DISABLE 0x1
-#define MEM_EXECUTE_OPTION_ENABLE 0x2
-#define MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION 0x4
-#define MEM_EXECUTE_OPTION_PERMANENT 0x8
-#define MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE 0x10
-#define MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE 0x20
+enum
+{
+    MEM_EXECUTE_OPTION_DISABLE = 0x1,
+    MEM_EXECUTE_OPTION_ENABLE = 0x2,
+    MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION = 0x4,
+    MEM_EXECUTE_OPTION_PERMANENT = 0x8,
+    MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE = 0x10,
+    MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE = 0x20
+};
+
 // #define MEM_EXECUTE_OPTION_VALID_FLAGS 0x3f
-// ReSharper enable CppClangTidyCppcoreguidelinesMacroUsage
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

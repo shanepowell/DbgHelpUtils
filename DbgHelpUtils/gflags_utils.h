@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
+// ReSharper disable once CppUnusedIncludeDirective
 #include <string_view>
 #include <vector>
 

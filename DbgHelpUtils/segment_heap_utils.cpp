@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 
-#include "file_version_info.h"
 #include "process_environment_block.h"
 #include "stream_utils.h"
 #include "ust_address_stack_trace.h"
