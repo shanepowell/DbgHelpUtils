@@ -46,7 +46,7 @@ namespace
         auto const& base_heap_entry = node.base_heap_entry();
 
         // ReSharper disable once StringLiteralTypo
-        return std::format(L" [Name({0}!{1}{2}) Index({3}) Addr({4}) Size({5}){6}]"
+        return std::format(L"[Name({0}!{1}{2}) Index({3}) Addr({4}) Size({5}){6}]"
             , module_name
             , entry.symbol_type().name().value_or(L"<unknown>"sv)
             , export_name
@@ -62,8 +62,9 @@ namespace
 
         using namespace size_units::base_16;
         auto const& entry = node.heap_entry();
+
         // ReSharper disable once StringLiteralTypo
-        ss << std::format(L" [UsrAddr({0}) Size({1})", stream_hex_dump::to_hex(entry.user_address(), hex_length), to_wstring(entry.user_requested_size()));
+        ss << std::format(L"[UsrAddr({0}) Size({1})", stream_hex_dump::to_hex(entry.user_address(), hex_length), to_wstring(entry.user_requested_size()));
         if(!entry.filename().empty())
         {
             ss << std::format(L" {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));
@@ -87,7 +88,7 @@ namespace
         using namespace size_units::base_16;
 
         std::wostringstream ss;
-        ss << std::format(L" [ThreadId({})", stream_hex_dump::to_hex(node.thread_id()));
+        ss << std::format(L"[ThreadId({})", stream_hex_dump::to_hex(node.thread_id()));
         if(node.stack_stream().current_address() > 0)
         {
             ss << std::format(L" Stack({})", stream_hex_dump::to_hex(node.stack_stream().current_address(), hex_length));
@@ -108,7 +109,7 @@ namespace
         using namespace size_units::base_16;
 
         std::wostringstream ss;
-        ss << std::format(L" [ThreadId({0}) Register({1}) Data({2})]"
+        ss << std::format(L"[ThreadId({0}) Register({1}) Data({2})]"
             , stream_hex_dump::to_hex(node.thread_id())
             , register_names::get_register_name(node.register_type())
             , stream_hex_dump::to_hex(node.register_data(), hex_length));
@@ -131,7 +132,7 @@ namespace
         auto export_name = node.symbol_type().export_name().empty() ? L""s : std::format(L"({})", node.symbol_type().export_name());
 
         // ReSharper disable once StringLiteralTypo
-        ss << std::format(L" [Name({0}!{1}{2}) Index({3}) Addr({4})"
+        ss << std::format(L"[Name({0}!{1}{2}) Index({3}) Addr({4})"
             , module_name, node.symbol_type().name().value_or(L"<unknown>"sv)
             , export_name
             , node.symbol_type().sym_index()
@@ -314,11 +315,12 @@ namespace
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , dump_file_options const& options)
     {
-        log << std::format(L"{0:{1}}{2}{3}{4}{5}\n", 
+        log << std::format(L"{0:{1}}{2}{3}{4}{5}{6}\n", 
             ' ',
             indent,
             parent_offset.has_value() ? (to_reference ? L"->"sv : L"<-"sv) : get_type_name<T>(),
             get_node_attributes(node, is_self, parent_offset, pointer, variable_symbol_info, hex_length, walker, options),
+            parent_offset.has_value() ? L" " : L" >>",
             get_node_specific_data(node, hex_length, walker),
             cycle_end_detected ? L" - cycle end"sv : (already_logged_children ? L" - already logged children"sv : L""sv));
     }
