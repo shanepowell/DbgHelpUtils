@@ -76,7 +76,7 @@ std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log, stream_
         return std::nullopt;
     }
 
-    auto stream = walker.get_process_memory_stream(address, data_length.value());
+    auto const stream = walker.get_process_memory_stream(address, data_length.value());
     if(stream.eof())
     {
         log << std::format(L"Failed to find {0} address [{1}] in dump file\n", symbol_type_name, stream_hex_dump::to_hex_full(address));

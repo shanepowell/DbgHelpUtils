@@ -1,4 +1,5 @@
 ﻿#pragma once
+// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
 #include <cstdint>
 #include <optional>
 #include <experimental/generator>

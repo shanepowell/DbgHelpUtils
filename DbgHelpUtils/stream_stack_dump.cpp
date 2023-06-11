@@ -122,7 +122,7 @@ namespace dlg_help_utils::stream_stack_dump
 
                 if(local_variable.frame_data)
                 {
-                    auto stream = walker.get_process_memory_stream(local_variable.frame_data->data_address, local_variable.frame_data->data_size);
+                    auto const stream = walker.get_process_memory_stream(local_variable.frame_data->data_address, local_variable.frame_data->data_size);
                     if(stream.eof())
                     {
                         os << std::format(L"\nFailed to find {0} address [{1}] in dump file\n", name, stream_hex_dump::to_hex_full(local_variable.frame_data->data_address));
@@ -132,7 +132,7 @@ namespace dlg_help_utils::stream_stack_dump
                 }
                 else if(local_variable.registry_value)
                 {
-                    mini_dump_memory_stream stream{&local_variable.registry_value->value, local_variable.registry_value->value_size};
+                    mini_dump_memory_stream const stream{&local_variable.registry_value->value, local_variable.registry_value->value_size};
                     dump_variable_symbol_at(os, walker, local_variable.symbol_info, local_variable.symbol_info, 0, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
                 }
             }

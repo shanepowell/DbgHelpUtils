@@ -62,7 +62,7 @@ namespace dlg_help_utils::symbol_type_utils
         , dbg_help::symbol_type_info const& type
         , dbg_help::symbol_type_info const& display_type
         , uint64_t variable_address
-        , mini_dump_memory_stream& variable_stream
+        , mini_dump_memory_stream const& variable_stream
         , size_t indent = 0
         , size_t visited_depth = 0
         , dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);

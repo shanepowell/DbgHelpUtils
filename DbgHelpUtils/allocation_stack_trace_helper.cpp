@@ -95,7 +95,7 @@ namespace dlg_help_utils::heap::statistic_views
         return std::nullopt;
     }
 
-    std::vector<uint64_t> allocation_stack_trace_helper::find_common_allocation_stack_trace(std::optional<dbg_help::symbol_address_info> const& common_allocation_callsite, std::vector<process_heap_entry> const& entries) const
+    std::vector<uint64_t> allocation_stack_trace_helper::find_common_allocation_stack_trace(std::optional<dbg_help::symbol_address_info> const& common_allocation_callsite, std::vector<process_heap_entry> const& entries)
     {
         if(!common_allocation_callsite.has_value())
         {

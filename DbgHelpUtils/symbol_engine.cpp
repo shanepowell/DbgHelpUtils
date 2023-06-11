@@ -1,4 +1,5 @@
-﻿// ReSharper disable CppClangTidyPerformanceNoIntToPtr
+﻿// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
+// ReSharper disable CppClangTidyPerformanceNoIntToPtr
 #include "symbol_engine.h"
 
 #include <array>

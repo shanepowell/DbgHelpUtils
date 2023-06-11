@@ -782,7 +782,7 @@ namespace dlg_help_utils::symbol_type_utils
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , uint64_t const variable_address
-            , mini_dump_memory_stream& variable_stream
+            , mini_dump_memory_stream const& variable_stream
             , unsigned long long bit_mask
             , size_t const indent
             , size_t const visited_depth)
@@ -1330,7 +1330,7 @@ namespace dlg_help_utils::symbol_type_utils
         , symbol_type_info const& type
         , symbol_type_info const& display_type
         , uint64_t const variable_address
-        , [[maybe_unused]] mini_dump_memory_stream& variable_stream
+        , [[maybe_unused]] mini_dump_memory_stream const& variable_stream
         , size_t const indent
         , size_t const visited_depth
         , dump_variable_symbol_options const options)

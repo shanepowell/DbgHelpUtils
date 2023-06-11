@@ -45,8 +45,8 @@ namespace dlg_help_utils::string_conversation
             return make_tuple(std::wstring(), GetLastError());
         }
 
-        std::wstring rv(static_cast<size_t>(ret), static_cast<wchar_t>(0x0));
-        if (static_cast<size_t>(MultiByteToWideChar(code_page, 0, str, static_cast<int>(length), &*rv.begin(),
+        std::wstring rv(static_cast<size_t>(ret), wchar_t{0x0});
+        if (static_cast<size_t>(MultiByteToWideChar(code_page, 0, str, static_cast<int>(length), rv.data(),
                                                     static_cast<int>(rv.length()))) != rv.length())
         {
             //something went wrong - GetLastError();
@@ -69,8 +69,8 @@ namespace dlg_help_utils::string_conversation
             return make_tuple(std::string(), GetLastError());
         }
 
-        std::string rv(static_cast<size_t>(ret), static_cast<char>(0x0));
-        if (static_cast<size_t>(WideCharToMultiByte(code_page, 0, str, static_cast<int>(length), &*rv.begin(),
+        std::string rv(static_cast<size_t>(ret), char{0x0});
+        if (static_cast<size_t>(WideCharToMultiByte(code_page, 0, str, static_cast<int>(length), rv.data(),
                                                     static_cast<int>(rv.length()), nullptr, nullptr)) != rv.length())
         {
             return make_tuple(std::string(), GetLastError());

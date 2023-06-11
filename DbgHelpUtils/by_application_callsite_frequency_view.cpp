@@ -36,7 +36,7 @@ namespace dlg_help_utils::heap::statistic_views
                     , calculate_bucket_range_count_percent(bucket, allocated_entries().size())
                     , calculate_bucket_range_size_percent(buckets, key)
                     , bucket.common_allocation_callsite
-                    , helper().find_common_allocation_stack_trace(bucket.common_allocation_callsite, bucket.entries)
+                    , allocation_stack_trace_helper::find_common_allocation_stack_trace(bucket.common_allocation_callsite, bucket.entries)
                     , bucket.entries
                     , bucket.free_entries};
             }), buckets.size()))

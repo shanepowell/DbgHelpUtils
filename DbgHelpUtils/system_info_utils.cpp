@@ -1,4 +1,5 @@
-﻿#include "system_info_utils.h"
+﻿// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
+#include "system_info_utils.h"
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"

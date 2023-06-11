@@ -1,4 +1,6 @@
-﻿#include "process_heap_graph.h"
+﻿// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
+
+#include "process_heap_graph.h"
 
 #include <algorithm>
 #include <array>
@@ -51,7 +53,7 @@ namespace dlg_help_utils::heap
 
         symbol_type_info_set build_filtered_system_type_indexes(stream_stack_dump::mini_dump_memory_walker const& walker, process_heaps_options const& options)
         {
-            static std::array const g_ignored_system_symbols
+            static constexpr std::array g_ignored_system_symbols
             {
                 &common_symbol_names::acrt_first_block,
             };
@@ -947,7 +949,7 @@ namespace dlg_help_utils::heap
         , uint64_t const address
         , dbg_help::symbol_type_info symbol_type
         , std::optional<uint32_t> const& thread_id
-        , std::wstring_view const& thread_name) const
+        , std::wstring_view const& thread_name)
     {
         if(thread_id.has_value())
         {
@@ -963,7 +965,7 @@ namespace dlg_help_utils::heap
         , is_root_symbol_t const is_root_symbol
         , is_metadata_symbol_t const is_metadata_symbol
         , uint64_t address
-        , dbg_help::symbol_type_info symbol_type) const
+        , dbg_help::symbol_type_info symbol_type)
     {
         return node.add_symbol_address_reference({is_root_symbol, is_metadata_symbol, address, node.index(), std::move(symbol_type)});
     }
@@ -976,7 +978,7 @@ namespace dlg_help_utils::heap
         , size_t const pointer_size
         , dbg_help::symbol_type_info const& base_symbol_type
         , dbg_help::symbol_type_info const& pointer_symbol_type
-        , std::wstring const& pointer_name) const
+        , std::wstring const& pointer_name)
     {
         auto& node_symbol_reference = get_node_symbol_variable_reference(node, is_root_symbol, is_metadata_symbol, base_address, base_symbol_type);
         node_symbol_reference.add_variable_symbol_reference(base_address + base_address_offset, base_address_offset, pointer_size, pointer_symbol_type, pointer_name);
@@ -986,7 +988,7 @@ namespace dlg_help_utils::heap
         , is_root_symbol_t const is_root_symbol
         , is_metadata_symbol_t const is_metadata_symbol
         , uint64_t const address
-        , dbg_help::symbol_type_info const& symbol_type) const
+        , dbg_help::symbol_type_info const& symbol_type)
     {
         auto const it = std::ranges::find_if(node.symbol_references(), [address](auto const& symbol_reference)
             {

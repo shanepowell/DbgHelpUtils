@@ -1,4 +1,6 @@
 ﻿#pragma once
+// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
+
 #include <vector>
 
 #include "stream_utils.h"

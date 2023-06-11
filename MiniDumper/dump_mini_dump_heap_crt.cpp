@@ -1,4 +1,6 @@
-﻿#include "dump_mini_dump_heap.h"
+﻿// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
+
+#include "dump_mini_dump_heap.h"
 
 #include "dump_file_options.h"
 #include "DbgHelpUtils/cache_manager.h"

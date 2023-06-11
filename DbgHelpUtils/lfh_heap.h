@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <experimental/generator>
 
+#include "nt_heap.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::process
@@ -17,7 +18,6 @@ namespace dlg_help_utils::stream_stack_dump
 namespace dlg_help_utils::heap
 {
     class lfh_segment;
-    class nt_heap;
 
     class lfh_heap
     {

@@ -1,4 +1,5 @@
 ﻿#pragma once
+// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
 
 #include "dump_file_options.h"
 #include "DbgHelpUtils/i_symbol_load_callback.h"

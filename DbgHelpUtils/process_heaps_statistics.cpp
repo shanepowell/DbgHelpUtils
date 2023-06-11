@@ -46,6 +46,7 @@ namespace dlg_help_utils::heap
     }
 
     // ReSharper disable once CppParameterMayBeConst
+    // ReSharper disable once CppPassValueParameterByConstReference
     std::map<uint64_t, process_heap_entry> process_heaps_statistics::get_all_entries(std::experimental::generator<process_heap_entry> entries)
     {
         std::map<uint64_t, process_heap_entry> rv;

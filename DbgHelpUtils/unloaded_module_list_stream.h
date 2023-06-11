@@ -1,4 +1,6 @@
 ﻿#pragma once
+// ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
+
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>

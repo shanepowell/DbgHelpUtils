@@ -31,7 +31,7 @@ namespace dlg_help_utils::heap::statistic_views
 
         [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_common_allocation_callsite(process_heap_entry const& entry) const;
         [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_common_allocation_callsite(std::vector<process_heap_entry> const& entries) const;
-        [[nodiscard]] std::vector<uint64_t> find_common_allocation_stack_trace(std::optional<dbg_help::symbol_address_info> const& common_allocation_callsite, std::vector<process_heap_entry> const& entries) const;
+        [[nodiscard]] static std::vector<uint64_t> find_common_allocation_stack_trace(std::optional<dbg_help::symbol_address_info> const& common_allocation_callsite, std::vector<process_heap_entry> const& entries);
 
     private:
         stream_stack_dump::mini_dump_memory_walker const* walker_;

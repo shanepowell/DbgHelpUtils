@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "lfh_segment.h"
-#include "nt_heap.h"
 #include "process_heap_graph_global_variable_entry.h"
 #include "process_heap_graph_heap_entry.h"
 #include "process_heap_graph_symbol_entry.h"
@@ -25,6 +24,7 @@ namespace dlg_help_utils::heap
 {
     class system_module_list;
     class process_heaps;
+    class nt_heap;
 
     namespace allocation_graph
     {
@@ -167,32 +167,32 @@ namespace dlg_help_utils::heap
             , std::optional<uint32_t> const& thread_id
             , std::wstring_view const& thread_name
             , mark_as_system_t mark_as_system);
-        void add_heap_node_symbol_reference(allocation_graph::process_heap_graph_node& node
-            , allocation_graph::is_root_symbol_t is_root_symbol
-            , allocation_graph::is_metadata_symbol_t is_metadata_symbol
-            , uint64_t address
-            , dbg_help::symbol_type_info symbol_type
-            , std::optional<uint32_t> const& thread_id
-            , std::wstring_view const& thread_name) const;
-        allocation_graph::process_heap_entry_symbol_address_reference& add_heap_node_symbol_reference(allocation_graph::process_heap_graph_node& node
-            , allocation_graph::is_root_symbol_t is_root_symbol
-            , allocation_graph::is_metadata_symbol_t is_metadata_symbol
-            , uint64_t address
-            , dbg_help::symbol_type_info symbol_type) const;
-        void find_or_add_node_symbol_variable_reference(allocation_graph::process_heap_graph_node& node
-            , allocation_graph::is_root_symbol_t is_root_symbol
-            , allocation_graph::is_metadata_symbol_t is_metadata_symbol
-            , uint64_t base_address
-            , uint64_t base_address_offset
-            , size_t pointer_size
-            , dbg_help::symbol_type_info const& base_symbol_type
-            , dbg_help::symbol_type_info const& pointer_symbol_type
-            , std::wstring const& pointer_name) const;
-        allocation_graph::process_heap_entry_symbol_address_reference& get_node_symbol_variable_reference(allocation_graph::process_heap_graph_node& node
-            , allocation_graph::is_root_symbol_t is_root_symbol
-            , allocation_graph::is_metadata_symbol_t is_metadata_symbol
-            , uint64_t address
-            , dbg_help::symbol_type_info const& symbol_type) const;
+        static void add_heap_node_symbol_reference(allocation_graph::process_heap_graph_node& node
+                                                   , allocation_graph::is_root_symbol_t is_root_symbol
+                                                   , allocation_graph::is_metadata_symbol_t is_metadata_symbol
+                                                   , uint64_t address
+                                                   , dbg_help::symbol_type_info symbol_type
+                                                   , std::optional<uint32_t> const& thread_id
+                                                   , std::wstring_view const& thread_name);
+        static allocation_graph::process_heap_entry_symbol_address_reference& add_heap_node_symbol_reference(allocation_graph::process_heap_graph_node& node
+                                                                                                             , allocation_graph::is_root_symbol_t is_root_symbol
+                                                                                                             , allocation_graph::is_metadata_symbol_t is_metadata_symbol
+                                                                                                             , uint64_t address
+                                                                                                             , dbg_help::symbol_type_info symbol_type);
+        static void find_or_add_node_symbol_variable_reference(allocation_graph::process_heap_graph_node& node
+                                                               , allocation_graph::is_root_symbol_t is_root_symbol
+                                                               , allocation_graph::is_metadata_symbol_t is_metadata_symbol
+                                                               , uint64_t base_address
+                                                               , uint64_t base_address_offset
+                                                               , size_t pointer_size
+                                                               , dbg_help::symbol_type_info const& base_symbol_type
+                                                               , dbg_help::symbol_type_info const& pointer_symbol_type
+                                                               , std::wstring const& pointer_name);
+        static allocation_graph::process_heap_entry_symbol_address_reference& get_node_symbol_variable_reference(allocation_graph::process_heap_graph_node& node
+                                                                                                                 , allocation_graph::is_root_symbol_t is_root_symbol
+                                                                                                                 , allocation_graph::is_metadata_symbol_t is_metadata_symbol
+                                                                                                                 , uint64_t address
+                                                                                                                 , dbg_help::symbol_type_info const& symbol_type);
         void remove_all_non_allocation_with_empty_to_references();
         void find_and_mark_system_nodes(std::unordered_map<uint64_t, bool>& result_cache);
         void remove_all_system_nodes(std::unordered_map<uint64_t, bool>& result_cache);
