@@ -14,6 +14,7 @@
 #include "DbgHelpUtils/wide_runtime_error.h"
 
 #include <algorithm>
+#include <chrono>
 #include <ranges>
 
 
