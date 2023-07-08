@@ -9,7 +9,7 @@ DbgHelp Utilities Library is a simple wrapper around the windows dbghelp.dll lib
 
 The library is compiled with VS 2019 16.11.3 or the pre-release version of VS 2022 v17 preview 4.1 and using the C++ latest compiler flag.
 The main library has no dependencies other than the VS c++ runtime.
-The sample application MiniDumper (and the test applications) has a submodule dependancy on lyra for process the command line and json_struct for loading a json files.
+The sample application MiniDumper (and the test applications) has a submodule dependency on lyra for command line support and json_struct for loading json files.
 
 The is sample application MiniDumper, build with the DbgHelp Utilities Library can dump:
 * most stream types of a user mini dump file
