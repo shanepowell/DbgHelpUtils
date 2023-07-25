@@ -1,4 +1,5 @@
 ﻿#pragma once
+// ReSharper disable once CppUnusedIncludeDirective
 #include <string>
 
 namespace dlg_help_utils::string_compare

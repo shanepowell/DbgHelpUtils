@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ViewModels\MiniDumpPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\MainWindow.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\HeaderPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\StreamsPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\SettingsPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="Controls\SettingsCard\SettingsCardTheme.xaml">
+      <Filter>Controls\SettingsCard</Filter>
+    </Page>
+    <Page Include="Themes\Generic.xaml" />
+    <Page Include="Controls\SettingsExpander\SettingsExpanderTheme.xaml">
+      <Filter>Controls\SettingsExpander</Filter>
+    </Page>
+    <Page Include="ViewModels\DefaultPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\RecentPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="App.idl" />
+    <Midl Include="ViewModels\MainWindow.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="Triggers\ControlSizeTrigger.cpp">
+      <Filter>Triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\ControlHelpers.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\SettingsCard\SettingsCard.cpp">
+      <Filter>Controls\SettingsCard</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\SettingsCard\SettingsCardAutomationPeer.cpp">
+      <Filter>Controls\SettingsCard</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\SettingsExpander\SettingsExpander.cpp">
+      <Filter>Controls\SettingsExpander</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\SettingsExpander\SettingsExpanderAutomationPeer.cpp">
+      <Filter>Controls\SettingsExpander</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\SettingsExpander\SettingsExpanderItemStyleSelector.cpp">
+      <Filter>Controls\SettingsExpander</Filter>
+    </ClCompile>
+    <ClCompile Include="Triggers\IsNullOrEmptyStateTrigger.cpp">
+      <Filter>Triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="Triggers\IsEqualStateTrigger.cpp">
+      <Filter>Triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleExtension\StyleExtensionResourceDictionary.cpp">
+      <Filter>StyleExtension</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleExtension\StyleExtensions.cpp">
+      <Filter>StyleExtension</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\WindowHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\ThemeHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\AppPropertiesHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\UIHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\HexNumberConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\GlobalOptions.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\logger.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\RecentFileItem.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Utility\RelayCommand.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\ControlHelpers.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\WindowHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\InspectableUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\ThemeHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\AppPropertiesHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\UIHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\GlobalOptions.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\logger.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\log_level.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{72e14cb5-ab19-47fe-837a-cb7bee564f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{193aa543-b289-47c0-9baf-30ded8dafcd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModels">
+      <UniqueIdentifier>{c37b7361-8207-42be-bef0-847de8bfef55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{42f2cfb3-6641-4302-b492-46de6f5d2b51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Triggers">
+      <UniqueIdentifier>{edaac235-ee9a-4665-92be-470f87f1ea00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helpers">
+      <UniqueIdentifier>{eaa0f1f7-e1e2-4cbd-8744-660ed4b79928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StyleExtension">
+      <UniqueIdentifier>{cefd910a-879f-45a0-b7cb-3b4439cba891}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{aecbe920-37ca-4bec-a326-96609765c9d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Converters">
+      <UniqueIdentifier>{5f0e1c09-3d5d-42ae-9728-324a7f786813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{78ae98a4-236c-4e26-adcc-01daf9de28c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\DataGrid">
+      <UniqueIdentifier>{7d1a2f0d-8d5d-43f4-a10b-f1ed88ed9032}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\SettingsCard">
+      <UniqueIdentifier>{a6b917de-a7ac-40da-aeca-0e42ccb2153a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\SettingsExpander">
+      <UniqueIdentifier>{0ca69060-4681-4145-be4f-6d98d94e2149}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Resources.resw">
+      <Filter>Resource Files</Filter>
+    </PRIResource>
+  </ItemGroup>
+</Project>

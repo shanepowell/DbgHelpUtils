@@ -3,7 +3,7 @@
   <assemblyIdentity
     type="win32"
     name="MiniDumper"
-    version="1.0.0.0"
+    version="1.0.0.1"
     processorArchitecture="x86"
   />
   <description>MiniDumper</description>

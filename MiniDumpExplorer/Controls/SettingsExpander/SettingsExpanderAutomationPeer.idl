@@ -1,0 +1,11 @@
+import "Controls\SettingsExpander\SettingsExpander.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SettingsExpanderAutomationPeer : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    {
+        SettingsExpanderAutomationPeer(SettingsExpander settingsExpander);
+        void RaiseExpandedChangedEvent(Boolean newValue);
+    }
+}

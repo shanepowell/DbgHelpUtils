@@ -5,6 +5,13 @@
 
 #include "windows_setup.h"
 
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
+
 namespace dlg_help_utils
 {
     class mini_dump_memory_stream;

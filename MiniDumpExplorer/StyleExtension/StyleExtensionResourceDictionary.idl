@@ -1,0 +1,9 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass StyleExtensionResourceDictionary : Microsoft.UI.Xaml.ResourceDictionary
+    {
+        StyleExtensionResourceDictionary();
+        void CopyFrom(Microsoft.UI.Xaml.ResourceDictionary resource);
+    }
+}

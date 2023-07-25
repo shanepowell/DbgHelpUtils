@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MiniDumpExplorer.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+<Page.Resources>
+        <!--  These styles can be referenced to create a consistent SettingsPage layout  -->
+
+        <!--  Spacing between cards  -->
+        <x:Double x:Key="SettingsCardSpacing">3</x:Double>
+
+        <!--  Style (inc. the correct spacing) of a section header  -->
+        <Style
+            x:Key="SettingsSectionHeaderTextBlockStyle"
+            BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+            TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Margin" Value="1,29,0,5" />
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="WideLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource Breakpoint640Plus}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="NarrowLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentSV.Padding" Value="16,0" />
+                        <Setter Target="PageHeader.Margin" Value="16,48,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <TextBlock
+            x:Name="PageHeader"
+            Margin="36,24,36,0"
+            Style="{StaticResource TitleTextBlockStyle}"
+            Text="Settings" />
+        <ScrollViewer
+            x:Name="contentSV"
+            Grid.Row="1"
+            Padding="36,0,36,0"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto"
+            HorizontalScrollBarVisibility="Auto"
+            HorizontalScrollMode="Auto">
+            <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Appearance &amp; behavior" />
+                <local:SettingsCard Description="Select which app theme to display" Header="App theme">
+                    <local:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE790;" />
+                    </local:SettingsCard.HeaderIcon>
+                    <ComboBox x:Name="themeMode" AutomationProperties.AutomationId="themeModeComboBox" SelectionChanged="ThemeModeSelectionChanged">
+                        <ComboBoxItem Content="Light" Tag="Light" />
+                        <ComboBoxItem Content="Dark" Tag="Dark" />
+                        <ComboBoxItem Content="Use system setting" Tag="Default" />
+                    </ComboBox>
+                </local:SettingsCard>
+                <local:SettingsCard Description="Select application log level" Header="Log level">
+                    <local:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="Segoe UI Symbol" Glyph="&#x1F41B;" />
+                    </local:SettingsCard.HeaderIcon>
+                    <ComboBox x:Name="logLevelMode" AutomationProperties.AutomationId="logLevelModeComboBox" SelectionChanged="LogLevelModeSelectionChanged">
+                        <ComboBoxItem Content="None" />
+                        <ComboBoxItem Content="Error" />
+                        <ComboBoxItem Content="Warning" />
+                        <ComboBoxItem Content="Information" />
+                        <ComboBoxItem Content="Debug" />
+                    </ComboBox>
+                </local:SettingsCard>
+                <local:SettingsCard Description="Select which number format to display" Header="Number format">
+                    <local:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="Segoe UI Symbol" Glyph="&#663;" />
+                    </local:SettingsCard.HeaderIcon>
+                    <ComboBox x:Name="numberFormatMode" AutomationProperties.AutomationId="numberFormatModeComboBox" SelectionChanged="NumberFormatModeSelectionChanged">
+                        <ComboBoxItem Content="Hexadecimal" />
+                        <ComboBoxItem Content="Decimal" />
+                    </ComboBox>
+                </local:SettingsCard>
+
+                <!--  About  -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="About" />
+
+                <local:SettingsExpander Description="© 2023 Shane Powell. All rights reserved." Header="{StaticResource AppTitleName}">
+                    <local:SettingsExpander.HeaderIcon>
+                        <BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/Square44x44Logo.png" />
+                    </local:SettingsExpander.HeaderIcon>
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind Version}" />
+                    <local:SettingsExpander.Items>
+                        <local:SettingsCard Header="To clone this repository">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                Text="git clone https://github.com/shanepowell/DbgHelpUtils.git" />
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="OS Version">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind OsVersion}" />
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Suite Mask">
+                            <StackPanel>
+                                <TextBlock x:Name="suiteMaskTextBlock" 
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           IsTextSelectionEnabled="True"
+                                           TextAlignment="Right"
+                                           Text="{x:Bind SuiteMask, Converter={StaticResource HexNumberConverter}, Mode=OneWay}">
+                                    <TextBlock.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Icon="Copy" Text="Copy" Click="CopySuiteMaskToClipboard" />
+                                            <MenuFlyoutSeparator />
+                                            <ToggleMenuFlyoutItem Text="Display numbers in hexadecimal" IsChecked="{x:Bind DisplayHexadecimalNumericFormat, Mode=TwoWay}" />
+                                        </MenuFlyout>
+                                    </TextBlock.ContextFlyout>
+                                </TextBlock>
+                                <ListBox
+                                    Margin="0,5,0,0"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    ItemsSource="{x:Bind SuiteMaskList}" >
+                                </ListBox>
+                            </StackPanel>
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Product Type">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind ProductType}" />
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Platform Id">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind PlatformId}" />
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="CSD Version">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind CsdVersion}" />
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Processor Architecture">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind ProcessorArchitecture}" />
+                        </local:SettingsCard>
+                    </local:SettingsExpander.Items>
+                </local:SettingsExpander>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

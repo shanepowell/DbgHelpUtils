@@ -1,0 +1,11 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SettingsExpanderItemStyleSelector : Microsoft.UI.Xaml.Controls.StyleSelector
+    {
+        SettingsExpanderItemStyleSelector();
+
+        Microsoft.UI.Xaml.Style DefaultStyle;
+        Microsoft.UI.Xaml.Style ClickableStyle;
+    }
+}

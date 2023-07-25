@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="MiniDumpExplorer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="Root" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="AppTitleBar" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0"
+                   Source="/Assets/Square44x44Logo.png"
+                   Margin="8,0,0,0"/>
+            <TextBlock Grid.Column="1" Text="{StaticResource AppTitleName}" FontSize="15" VerticalAlignment="bottom" Margin="15,5,0,5" />
+            <TextBlock Grid.Column="2" Text="{x:Bind SelectedTabTitle, Mode=OneWay}" FontSize="13" VerticalAlignment="bottom" Margin="5,5,0,5" />
+        </Grid>
+        <MenuBar Grid.Row="1" VerticalAlignment="Top">
+            <MenuBar.Items>
+                <MenuBarItem Title="File" AccessKey="F">
+                    <MenuFlyoutItem Text="Open"
+                                    Icon="OpenFile"
+                                    Click="MenuFileOpen_Click">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="O"
+                                                 Modifiers="Control" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Text="Exit"
+                                    Icon="Cancel"
+                                    Click="MenuFileOpen_Exit" />
+                </MenuBarItem>
+            </MenuBar.Items>
+        </MenuBar>
+        <TabView Grid.Row="2"
+                 x:Name="TabView"
+                 VerticalAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 SelectionChanged="TabView_SelectionChanged"
+                 TabCloseRequested="TabView_TabCloseRequested"
+                 AddTabButtonClick="TabView_AddTabButtonClick">
+        </TabView>
+    </Grid>
+</Window>

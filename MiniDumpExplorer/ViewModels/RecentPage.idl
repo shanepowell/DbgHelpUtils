@@ -1,0 +1,12 @@
+import "Models\RecentFileItem.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass RecentPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        RecentPage();
+
+        Windows.Foundation.Collections.IObservableVector<RecentFileItem> RecentFileItems{ get; };
+    }
+}

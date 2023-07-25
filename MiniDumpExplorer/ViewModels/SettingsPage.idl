@@ -1,0 +1,18 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SettingsPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        SettingsPage();
+
+        String Version { get; };
+        String OsVersion { get; };
+        UInt16 SuiteMask { get; };
+        Windows.Foundation.Collections.IObservableVector<String> SuiteMaskList{ get; };
+        String ProductType { get; };
+        String PlatformId { get; };
+        String CsdVersion { get; };
+        String ProcessorArchitecture { get; };
+        Boolean DisplayHexadecimalNumericFormat { get; set; };
+    }
+}

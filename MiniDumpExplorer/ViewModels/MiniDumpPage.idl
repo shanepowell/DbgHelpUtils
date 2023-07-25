@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass MiniDumpPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        MiniDumpPage(Windows.Storage.StorageFile file);
+    }
+}

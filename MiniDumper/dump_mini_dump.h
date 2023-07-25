@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <memory>
-#include <ostream>
 #include <string>
 
 class dump_file_options;

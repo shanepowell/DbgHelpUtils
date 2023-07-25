@@ -1,0 +1,33 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [contentproperty("Content")]
+    runtimeclass SettingsExpander : Microsoft.UI.Xaml.Controls.Control
+    {
+        SettingsExpander();
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.RoutedEventArgs> Expanded;
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.RoutedEventArgs> Collapsed;
+        static Microsoft.UI.Xaml.DependencyProperty HeaderProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty DescriptionProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty HeaderIconProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemsHeaderProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemsFooterProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty IsExpandedProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemsProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemsSourceProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemTemplateProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemContainerStyleSelectorProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ContentProperty { get; };
+        Object Header;
+        Object Description;
+        Microsoft.UI.Xaml.Controls.IconElement HeaderIcon;
+        Microsoft.UI.Xaml.UIElement ItemsHeader;
+        Microsoft.UI.Xaml.UIElement ItemsFooter;
+        Boolean IsExpanded;
+        Windows.Foundation.Collections.IVector<Object> Items;
+        Object ItemsSource;
+        Object ItemTemplate;
+        Microsoft.UI.Xaml.Controls.StyleSelector ItemContainerStyleSelector;
+        Object Content;
+    }
+}

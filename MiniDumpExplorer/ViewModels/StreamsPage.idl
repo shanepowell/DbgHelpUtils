@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass StreamsPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        StreamsPage();
+    }
+}

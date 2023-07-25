@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass HeaderPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        HeaderPage();
+    }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application
+    x:Class="MiniDumpExplorer.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary Source="Controls/SettingsCard/SettingsCardTheme.xaml" />
+                <ResourceDictionary Source="Controls/SettingsExpander/SettingsExpanderTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <local:HexNumberConverter x:Key="HexNumberConverter"/>
+
+            <x:Double x:Key="Breakpoint640Plus">641</x:Double>
+            <x:String x:Key="AppTitleName">MiniDump Explorer</x:String>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

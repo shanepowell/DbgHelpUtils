@@ -1,0 +1,13 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass RecentFileItem
+    {
+        RecentFileItem();
+
+        String Name { get; };
+        Microsoft.UI.Xaml.Media.Imaging.BitmapSource Icon { get; };
+        String Location { get; };
+        String Size { get; };
+    }
+}

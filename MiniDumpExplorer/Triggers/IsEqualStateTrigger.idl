@@ -1,0 +1,12 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass IsEqualStateTrigger : Microsoft.UI.Xaml.StateTriggerBase
+    {
+        IsEqualStateTrigger();
+        Object Value;
+        static Microsoft.UI.Xaml.DependencyProperty ValueProperty { get; };
+        Object To;
+        static Microsoft.UI.Xaml.DependencyProperty ToProperty { get; };
+    }
+}

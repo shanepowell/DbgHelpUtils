@@ -57,4 +57,11 @@ namespace dlg_help_utils::handles
     {
         return make_map_view_handle(nullptr);
     }
+
+    using registry_key_handle = decltype(make_handle(HKEY{}, RegCloseKey));
+
+    inline auto make_registry_key_handle(HKEY const key)
+    {
+        return make_handle(key, RegCloseKey);
+    }
 }

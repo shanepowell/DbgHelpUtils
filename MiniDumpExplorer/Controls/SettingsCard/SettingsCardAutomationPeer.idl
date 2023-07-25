@@ -1,0 +1,10 @@
+import "Controls\SettingsCard\SettingsCard.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SettingsCardAutomationPeer : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    {
+        SettingsCardAutomationPeer(SettingsCard settingsCard);
+    }
+}
