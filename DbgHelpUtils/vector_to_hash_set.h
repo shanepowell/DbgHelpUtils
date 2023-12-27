@@ -81,13 +81,13 @@ namespace dlg_help_utils
         template <>
         inline std::wstring string_converter<wstring_to_lower, std::wstring>(std::wstring const& value)
         {
-            return string_compare::to_lower(value);
+            return string_utils::to_lower(value);
         }
 
         template <>
         inline std::wstring string_converter<wstring_to_upper, std::wstring>(std::wstring const& value)
         {
-            return string_compare::to_upper(value);
+            return string_utils::to_upper(value);
         }
 
         template <typename T, typename=void> 

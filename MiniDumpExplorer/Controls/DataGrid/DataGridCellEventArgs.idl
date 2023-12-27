@@ -1,0 +1,12 @@
+import "Controls\DataGrid\DataGridCell.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridCellEventArgs
+    {
+        DataGridCellEventArgs(DataGridCell cell);
+
+        DataGridCell Cell { get; };
+    }
+}

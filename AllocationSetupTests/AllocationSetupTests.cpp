@@ -177,8 +177,9 @@ int main(int const argc, char* argv[])
             std::cerr << "FATAL ERROR: Unknown exception\n";
         }
     }
-    catch(...)
+    catch(...)  // NOLINT(bugprone-empty-catch)
     {
+        // ignore
     }
     return EXIT_FAILURE;
 }

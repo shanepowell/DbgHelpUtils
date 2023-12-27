@@ -1,4 +1,4 @@
-import "Models\RecentFileItem.idl";
+import "Controls\DataGrid\DataGridDataSource.idl";
 
 namespace MiniDumpExplorer
 {
@@ -7,6 +7,6 @@ namespace MiniDumpExplorer
     {
         RecentPage();
 
-        Windows.Foundation.Collections.IObservableVector<RecentFileItem> RecentFileItems{ get; };
+        IDataGridDataSource ItemsSource { get; };
     }
 }

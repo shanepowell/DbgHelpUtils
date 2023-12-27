@@ -376,9 +376,9 @@ bool validate_allocations(std::vector<Allocation> const& allocations
             {
                 auto const it_closest = heap_allocations.lower_bound(allocation.pointer);
 
-                // this happens when the base dmp has a allocation address/size that is reused between the first dmp and the second dump and
-                // we don't have any record of it and it's not a crt heap (i.e. we can't tell they are different by the request number) then
-                // we can't do anything about it as it looks the same... the only reason we can spot this unexpected situation is because
+                // this happens when the base dmp has an allocation address/size that is reused between the first dmp and the second dump, and
+                // we don't have any record of it, and it's not a crt heap (i.e. we can't tell they are different by the request number) then
+                // we can't do anything about it as it looks the same... the only reason we can spot this unexpected situation is that
                 // we have the json report of what you expected to have allocated.
                 if(!crt_heap.is_using_crt_heap() && heaps.is_address_filtered(allocation.pointer, dlg_help_utils::size_units::base_16::bytes{allocation.size}))
                 {
@@ -785,8 +785,9 @@ int main(int const argc, char* argv[])
             std::cerr << "FATAL ERROR: Unknown exception\n";
         }
     }
-    catch(...)
+    catch(...)  // NOLINT(bugprone-empty-catch)
     {
+        // ignore
     }
     return EXIT_FAILURE;
 }

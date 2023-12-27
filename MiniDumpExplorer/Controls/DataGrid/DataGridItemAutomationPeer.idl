@@ -1,0 +1,15 @@
+import "Controls\DataGrid\DataGrid.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridItemAutomationPeer
+    : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    , Microsoft.UI.Xaml.Automation.Provider.IInvokeProvider
+    , Microsoft.UI.Xaml.Automation.Provider.IScrollItemProvider
+    , Microsoft.UI.Xaml.Automation.Provider.ISelectionItemProvider
+    , Microsoft.UI.Xaml.Automation.Provider.ISelectionProvider
+    {
+        DataGridItemAutomationPeer(Object item, DataGrid dataGrid);
+    }
+}

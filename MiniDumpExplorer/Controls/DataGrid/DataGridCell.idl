@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+import "Controls\DataGrid\DataGridRow.idl";
+import "Controls\DataGrid\DataGrid.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridCell : Microsoft.UI.Xaml.Controls.ContentControl
+    {
+        DataGridCell();
+
+        static Microsoft.UI.Xaml.DependencyProperty IsValidProperty { get; };
+
+        Boolean IsValid { get; };
+    }
+}

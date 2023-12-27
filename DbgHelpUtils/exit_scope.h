@@ -8,7 +8,7 @@ namespace dlg_help_utils
     class scope_exit
     {
     public:
-        scope_exit(F&& value)
+        scope_exit(F&& value)  // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             : value_{std::forward<F>(value)}
         {
         }

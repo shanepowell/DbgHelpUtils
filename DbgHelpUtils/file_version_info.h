@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 
 #ifdef max

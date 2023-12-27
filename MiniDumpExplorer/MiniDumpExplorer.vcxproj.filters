@@ -32,10 +32,55 @@
     <Page Include="ViewModels\RecentPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="Controls\DataGrid\DataGridTheme.xaml">
+      <Filter>Controls\DataGrid</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="ViewModels\MainWindow.idl" />
+    <Midl Include="Controls\DataGrid\DataGridSortDirection.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridEditAction.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridClipboardCopyMode.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridEditingUnit.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridGridLinesVisibility.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridHeadersVisibility.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridRowDetailsVisibilityMode.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridSelectionMode.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridDataSource.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\EditableObject.idl">
+      <Filter>Controls</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridDataSourceFactory.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DefaultMember.idl">
+      <Filter>Controls</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridDataSourcePropertyInfo.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
+    <Midl Include="Controls\DataGrid\DataGridColumnHeadersPresenterAutomationPeer.idl">
+      <Filter>Controls\DataGrid</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -97,6 +142,195 @@
     <ClCompile Include="Models\RecentFileItem.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGrid.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnHeader.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridLength.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\SuspendedHandlers.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\BindingInfo.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridAutoGeneratingColumnEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridBeginningEditEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCellEditEndedEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCellEditEndingEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnReorderingEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRow.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowClipboardEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridClipboardCellContent.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridDataConnection.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnHeadersPresenter.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridPreparingCellForEditEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowDetailsEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowEditEndedEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowEditEndingEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowGroupHeader.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowGroupHeaderEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridSelectedItemsCollection.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\ValidationResult.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowsPresenter.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowGroupInfo.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnCollection.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridFillerColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCell.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCellCollection.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCellEventArgs.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\ValidationUtil.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCellAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowHeader.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridBoundColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCheckBoxColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridTextColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridComboBoxColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridFrozenGrid.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridCellsPresenter.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridDetailsPresenter.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridDisplayData.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\TypeHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridValueConverter.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowHeaderAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnHeaderAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\VisualStates.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridGroupItemAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridItemAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowGroupHeaderAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRowsPresenterAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridTemplateColumn.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\KeyboardHelper.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\UISettingsHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridRows.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumns.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\DataGrid\DataGridColumnHeadersPresenterAutomationPeer.cpp">
+      <Filter>Controls\DataGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="RecentFileItemsDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="SizeNumberConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -130,12 +364,102 @@
     <ClInclude Include="Utility\log_level.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Utility\SuspendedHandlers.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridError.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\BindingInfo.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridDataConnection.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridSelectionAction.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridCellCoordinates.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridSelectedItemsCollection.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\IndexToValueTable.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\WeakEventListener.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ValidationResult.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Range.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridRowGroupInfo.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\erase_value.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridColumnCollection.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridCellCollection.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\OptionalUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ValidationUtil.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridInteractionInfo.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\RectContains.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridDisplayData.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\TypeHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\WinrtDepenencyPropertiesReflectionMap.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\WinrtDepenencyPropertiesReflectionMapHeaders.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridCellInternal.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridColumnInternal.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\VisualStates.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridColumnHeaderInteractionInfo.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\KeyboardHelper.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\UISettingsHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\StringHelper.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\DataGrid\DataGridColumnHeadersPresenterAutomationPeer.h">
+      <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Square150x150Logo.scale-200.png">
@@ -150,7 +474,115 @@
     <Image Include="Assets\SplashScreen.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\LockScreenLogo.scale-200.png">
+    <Image Include="MiniDumper.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallTile.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallTile.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallTile.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallTile.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallTile.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-16.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-32.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-48.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-256.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

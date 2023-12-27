@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SettingsCardAutomationPeer.h"
 
-#include "App.xaml.h"
+#include <winrt/Windows.UI.Xaml.Interop.h>
 
 #if __has_include("SettingsCardAutomationPeer.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -14,7 +14,7 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     SettingsCardAutomationPeer::SettingsCardAutomationPeer(MiniDumpExplorer::SettingsCard const& settingsCard)
-        : SettingsCardAutomationPeerT<SettingsCardAutomationPeer>(settingsCard)
+        : base_type(settingsCard)
     {
     }
 

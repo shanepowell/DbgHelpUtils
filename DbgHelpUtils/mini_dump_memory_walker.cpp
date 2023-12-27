@@ -380,7 +380,7 @@ namespace dlg_help_utils::stream_stack_dump
     {
         if (memory_list.found())
         {
-            // a memory range can cross boundaries and that is ok...
+            // a memory range can cross boundaries and that is OK...
             auto base = base_address;
             auto size_left = size;
             DWORD64 length = size;

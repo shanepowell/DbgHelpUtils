@@ -1,13 +1,14 @@
 namespace MiniDumpExplorer
 {
     [default_interface]
-    runtimeclass RecentFileItem
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass RecentFileItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
-        RecentFileItem();
+        RecentFileItem(String fullPath);
 
         String Name { get; };
-        Microsoft.UI.Xaml.Media.Imaging.BitmapSource Icon { get; };
+        Microsoft.UI.Xaml.Media.ImageSource Icon { get; };
         String Location { get; };
-        String Size { get; };
+        UInt64 Size { get; };
     }
 }

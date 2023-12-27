@@ -4,7 +4,6 @@
 #include "DbgHelpUtils/common_symbol_names.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
-#include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"

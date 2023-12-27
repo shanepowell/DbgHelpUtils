@@ -1,0 +1,10 @@
+import "Controls\DataGrid\DataGridColumnHeadersPresenter.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridColumnHeadersPresenterAutomationPeer : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    {
+        DataGridColumnHeadersPresenterAutomationPeer(DataGridColumnHeadersPresenter owner);
+    }
+}

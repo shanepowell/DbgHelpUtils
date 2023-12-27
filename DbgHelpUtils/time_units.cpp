@@ -61,8 +61,8 @@ namespace dlg_help_utils::time_units
             for(auto const& [type, label_strings] : labels)
             {
                 if(auto const& [singular, plural] = label_strings;
-                    string_compare::iequals(singular, label) ||
-                    string_compare::iequals(plural, label))
+                    string_utils::iequals(singular, label) ||
+                    string_utils::iequals(plural, label))
                 {
                     return type;
                 }

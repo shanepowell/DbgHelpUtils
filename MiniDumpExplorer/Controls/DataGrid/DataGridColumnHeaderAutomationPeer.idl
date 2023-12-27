@@ -1,0 +1,14 @@
+import "Controls\DataGrid\DataGridColumnHeader.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridColumnHeaderAutomationPeer 
+    : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    , Microsoft.UI.Xaml.Automation.Provider.IInvokeProvider
+    , Microsoft.UI.Xaml.Automation.Provider.IScrollItemProvider
+    , Microsoft.UI.Xaml.Automation.Provider.ITransformProvider
+    {
+        DataGridColumnHeaderAutomationPeer(DataGridColumnHeader owner);
+    }
+}

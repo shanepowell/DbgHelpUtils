@@ -1,0 +1,11 @@
+import "Controls\DataGrid\DataGrid.idl";
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridFillerColumn : DataGridColumn
+    {
+        DataGridFillerColumn(DataGrid owningGrid);
+    }
+}

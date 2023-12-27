@@ -1,0 +1,11 @@
+namespace MiniDumpExplorer
+{
+    interface IDataGridDataSourcePropertyInfo
+    {
+        Boolean AutoGenerateField { get; };
+        String DisplayName { get; };
+        String Name { get; };
+        String TypeName { get; };
+        Windows.Foundation.IReference<Int32> DisplayOrder { get; };
+    }
+}

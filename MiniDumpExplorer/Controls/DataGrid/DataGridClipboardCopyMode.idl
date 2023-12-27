@@ -1,0 +1,22 @@
+    namespace MiniDumpExplorer
+    {
+    enum DataGridClipboardCopyMode
+    {
+        /// <summary>
+        /// Disable the DataGrid's ability to copy selected items as text.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Enable the DataGrid's ability to copy selected items as text, but do not include
+        /// the column header content as the first line in the text that gets copied to the Clipboard.
+        /// </summary>
+        ExcludeHeader,
+
+        /// <summary>
+        /// Enable the DataGrid's ability to copy selected items as text, and include
+        /// the column header content as the first line in the text that gets copied to the Clipboard.
+        /// </summary>
+        IncludeHeader
+    };
+}

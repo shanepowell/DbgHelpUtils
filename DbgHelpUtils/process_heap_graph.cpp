@@ -1199,7 +1199,7 @@ namespace dlg_help_utils::heap
         // link all reference nodes
         generate_node_references(heap_entries);
 
-        // remove any reference nodes that is not a allocation and has no to references
+        // remove any reference nodes that is not an allocation and has no to references
         remove_all_non_allocation_with_empty_to_references();
 
         // find and optionally remove "system" allocations

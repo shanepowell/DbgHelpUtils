@@ -1,0 +1,15 @@
+namespace MiniDumpExplorer
+{
+    enum DataGridEditingUnit
+    {
+        /// <summary>
+        /// Cell DataGridEditingUnit
+        /// </summary>
+        Cell = 0,
+
+        /// <summary>
+        /// Row DataGridEditingUnit
+        /// </summary>
+        Row = 1,
+    };
+}

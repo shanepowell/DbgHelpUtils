@@ -1,0 +1,61 @@
+namespace MiniDumpExplorer
+{
+    /// <summary>
+    /// DataGridLengthUnitType
+    /// </summary>
+    /// <remarks>
+    /// These aren't flags.
+    /// </remarks>
+    enum DataGridLengthUnitType
+    {
+        /// <summary>
+        /// Auto DataGridLengthUnitType
+        /// </summary>
+        Auto = 0,
+
+        /// <summary>
+        /// Pixel DataGridLengthUnitType
+        /// </summary>
+        Pixel = 1,
+
+        /// <summary>
+        /// SizeToCells DataGridLengthUnitType
+        /// </summary>
+        SizeToCells = 2,
+
+        /// <summary>
+        /// SizeToHeader DataGridLengthUnitType
+        /// </summary>
+        SizeToHeader = 3,
+
+        /// <summary>
+        /// Star DataGridLengthUnitType
+        /// </summary>
+        Star = 4
+    };
+
+    [default_interface]
+    runtimeclass DataGridLength
+    {
+        DataGridLength(Double lengthValue);
+        DataGridLength(Double lengthValue, DataGridLengthUnitType type);
+        DataGridLength(Double lengthValue, DataGridLengthUnitType type, Double desiredValue, Double displayValue);
+
+        static DataGridLength Auto { get; };
+        static DataGridLength SizeToCells { get; };
+        static DataGridLength SizeToHeader { get; };
+        
+        Double DesiredValue { get; };
+        Double DisplayValue { get; };
+        Boolean IsAbsolute { get; };
+        Boolean IsAuto { get; };
+        Boolean IsSizeToCells { get; };
+        Boolean IsSizeToHeader { get; };
+        Boolean IsStar { get; };
+        DataGridLengthUnitType UnitType { get; };
+        Double Value { get; };
+
+        static DataGridLength ConvertFromString(String value);
+        static String ConvertToString(DataGridLength value);
+    }
+}

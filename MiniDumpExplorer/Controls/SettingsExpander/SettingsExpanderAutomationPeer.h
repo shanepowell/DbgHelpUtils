@@ -5,9 +5,10 @@
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct SettingsExpander;
+
     struct SettingsExpanderAutomationPeer : SettingsExpanderAutomationPeerT<SettingsExpanderAutomationPeer>
     {
-        // ReSharper disable once CppRedundantQualifier
         SettingsExpanderAutomationPeer(MiniDumpExplorer::SettingsExpander const& settingsExpander);
         Microsoft::UI::Xaml::Automation::Peers::AutomationControlType GetAutomationControlTypeCore() const;
         hstring GetClassNameCore() const;

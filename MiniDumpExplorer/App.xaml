@@ -10,9 +10,11 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="Controls/SettingsCard/SettingsCardTheme.xaml" />
                 <ResourceDictionary Source="Controls/SettingsExpander/SettingsExpanderTheme.xaml" />
+                <ResourceDictionary Source="Controls/DataGrid/DataGridTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <local:HexNumberConverter x:Key="HexNumberConverter"/>
+            <local:SizeNumberConverter x:Key="SizeNumberConverter"/>
 
             <x:Double x:Key="Breakpoint640Plus">641</x:Double>
             <x:String x:Key="AppTitleName">MiniDump Explorer</x:String>

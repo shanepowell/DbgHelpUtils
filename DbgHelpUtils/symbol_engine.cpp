@@ -473,7 +473,7 @@ namespace
             break;
         }
 
-        // Return false to any ActionCode we don't handle
+        // Return false to any ActionCode we don't handle,
         // or we could generate some undesirable behavior.
         return FALSE;
     }
@@ -1252,7 +1252,7 @@ namespace dlg_help_utils::dbg_help
 
     std::wstring symbol_engine::find_module_name(std::wstring_view const& base_module_name) const
     {
-        auto const it = std::ranges::find_if(modules_, [&base_module_name](auto const& value) { return string_compare::i_ends_with(value.first, base_module_name); });
+        auto const it = std::ranges::find_if(modules_, [&base_module_name](auto const& value) { return string_utils::i_ends_with(value.first, base_module_name); });
         if(it == modules_.end())
         {
             return {};

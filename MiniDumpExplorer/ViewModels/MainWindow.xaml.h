@@ -20,6 +20,8 @@ namespace winrt::MiniDumpExplorer::implementation
         event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(event_token const& token) noexcept;
 
+        void OpenFileInTab(Windows::Storage::StorageFile const& file);
+
     private:
         void OpenDefaultTab();
         Windows::Foundation::IAsyncAction OpenFileInNewTab();

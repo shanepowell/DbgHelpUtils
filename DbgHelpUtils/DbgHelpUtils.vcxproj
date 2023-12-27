@@ -307,6 +307,7 @@
     <ClInclude Include="common_symbol_utils.h" />
     <ClInclude Include="crt_entry.h" />
     <ClInclude Include="crt_heap.h" />
+    <ClInclude Include="double_utils.h" />
     <ClInclude Include="dph_entry.h" />
     <ClInclude Include="dph_heap.h" />
     <ClInclude Include="dump_hex.h" />

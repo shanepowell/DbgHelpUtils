@@ -103,17 +103,19 @@ namespace dlg_help_utils::mini_dump_stream_type
                     return static_cast<MINIDUMP_STREAM_TYPE>(type_number);
                 }
             }
-            catch (std::invalid_argument const&)
+            catch (std::invalid_argument const&)  // NOLINT(bugprone-empty-catch)
             {
+                // ignore
             }
-            catch (std::out_of_range const&)
+            catch (std::out_of_range const&)  // NOLINT(bugprone-empty-catch)
             {
+                // ignore
             }
         }
 
         for (size_t i = 0; i <= LastReservedStream; ++i)
         {
-            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); string_compare::iequals(type, to_wstring(enum_type)) || string_compare::iequals(type, to_enum_wstring(enum_type)))
+            if (auto const enum_type = static_cast<MINIDUMP_STREAM_TYPE>(i); string_utils::iequals(type, to_wstring(enum_type)) || string_utils::iequals(type, to_enum_wstring(enum_type)))
             {
                 return enum_type;
             }

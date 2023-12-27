@@ -8,7 +8,7 @@ namespace MiniDumpExplorer
         String Version { get; };
         String OsVersion { get; };
         UInt16 SuiteMask { get; };
-        Windows.Foundation.Collections.IObservableVector<String> SuiteMaskList{ get; };
+        IObservableVector<String> SuiteMaskList{ get; };
         String ProductType { get; };
         String PlatformId { get; };
         String CsdVersion { get; };

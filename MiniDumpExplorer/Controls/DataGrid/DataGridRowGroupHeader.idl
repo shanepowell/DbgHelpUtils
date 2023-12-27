@@ -1,0 +1,25 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowGroupHeader : Microsoft.UI.Xaml.Controls.Control
+    {
+        DataGridRowGroupHeader();
+
+        static Microsoft.UI.Xaml.DependencyProperty HeaderStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemCountVisibilityProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty LevelProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty PropertyNameProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty PropertyNameVisibilityProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty PropertyValueProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty SublevelIndentProperty { get; };
+        
+        Microsoft.UI.Xaml.Style HeaderStyle;
+        Microsoft.UI.Xaml.Visibility ItemCountVisibility;
+        UInt32 Level { get; };
+        String PropertyName;
+        Microsoft.UI.Xaml.Visibility PropertyNameVisibility;
+        String PropertyValue;
+        Double SublevelIndent;
+        Microsoft.UI.Xaml.Data.ICollectionViewGroup CollectionViewGroup { get; };
+    }
+}

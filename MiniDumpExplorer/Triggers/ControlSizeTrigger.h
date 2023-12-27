@@ -1,5 +1,6 @@
 #pragma once
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include <App.xaml.g.h>
 
 #include "ControlSizeTrigger.g.h"

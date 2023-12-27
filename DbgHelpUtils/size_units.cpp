@@ -5,6 +5,7 @@
 
 #include "unit_convert_to_string.h"
 #include "string_compare.h"
+#include "string_utils.h"
 #include "wide_runtime_error.h"
 
 using namespace std::string_literals;
@@ -70,9 +71,9 @@ namespace dlg_help_utils::size_units
             for(auto const& [type, label_strings] : labels)
             {
                 if(auto const& [singular, plural, compact] = label_strings;
-                    string_compare::iequals(compact, label) ||
-                    string_compare::iequals(singular, label) ||
-                    string_compare::iequals(plural, label))
+                    string_utils::iequals(compact, label) ||
+                    string_utils::iequals(singular, label) ||
+                    string_utils::iequals(plural, label))
                 {
                     return type;
                 }
@@ -89,11 +90,62 @@ namespace dlg_help_utils::size_units
             return to_string_internal<bytes, exabytes, petabytes, terabytes, gigabytes, megabytes, kilobytes, bytes>(b, p);
         }
 
+        std::wstring to_bytes_wstring(bytes const b, print const p)
+        {
+            return print_value(size_unit_type::bytes, b, bytes{0}, p);
+        }
+
+        std::wstring to_kilobytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<kilobytes>(b);
+            b -= value;
+            return print_value(size_unit_type::kilobytes, value, b, p);
+        }
+
+        std::wstring to_megabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<megabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::megabytes, value, units::length_cast<kilobytes>(b), p);
+        }
+
+        std::wstring to_gigabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<gigabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::gigabytes, value, units::length_cast<megabytes>(b), p);
+        }
+
+        std::wstring to_terabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<terabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::terabytes, value, units::length_cast<gigabytes>(b), p);
+        }
+
+        std::wstring to_petabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<petabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::petabytes, value, units::length_cast<terabytes>(b), p);
+        }
+
+        std::wstring to_exabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<exabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::exabytes, value, units::length_cast<petabytes>(b), p);
+        }
+
         bytes from_wstring(std::wstring const& value)
         {
             wchar_t *end_ptr{nullptr};
+
+
             auto const units_value = wcstoull(value.c_str(), &end_ptr, 10);
-            const std::wstring_view label(end_ptr);
+            std::wstring_view label(end_ptr);
+
+            label = string_utils::trim_start(' ', label);
 
             if(label.empty())
             {
@@ -120,6 +172,53 @@ namespace dlg_help_utils::size_units
         std::wstring to_wstring(bytes const b, print const p)
         {
             return to_string_internal<bytes, exabytes, petabytes, terabytes, gigabytes, megabytes, kilobytes, bytes>(b, p);
+        }
+
+        std::wstring to_bytes_wstring(bytes const b, print const p)
+        {
+            return print_value(size_unit_type::bytes, b, bytes{0}, p);
+        }
+
+        std::wstring to_kilobytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<kilobytes>(b);
+            b -= value;
+            return print_value(size_unit_type::kilobytes, value, b, p);
+        }
+
+        std::wstring to_megabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<megabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::megabytes, value, units::length_cast<kilobytes>(b), p);
+        }
+
+        std::wstring to_gigabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<gigabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::gigabytes, value, units::length_cast<megabytes>(b), p);
+        }
+
+        std::wstring to_terabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<terabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::terabytes, value, units::length_cast<gigabytes>(b), p);
+        }
+
+        std::wstring to_petabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<petabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::petabytes, value, units::length_cast<terabytes>(b), p);
+        }
+
+        std::wstring to_exabytes_wstring(bytes b, print const p)
+        {
+            const auto value = units::length_cast<exabytes>(b);
+            b -= value;
+            return print_value(size_unit_type::exabytes, value, units::length_cast<petabytes>(b), p);
         }
 
         bytes from_wstring(std::wstring const& value)

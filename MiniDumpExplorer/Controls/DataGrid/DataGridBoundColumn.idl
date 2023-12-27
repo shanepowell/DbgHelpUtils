@@ -1,0 +1,13 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    unsealed runtimeclass DataGridBoundColumn : DataGridColumn
+    {
+        protected DataGridBoundColumn();
+
+        Microsoft.UI.Xaml.Data.Binding Binding;
+        Microsoft.UI.Xaml.Style EditingElementStyle;
+        Microsoft.UI.Xaml.Style ElementStyle;
+    }
+}

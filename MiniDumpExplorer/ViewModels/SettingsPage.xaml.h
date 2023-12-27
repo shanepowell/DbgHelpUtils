@@ -20,6 +20,9 @@ namespace winrt::MiniDumpExplorer::implementation
         void ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LogLevelModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void NumberFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void UnitSizeFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void UnitFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void UnitBaseModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
         event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(event_token const& token) noexcept;
@@ -34,6 +37,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void LoadVersionInformation();
         void RaisePropertyChanged(hstring const& propertyName);
         void OnNumberDisplayFormatChanged();
+        void OnSizeNumberDisplayFormatChanged();
 
     private:
         event_token onSettingsPageLoadedEvent_;

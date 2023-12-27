@@ -1,0 +1,9 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IDataGridDataSourceFactory
+    {
+        IDataGridDataSource CreateView();
+    }
+}

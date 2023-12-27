@@ -1,0 +1,10 @@
+import "Controls\DataGrid\DataGridRow.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowAutomationPeer : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    {
+        DataGridRowAutomationPeer(DataGridRow owner);
+    }
+}

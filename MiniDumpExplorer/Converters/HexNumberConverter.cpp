@@ -3,6 +3,7 @@
 
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "Helpers/GlobalOptions.h"
+#include "Utility/InspectableUtility.h"
 
 #if __has_include("HexNumberConverter.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -27,42 +28,10 @@ namespace winrt::MiniDumpExplorer::implementation
         switch(GlobalOptions::Options().NumberDisplayFormat())
         {
         case NumberDisplayFormat::Hexadecimal:
-            if (value.try_as<uint64_t>())
-            {
-                return box_value(to_hex(value.as<uint64_t>()));
-            }
-            if (value.try_as<uint32_t>())
-            {
-                return box_value(to_hex(value.as<uint32_t>()));
-            }
-            if (value.try_as<uint16_t>())
-            {
-                return box_value(to_hex(value.as<uint16_t>()));
-            }
-            if (value.try_as<uint8_t>())
-            {
-                return box_value(to_hex(value.as<uint8_t>()));
-            }
-            break;
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(to_hex(v)); }, value, value);
 
         case NumberDisplayFormat::Decimal:
-            if (value.try_as<uint64_t>())
-            {
-                return box_value(std::to_wstring(value.as<uint64_t>()));
-            }
-            if (value.try_as<uint32_t>())
-            {
-                return box_value(std::to_wstring(value.as<uint32_t>()));
-            }
-            if (value.try_as<uint16_t>())
-            {
-                return box_value(std::to_wstring(value.as<uint16_t>()));
-            }
-            if (value.try_as<uint8_t>())
-            {
-                return box_value(std::to_wstring(value.as<uint8_t>()));
-            }
-            break;
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(std::to_wstring(v)); }, value, value);
 
         default:
             break;
@@ -89,6 +58,6 @@ namespace winrt::MiniDumpExplorer::implementation
             return box_value(std::stoull(std::wstring(str.begin() + 2, str.end()), nullptr, 16));
         }
 
-        return box_value(std::stoull(std::wstring(str.begin() + 2, str.end()), nullptr, 10));
+        return box_value(std::stoull(std::wstring(str.begin(), str.end()), nullptr, 10));
     }
 }

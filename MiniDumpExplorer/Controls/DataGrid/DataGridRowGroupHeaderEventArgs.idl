@@ -1,0 +1,12 @@
+import "Controls\DataGrid\DataGridRowGroupHeader.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowGroupHeaderEventArgs
+    {
+        DataGridRowGroupHeaderEventArgs(DataGridRowGroupHeader rowGroupHeader);
+
+        DataGridRowGroupHeader RowGroupHeader { get; };
+    }
+}

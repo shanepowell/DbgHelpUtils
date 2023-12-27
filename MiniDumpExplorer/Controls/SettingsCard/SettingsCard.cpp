@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "SettingsCard.h"
 
-#include "App.xaml.h"
+#include <winrt/Windows.UI.Xaml.Interop.h>
+
+#include "SettingsCardAutomationPeer.h"
 #include "Helpers/ControlHelpers.h"
 
 #include <winrt/Microsoft.UI.Xaml.Input.h>
@@ -14,9 +16,6 @@
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 using namespace std::string_literals;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace winrt::MiniDumpExplorer::implementation
 {
@@ -38,26 +37,13 @@ namespace winrt::MiniDumpExplorer::implementation
         DefaultStyleKey(box_value(L"MiniDumpExplorer.SettingsCard"));
     }
 
-    void SettingsCard::Initialize()
-    {
-        HeaderProperty();
-        DescriptionProperty();
-        HeaderIconProperty();
-        ActionIconProperty();
-        ActionIconToolTipProperty();
-        IsClickEnabledProperty();
-        ContentAlignmentProperty();
-        IsActionIconVisibleProperty();
-        StyleExtensions::ResourcesProperty();
-    }
-
     DependencyProperty SettingsCard::HeaderProperty()
     {
         static DependencyProperty headerProperty =
             DependencyProperty::Register(
                 L"Header",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ nullptr, [](auto const& d, auto const& e) { d.template as<SettingsCard>()->OnHeaderPropertyChanged(e.OldValue(), e.NewValue()); } });
 
         return headerProperty;
@@ -68,8 +54,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty descriptionProperty =
             DependencyProperty::Register(
                 L"Description",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ nullptr, [](auto const& d, auto const& e) { d.template as<SettingsCard>()->OnDescriptionPropertyChanged(e.OldValue(), e.NewValue()); } });
 
         return descriptionProperty;
@@ -80,8 +66,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty headerIconProperty =
             DependencyProperty::Register(
                 L"HeaderIcon",
-                winrt::xaml_typename<Controls::IconElement>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<Controls::IconElement>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ nullptr, [](auto const& d, auto const& e) { d.template as<SettingsCard>()->OnHeaderIconPropertyChanged(e.OldValue().template as<Controls::IconElement>(), e.NewValue().template as<Controls::IconElement>()); } });
 
         return headerIconProperty;
@@ -92,8 +78,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty actionIconProperty =
             DependencyProperty::Register(
                 L"ActionIcon",
-                winrt::xaml_typename<Controls::IconElement>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<Controls::IconElement>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ MakeDefaultActionIcon() });
 
         return actionIconProperty;
@@ -104,8 +90,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty actionIconToolTipProperty =
             DependencyProperty::Register(
                 L"ActionIconToolTip",
-                winrt::xaml_typename<hstring>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<hstring>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ box_value(L"More") });
 
         return actionIconToolTipProperty;
@@ -116,8 +102,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty isClickEnabledProperty =
             DependencyProperty::Register(
                 L"IsClickEnabled",
-                winrt::xaml_typename<bool>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<bool>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ box_value(false), [](auto const& d, auto const& e) { d.template as<SettingsCard>()->OnIsClickEnabledPropertyChanged(unbox_value<bool>(e.OldValue()), unbox_value<bool>(e.NewValue())); } });
 
         return isClickEnabledProperty;
@@ -128,8 +114,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty contentAlignmentProperty =
             DependencyProperty::Register(
                 L"ContentAlignment",
-                winrt::xaml_typename<MiniDumpExplorer::ContentAlignment>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<MiniDumpExplorer::ContentAlignment>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ box_value(ContentAlignment::Right) });
 
         return contentAlignmentProperty;
@@ -140,8 +126,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty isActionIconVisibleProperty =
             DependencyProperty::Register(
                 L"IsActionIconVisible",
-                winrt::xaml_typename<bool>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsCard>(),
+                xaml_typename<bool>(),
+                xaml_typename<MiniDumpExplorer::SettingsCard>(),
                 PropertyMetadata{ box_value(true), [](auto const& d, auto const& e) { d.template as<SettingsCard>()->OnIsActionIconVisiblePropertyChanged(unbox_value<bool>(e.OldValue()), unbox_value<bool>(e.NewValue())); } });
 
         return isActionIconVisibleProperty;
@@ -395,7 +381,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         if (IsClickEnabled())
         {
-            SettingsCardT<SettingsCard>::OnPointerPressed(e);
+            base_type::OnPointerPressed(e);
             VisualStateManager::GoToState(*this, PressedState, true);
         }
     }
@@ -404,7 +390,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         if (IsClickEnabled())
         {
-            SettingsCardT<SettingsCard>::OnPointerReleased(e);
+            base_type::OnPointerReleased(e);
             VisualStateManager::GoToState(*this, NormalState, true);
         }
     }
@@ -468,7 +454,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     Automation::Peers::AutomationPeer SettingsCard::OnCreateAutomationPeer() const
     {
-        return make<SettingsCardAutomationPeer>(*this);
+        return MiniDumpExplorer::SettingsCardAutomationPeer{*this};
     }
 
     FrameworkElement SettingsCard::GetFocusedElement() const

@@ -1,0 +1,13 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridFrozenGrid : Microsoft.UI.Xaml.Controls.Grid
+    {
+        DataGridFrozenGrid();
+
+        static Microsoft.UI.Xaml.DependencyProperty IsFrozenProperty { get; };
+
+        static Boolean GetIsFrozen(Microsoft.UI.Xaml.DependencyObject element);
+        static void SetIsFrozen(Microsoft.UI.Xaml.DependencyObject element, Boolean value);
+    }
+}

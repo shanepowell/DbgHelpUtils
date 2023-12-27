@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "MiniDumpPage.xaml.h"
+
+#include <winrt/Windows.UI.Xaml.Interop.h>
+
+#include "DbgHelpUtils/mini_dump.h"
+#include "DbgHelpUtils/wide_runtime_error.h"
+
 #if __has_include("MiniDumpPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "MiniDumpPage.g.cpp"  // NOLINT(bugprone-suspicious-include)
 #endif
-
-#include "App.xaml.h"
-#include "winrt/Windows.UI.Core.h"
-#include "DbgHelpUtils/mini_dump.h"
-#include "DbgHelpUtils/wide_runtime_error.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;

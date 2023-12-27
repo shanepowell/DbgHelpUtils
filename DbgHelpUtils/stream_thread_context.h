@@ -36,7 +36,7 @@ namespace dlg_help_utils
         // Context Frame
         //
         //  This frame has a several purposes: 1) it is used as an argument to
-        //  NtContinue, 2) is is used to constuct a call frame for APC delivery,
+        //  NtContinue, 2) is used to constuct a call frame for APC delivery,
         //  and 3) it is used in the user level thread creation routines.
         //
         //  The layout of the record conforms to a standard call frame.
@@ -45,7 +45,7 @@ namespace dlg_help_utils
         typedef struct _X86_CONTEXT {
 
             //
-            // The flags values within this flag control the contents of
+            // The flags value within this flag control the contents of
             // a CONTEXT record.
             //
             // If the context record is used as an input parameter, then

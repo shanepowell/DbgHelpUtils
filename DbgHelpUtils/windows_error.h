@@ -1,4 +1,5 @@
 ﻿#pragma once
+// ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <string>
 

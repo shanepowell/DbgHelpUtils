@@ -55,6 +55,14 @@ namespace dlg_help_utils::size_units
 
         std::wstring to_wstring(bytes b, print p = print::compact);
 
+        std::wstring to_bytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_kilobytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_megabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_gigabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_terabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_petabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_exabytes_wstring(bytes b, print p = print::compact);
+
         template <typename R>
         std::wostream& operator<<(std::wostream& os, length<R> size)
         {
@@ -131,6 +139,14 @@ namespace dlg_help_utils::size_units
         using bytes = length<byte>;
 
         std::wstring to_wstring(bytes b, print p = print::compact);
+
+        std::wstring to_bytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_kilobytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_megabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_gigabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_terabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_petabytes_wstring(bytes b, print p = print::compact);
+        std::wstring to_exabytes_wstring(bytes b, print p = print::compact);
 
         template <typename R>
         std::wostream& operator<<(std::wostream& os, length<R> size)

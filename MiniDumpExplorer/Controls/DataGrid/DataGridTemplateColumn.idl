@@ -1,0 +1,13 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridTemplateColumn : DataGridColumn
+    {
+        DataGridTemplateColumn();
+
+        Microsoft.UI.Xaml.DataTemplate CellEditingTemplate;
+        Microsoft.UI.Xaml.DataTemplate CellTemplate;
+    }
+}

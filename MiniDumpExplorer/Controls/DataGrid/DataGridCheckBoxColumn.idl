@@ -1,0 +1,12 @@
+import "Controls\DataGrid\DataGridBoundColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridCheckBoxColumn : DataGridBoundColumn
+    {
+        DataGridCheckBoxColumn();
+
+        Boolean IsThreeState;
+    }
+}

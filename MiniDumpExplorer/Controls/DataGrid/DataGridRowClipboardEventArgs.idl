@@ -1,0 +1,14 @@
+import "Controls\DataGrid\DataGridClipboardCellContent.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowClipboardEventArgs
+    {
+        DataGridRowClipboardEventArgs(Object item, Boolean isColumnHeadersRow);
+
+        Object Item { get; };
+        Boolean IsColumnHeadersRow { get; };
+        IVector<DataGridClipboardCellContent> ClipboardRowContent { get; };
+    }
+}

@@ -1,0 +1,15 @@
+namespace MiniDumpExplorer
+{
+    enum DataGridSelectionMode
+    {
+        /// <summary>
+        /// Extended DataGridSelectionMode
+        /// </summary>
+        Extended = 0,
+
+        /// <summary>
+        /// Single DataGridSelectionMode
+        /// </summary>
+        Single = 1
+    };
+}

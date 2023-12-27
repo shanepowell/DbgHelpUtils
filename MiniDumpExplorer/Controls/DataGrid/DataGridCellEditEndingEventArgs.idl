@@ -1,0 +1,19 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+import "Controls\DataGrid\DataGridRow.idl";
+import "Controls\DataGrid\DataGridEditAction.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridCellEditEndingEventArgs
+    {
+        DataGridCellEditEndingEventArgs(DataGridColumn column, DataGridRow row, Microsoft.UI.Xaml.FrameworkElement editingElement, DataGridEditAction editAction);
+
+        DataGridColumn Column { get; };
+        DataGridRow Row { get; };
+        Microsoft.UI.Xaml.FrameworkElement EditingElement { get; };
+        DataGridEditAction EditAction { get; };
+
+        Boolean Cancel;
+    }
+}

@@ -51,7 +51,7 @@ namespace dlg_help_utils
                     jump_amount = keep_processing_index ? sizeof(T) : 1;
                 }
 
-                // increment by the jump amount..
+                // increment by the jump amount…
                 if(jump_amount != sizeof(T))
                 {
                     *this = before_stream;

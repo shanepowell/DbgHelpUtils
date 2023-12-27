@@ -1,0 +1,26 @@
+import "Controls\DataGrid\DataGridDataSourcePropertyInfo.idl";
+
+namespace MiniDumpExplorer
+{
+    interface IDataGridDataSource
+    {
+        Boolean IsReadOnly { get; };
+        Boolean CanSort { get; };
+        Boolean CanCancelEdit { get; };
+        Boolean DataIsPrimitive { get; };
+        Boolean IsAddingNew { get; };
+        Boolean CanGroup { get; };
+        Boolean SupportsNewItemPlaceholder { get; };
+        Boolean HasDataProperties { get; };
+        Boolean HasDataType { get; };
+        String DataTypeTypeName();
+        String DataTypeName();
+        Microsoft.UI.Xaml.Data.ICollectionView CollectionView { get; };
+        IVectorView<IDataGridDataSourcePropertyInfo> DataProperties { get; };
+        Boolean GetPropertyIsReadOnly(String propertyName);
+        Boolean NotifyingDataSourceReset();
+        void ClearDataProperties();
+        void UpdateDataProperties();
+        String GetPropertyDisplayName(String propertyPath);
+    }
+}

@@ -1,7 +1,45 @@
 ﻿#pragma once
 
+#include <optional>
+
 namespace InspectableUtility
 {
+    template<typename T, typename ...Args>
+    auto ProcessValueFromInspectable(auto const& func, winrt::Windows::Foundation::IInspectable const& value, auto defaultValue)
+    {
+        if(const auto tSourceValue = value.try_as<T>(); tSourceValue.has_value())
+        {
+            return func(tSourceValue.value());
+        }
+
+        if constexpr (sizeof...(Args) > 0)
+        {
+            return ProcessValueFromInspectable<Args...>(func, value, defaultValue);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
+    template<typename T, typename ...Args>
+    bool IsInspectable(winrt::Windows::Foundation::IInspectable const& value)
+    {
+        if(const auto tSourceValue = value.try_as<T>(); tSourceValue)
+        {
+            return true;
+        }
+
+        if constexpr (sizeof...(Args) > 0)
+        {
+            return IsInspectable<Args...>(value);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     template<typename T, typename TSource, typename ...Args>
     std::optional<T> ConvertTo(winrt::Windows::Foundation::IInspectable const& value)
     {

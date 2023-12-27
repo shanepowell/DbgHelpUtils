@@ -5,7 +5,6 @@
 #include "DbgHelpUtils/crt_heap.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
-#include "DbgHelpUtils/mini_dump_memory_walker.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heaps_statistics.h"
 #include "DbgHelpUtils/process_heaps_statistic_bucket_view.h"

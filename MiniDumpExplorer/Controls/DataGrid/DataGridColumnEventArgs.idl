@@ -1,0 +1,12 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridColumnEventArgs
+    {
+        DataGridColumnEventArgs(DataGridColumn column);
+
+        DataGridColumn Column { get; };
+    }
+}

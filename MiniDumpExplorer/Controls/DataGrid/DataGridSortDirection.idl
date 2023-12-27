@@ -1,0 +1,15 @@
+namespace MiniDumpExplorer
+{
+    enum DataGridSortDirection
+    {
+        /// <summary>
+        /// Sorts in ascending order.
+        /// </summary>
+        Ascending = 0,
+
+        /// <summary>
+        /// Sorts in descending order.
+        /// </summary>
+        Descending = 1
+    };
+}

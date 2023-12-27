@@ -6,7 +6,6 @@
 #include "DbgHelpUtils/exception_utils.h"
 #include "DbgHelpUtils/find_thread_stack.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
-#include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
 

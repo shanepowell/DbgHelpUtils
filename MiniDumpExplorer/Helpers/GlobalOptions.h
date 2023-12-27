@@ -1,12 +1,33 @@
 ﻿#pragma once
 #include <functional>
 
+#include "AppPropertiesHelper.h"
+#include "DbgHelpUtils/size_units.h"
 #include "Utility/log_level.h"
 
 enum class NumberDisplayFormat
 {
     Hexadecimal,
     Decimal
+};
+
+enum class SizeNumberDisplayFormat
+{
+    Auto,
+    Bytes,
+    Kilobytes,
+    Megabytes,
+    Gigabytes,
+    Terabytes,
+    Petabytes,
+    Exabytes,
+    Raw
+};
+
+enum class SizeDisplayNumberBase
+{
+    Base10,
+    Base16
 };
 
 class GlobalOptions
@@ -26,7 +47,17 @@ public:
     NumberDisplayFormat NumberDisplayFormat() const { return numberDisplayFormat_; }
     void NumberDisplayFormat(::NumberDisplayFormat value);
 
+    SizeNumberDisplayFormat SizeNumberDisplayFormat() const { return sizeNumberDisplayFormat_; }
+    void SizeNumberDisplayFormat(::SizeNumberDisplayFormat value);
+
+    dlg_help_utils::size_units::print SizeFormat() const { return sizeFormat_; }
+    void SizeFormat(dlg_help_utils::size_units::print value);
+
+    SizeDisplayNumberBase SizeBase() const { return sizeBase_; }
+    void SizeBase(SizeDisplayNumberBase value);
+
     void OnNumberDisplayFormatChanged(std::function<bool(::NumberDisplayFormat)> callback);
+    void OnSizeNumberDisplayFormatChanged(std::function<bool(::SizeNumberDisplayFormat, dlg_help_utils::size_units::print, SizeDisplayNumberBase)> callback);
 
     std::vector<std::wstring> const& RecentFiles() const { return recentFiles_; }
     void RecentFiles(std::vector<std::wstring> value);
@@ -34,9 +65,37 @@ public:
     static GlobalOptions& Options();
 
 private:
+    template<typename T, typename CVT, typename CT>
+    void ApplyValue(T const newValue, T& existingValue, std::wstring const& valueName, CVT& callbacks, CT callback)
+    {
+        if(existingValue == newValue)
+        {
+            return;
+        }
+
+        existingValue = newValue;
+        AppPropertiesHelper::SetEnumProperty(valueName, newValue);
+        for (auto it = callbacks.begin(); it != callbacks.end(); )
+        {
+            if(!callback(*it, newValue))
+            {
+                it = callbacks.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+private:
     winrt::Microsoft::UI::Xaml::ElementTheme applicationTheme_;
     log_level logLevel_;
     ::NumberDisplayFormat numberDisplayFormat_;
+    ::SizeNumberDisplayFormat sizeNumberDisplayFormat_;
+    dlg_help_utils::size_units::print sizeFormat_;
+    ::SizeDisplayNumberBase sizeBase_;
     std::vector<std::wstring> recentFiles_;
     std::vector<std::function<bool(::NumberDisplayFormat)>> numberDisplayFormatCallbacks_;
+    std::vector<std::function<bool(::SizeNumberDisplayFormat, dlg_help_utils::size_units::print, SizeDisplayNumberBase)>> sizeNumberDisplayFormatCallbacks_;
 };

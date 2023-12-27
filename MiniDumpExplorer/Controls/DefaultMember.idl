@@ -1,0 +1,7 @@
+namespace MiniDumpExplorer
+{
+    interface IDefaultMember
+    {
+        String DefaultMememberName { get; };
+    }
+}

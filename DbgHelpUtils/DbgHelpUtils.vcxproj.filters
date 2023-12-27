@@ -974,6 +974,9 @@
     <ClInclude Include="null_stream.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="double_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

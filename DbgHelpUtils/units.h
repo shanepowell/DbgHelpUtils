@@ -4,7 +4,7 @@
 #include <ratio>
 
 // this is based on the std::chrono::duration limitation in MSVC 2020 library changed so that we can make the
-// renamed duration to length take a extra template parameter so that it makes each unit implementation it's
+// renamed duration to length take an extra template parameter so that it makes each unit implementation its
 // own type that can't be confused with other types (like std::chrono::duration and also between base_10 length
 // vs base_16 length).
 

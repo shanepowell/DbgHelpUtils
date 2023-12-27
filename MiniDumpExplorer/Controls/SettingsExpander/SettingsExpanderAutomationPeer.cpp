@@ -12,9 +12,9 @@ using namespace Microsoft::UI::Xaml::Automation;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    // ReSharper disable once CppRedundantQualifier
     SettingsExpanderAutomationPeer::SettingsExpanderAutomationPeer(MiniDumpExplorer::SettingsExpander const& settingsExpander)
-        : SettingsExpanderAutomationPeerT<SettingsExpanderAutomationPeer>(settingsExpander)
+        : base_type
+    (settingsExpander)
     {
     }
 

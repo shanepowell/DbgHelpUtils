@@ -52,12 +52,30 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         logLevelMode().SelectedIndex(static_cast<int>(logger::Log().LogLevel()));
-        numberFormatMode().SelectedIndex(static_cast<int>(GlobalOptions::Options().NumberDisplayFormat()));
+
+        auto const& options = GlobalOptions::Options();
+        numberFormatMode().SelectedIndex(static_cast<int>(options.NumberDisplayFormat()));
+
+        unitSizeFormatMode().SelectedIndex(static_cast<int>(options.SizeNumberDisplayFormat()));
+        unitFormatMode().SelectedIndex(static_cast<int>(options.SizeFormat()));
+        unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
+
         GlobalOptions::Options().OnNumberDisplayFormatChanged([ptr = get_weak()](auto const)
             {
                 if(auto const self = ptr.get())
                 {
                     self->OnNumberDisplayFormatChanged();
+                    return true;
+                }
+
+                return false;
+            });
+
+        GlobalOptions::Options().OnSizeNumberDisplayFormatChanged([ptr = get_weak()](auto const, auto const, const auto)
+            {
+                if(auto const self = ptr.get())
+                {
+                    self->OnSizeNumberDisplayFormatChanged();
                     return true;
                 }
 
@@ -113,6 +131,14 @@ namespace winrt::MiniDumpExplorer::implementation
         RaisePropertyChanged(L"DisplayHexadecimalNumericFormat");
     }
 
+    void SettingsPage::OnSizeNumberDisplayFormatChanged()
+    {
+        auto const& options = GlobalOptions::Options();
+        unitSizeFormatMode().SelectedIndex(static_cast<int>(options.SizeNumberDisplayFormat()));
+        unitFormatMode().SelectedIndex(static_cast<int>(options.SizeFormat()));
+        unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
+    }
+
     void SettingsPage::ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
     {
         const auto themeSelectedItem = themeMode().SelectedItem().try_as<Controls::ComboBoxItem>();
@@ -154,6 +180,24 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         const auto new_number_format = static_cast<NumberDisplayFormat>(numberFormatMode().SelectedIndex());
         GlobalOptions::Options().NumberDisplayFormat(new_number_format);
+    }
+
+    void SettingsPage::UnitSizeFormatModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        const auto value = static_cast<SizeNumberDisplayFormat>(unitSizeFormatMode().SelectedIndex());
+        GlobalOptions::Options().SizeNumberDisplayFormat(value);
+    }
+
+    void SettingsPage::UnitFormatModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        const auto value = static_cast<size_units::print>(unitFormatMode().SelectedIndex());
+        GlobalOptions::Options().SizeFormat(value);
+    }
+
+    void SettingsPage::UnitBaseModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        const auto value = static_cast<SizeDisplayNumberBase>(unitBaseMode().SelectedIndex());
+        GlobalOptions::Options().SizeBase(value);
     }
 
     event_token SettingsPage::PropertyChanged(Data::PropertyChangedEventHandler const& handler)

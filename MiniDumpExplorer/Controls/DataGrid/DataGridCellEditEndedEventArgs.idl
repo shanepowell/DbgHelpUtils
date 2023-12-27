@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+import "Controls\DataGrid\DataGridRow.idl";
+import "Controls\DataGrid\DataGridEditAction.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridCellEditEndedEventArgs
+    {
+        DataGridCellEditEndedEventArgs(DataGridColumn column, DataGridRow row, DataGridEditAction editAction);
+
+        DataGridColumn Column { get; };
+        DataGridRow Row { get; };
+        DataGridEditAction EditAction { get; };
+    }
+}

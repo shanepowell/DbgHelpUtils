@@ -1,0 +1,10 @@
+import "Controls\DataGrid\DataGridRowGroupHeader.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowGroupHeaderAutomationPeer : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    {
+        DataGridRowGroupHeaderAutomationPeer(DataGridRowGroupHeader owner);
+    }
+}

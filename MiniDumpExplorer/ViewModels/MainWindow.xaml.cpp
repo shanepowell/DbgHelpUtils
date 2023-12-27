@@ -59,9 +59,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void MainWindow::TabView_SelectionChanged(Windows::Foundation::IInspectable const&, Controls::SelectionChangedEventArgs const&)
     {
-        logger::Log().LogMessage(log_level::debug, "TabView_SelectionChanged");
         RaisePropertyChanged( L"SelectedTabTitle" );
-        logger::Log().LogMessage(log_level::debug, "TabView_SelectionChanged - end");
     }
 
     void MainWindow::TabView_TabCloseRequested(Controls::TabView const& sender, Controls::TabViewTabCloseRequestedEventArgs const& args)
@@ -96,6 +94,12 @@ namespace winrt::MiniDumpExplorer::implementation
     void MainWindow::PropertyChanged(event_token const& token) noexcept
     {
         propertyChanged_.remove(token);
+    }
+
+    void MainWindow::OpenFileInTab(Windows::Storage::StorageFile const& file)
+    {
+        TabView().TabItems().Append(CreateNewTab(file));
+        TabView().SelectedItem(TabView().TabItems().GetAt(TabView().TabItems().Size() - 1));
     }
 
     void MainWindow::OpenDefaultTab()
@@ -134,8 +138,7 @@ namespace winrt::MiniDumpExplorer::implementation
             co_return;
         }
 
-        TabView().TabItems().Append(CreateNewTab(file));
-        TabView().SelectedItem(TabView().TabItems().GetAt(TabView().TabItems().Size() - 1));
+        OpenFileInTab(file);
     }
 
     void MainWindow::RaisePropertyChanged(hstring const& propertyName)

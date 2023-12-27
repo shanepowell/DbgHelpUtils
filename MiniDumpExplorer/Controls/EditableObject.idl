@@ -1,0 +1,9 @@
+namespace MiniDumpExplorer
+{
+    interface IEditableObject
+    {
+        void BeginEdit();
+        void CancelEdit();
+        void EndEdit();
+    }
+}

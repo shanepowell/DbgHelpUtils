@@ -1,0 +1,15 @@
+namespace MiniDumpExplorer
+{
+    enum DataGridEditAction
+    {
+        /// <summary>
+        /// Cancel the changes.
+        /// </summary>
+        Cancel,
+
+        /// <summary>
+        /// Commit edited value.
+        /// </summary>
+        Commit
+    };
+}

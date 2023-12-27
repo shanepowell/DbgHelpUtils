@@ -70,7 +70,7 @@ namespace dlg_help_utils::hex_dump
                 os << to_hex(static_cast<unsigned int>(values[bytes_per_row * row + column]), bytes_per_row_hex_size_bytes, L'0', write_header_t{false}) << L' ';
             }
 
-            //next, the last row may contain less bytes, so we need to pad the output a bit
+            //next, the last row may contain fewer bytes, so we need to pad the output a bit
             if (num_bytes != bytes_per_row)
             {
                 auto const gaps = bytes_per_row - num_bytes;
@@ -140,7 +140,7 @@ namespace dlg_help_utils::hex_dump
                 os << to_hex(static_cast<unsigned int>(values[column]), bytes_per_row_hex_size_bytes, L'0', write_header_t{false}) << L' ';
             }
 
-            //next, the last row may contain less bytes, so we need to pad the output a bit
+            //next, the last row may contain fewer bytes, so we need to pad the output a bit
             if (num_bytes != bytes_per_row)
             {
                 auto const gaps = bytes_per_row - num_bytes;

@@ -146,7 +146,7 @@ namespace dlg_help_utils::dbg_help
         {
             if(auto const name_value = name(); name_value.has_value())
             {
-                if(!string_compare::equals(name_value.value(), export_name))
+                if(!string_utils::equals(name_value.value(), export_name))
                 {
                     cache_info_->set_export_name(export_name);
                 }
@@ -518,7 +518,7 @@ namespace dlg_help_utils::dbg_help
             auto found = false;
             for (auto const& child : type.children())
             {
-                if(auto const name_data = child.name(); name_data.has_value() && string_compare::iequals(find_name_part, name_data.value()))
+                if(auto const name_data = child.name(); name_data.has_value() && string_utils::iequals(find_name_part, name_data.value()))
                 {
                     if(find_name_rest.empty())
                     {

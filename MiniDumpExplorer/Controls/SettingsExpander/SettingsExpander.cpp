@@ -1,8 +1,11 @@
 #include "pch.h"
-
-#include "App.xaml.h"
-
 #include "SettingsExpander.h"
+
+#include <winrt/Windows.UI.Xaml.Interop.h>
+#include <winrt/Microsoft.UI.Xaml.Automation.h>
+
+#include "SettingsExpanderAutomationPeer.h"
+
 #if __has_include("SettingsExpander.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "SettingsExpander.g.cpp"  // NOLINT(bugprone-suspicious-include)
@@ -22,17 +25,6 @@ namespace winrt::MiniDumpExplorer::implementation
     SettingsExpander::SettingsExpander()
     {
         DefaultStyleKey(box_value(L"MiniDumpExplorer.SettingsExpander"));
-        HeaderProperty();
-        DescriptionProperty();
-        HeaderIconProperty();
-        ItemsHeaderProperty();
-        ItemsFooterProperty();
-        IsExpandedProperty();
-        ItemsProperty();
-        ItemsSourceProperty();
-        ItemTemplateProperty();
-        ItemContainerStyleSelectorProperty();
-        ContentProperty();
         Items(single_threaded_vector<Windows::Foundation::IInspectable>());
     }
 
@@ -61,8 +53,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_headerProperty =
             DependencyProperty::Register(
                 L"Header",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_headerProperty;
@@ -73,8 +65,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_descriptionProperty =
             DependencyProperty::Register(
                 L"Description",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_descriptionProperty;
@@ -85,8 +77,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_headerIconProperty =
             DependencyProperty::Register(
                 L"HeaderIcon",
-                winrt::xaml_typename<Controls::IconElement>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Controls::IconElement>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_headerIconProperty;
@@ -97,8 +89,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_itemsHeaderProperty =
             DependencyProperty::Register(
                 L"ItemsHeader",
-                winrt::xaml_typename<UIElement>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<UIElement>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_itemsHeaderProperty;
@@ -109,8 +101,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_itemsFooterProperty =
             DependencyProperty::Register(
                 L"ItemsFooter",
-                winrt::xaml_typename<UIElement>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<UIElement>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_itemsFooterProperty;
@@ -121,8 +113,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_isExpandedProperty =
             DependencyProperty::Register(
                 L"IsExpanded",
-                winrt::xaml_typename<bool>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<bool>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ box_value(false), PropertyChangedCallback{ [](auto const& d, auto const& e) { d.template as<SettingsExpander>()->OnIsExpandedChanged(unbox_value<bool>(e.OldValue()), unbox_value<bool>(e.NewValue())); } } });
 
         return s_isExpandedProperty;
@@ -133,8 +125,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_itemsProperty =
             DependencyProperty::Register(
                 L"Items",
-                winrt::xaml_typename<Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable>>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable>>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr, PropertyChangedCallback{ [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<SettingsExpander>()->OnItemsConnectedPropertyChanged(); } } });
 
         return s_itemsProperty;
@@ -145,8 +137,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_itemsSourceProperty =
             DependencyProperty::Register(
                 L"ItemsSource",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr, PropertyChangedCallback{ [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<SettingsExpander>()->OnItemsConnectedPropertyChanged(); } } });
 
         return s_itemsSourceProperty;
@@ -157,8 +149,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_itemTemplateProperty =
             DependencyProperty::Register(
                 L"ItemTemplate",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr, PropertyChangedCallback{ [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<SettingsExpander>()->OnItemsConnectedPropertyChanged(); } } });
 
         return s_itemTemplateProperty;
@@ -169,8 +161,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_itemContainerStyleSelectorProperty =
             DependencyProperty::Register(
                 L"ItemContainerStyleSelector",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_itemContainerStyleSelectorProperty;
@@ -181,8 +173,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_contentProperty =
             DependencyProperty::Register(
                 L"Content",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::SettingsExpander>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::SettingsExpander>(),
                 PropertyMetadata{ nullptr });
 
         return s_contentProperty;
@@ -320,7 +312,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     Automation::Peers::AutomationPeer SettingsExpander::OnCreateAutomationPeer() const
     {
-        return make<SettingsExpanderAutomationPeer>(*this);
+        return MiniDumpExplorer::SettingsExpanderAutomationPeer{*this};
     }
 
     void SettingsExpander::OnIsExpandedPropertyChanged(bool const oldValue, bool const newValue)

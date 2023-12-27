@@ -18,6 +18,8 @@ public:
     void Flush() const;
     void Close();
 
+    static void HandleUnknownException(std::source_location const& location = std::source_location::current());
+
 private:
     static dlg_help_utils::handles::windows_handle open_log_file(log_level log_level);
     static std::wstring get_log_file_name();

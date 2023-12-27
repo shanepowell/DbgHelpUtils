@@ -17,10 +17,12 @@ using namespace dlg_help_utils::crc;
 
 enum
 {
+    // ReSharper disable CppMultiCharacterLiteral
     KERNEL_X86_DUMP_SIGNATURE = 'EGAP', // NOLINT
     KERNEL_X86_VERSION = 'PMUD', // NOLINT
     KERNEL_X64_DUMP_SIGNATURE = 'EGAP', // NOLINT
     KERNEL_X64_VERSION = '46UD' // NOLINT
+    // ReSharper restore CppMultiCharacterLiteral
 };
 
 

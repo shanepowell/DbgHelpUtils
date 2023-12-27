@@ -1,0 +1,22 @@
+import "Controls\DataGrid\DataGridBoundColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridComboBoxColumn : DataGridBoundColumn
+    {
+        DataGridComboBoxColumn();
+
+        static Microsoft.UI.Xaml.DependencyProperty ItemsSourceProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty DisplayMemberPathProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty FontFamilyProperty { get; };
+
+        IObservableVector<Object> ItemsSource;
+        String DisplayMemberPath;
+        Microsoft.UI.Xaml.Media.FontFamily FontFamily;
+        Double FontSize;
+        Windows.UI.Text.FontStyle FontStyle;
+        Windows.UI.Text.FontWeight FontWeight;
+        Microsoft.UI.Xaml.Media.Brush Foreground;
+    }
+}

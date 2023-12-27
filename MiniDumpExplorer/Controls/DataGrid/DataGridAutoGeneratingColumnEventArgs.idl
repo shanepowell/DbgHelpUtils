@@ -1,0 +1,15 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridAutoGeneratingColumnEventArgs
+    {
+        DataGridAutoGeneratingColumnEventArgs(String propertyName, DataGridColumn column);
+
+        DataGridColumn Column;
+        String PropertyName { get; };
+
+        Boolean Cancel;
+    }
+}

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "StyleExtensions.h"
 
-#include "App.xaml.h"
-#include "DbgHelpUtils/stream_hex_dump.h"
-#include "DbgHelpUtils/wide_runtime_error.h"
+#include <winrt/Windows.UI.Xaml.Interop.h>
+
+#include "StyleExtensionResourceDictionary.h"
 #include "Utility/logger.h"
 
 #if __has_include("StyleExtensions.g.cpp")
@@ -31,10 +31,10 @@ namespace winrt::MiniDumpExplorer::implementation
 
     DependencyProperty StyleExtensions::ResourcesProperty()
     {
-        static DependencyProperty s_ResourcesProperty = DependencyProperty::RegisterAttached(
+        static DependencyProperty s_ResourcesProperty = DependencyProperty::Register(
             L"Resources",
-            winrt::xaml_typename<ResourceDictionary>(),
-            winrt::xaml_typename<MiniDumpExplorer::StyleExtensions>(),
+            xaml_typename<ResourceDictionary>(),
+            xaml_typename<MiniDumpExplorer::StyleExtensions>(),
             PropertyMetadata(nullptr, ResourcesChanged)
         );
         return s_ResourcesProperty;
@@ -80,21 +80,9 @@ namespace winrt::MiniDumpExplorer::implementation
                 ForceControlToReloadThemeResources(frameworkElement);
             }
         }
-        catch(dlg_help_utils::exceptions::wide_runtime_error const& exception)
-        {
-            logger::Log().LogMessage(log_level::error, std::format(L"StyleExtensions::ResourcesChanged: {}", exception.message()));
-        }
-        catch(std::exception const& exception)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("StyleExtensions::ResourcesChanged: {}", exception.what()));
-        }
-        catch(hresult_error const& exception)
-        {
-            logger::Log().LogMessage(log_level::error, std::format(L"StyleExtensions::ResourcesChanged: hresult_error: {0} / code: {1}", exception.message(), dlg_help_utils::stream_hex_dump::to_hex(exception.code().value)));
-        }
         catch(...)
         {
-            logger::Log().LogMessage(log_level::error, "StyleExtensions::ResourcesChanged: Unknown exception"sv);
+            logger::HandleUnknownException();
         }
     }
 

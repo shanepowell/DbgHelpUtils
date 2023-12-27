@@ -5,15 +5,25 @@
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct RecentFileItemsDataSource;
+
     struct RecentPage : RecentPageT<RecentPage>
     {
         RecentPage();
 
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::RecentFileItem> RecentFileItems() const { return recentFileItems_; }
+        [[nodiscard]] IDataGridDataSource ItemsSource() const noexcept { return recentFileItemsDataSource_; }
         void ClearAllRecentFiles(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
+        void LoadSelectedFile(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
 
     private:
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::RecentFileItem> recentFileItems_;
+        fire_and_forget RecentPageLoad() const;
+        fire_and_forget LoadCurrentlySelectedFile() const;
+        void OnRowDoubleTapped(Windows::Foundation::IInspectable const& sender, DataGridRowDetailsEventArgs const& e) const;
+
+    private:
+        event_token onRecentPageLoadedEvent_;
+        event_token onRowDoubleTapped_;
+        MiniDumpExplorer::RecentFileItemsDataSource recentFileItemsDataSource_{};
     };
 }
 

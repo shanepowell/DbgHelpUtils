@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridCell.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridCellAutomationPeer 
+    : Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer
+    , Microsoft.UI.Xaml.Automation.Provider.IGridItemProvider
+    , Microsoft.UI.Xaml.Automation.Provider.IInvokeProvider
+    , Microsoft.UI.Xaml.Automation.Provider.IScrollItemProvider
+    , Microsoft.UI.Xaml.Automation.Provider.ISelectionItemProvider
+    , Microsoft.UI.Xaml.Automation.Provider.ITableItemProvider
+    {
+        DataGridCellAutomationPeer(DataGridCell owner);
+    }
+}

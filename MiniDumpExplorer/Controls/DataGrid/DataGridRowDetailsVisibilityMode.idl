@@ -1,0 +1,20 @@
+namespace MiniDumpExplorer
+{
+    enum DataGridRowDetailsVisibilityMode
+    {
+        /// <summary>
+        /// Collapsed DataGridRowDetailsVisibilityMode
+        /// </summary>
+        Collapsed = 2, // Show no details.  Developer is in charge of toggling visibility.
+
+        /// <summary>
+        /// Visible DataGridRowDetailsVisibilityMode
+        /// </summary>
+        Visible = 1, // Show the details section for all rows.
+
+        /// <summary>
+        /// VisibleWhenSelected DataGridRowDetailsVisibilityMode
+        /// </summary>
+        VisibleWhenSelected = 0 // Show the details section only for the selected row(s).
+    };
+}

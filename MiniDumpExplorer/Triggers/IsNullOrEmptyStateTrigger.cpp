@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "IsNullOrEmptyStateTrigger.h"
 
-#include "App.xaml.h"
+#include <winrt/Windows.UI.Xaml.Interop.h>
 
 #if __has_include("IsNullOrEmptyStateTrigger.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -30,8 +30,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty valueProperty =
             DependencyProperty::Register(
                 L"Value",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::IsNullOrEmptyStateTrigger>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::IsNullOrEmptyStateTrigger>(),
                 PropertyMetadata{ nullptr, [](auto const& d, auto const& e) { d.template as<IsNullOrEmptyStateTrigger>()->OnValuePropertyChanged(e); } });
 
         return valueProperty;

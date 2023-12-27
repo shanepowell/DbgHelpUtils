@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowsPresenter : Microsoft.UI.Xaml.Controls.Panel
+    {
+        DataGridRowsPresenter();
+    }
+}

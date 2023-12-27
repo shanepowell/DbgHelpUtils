@@ -1,0 +1,13 @@
+import "Controls\DataGrid\DataGridRow.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowDetailsEventArgs
+    {
+        DataGridRowDetailsEventArgs(DataGridRow row, Microsoft.UI.Xaml.FrameworkElement detailsElement);
+
+        DataGridRow Row { get; };
+        Microsoft.UI.Xaml.FrameworkElement DetailsElement { get; };
+    }
+}

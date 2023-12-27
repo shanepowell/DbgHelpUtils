@@ -484,25 +484,25 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
         {
             hex_dump::hex_dump(log, stream, memory_size);
         }
-        else if(string_compare::iequals(dt, L"str"sv))
+        else if(string_utils::iequals(dt, L"str"sv))
         {
             log << std::format(L"string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
             print_utils::print_stream_str<char>(log, stream, memory_size, find_limit);
             log << L'\n';
         }
-        else if(string_compare::iequals(dt, L"wstr"sv))
+        else if(string_utils::iequals(dt, L"wstr"sv))
         {
             log << std::format(L"unicode string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
             print_utils::print_stream_str<wchar_t>(log, stream, memory_size / sizeof(wchar_t), find_limit);
             log << L'\n';
         }
-        else if(string_compare::iequals(dt, L"astr"sv))
+        else if(string_utils::iequals(dt, L"astr"sv))
         {
             log << std::format(L"string array @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
             print_utils::print_stream_array_str<char>(log, stream, memory_size, 2);
             log << L'\n';
         }
-        else if(string_compare::iequals(dt, L"awstr"sv))
+        else if(string_utils::iequals(dt, L"awstr"sv))
         {
             log << std::format(L"unicode string array @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
             print_utils::print_stream_array_str<wchar_t>(log, stream, memory_size / sizeof(wchar_t), 2);
@@ -516,43 +516,43 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
                 dt = dt.substr(0, dt.size() - 2);
                 display_hex = dump_hex_t{true};
             }
-            if(string_compare::iequals(dt, L"uint8"sv))
+            if(string_utils::iequals(dt, L"uint8"sv))
             {
                 dump_address_type_array<uint8_t>(log, dt, stream, memory_size, 16, 6, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"int8"sv))
+            else if(string_utils::iequals(dt, L"int8"sv))
             {
                 dump_address_type_array<int8_t>(log, dt, stream, memory_size, 16, 6, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"uint16"sv))
+            else if(string_utils::iequals(dt, L"uint16"sv))
             {
                 dump_address_type_array<uint16_t>(log, dt, stream, memory_size, 8, 8, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"int16"sv))
+            else if(string_utils::iequals(dt, L"int16"sv))
             {
                 dump_address_type_array<int16_t>(log, dt, stream, memory_size, 8, 8, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"uint32"sv))
+            else if(string_utils::iequals(dt, L"uint32"sv))
             {
                 dump_address_type_array<uint32_t>(log, dt, stream, memory_size, 4, 14, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"int32"sv))
+            else if(string_utils::iequals(dt, L"int32"sv))
             {
                 dump_address_type_array<int32_t>(log, dt, stream, memory_size, 4, 14, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"uint64"sv))
+            else if(string_utils::iequals(dt, L"uint64"sv))
             {
                 dump_address_type_array<uint64_t>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"int64"sv))
+            else if(string_utils::iequals(dt, L"int64"sv))
             {
                 dump_address_type_array<int64_t>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"float"sv))
+            else if(string_utils::iequals(dt, L"float"sv))
             {
                 dump_address_type_array<float>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }
-            else if(string_compare::iequals(dt, L"double"sv))
+            else if(string_utils::iequals(dt, L"double"sv))
             {
                 dump_address_type_array<double>(log, dt, stream, memory_size, 2, 24, 2, display_hex);
             }

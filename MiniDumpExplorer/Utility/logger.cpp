@@ -1,10 +1,15 @@
 ﻿#include "pch.h"
 #include "logger.h"
 
+#include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/string_conversation.h"
 #include "DbgHelpUtils/system_info_utils.h"
+#include "DbgHelpUtils/wide_runtime_error.h"
 #include "DbgHelpUtils/windows_error.h"
 #include "Helpers/GlobalOptions.h"
+
+
+#include <format>
 
 using namespace dlg_help_utils;
 using namespace std::string_literals;
@@ -100,6 +105,40 @@ void logger::Flush() const
 void logger::Close()
 {
     log_file_.reset();
+}
+
+void logger::HandleUnknownException(std::source_location const& location)
+{
+    using namespace dlg_help_utils::string_conversation;
+    try
+    {
+        throw;
+    }
+    catch(exceptions::wide_runtime_error const& e)
+    {
+        auto const line = std::format(L"[{}:{}:{}]:[wide_runtime_error:{}]: {}", acp_to_wstring(location.file_name()), acp_to_wstring(location.function_name()), location.line(), acp_to_wstring(typeid(e).name()), e.message());
+        OutputDebugStringW(line.c_str());
+        Log().LogMessage(log_level::error, line);
+    }
+    catch(std::exception const& e)
+    {
+        auto const line = std::format(L"[{}:{}:{}]:[exception:{}]: {}", acp_to_wstring(location.file_name()), acp_to_wstring(location.function_name()), location.line(), acp_to_wstring(typeid(e).name()), acp_to_wstring(e.what()));
+        OutputDebugStringW(line.c_str());
+        Log().LogMessage(log_level::error, line);
+    }
+    catch(winrt::hresult_error const& e)
+    {
+        auto const line = std::format(L"[{}:{}:{}]:[hresult_error:{}]: hresult_error: {} / code: {}", acp_to_wstring(location.file_name()), acp_to_wstring(location.function_name()), location.line(), acp_to_wstring(typeid(e).name()), e.message(), stream_hex_dump::to_hex(e.code().value));
+        OutputDebugStringW(line.c_str());
+        Log().LogMessage(log_level::error, line);
+    }
+    catch(...)
+    {
+        auto const line = std::format(L"[{}:{}:{}]: unhandled unknown exception", acp_to_wstring(location.file_name()), acp_to_wstring(location.function_name()), location.line());
+        OutputDebugStringW(line.c_str());
+        Log().LogMessage(log_level::error, line);
+    }
+
 }
 
 handles::windows_handle logger::open_log_file(log_level const log_level)

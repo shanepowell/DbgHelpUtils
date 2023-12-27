@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ControlSizeTrigger.h"
 
-#include "App.xaml.h"
+#include <winrt/Windows.UI.Xaml.Interop.h>
 
 #if __has_include("ControlSizeTrigger.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -30,8 +30,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_canTriggerProperty =
             DependencyProperty::Register(
                 L"CanTrigger",
-                winrt::xaml_typename<bool>(),
-                winrt::xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
+                xaml_typename<bool>(),
+                xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
                 PropertyMetadata{ box_value(true), [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<ControlSizeTrigger>()->UpdateTrigger(); } });
 
         return s_canTriggerProperty;
@@ -52,8 +52,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_maxWidthProperty =
             DependencyProperty::Register(
                 L"MaxWidth",
-                winrt::xaml_typename<double>(),
-                winrt::xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
+                xaml_typename<double>(),
+                xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
                 PropertyMetadata{ box_value(0.0), [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<ControlSizeTrigger>()->UpdateTrigger(); } });
 
         return s_maxWidthProperty;
@@ -74,8 +74,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_minWidthProperty =
             DependencyProperty::Register(
                 L"MinWidth",
-                winrt::xaml_typename<double>(),
-                winrt::xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
+                xaml_typename<double>(),
+                xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
                 PropertyMetadata{ box_value(0.0), [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<ControlSizeTrigger>()->UpdateTrigger(); } });
 
         return s_minWidthProperty;
@@ -96,8 +96,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_maxHeightProperty =
             DependencyProperty::Register(
                 L"MaxHeight",
-                winrt::xaml_typename<double>(),
-                winrt::xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
+                xaml_typename<double>(),
+                xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
                 PropertyMetadata{ box_value(0.0), [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<ControlSizeTrigger>()->UpdateTrigger(); } });
 
         return s_maxHeightProperty;
@@ -118,8 +118,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_minHeightProperty =
             DependencyProperty::Register(
                 L"MinHeight",
-                winrt::xaml_typename<double>(),
-                winrt::xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
+                xaml_typename<double>(),
+                xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
                 PropertyMetadata{ box_value(0.0), [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<ControlSizeTrigger>()->UpdateTrigger(); } });
 
         return s_minHeightProperty;
@@ -140,8 +140,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty s_targetElementProperty =
             DependencyProperty::Register(
                 L"TargetElement",
-                winrt::xaml_typename<FrameworkElement>(),
-                winrt::xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
+                xaml_typename<FrameworkElement>(),
+                xaml_typename<MiniDumpExplorer::ControlSizeTrigger>(),
                 PropertyMetadata{ nullptr, OnTargetElementPropertyChanged });
 
         return s_targetElementProperty;

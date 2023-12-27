@@ -1,0 +1,12 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridDetailsPresenter : Microsoft.UI.Xaml.Controls.Panel
+    {
+        DataGridDetailsPresenter();
+
+        static Microsoft.UI.Xaml.DependencyProperty ContentHeightProperty { get; };
+
+        Double ContentHeight;
+    }
+}

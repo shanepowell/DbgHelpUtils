@@ -8,97 +8,80 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel>
-        <TextBlock Text="Recent Opened Files" FontSize="24" Margin="5,0,0,20" HorizontalAlignment="Left" />
-        <ListView ItemsSource="{x:Bind RecentFileItems}">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
-                                <Grid>
-                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Width="500" VerticalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.Resources>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Margin" Value="5,0" />
-                                <Setter Property="Foreground" Value="White" />
-                            </Style>
-                            <Style TargetType="Border">
-                                <Setter Property="BorderThickness" Value="1" />
-                                <Setter Property="BorderBrush" Value="LightGray" />
-                                <Setter Property="Background" Value="DarkGray" />
-                            </Style>
-                        </Grid.Resources>
-                        <Border Grid.Column="0" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock 
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Text="Recent Opened Files"
+            FontSize="24"
+            Margin="5,0,0,20"
+            HorizontalAlignment="Left" />
+
+        <local:DataGrid
+            x:Name="RecentFilesDataGrid"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="12"
+            AlternatingRowBackground="Transparent"
+            AlternatingRowForeground="White"
+            HeadersVisibility="Column"
+            RowDetailsVisibilityMode="Collapsed"
+            SelectionMode="Single"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            HorizontalScrollBarVisibility="Visible"
+            VerticalScrollBarVisibility="Visible"
+            AreRowDetailsFrozen="False"
+            AreRowGroupHeadersFrozen="True"
+            AutoGenerateColumns="False"
+            CanUserSortColumns="False"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            ColumnHeaderHeight="32"
+            MaxColumnWidth="1000"
+            IsReadOnly="True"
+            ItemsSource="{x:Bind ItemsSource}"
+            >
+            <local:DataGrid.Columns>
+                <local:DataGridTemplateColumn Header="Name" Tag="FileName">
+                    <local:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Image Height="16" Width="16" Source="{Binding Icon}" Margin="0,0,5,0" />
-                                <TextBlock Text="{Binding Name}" />
+                                <Image Height="25" Width="25" Source="{Binding Icon,Mode=OneWay}" Margin="10,10,0,0"/>
+                                <TextBlock Text="{Binding Name,Mode=OneWay}" VerticalAlignment="Center" />
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" >
-                            <TextBlock Text="{Binding Location}" />
-                        </Border>
-                        <Border Grid.Column="2" >
-                            <TextBlock Text="{Binding Size}" />
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.Template>
-                <ControlTemplate>
-                    <Grid HorizontalAlignment="Left">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0" Width="500" VerticalAlignment="Center">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Margin" Value="5,0" />
-                                    <Setter Property="Foreground" Value="White" />
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                </Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="BorderThickness" Value="1" />
-                                    <Setter Property="BorderBrush" Value="LightGray" />
-                                    <Setter Property="Background" Value="MidnightBlue" />
-                                </Style>
-                            </Grid.Resources>
-                            <Border Grid.Column="0">
-                                <TextBlock >Name</TextBlock>
-                            </Border>
-                            <Border Grid.Column="1">
-                                <TextBlock >Location</TextBlock>
-                            </Border>
-                            <Border Grid.Column="2">
-                                <TextBlock >Size</TextBlock>
-                            </Border>
-                        </Grid>
-                        <ItemsPresenter Grid.Row="1"></ItemsPresenter>
-                    </Grid>
-                </ControlTemplate>
-            </ListView.Template>
-        </ListView>
-        <Button Click="ClearAllRecentFiles" Margin="10" HorizontalAlignment="Right" >Clear Recent Files</Button>
-    </StackPanel>
+                        </DataTemplate>
+                    </local:DataGridTemplateColumn.CellTemplate>
+                </local:DataGridTemplateColumn>
+                <local:DataGridTextColumn Header="Location"
+                                          Binding="{Binding Location,Mode=OneWay}"
+                                          Tag="Location" />
+                <local:DataGridTextColumn Header="Size"
+                                          Binding="{Binding Size,Converter={StaticResource SizeNumberConverter},Mode=OneWay}"
+                                          Tag="Size" />
+            </local:DataGrid.Columns>
+        </local:DataGrid>
+        <Button
+            Grid.Row="2"
+            Grid.Column="0"
+            Click="ClearAllRecentFiles"
+            Margin="10">Clear Recent Files</Button>
+        <Button
+            Grid.Row="2"
+            Grid.Column="2"
+            Click="LoadSelectedFile"
+            Margin="10">Load</Button>
+    </Grid>
 </Page>

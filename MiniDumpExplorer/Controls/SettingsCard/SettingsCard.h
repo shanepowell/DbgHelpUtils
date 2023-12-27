@@ -9,8 +9,6 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         SettingsCard();
 
-        static void Initialize();
-
         static Microsoft::UI::Xaml::DependencyProperty HeaderProperty();
         static Microsoft::UI::Xaml::DependencyProperty DescriptionProperty();
         static Microsoft::UI::Xaml::DependencyProperty HeaderIconProperty();

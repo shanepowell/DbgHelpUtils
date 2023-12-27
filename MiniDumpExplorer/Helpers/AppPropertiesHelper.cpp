@@ -169,7 +169,7 @@ std::vector<std::wstring> AppPropertiesHelper::GetStringVectorProperty(std::wstr
 
     if(pos == std::wstring::npos && previousPos != std::wstring::npos && previousPos + 1 < value.size())
     {
-        // is there a left over string? - i.e. no double null
+        // is there a leftover string? - i.e. no double null
         result.emplace_back(value.substr(previousPos + 1));
     }
 

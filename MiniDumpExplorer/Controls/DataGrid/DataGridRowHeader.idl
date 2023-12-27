@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridRowHeader : Microsoft.UI.Xaml.Controls.ContentControl
+    {
+        DataGridRowHeader();
+
+        static Microsoft.UI.Xaml.DependencyProperty SeparatorBrushProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty SeparatorVisibilityProperty { get; };
+
+        Microsoft.UI.Xaml.Media.Brush SeparatorBrush;
+        Microsoft.UI.Xaml.Visibility SeparatorVisibility;
+    }
+}

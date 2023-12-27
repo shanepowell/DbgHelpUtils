@@ -1,0 +1,25 @@
+namespace MiniDumpExplorer
+{
+    enum DataGridGridLinesVisibility
+    {
+        /// <summary>
+        /// None DataGridGridLinesVisibility
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Horizontal DataGridGridLinesVisibility
+        /// </summary>
+        Horizontal = 1,
+
+        /// <summary>
+        /// Vertical DataGridGridLinesVisibility
+        /// </summary>
+        Vertical = 2,
+
+        /// <summary>
+        /// All DataGridGridLinesVisibility
+        /// </summary>
+        All = 3,
+    };
+}

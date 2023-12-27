@@ -5,9 +5,10 @@
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct SettingsCard;
+
     struct SettingsCardAutomationPeer : SettingsCardAutomationPeerT<SettingsCardAutomationPeer>
     {
-        // ReSharper disable once CppRedundantQualifier
         SettingsCardAutomationPeer(MiniDumpExplorer::SettingsCard const& settingsCard);
         Microsoft::UI::Xaml::Automation::Peers::AutomationControlType GetAutomationControlTypeCore() const;
         hstring GetClassNameCore() const;

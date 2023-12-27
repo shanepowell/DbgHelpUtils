@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+import "Controls\DataGrid\DataGridRow.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridPreparingCellForEditEventArgs
+    {
+        DataGridPreparingCellForEditEventArgs(DataGridColumn column, DataGridRow row, Microsoft.UI.Xaml.RoutedEventArgs editingEventArgs, Microsoft.UI.Xaml.FrameworkElement editingElement);
+
+        DataGridColumn Column { get; };
+        DataGridRow Row { get; };
+        Microsoft.UI.Xaml.RoutedEventArgs EditingEventArgs { get; };
+        Microsoft.UI.Xaml.FrameworkElement EditingElement { get; };
+    }
+}

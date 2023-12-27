@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridColumnReorderingEventArgs
+    {
+        DataGridColumnReorderingEventArgs(DataGridColumn dataGridColumn);
+
+        DataGridColumn Column { get; };
+        Microsoft.UI.Xaml.Controls.Control DragIndicator;
+        Microsoft.UI.Xaml.Controls.Control DropLocationIndicator;
+
+        Boolean Cancel;
+    }
+}

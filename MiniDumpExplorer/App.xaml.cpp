@@ -1,10 +1,10 @@
 #include "pch.h"
-
 #include "App.xaml.h"
 
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "Helpers/AppPropertiesHelper.h"
 #include "Helpers/ThemeHelper.h"
+#include "Helpers/TypeHelper.h"
 #include "Helpers/WindowHelper.h"
 #include "ViewModels/MainWindow.xaml.h"
 #include "Utility/logger.h"
@@ -35,7 +35,7 @@ App::App()
             logger::Log().LogMessage(log_level::error, std::format(L"Unhandled Exception: [{0}] - hresult[{1}]", e.Message(), dlg_help_utils::stream_hex_dump::to_hex(hresult.value)));
             logger::Log().Flush();
         }
-        catch (...)
+        catch (...)  // NOLINT(bugprone-empty-catch)
         {
         }
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
@@ -57,8 +57,8 @@ void App::OnLaunched([[maybe_unused]]LaunchActivatedEventArgs const& e)
     AppPropertiesHelper::Initialize(L"MiniDumpExplorer"s);
     logger::Log().LogMessage(log_level::info, L"Starting"sv);
 
-    // this is required for the startup of the SettingsCard
-    SettingsCard::Initialize();
+    // this is required for the startup of the all application dependency properties
+    TypeHelper::LoadAddApplicationDependencyProperties();
 
     window = make<MainWindow>();
     ThemeHelper::SetDefaultTheme(window);

@@ -2,7 +2,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include <string>
 
-namespace dlg_help_utils::string_compare
+namespace dlg_help_utils::string_utils
 {
     [[nodiscard]] inline bool iequals(std::wstring_view const& str1, std::wstring_view const& str2)
     {

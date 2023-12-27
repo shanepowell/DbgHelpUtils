@@ -1,0 +1,157 @@
+import "Controls\DataGrid\DataGridAutoGeneratingColumnEventArgs.idl";
+import "Controls\DataGrid\DataGridBeginningEditEventArgs.idl";
+import "Controls\DataGrid\DataGridCellEditEndedEventArgs.idl";
+import "Controls\DataGrid\DataGridCellEditEndingEventArgs.idl";
+import "Controls\DataGrid\DataGridColumnEventArgs.idl";
+import "Controls\DataGrid\DataGridColumnReorderingEventArgs.idl";
+import "Controls\DataGrid\DataGridRowClipboardEventArgs.idl";
+import "Controls\DataGrid\DataGridRowEventArgs.idl";
+import "Controls\DataGrid\DataGridRowDetailsEventArgs.idl";
+import "Controls\DataGrid\DataGridRowGroupHeaderEventArgs.idl";
+import "Controls\DataGrid\DataGridPreparingCellForEditEventArgs.idl";
+import "Controls\DataGrid\DataGridRowEditEndedEventArgs.idl";
+import "Controls\DataGrid\DataGridRowEditEndingEventArgs.idl";
+import "Controls\DataGrid\DataGridClipboardCopyMode.idl";
+import "Controls\DataGrid\DataGridGridLinesVisibility.idl";
+import "Controls\DataGrid\DataGridHeadersVisibility.idl";
+import "Controls\DataGrid\DataGridRowDetailsVisibilityMode.idl";
+import "Controls\DataGrid\DataGridSelectionMode.idl";
+import "Controls\DataGrid\DataGridEditingUnit.idl";
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGrid : Microsoft.UI.Xaml.Controls.Control
+    {
+        DataGrid();
+
+        event Windows.Foundation.EventHandler<DataGridAutoGeneratingColumnEventArgs> AutoGeneratingColumn;
+        event Windows.Foundation.EventHandler<DataGridBeginningEditEventArgs> BeginningEdit;
+        event Windows.Foundation.EventHandler<DataGridCellEditEndedEventArgs> CellEditEnded;
+        event Windows.Foundation.EventHandler<DataGridCellEditEndingEventArgs> CellEditEnding;
+        event Windows.Foundation.EventHandler<DataGridColumnEventArgs> ColumnDisplayIndexChanged;
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.Primitives.DragCompletedEventArgs> ColumnHeaderDragCompleted;
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.Primitives.DragDeltaEventArgs> ColumnHeaderDragDelta;
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.Primitives.DragStartedEventArgs> ColumnHeaderDragStarted;
+        event Windows.Foundation.EventHandler<DataGridColumnEventArgs> ColumnReordered;
+        event Windows.Foundation.EventHandler<DataGridColumnReorderingEventArgs> ColumnReordering;
+        event Windows.Foundation.EventHandler<DataGridRowClipboardEventArgs> CopyingRowClipboardContent;
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.RoutedEventArgs> CurrentCellChanged;
+        event Windows.Foundation.EventHandler<DataGridRowEventArgs> LoadingRow;
+        event Windows.Foundation.EventHandler<DataGridRowDetailsEventArgs> LoadingRowDetails;
+        event Windows.Foundation.EventHandler<DataGridRowGroupHeaderEventArgs> LoadingRowGroup;
+        event Windows.Foundation.EventHandler<DataGridPreparingCellForEditEventArgs> PreparingCellForEdit;
+        event Windows.Foundation.EventHandler<DataGridRowDetailsEventArgs> RowDetailsVisibilityChanged;
+        event Windows.Foundation.EventHandler<DataGridRowEditEndedEventArgs> RowEditEnded;
+        event Windows.Foundation.EventHandler<DataGridRowEditEndingEventArgs> RowEditEnding;
+        event Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler SelectionChanged;
+        event Windows.Foundation.EventHandler<DataGridColumnEventArgs> Sorting;
+        event Windows.Foundation.EventHandler<DataGridRowEventArgs> UnloadingRow;
+        event Windows.Foundation.EventHandler<DataGridRowGroupHeaderEventArgs> UnloadingRowGroup;
+        event Windows.Foundation.EventHandler<DataGridRowDetailsEventArgs> UnloadingRowDetails;
+        event Windows.Foundation.EventHandler<DataGridRowDetailsEventArgs> RowDoubleTapped;
+
+        static Microsoft.UI.Xaml.DependencyProperty AlternatingRowBackgroundProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty AlternatingRowForegroundProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty AreRowDetailsFrozenProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty AreRowGroupHeadersFrozenProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty AutoGenerateColumnsProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty CanUserReorderColumnsProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty CanUserResizeColumnsProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty CanUserSortColumnsProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty CellStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ClipboardCopyModeProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ColumnHeaderHeightProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ColumnHeaderStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ColumnWidthProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty DataFetchSizeProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty DragIndicatorStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty DropLocationIndicatorStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty FrozenColumnCountProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty GridLinesVisibilityProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty HeadersVisibilityProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty HorizontalGridLinesBrushProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty HorizontalScrollBarVisibilityProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty IsReadOnlyProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty IsValidProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty IncrementalLoadingThresholdProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty IncrementalLoadingTriggerProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty ItemsSourceProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty MaxColumnWidthProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty MinColumnWidthProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowBackgroundProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowDetailsTemplateProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowDetailsVisibilityModeProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowForegroundProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowHeightProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowHeaderWidthProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowHeaderStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty RowStyleProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty SelectionModeProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty SelectedIndexProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty SelectedItemProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty VerticalGridLinesBrushProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty VerticalScrollBarVisibilityProperty { get; };
+
+        Microsoft.UI.Xaml.Media.Brush AlternatingRowBackground;
+        Microsoft.UI.Xaml.Media.Brush AlternatingRowForeground;
+        Boolean AreRowDetailsFrozen;
+        Boolean AreRowGroupHeadersFrozen;
+        Boolean AutoGenerateColumns;
+        Boolean CanUserReorderColumns;
+        Boolean CanUserResizeColumns;
+        Boolean CanUserSortColumns;
+        Microsoft.UI.Xaml.Style CellStyle;
+        DataGridClipboardCopyMode ClipboardCopyMode;
+        Double ColumnHeaderHeight;
+        Microsoft.UI.Xaml.Style ColumnHeaderStyle;
+        DataGridLength ColumnWidth;
+        Double DataFetchSize;
+        Microsoft.UI.Xaml.Style DragIndicatorStyle;
+        Microsoft.UI.Xaml.Style DropLocationIndicatorStyle;
+        Int32 FrozenColumnCount;
+        DataGridGridLinesVisibility GridLinesVisibility;
+        DataGridHeadersVisibility HeadersVisibility;
+        Microsoft.UI.Xaml.Media.Brush HorizontalGridLinesBrush;
+        Microsoft.UI.Xaml.Controls.ScrollBarVisibility HorizontalScrollBarVisibility;
+        Boolean IsReadOnly;
+        Boolean IsValid;
+        Double IncrementalLoadingThreshold;
+        Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger IncrementalLoadingTrigger;
+        IDataGridDataSource ItemsSource;
+        Double MaxColumnWidth;
+        Double MinColumnWidth;
+        Microsoft.UI.Xaml.Media.Brush RowBackground;
+        Microsoft.UI.Xaml.DataTemplate RowDetailsTemplate;
+        DataGridRowDetailsVisibilityMode RowDetailsVisibilityMode;
+        Microsoft.UI.Xaml.Media.Brush RowForeground;
+        Double RowHeight;
+        Double RowHeaderWidth;
+        Microsoft.UI.Xaml.Style RowHeaderStyle;
+        Microsoft.UI.Xaml.Style RowStyle;
+        DataGridSelectionMode SelectionMode;
+        Int32 SelectedIndex;
+        Object SelectedItem;
+        Microsoft.UI.Xaml.Media.Brush VerticalGridLinesBrush;
+        Microsoft.UI.Xaml.Controls.ScrollBarVisibility VerticalScrollBarVisibility;
+
+        IObservableVector<DataGridColumn> Columns { get; };
+        DataGridColumn CurrentColumn;
+        String RowGroupHeaderPropertyNameAlternative;
+        IObservableVector<Microsoft.UI.Xaml.Style> RowGroupHeaderStyles { get; };
+        IVector<Object> SelectedItems { get; };
+
+        Boolean BeginEdit();
+        Boolean BeginEdit(Microsoft.UI.Xaml.RoutedEventArgs editingEventArgs);
+        Boolean CancelEdit();
+        Boolean CancelEdit(DataGridEditingUnit editingUnit);
+        Boolean CommitEdit();
+        Boolean CommitEdit(DataGridEditingUnit editingUnit, Boolean exitEditingMode);
+        Microsoft.UI.Xaml.Data.ICollectionViewGroup GetGroupFromItem(Object item, Int32 groupLevel);
+        void ScrollIntoView(Object item, DataGridColumn column);
+        
+        void CollapseRowGroup(Microsoft.UI.Xaml.Data.ICollectionViewGroup collectionViewGroup, Boolean collapseAllSubgroups);
+        void ExpandRowGroup(Microsoft.UI.Xaml.Data.ICollectionViewGroup collectionViewGroup, Boolean expandAllSubgroups);
+    }
+}

@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "IsEqualStateTrigger.h"
 
-#include "App.xaml.h"
+#include <winrt/Windows.UI.Xaml.Interop.h>
+
 #include "Utility/InspectableUtility.h"
 
 #if __has_include("IsEqualStateTrigger.g.cpp")
@@ -32,8 +33,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty valueProperty =
             DependencyProperty::Register(
                 L"Value",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::IsEqualStateTrigger>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::IsEqualStateTrigger>(),
                 PropertyMetadata{ nullptr, [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<IsEqualStateTrigger>()->UpdateTrigger(); } });
 
         return valueProperty;
@@ -54,8 +55,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static DependencyProperty toProperty =
             DependencyProperty::Register(
                 L"To",
-                winrt::xaml_typename<Windows::Foundation::IInspectable>(),
-                winrt::xaml_typename<MiniDumpExplorer::IsEqualStateTrigger>(),
+                xaml_typename<Windows::Foundation::IInspectable>(),
+                xaml_typename<MiniDumpExplorer::IsEqualStateTrigger>(),
                 PropertyMetadata{ nullptr, [](auto const& d, [[maybe_unused]] auto const& e) { d.template as<IsEqualStateTrigger>()->UpdateTrigger(); } });
 
         return toProperty;

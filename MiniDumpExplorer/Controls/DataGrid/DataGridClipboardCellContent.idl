@@ -1,0 +1,14 @@
+import "Controls\DataGrid\DataGridColumn.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DataGridClipboardCellContent
+    {
+        DataGridClipboardCellContent(Object item, DataGridColumn column, Object content);
+
+        Object Item { get; };
+        DataGridColumn Column { get; };
+        Object Content { get; };
+    }
+}

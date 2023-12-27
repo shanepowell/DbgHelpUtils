@@ -2,8 +2,9 @@
 #include "DefaultPage.xaml.h"
 
 #include <winrt/Windows.UI.Core.h>
+#include <winrt/Windows.UI.Xaml.Controls.h>
+#include <winrt/Windows.UI.Xaml.Interop.h>
 
-#include "App.xaml.h"
 #include "Utility/logger.h"
 
 #if __has_include("DefaultPage.g.cpp")
@@ -19,13 +20,14 @@ using namespace std::string_literals;
 namespace
 {
     const std::wstring settingsTag = L"Settings"s;
+    const std::wstring recentTag = L"Recent"s;
 }
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> DefaultPage::pageMap_ =
         {
-            { L"Recent", xaml_typename<RecentPage>() },
+            { recentTag, xaml_typename<RecentPage>() },
             { settingsTag, xaml_typename<SettingsPage>() },
         };
 
@@ -34,6 +36,7 @@ namespace winrt::MiniDumpExplorer::implementation
         logger::Log().LogMessage(log_level::debug, "DefaultPage");
         InitializeComponent();
         logger::Log().LogMessage(log_level::debug, "DefaultPage post InitializeComponent");
+        ContentFrame().Navigate(xaml_typename<RecentPage>());
     }
 
     void DefaultPage::NavigationView_SelectionChanged([[maybe_unused]] Controls::NavigationView const& sender, Controls::NavigationViewSelectionChangedEventArgs const& args)
