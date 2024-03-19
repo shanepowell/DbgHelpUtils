@@ -59,8 +59,14 @@
 #include "Controls\DataGrid\DataGridColumnHeadersPresenterAutomationPeer.h"
 #include "Controls\DataGrid\DataGridRowsPresenterAutomationPeer.h"
 #include "Controls\DataGrid\DataGridTemplateColumn.h"
-#include "RecentFileItemsDataSource.h"
-#include "SizeNumberConverter.h"
+#include "Models\RecentFileItemsDataSource.h"
+#include "Converters\SizeNumberConverter.h"
+#include "Converters\BoolToObjectConverter.h"
+#include "Converters\BoolToVisibilityConverter.h"
+#include "Converters\LocalNumberConverter.h"
+#include "Converters\TimeStampNumberConverter.h"
+#include "Models\GlobalOptionItems.h"
+#include "BoolNegationConverter.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

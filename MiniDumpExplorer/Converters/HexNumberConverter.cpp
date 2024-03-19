@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "HexNumberConverter.h"
 
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "Helpers/GlobalOptions.h"
 #include "Utility/InspectableUtility.h"
@@ -12,7 +13,7 @@
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
-using namespace dlg_help_utils::stream_hex_dump;
+using namespace dlg_help_utils;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
@@ -28,10 +29,10 @@ namespace winrt::MiniDumpExplorer::implementation
         switch(GlobalOptions::Options().NumberDisplayFormat())
         {
         case NumberDisplayFormat::Hexadecimal:
-            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(to_hex(v)); }, value, value);
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(stream_hex_dump::to_hex(v)); }, value, value);
 
         case NumberDisplayFormat::Decimal:
-            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(std::to_wstring(v)); }, value, value);
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
 
         default:
             break;

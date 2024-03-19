@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    unsealed runtimeclass BoolToObjectConverter : Microsoft.UI.Xaml.DependencyObject, Microsoft.UI.Xaml.Data.IValueConverter
+    {
+        BoolToObjectConverter();
+
+        static Microsoft.UI.Xaml.DependencyProperty TrueValueProperty { get; };
+        static Microsoft.UI.Xaml.DependencyProperty FalseValueProperty { get; };
+
+        Object TrueValue;
+        Object FalseValue;
+    }
+}

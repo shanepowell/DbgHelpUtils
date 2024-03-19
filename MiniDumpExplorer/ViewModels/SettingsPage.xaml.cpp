@@ -26,12 +26,20 @@ using namespace dlg_help_utils;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    namespace
+    {
+        auto const ThemeDarkTag = L"Dark";
+        auto const ThemeLightTag = L"Light";
+    }
+
     SettingsPage::SettingsPage()
     {
         LoadVersionInformation();
         InitializeComponent();
 
         onSettingsPageLoadedEvent_ = Loaded(RoutedEventHandler{this, &SettingsPage::OnSettingsPageLoaded});
+
+        SetupFlyoutMenus();
     }
 
     void SettingsPage::OnSettingsPageLoaded([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
@@ -128,7 +136,6 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         numberFormatMode().SelectedIndex(static_cast<int>(GlobalOptions::Options().NumberDisplayFormat()));
         RaisePropertyChanged(L"SuiteMask");
-        RaisePropertyChanged(L"DisplayHexadecimalNumericFormat");
     }
 
     void SettingsPage::OnSizeNumberDisplayFormatChanged()
@@ -137,6 +144,12 @@ namespace winrt::MiniDumpExplorer::implementation
         unitSizeFormatMode().SelectedIndex(static_cast<int>(options.SizeNumberDisplayFormat()));
         unitFormatMode().SelectedIndex(static_cast<int>(options.SizeFormat()));
         unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
+        RaisePropertyChanged(L"ExampleSize");
+    }
+
+    uint64_t SettingsPage::ExampleSize()
+    {
+        return 1234567890123456789ULL;
     }
 
     void SettingsPage::ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
@@ -150,24 +163,31 @@ namespace winrt::MiniDumpExplorer::implementation
             return;
         }
 
-        if (selectedTheme == L"Dark")
+        Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+
+        auto const themeDarkName = rm.MainResourceMap().GetValue(L"Resources/ThemeDarkName").ValueAsString();
+        auto const themeLightName = rm.MainResourceMap().GetValue(L"Resources/ThemeLightName").ValueAsString();
+
+        if (selectedTheme == ThemeDarkTag)
         {
             ThemeHelper::RootTheme(ElementTheme::Dark);
-            colour = selectedTheme;
+            colour = themeDarkName;
         }
-        else if (selectedTheme == L"Light")
+        else if (selectedTheme == ThemeLightTag)
         {
             ThemeHelper::RootTheme(ElementTheme::Light);
-            colour = selectedTheme;
+            colour = themeLightName;
         }
         else
         {
             ThemeHelper::RootTheme(ElementTheme::Default);
-            colour = ThemeHelper::WindowActualTheme() == ElementTheme::Dark ? L"Dark" : L"Light";
+            colour = ThemeHelper::WindowActualTheme() == ElementTheme::Dark ? themeDarkName : themeLightName;
         }
 
         // announce visual change to automation
-        UIHelper::AnnounceActionForAccessibility(sender.as<UIElement>(), hstring{std::format(L"Theme changed to {}", colour)}, L"ThemeChangedNotificationActivityId");
+        auto const themeChangedNotificationMessage = std::format(L"{} {}", rm.MainResourceMap().GetValue(L"Resources/ThemeChangedMessage").ValueAsString(), colour);
+        logger::Log().LogMessage(log_level::info, themeChangedNotificationMessage);
+        UIHelper::AnnounceActionForAccessibility(sender.as<UIElement>(), hstring{themeChangedNotificationMessage}, L"ThemeChangedNotificationActivityId");
     }
 
     void SettingsPage::LogLevelModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
@@ -210,25 +230,10 @@ namespace winrt::MiniDumpExplorer::implementation
         propertyChanged_.remove(token);
     }
 
-    bool SettingsPage::DisplayHexadecimalNumericFormat()
+    void SettingsPage::SetupFlyoutMenus()
     {
-        return GlobalOptions::Options().NumberDisplayFormat() == NumberDisplayFormat::Hexadecimal;
-    }
-
-    void SettingsPage::DisplayHexadecimalNumericFormat(bool const value)
-    {
-        auto const numericFormat = value ? NumberDisplayFormat::Hexadecimal : NumberDisplayFormat::Decimal;
-        GlobalOptions::Options().NumberDisplayFormat(numericFormat);
-    }
-
-    void SettingsPage::CopySuiteMaskToClipboard([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
-    {
-        auto text = suiteMaskTextBlock().SelectedText();
-        if (text.empty())
-        {
-            text = suiteMaskTextBlock().Text();
-        }
-        UIHelper::CopyToClipboard(text);
+        UIHelper::CreateStandardHexNumberMenu(suiteMaskTextBlock());
+        UIHelper::CreateStandardSizeNumberMenu(exampleSizeDisplay());
     }
 }
 

@@ -19,16 +19,16 @@ using namespace std::string_literals;
 
 namespace
 {
-    const std::wstring settingsTag = L"Settings"s;
-    const std::wstring recentTag = L"Recent"s;
+    const std::wstring SettingsTag = L"Settings"s;
+    const std::wstring RecentTag = L"Recent"s;
 }
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> DefaultPage::pageMap_ =
         {
-            { recentTag, xaml_typename<RecentPage>() },
-            { settingsTag, xaml_typename<SettingsPage>() },
+            { RecentTag, xaml_typename<RecentPage>() },
+            { SettingsTag, xaml_typename<SettingsPage>() },
         };
 
     DefaultPage::DefaultPage()
@@ -41,7 +41,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DefaultPage::NavigationView_SelectionChanged([[maybe_unused]] Controls::NavigationView const& sender, Controls::NavigationViewSelectionChangedEventArgs const& args)
     {
-        if(const auto navItemTag = args.IsSettingsSelected() ? settingsTag : static_cast<std::wstring>(unbox_value<hstring>(args.SelectedItemContainer().Tag())); 
+        if(const auto navItemTag = args.IsSettingsSelected() ? SettingsTag : static_cast<std::wstring>(unbox_value<hstring>(args.SelectedItemContainer().Tag())); 
             !navItemTag.empty())
         {
             if(auto const it = pageMap_.find(navItemTag); it != pageMap_.end())

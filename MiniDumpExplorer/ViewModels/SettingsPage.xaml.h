@@ -16,6 +16,7 @@ namespace winrt::MiniDumpExplorer::implementation
         hstring CsdVersion() const { return csdVersion_; }
         hstring ProcessorArchitecture() const { return processorArchitecture_; }
         Windows::Foundation::Collections::IObservableVector<hstring> SuiteMaskList() const { return suiteMaskList_; }
+        static uint64_t ExampleSize();
 
         void ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LogLevelModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -27,12 +28,8 @@ namespace winrt::MiniDumpExplorer::implementation
         event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(event_token const& token) noexcept;
 
-        static bool DisplayHexadecimalNumericFormat();
-        static void DisplayHexadecimalNumericFormat(bool value);
-
-        void CopySuiteMaskToClipboard(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
-
     private:
+        void SetupFlyoutMenus();
         void OnSettingsPageLoaded(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LoadVersionInformation();
         void RaisePropertyChanged(hstring const& propertyName);

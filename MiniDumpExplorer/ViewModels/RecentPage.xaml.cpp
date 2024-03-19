@@ -3,9 +3,9 @@
 
 #include <winrt/Windows.Storage.h>
 
-#include "RecentFileItemsDataSource.h"
 #include "Helpers/WindowHelper.h"
 #include "Models/RecentFileItem.h"
+#include "Models/RecentFileItemsDataSource.h"
 #include "Utility/logger.h"
 
 #if __has_include("RecentPage.g.cpp")
@@ -54,19 +54,26 @@ namespace winrt::MiniDumpExplorer::implementation
 
     fire_and_forget RecentPage::LoadCurrentlySelectedFile() const
     {
-        if (auto selectedItem = recentFileItemsDataSource_.CollectionView().CurrentItem();
-            selectedItem)
+        try
         {
-            if (auto const recentFileItem = selectedItem.as<RecentFileItem>();
-                recentFileItem)
+            if (auto selectedItem = recentFileItemsDataSource_.CollectionView().CurrentItem();
+                selectedItem)
             {
-                if(auto const mainWindow = WindowHelper::GetWindowForElement(*this).as<MainWindow>();
-                    mainWindow)
+                if (auto const recentFileItem = selectedItem.as<RecentFileItem>();
+                    recentFileItem)
                 {
-                    auto file = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(recentFileItem->FullPath());
-                    mainWindow.OpenFileInTab(file);
+                    if(auto const mainWindow = WindowHelper::GetWindowForElement(*this).as<MainWindow>();
+                        mainWindow)
+                    {
+                        auto file = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(recentFileItem->FullPath());
+                        co_await mainWindow.OpenFileInTab(file);
+                    }
                 }
             }
+        }
+        catch(...)
+        {
+            logger::HandleUnknownException();
         }
     }
 

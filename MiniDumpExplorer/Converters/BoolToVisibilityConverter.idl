@@ -1,0 +1,10 @@
+import "Converters\BoolToObjectConverter.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass BoolToVisibilityConverter : BoolToObjectConverter
+    {
+        BoolToVisibilityConverter();
+    }
+}

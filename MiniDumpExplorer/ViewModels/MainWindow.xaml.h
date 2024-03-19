@@ -20,13 +20,13 @@ namespace winrt::MiniDumpExplorer::implementation
         event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(event_token const& token) noexcept;
 
-        void OpenFileInTab(Windows::Storage::StorageFile const& file);
+        Windows::Foundation::IAsyncAction OpenFileInTab(Windows::Storage::StorageFile const& file);
 
     private:
         void OpenDefaultTab();
         Windows::Foundation::IAsyncAction OpenFileInNewTab();
         void RaisePropertyChanged(hstring const& propertyName);
-        static Microsoft::UI::Xaml::Controls::TabViewItem CreateNewTab(Windows::Storage::StorageFile const& file);
+        static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile const& file);
 
     private:
         event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;

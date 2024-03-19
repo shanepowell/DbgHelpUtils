@@ -127,6 +127,10 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoolNegationConverter.h">
+      <DependentUpon>BoolNegationConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Controls\DataGrid\DataGrid.h">
       <DependentUpon>Controls\DataGrid\DataGrid.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -297,6 +301,14 @@
       <DependentUpon>Controls\DataGrid\DataGridValueConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Converters\BoolToObjectConverter.h">
+      <DependentUpon>Converters\BoolToObjectConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Converters\BoolToVisibilityConverter.h">
+      <DependentUpon>Converters\BoolToVisibilityConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Converters\HexNumberConverter.h">
       <DependentUpon>Converters\HexNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -321,24 +333,37 @@
       <DependentUpon>Controls\DataGrid\DataGridRowsPresenter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Converters\LocalNumberConverter.h">
+      <DependentUpon>Converters\LocalNumberConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Converters\SizeNumberConverter.h">
+      <DependentUpon>Converters\SizeNumberConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Converters\TimeStampNumberConverter.h">
+      <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Helpers\TypeHelper.h" />
     <ClInclude Include="Helpers\UISettingsHelper.h" />
     <ClInclude Include="Helpers\VisualStates.h" />
     <ClInclude Include="Helpers\WinrtDepenencyPropertiesReflectionMap.h" />
     <ClInclude Include="Helpers\WinrtDepenencyPropertiesReflectionMapHeaders.h" />
+    <ClInclude Include="Models\GlobalOptionItems.h">
+      <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\RecentFileItem.h">
       <DependentUpon>Models\RecentFileItem.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="RecentFileItemsDataSource.h">
-      <DependentUpon>RecentFileItemsDataSource.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="SizeNumberConverter.h">
-      <DependentUpon>SizeNumberConverter.cpp</DependentUpon>
+    <ClInclude Include="Models\RecentFileItemsDataSource.h">
+      <DependentUpon>Models\RecentFileItemsDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Utility\BindingInfo.h" />
+    <ClInclude Include="Utility\ConverterTools.h" />
     <ClInclude Include="Utility\erase_value.h" />
     <ClInclude Include="Utility\IndexToValueTable.h" />
     <ClInclude Include="Utility\KeyboardHelper.h" />
@@ -459,6 +484,9 @@
     <Page Include="Controls\SettingsExpander\SettingsExpanderTheme.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoolNegationConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Controls\DataGrid\DataGrid.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -585,6 +613,12 @@
     <ClCompile Include="Controls\DataGrid\DataGridValueConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Converters\BoolToObjectConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Converters\BoolToVisibilityConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Converters\HexNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -603,19 +637,29 @@
     <ClCompile Include="Controls\DataGrid\DataGridRowsPresenter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Converters\LocalNumberConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Converters\SizeNumberConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Helpers\TypeHelper.cpp" />
     <ClCompile Include="Helpers\UISettingsHelper.cpp" />
     <ClCompile Include="Helpers\VisualStates.cpp" />
+    <ClCompile Include="Models\GlobalOptionItems.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\RecentFileItem.cpp">
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="RecentFileItemsDataSource.cpp">
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="SizeNumberConverter.cpp">
+    <ClCompile Include="Models\RecentFileItemsDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Utility\BindingInfo.cpp" />
+    <ClCompile Include="Utility\ConverterTools.cpp" />
     <ClCompile Include="Utility\KeyboardHelper.cpp" />
     <ClCompile Include="Utility\SuspendedHandlers.cpp" />
     <ClCompile Include="Utility\ValidationResult.cpp" />
@@ -696,6 +740,10 @@
     <Midl Include="App.idl">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="BoolNegationConverter.idl">
+      <DependentUpon>BoolNegationConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="Controls\DataGrid\DataGrid.idl">
       <DependentUpon>Controls\DataGrid\DataGrid.cpp</DependentUpon>
@@ -866,6 +914,14 @@
     </Midl>
     <Midl Include="Controls\DefaultMember.idl" />
     <Midl Include="Controls\EditableObject.idl" />
+    <Midl Include="Converters\BoolToObjectConverter.idl">
+      <DependentUpon>Converters\BoolToObjectConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Converters\BoolToVisibilityConverter.idl">
+      <DependentUpon>Converters\BoolToVisibilityConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Converters\HexNumberConverter.idl">
       <DependentUpon>Converters\HexNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -890,16 +946,28 @@
       <DependentUpon>Controls\DataGrid\DataGridRowsPresenter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Converters\LocalNumberConverter.idl">
+      <DependentUpon>Converters\LocalNumberConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Converters\SizeNumberConverter.idl">
+      <DependentUpon>Converters\SizeNumberConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Converters\TimeStampNumberConverter.idl">
+      <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\GlobalOptionItems.idl">
+      <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\RecentFileItem.idl">
       <DependentUpon>Models\RecentFileItem.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="RecentFileItemsDataSource.idl">
-      <DependentUpon>RecentFileItemsDataSource.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="SizeNumberConverter.idl">
-      <DependentUpon>SizeNumberConverter.cpp</DependentUpon>
+    <Midl Include="Models\RecentFileItemsDataSource.idl">
+      <DependentUpon>Models\RecentFileItemsDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\DefaultPage.idl">

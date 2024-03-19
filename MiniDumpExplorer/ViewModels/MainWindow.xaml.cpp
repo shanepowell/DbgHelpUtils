@@ -40,11 +40,12 @@ namespace winrt::MiniDumpExplorer::implementation
     fire_and_forget MainWindow::MenuFileOpen_Exit(Windows::Foundation::IInspectable const&, RoutedEventArgs const&) const
     {
         const Controls::ContentDialog dialog;
+        Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
         dialog.XamlRoot(Content().XamlRoot());
-        dialog.Title(box_value(L"Quit MiniDump Explorer"));
-        dialog.Content(box_value(L"Are you sure?"));
-        dialog.PrimaryButtonText(L"Quit");
-        dialog.SecondaryButtonText(L"Cancel");
+        dialog.Title(box_value(rm.MainResourceMap().GetValue(L"Resources/QuitMiniDumpExplorerDialogTitle").ValueAsString()));
+        dialog.Content(box_value(rm.MainResourceMap().GetValue(L"Resources/QuitMiniDumpExplorerDialogContent").ValueAsString()));
+        dialog.PrimaryButtonText(rm.MainResourceMap().GetValue(L"Resources/QuitMiniDumpExplorerDialogPrimaryButtonText").ValueAsString());
+        dialog.SecondaryButtonText(rm.MainResourceMap().GetValue(L"Resources/QuitMiniDumpExplorerDialogSecondaryButtonText").ValueAsString());
         dialog.DefaultButton(Controls::ContentDialogButton::Primary);
         if(co_await dialog.ShowAsync() == Controls::ContentDialogResult::Primary)
         {
@@ -96,18 +97,21 @@ namespace winrt::MiniDumpExplorer::implementation
         propertyChanged_.remove(token);
     }
 
-    void MainWindow::OpenFileInTab(Windows::Storage::StorageFile const& file)
+    Windows::Foundation::IAsyncAction MainWindow::OpenFileInTab(Windows::Storage::StorageFile const& file)
     {
-        TabView().TabItems().Append(CreateNewTab(file));
-        TabView().SelectedItem(TabView().TabItems().GetAt(TabView().TabItems().Size() - 1));
+        if(auto const tabItem = co_await CreateNewTab(file);
+            tabItem)
+        {
+            TabView().TabItems().Append(tabItem);
+            TabView().SelectedItem(TabView().TabItems().GetAt(TabView().TabItems().Size() - 1));
+        }
     }
 
     void MainWindow::OpenDefaultTab()
     {
         Controls::TabViewItem const newItem;
         Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
-        auto const headerString = rm.MainResourceMap().GetValue(L"Resources/DefaultTabHeader").ValueAsString();
-        newItem.Header(box_value(headerString));
+        newItem.Header(box_value(rm.MainResourceMap().GetValue(L"Resources/DefaultTabHeader").ValueAsString()));
         const Controls::SymbolIconSource iconSource;
         iconSource.Symbol(Controls::Symbol::Admin);
         newItem.IconSource(iconSource);
@@ -138,7 +142,7 @@ namespace winrt::MiniDumpExplorer::implementation
             co_return;
         }
 
-        OpenFileInTab(file);
+        co_await OpenFileInTab(file);
     }
 
     void MainWindow::RaisePropertyChanged(hstring const& propertyName)
@@ -146,14 +150,20 @@ namespace winrt::MiniDumpExplorer::implementation
         propertyChanged_(*this, Data::PropertyChangedEventArgs(propertyName));
     }
 
-    Controls::TabViewItem MainWindow::CreateNewTab(Windows::Storage::StorageFile const& file)
+    Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const& file)
     {
+        auto miniDumpPage = winrt::make<MiniDumpPage>(file);
+        if(!co_await miniDumpPage.LoadMiniDump())
+        {
+            co_return nullptr;
+        }
+
         Controls::TabViewItem newItem;
         newItem.Header(box_value(file.Name()));
         const Controls::SymbolIconSource iconSource;
         iconSource.Symbol(Controls::Symbol::Document);
         newItem.IconSource(iconSource);
-        newItem.Content(winrt::make<MiniDumpPage>(file));
-        return newItem;
+        newItem.Content(miniDumpPage);
+        co_return newItem;
     }
 }

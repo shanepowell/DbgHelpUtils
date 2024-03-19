@@ -142,11 +142,59 @@ namespace winrt::MiniDumpExplorer::implementation
         GlobalOptions::Options().RecentFiles(recentFiles);
     }
 
+    fire_and_forget RecentFileItemsDataSource::OnRecentFilesChanged(std::vector<std::wstring> const& recentFiles)
+    {
+        if(ignoreNextRecentFilesChanged_)
+        {
+            ignoreNextRecentFilesChanged_ = false;
+            co_return;
+        }
+
+        recentItems_.Clear();
+
+        logger::Log().LogMessage(log_level::debug, "Reloading recent files icons");
+
+        auto removedItems = false;
+        for(const auto& file : recentFiles)
+        {
+            MiniDumpExplorer::RecentFileItem item{hstring{file}};
+            if(auto const internalItem = item.as<RecentFileItem>();
+                internalItem->Exists())
+            {
+                recentItems_.Append(item);
+            }
+            else
+            {
+                removedItems = true;
+            }
+        }
+
+        if(removedItems)
+        {
+            ignoreNextRecentFilesChanged_ = true;
+            SaveRecentFiles();
+        }
+
+        logger::Log().LogMessage(log_level::debug, "Reloading recent files icons");
+
+        for (auto recentItem : recentItems_)
+        {
+            co_await recentItem.as<RecentFileItem>()->LoadIconAsync();
+        }
+
+        logger::Log().LogMessage(log_level::debug, "Reloading recent files complete");
+    }
+
     // ReSharper restore CppMemberFunctionMayBeStatic
 
     // ReSharper disable once CppMemberFunctionMayBeConst
     Windows::Foundation::IAsyncAction RecentFileItemsDataSource::LoadRecentFiles()
     {
+        if(loaded_)
+        {
+            co_return;
+        }
+
         logger::Log().LogMessage(log_level::debug, "Loading recent files...");
 
         auto removedItems = false;
@@ -168,6 +216,19 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             SaveRecentFiles();
         }
+
+        GlobalOptions::Options().OnRecentFiles([ptr = get_weak()](auto const& recentFiles)
+            {
+                if(auto const self = ptr.get())
+                {
+                    self->OnRecentFilesChanged(recentFiles);
+                    return true;
+                }
+
+                return false;
+            });
+
+        loaded_ = true;
 
         logger::Log().LogMessage(log_level::debug, "Loading recent files icons");
 

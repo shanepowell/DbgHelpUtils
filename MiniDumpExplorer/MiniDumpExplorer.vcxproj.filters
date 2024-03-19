@@ -325,10 +325,31 @@
     <ClCompile Include="Controls\DataGrid\DataGridColumnHeadersPresenterAutomationPeer.cpp">
       <Filter>Controls\DataGrid</Filter>
     </ClCompile>
-    <ClCompile Include="RecentFileItemsDataSource.cpp">
+    <ClCompile Include="Models\RecentFileItemsDataSource.cpp">
       <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="SizeNumberConverter.cpp">
+    <ClCompile Include="Converters\SizeNumberConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\BoolToObjectConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\BoolToVisibilityConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\LocalNumberConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\ConverterTools.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\GlobalOptionItems.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="BoolNegationConverter.cpp">
       <Filter>Converters</Filter>
     </ClCompile>
   </ItemGroup>
@@ -456,6 +477,9 @@
     </ClInclude>
     <ClInclude Include="Controls\DataGrid\DataGridColumnHeadersPresenterAutomationPeer.h">
       <Filter>Controls\DataGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ConverterTools.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

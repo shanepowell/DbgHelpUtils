@@ -7,6 +7,6 @@ namespace MiniDumpExplorer
 
         String SelectedTabTitle { get; };
 
-        void OpenFileInTab(Windows.Storage.StorageFile file);
+        Windows.Foundation.IAsyncAction OpenFileInTab(Windows.Storage.StorageFile file);
     }
 }

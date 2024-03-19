@@ -1,8 +1,27 @@
+import "Models\RecentFileItem.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
-    runtimeclass HeaderPage : Microsoft.UI.Xaml.Controls.Page
+    runtimeclass HeaderPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         HeaderPage();
+
+        RecentFileItem FileItem { get; };
+        String DumpType { get; };
+        String Signature { get; };
+        Boolean IsValid { get; };
+        Boolean IsUserDump { get; };
+        Boolean IsKernelDump { get; };
+        Boolean IsUnknownDump { get; };
+        UInt16 Version { get; };
+        UInt16 InternalVersion { get; };
+        UInt32 NumberOfStreams { get; };
+        UInt32 StreamDirectoryRva { get; };
+        UInt32 CheckSum { get; };
+        UInt32 DumpFileCrc32 { get; };
+        UInt32 TimeDateStamp { get; };
+        UInt64 Flags { get; };
+        IObservableVector<String> FlagsList { get; };
     }
 }

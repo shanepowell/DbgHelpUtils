@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "GlobalOptions.h"
 
+#include <filesystem>
+
+#include "DbgHelpUtils/string_compare.h"
+
 using namespace std::string_literals;
 
 namespace
@@ -79,8 +83,43 @@ void GlobalOptions::OnSizeNumberDisplayFormatChanged(std::function<bool(::SizeNu
 
 void GlobalOptions::RecentFiles(std::vector<std::wstring> value)
 {
-    recentFiles_ = std::move(value);
-    AppPropertiesHelper::SetStringVectorProperty(RecentFilesProperty, value);
+    ApplyValue(std::move(value), recentFiles_, RecentFilesProperty, recentFilesCallbacks_, [](auto const& callback, auto const& value) { return callback(value); });
+}
+
+void GlobalOptions::AddRecentFile(std::wstring const& fullPath)
+{
+    std::filesystem::path const path{fullPath.c_str()};
+    if(!exists(path))
+    {
+        return;
+    }
+
+    std::vector<std::wstring> recentFiles;
+    recentFiles.reserve(recentFiles_.size() + 1);
+
+    recentFiles.push_back(fullPath);
+
+    for (auto const& recentFile : recentFiles_)
+    {
+        if(path == recentFile)
+        {
+            continue;
+        }
+
+        if(!std::filesystem::exists(recentFile))
+        {
+            continue;
+        }
+
+        recentFiles.push_back(recentFile);
+    }
+
+    RecentFiles(std::move(recentFiles));
+}
+
+void GlobalOptions::OnRecentFiles(std::function<bool(std::vector<std::wstring> const&)> callback)
+{
+    recentFilesCallbacks_.push_back(std::move(callback));
 }
 
 GlobalOptions& GlobalOptions::Options()

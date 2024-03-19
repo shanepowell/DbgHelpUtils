@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass BoolNegationConverter : Microsoft.UI.Xaml.Data.IValueConverter
+    {
+        BoolNegationConverter();
+    }
+}

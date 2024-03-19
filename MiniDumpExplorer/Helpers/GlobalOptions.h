@@ -61,23 +61,46 @@ public:
 
     std::vector<std::wstring> const& RecentFiles() const { return recentFiles_; }
     void RecentFiles(std::vector<std::wstring> value);
+    void AddRecentFile(std::wstring const& fullPath);
+
+    void OnRecentFiles(std::function<bool(std::vector<std::wstring> const&)> callback);
 
     static GlobalOptions& Options();
 
 private:
     template<typename T, typename CVT, typename CT>
-    void ApplyValue(T const newValue, T& existingValue, std::wstring const& valueName, CVT& callbacks, CT callback)
+    void ApplyValue(T newValue, T& existingValue, std::wstring const& valueName, CVT& callbacks, CT callback)
     {
         if(existingValue == newValue)
         {
             return;
         }
 
-        existingValue = newValue;
-        AppPropertiesHelper::SetEnumProperty(valueName, newValue);
+        existingValue = std::move(newValue);
+        if constexpr (std::is_enum_v<T>)
+        {
+            AppPropertiesHelper::SetEnumProperty(valueName, existingValue);
+        }
+        else if constexpr (std::is_same_v<T, std::wstring>)
+        {
+            AppPropertiesHelper::SetStringProperty(valueName, existingValue);
+        }
+        else if constexpr (std::is_same_v<T, int>)
+        {
+            AppPropertiesHelper::SetIntProperty(valueName, existingValue);
+        }
+        else if constexpr (std::is_same_v<T, std::vector<std::wstring>>)
+        {
+            AppPropertiesHelper::SetStringVectorProperty(valueName, existingValue);
+        }
+        else
+        {
+            static_assert(false);
+        }
+
         for (auto it = callbacks.begin(); it != callbacks.end(); )
         {
-            if(!callback(*it, newValue))
+            if(!callback(*it, existingValue))
             {
                 it = callbacks.erase(it);
             }
@@ -94,8 +117,9 @@ private:
     ::NumberDisplayFormat numberDisplayFormat_;
     ::SizeNumberDisplayFormat sizeNumberDisplayFormat_;
     dlg_help_utils::size_units::print sizeFormat_;
-    ::SizeDisplayNumberBase sizeBase_;
+    SizeDisplayNumberBase sizeBase_;
     std::vector<std::wstring> recentFiles_;
     std::vector<std::function<bool(::NumberDisplayFormat)>> numberDisplayFormatCallbacks_;
     std::vector<std::function<bool(::SizeNumberDisplayFormat, dlg_help_utils::size_units::print, SizeDisplayNumberBase)>> sizeNumberDisplayFormatCallbacks_;
+    std::vector<std::function<bool(std::vector<std::wstring> const&)>> recentFilesCallbacks_;
 };

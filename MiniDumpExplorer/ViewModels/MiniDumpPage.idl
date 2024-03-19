@@ -4,5 +4,7 @@ namespace MiniDumpExplorer
     runtimeclass MiniDumpPage : Microsoft.UI.Xaml.Controls.Page
     {
         MiniDumpPage(Windows.Storage.StorageFile file);
+
+        Windows.Foundation.IAsyncOperation<Boolean> LoadMiniDump();
     }
 }

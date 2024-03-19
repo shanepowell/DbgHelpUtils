@@ -59,7 +59,7 @@
                     <local:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Image Height="25" Width="25" Source="{Binding Icon,Mode=OneWay}" Margin="10,10,0,0"/>
+                                <Image Height="25" Width="25" Source="{Binding Icon,Mode=OneWay}" Margin="10,10,0,10"/>
                                 <TextBlock Text="{Binding Name,Mode=OneWay}" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>

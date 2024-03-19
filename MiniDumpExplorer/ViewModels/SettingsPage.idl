@@ -13,6 +13,6 @@ namespace MiniDumpExplorer
         String PlatformId { get; };
         String CsdVersion { get; };
         String ProcessorArchitecture { get; };
-        Boolean DisplayHexadecimalNumericFormat { get; set; };
+        UInt64 ExampleSize { get; };
     }
 }

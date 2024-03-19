@@ -104,7 +104,7 @@
                         <FontIcon FontFamily="Segoe UI Symbol" Glyph="&#663;" />
                     </local:SettingsExpander.HeaderIcon>
                     <local:SettingsExpander.Items>
-                        <local:SettingsCard Description="Select which unit size format to display" Header="Unit Size format">
+                        <local:SettingsCard Description="Select which size unit format to use" Header="Unit Size format">
                             <ComboBox x:Name="unitSizeFormatMode" AutomationProperties.AutomationId="unitSizeFormatModeComboBox" SelectionChanged="UnitSizeFormatModeSelectionChanged">
                                 <ComboBoxItem Content="Auto" />
                                 <ComboBoxItem Content="Bytes" />
@@ -117,17 +117,27 @@
                                 <ComboBoxItem Content="Raw" />
                             </ComboBox>
                         </local:SettingsCard>
-                        <local:SettingsCard Description="Select which unit format to display" Header="Format">
+                        <local:SettingsCard Description="Select which unit print format to use" Header="Format">
                             <ComboBox x:Name="unitFormatMode" AutomationProperties.AutomationId="unitFormatModeComboBox" SelectionChanged="UnitFormatModeSelectionChanged">
                                 <ComboBoxItem Content="Full" />
                                 <ComboBoxItem Content="Compact" />
                             </ComboBox>
                         </local:SettingsCard>
-                        <local:SettingsCard Description="Select which unit base to display" Header="Base">
+                        <local:SettingsCard Description="Select which unit base to use" Header="Base">
                             <ComboBox x:Name="unitBaseMode" AutomationProperties.AutomationId="unitBaseModeComboBox" SelectionChanged="UnitBaseModeSelectionChanged">
                                 <ComboBoxItem Content="Base 10" />
                                 <ComboBoxItem Content="Base 16" />
                             </ComboBox>
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Example Size">
+                            <StackPanel>
+                                <TextBlock x:Name="exampleSizeDisplay" 
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           IsTextSelectionEnabled="True"
+                                           TextAlignment="Right"
+                                           Text="{x:Bind ExampleSize, Converter={StaticResource SizeNumberConverter}, Mode=OneWay}">
+                                </TextBlock>
+                            </StackPanel>
                         </local:SettingsCard>
                     </local:SettingsExpander.Items>
                 </local:SettingsExpander>
@@ -163,13 +173,6 @@
                                            IsTextSelectionEnabled="True"
                                            TextAlignment="Right"
                                            Text="{x:Bind SuiteMask, Converter={StaticResource HexNumberConverter}, Mode=OneWay}">
-                                    <TextBlock.ContextFlyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem Icon="Copy" Text="Copy" Click="CopySuiteMaskToClipboard" />
-                                            <MenuFlyoutSeparator />
-                                            <ToggleMenuFlyoutItem Text="Display numbers in hexadecimal" IsChecked="{x:Bind DisplayHexadecimalNumericFormat, Mode=TwoWay}" />
-                                        </MenuFlyout>
-                                    </TextBlock.ContextFlyout>
                                 </TextBlock>
                                 <ListBox
                                     Margin="0,5,0,0"

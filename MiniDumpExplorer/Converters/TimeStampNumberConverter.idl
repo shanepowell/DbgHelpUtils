@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass TimeStampNumberConverter : Microsoft.UI.Xaml.Data.IValueConverter
+    {
+        TimeStampNumberConverter();
+    }
+}

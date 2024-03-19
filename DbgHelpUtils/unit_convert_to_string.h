@@ -28,7 +28,6 @@ namespace dlg_help_utils::unit_utilities
     void convert_to_compact_string(std::wostream& os, Us1 us1, Us2 us2, std::wstring const& us_name)
     {
         using namespace units;
-        os << us1.count();
 
         if (us2.count() > 0)
         {

@@ -1,0 +1,27 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass GlobalOptionItems : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        GlobalOptionItems();
+
+        Boolean DisplayHexadecimalNumericFormat;
+
+        Boolean SizeNumberDisplayUnitFormatAuto;
+        Boolean SizeNumberDisplayUnitFormatBytes;
+        Boolean SizeNumberDisplayUnitFormatKilobytes;
+        Boolean SizeNumberDisplayUnitFormatMegabytes;
+        Boolean SizeNumberDisplayUnitFormatGigabytes;
+        Boolean SizeNumberDisplayUnitFormatTerabytes;
+        Boolean SizeNumberDisplayUnitFormatPetabytes;
+        Boolean SizeNumberDisplayUnitFormatExabytes;
+        Boolean SizeNumberDisplayUnitFormatRaw;
+
+        Boolean SizeNumberDisplayPrintFormatFull;
+        Boolean SizeNumberDisplayPrintFormatCompact;
+
+        Boolean SizeNumberDisplayBase16;
+        Boolean SizeNumberDisplayBase10;
+    }
+}

@@ -6,6 +6,7 @@
 #include <winrt/Windows.Storage.h>
 #include <winrt/Microsoft.Ui.Xaml.Media.Imaging.h>
 
+#include "Helpers/GlobalOptions.h"
 #include "Utility/logger.h"
 
 #if __has_include("RecentFileItem.g.cpp")
@@ -48,6 +49,17 @@ namespace winrt::MiniDumpExplorer::implementation
             exists_ = true;
             size_ = file_size(path);
         }
+
+        GlobalOptions::Options().OnSizeNumberDisplayFormatChanged([ptr = get_weak()](auto const, auto const, const auto)
+            {
+                if(auto const self = ptr.get())
+                {
+                    self->OnSizeNumberDisplayFormatChanged();
+                    return true;
+                }
+
+                return false;
+            });
     }
 
     Windows::Foundation::IAsyncAction RecentFileItem::LoadIconAsync()
@@ -55,7 +67,7 @@ namespace winrt::MiniDumpExplorer::implementation
         try
         {
             icon_ = co_await GetIconFromFile(fullPath_.c_str());
-            OnPropertyChanged(L"Icon");
+            RaisePropertyChanged(L"Icon");
         }
         catch(...)
         {
@@ -73,8 +85,13 @@ namespace winrt::MiniDumpExplorer::implementation
         propertyChanged_.remove(token);
     }
 
-    void RecentFileItem::OnPropertyChanged(hstring const& propertyName)
+    void RecentFileItem::RaisePropertyChanged(hstring const& propertyName)
     {
         propertyChanged_(*this, Data::PropertyChangedEventArgs{ propertyName });
+    }
+
+    void RecentFileItem::OnSizeNumberDisplayFormatChanged()
+    {
+        RaisePropertyChanged(L"Size");
     }
 }

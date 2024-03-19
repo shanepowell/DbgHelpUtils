@@ -120,7 +120,91 @@
   <data name="DefaultTabHeader" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="StreamsTitleName" xml:space="preserve">
+    <value>Streams</value>
+  </data>
+  <data name="LoadMiniDumpErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="LoadMiniDumpErrorCloseButton" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="QuitMiniDumpExplorerDialogTitle" xml:space="preserve">
+    <value>Quit MiniDump Explorer</value>
+  </data>
+  <data name="QuitMiniDumpExplorerDialogContent" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="QuitMiniDumpExplorerDialogPrimaryButtonText" xml:space="preserve">
+    <value>Quit</value>
+  </data>
+  <data name="QuitMiniDumpExplorerDialogSecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Version" xml:space="preserve">
     <value>Version:</value>
+  </data>
+  <data name="ThemeDarkName" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ThemeLightName" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="ThemeChangedMessage" xml:space="preserve">
+    <value>Theme changed to</value>
+  </data>
+  <data name="CopyValueMenuItem" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="HexNumberDisplayFormatOptionMenuItem" xml:space="preserve">
+    <value>Display numbers in hexadecimal</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatMenu" xml:space="preserve">
+    <value>Size Unit Format</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatAutoMenuItem" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatBytesMenuItem" xml:space="preserve">
+    <value>Bytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatKilobytesMenuItem" xml:space="preserve">
+    <value>Kilobytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatMegabytesMenuItem" xml:space="preserve">
+    <value>Megabytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatGigabytesMenuItem" xml:space="preserve">
+    <value>Gigabytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatTerabytesMenuItem" xml:space="preserve">
+    <value>Terabytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatPetabytesMenuItem" xml:space="preserve">
+    <value>Petabytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatExabytesMenuItem" xml:space="preserve">
+    <value>Exabytes</value>
+  </data>
+  <data name="SizeNumberDisplayUnitFormatRawMenuItem" xml:space="preserve">
+    <value>Raw</value>
+  </data>
+  <data name="SizeNumberDisplayPrintFormatMenu" xml:space="preserve">
+    <value>Size Print Format</value>
+  </data>
+  <data name="SizeNumberDisplayPrintFormatFullMenuItem" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="SizeNumberDisplayPrintFormatCompactMenuItem" xml:space="preserve">
+    <value>Compact</value>
+  </data>
+  <data name="SizeNumberDisplayBaseMenu" xml:space="preserve">
+    <value>Size Base</value>
+  </data>
+  <data name="SizeNumberDisplayBase16MenuItem" xml:space="preserve">
+    <value>Base 16</value>
+  </data>
+  <data name="SizeNumberDisplayBase10MenuItem" xml:space="preserve">
+    <value>Base 10</value>
   </data>
 </root>

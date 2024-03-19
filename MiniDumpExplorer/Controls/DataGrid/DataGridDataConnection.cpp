@@ -4,6 +4,7 @@
 #include "DataGrid.h"
 #include "DataGridColumnCollection.h"
 #include "DataGridError.h"
+#include "Utility/logger.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -218,6 +219,11 @@ namespace DataGridInternal
 
     Windows::Foundation::IInspectable DataGridDataConnection::GetDataItem(int32_t const index) const
     {
+        if(index > Count() || index < 0)
+        {
+            return nullptr;
+        }
+
         return CollectionView().GetAt(static_cast<uint32_t>(index));
     }
 
@@ -234,7 +240,7 @@ namespace DataGridInternal
     {
         if(uint32_t index; CollectionView().IndexOf(dataItem, index))
         {
-            return index;
+            return static_cast<int32_t>(index);
         }
 
         return InvalidIndex;
@@ -364,6 +370,13 @@ namespace DataGridInternal
             // A local variable must be used in the lambda expression or the CollectionView will leak
             auto const collectionView = CollectionView();
 
+            weakVectorChangedListener_ = std::make_unique<Utility::WeakEventListener<MiniDumpExplorer::DataGrid, Windows::Foundation::Collections::IObservableVector<Windows::Foundation::IInspectable>, Windows::Foundation::Collections::IVectorChangedEventArgs>>(*owner_);
+            weakVectorChangedListener_->OnEventAction([this]([[maybe_unused]] auto const& instance, auto const& source, auto const& eventArgs) { NotifyingDataSourceVectorChanged(source, eventArgs); });
+            {
+                auto const event = collectionView.VectorChanged([this](auto const& sender, auto const& e) {weakVectorChangedListener_->OnEvent(sender, e); });
+                weakVectorChangedListener_->OnDetachAction([notify = static_cast<Windows::Foundation::Collections::IObservableVector<Windows::Foundation::IInspectable>>(collectionView), event](auto const&){ notify.VectorChanged(event); } );
+            }
+
             weakCurrentChangedListener_ = std::make_unique<Utility::WeakEventListener<MiniDumpExplorer::DataGrid, Windows::Foundation::IInspectable, Windows::Foundation::IInspectable>>(*owner_);
             weakCurrentChangedListener_->OnEventAction([this]([[maybe_unused]] auto const& instance, auto const& source, auto const& eventArgs) { OnCollectionViewCurrentChanged(source, eventArgs); });
             {
@@ -449,84 +462,98 @@ namespace DataGridInternal
 
     void DataGridDataConnection::NotifyingDataSourceCollectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, Interop::NotifyCollectionChangedEventArgs const& e) const
     {
-        if (owner_->LoadingOrUnloadingRow())
+        try
         {
-            throw DataGridError::DataGrid::CannotChangeItemsWhenLoadingRows();
-        }
-
-        switch (e.Action())
-        {
-        case Interop::NotifyCollectionChangedAction::Add:
-            assert(e.NewItems());
-            assert(ShouldAutoGenerateColumns() || IsGrouping() || e.NewItems().Size() == 1);
-            NotifyingDataSourceAdd(e.NewStartingIndex());
-            break;
-
-        case Interop::NotifyCollectionChangedAction::Remove:
-        {
-            auto const removedItems = e.OldItems();
-            if (!removedItems || e.OldStartingIndex() < 0)
+            if (owner_->LoadingOrUnloadingRow())
             {
-                return;
+                throw DataGridError::DataGrid::CannotChangeItemsWhenLoadingRows();
             }
 
-            if (!IsGrouping())
+            switch (e.Action())
             {
-                // If we're grouping then we handle this through the CollectionViewGroup notifications.
-                // Remove is a single item operation.
-                for(uint32_t index = 0; index < removedItems.Size(); ++index)
+            case Interop::NotifyCollectionChangedAction::Add:
+                assert(e.NewItems());
+                assert(ShouldAutoGenerateColumns() || IsGrouping() || e.NewItems().Size() == 1);
+                NotifyingDataSourceAdd(e.NewStartingIndex());
+                break;
+
+            case Interop::NotifyCollectionChangedAction::Remove:
+            {
+                auto const removedItems = e.OldItems();
+                if (!removedItems || e.OldStartingIndex() < 0)
                 {
-                    auto const item = removedItems.GetAt(index);
-                    assert(item);
-                    owner_->RemoveRowAt(e.OldStartingIndex(), item);
+                    return;
                 }
+
+                if (!IsGrouping())
+                {
+                    // If we're grouping then we handle this through the CollectionViewGroup notifications.
+                    // Remove is a single item operation.
+                    for(uint32_t index = 0; index < removedItems.Size(); ++index)
+                    {
+                        auto const item = removedItems.GetAt(index);
+                        assert(item);
+                        owner_->RemoveRowAt(e.OldStartingIndex(), item);
+                    }
+                }
+                break;
             }
-            break;
+
+            case Interop::NotifyCollectionChangedAction::Replace:
+                throw DataGridError::DataGrid::NotifyCollectionChangedActionReplaceNotSupported();
+
+            case Interop::NotifyCollectionChangedAction::Reset:
+                NotifyingDataSourceReset();
+                break;
+
+            default:
+                break;
+            }
         }
-
-        case Interop::NotifyCollectionChangedAction::Replace:
-            throw DataGridError::DataGrid::NotifyCollectionChangedActionReplaceNotSupported();
-
-        case Interop::NotifyCollectionChangedAction::Reset:
-            NotifyingDataSourceReset();
-            break;
-
-        default:
-            break;
+        catch(...)
+        {
+            logger::HandleUnknownException();
         }
     }
 
     void DataGridDataConnection::NotifyingDataSourceVectorChanged(Windows::Foundation::Collections::IObservableVector<Windows::Foundation::IInspectable> const& sender, Windows::Foundation::Collections::IVectorChangedEventArgs const& e) const
     {
-        if (owner_->LoadingOrUnloadingRow())
+        try
         {
-            throw DataGridError::DataGrid::CannotChangeItemsWhenLoadingRows();
-        }
-
-        auto const index = e.Index();
-
-        switch (e.CollectionChange())
-        {
-        case Windows::Foundation::Collections::CollectionChange::ItemChanged:
-            throw DataGridError::DataGrid::CollectionChangeItemChangedNotSupported();
-
-        case Windows::Foundation::Collections::CollectionChange::ItemInserted:
-            NotifyingDataSourceAdd(index);
-            break;
-
-        case Windows::Foundation::Collections::CollectionChange::ItemRemoved:
-            if (!IsGrouping())
+            if (owner_->LoadingOrUnloadingRow())
             {
-                // If we're grouping then we handle this through the CollectionViewGroup notifications.
-                // Remove is a single item operation.
-                owner_->RemoveRowAt(index, sender.GetAt(index));
+                throw DataGridError::DataGrid::CannotChangeItemsWhenLoadingRows();
             }
 
-            break;
+            auto const index = e.Index();
 
-        case Windows::Foundation::Collections::CollectionChange::Reset:
-            NotifyingDataSourceReset();
-            break;
+            switch (e.CollectionChange())
+            {
+            case Windows::Foundation::Collections::CollectionChange::ItemChanged:
+                throw DataGridError::DataGrid::CollectionChangeItemChangedNotSupported();
+
+            case Windows::Foundation::Collections::CollectionChange::ItemInserted:
+                NotifyingDataSourceAdd(index);
+                break;
+
+            case Windows::Foundation::Collections::CollectionChange::ItemRemoved:
+                if (!IsGrouping())
+                {
+                    // If we're grouping then we handle this through the CollectionViewGroup notifications.
+                    // Remove is a single item operation.
+                    owner_->RemoveRowAt(index, sender.GetAt(index));
+                }
+
+                break;
+
+            case Windows::Foundation::Collections::CollectionChange::Reset:
+                NotifyingDataSourceReset();
+                break;
+            }
+        }
+        catch(...)
+        {
+            logger::HandleUnknownException();
         }
     }
 

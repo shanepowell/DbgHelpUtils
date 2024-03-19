@@ -5248,6 +5248,18 @@ const std::map<winrt::guid, ObjectData> InterfaceIdToDependencyProperties = []()
     ));
   }
   // MiniDumpExplorer.h
+  if constexpr (std::is_same_v<winrt::Microsoft::UI::Xaml::DependencyProperty, decltype(winrt::MiniDumpExplorer::BoolToObjectConverter::TrueValueProperty())>)
+  {
+    result.insert(std::make_pair(winrt::guid_of<winrt::MiniDumpExplorer::BoolToObjectConverter>(),
+      ObjectData {
+        ObjectType::Application, 
+        {
+          { L"truevalue"s, []() { return winrt::MiniDumpExplorer::BoolToObjectConverter::TrueValueProperty(); } },
+          { L"falsevalue"s, []() { return winrt::MiniDumpExplorer::BoolToObjectConverter::FalseValueProperty(); } },
+        }
+      }
+    ));
+  }
   if constexpr (std::is_same_v<winrt::Microsoft::UI::Xaml::DependencyProperty, decltype(winrt::MiniDumpExplorer::ControlSizeTrigger::CanTriggerProperty())>)
   {
     result.insert(std::make_pair(winrt::guid_of<winrt::MiniDumpExplorer::ControlSizeTrigger>(),

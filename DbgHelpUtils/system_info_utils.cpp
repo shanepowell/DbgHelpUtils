@@ -154,10 +154,14 @@ struct std::hash<windows_version>
 
 namespace
 {
+    // see https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
     std::unordered_map<windows_version, std::wstring_view> const version_strings =
     {
+        // see https://en.wikipedia.org/wiki/Windows_Server_2022
         {windows_version{10, 0, 20348, VER_NT_SERVER, 0, 0}, L"Windows Server 2022"sv},
         {windows_version{10, 0, 20285, VER_NT_SERVER, 0, 0}, L"Windows Server 2022 (preview)"sv},
+
+        // see https://en.wikipedia.org/wiki/Windows_Server_2019
         {windows_version{10, 0, 19042, VER_NT_SERVER, 0, 0}, L"Windows Server 2019 2004"sv},
         {windows_version{10, 0, 18342, VER_NT_SERVER, 0, 0}, L"Windows Server 2019 2009 20H2"sv},
         {windows_version{10, 0, 19041, VER_NT_SERVER, 0, 0}, L"Windows Server 2019 1903"sv},
@@ -178,9 +182,12 @@ namespace
         {windows_version{5, 2, 0, 0, 0, VER_SUITE_WH_SERVER}, L"Windows Home Server"sv},
         {windows_version{5, 2, 0, 0, 0, 0}, L"Windows Server 2003"sv},
 
+        // see https://en.wikipedia.org/wiki/Windows_11_version_history
+        {windows_version{10, 0, 22631, VER_NT_WORKSTATION, 0, 0}, L"Windows 11 23H2"sv},
         {windows_version{10, 0, 22621, VER_NT_WORKSTATION, 0, 0}, L"Windows 11 22H2"sv},
         {windows_version{10, 0, 22000, VER_NT_WORKSTATION, 0, 0}, L"Windows 11"sv},
 
+        // see https://en.wikipedia.org/wiki/Windows_10_version_history
         {windows_version{10, 0, 19045, VER_NT_WORKSTATION, 0, 0}, L"Windows 10 22H2"sv},
         {windows_version{10, 0, 19044, VER_NT_WORKSTATION, 0, 0}, L"Windows 10 21H2"sv},
         {windows_version{10, 0, 19043, VER_NT_WORKSTATION, 0, 0}, L"Windows 10 21H1"sv},

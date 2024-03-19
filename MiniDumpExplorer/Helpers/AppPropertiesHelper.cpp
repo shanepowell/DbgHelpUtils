@@ -128,7 +128,7 @@ void AppPropertiesHelper::SetStringVectorProperty(std::wstring const& propertyNa
         multiSz.push_back(L'\0');
     }
 
-    set_registry_value(key.get(), propertyName, REG_MULTI_SZ, multiSz.c_str(), (value.size() + 1) * sizeof(wchar_t));
+    set_registry_value(key.get(), propertyName, REG_MULTI_SZ, multiSz.c_str(), (multiSz.size() + 1) * sizeof(wchar_t));
 }
 
 std::vector<std::wstring> AppPropertiesHelper::GetStringVectorProperty(std::wstring const& propertyName, std::vector<std::wstring> const& defaultValue)

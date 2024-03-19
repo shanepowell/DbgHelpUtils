@@ -20,7 +20,8 @@ namespace winrt::MiniDumpExplorer::implementation
         void PropertyChanged(event_token const& token);
 
     private:
-        void OnPropertyChanged(hstring const& propertyName);
+        void RaisePropertyChanged(hstring const& propertyName);
+        void OnSizeNumberDisplayFormatChanged();
 
     private:
         std::wstring fullPath_;

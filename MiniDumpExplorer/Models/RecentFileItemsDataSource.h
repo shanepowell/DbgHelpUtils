@@ -36,12 +36,14 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         void SetupDataProperties();
         void SaveRecentFiles();
+        fire_and_forget OnRecentFilesChanged(std::vector<std::wstring> const& recentFiles);
 
     private:
-
         Microsoft::UI::Xaml::Data::CollectionViewSource collectionViewSource_{};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::RecentFileItem> recentItems_{winrt::single_threaded_observable_vector<MiniDumpExplorer::RecentFileItem>()};
         Windows::Foundation::Collections::IVector<IDataGridDataSourcePropertyInfo> dataProperties_{winrt::single_threaded_vector<IDataGridDataSourcePropertyInfo>()};
+        bool ignoreNextRecentFilesChanged_{false};
+        bool loaded_{false};
     };
 }
 
