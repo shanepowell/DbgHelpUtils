@@ -66,7 +66,8 @@
 #include "Converters\LocalNumberConverter.h"
 #include "Converters\TimeStampNumberConverter.h"
 #include "Models\GlobalOptionItems.h"
-#include "BoolNegationConverter.h"
+#include "Converters\BoolNegationConverter.h"
+#include "Utility/logger.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation
@@ -78,6 +79,10 @@ namespace winrt::MiniDumpExplorer::implementation
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
     
     private:
+        fire_and_forget QueueLogMessage(logger::log_command command, log_level level, std::string log_line, log_level const current_level, std::chrono::system_clock::time_point now_day, std::function<void (logger::log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> const& filter);
+
+    private:
         Microsoft::UI::Xaml::Window window{ nullptr };
+        Windows::System::DispatcherQueueController log_queue_;
     };
 }

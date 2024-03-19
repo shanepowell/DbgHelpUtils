@@ -248,7 +248,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
         catch(...)
         {
-            logger::HandleUnknownException();
+            logger::Log().HandleUnknownException();
         }
     }
 

@@ -127,8 +127,8 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoolNegationConverter.h">
-      <DependentUpon>BoolNegationConverter.cpp</DependentUpon>
+    <ClInclude Include="Converters\BoolNegationConverter.h">
+      <DependentUpon>Converters\BoolNegationConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Controls\DataGrid\DataGrid.h">
@@ -484,7 +484,7 @@
     <Page Include="Controls\SettingsExpander\SettingsExpanderTheme.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BoolNegationConverter.cpp">
+    <ClCompile Include="Converters\BoolNegationConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Controls\DataGrid\DataGrid.cpp">
@@ -741,8 +741,8 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Midl>
-    <Midl Include="BoolNegationConverter.idl">
-      <DependentUpon>BoolNegationConverter.cpp</DependentUpon>
+    <Midl Include="Converters\BoolNegationConverter.idl">
+      <DependentUpon>Converters\BoolNegationConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Controls\DataGrid\DataGrid.idl">

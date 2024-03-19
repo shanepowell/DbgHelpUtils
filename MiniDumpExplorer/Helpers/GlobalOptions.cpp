@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "DbgHelpUtils/string_compare.h"
+#include "DbgHelpUtils/wide_runtime_error.h"
 
 using namespace std::string_literals;
 
@@ -42,12 +43,17 @@ void GlobalOptions::ApplicationTheme(winrt::Microsoft::UI::Xaml::ElementTheme co
 
 void GlobalOptions::LogLevel(log_level const value)
 {
-    if(logLevel_ == value)
+    if(value < log_level::none || value > log_level::debug)
+    {
+        throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Invalid log level value {}.", static_cast<int>(value))};
+    }
+
+    if(auto const oldLogLevel = logLevel_.exchange(value);
+        oldLogLevel == value)
     {
         return;
     }
 
-    logLevel_ = value;
     AppPropertiesHelper::SetEnumProperty(LogLevelProperty, value);
 }
 

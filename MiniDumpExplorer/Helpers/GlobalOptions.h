@@ -113,7 +113,7 @@ private:
 
 private:
     winrt::Microsoft::UI::Xaml::ElementTheme applicationTheme_;
-    log_level logLevel_;
+    std::atomic<log_level> logLevel_;
     ::NumberDisplayFormat numberDisplayFormat_;
     ::SizeNumberDisplayFormat sizeNumberDisplayFormat_;
     dlg_help_utils::size_units::print sizeFormat_;

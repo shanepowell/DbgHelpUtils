@@ -512,7 +512,7 @@ namespace DataGridInternal
         }
         catch(...)
         {
-            logger::HandleUnknownException();
+            logger::Log().HandleUnknownException();
         }
     }
 
@@ -553,7 +553,7 @@ namespace DataGridInternal
         }
         catch(...)
         {
-            logger::HandleUnknownException();
+            logger::Log().HandleUnknownException();
         }
     }
 

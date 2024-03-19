@@ -349,7 +349,7 @@
     <ClCompile Include="Models\GlobalOptionItems.cpp">
       <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="BoolNegationConverter.cpp">
+    <ClCompile Include="Converters\BoolNegationConverter.cpp">
       <Filter>Converters</Filter>
     </ClCompile>
   </ItemGroup>

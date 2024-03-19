@@ -48,7 +48,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
         catch(...)
         {
-            logger::HandleUnknownException();
+            logger::Log().HandleUnknownException();
         }
     }
 
@@ -73,7 +73,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
         catch(...)
         {
-            logger::HandleUnknownException();
+            logger::Log().HandleUnknownException();
         }
     }
 

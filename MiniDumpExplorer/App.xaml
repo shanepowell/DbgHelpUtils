@@ -17,6 +17,7 @@
             <local:SizeNumberConverter x:Key="SizeNumberConverter"/>
             <local:LocalNumberConverter x:Key="LocalNumberConverter"/>
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <local:BoolNegationConverter x:Key="BoolNegationConverter"/>
             <local:TimeStampNumberConverter x:Key="TimeStampNumberConverter"/>
 
             <x:Double x:Key="Breakpoint640Plus">641</x:Double>
