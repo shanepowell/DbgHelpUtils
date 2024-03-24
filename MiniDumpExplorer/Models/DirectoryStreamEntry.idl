@@ -1,0 +1,16 @@
+import "Models\MiniDumpLocationDescriptor.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass DirectoryStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        DirectoryStreamEntry();
+
+        UInt32 Index { get; };
+        UInt32 StreamType { get; };
+        String StreamTypeName { get; };
+        MiniDumpLocationDescriptor Location { get; };
+    }
+}

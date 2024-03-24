@@ -2,6 +2,7 @@
 #pragma once
 
 #include "App.xaml.g.h"
+#include "Utility/logger.h"
 #include "Triggers/ControlSizeTrigger.h"
 #include "Triggers/IsEqualStateTrigger.h"
 #include "Triggers/IsNullOrEmptyStateTrigger.h"
@@ -67,8 +68,9 @@
 #include "Converters\TimeStampNumberConverter.h"
 #include "Models\GlobalOptionItems.h"
 #include "Converters\BoolNegationConverter.h"
-#include "Utility/logger.h"
-
+#include "Models\DirectoryStreamEntry.h"
+#include "Models\MiniDumpLocationDescriptor.h"
+#include "Models\DirectoryStreamEntriesDataSource.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {

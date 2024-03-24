@@ -3,6 +3,7 @@
 
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
+#include "DbgHelpUtils/string_conversation.h"
 #include "Helpers/GlobalOptions.h"
 #include "Utility/InspectableUtility.h"
 
@@ -19,17 +20,20 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     HexNumberConverter::HexNumberConverter() = default;
 
-    Windows::Foundation::IInspectable HexNumberConverter::Convert(Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, [[maybe_unused]] Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)
+    Windows::Foundation::IInspectable HexNumberConverter::Convert(Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)
     {
         if (!value)
         {
             return value;
         }
+        auto widthParameter = string_conversation::wstring_to_utf8(unbox_value_or<hstring>(parameter, L"0"));
+        std::streamsize width{0};
+        std::from_chars(widthParameter.data(), widthParameter.data() + widthParameter.size(), width);
 
         switch(GlobalOptions::Options().NumberDisplayFormat())
         {
         case NumberDisplayFormat::Hexadecimal:
-            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(stream_hex_dump::to_hex(v)); }, value, value);
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([width](auto const v) { return box_value(stream_hex_dump::to_hex(v, width)); }, value, value);
 
         case NumberDisplayFormat::Decimal:
             return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);

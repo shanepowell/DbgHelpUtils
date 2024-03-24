@@ -2,9 +2,11 @@
 
 #include "SettingsPage.g.h"
 
+#include "Models/GlobalOptionsNotifyPropertyChangedBase.h"
+
 namespace winrt::MiniDumpExplorer::implementation
 {
-    struct SettingsPage : SettingsPageT<SettingsPage>
+    struct SettingsPage : SettingsPageT<SettingsPage>, GlobalOptionsNotifyPropertyChangedBase<SettingsPage>
     {
         SettingsPage();
 
@@ -25,16 +27,13 @@ namespace winrt::MiniDumpExplorer::implementation
         void UnitFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void UnitBaseModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
-        event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
-        void PropertyChanged(event_token const& token) noexcept;
-
     private:
         void SetupFlyoutMenus();
         void OnSettingsPageLoaded(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LoadVersionInformation();
-        void RaisePropertyChanged(hstring const& propertyName);
-        void OnNumberDisplayFormatChanged();
-        void OnSizeNumberDisplayFormatChanged();
+
+        void OnNumberDisplayFormatChanged() override;
+        void OnSizeNumberDisplayFormatChanged() override;
 
     private:
         event_token onSettingsPageLoadedEvent_;
@@ -46,7 +45,6 @@ namespace winrt::MiniDumpExplorer::implementation
         hstring platformId_{};
         hstring csdVersion_{};
         hstring processorArchitecture_{};
-        event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
     };
 }
 

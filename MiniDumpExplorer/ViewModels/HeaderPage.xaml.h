@@ -2,6 +2,8 @@
 
 #include "HeaderPage.g.h"
 
+#include "Models/GlobalOptionsNotifyPropertyChangedBase.h"
+
 namespace dlg_help_utils
 {
     class mini_dump;
@@ -12,7 +14,7 @@ namespace winrt::MiniDumpExplorer::implementation
     struct MiniDumpPage;
     struct RecentFileItem;
 
-    struct HeaderPage : HeaderPageT<HeaderPage>
+    struct HeaderPage : HeaderPageT<HeaderPage>, GlobalOptionsNotifyPropertyChangedBase<HeaderPage>
     {
         HeaderPage();
 
@@ -35,24 +37,17 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] uint64_t Flags() const;
         [[nodiscard]] Windows::Foundation::Collections::IObservableVector<hstring> FlagsList() const { return flagsList_; }
 
-        event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
-        void PropertyChanged(event_token const& token) noexcept;
-
     private:
         void SetupFlyoutMenus();
-        void SetupGlobalOptionHooks();
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPage const& miniDumpPage);
         void SetupMinidumpHeader(dlg_help_utils::mini_dump const& miniDump, hstring const& path);
-        void RaisePropertyChanged(hstring const& propertyName);
         fire_and_forget LoadFileItemIcon() const;
-        void OnNumberDisplayFormatChanged();
 
     private:
         MiniDumpExplorer::RecentFileItem fileItem_{nullptr};
         dlg_help_utils::mini_dump const* mini_dump_{nullptr};
         uint32_t data_crc32_{0};
         Windows::Foundation::Collections::IObservableVector<hstring> flagsList_{single_threaded_observable_vector<hstring>()};
-        event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
         event_token miniDumpLoadedEvent_;
     };
 }

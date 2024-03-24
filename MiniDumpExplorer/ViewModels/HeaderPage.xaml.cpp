@@ -5,7 +5,6 @@
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_type.h"
 #include "DbgHelpUtils/system_info_utils.h"
-#include "Helpers/GlobalOptions.h"
 #include "Helpers/UIHelper.h"
 #include "Models/RecentFileItem.h"
 #include "Utility/logger.h"
@@ -21,10 +20,20 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     HeaderPage::HeaderPage()
+        : GlobalOptionsNotifyPropertyChangedBase(
+            {
+                L"Version",
+                L"InternalVersion",
+                L"NumberOfStreams",
+                L"StreamDirectoryRva",
+                L"CheckSum",
+                L"DumpFileCrc32",
+                L"Flags"
+            },
+            { })
     {
         InitializeComponent();
         SetupFlyoutMenus();
-        SetupGlobalOptionHooks();
     }
 
     void HeaderPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
@@ -159,16 +168,6 @@ namespace winrt::MiniDumpExplorer::implementation
         return mini_dump_->header()->Flags;
     }
 
-    event_token HeaderPage::PropertyChanged(Data::PropertyChangedEventHandler const& handler)
-    {
-        return propertyChanged_.add(handler);
-    }
-
-    void HeaderPage::PropertyChanged(event_token const& token) noexcept
-    {
-        propertyChanged_.remove(token);
-    }
-
     void HeaderPage::SetupFlyoutMenus()
     {
         UIHelper::CreateStandardHexNumberMenu(headerVersion());
@@ -179,20 +178,6 @@ namespace winrt::MiniDumpExplorer::implementation
         UIHelper::CreateStandardHexNumberMenu(headerFlags());
 
         UIHelper::CreateStandardSizeNumberMenu(headerFileSize());
-    }
-
-    void HeaderPage::SetupGlobalOptionHooks()
-    {
-        GlobalOptions::Options().OnNumberDisplayFormatChanged([ptr = get_weak()](auto const)
-            {
-                if(auto const self = ptr.get())
-                {
-                    self->OnNumberDisplayFormatChanged();
-                    return true;
-                }
-
-                return false;
-            });
     }
 
     void HeaderPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPage const& miniDumpPage)
@@ -235,11 +220,6 @@ namespace winrt::MiniDumpExplorer::implementation
         LoadFileItemIcon();
     }
 
-    void HeaderPage::RaisePropertyChanged(hstring const& propertyName)
-    {
-        propertyChanged_(*this, Data::PropertyChangedEventArgs{ propertyName });
-    }
-
     fire_and_forget HeaderPage::LoadFileItemIcon() const
     {
         try
@@ -250,16 +230,5 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             logger::Log().HandleUnknownException();
         }
-    }
-
-    void HeaderPage::OnNumberDisplayFormatChanged()
-    {
-        RaisePropertyChanged(L"Version");
-        RaisePropertyChanged(L"InternalVersion");
-        RaisePropertyChanged(L"NumberOfStreams");
-        RaisePropertyChanged(L"StreamDirectoryRva");
-        RaisePropertyChanged(L"CheckSum");
-        RaisePropertyChanged(L"DumpFileCrc32");
-        RaisePropertyChanged(L"Flags");
     }
 }

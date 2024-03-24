@@ -8,7 +8,77 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Streams Click Me</Button>
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock 
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Text="Streams"
+            FontSize="24"
+            Margin="5,0,0,20"
+            HorizontalAlignment="Left" />
+
+        <local:DataGrid
+            x:Name="StreamsDataGrid"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="12"
+            AlternatingRowBackground="Transparent"
+            AlternatingRowForeground="White"
+            HeadersVisibility="Column"
+            RowDetailsVisibilityMode="Collapsed"
+            SelectionMode="Single"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            HorizontalScrollBarVisibility="Visible"
+            VerticalScrollBarVisibility="Visible"
+            AreRowDetailsFrozen="False"
+            AreRowGroupHeadersFrozen="True"
+            AutoGenerateColumns="False"
+            CanUserSortColumns="False"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            ColumnHeaderHeight="32"
+            MaxColumnWidth="1000"
+            IsReadOnly="True"
+            ItemsSource="{x:Bind ItemsSource}"
+            >
+            <local:DataGrid.Columns>
+                <local:DataGridTextColumn Header="Index"
+                                          Binding="{Binding Index,Mode=OneWay}"
+                                          Tag="Index" />
+                <local:DataGridTextColumn Header="Name"
+                                          Binding="{Binding StreamTypeName,Mode=OneWay}"
+                                          Tag="Name" />
+                <local:DataGridTemplateColumn Header="Location" Tag="Location">
+                    <local:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <TextBlock Text="@" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding Location.Rva,Converter={StaticResource HexNumberConverter},ConverterParameter=4,Mode=OneWay}" VerticalAlignment="Center" />
+                                <TextBlock Text="for" VerticalAlignment="Center" Margin="5,0"/>
+                                <TextBlock Text="{Binding Location.DataSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </local:DataGridTemplateColumn.CellTemplate>
+                </local:DataGridTemplateColumn>
+            </local:DataGrid.Columns>
+        </local:DataGrid>
+        <Button
+            Grid.Row="2"
+            Grid.Column="2"
+            Click="SelectStream"
+            Margin="10">Select</Button>
+    </Grid>
 </Page>

@@ -2,9 +2,11 @@
 
 #include "MainWindow.g.h"
 
+#include "Models/NotifyPropertyChangedBase.h"
+
 namespace winrt::MiniDumpExplorer::implementation
 {
-    struct MainWindow : MainWindowT<MainWindow>
+    struct MainWindow : MainWindowT<MainWindow>, NotifyPropertyChangedBase<MainWindow>
     {
         MainWindow();
 
@@ -17,19 +19,12 @@ namespace winrt::MiniDumpExplorer::implementation
 
         hstring SelectedTabTitle();
 
-        event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
-        void PropertyChanged(event_token const& token) noexcept;
-
         Windows::Foundation::IAsyncAction OpenFileInTab(Windows::Storage::StorageFile const& file);
 
     private:
         void OpenDefaultTab();
         Windows::Foundation::IAsyncAction OpenFileInNewTab();
-        void RaisePropertyChanged(hstring const& propertyName);
         static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile const& file);
-
-    private:
-        event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
     };
 }
 

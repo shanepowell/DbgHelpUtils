@@ -38,7 +38,7 @@ namespace DataGridInternal
         size_t NumDisplayedScrollingElements() const { return scrollingElements_.size(); }
 
         int32_t NumTotallyDisplayedScrollingElements() const { return numTotallyDisplayedScrollingElements_; }
-        void NumTotallyDisplayedScrollingElements(int32_t const value) { lastTotallyDisplayedScrollingCol_ = value; }
+        void NumTotallyDisplayedScrollingElements(int32_t const value) { numTotallyDisplayedScrollingElements_ = value; }
 
         double PendingVerticalScrollHeight() const { return pendingVerticalScrollHeight_; }
         void PendingVerticalScrollHeight(double const value) { pendingVerticalScrollHeight_ = value; }

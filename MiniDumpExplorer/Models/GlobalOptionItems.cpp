@@ -2,7 +2,6 @@
 #include "GlobalOptionItems.h"
 
 #include "Helpers/GlobalOptions.h"
-#include "Utility/logger.h"
 
 #if __has_include("GlobalOptionItems.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -17,28 +16,26 @@ using namespace std::chrono_literals;
 namespace winrt::MiniDumpExplorer::implementation
 {
     GlobalOptionItems::GlobalOptionItems()
+        : GlobalOptionsNotifyPropertyChangedBase(
+            { L"DisplayHexadecimalNumericFormat" }, 
+            {
+                L"SizeNumberDisplayUnitFormatAuto",
+                L"SizeNumberDisplayUnitFormatBytes",
+                L"SizeNumberDisplayUnitFormatKilobytes",
+                L"SizeNumberDisplayUnitFormatMegabytes",
+                L"SizeNumberDisplayUnitFormatGigabytes",
+                L"SizeNumberDisplayUnitFormatTerabytes",
+                L"SizeNumberDisplayUnitFormatPetabytes",
+                L"SizeNumberDisplayUnitFormatExabytes",
+                L"SizeNumberDisplayUnitFormatRaw",
+
+                L"SizeNumberDisplayPrintFormatFull",
+                L"SizeNumberDisplayPrintFormatCompact",
+
+                L"SizeNumberDisplayBase16",
+                L"SizeNumberDisplayBase10"
+            })
     {
-        GlobalOptions::Options().OnNumberDisplayFormatChanged([ptr = get_weak()](auto const)
-            {
-                if(auto const self = ptr.get())
-                {
-                    self->OnNumberDisplayFormatChanged();
-                    return true;
-                }
-
-                return false;
-            });
-
-        GlobalOptions::Options().OnSizeNumberDisplayFormatChanged([ptr = get_weak()](auto const, auto const, auto const)
-            {
-                if(auto const self = ptr.get())
-                {
-                    self->OnSizeNumberDisplayFormatChanged();
-                    return true;
-                }
-
-                return false;
-            });
     }
 
     bool GlobalOptionItems::DisplayHexadecimalNumericFormat()
@@ -180,44 +177,5 @@ namespace winrt::MiniDumpExplorer::implementation
     void GlobalOptionItems::SizeNumberDisplayBase10([[maybe_unused]] bool value)
     {
         GlobalOptions::Options().SizeBase(SizeDisplayNumberBase::Base10);
-    }
-
-    event_token GlobalOptionItems::PropertyChanged(Data::PropertyChangedEventHandler const& value)
-    {
-        return propertyChanged_.add(value);
-    }
-
-    void GlobalOptionItems::PropertyChanged(event_token const& token)
-    {
-        propertyChanged_.remove(token);
-    }
-
-    void GlobalOptionItems::RaisePropertyChanged(hstring const& propertyName)
-    {
-        propertyChanged_(*this, Data::PropertyChangedEventArgs(propertyName));
-    }
-
-    void GlobalOptionItems::OnNumberDisplayFormatChanged()
-    {
-        RaisePropertyChanged(L"DisplayHexadecimalNumericFormat");
-    }
-
-    void GlobalOptionItems::OnSizeNumberDisplayFormatChanged()
-    {
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatAuto");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatBytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatKilobytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatMegabytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatGigabytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatTerabytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatPetabytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatExabytes");
-        RaisePropertyChanged(L"SizeNumberDisplayUnitFormatRaw");
-
-        RaisePropertyChanged(L"SizeNumberDisplayPrintFormatFull");
-        RaisePropertyChanged(L"SizeNumberDisplayPrintFormatCompact");
-
-        RaisePropertyChanged(L"SizeNumberDisplayBase16");
-        RaisePropertyChanged(L"SizeNumberDisplayBase10");
     }
 }

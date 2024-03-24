@@ -105,8 +105,7 @@ namespace dlg_help_utils
         {
             throw wide_runtime_error{std::format(L"File: {} has invalid StreamDirectoryRva offset", file_path_)};
         }
-        directory_ = reinterpret_cast<MINIDUMP_DIRECTORY const*>(static_cast<uint8_t const*>(map_view_.get()) + header_
-            ->StreamDirectoryRva);
+        directory_ = reinterpret_cast<MINIDUMP_DIRECTORY const*>(static_cast<uint8_t const*>(map_view_.get()) + header_->StreamDirectoryRva);
         is_valid_ = true;
     }
 

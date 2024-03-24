@@ -6,7 +6,6 @@
 #include <winrt/Windows.Storage.h>
 #include <winrt/Microsoft.Ui.Xaml.Media.Imaging.h>
 
-#include "Helpers/GlobalOptions.h"
 #include "Utility/logger.h"
 
 #if __has_include("RecentFileItem.g.cpp")
@@ -34,7 +33,8 @@ namespace
 namespace winrt::MiniDumpExplorer::implementation
 {
     RecentFileItem::RecentFileItem(hstring const& fullPath)
-        : fullPath_{fullPath.c_str()}
+        : GlobalOptionsNotifyPropertyChangedBase({ }, { L"Size" })
+        , fullPath_{fullPath.c_str()}
     {
         std::filesystem::path const path{fullPath.c_str()};
 
@@ -49,17 +49,6 @@ namespace winrt::MiniDumpExplorer::implementation
             exists_ = true;
             size_ = file_size(path);
         }
-
-        GlobalOptions::Options().OnSizeNumberDisplayFormatChanged([ptr = get_weak()](auto const, auto const, const auto)
-            {
-                if(auto const self = ptr.get())
-                {
-                    self->OnSizeNumberDisplayFormatChanged();
-                    return true;
-                }
-
-                return false;
-            });
     }
 
     Windows::Foundation::IAsyncAction RecentFileItem::LoadIconAsync()
@@ -73,25 +62,5 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             logger::Log().HandleUnknownException();
         }
-    }
-
-    event_token RecentFileItem::PropertyChanged(Data::PropertyChangedEventHandler const& value)
-    {
-        return propertyChanged_.add(value);
-    }
-
-    void RecentFileItem::PropertyChanged(event_token const& token)
-    {
-        propertyChanged_.remove(token);
-    }
-
-    void RecentFileItem::RaisePropertyChanged(hstring const& propertyName)
-    {
-        propertyChanged_(*this, Data::PropertyChangedEventArgs{ propertyName });
-    }
-
-    void RecentFileItem::OnSizeNumberDisplayFormatChanged()
-    {
-        RaisePropertyChanged(L"Size");
     }
 }

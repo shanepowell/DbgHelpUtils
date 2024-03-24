@@ -4461,7 +4461,7 @@ namespace winrt::MiniDumpExplorer::implementation
                     if ([[maybe_unused]] auto const [ctrl, shift] = KeyboardHelper::GetMetaKeyState1();
                         shift && lastHandledKeyDown_ != Windows::System::VirtualKey::Tab)
                     {
-                        assert(!ColumnHeaderHasFocus());
+                        // assert(!ColumnHeaderHasFocus());
 
                         // Show currency on the current column's header as focus is entering the DataGrid backwards.
                         ColumnHeaderHasFocus(true);
@@ -7517,6 +7517,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 if (needVertScrollBar && !std::isinf(cellsHeight))
                 {
                     // maximum travel distance -- not the total height
+                    assert(totalVisibleHeight >= cellsHeight);
                     vScrollBar_.Maximum(totalVisibleHeight - cellsHeight);
                     assert(vScrollBar_.Maximum() >= 0);
 

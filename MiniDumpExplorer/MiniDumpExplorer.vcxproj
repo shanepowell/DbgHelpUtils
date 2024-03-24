@@ -350,10 +350,24 @@
     <ClInclude Include="Helpers\VisualStates.h" />
     <ClInclude Include="Helpers\WinrtDepenencyPropertiesReflectionMap.h" />
     <ClInclude Include="Helpers\WinrtDepenencyPropertiesReflectionMapHeaders.h" />
+    <ClInclude Include="Models\DirectoryStreamEntriesDataSource.h">
+      <DependentUpon>Models\DirectoryStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\DirectoryStreamEntry.h">
+      <DependentUpon>Models\DirectoryStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\GlobalOptionItems.h">
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\GlobalOptionsNotifyPropertyChangedBase.h" />
+    <ClInclude Include="Models\MiniDumpLocationDescriptor.h">
+      <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\NotifyPropertyChangedBase.h" />
     <ClInclude Include="Models\RecentFileItem.h">
       <DependentUpon>Models\RecentFileItem.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -649,7 +663,16 @@
     <ClCompile Include="Helpers\TypeHelper.cpp" />
     <ClCompile Include="Helpers\UISettingsHelper.cpp" />
     <ClCompile Include="Helpers\VisualStates.cpp" />
+    <ClCompile Include="Models\DirectoryStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\DirectoryStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\GlobalOptionItems.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpLocationDescriptor.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\RecentFileItem.cpp">
@@ -958,8 +981,20 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\DirectoryStreamEntriesDataSource.idl">
+      <DependentUpon>Models\DirectoryStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\DirectoryStreamEntry.idl">
+      <DependentUpon>Models\DirectoryStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\GlobalOptionItems.idl">
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MiniDumpLocationDescriptor.idl">
+      <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\RecentFileItem.idl">

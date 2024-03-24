@@ -352,6 +352,15 @@
     <ClCompile Include="Converters\BoolNegationConverter.cpp">
       <Filter>Converters</Filter>
     </ClCompile>
+    <ClCompile Include="Models\DirectoryStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpLocationDescriptor.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\DirectoryStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -480,6 +489,12 @@
     </ClInclude>
     <ClInclude Include="Utility\ConverterTools.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\NotifyPropertyChangedBase.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\GlobalOptionsNotifyPropertyChangedBase.h">
+      <Filter>Models</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

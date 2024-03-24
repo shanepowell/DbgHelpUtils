@@ -2,9 +2,11 @@
 
 #include "GlobalOptionItems.g.h"
 
+#include "GlobalOptionsNotifyPropertyChangedBase.h"
+
 namespace winrt::MiniDumpExplorer::implementation
 {
-    struct GlobalOptionItems : GlobalOptionItemsT<GlobalOptionItems>
+    struct GlobalOptionItems : GlobalOptionItemsT<GlobalOptionItems>, GlobalOptionsNotifyPropertyChangedBase<GlobalOptionItems>
     {
         GlobalOptionItems();
 
@@ -39,17 +41,6 @@ namespace winrt::MiniDumpExplorer::implementation
         static void SizeNumberDisplayBase16(bool value);
         static bool SizeNumberDisplayBase10();
         static void SizeNumberDisplayBase10(bool value);
-
-        event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value);
-        void PropertyChanged(event_token const& token);
-
-    private:
-        void RaisePropertyChanged(hstring const& propertyName);
-        void OnNumberDisplayFormatChanged();
-        void OnSizeNumberDisplayFormatChanged();
-
-    private:
-        event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
     };
 }
 

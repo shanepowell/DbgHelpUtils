@@ -71,7 +71,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
             valid_ = miniDump_->header();
 
-            if (valid_ && miniDump_->type() == dump_file_type::user_mode_dump)
+            if (valid_ && miniDump_->type() == dump_file_type::user_mode_dump && miniDump_->directory() != nullptr)
             {
                 Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
                 auto const streamsTitleName = rm.MainResourceMap().GetValue(L"Resources/StreamsTitleName").ValueAsString();

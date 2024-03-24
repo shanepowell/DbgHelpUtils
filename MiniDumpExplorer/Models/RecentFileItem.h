@@ -2,9 +2,11 @@
 
 #include "RecentFileItem.g.h"
 
+#include "GlobalOptionsNotifyPropertyChangedBase.h"
+
 namespace winrt::MiniDumpExplorer::implementation
 {
-    struct RecentFileItem : RecentFileItemT<RecentFileItem>
+    struct RecentFileItem : RecentFileItemT<RecentFileItem>, GlobalOptionsNotifyPropertyChangedBase<RecentFileItem>
     {
         RecentFileItem(hstring const& fullPath);
 
@@ -16,12 +18,6 @@ namespace winrt::MiniDumpExplorer::implementation
         std::wstring const& FullPath() const { return fullPath_; }
 
         Windows::Foundation::IAsyncAction LoadIconAsync();
-        event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value);
-        void PropertyChanged(event_token const& token);
-
-    private:
-        void RaisePropertyChanged(hstring const& propertyName);
-        void OnSizeNumberDisplayFormatChanged();
 
     private:
         std::wstring fullPath_;
@@ -30,7 +26,6 @@ namespace winrt::MiniDumpExplorer::implementation
         Microsoft::UI::Xaml::Media::ImageSource icon_{nullptr};
         size_t size_{};
         bool exists_{false};
-        event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
     };
 }
 

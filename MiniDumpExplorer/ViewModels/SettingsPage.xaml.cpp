@@ -33,6 +33,7 @@ namespace winrt::MiniDumpExplorer::implementation
     }
 
     SettingsPage::SettingsPage()
+        : GlobalOptionsNotifyPropertyChangedBase({ L"SuiteMask" },{ L"ExampleSize" })
     {
         LoadVersionInformation();
         InitializeComponent();
@@ -67,28 +68,6 @@ namespace winrt::MiniDumpExplorer::implementation
         unitSizeFormatMode().SelectedIndex(static_cast<int>(options.SizeNumberDisplayFormat()));
         unitFormatMode().SelectedIndex(static_cast<int>(options.SizeFormat()));
         unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
-
-        GlobalOptions::Options().OnNumberDisplayFormatChanged([ptr = get_weak()](auto const)
-            {
-                if(auto const self = ptr.get())
-                {
-                    self->OnNumberDisplayFormatChanged();
-                    return true;
-                }
-
-                return false;
-            });
-
-        GlobalOptions::Options().OnSizeNumberDisplayFormatChanged([ptr = get_weak()](auto const, auto const, const auto)
-            {
-                if(auto const self = ptr.get())
-                {
-                    self->OnSizeNumberDisplayFormatChanged();
-                    return true;
-                }
-
-                return false;
-            });
     }
 
     void SettingsPage::LoadVersionInformation()
@@ -127,15 +106,9 @@ namespace winrt::MiniDumpExplorer::implementation
         processorArchitecture_ = system_info_utils::processor_architecture_to_string(system_info.wProcessorArchitecture);
     }
 
-    void SettingsPage::RaisePropertyChanged(hstring const& propertyName)
-    {
-        propertyChanged_(*this, Data::PropertyChangedEventArgs(propertyName));
-    }
-
     void SettingsPage::OnNumberDisplayFormatChanged()
     {
         numberFormatMode().SelectedIndex(static_cast<int>(GlobalOptions::Options().NumberDisplayFormat()));
-        RaisePropertyChanged(L"SuiteMask");
     }
 
     void SettingsPage::OnSizeNumberDisplayFormatChanged()
@@ -144,7 +117,6 @@ namespace winrt::MiniDumpExplorer::implementation
         unitSizeFormatMode().SelectedIndex(static_cast<int>(options.SizeNumberDisplayFormat()));
         unitFormatMode().SelectedIndex(static_cast<int>(options.SizeFormat()));
         unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
-        RaisePropertyChanged(L"ExampleSize");
     }
 
     uint64_t SettingsPage::ExampleSize()
@@ -218,16 +190,6 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         const auto value = static_cast<SizeDisplayNumberBase>(unitBaseMode().SelectedIndex());
         GlobalOptions::Options().SizeBase(value);
-    }
-
-    event_token SettingsPage::PropertyChanged(Data::PropertyChangedEventHandler const& handler)
-    {
-        return propertyChanged_.add(handler);
-    }
-
-    void SettingsPage::PropertyChanged(event_token const& token) noexcept
-    {
-        propertyChanged_.remove(token);
     }
 
     void SettingsPage::SetupFlyoutMenus()

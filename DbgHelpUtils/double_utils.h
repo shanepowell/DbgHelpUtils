@@ -23,12 +23,12 @@ namespace double_utils
 
     [[nodiscard]] inline bool greater_than_or_close(double const value1, double const value2)
     {
-        return value1 > value2 && are_close(value1, value2);
+        return value1 > value2 || are_close(value1, value2);
     }
 
     [[nodiscard]] inline bool less_than(double const value1, double const value2)
     {
-        return value1 < value2 || !are_close(value1, value2);
+        return value1 < value2 && !are_close(value1, value2);
     }
 
     [[nodiscard]] inline bool less_than_or_close(double const value1, double const value2)

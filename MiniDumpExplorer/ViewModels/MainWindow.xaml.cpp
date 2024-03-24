@@ -87,16 +87,6 @@ namespace winrt::MiniDumpExplorer::implementation
         return L"";
     }
 
-    event_token MainWindow::PropertyChanged(Data::PropertyChangedEventHandler const& handler)
-    {
-        return propertyChanged_.add(handler);
-    }
-
-    void MainWindow::PropertyChanged(event_token const& token) noexcept
-    {
-        propertyChanged_.remove(token);
-    }
-
     Windows::Foundation::IAsyncAction MainWindow::OpenFileInTab(Windows::Storage::StorageFile const& file)
     {
         if(auto const tabItem = co_await CreateNewTab(file);
@@ -143,11 +133,6 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         co_await OpenFileInTab(file);
-    }
-
-    void MainWindow::RaisePropertyChanged(hstring const& propertyName)
-    {
-        propertyChanged_(*this, Data::PropertyChangedEventArgs(propertyName));
     }
 
     Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const& file)

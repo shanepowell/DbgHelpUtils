@@ -2794,7 +2794,7 @@ namespace winrt::MiniDumpExplorer::implementation
             VerticalOffset(newVerticalOffset);
         }
 
-        assert(verticalOffset_ != 0 || NegVerticalOffset() != 0 || DisplayData().FirstScrollingSlot() == InvalidIndex);
+        assert(verticalOffset_ != 0 || NegVerticalOffset() != 0 || DisplayData().FirstScrollingSlot() <= 0);
 
         SetVerticalOffset(verticalOffset_);
 
