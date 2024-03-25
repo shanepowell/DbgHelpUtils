@@ -214,7 +214,7 @@ namespace winrt::MiniDumpExplorer::implementation
             flagsList_.Append(type);
         }
 
-        fileItem_ = MiniDumpExplorer::RecentFileItem{path};
+        fileItem_ = MiniDumpExplorer::RecentFileItem{0, path};
 
         // ReSharper disable once CppExpressionWithoutSideEffects
         LoadFileItemIcon();

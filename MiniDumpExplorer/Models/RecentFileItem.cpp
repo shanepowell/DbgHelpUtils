@@ -32,9 +32,10 @@ namespace
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    RecentFileItem::RecentFileItem(hstring const& fullPath)
+    RecentFileItem::RecentFileItem(uint32_t const index, hstring const& fullPath)
         : GlobalOptionsNotifyPropertyChangedBase({ }, { L"Size" })
         , fullPath_{fullPath.c_str()}
+        , index_{index}
     {
         std::filesystem::path const path{fullPath.c_str()};
 

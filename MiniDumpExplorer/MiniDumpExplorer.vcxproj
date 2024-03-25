@@ -385,11 +385,13 @@
     <ClInclude Include="Utility\OptionalUtility.h" />
     <ClInclude Include="Utility\Range.h" />
     <ClInclude Include="Utility\RectContains.h" />
+    <ClInclude Include="Utility\SortObservableVector.h" />
     <ClInclude Include="Utility\StringHelper.h" />
     <ClInclude Include="Utility\SuspendedHandlers.h" />
     <ClInclude Include="Utility\ValidationResult.h" />
     <ClInclude Include="Utility\ValidationUtil.h" />
     <ClInclude Include="Utility\WeakEventListener.h" />
+    <ClInclude Include="Utility\WinrtEmptyValue.h" />
     <ClInclude Include="ViewModels\DefaultPage.xaml.h">
       <DependentUpon>ViewModels\DefaultPage.xaml</DependentUpon>
       <SubType>Code</SubType>

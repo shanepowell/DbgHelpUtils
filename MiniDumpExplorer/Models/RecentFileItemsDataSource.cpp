@@ -3,20 +3,70 @@
 
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
+#include "DbgHelpUtils/string_compare.h"
+#include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
 #include "Models/RecentFileItem.h"
 #include "Utility/logger.h"
+#include "Utility/SortObservableVector.h"
 
 #if __has_include("RecentFileItemsDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "RecentFileItemsDataSource.g.cpp"  // NOLINT(bugprone-suspicious-include)
 #endif
 
+#include <unordered_map>
+
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    namespace
+    {
+        enum class CompareResult
+        {
+            Less,
+            Equal,
+            Greater
+        };
+
+        CompareResult CompareStrings(std::wstring_view const& a, std::wstring_view const& b)
+        {
+            auto const result = dlg_help_utils::string_utils::icompare(a, b);
+            if(result < 0)
+            {
+                return CompareResult::Less;
+            }
+            if (result > 0)
+            {
+                return CompareResult::Greater;
+            }
+            return CompareResult::Equal;
+        }
+
+        std::unordered_map<std::wstring, std::function<CompareResult(MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)>> const ColumnSorters
+            {
+                {L"FileName", [](MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)
+                    {
+                        return CompareStrings(a.Name(), b.Name());
+                    }},
+                {L"Location", [](MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)
+                    {
+                        return CompareStrings(a.Location(), b.Location());
+                    }},
+                {L"Size", [](MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)
+                    {
+                        return a.Size() == b.Size() ? CompareResult::Equal : a.Size() < b.Size() ? CompareResult::Less : CompareResult::Greater;
+                    }}
+            };
+
+        bool UnorderedCompare(MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)
+        {
+            return a.Index() < b.Index();
+        }
+    }
+
     RecentFileItemsDataSource::RecentFileItemsDataSource()
     {
         SetupDataProperties();
@@ -117,6 +167,40 @@ namespace winrt::MiniDumpExplorer::implementation
         return propertyPath;
     }
 
+    void RecentFileItemsDataSource::Sort([[maybe_unused]] MiniDumpExplorer::DataGrid const& dataGrid, [[maybe_unused]] MiniDumpExplorer::DataGridColumnEventArgs const& args) const
+    {
+        auto sortDirection = args.Column().SortDirection();
+
+        if(sortDirection)
+        {
+            switch(sortDirection.Value())
+            {
+            case DataGridSortDirection::Ascending:
+                sortDirection = {};
+                break;
+            case DataGridSortDirection::Descending:
+                sortDirection = DataGridSortDirection::Ascending;
+                break;
+            }
+        }
+        else
+        {
+            sortDirection = DataGridSortDirection::Descending;
+        }
+
+        Utility::SortObservableVector(recentItems_, GetColumnComparer(sortDirection, args.Column().Tag().as<hstring>()));
+
+        args.Column().SortDirection(sortDirection);
+
+        for(auto const& column : dataGrid.Columns())
+        {
+            if(column != args.Column())
+            {
+                column.SortDirection({});
+            }
+        }
+    }
+
     // ReSharper disable once CppMemberFunctionMayBeConst
     void RecentFileItemsDataSource::ClearAllRecentFiles()
     {
@@ -150,39 +234,7 @@ namespace winrt::MiniDumpExplorer::implementation
             co_return;
         }
 
-        recentItems_.Clear();
-
-        logger::Log().LogMessage(log_level::debug, "Reloading recent files icons");
-
-        auto removedItems = false;
-        for(const auto& file : recentFiles)
-        {
-            MiniDumpExplorer::RecentFileItem item{hstring{file}};
-            if(auto const internalItem = item.as<RecentFileItem>();
-                internalItem->Exists())
-            {
-                recentItems_.Append(item);
-            }
-            else
-            {
-                removedItems = true;
-            }
-        }
-
-        if(removedItems)
-        {
-            ignoreNextRecentFilesChanged_ = true;
-            SaveRecentFiles();
-        }
-
-        logger::Log().LogMessage(log_level::debug, "Reloading recent files icons");
-
-        for (auto recentItem : recentItems_)
-        {
-            co_await recentItem.as<RecentFileItem>()->LoadIconAsync();
-        }
-
-        logger::Log().LogMessage(log_level::debug, "Reloading recent files complete");
+        LoadRecordFilesIntoCollection(recentFiles);
     }
 
     // ReSharper restore CppMemberFunctionMayBeStatic
@@ -193,28 +245,6 @@ namespace winrt::MiniDumpExplorer::implementation
         if(loaded_)
         {
             co_return;
-        }
-
-        logger::Log().LogMessage(log_level::debug, "Loading recent files...");
-
-        auto removedItems = false;
-        for(const auto& file : GlobalOptions::Options().RecentFiles())
-        {
-            MiniDumpExplorer::RecentFileItem item{hstring{file}};
-            if(auto const internalItem = item.as<RecentFileItem>();
-                internalItem->Exists())
-            {
-                recentItems_.Append(item);
-            }
-            else
-            {
-                removedItems = true;
-            }
-        }
-
-        if(removedItems)
-        {
-            SaveRecentFiles();
         }
 
         GlobalOptions::Options().OnRecentFiles([ptr = get_weak()](auto const& recentFiles)
@@ -228,15 +258,103 @@ namespace winrt::MiniDumpExplorer::implementation
                 return false;
             });
 
+        co_await LoadRecordFilesIntoCollection(GlobalOptions::Options().RecentFiles());
+    }
+
+    Windows::Foundation::IAsyncAction RecentFileItemsDataSource::LoadRecordFilesIntoCollection(std::vector<std::wstring> const& recentFiles)
+    {
+        recentItems_.Clear();
+
+        logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files..." : "Reloading recent files...");
+
+        auto removedItems = false;
+        uint32_t index{0};
+        for(const auto& file : recentFiles)
+        {
+            MiniDumpExplorer::RecentFileItem item{index, hstring{file}};
+            if(auto const internalItem = item.as<RecentFileItem>();
+                internalItem->Exists())
+            {
+                recentItems_.Append(item);
+                ++index;
+            }
+            else
+            {
+                removedItems = true;
+            }
+        }
+
+        if(removedItems)
+        {
+            SaveRecentFiles();
+        }
+
         loaded_ = true;
 
-        logger::Log().LogMessage(log_level::debug, "Loading recent files icons");
+        logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files icons" : "Reloading recent files icons");
 
         for (auto recentItem : recentItems_)
         {
             co_await recentItem.as<RecentFileItem>()->LoadIconAsync();
         }
 
-        logger::Log().LogMessage(log_level::debug, "Loading recent files complete");
+        logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files complete" : "Reloading recent files complete");
+    }
+
+    std::unordered_map<MiniDumpExplorer::RecentFileItem, uint32_t> RecentFileItemsDataSource::GetRecentFileCurrentSortOrder() const
+    {
+        std::unordered_map<MiniDumpExplorer::RecentFileItem, uint32_t> sortOrder;
+        uint32_t index{0};
+        for(const auto& item : recentItems_)
+        {
+            sortOrder[item] = index++;
+        }
+        return sortOrder;
+    }
+
+    std::function<bool(MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)> RecentFileItemsDataSource::GetColumnComparer(Windows::Foundation::IReference<DataGridSortDirection> const& sortDirection, hstring const& columnTag) const
+    {
+        if(sortDirection)
+        {
+            switch(sortDirection.Value())
+            {
+            case DataGridSortDirection::Ascending:
+                return [columnComparer = ColumnSorters.at(std::wstring{columnTag}), currentSortOrder = GetRecentFileCurrentSortOrder()](MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)
+                {
+                    switch(columnComparer(a, b))
+                    {
+                    case CompareResult::Less:
+                        return false;
+                    case CompareResult::Equal:
+                        return currentSortOrder.at(a) < currentSortOrder.at(b);
+                    case CompareResult::Greater:
+                        return true;
+                    }
+
+                    throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Unsupported compare result")};
+                };
+
+            case DataGridSortDirection::Descending:
+                return [columnComparer = ColumnSorters.at(std::wstring{columnTag}), currentSortOrder = GetRecentFileCurrentSortOrder()](MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)
+                {
+                    switch(columnComparer(a, b))
+                    {
+                    case CompareResult::Less:
+                        return true;
+                    case CompareResult::Equal:
+                        return currentSortOrder.at(a) < currentSortOrder.at(b);
+                    case CompareResult::Greater:
+                        return false;
+                    }
+
+                    throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Unsupported compare result")};
+                };
+
+            default:
+                throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Unsupported sort direction : {}", static_cast<int>(sortDirection.Value()))};
+            }
+        }
+
+        return UnorderedCompare;
     }
 }

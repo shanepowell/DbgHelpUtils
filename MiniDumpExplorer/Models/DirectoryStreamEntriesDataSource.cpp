@@ -3,9 +3,7 @@
 
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
-#include "Helpers/GlobalOptions.h"
 #include "Models/DirectoryStreamEntry.h"
-#include "Utility/logger.h"
 
 #if __has_include("DirectoryStreamEntriesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -117,7 +115,11 @@ namespace winrt::MiniDumpExplorer::implementation
         return propertyPath;
     }
 
-    void DirectoryStreamEntriesDataSource::LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump)
+    void DirectoryStreamEntriesDataSource::Sort([[maybe_unused]] MiniDumpExplorer::DataGrid const& dataGrid, [[maybe_unused]] MiniDumpExplorer::DataGridColumnEventArgs const& args)
+    {
+    }
+
+    void DirectoryStreamEntriesDataSource::LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump) const
     {
         entries_.Clear();
         auto const* header = mini_dump.header();

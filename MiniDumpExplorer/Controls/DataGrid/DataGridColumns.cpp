@@ -48,6 +48,10 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGrid::OnColumnSorting(MiniDumpExplorer::DataGridColumnEventArgs const& e)
     {
+        if(auto const itemsSource = ItemsSource(); itemsSource)
+        {
+            itemsSource.Sort(*this, e);
+        }
         sortingHandler_(*this, e);
     }
 

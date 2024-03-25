@@ -9,6 +9,8 @@ namespace dlg_help_utils
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct DataGrid;
+    struct DataGridColumnEventArgs;
     struct DirectoryStreamEntry;
 
     struct DirectoryStreamEntriesDataSource : DirectoryStreamEntriesDataSourceT<DirectoryStreamEntriesDataSource>
@@ -33,8 +35,9 @@ namespace winrt::MiniDumpExplorer::implementation
         void ClearDataProperties();
         void UpdateDataProperties();
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
+        void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args);
 
-        void LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump);
+        void LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump) const;
 
     private:
         void SetupDataProperties();

@@ -1,3 +1,5 @@
+import "Controls\DataGrid\DataGrid.idl";
+import "Controls\DataGrid\DataGridColumnEventArgs.idl";
 import "Controls\DataGrid\DataGridDataSourcePropertyInfo.idl";
 
 namespace MiniDumpExplorer
@@ -22,5 +24,6 @@ namespace MiniDumpExplorer
         void ClearDataProperties();
         void UpdateDataProperties();
         String GetPropertyDisplayName(String propertyPath);
+        void Sort(DataGrid dataGrid, DataGridColumnEventArgs args);
     }
 }
