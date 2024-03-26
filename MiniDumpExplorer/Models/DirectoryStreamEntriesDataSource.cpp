@@ -4,6 +4,7 @@
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
 #include "Models/DirectoryStreamEntry.h"
+#include "Utility/DataGridColumnSorter.h"
 
 #if __has_include("DirectoryStreamEntriesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -15,6 +16,22 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    namespace
+    {
+        std::unordered_map<std::wstring, std::function<Utility::CompareResult(MiniDumpExplorer::DirectoryStreamEntry const& a, MiniDumpExplorer::DirectoryStreamEntry const& b)>> const ColumnSorters
+            {
+                {L"Index", Utility::MakeComparer(&MiniDumpExplorer::DirectoryStreamEntry::Index)},
+                {L"Name", Utility::MakeComparer(&MiniDumpExplorer::DirectoryStreamEntry::StreamTypeName)},
+                {L"Location", [](MiniDumpExplorer::DirectoryStreamEntry const& a, MiniDumpExplorer::DirectoryStreamEntry const& b)
+                    {
+                        return Utility::SortCompare(a.Location().Rva(), b.Location().Rva());
+                    }},
+                {Utility::UnorderedTag, Utility::MakeComparer(&MiniDumpExplorer::DirectoryStreamEntry::Index)}
+            };
+
+    }
+
+
     DirectoryStreamEntriesDataSource::DirectoryStreamEntriesDataSource()
     {
         SetupDataProperties();
@@ -115,8 +132,9 @@ namespace winrt::MiniDumpExplorer::implementation
         return propertyPath;
     }
 
-    void DirectoryStreamEntriesDataSource::Sort([[maybe_unused]] MiniDumpExplorer::DataGrid const& dataGrid, [[maybe_unused]] MiniDumpExplorer::DataGridColumnEventArgs const& args)
+    void DirectoryStreamEntriesDataSource::Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const
     {
+        ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
     void DirectoryStreamEntriesDataSource::LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump) const

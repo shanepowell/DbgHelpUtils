@@ -378,6 +378,7 @@
     </ClInclude>
     <ClInclude Include="Utility\BindingInfo.h" />
     <ClInclude Include="Utility\ConverterTools.h" />
+    <ClInclude Include="Utility\DataGridColumnSorter.h" />
     <ClInclude Include="Utility\erase_value.h" />
     <ClInclude Include="Utility\IndexToValueTable.h" />
     <ClInclude Include="Utility\KeyboardHelper.h" />
@@ -685,6 +686,7 @@
     </ClCompile>
     <ClCompile Include="Utility\BindingInfo.cpp" />
     <ClCompile Include="Utility\ConverterTools.cpp" />
+    <ClCompile Include="Utility\DataGridColumnSorter.cpp" />
     <ClCompile Include="Utility\KeyboardHelper.cpp" />
     <ClCompile Include="Utility\SuspendedHandlers.cpp" />
     <ClCompile Include="Utility\ValidationResult.cpp" />

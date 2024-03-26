@@ -43,8 +43,6 @@ namespace winrt::MiniDumpExplorer::implementation
         void SaveRecentFiles();
         fire_and_forget OnRecentFilesChanged(std::vector<std::wstring> const& recentFiles);
         Windows::Foundation::IAsyncAction LoadRecordFilesIntoCollection(std::vector<std::wstring> const& recentFiles);
-        std::unordered_map<MiniDumpExplorer::RecentFileItem, uint32_t> GetRecentFileCurrentSortOrder() const;
-        std::function<bool (MiniDumpExplorer::RecentFileItem const& a, MiniDumpExplorer::RecentFileItem const& b)> GetColumnComparer(Windows::Foundation::IReference<DataGridSortDirection> const& sortDirection, hstring const& columnTag) const;
 
     private:
         Microsoft::UI::Xaml::Data::CollectionViewSource collectionViewSource_{};

@@ -361,6 +361,9 @@
     <ClCompile Include="Models\DirectoryStreamEntriesDataSource.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="Utility\DataGridColumnSorter.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -500,6 +503,9 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Utility\WinrtEmptyValue.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\DataGridColumnSorter.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
