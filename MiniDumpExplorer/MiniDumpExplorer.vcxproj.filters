@@ -364,6 +364,12 @@
     <ClCompile Include="Utility\DataGridColumnSorter.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Models\MiniDumpPageParameters.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtils\mini_dump_stream_type_impl.cpp">
+      <Filter>DlgHelpUtils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -676,6 +682,9 @@
     </Filter>
     <Filter Include="Controls\SettingsExpander">
       <UniqueIdentifier>{0ca69060-4681-4145-be4f-6d98d94e2149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgHelpUtils">
+      <UniqueIdentifier>{1cb4cba9-a8d3-494e-b3f5-e7795f34eb64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

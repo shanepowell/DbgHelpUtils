@@ -1,6 +1,9 @@
 #pragma once
 
 #include "MiniDumpPage.g.h"
+
+#include "DbgHelpUtils/mini_dump.h"
+
 #include <memory>
 
 
@@ -32,6 +35,10 @@ namespace winrt::MiniDumpExplorer::implementation
 
         event_token MiniDumpLoaded(Windows::Foundation::EventHandler<MiniDumpExplorer::MiniDumpPage> const& value);
         void MiniDumpLoaded(event_token const& value);
+
+    private:
+        Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStreamType(MINIDUMP_STREAM_TYPE stream_type, uint32_t stream_index, MINIDUMP_LOCATION_DESCRIPTOR const& location) const;
+        Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStream(std::wstring const& title, std::wstring const& tag, uint32_t stream_index, Microsoft::UI::Xaml::Controls::Symbol symbol) const;
 
     private:
         Windows::Storage::StorageFile file_{ nullptr };

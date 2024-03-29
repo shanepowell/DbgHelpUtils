@@ -71,6 +71,7 @@
 #include "Models\DirectoryStreamEntry.h"
 #include "Models\MiniDumpLocationDescriptor.h"
 #include "Models\DirectoryStreamEntriesDataSource.h"
+#include "Models\MiniDumpPageParameters.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {

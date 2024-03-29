@@ -19,6 +19,8 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct MiniDumpPageParameters;
+
     HeaderPage::HeaderPage()
         : GlobalOptionsNotifyPropertyChangedBase(
             {
@@ -38,7 +40,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void HeaderPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
     {
-        if(auto const miniDumpPage = e.Parameter().as<MiniDumpPage>();
+        auto const miniDumpPageParameters = e.Parameter().as<MiniDumpExplorer::MiniDumpPageParameters>();
+        if(auto const miniDumpPage = miniDumpPageParameters.MiniDump().as<MiniDumpPage>();
             miniDumpPage->MiniDumpOpened())
         {
             SetupMinidumpHeader(miniDumpPage->MiniDump(), miniDumpPage->File().Path());

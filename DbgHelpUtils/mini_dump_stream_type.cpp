@@ -1,93 +1,55 @@
 ﻿#include "mini_dump_stream_type.h"
 
 #include <format>
-#include <unordered_map>
 
-#include "stream_hex_dump.h"
 #include "string_compare.h"
 #include "wide_runtime_error.h"
 
 using namespace std::string_literals;
-using namespace dlg_help_utils::stream_hex_dump;
-
-namespace
-{
-    std::unordered_map<MINIDUMP_STREAM_TYPE, std::tuple<std::wstring, std::wstring>> const type_map =
-    {
-        {UnusedStream, {L"Unused"s, L"UnusedStream"s}},
-        {ReservedStream0, {L"Reserved 0"s, L"ReservedStream0"s}},
-        {ReservedStream1, {L"Reserved 1"s, L"ReservedStream1"s}},
-        {ThreadListStream, {L"Thread List"s, L"ThreadListStream"s}},
-        {ModuleListStream, {L"Module List"s, L"ModuleListStream"s}},
-        {MemoryListStream, {L"Memory List"s, L"MemoryListStream"s}},
-        {ExceptionStream, {L"Exception"s, L"ExceptionStream"s}},
-        {SystemInfoStream, {L"System Info"s, L"SystemInfoStream"s}},
-        {ThreadExListStream, {L"ThreadEx List"s, L"ThreadExListStream"s}},
-        {Memory64ListStream, {L"MemoryEx List"s, L"Memory64ListStream"s}},
-        {CommentStreamA, {L"Comment Ascii"s, L"CommentStreamA"s}},
-        {CommentStreamW, {L"Comment Unicode"s, L"CommentStreamW"s}},
-        {HandleDataStream, {L"Handle Data"s, L"HandleDataStream"s}},
-        {FunctionTableStream, {L"Function Table"s, L"FunctionTableStream"s}},
-        {UnloadedModuleListStream, {L"Unloaded Module List"s, L"UnloadedModuleListStream"s}},
-        {MiscInfoStream, {L"Misc Info"s, L"MiscInfoStream"s}},
-        {MemoryInfoListStream, {L"Memory Info List"s, L"MemoryInfoListStream"s}},
-        {ThreadInfoListStream, {L"Thread Info List"s, L"ThreadInfoListStream"s}},
-        {HandleOperationListStream, {L"Handle Operation List"s, L"HandleOperationListStream"s}},
-        {TokenStream, {L"Token"s, L"TokenStream"s}},
-        {JavaScriptDataStream, {L"Java Script Data"s, L"JavaScriptDataStream"s}},
-        {SystemMemoryInfoStream, {L"System Memory Info"s, L"SystemMemoryInfoStream"s}},
-        {ProcessVmCountersStream, {L"Process Vm Counters"s, L"ProcessVmCountersStream"s}},
-        {IptTraceStream, {L"IPT Trace"s, L"IptTraceStream"s}},
-        {ThreadNamesStream, {L"Thread Names"s, L"ThreadNamesStream"s}},
-        {ceStreamNull, {L"CE Null"s, L"ceStreamNull"s}},
-        {ceStreamSystemInfo, {L"CE System Info"s, L"ceStreamSystemInfo"s}},
-        {ceStreamException, {L"CE Exception"s, L"ceStreamException"s}},
-        {ceStreamModuleList, {L"CE Module List"s, L"ceStreamModuleList"s}},
-        {ceStreamProcessList, {L"CE Process List"s, L"ceStreamProcessList"s}},
-        {ceStreamThreadList, {L"CE Thread List"s, L"ceStreamThreadList"s}},
-        {ceStreamThreadContextList, {L"CE Thread Context List"s, L"ceStreamThreadContextList"s}},
-        {ceStreamThreadCallStackList, {L"CE Thread Call Stack List"s, L"ceStreamThreadCallStackList"s}},
-        {ceStreamMemoryVirtualList, {L"CE Memory Virtual List"s, L"ceStreamMemoryVirtualList"s}},
-        {ceStreamMemoryPhysicalList, {L"CE Memory Physical List"s, L"ceStreamMemoryPhysicalList"s}},
-        {ceStreamBucketParameters, {L"CE Bucket Parameters"s, L"ceStreamBucketParameters"s}},
-        {ceStreamProcessModuleMap, {L"CE Process Module Map"s, L"ceStreamProcessModuleMap"s}},
-        {ceStreamDiagnosisList, {L"CE Diagnosis List"s, L"ceStreamDiagnosisList"s}},
-        {LastReservedStream, {L"Last Reserved Stream"s, L"LastReservedStream"s}},
-    };
-}
 
 namespace dlg_help_utils::mini_dump_stream_type
 {
-    std::wstring to_wstring(MINIDUMP_STREAM_TYPE const type)
+    namespace enum_names
     {
-        if (type > LastReservedStream)
-        {
-            return std::format(L"User Stream Type [{}]", to_hex(type));
-        }
-
-        auto const it = type_map.find(type);
-        if (it == type_map.end())
-        {
-            return std::format(L"Unknown Stream Type [{}]", to_hex(type));
-        }
-
-        return std::get<0>(it->second);
-    }
-
-    std::wstring to_enum_wstring(MINIDUMP_STREAM_TYPE const type)
-    {
-        if (type > LastReservedStream)
-        {
-            return to_hex(type);
-        }
-
-        auto const it = type_map.find(type);
-        if (it == type_map.end())
-        {
-            return std::format(L"unknown stream type [{}]", to_hex(type));
-        }
-
-        return std::get<1>(it->second);
+        wchar_t const* const UnusedStream = L"UnusedStream";
+        wchar_t const* const ReservedStream0 = L"ReservedStream0";
+        wchar_t const* const ReservedStream1 = L"ReservedStream1";
+        wchar_t const* const ThreadListStream = L"ThreadListStream";
+        wchar_t const* const ModuleListStream = L"ModuleListStream";
+        wchar_t const* const MemoryListStream = L"MemoryListStream";
+        wchar_t const* const ExceptionStream = L"ExceptionStream";
+        wchar_t const* const SystemInfoStream = L"SystemInfoStream";
+        wchar_t const* const ThreadExListStream = L"ThreadExListStream";
+        wchar_t const* const Memory64ListStream = L"Memory64ListStream";
+        wchar_t const* const CommentStreamA = L"CommentStreamA";
+        wchar_t const* const CommentStreamW = L"CommentStreamW";
+        wchar_t const* const HandleDataStream = L"HandleDataStream";
+        wchar_t const* const FunctionTableStream = L"FunctionTableStream";
+        wchar_t const* const UnloadedModuleListStream = L"UnloadedModuleListStream";
+        wchar_t const* const MiscInfoStream = L"MiscInfoStream";
+        wchar_t const* const MemoryInfoListStream = L"MemoryInfoListStream";
+        wchar_t const* const ThreadInfoListStream = L"ThreadInfoListStream";
+        wchar_t const* const HandleOperationListStream = L"HandleOperationListStream";
+        wchar_t const* const TokenStream = L"TokenStream";
+        wchar_t const* const JavaScriptDataStream = L"JavaScriptDataStream";
+        wchar_t const* const SystemMemoryInfoStream = L"SystemMemoryInfoStream";
+        wchar_t const* const ProcessVmCountersStream = L"ProcessVmCountersStream";
+        wchar_t const* const IptTraceStream = L"IptTraceStream";
+        wchar_t const* const ThreadNamesStream = L"ThreadNamesStream";
+        wchar_t const* const ceStreamNull = L"ceStreamNull";
+        wchar_t const* const ceStreamSystemInfo = L"ceStreamSystemInfo";
+        wchar_t const* const ceStreamException = L"ceStreamException";
+        wchar_t const* const ceStreamModuleList = L"ceStreamModuleList";
+        wchar_t const* const ceStreamProcessList = L"ceStreamProcessList";
+        wchar_t const* const ceStreamThreadList = L"ceStreamThreadList";
+        wchar_t const* const ceStreamThreadContextList = L"ceStreamThreadContextList";
+        wchar_t const* const ceStreamThreadCallStackList = L"ceStreamThreadCallStackList";
+        wchar_t const* const ceStreamMemoryVirtualList = L"ceStreamMemoryVirtualList";
+        wchar_t const* const ceStreamMemoryPhysicalList = L"ceStreamMemoryPhysicalList";
+        wchar_t const* const ceStreamBucketParameters = L"ceStreamBucketParameters";
+        wchar_t const* const ceStreamProcessModuleMap = L"ceStreamProcessModuleMap";
+        wchar_t const* const ceStreamDiagnosisList = L"ceStreamDiagnosisList";
+        wchar_t const* const LastReservedStream = L"LastReservedStream";
     }
 
     MINIDUMP_STREAM_TYPE from_wstring(std::wstring const& type)

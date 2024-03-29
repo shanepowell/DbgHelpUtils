@@ -14,6 +14,8 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct MiniDumpPageParameters;
+
     StreamsPage::StreamsPage()
     {
         InitializeComponent();
@@ -21,7 +23,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void StreamsPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
     {
-        if(auto const miniDumpPage = e.Parameter().as<MiniDumpPage>();
+        auto const miniDumpPageParameters = e.Parameter().as<MiniDumpExplorer::MiniDumpPageParameters>();
+        if(auto const miniDumpPage = miniDumpPageParameters.MiniDump().as<MiniDumpPage>();
             miniDumpPage->MiniDumpOpened())
         {
             MiniDumpLoaded(miniDumpPage->MiniDump());
@@ -40,7 +43,7 @@ namespace winrt::MiniDumpExplorer::implementation
     }
 
 
-    void StreamsPage::SelectStream([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] Microsoft::UI::Xaml::RoutedEventArgs const& e) const
+    void StreamsPage::SelectStream([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
     }
 

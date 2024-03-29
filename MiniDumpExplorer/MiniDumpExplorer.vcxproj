@@ -367,6 +367,10 @@
       <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\MiniDumpPageParameters.h">
+      <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\NotifyPropertyChangedBase.h" />
     <ClInclude Include="Models\RecentFileItem.h">
       <DependentUpon>Models\RecentFileItem.cpp</DependentUpon>
@@ -663,6 +667,7 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtils\mini_dump_stream_type_impl.cpp" />
     <ClCompile Include="Helpers\TypeHelper.cpp" />
     <ClCompile Include="Helpers\UISettingsHelper.cpp" />
     <ClCompile Include="Helpers\VisualStates.cpp" />
@@ -676,6 +681,9 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\MiniDumpLocationDescriptor.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpPageParameters.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\RecentFileItem.cpp">
@@ -999,6 +1007,10 @@
     </Midl>
     <Midl Include="Models\MiniDumpLocationDescriptor.idl">
       <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MiniDumpPageParameters.idl">
+      <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\RecentFileItem.idl">

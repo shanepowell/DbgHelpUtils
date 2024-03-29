@@ -220,6 +220,7 @@
     <ClCompile Include="mini_dump_memory_stream.cpp" />
     <ClCompile Include="mini_dump_memory_walker.cpp" />
     <ClCompile Include="mini_dump_stream_type.cpp" />
+    <ClCompile Include="mini_dump_stream_type_impl.cpp" />
     <ClCompile Include="mini_dump_type.cpp" />
     <ClCompile Include="misc_info_stream.cpp" />
     <ClCompile Include="module_list_stream.cpp" />

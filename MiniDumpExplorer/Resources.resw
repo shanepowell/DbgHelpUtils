@@ -6,7 +6,7 @@
     Version 2.0
     
     The primary goals of this format is to allow a simple XML format 
-    that is mostly human-readable. The generation and parsing of the 
+    that is mostly human readable. The generation and parsing of the 
     various data types are done through the TypeConverter classes 
     associated with the data types.
     
@@ -206,5 +206,137 @@
   </data>
   <data name="SizeNumberDisplayBase10MenuItem" xml:space="preserve">
     <value>Base 10</value>
+  </data>
+  <data name="UnusedStream" xml:space="preserve">
+    <value>Unused</value>
+  </data>
+  <data name="UnusedStream" xml:space="preserve">
+    <value>Unused</value>
+  </data>
+  <data name="ReservedStream0" xml:space="preserve">
+    <value>Reserved 0</value>
+  </data>
+  <data name="ReservedStream1" xml:space="preserve">
+    <value>Reserved 1</value>
+  </data>
+  <data name="ThreadListStream" xml:space="preserve">
+    <value>Thread List</value>
+  </data>
+  <data name="ModuleListStream" xml:space="preserve">
+    <value>Module List</value>
+  </data>
+  <data name="ModuleListStream" xml:space="preserve">
+    <value>Module List</value>
+  </data>
+  <data name="MemoryListStream" xml:space="preserve">
+    <value>Memory List</value>
+  </data>
+  <data name="ExceptionStream" xml:space="preserve">
+    <value>Exception</value>
+  </data>
+  <data name="SystemInfoStream" xml:space="preserve">
+    <value>System Information</value>
+  </data>
+  <data name="ThreadExListStream" xml:space="preserve">
+    <value>Thread Extension List</value>
+  </data>
+  <data name="Memory64ListStream" xml:space="preserve">
+    <value>Memory64 List</value>
+  </data>
+  <data name="CommentStreamA" xml:space="preserve">
+    <value>Comment Ascii</value>
+  </data>
+  <data name="CommentStreamW" xml:space="preserve">
+    <value>Comment Unicode</value>
+  </data>
+  <data name="HandleDataStream" xml:space="preserve">
+    <value>Handle Data</value>
+  </data>
+  <data name="FunctionTableStream" xml:space="preserve">
+    <value>Function Table</value>
+  </data>
+  <data name="UnloadedModuleListStream" xml:space="preserve">
+    <value>Unloaded Module List</value>
+  </data>
+  <data name="MiscInfoStream" xml:space="preserve">
+    <value>Miscellaneous Information</value>
+  </data>
+  <data name="MemoryInfoListStream" xml:space="preserve">
+    <value>Memory Information List</value>
+  </data>
+  <data name="ThreadInfoListStream" xml:space="preserve">
+    <value>Thread Information List</value>
+    </data>
+  <data name="HandleOperationListStream" xml:space="preserve">
+    <value>Handle Operation List</value>
+  </data>
+  <data name="TokenStream" xml:space="preserve">
+    <value>Token</value>
+  </data>
+  <data name="JavaScriptDataStream" xml:space="preserve">
+    <value>Java Script Data</value>
+  </data>
+  <data name="SystemMemoryInfoStream" xml:space="preserve">
+    <value>System Memory Information</value>
+  </data>
+  <data name="ProcessVmCountersStream" xml:space="preserve">
+    <value>Process VM Counters</value>
+  </data>
+  <data name="IptTraceStream" xml:space="preserve">
+    <value>IPT Trace</value>
+  </data>
+  <data name="ThreadNamesStream" xml:space="preserve">
+    <value>Thread Names</value>
+  </data>
+  <data name="ceStreamNull" xml:space="preserve">
+    <value>CE Null</value>
+  </data>
+  <data name="ceStreamSystemInfo" xml:space="preserve">
+    <value>CE System Information</value>
+  </data>
+  <data name="ceStreamException" xml:space="preserve">
+    <value>CE Exception</value>
+  </data>
+  <data name="ceStreamModuleList" xml:space="preserve">
+    <value>CE Module List</value>
+  </data>
+  <data name="ceStreamProcessList" xml:space="preserve">
+    <value>CE Process List</value>
+  </data>
+  <data name="ceStreamThreadList" xml:space="preserve">
+    <value>CE Thread List</value>
+  </data>
+  <data name="ceStreamThreadContextList" xml:space="preserve">
+    <value>CE Thread Context List</value>
+  </data>
+  <data name="ceStreamThreadCallStackList" xml:space="preserve">
+    <value>CE Thread Call Stack List</value>
+  </data>
+  <data name="ceStreamMemoryVirtualList" xml:space="preserve">
+    <value>CE Memory Virtual List</value>
+  </data>
+  <data name="ceStreamMemoryPhysicalList" xml:space="preserve">
+    <value>CE Memory Physical List</value>
+  </data>
+  <data name="ceStreamBucketParameters" xml:space="preserve">
+    <value>CE Bucket Parameters</value>
+  </data>
+  <data name="ceStreamProcessModuleMap" xml:space="preserve">
+    <value>CE Process Module Map</value>
+  </data>
+  <data name="ceStreamDiagnosisList" xml:space="preserve">
+    <value>CE Diagnosis List</value>
+  </data>
+  <data name="LastReservedStream" xml:space="preserve">
+    <value>Last Reserved Stream</value>
+  </data>
+  <data name="UnsupportedStream" xml:space="preserve">
+    <value>Unsupported Stream</value>
+  </data>
+  <data name="UserStreamType" xml:space="preserve">
+    <value>User Stream Type</value>
+  </data>
+  <data name="UnknownStreamType" xml:space="preserve">
+    <value>Unknown Stream Type</value>
   </data>
 </root>

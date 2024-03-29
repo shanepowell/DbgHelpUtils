@@ -453,6 +453,9 @@
     <ClCompile Include="segment_heap_options.cpp">
       <Filter>Heap\SegmentHeap</Filter>
     </ClCompile>
+    <ClCompile Include="mini_dump_stream_type_impl.cpp">
+      <Filter>MiniDump</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">

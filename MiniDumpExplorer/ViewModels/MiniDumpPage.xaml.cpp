@@ -5,6 +5,7 @@
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
 #include "DbgHelpUtils/mini_dump.h"
+#include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
 
@@ -21,16 +22,67 @@ using namespace std::string_literals;
 
 namespace
 {
-    const std::wstring SettingsTag = L"Settings"s;
+    auto const HeaderTag = L"Header"s;
+    auto const SettingsTag = L"Settings"s;
+    auto const StreamsTag = L"Streams"s;
+    auto const UnsupportedStreamTag = L"UnsupportedStream"s;
+
+    std::unordered_map<MINIDUMP_STREAM_TYPE, Controls::Symbol> StreamTypeToIcon =
+        {
+            {ThreadListStream, Controls::Symbol::ThreeBars},
+            {ModuleListStream, Controls::Symbol::Bullets},
+            {MemoryListStream, Controls::Symbol::Bookmarks},
+            {ExceptionStream, Controls::Symbol::Repair},
+            {SystemInfoStream, Controls::Symbol::ContactInfo},
+            {ThreadExListStream, Controls::Symbol::ThreeBars},
+            {Memory64ListStream, Controls::Symbol::Bookmarks},
+            {CommentStreamA, Controls::Symbol::Comment},
+            {CommentStreamW, Controls::Symbol::Comment},
+            {HandleDataStream, Controls::Symbol::Directions},
+            {FunctionTableStream, Controls::Symbol::FourBars},
+            {UnloadedModuleListStream, Controls::Symbol::Undo},
+            {MiscInfoStream, Controls::Symbol::MusicInfo},
+            {MemoryInfoListStream, Controls::Symbol::Admin},
+            {ThreadInfoListStream, Controls::Symbol::Admin},
+            {HandleOperationListStream, Controls::Symbol::Calendar},
+            {TokenStream, Controls::Symbol::Character},
+            {SystemMemoryInfoStream, Controls::Symbol::Favorite},
+            {ProcessVmCountersStream, Controls::Symbol::DockBottom},
+            {ThreadNamesStream, Controls::Symbol::List},
+        };
+
 }
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct MiniDumpPageParameters;
+
     std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> MiniDumpPage::pageMap_ =
         {
-            { L"Header", xaml_typename<HeaderPage>() },
-            { L"Streams", xaml_typename<StreamsPage>() },
+            { HeaderTag, xaml_typename<HeaderPage>() },
+            { StreamsTag, xaml_typename<StreamsPage>() },
             { SettingsTag, xaml_typename<SettingsPage>() },
+            //{ mini_dump_stream_type::enum_names::ThreadListStream, xaml_typename<ThreadListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::ModuleListStream, xaml_typename<ModuleListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::MemoryListStream, xaml_typename<MemoryListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::ExceptionStream, xaml_typename<ExceptionStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::SystemInfoStream, xaml_typename<SystemInfoStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::ThreadExListStream, xaml_typename<ThreadExListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::Memory64ListStream, xaml_typename<Memory64ListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::CommentStreamA, xaml_typename<CommentStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::CommentStreamW, xaml_typename<CommentStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::HandleDataStream, xaml_typename<HandleDataStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::FunctionTableStream, xaml_typename<FunctionTableStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::UnloadedModuleListStream, xaml_typename<UnloadedModuleListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::MiscInfoStream, xaml_typename<MiscInfoStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::MemoryInfoListStream, xaml_typename<MemoryInfoListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::ThreadInfoListStream, xaml_typename<ThreadInfoListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::HandleOperationListStream, xaml_typename<HandleOperationListStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::TokenStream, xaml_typename<TokenStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::SystemMemoryInfoStream, xaml_typename<SystemMemoryInfoStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::ProcessVmCountersStream, xaml_typename<ProcessVmCountersStreamPage>() },
+            //{ mini_dump_stream_type::enum_names::ThreadNamesStream, xaml_typename<ThreadNamesStreamPage>() },
+            //{ UnsupportedStreamTag, xaml_typename<UnsupportedStreamPage>() },
         };
 
 
@@ -47,12 +99,27 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void MiniDumpPage::NavigationView_SelectionChanged([[maybe_unused]] Controls::NavigationView const& sender, Controls::NavigationViewSelectionChangedEventArgs const& args)
     {
-        if(const auto navItemTag = args.IsSettingsSelected() ? SettingsTag : static_cast<std::wstring>(unbox_value<hstring>(args.SelectedItemContainer().Tag())); 
-            !navItemTag.empty())
+        auto navigationItemTag = args.IsSettingsSelected() ? SettingsTag : static_cast<std::wstring>(unbox_value_or<hstring>(args.SelectedItemContainer().Tag(), {}));
+        MiniDumpExplorer::MiniDumpPageParameters parameters{nullptr};
+        if(navigationItemTag.empty())
         {
-            if(auto const it = pageMap_.find(navItemTag); it != pageMap_.end())
+            parameters = args.SelectedItemContainer().Tag().try_as<MiniDumpExplorer::MiniDumpPageParameters>();
+            if(parameters)
             {
-                ContentFrame().Navigate(it->second, *this);
+                navigationItemTag = parameters.NavigationItemTag();
+            }
+        }
+
+        if(!navigationItemTag.empty())
+        {
+            if(!parameters)
+            {
+                parameters = MiniDumpExplorer::MiniDumpPageParameters{*this, navigationItemTag, 0};
+            }
+
+            if(auto const it = pageMap_.find(navigationItemTag); it != pageMap_.end())
+            {
+                ContentFrame().Navigate(it->second, parameters);
             }
         }
     }
@@ -69,19 +136,32 @@ namespace winrt::MiniDumpExplorer::implementation
 
             GlobalOptions::Options().AddRecentFile(fullPath);
 
-            valid_ = miniDump_->header();
+            valid_ = miniDump_->is_valid();
 
-            if (valid_ && miniDump_->type() == dump_file_type::user_mode_dump && miniDump_->directory() != nullptr)
+            if (auto const* directory = miniDump_->directory();
+                valid_ && miniDump_->type() == dump_file_type::user_mode_dump && directory != nullptr)
             {
                 Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
                 auto const streamsTitleName = rm.MainResourceMap().GetValue(L"Resources/StreamsTitleName").ValueAsString();
                 const Controls::NavigationViewItem item;
                 item.Content(box_value(streamsTitleName));
-                item.Tag(box_value(streamsTitleName));
+                item.Tag(box_value(StreamsTag));
                 const Controls::SymbolIcon iconSource;
                 iconSource.Symbol(Controls::Symbol::Library);
                 item.Icon(iconSource);
                 NavigationView().MenuItems().InsertAt(1, item);
+
+                auto const* header = miniDump_->header();
+
+                for (uint32_t index = 0; index < header->NumberOfStreams; ++index)
+                {
+                    auto const& stream_entry = directory[index];
+                    if(auto const streamItem = CreateNavigationViewItemForStreamType(static_cast<MINIDUMP_STREAM_TYPE>(stream_entry.StreamType), index, stream_entry.Location);
+                        streamItem)
+                    {
+                        item.MenuItems().Append(streamItem);
+                    }
+                }
             }
 
             miniDumpLoadedHandler_(*this, MiniDumpExplorer::MiniDumpPage{*this});
@@ -120,5 +200,41 @@ namespace winrt::MiniDumpExplorer::implementation
     void MiniDumpPage::MiniDumpLoaded(event_token const& value)
     {
         miniDumpLoadedHandler_.remove(value);
+    }
+
+    Controls::NavigationViewItem MiniDumpPage::CreateNavigationViewItemForStreamType(MINIDUMP_STREAM_TYPE const stream_type, uint32_t const stream_index, MINIDUMP_LOCATION_DESCRIPTOR const& location) const
+    {
+        if(location.DataSize == 0)
+        {
+            return {nullptr};
+        }
+
+        auto const title = mini_dump_stream_type::to_wstring(stream_type);
+        Controls::Symbol icon;
+        std::wstring tag;
+        if(auto it = StreamTypeToIcon.find(stream_type); it != StreamTypeToIcon.end())
+        {
+            icon = it->second;
+            tag = mini_dump_stream_type::to_enum_wstring(stream_type);
+        }
+        else
+        {
+            icon = Controls::Symbol::DisableUpdates;
+            tag = UnsupportedStreamTag;
+        }
+
+        return CreateNavigationViewItemForStream(title, tag, stream_index, icon);
+    }
+
+    Controls::NavigationViewItem MiniDumpPage::CreateNavigationViewItemForStream(std::wstring const& title, std::wstring const& tag, uint32_t const stream_index, Controls::Symbol const symbol) const
+    {
+        const Controls::NavigationViewItem item;
+        item.Content(box_value(hstring{title}));
+        MiniDumpExplorer::MiniDumpPageParameters parameters{*this, tag, stream_index};
+        item.Tag(parameters);
+        const Controls::SymbolIcon iconSource;
+        iconSource.Symbol(symbol);
+        item.Icon(iconSource);
+        return item;
     }
 }

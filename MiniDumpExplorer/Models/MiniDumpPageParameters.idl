@@ -1,0 +1,14 @@
+import "ViewModels\MiniDumpPage.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass MiniDumpPageParameters
+    {
+        MiniDumpPageParameters(MiniDumpPage miniDump, String navigationItemTag, UInt32 streamIndex);
+
+        MiniDumpPage MiniDump { get; };
+        String NavigationItemTag { get; };
+        UInt32 StreamIndex { get; };
+    }
+}
