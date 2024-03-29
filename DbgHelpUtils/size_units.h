@@ -221,6 +221,10 @@ namespace dlg_help_utils::size_units
 
     std::wstring const& get_label_string(size_unit_type time_type, string_type type);
     std::tuple<std::wstring, std::wstring, std::wstring> const& get_label_strings(size_unit_type type);
-    void set_label_strings(std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> user_string_data);
     size_unit_type get_label_type(std::wstring_view label);
+
+    namespace details
+    {
+        std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> const& get_type_strings();
+    }
 }

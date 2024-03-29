@@ -210,9 +210,6 @@
   <data name="UnusedStream" xml:space="preserve">
     <value>Unused</value>
   </data>
-  <data name="UnusedStream" xml:space="preserve">
-    <value>Unused</value>
-  </data>
   <data name="ReservedStream0" xml:space="preserve">
     <value>Reserved 0</value>
   </data>
@@ -221,9 +218,6 @@
   </data>
   <data name="ThreadListStream" xml:space="preserve">
     <value>Thread List</value>
-  </data>
-  <data name="ModuleListStream" xml:space="preserve">
-    <value>Module List</value>
   </data>
   <data name="ModuleListStream" xml:space="preserve">
     <value>Module List</value>
@@ -266,7 +260,7 @@
   </data>
   <data name="ThreadInfoListStream" xml:space="preserve">
     <value>Thread Information List</value>
-    </data>
+  </data>
   <data name="HandleOperationListStream" xml:space="preserve">
     <value>Handle Operation List</value>
   </data>
@@ -338,5 +332,77 @@
   </data>
   <data name="UnknownStreamType" xml:space="preserve">
     <value>Unknown Stream Type</value>
+  </data>
+  <data name="FlagsUnknownOptions" xml:space="preserve">
+    <value>unknown options</value>
+  </data>
+  <data name="FlagsNone" xml:space="preserve">
+    <value>none</value>
+  </data>
+  <data name="ExabytesSingular" xml:space="preserve">
+    <value>exabyte</value>
+  </data>
+  <data name="ExabytesPlural" xml:space="preserve">
+    <value>exabytes</value>
+  </data>
+  <data name="ExabytesCompact" xml:space="preserve">
+    <value>eb</value>
+  </data>
+  <data name="PetabytesSingular" xml:space="preserve">
+    <value>petabyte</value>
+  </data>
+  <data name="PetabytesPlural" xml:space="preserve">
+    <value>petabytes</value>
+  </data>
+  <data name="PetabytesCompact" xml:space="preserve">
+    <value>pb</value>
+  </data>
+  <data name="TerabytesSingular" xml:space="preserve">
+    <value>terabyte</value>
+  </data>
+  <data name="TerabytesPlural" xml:space="preserve">
+    <value>terabytes</value>
+  </data>
+  <data name="TerabytesCompact" xml:space="preserve">
+    <value>tb</value>
+  </data>
+  <data name="GigabytesSingular" xml:space="preserve">
+    <value>gigabyte</value>
+  </data>
+  <data name="GigabytesPlural" xml:space="preserve">
+    <value>gigabytes</value>
+  </data>
+  <data name="GigabytesCompact" xml:space="preserve">
+    <value>gb</value>
+  </data>
+  <data name="MegabytesSingular" xml:space="preserve">
+    <value>megabyte</value>
+  </data>
+  <data name="MegabytesPlural" xml:space="preserve">
+    <value>megabytes</value>
+  </data>
+  <data name="MegabytesCompact" xml:space="preserve">
+    <value>mb</value>
+  </data>
+  <data name="KilobytesSingular" xml:space="preserve">
+    <value>kilobyte</value>
+  </data>
+  <data name="KilobytesPlural" xml:space="preserve">
+    <value>kilobytes</value>
+  </data>
+  <data name="KilobytesCompact" xml:space="preserve">
+    <value>kb</value>
+  </data>
+  <data name="BytesSingular" xml:space="preserve">
+    <value>byte</value>
+  </data>
+  <data name="BytesPlural" xml:space="preserve">
+    <value>bytes</value>
+  </data>
+  <data name="BytesCompact" xml:space="preserve">
+    <value>b</value>
+  </data>
+  <data name="HexNumberPrefix" xml:space="preserve">
+    <value>0x</value>
   </data>
 </root>

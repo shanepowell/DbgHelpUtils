@@ -667,7 +667,11 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtils\flags_string_utils_impl.cpp" />
     <ClCompile Include="DlgHelpUtils\mini_dump_stream_type_impl.cpp" />
+    <ClCompile Include="DlgHelpUtils\size_units_impl.cpp" />
+    <ClCompile Include="DlgHelpUtils\stream_hex_dump_impl.cpp" />
+    <ClCompile Include="DlgHelpUtils\time_units_impl.cpp" />
     <ClCompile Include="Helpers\TypeHelper.cpp" />
     <ClCompile Include="Helpers\UISettingsHelper.cpp" />
     <ClCompile Include="Helpers\VisualStates.cpp" />

@@ -370,6 +370,18 @@
     <ClCompile Include="DlgHelpUtils\mini_dump_stream_type_impl.cpp">
       <Filter>DlgHelpUtils</Filter>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtils\flags_string_utils_impl.cpp">
+      <Filter>DlgHelpUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtils\size_units_impl.cpp">
+      <Filter>DlgHelpUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtils\stream_hex_dump_impl.cpp">
+      <Filter>DlgHelpUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtils\time_units_impl.cpp">
+      <Filter>DlgHelpUtils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

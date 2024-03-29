@@ -8,10 +8,7 @@
 
 namespace locale_formatting
 {
-    namespace detail
-    {
-        NUMBERFMTW get_default_number_format_w();
-    } // namespace detail
+    NUMBERFMTW const& get_default_number_format_w();
 
     using floating_point_formatting_t = dlg_help_utils::tagged_bool<struct floating_point_formatting_type>;
 
@@ -21,7 +18,7 @@ namespace locale_formatting
         auto v = std::to_wstring(value);
         std::wstring rv;
 
-        auto fmt = detail::get_default_number_format_w();
+        auto fmt = get_default_number_format_w();
         if (!floating_point_formatting)
         {
             fmt.NumDigits = 0;

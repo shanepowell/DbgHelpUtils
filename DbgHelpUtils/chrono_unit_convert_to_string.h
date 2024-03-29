@@ -2,6 +2,8 @@
 #include <ostream>
 #include <chrono>
 
+#include "locale_number_formatting.h"
+
 namespace dlg_help_utils::chrono_unit_utilities
 {
     template <typename Us1, typename Us2>
@@ -14,7 +16,8 @@ namespace dlg_help_utils::chrono_unit_utilities
             if (const auto partial = static_cast<unsigned>((static_cast<double>(us2.count()) / static_cast<double>(
                 std::chrono::duration_cast<Us2>(Us1{1}).count())) * 100.0); partial > 0)
             {
-                os << L"." << partial << L" " << us1_plural_name;
+                auto const& fmt = locale_formatting::get_default_number_format_w();
+                os << fmt.lpDecimalSep << partial << L" " << us1_plural_name;
                 return;
             }
         }
@@ -32,7 +35,8 @@ namespace dlg_help_utils::chrono_unit_utilities
             if (const auto partial = static_cast<unsigned>((static_cast<double>(us2.count()) / static_cast<double>(
                 std::chrono::duration_cast<Us2>(Us1{1}).count())) * 100.0); partial > 0)
             {
-                os << L"." << partial << us_name;
+                auto const& fmt = locale_formatting::get_default_number_format_w();
+                os << fmt.lpDecimalSep << partial << us_name;
                 return;
             }
         }

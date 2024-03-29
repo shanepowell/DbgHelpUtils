@@ -3,33 +3,15 @@
 #include <optional>
 #include <sstream>
 
+#include "get_label_type_from_labels.h"
 #include "unit_convert_to_string.h"
-#include "string_compare.h"
 #include "string_utils.h"
 #include "wide_runtime_error.h"
-
-using namespace std::string_literals;
 
 namespace dlg_help_utils::size_units
 {
     namespace
     {
-        std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> populate_default_strings()
-        {
-            std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> rv;
-            rv[size_unit_type::exabytes] = make_tuple(L"exabyte"s, L"exabytes"s, L"eb"s);
-            rv[size_unit_type::petabytes] = make_tuple(L"petabyte"s, L"petabytes"s, L"pb"s);
-            rv[size_unit_type::terabytes] = make_tuple(L"terabyte"s, L"terabytes"s, L"tb"s);
-            rv[size_unit_type::gigabytes] = make_tuple(L"gigabyte"s, L"gigabytes"s, L"gb"s);
-            rv[size_unit_type::megabytes] = make_tuple(L"megabyte"s, L"megabytes"s, L"mb"s);
-            rv[size_unit_type::kilobytes] = make_tuple(L"kilobyte"s, L"kilobytes"s, L"kb"s);
-            rv[size_unit_type::bytes] = make_tuple(L"byte"s, L"bytes"s, L"b"s);
-            return rv;
-        }
-
-        std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> const g_default_string_data = populate_default_strings();
-        std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> g_user_string_data;
-
         std::wstring print_value(size_unit_type const type, auto const us1, auto const us2, print const p)
         {
             auto const& str = get_label_strings(type);
@@ -64,22 +46,6 @@ namespace dlg_help_utils::size_units
             }
 
             return to_string_internal<TBsz, Ysz, Args...>(b, p);
-        }
-
-        std::optional<size_unit_type> get_label_type_from_labels(std::wstring_view const& label, std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> const& labels)
-        {
-            for(auto const& [type, label_strings] : labels)
-            {
-                if(auto const& [singular, plural, compact] = label_strings;
-                    string_utils::iequals(compact, label) ||
-                    string_utils::iequals(singular, label) ||
-                    string_utils::iequals(plural, label))
-                {
-                    return type;
-                }
-            }
-
-            return std::nullopt;
         }
     }
 
@@ -261,31 +227,18 @@ namespace dlg_help_utils::size_units
 
     std::tuple<std::wstring, std::wstring, std::wstring> const& get_label_strings(const size_unit_type type)
     {
-        const auto it = g_user_string_data.find(type);
-        if (it == g_user_string_data.end())
-        {
-            return g_default_string_data.at(type);
-        }
-
-        return it->second;
-    }
-
-    void set_label_strings(std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> user_string_data)
-    {
-        g_user_string_data = std::move(user_string_data);
+        auto const& type_strings = details::get_type_strings();
+        return type_strings.at(type);
     }
 
     size_unit_type get_label_type(std::wstring_view const label)
     {
-        if(auto const type = get_label_type_from_labels(label, g_user_string_data); type.has_value())
-        {
-            return type.value();
-        }
-        if(auto const type = get_label_type_from_labels(label, g_default_string_data); type.has_value())
+        auto const& type_strings = details::get_type_strings();
+        if(auto const type = utilities::get_label_type_from_labels(label, type_strings); type.has_value())
         {
             return type.value();
         }
 
-        throw exceptions::wide_runtime_error{std::format(L"Unknown units type [{}]", label)};
+        throw exceptions::wide_runtime_error{std::format(L"Unknown size units type [{}]", label)};
     }
 }

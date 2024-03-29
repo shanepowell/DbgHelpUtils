@@ -180,6 +180,7 @@
     <ClCompile Include="filesystem_utils.cpp" />
     <ClCompile Include="file_version_info.cpp" />
     <ClCompile Include="find_thread_stack.cpp" />
+    <ClCompile Include="flags_string_utils_impl.cpp" />
     <ClCompile Include="function_table_stream.cpp" />
     <ClCompile Include="get_last_address.h" />
     <ClCompile Include="gflags_utils.cpp" />
@@ -254,10 +255,12 @@
     <ClCompile Include="segment_heap_options.cpp" />
     <ClCompile Include="segment_heap_utils.cpp" />
     <ClCompile Include="size_units.cpp" />
+    <ClCompile Include="size_units_impl.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
     <ClCompile Include="stream_function_entry.cpp" />
     <ClCompile Include="stream_handle.cpp" />
     <ClCompile Include="stream_handle_object_information.cpp" />
+    <ClCompile Include="stream_hex_dump_impl.cpp" />
     <ClCompile Include="stream_module.cpp" />
     <ClCompile Include="stream_module_name.cpp" />
     <ClCompile Include="stream_stack_dump.cpp" />
@@ -286,6 +289,7 @@
     <ClCompile Include="thread_list_stream.cpp" />
     <ClCompile Include="thread_names_list_stream.cpp" />
     <ClCompile Include="time_units.cpp" />
+    <ClCompile Include="time_units_impl.cpp" />
     <ClCompile Include="time_utils.cpp" />
     <ClCompile Include="token_info_list_stream.cpp" />
     <ClCompile Include="symbol_type_info.cpp" />
@@ -314,6 +318,7 @@
     <ClInclude Include="dump_hex.h" />
     <ClInclude Include="enable_module_loading.h" />
     <ClInclude Include="file_version_info.h" />
+    <ClInclude Include="get_label_type_from_labels.h" />
     <ClInclude Include="gflags_utils.h" />
     <ClInclude Include="global_symbol.h" />
     <ClInclude Include="global_symbols.h" />

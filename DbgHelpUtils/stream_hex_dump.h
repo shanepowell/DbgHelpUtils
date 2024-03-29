@@ -7,6 +7,8 @@
 
 namespace dlg_help_utils::stream_hex_dump
 {
+    std::wstring get_hex_number_prefix();
+
     namespace details
     {
         template<typename T>
@@ -42,7 +44,7 @@ namespace dlg_help_utils::stream_hex_dump
 
             if(write_header)
             {
-                return std::format(L"0x{}", std::move(result));
+                return std::format(L"{}{}", get_hex_number_prefix(), std::move(result));
             }
 
             return result;

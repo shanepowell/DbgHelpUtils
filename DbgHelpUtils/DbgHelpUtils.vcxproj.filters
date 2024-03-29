@@ -456,6 +456,18 @@
     <ClCompile Include="mini_dump_stream_type_impl.cpp">
       <Filter>MiniDump</Filter>
     </ClCompile>
+    <ClCompile Include="size_units_impl.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="time_units_impl.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="flags_string_utils_impl.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_hex_dump_impl.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -978,6 +990,9 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="double_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="get_label_type_from_labels.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

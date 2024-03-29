@@ -2,11 +2,15 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "stream_hex_dump.h"
 
 namespace dlg_help_utils::flags_string_utils
 {
+    std::wstring get_unknown_options_string();
+    std::wstring get_none_options_string();
+
     template <typename T>
     std::wstring generate_flags_string(T dump_flags, std::map<T, std::wstring_view> const& flag_masks)
     {
@@ -43,11 +47,11 @@ namespace dlg_help_utils::flags_string_utils
                 ss << L", ";
             }
 
-            ss << L"unknown options [" << stream_hex_dump::to_hex(dump_flags) << L"]";
+            ss << std::format(L"{} [{}]", get_unknown_options_string(), stream_hex_dump::to_hex(dump_flags));
         }
         else if (first)
         {
-            ss << L"none";
+            ss << get_none_options_string();
         }
 
         return std::move(ss).str();

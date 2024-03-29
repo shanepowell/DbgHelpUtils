@@ -89,7 +89,11 @@ namespace dlg_help_utils::time_units
     }
 
     std::wstring const& get_label_string(time_unit_type time_type, string_type type);
-    std::pair<std::wstring, std::wstring> const& get_label_strings(time_unit_type type);
-    void set_label_strings(std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> user_string_data);
+    std::tuple<std::wstring, std::wstring> const& get_label_strings(time_unit_type type);
     time_unit_type get_label_type(std::wstring_view label);
+
+    namespace details
+    {
+        std::unordered_map<time_unit_type, std::tuple<std::wstring, std::wstring>> const& get_type_strings();
+    }
 }

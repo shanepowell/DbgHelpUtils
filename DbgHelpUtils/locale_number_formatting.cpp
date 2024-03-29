@@ -2,7 +2,7 @@
 #include <cctype>
 
 // ReSharper disable CppZeroConstantCanBeReplacedWithNullptr
-namespace locale_formatting::detail
+namespace locale_formatting
 {
     namespace
     {
@@ -49,7 +49,7 @@ namespace locale_formatting::detail
     }  // namespace
 
 
-    NUMBERFMTW get_default_number_format_w()
+    NUMBERFMTW const& get_default_number_format_w()
     {
         static auto fmt = init_default_number_format_w();
         return fmt;

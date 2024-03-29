@@ -3,31 +3,16 @@
 #include <sstream>
 
 #include "chrono_unit_convert_to_string.h"
-#include "string_compare.h"
+#include "get_label_type_from_labels.h"
+#include "size_units.h"
 #include "wide_runtime_error.h"
+
+using namespace std::string_literals;
 
 namespace dlg_help_utils::time_units
 {
     namespace
     {
-        std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> populate_default_strings()
-        {
-            std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> rv;
-            rv[time_unit_type::year] = make_pair(std::wstring{L"year"}, std::wstring{L"years"});
-            rv[time_unit_type::month] = make_pair(std::wstring{L"month"}, std::wstring{L"months"});
-            rv[time_unit_type::week] = make_pair(std::wstring{L"week"}, std::wstring{L"weeks"});
-            rv[time_unit_type::day] = make_pair(std::wstring{L"day"}, std::wstring{L"days"});
-            rv[time_unit_type::hour] = make_pair(std::wstring{L"hour"}, std::wstring{L"hours"});
-            rv[time_unit_type::minute] = make_pair(std::wstring{L"minute"}, std::wstring{L"minutes"});
-            rv[time_unit_type::second] = make_pair(std::wstring{L"second"}, std::wstring{L"seconds"});
-            rv[time_unit_type::millisecond] = make_pair(std::wstring{L"millisecond"}, std::wstring{L"milliseconds"});
-            return rv;
-        }
-
-        std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> const g_default_string_data =
-            populate_default_strings();
-        std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> g_user_string_data;
-
         std::wstring print_value(time_unit_type const type, auto const us1, auto const us2)
         {
             auto const& str = get_label_strings(type);
@@ -54,21 +39,6 @@ namespace dlg_help_utils::time_units
             }
 
             return to_string_internal<TBsz, Ysz, Args...>(ms);
-        }
-
-        std::optional<time_unit_type> get_label_type_from_labels(std::wstring_view const& label, std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> const& labels)
-        {
-            for(auto const& [type, label_strings] : labels)
-            {
-                if(auto const& [singular, plural] = label_strings;
-                    string_utils::iequals(singular, label) ||
-                    string_utils::iequals(plural, label))
-                {
-                    return type;
-                }
-            }
-
-            return std::nullopt;
         }
     } // namespace
 
@@ -108,36 +78,23 @@ namespace dlg_help_utils::time_units
     std::wstring const& get_label_string(const time_unit_type time_type, const string_type type)
     {
         auto const& str = get_label_strings(time_type);
-        return type == string_type::singular ? str.first : str.second;
+        return type == string_type::singular ? std::get<0>(str) : std::get<1>(str);
     }
 
-    std::pair<std::wstring, std::wstring> const& get_label_strings(const time_unit_type type)
+    std::tuple<std::wstring, std::wstring> const& get_label_strings(const time_unit_type type)
     {
-        const auto it = g_user_string_data.find(type);
-        if (it == g_user_string_data.end())
-        {
-            return g_default_string_data.at(type);
-        }
-
-        return it->second;
-    }
-
-    void set_label_strings(std::unordered_map<time_unit_type, std::pair<std::wstring, std::wstring>> user_string_data)
-    {
-        g_user_string_data = std::move(user_string_data);
+        auto const& type_strings = details::get_type_strings();
+        return type_strings.at(type);
     }
 
     time_unit_type get_label_type(std::wstring_view const label)
     {
-        if(auto const type = get_label_type_from_labels(label, g_user_string_data); type.has_value())
-        {
-            return type.value();
-        }
-        if(auto const type = get_label_type_from_labels(label, g_default_string_data); type.has_value())
+        auto const& type_strings = details::get_type_strings();
+        if(auto const type = utilities::get_label_type_from_labels(label, type_strings); type.has_value())
         {
             return type.value();
         }
 
-        throw exceptions::wide_runtime_error{std::format(L"Unknown units type [{}]", label)};
+        throw exceptions::wide_runtime_error{std::format(L"Unknown time units type [{}]", label)};
     }
 }

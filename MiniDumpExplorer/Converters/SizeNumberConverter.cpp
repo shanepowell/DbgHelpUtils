@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SizeNumberConverter.h"
 
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/size_units.h"
 #include "Helpers/GlobalOptions.h"
 #include "Utility/InspectableUtility.h"
@@ -59,7 +60,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
             case SizeNumberDisplayFormat::Raw:
-                return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(std::to_wstring(v)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
 
             default:
                 break;
@@ -96,7 +97,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
             case SizeNumberDisplayFormat::Raw:
-                return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(std::to_wstring(v)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
 
             default:
                 break;
