@@ -7,7 +7,7 @@
 namespace dlg_help_utils::utilities
 {
     template<size_t Index, typename ...TLabels>
-    bool iequals_label(std::wstring_view const& label,  std::tuple<TLabels...> const& labels)
+    bool iequals_label([[maybe_unused]] std::wstring_view const& label, [[maybe_unused]] std::tuple<TLabels...> const& labels)
     {
         if constexpr (Index < sizeof...(TLabels))
         {
