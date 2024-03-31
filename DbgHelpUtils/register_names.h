@@ -9,5 +9,5 @@
 
 namespace dlg_help_utils::register_names
 {
-    std::wstring_view get_register_name(CV_HREG_e register_type);
+    std::wstring get_register_name(CV_HREG_e register_type);
 }

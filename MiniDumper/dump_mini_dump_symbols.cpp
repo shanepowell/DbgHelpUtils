@@ -141,17 +141,17 @@ namespace
 
             if(tag_data.has_value())
             {
-                log << std::format(L", tag: {}", symbol_type_utils::sym_tag_to_string(tag_data.value()));
+                log << std::format(L", tag: {}", symbol_type_utils::resources::sym_tag_to_string(tag_data.value()));
             }
 
             if(auto const data = type.base_type(); data.has_value())
             {
-                log << std::format(L", BaseType: {}",  symbol_type_utils::basic_type_to_string(data.value()));
+                log << std::format(L", BaseType: {}",  symbol_type_utils::resources::basic_type_to_string(data.value()));
             }
             
             if(auto const data = type.data_kind(); data.has_value())
             {
-                log << std::format(L", DataKind: {}", symbol_type_utils::data_kind_convention_to_string(data.value()));
+                log << std::format(L", DataKind: {}", symbol_type_utils::resources::data_kind_convention_to_string(data.value()));
             }
 
             if(auto const data = type.address_offset(); data.has_value())
@@ -234,7 +234,7 @@ namespace
 
             if(auto const data = type.calling_convention(); data.has_value())
             {
-                log << std::format(L", CallingConvention: {}", symbol_type_utils::calling_convention_to_string(data.value()));
+                log << std::format(L", CallingConvention: {}", symbol_type_utils::resources::calling_convention_to_string(data.value()));
             }
 
             if(auto const data = type.type(); data.has_value())

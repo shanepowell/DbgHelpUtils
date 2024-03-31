@@ -24,131 +24,6 @@ namespace dlg_help_utils::symbol_type_utils
 {
     namespace
     {
-        std::unordered_map<sym_tag_enum, std::wstring_view> g_sym_tag_descriptions =
-        {
-            { sym_tag_enum::Null, L"(SymTagNull)"sv },
-            { sym_tag_enum::Exe, L"exe"sv },
-            { sym_tag_enum::Compiland, L"Compiland"sv },
-            { sym_tag_enum::CompilandDetails, L"CompilandDetails"sv },
-            { sym_tag_enum::CompilandEnv, L"CompilandEnv"sv },
-            { sym_tag_enum::Function, L"Function"sv },
-            { sym_tag_enum::Block, L"Block"sv },
-            { sym_tag_enum::Data, L"Data"sv },
-            { sym_tag_enum::Annotation, L"Annotation"sv },
-            { sym_tag_enum::Label, L"Label"sv },
-            { sym_tag_enum::PublicSymbol, L"PublicSymbol"sv },
-            { sym_tag_enum::UDT, L"UserDefinedType"sv },
-            { sym_tag_enum::Enum, L"ENUM"sv },
-            { sym_tag_enum::FunctionType, L"FunctionType"sv },
-            { sym_tag_enum::PointerType, L"PointerType"sv },
-            { sym_tag_enum::ArrayType, L"ArrayType"sv },
-            { sym_tag_enum::BaseType, L"BaseType"sv },
-            { sym_tag_enum::Typedef, L"Typedef"sv },
-            { sym_tag_enum::BaseClass, L"BaseClass"sv },
-            { sym_tag_enum::Friend, L"Friend"sv },
-            { sym_tag_enum::FunctionArgType, L"FunctionArgType"sv },
-            { sym_tag_enum::FuncDebugStart, L"FuncDebugStart"sv },
-            { sym_tag_enum::FuncDebugEnd, L"FuncDebugEnd"sv },
-            { sym_tag_enum::UsingNamespace, L"UsingNamespace"sv },
-            { sym_tag_enum::VTableShape, L"VTableShape"sv },
-            { sym_tag_enum::VTable, L"VTable"sv },
-            { sym_tag_enum::Custom, L"Custom"sv },
-            { sym_tag_enum::Thunk, L"Thunk"sv },
-            { sym_tag_enum::CustomType, L"CustomType"sv },
-            { sym_tag_enum::ManagedType, L"ManagedType"sv },
-            { sym_tag_enum::Dimension, L"Dimension"sv },
-            { sym_tag_enum::CallSite, L"CallSite"sv },
-            { sym_tag_enum::InlineSite, L"InlineSite"sv },
-            { sym_tag_enum::BaseInterface, L"BaseInterface"sv },
-            { sym_tag_enum::VectorType, L"VectorType"sv },
-            { sym_tag_enum::MatrixType, L"MatrixType"sv },
-            { sym_tag_enum::HLSLType, L"HLSLType"sv },
-            { sym_tag_enum::Caller, L"Caller"sv },
-            { sym_tag_enum::Callee, L"Callee"sv },
-            { sym_tag_enum::Export, L"Export"sv },
-            { sym_tag_enum::HeapAllocationSite, L"HeapAllocationSite"sv },
-            { sym_tag_enum::CoffGroup, L"CoffGroup"sv },
-            { sym_tag_enum::Inlinee, L"Inlinee"sv },
-        };
-
-        std::unordered_map<basic_type, std::wstring_view> g_basic_type_descriptions =
-        {
-            { basic_type::NoType, L"<NoType>"sv },
-            { basic_type::Void, L"void"sv },
-            { basic_type::Char, L"char"sv },
-            { basic_type::WChar, L"wchar_t"sv },
-            { basic_type::Int, L"int"sv },
-            { basic_type::UInt, L"unsigned int"sv },
-            { basic_type::Float, L"float"sv },
-            { basic_type::BCD, L"<BCD>"sv },
-            { basic_type::Bool, L"bool"sv },
-            { basic_type::Long, L"long"sv },
-            { basic_type::ULong, L"unsigned long"sv },
-            { basic_type::Currency, L"<currency>"sv },
-            { basic_type::Date, L"<date>"sv },
-            { basic_type::Variant, L"VARIANT"sv },
-            { basic_type::Complex, L"<complex>"sv },
-            { basic_type::Bit, L"<bit>"sv },
-            { basic_type::BSTR, L"BSTR"sv },
-            { basic_type::HResult, L"HRESULT"sv },
-            { basic_type::Char16, L"char16_t"sv },
-            { basic_type::Char32, L"char32_t"sv },
-            { basic_type::Char8, L"char8_t"sv },
-        };
-
-        std::unordered_map<udt_kind_type, std::wstring_view> g_udt_kind_type_descriptions =
-        {
-            { udt_kind_type::struct_type, L"struct"sv },
-            { udt_kind_type::class_type, L"class"sv },
-            { udt_kind_type::union_type, L"union"sv },
-            { udt_kind_type::interface_type, L"interface"sv },
-        };
-
-        std::unordered_map<calling_convention, std::wstring_view> g_calling_convention_descriptions =
-        {
-            { calling_convention::near_c, L"near c"sv },
-            { calling_convention::far_c, L"far c"sv },
-            { calling_convention::near_pascal, L"near pascal"sv },
-            { calling_convention::far_pascal, L"far pascal"sv },
-            { calling_convention::near_fast, L"near fast"sv },
-            { calling_convention::far_fast, L"far fast"sv },
-            { calling_convention::skipped, L"skipped"sv },
-            { calling_convention::near_std, L"near std"sv },
-            { calling_convention::far_std, L"far std"sv },
-            { calling_convention::near_sys, L"near sys"sv },
-            { calling_convention::far_sys, L"far sys"sv },
-            { calling_convention::thiscall, L"thiscall"sv },
-            { calling_convention::mipscall, L"mipscall"sv },
-            { calling_convention::generic, L"generic"sv },
-            { calling_convention::alphacall, L"alphacall"sv },
-            { calling_convention::ppccall, L"ppccall"sv },
-            { calling_convention::shcall, L"shcall"sv },
-            { calling_convention::armcall, L"armcall"sv },
-            { calling_convention::am33call, L"am33call"sv },
-            { calling_convention::tricall, L"tricall"sv },
-            { calling_convention::sh5_call, L"sh5_call"sv },
-            { calling_convention::m32rcall, L"m32rcall"sv },
-            { calling_convention::clrcall, L"clrcall"sv },
-            { calling_convention::inlinecall, L"inline"sv },
-            { calling_convention::near_vector, L"near vector"sv },
-            { calling_convention::swift, L"swift"sv },
-            { calling_convention::reserved, L"reserved"sv },
-        };
-
-        std::unordered_map<data_kind, std::wstring_view> g_data_kind_descriptions =
-        {
-            { data_kind::data_is_local, L"local"sv },
-            { data_kind::data_is_unknown, L"unknown"sv },
-            { data_kind::data_is_static_local, L"static local"sv },
-            { data_kind::data_is_param, L"param"sv },
-            { data_kind::data_is_object_ptr, L"object ptr"sv },
-            { data_kind::data_is_file_static, L"file static"sv },
-            { data_kind::data_is_global, L"global"sv },
-            { data_kind::data_is_member, L"member"sv },
-            { data_kind::data_is_static_member, L"static member"sv },
-            { data_kind::data_is_constant, L"constant"sv },
-        };
-
         auto constexpr all_bits = std::numeric_limits<uint64_t>::max(); 
 
         struct symbol_walker_work
@@ -210,12 +85,12 @@ namespace dlg_help_utils::symbol_type_utils
         std::wstring_view get_symbol_name(symbol_type_info const& value)
         {
             auto const name_data = value.name();
-            return name_data.value_or(L"(none)"sv);
+            return name_data.value_or(resources::get_symbol_name_none());
         }
 
         void dump_unsupported_variable_symbol_at(std::wostream& os, symbol_type_info const& type, sym_tag_enum const tag, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
         {
-            os << std::format(L" : unsupported type [{0}] on type [{1}]", sym_tag_to_string(tag), sym_tag_to_string(type.sym_tag().value_or(sym_tag_enum::Null)));
+            os << std::format(L" : {} [{}] {} [{}]", resources::get_unsupported_type(), resources::sym_tag_to_string(tag), resources::get_on_type(), resources::sym_tag_to_string(type.sym_tag().value_or(sym_tag_enum::Null)));
         }
 
         std::wstring generate_name_prefix(std::wstring const& name_prefix, symbol_type_info const& type)
@@ -226,11 +101,6 @@ namespace dlg_help_utils::symbol_type_utils
             }
 
             return std::format(L"{0}.{1}", name_prefix, get_symbol_type_friendly_name(type));
-        }
-
-        void dump_enum_variable_symbol_at(std::wostream& os, [[maybe_unused]] symbol_type_info const& type, [[maybe_unused]] uint64_t variable_address, [[maybe_unused]] mini_dump_memory_stream& variable_stream)
-        {
-            os << L" : enum value tbd";
         }
 
         template<typename T>
@@ -292,7 +162,41 @@ namespace dlg_help_utils::symbol_type_utils
                 }
                 else
                 {
-                    os << L": <unknown>";
+                    os << std::format(L": {}", resources::get_variable_unknown());
+                }
+            }
+        }
+
+        void dump_enum_variable_symbol_at(std::wostream& os
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream)
+        {
+            if(auto const length = type.length(); length.has_value())
+            {
+                switch(length.value())
+                {
+                case 1:
+                    dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    break;
+
+                case 2:
+                    dump_number_variable<uint16_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    break;
+
+                case 4:
+                    dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    break;
+
+                case 8:
+                    dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    break;
+
+                default:
+                    os << std::format(L": ({})\n", length.value());
+                    print_utils::print_stream_array_lines<uint8_t>(os, variable_stream, length.value(), 10, 3, 4, dump_hex_t{true});
+                    break;
                 }
             }
         }
@@ -326,7 +230,7 @@ namespace dlg_help_utils::symbol_type_utils
             }
             else
             {
-                os << L": <unknown>";
+                os << std::format(L": {}", resources::get_variable_unknown());
             }
         }
 
@@ -469,7 +373,7 @@ namespace dlg_help_utils::symbol_type_utils
                     break;
 
                 case basic_type::BCD:
-                    os << L": BCD value unsupported";
+                    os << std::format(L": {}", resources::get_bcd_value_unsupported());
                     break;
 
                 case basic_type::Bool:
@@ -477,19 +381,19 @@ namespace dlg_help_utils::symbol_type_utils
                     break;
 
                 case basic_type::Currency:
-                    os << L": Currency value unsupported";
+                    os << std::format(L": {}", resources::get_currency_value_unsupported());
                     break;
 
                 case basic_type::Date:
-                    os << L": Date value unsupported";
+                    os << std::format(L": {}", resources::get_date_value_unsupported());
                     break;
 
                 case basic_type::Variant:
-                    os << L": Variant value unsupported";
+                    os << std::format(L": {}", resources::get_variant_value_unsupported());
                     break;
 
                 case basic_type::Complex:
-                    os << L": Complex value unsupported";
+                    os << std::format(L": {}", resources::get_complex_value_unsupported());
                     break;
 
                 case basic_type::Bit:
@@ -497,8 +401,7 @@ namespace dlg_help_utils::symbol_type_utils
                     break;
 
                 case basic_type::BSTR:
-                    // ReSharper disable once StringLiteralTypo
-                    os << L": BSTR value unsupported";
+                    os << std::format(L": {}", resources::get_bstr_value_unsupported());
                     break;
 
                 case basic_type::HResult:
@@ -713,12 +616,12 @@ namespace dlg_help_utils::symbol_type_utils
                     length_data.value_or(1) > 1)
                 {
                     bit_mask = (~(bit_mask << length_data.value())) << bit_position_data.value();
-                    os << std::format(L" bits {0}-{1} ({2})", bit_position_data.value(), bit_position_data.value() + length_data.value() - 1, stream_hex_dump::to_hex(bit_mask));
+                    os << std::format(L" {} {}-{} ({})", resources::get_bits_title(), bit_position_data.value(), bit_position_data.value() + length_data.value() - 1, stream_hex_dump::to_hex(bit_mask));
                 }
                 else
                 {
                     bit_mask = 0x01ULL << bit_position_data.value();
-                    os << std::format(L" bit {0} ({1})", bit_position_data.value(), stream_hex_dump::to_hex(bit_mask));
+                    os << std::format(L" {} {} ({})", resources::get_bit_title(), bit_position_data.value(), stream_hex_dump::to_hex(bit_mask));
                 }
             }
         }
@@ -753,7 +656,7 @@ namespace dlg_help_utils::symbol_type_utils
                     break;
 
                 case sym_tag_enum::Enum:
-                    dump_enum_variable_symbol_at(os, data_type.value(), variable_address, variable_stream);
+                    dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream);
                     break;
 
                 case sym_tag_enum::PointerType:
@@ -915,66 +818,6 @@ namespace dlg_help_utils::symbol_type_utils
         }
     }
 
-    std::wstring_view sym_tag_to_string(sym_tag_enum const type)
-    {
-        if (auto const it = g_sym_tag_descriptions.find(type); it != g_sym_tag_descriptions.end())
-        {
-            return it->second;
-        }
-
-        static std::wstring bad_result;
-        bad_result = std::format(L"unknown sym tag: {}", static_cast<int>(type));
-        return bad_result;
-    }
-
-    std::wstring_view basic_type_to_string(basic_type const type)
-    {
-        if (auto const it = g_basic_type_descriptions.find(type); it != g_basic_type_descriptions.end())
-        {
-            return it->second;
-        }
-
-        static std::wstring bad_result;
-        bad_result = std::format(L"unknown basic type: {}", static_cast<int>(type));
-        return bad_result;
-    }
-
-    std::wstring_view udt_kind_to_string(udt_kind_type const type)
-    {
-        if (auto const it = g_udt_kind_type_descriptions.find(type); it != g_udt_kind_type_descriptions.end())
-        {
-            return it->second;
-        }
-
-        static std::wstring bad_result;
-        bad_result = std::format(L"unknown UDT type: {}", static_cast<int>(type));
-        return bad_result;
-    }
-
-    std::wstring_view calling_convention_to_string(calling_convention type)
-    {
-        if (auto const it = g_calling_convention_descriptions.find(type); it != g_calling_convention_descriptions.end())
-        {
-            return it->second;
-        }
-
-        static std::wstring bad_result;
-        bad_result = std::format(L"unknown calling convention: {}", static_cast<int>(type));
-        return bad_result;
-    }
-
-    std::wstring_view data_kind_convention_to_string(data_kind type)
-    {
-        if (auto const it = g_data_kind_descriptions.find(type); it != g_data_kind_descriptions.end())
-        {
-            return it->second;
-        }
-
-        static std::wstring bad_result;
-        bad_result = std::format(L"unknown DataKind: ", static_cast<int>(type));
-        return bad_result;
-    }
-
     std::wstring get_symbol_type_friendly_name(symbol_type_info const& value)
     {
         std::wstring name;
@@ -986,7 +829,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 if (auto const kind_data = value.udt_kind(); kind_data.has_value())
                 {
-                    name = udt_kind_to_string(kind_data.value());
+                    name = resources::udt_kind_to_string(kind_data.value());
                 }
 
                 if(!name.empty())
@@ -999,8 +842,7 @@ namespace dlg_help_utils::symbol_type_utils
             }
 
             case sym_tag_enum::Enum:
-                name = L"enum "s;
-                name += get_symbol_name(value);
+                name = std::format(L"{} {}", resources::get_enum_title(), get_symbol_name(value));
                 break;
 
             case sym_tag_enum::PointerType:
@@ -1009,11 +851,11 @@ namespace dlg_help_utils::symbol_type_utils
                     name = get_symbol_type_friendly_name(type_data.value());
                     if (auto const reference_data = value.is_reference(); reference_data.has_value() && reference_data.value())
                     {
-                        name += L"&"s;
+                        name += resources::get_reference_title();
                     }
                     else
                     {
-                        name += L"*"s;
+                        name += resources::get_pointer_title();
                     }
                 }
                 break;
@@ -1041,32 +883,32 @@ namespace dlg_help_utils::symbol_type_utils
                             switch (data_length.value())
                             {
                             case 1:
-                                name = L"int8_t"s;
+                                name = resources::get_int8_title();
                                 do_type = false;
                                 break;
 
                             case 2:
-                                name = L"int16_t"s;
+                                name = resources::get_int16_title();
                                 do_type = false;
                                 break;
 
                             case 4:
-                                name = L"int32_t"s;
+                                name = resources::get_int32_title();
                                 do_type = false;
                                 break;
 
                             case 8:
-                                name = L"int64_t"s;
+                                name = resources::get_int64_title();
                                 do_type = false;
                                 break;
 
                             case 16:
-                                name = L"int128_t"s;
+                                name = resources::get_int128_title();
                                 do_type = false;
                                 break;
 
                             case 32:
-                                name = L"int256_t"s;
+                                name = resources::get_int256_title();
                                 do_type = false;
                                 break;
 
@@ -1082,32 +924,32 @@ namespace dlg_help_utils::symbol_type_utils
                             switch (data_length.value())
                             {
                             case 1:
-                                name = L"uint8_t"s;
+                                name = resources::get_uint8_title();
                                 do_type = false;
                                 break;
 
                             case 2:
-                                name = L"uint16_t"s;
+                                name = resources::get_uint16_title();
                                 do_type = false;
                                 break;
 
                             case 4:
-                                name = L"uint32_t"s;
+                                name = resources::get_uint32_title();
                                 do_type = false;
                                 break;
 
                             case 8:
-                                name = L"uint64_t"s;
+                                name = resources::get_uint64_title();
                                 do_type = false;
                                 break;
 
                             case 16:
-                                name = L"uint128_t"s;
+                                name = resources::get_uint128_title();
                                 do_type = false;
                                 break;
 
                             case 32:
-                                name = L"uint256_t"s;
+                                name = resources::get_uint256_title();
                                 do_type = false;
                                 break;
 
@@ -1123,17 +965,22 @@ namespace dlg_help_utils::symbol_type_utils
                             switch (data_length.value())
                             {
                             case 4:
-                                name = L"float"s;
+                                name = resources::get_float32_title();
                                 do_type = false;
                                 break;
 
                             case 8:
-                                name = L"double"s;
+                                name = resources::get_float64_title();
                                 do_type = false;
                                 break;
 
                             case 16:
-                                name = L"long double"s;
+                                name = resources::get_float128_title();
+                                do_type = false;
+                                break;
+
+                            case 32:
+                                name = resources::get_float256_title();
                                 do_type = false;
                                 break;
 
@@ -1145,7 +992,7 @@ namespace dlg_help_utils::symbol_type_utils
 
                     if (do_type)
                     {
-                        name = basic_type_to_string(data_base_type.value());
+                        name = resources::basic_type_to_string(data_base_type.value());
                     }
                 }
                 break;
@@ -1177,7 +1024,7 @@ namespace dlg_help_utils::symbol_type_utils
                         {
                             name += L' ';
                         }
-                        name += calling_convention_to_string(calling_convention.value());
+                        name += resources::calling_convention_to_string(calling_convention.value());
                     }
 
                     if (auto const name_data = value.name(); name_data.has_value())
@@ -1231,7 +1078,7 @@ namespace dlg_help_utils::symbol_type_utils
 
             if (name.empty())
             {
-                name = sym_tag_to_string(tag_data.value());
+                name = resources::sym_tag_to_string(tag_data.value());
                 if (auto const name_data = value.name(); name_data.has_value())
                 {
                     if (!name.empty())
@@ -1268,21 +1115,21 @@ namespace dlg_help_utils::symbol_type_utils
         auto const symbol_info = walker.get_type_info(symbol_type_name);
         if(!symbol_info.has_value())
         {
-            os << std::format(L"failed to find [{}]\n", symbol_type_name);
+            os << std::format(L"{} [{}]\n", resources::get_failed_to_find_string(), symbol_type_name);
             return;
         }
 
         auto const length = symbol_info.value().length();
         if(!length.has_value())
         {
-            os << std::format(L"symbol [{}] is zero length\n", symbol_type_name);
+            os << std::format(L"{} [{}] {}\n", resources::get_symbol_title(), symbol_type_name, resources::get_is_zero_length_string());
             return;
         }
 
         auto stream = walker.get_process_memory_stream(variable_address, length.value());
         if(stream.eof())
         {
-            os << std::format(L"failed to find [{0} - {1}] memory address range in dump file\n", stream_hex_dump::to_hex(variable_address), size_units::base_16::to_wstring(size_units::base_16::bytes{length.value()}));
+            os << std::format(L"{} [{} - {}] {}\n", resources::get_failed_to_find_string(), stream_hex_dump::to_hex(variable_address), size_units::base_16::to_wstring(size_units::base_16::bytes{length.value()}), resources::get_memory_address_in_range_string());
             return;
         }
 
@@ -1311,14 +1158,14 @@ namespace dlg_help_utils::symbol_type_utils
         auto const length = symbol_info.length();
         if(!length.has_value())
         {
-            os << std::format(L"symbol [{}] is zero length\n", get_symbol_type_friendly_name(symbol_info));
+            os << std::format(L"{} [{}] {}\n", resources::get_symbol_title(), get_symbol_type_friendly_name(symbol_info), resources::get_is_zero_length_string());
             return;
         }
 
         auto stream = walker.get_process_memory_stream(variable_address, length.value());
         if(stream.eof())
         {
-            os << std::format(L"failed to find [{0} - {1}] memory address range in dump file\n", stream_hex_dump::to_hex(variable_address), size_units::base_16::to_wstring(size_units::base_16::bytes{length.value()}));
+            os << std::format(L"{} [{} - {}] {}\n", resources::get_failed_to_find_string(), stream_hex_dump::to_hex(variable_address), size_units::base_16::to_wstring(size_units::base_16::bytes{length.value()}), resources::get_memory_address_in_range_string());
             return;
         }
 
@@ -1359,7 +1206,7 @@ namespace dlg_help_utils::symbol_type_utils
         case sym_tag_enum::Enum:
             if(data_type.has_value())
             {
-                dump_enum_variable_symbol_at(os, data_type.value(), variable_address, copy_variable_stream);
+                dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_variable_stream);
             }
             break;
 

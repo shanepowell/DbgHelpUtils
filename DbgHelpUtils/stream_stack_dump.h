@@ -64,4 +64,19 @@ namespace dlg_help_utils::stream_stack_dump
         , uint64_t address
         , size_t indent);
     std::wstring hex_dump_stack_frame(dbg_help::symbol_address_info const& info, is_x86_target_t is_x86_address);
+
+    namespace resources
+    {
+        std::wstring get_inline_string();
+        std::wstring get_parameters_title();
+        std::wstring get_local_variables_title();
+        std::wstring get_symbol_name_prefix();
+        std::wstring get_symbol_displacement_prefix();
+        std::wstring get_module_displacement_prefix();
+        std::wstring get_unknown_variable_type();
+        std::wstring get_file_name_line_number_separator();
+        std::wstring get_failed_to_find_address_prefix();
+        std::wstring get_failed_to_find_address_name_address_separator();
+        std::wstring get_failed_to_find_address_postfix();
+    }
 };

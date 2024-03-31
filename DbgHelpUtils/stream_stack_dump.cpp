@@ -29,7 +29,7 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 auto const digit_print_size = hex_length + 2;
                 os << std::setw(digit_print_size + (stack_address > 0 ? digit_print_size + 2 : 0)) << std::setfill(L' ')
-                    << L"(Inline)";
+                    << std::format(L"({})", resources::get_inline_string());
             }
             else
             {
@@ -53,19 +53,19 @@ namespace dlg_help_utils::stream_stack_dump
 
                 if (!info->symbol_name.empty())
                 {
-                    os << L'!' << info->symbol_name;
+                    os << std::format(L"{}{}", resources::get_symbol_name_prefix(), info->symbol_name);
                     if (info->symbol_displacement > 0)
                     {
-                        os << L'+' << stream_hex_dump::to_hex(info->symbol_displacement);
+                        os << std::format(L"{}{}", resources::get_symbol_displacement_prefix(), stream_hex_dump::to_hex(info->symbol_displacement));
                     }
                     if (!info->file_name.empty())
                     {
-                        os << L" [" << info->file_name << L'@' << info->line_number << L']';
+                        os << std::format(L" [{}{}{}]", info->file_name, resources::get_file_name_line_number_separator(), info->line_number);
                     }
                 }
                 else
                 {
-                    os << L'+' << stream_hex_dump::to_hex(info->module_displacement);
+                    os << resources::get_module_displacement_prefix() << stream_hex_dump::to_hex(info->module_displacement);
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace dlg_help_utils::stream_stack_dump
                     auto const stream = walker.get_process_memory_stream(local_variable.frame_data->data_address, local_variable.frame_data->data_size);
                     if(stream.eof())
                     {
-                        os << std::format(L"\nFailed to find {0} address [{1}] in dump file\n", name, stream_hex_dump::to_hex_full(local_variable.frame_data->data_address));
+                        os << std::format(L"\n{}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(local_variable.frame_data->data_address), resources::get_failed_to_find_address_postfix());
                         return;
                     }
                     dump_variable_symbol_at(os, walker, local_variable.symbol_info, local_variable.symbol_info, local_variable.frame_data->data_address, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
@@ -138,7 +138,7 @@ namespace dlg_help_utils::stream_stack_dump
             }
             else
             {
-                os << L": <unknown>";
+                os << L": " << resources::get_unknown_variable_type();
             }
         }
 
@@ -195,19 +195,17 @@ namespace dlg_help_utils::stream_stack_dump
         for (size_t index = 0; auto const& entry : symbol_engine.stack_walk(thread_context))
         {
             os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
-            auto constexpr parameters_title = L"Parameters"sv;
-            auto constexpr local_variables_title = L"Local Variables"sv;
 
             if (thread_context.x86_thread_context_available() || thread_context.wow64_thread_context_available())
             {
                 generate_hex_dump_address(os, static_cast<uint32_t>(entry.stack), static_cast<uint32_t>(entry.address), entry);
                 if(display_parameters)
                 {
-                    generate_hex_dump_local_variables<uint32_t>(os, parameters_title, walker, entry.parameters);
+                    generate_hex_dump_local_variables<uint32_t>(os, resources::get_parameters_title(), walker, entry.parameters);
                 }
                 if(display_variables)
                 {
-                    generate_hex_dump_local_variables<uint32_t>(os, local_variables_title, walker, entry.local_variables);
+                    generate_hex_dump_local_variables<uint32_t>(os, resources::get_local_variables_title(), walker, entry.local_variables);
                 }
             }
             else if (thread_context.x64_thread_context_available())
@@ -215,11 +213,11 @@ namespace dlg_help_utils::stream_stack_dump
                 generate_hex_dump_address(os, entry.stack, entry.address, entry);
                 if(display_parameters)
                 {
-                    generate_hex_dump_local_variables<uint64_t>(os, parameters_title, walker, entry.parameters);
+                    generate_hex_dump_local_variables<uint64_t>(os, resources::get_parameters_title(), walker, entry.parameters);
                 }
                 if(display_variables)
                 {
-                    generate_hex_dump_local_variables<uint64_t>(os, local_variables_title, walker, entry.local_variables);
+                    generate_hex_dump_local_variables<uint64_t>(os, resources::get_local_variables_title(), walker, entry.local_variables);
                 }
             }
 

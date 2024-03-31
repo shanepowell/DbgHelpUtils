@@ -4,23 +4,21 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 
-#include <map>
-
 #include "flags_string_utils.h"
 #include "stream_hex_dump.h"
 
-using namespace std::string_view_literals;
+using namespace std::string_literals;
 
 namespace
 {
-    std::map<uint32_t, std::wstring_view> const dump_flag_masks =
+    std::unordered_map<uint32_t, std::wstring> const dump_flag_masks =
     {
-        {MINIDUMP_THREAD_INFO_ERROR_THREAD, L"Error Thread"sv},
-        {MINIDUMP_THREAD_INFO_WRITING_THREAD, L"Writing Thread"sv},
-        {MINIDUMP_THREAD_INFO_EXITED_THREAD, L"Exited Thread"sv},
-        {MINIDUMP_THREAD_INFO_INVALID_INFO, L"Invalid Info"sv},
-        {MINIDUMP_THREAD_INFO_INVALID_CONTEXT, L"Invalid Context"sv},
-        {MINIDUMP_THREAD_INFO_INVALID_TEB, L"Invalid TEB"sv},
+        {MINIDUMP_THREAD_INFO_ERROR_THREAD, L"Error Thread"s},
+        {MINIDUMP_THREAD_INFO_WRITING_THREAD, L"Writing Thread"s},
+        {MINIDUMP_THREAD_INFO_EXITED_THREAD, L"Exited Thread"s},
+        {MINIDUMP_THREAD_INFO_INVALID_INFO, L"Invalid Info"s},
+        {MINIDUMP_THREAD_INFO_INVALID_CONTEXT, L"Invalid Context"s},
+        {MINIDUMP_THREAD_INFO_INVALID_TEB, L"Invalid TEB"s},
     };
 }
 

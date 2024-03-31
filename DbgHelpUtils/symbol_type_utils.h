@@ -29,11 +29,6 @@ namespace dlg_help_utils::dbg_help
 
 namespace dlg_help_utils::symbol_type_utils
 {
-    std::wstring_view sym_tag_to_string(dbg_help::sym_tag_enum type);
-    std::wstring_view basic_type_to_string(dbg_help::basic_type type);
-    std::wstring_view udt_kind_to_string(dbg_help::udt_kind_type type);
-    std::wstring_view calling_convention_to_string(dbg_help::calling_convention type);
-    std::wstring_view data_kind_convention_to_string(dbg_help::data_kind type);
     std::wstring get_symbol_type_friendly_name(dbg_help::symbol_type_info const& value);
     void dump_variable_type_at(std::wostream& os
         , mini_dump const& mini_dump
@@ -86,4 +81,48 @@ namespace dlg_help_utils::symbol_type_utils
         , std::map<uint64_t, pointer_info>& pointers
         , std::wstring const& name_prefix
         , std::unordered_set<uint64_t> const& ignore_pointers);
+
+    namespace resources
+    {
+        std::wstring sym_tag_to_string(dbg_help::sym_tag_enum type);
+        std::wstring basic_type_to_string(dbg_help::basic_type type);
+        std::wstring udt_kind_to_string(dbg_help::udt_kind_type type);
+        std::wstring calling_convention_to_string(dbg_help::calling_convention type);
+        std::wstring data_kind_convention_to_string(dbg_help::data_kind type);
+        std::wstring_view get_symbol_name_none();
+        std::wstring get_unsupported_type();
+        std::wstring get_on_type();
+        std::wstring get_variable_unknown();
+        std::wstring get_bcd_value_unsupported();
+        std::wstring get_currency_value_unsupported();
+        std::wstring get_date_value_unsupported();
+        std::wstring get_variant_value_unsupported();
+        std::wstring get_complex_value_unsupported();
+        std::wstring get_bstr_value_unsupported();
+        std::wstring get_bits_title();
+        std::wstring get_bit_title();
+        std::wstring get_enum_title();
+        std::wstring get_reference_title();
+        std::wstring get_pointer_title();
+        std::wstring get_int8_title();
+        std::wstring get_int16_title();
+        std::wstring get_int32_title();
+        std::wstring get_int64_title();
+        std::wstring get_int128_title();
+        std::wstring get_int256_title();
+        std::wstring get_uint8_title();
+        std::wstring get_uint16_title();
+        std::wstring get_uint32_title();
+        std::wstring get_uint64_title();
+        std::wstring get_uint128_title();
+        std::wstring get_uint256_title();
+        std::wstring get_float32_title();
+        std::wstring get_float64_title();
+        std::wstring get_float128_title();
+        std::wstring get_float256_title();
+        std::wstring get_failed_to_find_string();
+        std::wstring get_symbol_title();
+        std::wstring get_is_zero_length_string();
+        std::wstring get_memory_address_in_range_string();
+    }
 }

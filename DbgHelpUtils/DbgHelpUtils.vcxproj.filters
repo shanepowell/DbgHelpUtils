@@ -165,13 +165,13 @@
     <ClCompile Include="system_info_utils.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="memory_info_utils.cpp">
+    <ClCompile Include="memory_info_utils_resource.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="thread_info_list_stream.cpp">
       <Filter>Streams</Filter>
     </ClCompile>
-    <ClCompile Include="thread_info_utils.cpp">
+    <ClCompile Include="thread_info_utils_resource.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="system_memory_info_stream.cpp">
@@ -249,7 +249,7 @@
     <ClCompile Include="common_symbol_names.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="gflags_utils.cpp">
+    <ClCompile Include="gflags_utils_resource.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="common_symbol_utils.cpp">
@@ -342,7 +342,7 @@
     <ClCompile Include="heap_lfh_subsegment.cpp">
       <Filter>Heap\SegmentHeap</Filter>
     </ClCompile>
-    <ClCompile Include="lfh_subsegment_location_utils.cpp">
+    <ClCompile Include="lfh_subsegment_location_utils_resource.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="heap_lfh_entry.cpp">
@@ -399,7 +399,7 @@
     <ClCompile Include="global_symbol.cpp">
       <Filter>Process</Filter>
     </ClCompile>
-    <ClCompile Include="register_names.cpp">
+    <ClCompile Include="register_names_resource.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="stream_module_name.cpp">
@@ -453,20 +453,32 @@
     <ClCompile Include="segment_heap_options.cpp">
       <Filter>Heap\SegmentHeap</Filter>
     </ClCompile>
-    <ClCompile Include="mini_dump_stream_type_impl.cpp">
+    <ClCompile Include="mini_dump_stream_type_resource.cpp">
       <Filter>MiniDump</Filter>
     </ClCompile>
-    <ClCompile Include="size_units_impl.cpp">
+    <ClCompile Include="size_units_resource.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="time_units_impl.cpp">
+    <ClCompile Include="time_units_resource.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="flags_string_utils_impl.cpp">
+    <ClCompile Include="flags_string_utils_resource.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="stream_hex_dump_impl.cpp">
+    <ClCompile Include="stream_hex_dump_resource.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="exception_utils_resource.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_stack_dump_resource.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_type_utils_resource.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="system_info_utils_resource.cpp">
+      <Filter>StreamUtilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -994,6 +1006,9 @@
     </ClInclude>
     <ClInclude Include="get_label_type_from_labels.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="system_info_utils_resource.h">
+      <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

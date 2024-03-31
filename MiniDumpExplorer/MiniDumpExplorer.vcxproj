@@ -384,6 +384,7 @@
     <ClInclude Include="Utility\ConverterTools.h" />
     <ClInclude Include="Utility\DataGridColumnSorter.h" />
     <ClInclude Include="Utility\erase_value.h" />
+    <ClInclude Include="Utility\GetResourceValue.h" />
     <ClInclude Include="Utility\IndexToValueTable.h" />
     <ClInclude Include="Utility\KeyboardHelper.h" />
     <ClInclude Include="Utility\log_level.h" />
@@ -667,11 +668,20 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtils\flags_string_utils_impl.cpp" />
-    <ClCompile Include="DlgHelpUtils\mini_dump_stream_type_impl.cpp" />
-    <ClCompile Include="DlgHelpUtils\size_units_impl.cpp" />
-    <ClCompile Include="DlgHelpUtils\stream_hex_dump_impl.cpp" />
-    <ClCompile Include="DlgHelpUtils\time_units_impl.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\exception_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\lfh_subsegment_location_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\memory_info_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\mini_dump_stream_type_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\register_names_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\size_units_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\stream_hex_dump_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\stream_stack_dump_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\symbol_type_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\thread_info_utils_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\time_units_resource.cpp" />
     <ClCompile Include="Helpers\TypeHelper.cpp" />
     <ClCompile Include="Helpers\UISettingsHelper.cpp" />
     <ClCompile Include="Helpers\VisualStates.cpp" />
@@ -699,6 +709,7 @@
     <ClCompile Include="Utility\BindingInfo.cpp" />
     <ClCompile Include="Utility\ConverterTools.cpp" />
     <ClCompile Include="Utility\DataGridColumnSorter.cpp" />
+    <ClCompile Include="Utility\GetResourceValue.cpp" />
     <ClCompile Include="Utility\KeyboardHelper.cpp" />
     <ClCompile Include="Utility\SuspendedHandlers.cpp" />
     <ClCompile Include="Utility\ValidationResult.cpp" />
@@ -1170,22 +1181,22 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)dbghelp_support_files\DIA SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

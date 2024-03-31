@@ -315,7 +315,14 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_stream_array_lines(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const max_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex = dump_hex_t{false})
+    void print_stream_array_lines(std::wostream& os
+        , mini_dump_memory_stream& stream
+        , uint64_t const max_size
+        , size_t const elements_per_line
+        , size_t const element_width
+        , size_t const indent
+        , dump_hex_t const dump_hex = dump_hex_t{false}
+        , write_header_t const write_header = write_header_t{true})
     {
         std::wstring const indent_str(indent, ' ');
 
@@ -340,7 +347,7 @@ namespace dlg_help_utils::print_utils
                     os << '\n';
                 }
 
-                os << indent_str << '[' << stream_hex_dump::to_hex(i, index_width) << L"]: ";
+                os << indent_str << '[' << stream_hex_dump::to_hex(i, index_width, L'0', write_header) << L"]: ";
             }
 
             std::wostringstream ss;
@@ -352,7 +359,7 @@ namespace dlg_help_utils::print_utils
             {
                 if(dump_hex)
                 {
-                    ss << stream_hex_dump::to_hex_full(value);
+                    ss << stream_hex_dump::to_hex_full(value, write_header);
                 }
                 else
                 {

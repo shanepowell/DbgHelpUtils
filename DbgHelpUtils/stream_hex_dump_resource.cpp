@@ -2,7 +2,7 @@
 
 using namespace std::string_literals;
 
-namespace dlg_help_utils::stream_hex_dump
+namespace dlg_help_utils::stream_hex_dump::details::resources
 {
     std::wstring get_hex_number_prefix()
     {

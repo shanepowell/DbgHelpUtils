@@ -11,5 +11,5 @@ namespace dlg_help_utils::lfh_subsegment_location_utils
         retiring_subsegment_list = 2
     };
 
-    std::wstring_view dump_page_range_flags_to_string(location value);
+    std::wstring dump_location_to_string(location value);
 }

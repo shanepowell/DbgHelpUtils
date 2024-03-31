@@ -2,7 +2,7 @@
 
 using namespace std::string_literals;
 
-namespace dlg_help_utils::size_units::details
+namespace dlg_help_utils::size_units::resources
 {
     namespace
     {

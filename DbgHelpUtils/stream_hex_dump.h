@@ -7,10 +7,13 @@
 
 namespace dlg_help_utils::stream_hex_dump
 {
-    std::wstring get_hex_number_prefix();
-
     namespace details
     {
+        namespace resources
+        {
+            std::wstring get_hex_number_prefix();
+        }
+
         template<typename T>
         [[nodiscard]] auto constexpr to_printable_value(T const& value)
         {
@@ -44,7 +47,7 @@ namespace dlg_help_utils::stream_hex_dump
 
             if(write_header)
             {
-                return std::format(L"{}{}", get_hex_number_prefix(), std::move(result));
+                return std::format(L"{}{}", resources::get_hex_number_prefix(), std::move(result));
             }
 
             return result;

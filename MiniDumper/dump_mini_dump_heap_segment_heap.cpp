@@ -167,7 +167,7 @@ namespace detail
             log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.block_count()));
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(subsegment.block_size()), stream_hex_dump::to_hex(subsegment.block_size()));
             auto const location{subsegment.location()};
-            log << std::format(L"{0}  Location: {1} ({2})\n", indent_str, locale_formatting::to_wstring(static_cast<uint16_t>(location)), dump_page_range_flags_to_string(location));
+            log << std::format(L"{0}  Location: {1} ({2})\n", indent_str, locale_formatting::to_wstring(static_cast<uint16_t>(location)), dump_location_to_string(location));
             if(options.debug_heap_data())
             {
                 log << std::format(L"{0}  Witheld Block Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.witheld_block_count()));

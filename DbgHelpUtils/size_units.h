@@ -223,7 +223,7 @@ namespace dlg_help_utils::size_units
     std::tuple<std::wstring, std::wstring, std::wstring> const& get_label_strings(size_unit_type type);
     size_unit_type get_label_type(std::wstring_view label);
 
-    namespace details
+    namespace resources
     {
         std::unordered_map<size_unit_type, std::tuple<std::wstring, std::wstring, std::wstring>> const& get_type_strings();
     }

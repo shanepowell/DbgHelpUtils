@@ -333,8 +333,14 @@
   <data name="UnknownStreamType" xml:space="preserve">
     <value>Unknown Stream Type</value>
   </data>
-  <data name="FlagsUnknownOptions" xml:space="preserve">
-    <value>unknown options</value>
+  <data name="FlagsUnknown" xml:space="preserve">
+    <value>unknown flags</value>
+  </data>
+  <data name="FlagsSeparator" xml:space="preserve">
+    <value>,</value>
+  </data>
+  <data name="EnumUnknown" xml:space="preserve">
+    <value>unknown enum</value>
   </data>
   <data name="FlagsNone" xml:space="preserve">
     <value>none</value>
@@ -404,5 +410,2711 @@
   </data>
   <data name="HexNumberPrefix" xml:space="preserve">
     <value>0x</value>
+  </data>
+  <data name="MINIDUMP_THREAD_INFO_ERROR_THREAD" xml:space="preserve">
+    <value>Error Thread</value>
+  </data>
+  <data name="MINIDUMP_THREAD_INFO_WRITING_THREAD" xml:space="preserve">
+    <value>Writing Thread</value>
+  </data>
+  <data name="MINIDUMP_THREAD_INFO_EXITED_THREAD" xml:space="preserve">
+    <value>Exited Thread</value>
+  </data>
+  <data name="MINIDUMP_THREAD_INFO_INVALID_INFO" xml:space="preserve">
+    <value>Invalid Info</value>
+  </data>
+  <data name="MINIDUMP_THREAD_INFO_INVALID_CONTEXT" xml:space="preserve">
+    <value>Invalid Context</value>
+  </data>
+  <data name="MINIDUMP_THREAD_INFO_INVALID_TEB" xml:space="preserve">
+    <value>Invalid TEB</value>
+  </data>
+  <data name="APC_INDEX_MISMATCH" xml:space="preserve">
+    <value>APC_INDEX_MISMATCH</value>
+  </data>
+  <data name="DEVICE_QUEUE_NOT_BUSY" xml:space="preserve">
+    <value>DEVICE_QUEUE_NOT_BUSY</value>
+  </data>
+  <data name="INVALID_AFFINITY_SET" xml:space="preserve">
+    <value>INVALID_AFFINITY_SET</value>
+  </data>
+  <data name="INVALID_DATA_ACCESS_TRAP" xml:space="preserve">
+    <value>INVALID_DATA_ACCESS_TRAP</value>
+  </data>
+  <data name="INVALID_PROCESS_ATTACH_ATTEMPT" xml:space="preserve">
+    <value>INVALID_PROCESS_ATTACH_ATTEMPT</value>
+  </data>
+  <data name="INVALID_PROCESS_DETACH_ATTEMPT" xml:space="preserve">
+    <value>INVALID_PROCESS_DETACH_ATTEMPT</value>
+  </data>
+  <data name="INVALID_SOFTWARE_INTERRUPT" xml:space="preserve">
+    <value>INVALID_SOFTWARE_INTERRUPT</value>
+  </data>
+  <data name="IRQL_NOT_DISPATCH_LEVEL" xml:space="preserve">
+    <value>IRQL_NOT_DISPATCH_LEVEL</value>
+  </data>
+  <data name="IRQL_NOT_GREATER_OR_EQUAL" xml:space="preserve">
+    <value>IRQL_NOT_GREATER_OR_EQUAL</value>
+  </data>
+  <data name="IRQL_NOT_LESS_OR_EQUAL" xml:space="preserve">
+    <value>IRQL_NOT_LESS_OR_EQUAL</value>
+  </data>
+  <data name="NO_EXCEPTION_HANDLING_SUPPORT" xml:space="preserve">
+    <value>NO_EXCEPTION_HANDLING_SUPPORT</value>
+  </data>
+  <data name="MAXIMUM_WAIT_OBJECTS_EXCEEDED" xml:space="preserve">
+    <value>MAXIMUM_WAIT_OBJECTS_EXCEEDED</value>
+  </data>
+  <data name="MUTEX_LEVEL_NUMBER_VIOLATION" xml:space="preserve">
+    <value>MUTEX_LEVEL_NUMBER_VIOLATION</value>
+  </data>
+  <data name="NO_USER_MODE_CONTEXT" xml:space="preserve">
+    <value>NO_USER_MODE_CONTEXT</value>
+  </data>
+  <data name="SPIN_LOCK_ALREADY_OWNED" xml:space="preserve">
+    <value>SPIN_LOCK_ALREADY_OWNED</value>
+  </data>
+  <data name="SPIN_LOCK_NOT_OWNED" xml:space="preserve">
+    <value>SPIN_LOCK_NOT_OWNED</value>
+  </data>
+  <data name="THREAD_NOT_MUTEX_OWNER" xml:space="preserve">
+    <value>THREAD_NOT_MUTEX_OWNER</value>
+  </data>
+  <data name="TRAP_CAUSE_UNKNOWN" xml:space="preserve">
+    <value>TRAP_CAUSE_UNKNOWN</value>
+  </data>
+  <data name="EMPTY_THREAD_REAPER_LIST" xml:space="preserve">
+    <value>EMPTY_THREAD_REAPER_LIST</value>
+  </data>
+  <data name="CREATE_DELETE_LOCK_NOT_LOCKED" xml:space="preserve">
+    <value>CREATE_DELETE_LOCK_NOT_LOCKED</value>
+  </data>
+  <data name="LAST_CHANCE_CALLED_FROM_KMODE" xml:space="preserve">
+    <value>LAST_CHANCE_CALLED_FROM_KMODE</value>
+  </data>
+  <data name="CID_HANDLE_CREATION" xml:space="preserve">
+    <value>CID_HANDLE_CREATION</value>
+  </data>
+  <data name="CID_HANDLE_DELETION" xml:space="preserve">
+    <value>CID_HANDLE_DELETION</value>
+  </data>
+  <data name="REFERENCE_BY_POINTER" xml:space="preserve">
+    <value>REFERENCE_BY_POINTER</value>
+  </data>
+  <data name="BAD_POOL_HEADER" xml:space="preserve">
+    <value>BAD_POOL_HEADER</value>
+  </data>
+  <data name="MEMORY_MANAGEMENT" xml:space="preserve">
+    <value>MEMORY_MANAGEMENT</value>
+  </data>
+  <data name="PFN_SHARE_COUNT" xml:space="preserve">
+    <value>PFN_SHARE_COUNT</value>
+  </data>
+  <data name="PFN_REFERENCE_COUNT" xml:space="preserve">
+    <value>PFN_REFERENCE_COUNT</value>
+  </data>
+  <data name="NO_SPIN_LOCK_AVAILABLE" xml:space="preserve">
+    <value>NO_SPIN_LOCK_AVAILABLE</value>
+  </data>
+  <data name="KMODE_EXCEPTION_NOT_HANDLED" xml:space="preserve">
+    <value>KMODE_EXCEPTION_NOT_HANDLED</value>
+  </data>
+  <data name="SHARED_RESOURCE_CONV_ERROR" xml:space="preserve">
+    <value>SHARED_RESOURCE_CONV_ERROR</value>
+  </data>
+  <data name="KERNEL_APC_PENDING_DURING_EXIT" xml:space="preserve">
+    <value>KERNEL_APC_PENDING_DURING_EXIT</value>
+  </data>
+  <data name="QUOTA_UNDERFLOW" xml:space="preserve">
+    <value>QUOTA_UNDERFLOW</value>
+  </data>
+  <data name="FILE_SYSTEM" xml:space="preserve">
+    <value>FILE_SYSTEM</value>
+  </data>
+  <data name="FAT_FILE_SYSTEM" xml:space="preserve">
+    <value>FAT_FILE_SYSTEM</value>
+  </data>
+  <data name="NTFS_FILE_SYSTEM" xml:space="preserve">
+    <value>NTFS_FILE_SYSTEM</value>
+  </data>
+  <data name="NPFS_FILE_SYSTEM" xml:space="preserve">
+    <value>NPFS_FILE_SYSTEM</value>
+  </data>
+  <data name="CDFS_FILE_SYSTEM" xml:space="preserve">
+    <value>CDFS_FILE_SYSTEM</value>
+  </data>
+  <data name="RDR_FILE_SYSTEM" xml:space="preserve">
+    <value>RDR_FILE_SYSTEM</value>
+  </data>
+  <data name="CORRUPT_ACCESS_TOKEN" xml:space="preserve">
+    <value>CORRUPT_ACCESS_TOKEN</value>
+  </data>
+  <data name="SECURITY_SYSTEM" xml:space="preserve">
+    <value>SECURITY_SYSTEM</value>
+  </data>
+  <data name="INCONSISTENT_IRP" xml:space="preserve">
+    <value>INCONSISTENT_IRP</value>
+  </data>
+  <data name="PANIC_STACK_SWITCH" xml:space="preserve">
+    <value>PANIC_STACK_SWITCH</value>
+  </data>
+  <data name="PORT_DRIVER_INTERNAL" xml:space="preserve">
+    <value>PORT_DRIVER_INTERNAL</value>
+  </data>
+  <data name="SCSI_DISK_DRIVER_INTERNAL" xml:space="preserve">
+    <value>SCSI_DISK_DRIVER_INTERNAL</value>
+  </data>
+  <data name="DATA_BUS_ERROR" xml:space="preserve">
+    <value>DATA_BUS_ERROR</value>
+  </data>
+  <data name="INSTRUCTION_BUS_ERROR" xml:space="preserve">
+    <value>INSTRUCTION_BUS_ERROR</value>
+  </data>
+  <data name="SET_OF_INVALID_CONTEXT" xml:space="preserve">
+    <value>SET_OF_INVALID_CONTEXT</value>
+  </data>
+  <data name="PHASE0_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>PHASE0_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="PHASE1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>PHASE1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="UNEXPECTED_INITIALIZATION_CALL" xml:space="preserve">
+    <value>UNEXPECTED_INITIALIZATION_CALL</value>
+  </data>
+  <data name="CACHE_MANAGER" xml:space="preserve">
+    <value>CACHE_MANAGER</value>
+  </data>
+  <data name="NO_MORE_IRP_STACK_LOCATIONS" xml:space="preserve">
+    <value>NO_MORE_IRP_STACK_LOCATIONS</value>
+  </data>
+  <data name="DEVICE_REFERENCE_COUNT_NOT_ZERO" xml:space="preserve">
+    <value>DEVICE_REFERENCE_COUNT_NOT_ZERO</value>
+  </data>
+  <data name="FLOPPY_INTERNAL_ERROR" xml:space="preserve">
+    <value>FLOPPY_INTERNAL_ERROR</value>
+  </data>
+  <data name="SERIAL_DRIVER_INTERNAL" xml:space="preserve">
+    <value>SERIAL_DRIVER_INTERNAL</value>
+  </data>
+  <data name="SYSTEM_EXIT_OWNED_MUTEX" xml:space="preserve">
+    <value>SYSTEM_EXIT_OWNED_MUTEX</value>
+  </data>
+  <data name="SYSTEM_UNWIND_PREVIOUS_USER" xml:space="preserve">
+    <value>SYSTEM_UNWIND_PREVIOUS_USER</value>
+  </data>
+  <data name="SYSTEM_SERVICE_EXCEPTION" xml:space="preserve">
+    <value>SYSTEM_SERVICE_EXCEPTION</value>
+  </data>
+  <data name="INTERRUPT_UNWIND_ATTEMPTED" xml:space="preserve">
+    <value>INTERRUPT_UNWIND_ATTEMPTED</value>
+  </data>
+  <data name="INTERRUPT_EXCEPTION_NOT_HANDLED" xml:space="preserve">
+    <value>INTERRUPT_EXCEPTION_NOT_HANDLED</value>
+  </data>
+  <data name="MULTIPROCESSOR_CONFIGURATION_NOT_SUPPORTED" xml:space="preserve">
+    <value>MULTIPROCESSOR_CONFIGURATION_NOT_SUPPORTED</value>
+  </data>
+  <data name="NO_MORE_SYSTEM_PTES" xml:space="preserve">
+    <value>NO_MORE_SYSTEM_PTES</value>
+  </data>
+  <data name="TARGET_MDL_TOO_SMALL" xml:space="preserve">
+    <value>TARGET_MDL_TOO_SMALL</value>
+  </data>
+  <data name="MUST_SUCCEED_POOL_EMPTY" xml:space="preserve">
+    <value>MUST_SUCCEED_POOL_EMPTY</value>
+  </data>
+  <data name="ATDISK_DRIVER_INTERNAL" xml:space="preserve">
+    <value>ATDISK_DRIVER_INTERNAL</value>
+  </data>
+  <data name="NO_SUCH_PARTITION" xml:space="preserve">
+    <value>NO_SUCH_PARTITION</value>
+  </data>
+  <data name="MULTIPLE_IRP_COMPLETE_REQUESTS" xml:space="preserve">
+    <value>MULTIPLE_IRP_COMPLETE_REQUESTS</value>
+  </data>
+  <data name="INSUFFICIENT_SYSTEM_MAP_REGS" xml:space="preserve">
+    <value>INSUFFICIENT_SYSTEM_MAP_REGS</value>
+  </data>
+  <data name="DEREF_UNKNOWN_LOGON_SESSION" xml:space="preserve">
+    <value>DEREF_UNKNOWN_LOGON_SESSION</value>
+  </data>
+  <data name="REF_UNKNOWN_LOGON_SESSION" xml:space="preserve">
+    <value>REF_UNKNOWN_LOGON_SESSION</value>
+  </data>
+  <data name="CANCEL_STATE_IN_COMPLETED_IRP" xml:space="preserve">
+    <value>CANCEL_STATE_IN_COMPLETED_IRP</value>
+  </data>
+  <data name="PAGE_FAULT_WITH_INTERRUPTS_OFF" xml:space="preserve">
+    <value>PAGE_FAULT_WITH_INTERRUPTS_OFF</value>
+  </data>
+  <data name="IRQL_GT_ZERO_AT_SYSTEM_SERVICE" xml:space="preserve">
+    <value>IRQL_GT_ZERO_AT_SYSTEM_SERVICE</value>
+  </data>
+  <data name="STREAMS_INTERNAL_ERROR" xml:space="preserve">
+    <value>STREAMS_INTERNAL_ERROR</value>
+  </data>
+  <data name="FATAL_UNHANDLED_HARD_ERROR" xml:space="preserve">
+    <value>FATAL_UNHANDLED_HARD_ERROR</value>
+  </data>
+  <data name="NO_PAGES_AVAILABLE" xml:space="preserve">
+    <value>NO_PAGES_AVAILABLE</value>
+  </data>
+  <data name="PFN_LIST_CORRUPT" xml:space="preserve">
+    <value>PFN_LIST_CORRUPT</value>
+  </data>
+  <data name="NDIS_INTERNAL_ERROR" xml:space="preserve">
+    <value>NDIS_INTERNAL_ERROR</value>
+  </data>
+  <data name="PAGE_FAULT_IN_NONPAGED_AREA" xml:space="preserve">
+    <value>PAGE_FAULT_IN_NONPAGED_AREA</value>
+  </data>
+  <data name="REGISTRY_ERROR" xml:space="preserve">
+    <value>REGISTRY_ERROR</value>
+  </data>
+  <data name="MAILSLOT_FILE_SYSTEM" xml:space="preserve">
+    <value>MAILSLOT_FILE_SYSTEM</value>
+  </data>
+  <data name="NO_BOOT_DEVICE" xml:space="preserve">
+    <value>NO_BOOT_DEVICE</value>
+  </data>
+  <data name="LM_SERVER_INTERNAL_ERROR" xml:space="preserve">
+    <value>LM_SERVER_INTERNAL_ERROR</value>
+  </data>
+  <data name="DATA_COHERENCY_EXCEPTION" xml:space="preserve">
+    <value>DATA_COHERENCY_EXCEPTION</value>
+  </data>
+  <data name="INSTRUCTION_COHERENCY_EXCEPTION" xml:space="preserve">
+    <value>INSTRUCTION_COHERENCY_EXCEPTION</value>
+  </data>
+  <data name="XNS_INTERNAL_ERROR" xml:space="preserve">
+    <value>XNS_INTERNAL_ERROR</value>
+  </data>
+  <data name="FTDISK_INTERNAL_ERROR" xml:space="preserve">
+    <value>FTDISK_INTERNAL_ERROR</value>
+  </data>
+  <data name="PINBALL_FILE_SYSTEM" xml:space="preserve">
+    <value>PINBALL_FILE_SYSTEM</value>
+  </data>
+  <data name="CRITICAL_SERVICE_FAILED" xml:space="preserve">
+    <value>CRITICAL_SERVICE_FAILED</value>
+  </data>
+  <data name="SET_ENV_VAR_FAILED" xml:space="preserve">
+    <value>SET_ENV_VAR_FAILED</value>
+  </data>
+  <data name="HAL_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>HAL_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="UNSUPPORTED_PROCESSOR" xml:space="preserve">
+    <value>UNSUPPORTED_PROCESSOR</value>
+  </data>
+  <data name="OBJECT_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>OBJECT_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SECURITY_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SECURITY_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="PROCESS_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>PROCESS_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="HAL1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>HAL1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="OBJECT1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>OBJECT1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SECURITY1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SECURITY1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SYMBOLIC_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SYMBOLIC_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="MEMORY1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>MEMORY1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="CACHE_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>CACHE_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="CONFIG_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>CONFIG_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="FILE_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>FILE_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="IO1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>IO1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="LPC_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>LPC_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="PROCESS1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>PROCESS1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="REFMON_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>REFMON_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SESSION1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SESSION1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SESSION2_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SESSION2_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SESSION3_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SESSION3_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SESSION4_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SESSION4_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="SESSION5_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>SESSION5_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="ASSIGN_DRIVE_LETTERS_FAILED" xml:space="preserve">
+    <value>ASSIGN_DRIVE_LETTERS_FAILED</value>
+  </data>
+  <data name="CONFIG_LIST_FAILED" xml:space="preserve">
+    <value>CONFIG_LIST_FAILED</value>
+  </data>
+  <data name="BAD_SYSTEM_CONFIG_INFO" xml:space="preserve">
+    <value>BAD_SYSTEM_CONFIG_INFO</value>
+  </data>
+  <data name="CANNOT_WRITE_CONFIGURATION" xml:space="preserve">
+    <value>CANNOT_WRITE_CONFIGURATION</value>
+  </data>
+  <data name="PROCESS_HAS_LOCKED_PAGES" xml:space="preserve">
+    <value>PROCESS_HAS_LOCKED_PAGES</value>
+  </data>
+  <data name="KERNEL_STACK_INPAGE_ERROR" xml:space="preserve">
+    <value>KERNEL_STACK_INPAGE_ERROR</value>
+  </data>
+  <data name="PHASE0_EXCEPTION" xml:space="preserve">
+    <value>PHASE0_EXCEPTION</value>
+  </data>
+  <data name="MISMATCHED_HAL" xml:space="preserve">
+    <value>MISMATCHED_HAL</value>
+  </data>
+  <data name="KERNEL_DATA_INPAGE_ERROR" xml:space="preserve">
+    <value>KERNEL_DATA_INPAGE_ERROR</value>
+  </data>
+  <data name="INACCESSIBLE_BOOT_DEVICE" xml:space="preserve">
+    <value>INACCESSIBLE_BOOT_DEVICE</value>
+  </data>
+  <data name="BUGCODE_NDIS_DRIVER" xml:space="preserve">
+    <value>BUGCODE_NDIS_DRIVER</value>
+  </data>
+  <data name="INSTALL_MORE_MEMORY" xml:space="preserve">
+    <value>INSTALL_MORE_MEMORY</value>
+  </data>
+  <data name="SYSTEM_THREAD_EXCEPTION_NOT_HANDLED" xml:space="preserve">
+    <value>SYSTEM_THREAD_EXCEPTION_NOT_HANDLED</value>
+  </data>
+  <data name="UNEXPECTED_KERNEL_MODE_TRAP" xml:space="preserve">
+    <value>UNEXPECTED_KERNEL_MODE_TRAP</value>
+  </data>
+  <data name="NMI_HARDWARE_FAILURE" xml:space="preserve">
+    <value>NMI_HARDWARE_FAILURE</value>
+  </data>
+  <data name="SPIN_LOCK_INIT_FAILURE" xml:space="preserve">
+    <value>SPIN_LOCK_INIT_FAILURE</value>
+  </data>
+  <data name="DFS_FILE_SYSTEM" xml:space="preserve">
+    <value>DFS_FILE_SYSTEM</value>
+  </data>
+  <data name="SETUP_FAILURE" xml:space="preserve">
+    <value>SETUP_FAILURE</value>
+  </data>
+  <data name="MBR_CHECKSUM_MISMATCH" xml:space="preserve">
+    <value>MBR_CHECKSUM_MISMATCH</value>
+  </data>
+  <data name="KERNEL_MODE_EXCEPTION_NOT_HANDLED" xml:space="preserve">
+    <value>KERNEL_MODE_EXCEPTION_NOT_HANDLED</value>
+  </data>
+  <data name="PP0_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>PP0_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="PP1_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>PP1_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="UP_DRIVER_ON_MP_SYSTEM" xml:space="preserve">
+    <value>UP_DRIVER_ON_MP_SYSTEM</value>
+  </data>
+  <data name="INVALID_KERNEL_HANDLE" xml:space="preserve">
+    <value>INVALID_KERNEL_HANDLE</value>
+  </data>
+  <data name="KERNEL_STACK_LOCKED_AT_EXIT" xml:space="preserve">
+    <value>KERNEL_STACK_LOCKED_AT_EXIT</value>
+  </data>
+  <data name="INVALID_WORK_QUEUE_ITEM" xml:space="preserve">
+    <value>INVALID_WORK_QUEUE_ITEM</value>
+  </data>
+  <data name="BOUND_IMAGE_UNSUPPORTED" xml:space="preserve">
+    <value>BOUND_IMAGE_UNSUPPORTED</value>
+  </data>
+  <data name="END_OF_NT_EVALUATION_PERIOD" xml:space="preserve">
+    <value>END_OF_NT_EVALUATION_PERIOD</value>
+  </data>
+  <data name="INVALID_REGION_OR_SEGMENT" xml:space="preserve">
+    <value>INVALID_REGION_OR_SEGMENT</value>
+  </data>
+  <data name="SYSTEM_LICENSE_VIOLATION" xml:space="preserve">
+    <value>SYSTEM_LICENSE_VIOLATION</value>
+  </data>
+  <data name="UDFS_FILE_SYSTEM" xml:space="preserve">
+    <value>UDFS_FILE_SYSTEM</value>
+  </data>
+  <data name="MACHINE_CHECK_EXCEPTION" xml:space="preserve">
+    <value>MACHINE_CHECK_EXCEPTION</value>
+  </data>
+  <data name="USER_MODE_HEALTH_MONITOR" xml:space="preserve">
+    <value>USER_MODE_HEALTH_MONITOR</value>
+  </data>
+  <data name="DRIVER_POWER_STATE_FAILURE" xml:space="preserve">
+    <value>DRIVER_POWER_STATE_FAILURE</value>
+  </data>
+  <data name="INTERNAL_POWER_ERROR" xml:space="preserve">
+    <value>INTERNAL_POWER_ERROR</value>
+  </data>
+  <data name="PCI_BUS_DRIVER_INTERNAL" xml:space="preserve">
+    <value>PCI_BUS_DRIVER_INTERNAL</value>
+  </data>
+  <data name="MEMORY_IMAGE_CORRUPT" xml:space="preserve">
+    <value>MEMORY_IMAGE_CORRUPT</value>
+  </data>
+  <data name="ACPI_DRIVER_INTERNAL" xml:space="preserve">
+    <value>ACPI_DRIVER_INTERNAL</value>
+  </data>
+  <data name="CNSS_FILE_SYSTEM_FILTER" xml:space="preserve">
+    <value>CNSS_FILE_SYSTEM_FILTER</value>
+  </data>
+  <data name="ACPI_BIOS_ERROR" xml:space="preserve">
+    <value>ACPI_BIOS_ERROR</value>
+  </data>
+  <data name="BAD_EXHANDLE" xml:space="preserve">
+    <value>BAD_EXHANDLE</value>
+  </data>
+  <data name="SESSION_HAS_VALID_POOL_ON_EXIT" xml:space="preserve">
+    <value>SESSION_HAS_VALID_POOL_ON_EXIT</value>
+  </data>
+  <data name="HAL_MEMORY_ALLOCATION" xml:space="preserve">
+    <value>HAL_MEMORY_ALLOCATION</value>
+  </data>
+  <data name="VIDEO_DRIVER_DEBUG_REPORT_REQUEST" xml:space="preserve">
+    <value>VIDEO_DRIVER_DEBUG_REPORT_REQUEST</value>
+  </data>
+  <data name="BGI_DETECTED_VIOLATION" xml:space="preserve">
+    <value>BGI_DETECTED_VIOLATION</value>
+  </data>
+  <data name="VIDEO_DRIVER_INIT_FAILURE" xml:space="preserve">
+    <value>VIDEO_DRIVER_INIT_FAILURE</value>
+  </data>
+  <data name="ATTEMPTED_SWITCH_FROM_DPC" xml:space="preserve">
+    <value>ATTEMPTED_SWITCH_FROM_DPC</value>
+  </data>
+  <data name="CHIPSET_DETECTED_ERROR" xml:space="preserve">
+    <value>CHIPSET_DETECTED_ERROR</value>
+  </data>
+  <data name="SESSION_HAS_VALID_VIEWS_ON_EXIT" xml:space="preserve">
+    <value>SESSION_HAS_VALID_VIEWS_ON_EXIT</value>
+  </data>
+  <data name="NETWORK_BOOT_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>NETWORK_BOOT_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="NETWORK_BOOT_DUPLICATE_ADDRESS" xml:space="preserve">
+    <value>NETWORK_BOOT_DUPLICATE_ADDRESS</value>
+  </data>
+  <data name="INVALID_HIBERNATED_STATE" xml:space="preserve">
+    <value>INVALID_HIBERNATED_STATE</value>
+  </data>
+  <data name="ATTEMPTED_WRITE_TO_READONLY_MEMORY" xml:space="preserve">
+    <value>ATTEMPTED_WRITE_TO_READONLY_MEMORY</value>
+  </data>
+  <data name="MUTEX_ALREADY_OWNED" xml:space="preserve">
+    <value>MUTEX_ALREADY_OWNED</value>
+  </data>
+  <data name="SPECIAL_POOL_DETECTED_MEMORY_CORRUPTION" xml:space="preserve">
+    <value>SPECIAL_POOL_DETECTED_MEMORY_CORRUPTION</value>
+  </data>
+  <data name="BAD_POOL_CALLER" xml:space="preserve">
+    <value>BAD_POOL_CALLER</value>
+  </data>
+  <data name="DRIVER_VERIFIER_DETECTED_VIOLATION" xml:space="preserve">
+    <value>DRIVER_VERIFIER_DETECTED_VIOLATION</value>
+  </data>
+  <data name="DRIVER_CORRUPTED_EXPOOL" xml:space="preserve">
+    <value>DRIVER_CORRUPTED_EXPOOL</value>
+  </data>
+  <data name="DRIVER_CAUGHT_MODIFYING_FREED_POOL" xml:space="preserve">
+    <value>DRIVER_CAUGHT_MODIFYING_FREED_POOL</value>
+  </data>
+  <data name="TIMER_OR_DPC_INVALID" xml:space="preserve">
+    <value>TIMER_OR_DPC_INVALID</value>
+  </data>
+  <data name="IRQL_UNEXPECTED_VALUE" xml:space="preserve">
+    <value>IRQL_UNEXPECTED_VALUE</value>
+  </data>
+  <data name="DRIVER_VERIFIER_IOMANAGER_VIOLATION" xml:space="preserve">
+    <value>DRIVER_VERIFIER_IOMANAGER_VIOLATION</value>
+  </data>
+  <data name="PNP_DETECTED_FATAL_ERROR" xml:space="preserve">
+    <value>PNP_DETECTED_FATAL_ERROR</value>
+  </data>
+  <data name="DRIVER_LEFT_LOCKED_PAGES_IN_PROCESS" xml:space="preserve">
+    <value>DRIVER_LEFT_LOCKED_PAGES_IN_PROCESS</value>
+  </data>
+  <data name="PAGE_FAULT_IN_FREED_SPECIAL_POOL" xml:space="preserve">
+    <value>PAGE_FAULT_IN_FREED_SPECIAL_POOL</value>
+  </data>
+  <data name="PAGE_FAULT_BEYOND_END_OF_ALLOCATION" xml:space="preserve">
+    <value>PAGE_FAULT_BEYOND_END_OF_ALLOCATION</value>
+  </data>
+  <data name="DRIVER_UNLOADED_WITHOUT_CANCELLING_PENDING_OPERATIONS" xml:space="preserve">
+    <value>DRIVER_UNLOADED_WITHOUT_CANCELLING_PENDING_OPERATIONS</value>
+  </data>
+  <data name="TERMINAL_SERVER_DRIVER_MADE_INCORRECT_MEMORY_REFERENCE" xml:space="preserve">
+    <value>TERMINAL_SERVER_DRIVER_MADE_INCORRECT_MEMORY_REFERENCE</value>
+  </data>
+  <data name="DRIVER_CORRUPTED_MMPOOL" xml:space="preserve">
+    <value>DRIVER_CORRUPTED_MMPOOL</value>
+  </data>
+  <data name="DRIVER_IRQL_NOT_LESS_OR_EQUAL" xml:space="preserve">
+    <value>DRIVER_IRQL_NOT_LESS_OR_EQUAL</value>
+  </data>
+  <data name="BUGCODE_ID_DRIVER" xml:space="preserve">
+    <value>BUGCODE_ID_DRIVER</value>
+  </data>
+  <data name="DRIVER_PORTION_MUST_BE_NONPAGED" xml:space="preserve">
+    <value>DRIVER_PORTION_MUST_BE_NONPAGED</value>
+  </data>
+  <data name="SYSTEM_SCAN_AT_RAISED_IRQL_CAUGHT_IMPROPER_DRIVER_UNLOAD" xml:space="preserve">
+    <value>SYSTEM_SCAN_AT_RAISED_IRQL_CAUGHT_IMPROPER_DRIVER_UNLOAD</value>
+  </data>
+  <data name="DRIVER_PAGE_FAULT_IN_FREED_SPECIAL_POOL" xml:space="preserve">
+    <value>DRIVER_PAGE_FAULT_IN_FREED_SPECIAL_POOL</value>
+  </data>
+  <data name="DRIVER_PAGE_FAULT_BEYOND_END_OF_ALLOCATION" xml:space="preserve">
+    <value>DRIVER_PAGE_FAULT_BEYOND_END_OF_ALLOCATION</value>
+  </data>
+  <data name="DRIVER_UNMAPPING_INVALID_VIEW" xml:space="preserve">
+    <value>DRIVER_UNMAPPING_INVALID_VIEW</value>
+  </data>
+  <data name="DRIVER_USED_EXCESSIVE_PTES" xml:space="preserve">
+    <value>DRIVER_USED_EXCESSIVE_PTES</value>
+  </data>
+  <data name="LOCKED_PAGES_TRACKER_CORRUPTION" xml:space="preserve">
+    <value>LOCKED_PAGES_TRACKER_CORRUPTION</value>
+  </data>
+  <data name="SYSTEM_PTE_MISUSE" xml:space="preserve">
+    <value>SYSTEM_PTE_MISUSE</value>
+  </data>
+  <data name="DRIVER_CORRUPTED_SYSPTES" xml:space="preserve">
+    <value>DRIVER_CORRUPTED_SYSPTES</value>
+  </data>
+  <data name="DRIVER_INVALID_STACK_ACCESS" xml:space="preserve">
+    <value>DRIVER_INVALID_STACK_ACCESS</value>
+  </data>
+  <data name="POOL_CORRUPTION_IN_FILE_AREA" xml:space="preserve">
+    <value>POOL_CORRUPTION_IN_FILE_AREA</value>
+  </data>
+  <data name="IMPERSONATING_WORKER_THREAD" xml:space="preserve">
+    <value>IMPERSONATING_WORKER_THREAD</value>
+  </data>
+  <data name="ACPI_BIOS_FATAL_ERROR" xml:space="preserve">
+    <value>ACPI_BIOS_FATAL_ERROR</value>
+  </data>
+  <data name="WORKER_THREAD_RETURNED_AT_BAD_IRQL" xml:space="preserve">
+    <value>WORKER_THREAD_RETURNED_AT_BAD_IRQL</value>
+  </data>
+  <data name="MANUALLY_INITIATED_CRASH" xml:space="preserve">
+    <value>MANUALLY_INITIATED_CRASH</value>
+  </data>
+  <data name="RESOURCE_NOT_OWNED" xml:space="preserve">
+    <value>RESOURCE_NOT_OWNED</value>
+  </data>
+  <data name="WORKER_INVALID" xml:space="preserve">
+    <value>WORKER_INVALID</value>
+  </data>
+  <data name="DRIVER_VERIFIER_DMA_VIOLATION" xml:space="preserve">
+    <value>DRIVER_VERIFIER_DMA_VIOLATION</value>
+  </data>
+  <data name="INVALID_FLOATING_POINT_STATE" xml:space="preserve">
+    <value>INVALID_FLOATING_POINT_STATE</value>
+  </data>
+  <data name="INVALID_CANCEL_OF_FILE_OPEN" xml:space="preserve">
+    <value>INVALID_CANCEL_OF_FILE_OPEN</value>
+  </data>
+  <data name="ACTIVE_EX_WORKER_THREAD_TERMINATION" xml:space="preserve">
+    <value>ACTIVE_EX_WORKER_THREAD_TERMINATION</value>
+  </data>
+  <data name="THREAD_STUCK_IN_DEVICE_DRIVER" xml:space="preserve">
+    <value>THREAD_STUCK_IN_DEVICE_DRIVER</value>
+  </data>
+  <data name="DIRTY_MAPPED_PAGES_CONGESTION" xml:space="preserve">
+    <value>DIRTY_MAPPED_PAGES_CONGESTION</value>
+  </data>
+  <data name="SESSION_HAS_VALID_SPECIAL_POOL_ON_EXIT" xml:space="preserve">
+    <value>SESSION_HAS_VALID_SPECIAL_POOL_ON_EXIT</value>
+  </data>
+  <data name="UNMOUNTABLE_BOOT_VOLUME" xml:space="preserve">
+    <value>UNMOUNTABLE_BOOT_VOLUME</value>
+  </data>
+  <data name="CRITICAL_PROCESS_DIED" xml:space="preserve">
+    <value>CRITICAL_PROCESS_DIED</value>
+  </data>
+  <data name="STORAGE_MINIPORT_ERROR" xml:space="preserve">
+    <value>STORAGE_MINIPORT_ERROR</value>
+  </data>
+  <data name="SCSI_VERIFIER_DETECTED_VIOLATION" xml:space="preserve">
+    <value>SCSI_VERIFIER_DETECTED_VIOLATION</value>
+  </data>
+  <data name="HARDWARE_INTERRUPT_STORM" xml:space="preserve">
+    <value>HARDWARE_INTERRUPT_STORM</value>
+  </data>
+  <data name="DISORDERLY_SHUTDOWN" xml:space="preserve">
+    <value>DISORDERLY_SHUTDOWN</value>
+  </data>
+  <data name="CRITICAL_OBJECT_TERMINATION" xml:space="preserve">
+    <value>CRITICAL_OBJECT_TERMINATION</value>
+  </data>
+  <data name="FLTMGR_FILE_SYSTEM" xml:space="preserve">
+    <value>FLTMGR_FILE_SYSTEM</value>
+  </data>
+  <data name="PCI_VERIFIER_DETECTED_VIOLATION" xml:space="preserve">
+    <value>PCI_VERIFIER_DETECTED_VIOLATION</value>
+  </data>
+  <data name="DRIVER_OVERRAN_STACK_BUFFER" xml:space="preserve">
+    <value>DRIVER_OVERRAN_STACK_BUFFER</value>
+  </data>
+  <data name="RAMDISK_BOOT_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>RAMDISK_BOOT_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="DRIVER_RETURNED_STATUS_REPARSE_FOR_VOLUME_OPEN" xml:space="preserve">
+    <value>DRIVER_RETURNED_STATUS_REPARSE_FOR_VOLUME_OPEN</value>
+  </data>
+  <data name="HTTP_DRIVER_CORRUPTED" xml:space="preserve">
+    <value>HTTP_DRIVER_CORRUPTED</value>
+  </data>
+  <data name="ATTEMPTED_EXECUTE_OF_NOEXECUTE_MEMORY" xml:space="preserve">
+    <value>ATTEMPTED_EXECUTE_OF_NOEXECUTE_MEMORY</value>
+  </data>
+  <data name="DIRTY_NOWRITE_PAGES_CONGESTION" xml:space="preserve">
+    <value>DIRTY_NOWRITE_PAGES_CONGESTION</value>
+  </data>
+  <data name="BUGCODE_USB_DRIVER" xml:space="preserve">
+    <value>BUGCODE_USB_DRIVER</value>
+  </data>
+  <data name="RESERVE_QUEUE_OVERFLOW" xml:space="preserve">
+    <value>RESERVE_QUEUE_OVERFLOW</value>
+  </data>
+  <data name="LOADER_BLOCK_MISMATCH" xml:space="preserve">
+    <value>LOADER_BLOCK_MISMATCH</value>
+  </data>
+  <data name="CLOCK_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>CLOCK_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="DPC_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>DPC_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="MUP_FILE_SYSTEM" xml:space="preserve">
+    <value>MUP_FILE_SYSTEM</value>
+  </data>
+  <data name="AGP_INVALID_ACCESS" xml:space="preserve">
+    <value>AGP_INVALID_ACCESS</value>
+  </data>
+  <data name="AGP_GART_CORRUPTION" xml:space="preserve">
+    <value>AGP_GART_CORRUPTION</value>
+  </data>
+  <data name="AGP_ILLEGALLY_REPROGRAMMED" xml:space="preserve">
+    <value>AGP_ILLEGALLY_REPROGRAMMED</value>
+  </data>
+  <data name="THIRD_PARTY_FILE_SYSTEM_FAILURE" xml:space="preserve">
+    <value>THIRD_PARTY_FILE_SYSTEM_FAILURE</value>
+  </data>
+  <data name="CRITICAL_STRUCTURE_CORRUPTION" xml:space="preserve">
+    <value>CRITICAL_STRUCTURE_CORRUPTION</value>
+  </data>
+  <data name="APP_TAGGING_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>APP_TAGGING_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="FSRTL_EXTRA_CREATE_PARAMETER_VIOLATION" xml:space="preserve">
+    <value>FSRTL_EXTRA_CREATE_PARAMETER_VIOLATION</value>
+  </data>
+  <data name="WDF_VIOLATION" xml:space="preserve">
+    <value>WDF_VIOLATION</value>
+  </data>
+  <data name="VIDEO_MEMORY_MANAGEMENT_INTERNAL" xml:space="preserve">
+    <value>VIDEO_MEMORY_MANAGEMENT_INTERNAL</value>
+  </data>
+  <data name="RESOURCE_MANAGER_EXCEPTION_NOT_HANDLED" xml:space="preserve">
+    <value>RESOURCE_MANAGER_EXCEPTION_NOT_HANDLED</value>
+  </data>
+  <data name="RECURSIVE_NMI" xml:space="preserve">
+    <value>RECURSIVE_NMI</value>
+  </data>
+  <data name="MSRPC_STATE_VIOLATION" xml:space="preserve">
+    <value>MSRPC_STATE_VIOLATION</value>
+  </data>
+  <data name="VIDEO_DXGKRNL_FATAL_ERROR" xml:space="preserve">
+    <value>VIDEO_DXGKRNL_FATAL_ERROR</value>
+  </data>
+  <data name="VIDEO_SHADOW_DRIVER_FATAL_ERROR" xml:space="preserve">
+    <value>VIDEO_SHADOW_DRIVER_FATAL_ERROR</value>
+  </data>
+  <data name="AGP_INTERNAL" xml:space="preserve">
+    <value>AGP_INTERNAL</value>
+  </data>
+  <data name="VIDEO_TDR_FAILURE" xml:space="preserve">
+    <value>VIDEO_TDR_FAILURE</value>
+  </data>
+  <data name="VIDEO_TDR_TIMEOUT_DETECTED" xml:space="preserve">
+    <value>VIDEO_TDR_TIMEOUT_DETECTED</value>
+  </data>
+  <data name="VIDEO_SCHEDULER_INTERNAL_ERROR" xml:space="preserve">
+    <value>VIDEO_SCHEDULER_INTERNAL_ERROR</value>
+  </data>
+  <data name="EM_INITIALIZATION_FAILURE" xml:space="preserve">
+    <value>EM_INITIALIZATION_FAILURE</value>
+  </data>
+  <data name="DRIVER_RETURNED_HOLDING_CANCEL_LOCK" xml:space="preserve">
+    <value>DRIVER_RETURNED_HOLDING_CANCEL_LOCK</value>
+  </data>
+  <data name="ATTEMPTED_WRITE_TO_CM_PROTECTED_STORAGE" xml:space="preserve">
+    <value>ATTEMPTED_WRITE_TO_CM_PROTECTED_STORAGE</value>
+  </data>
+  <data name="EVENT_TRACING_FATAL_ERROR" xml:space="preserve">
+    <value>EVENT_TRACING_FATAL_ERROR</value>
+  </data>
+  <data name="TOO_MANY_RECURSIVE_FAULTS" xml:space="preserve">
+    <value>TOO_MANY_RECURSIVE_FAULTS</value>
+  </data>
+  <data name="INVALID_DRIVER_HANDLE" xml:space="preserve">
+    <value>INVALID_DRIVER_HANDLE</value>
+  </data>
+  <data name="BITLOCKER_FATAL_ERROR" xml:space="preserve">
+    <value>BITLOCKER_FATAL_ERROR</value>
+  </data>
+  <data name="DRIVER_VIOLATION" xml:space="preserve">
+    <value>DRIVER_VIOLATION</value>
+  </data>
+  <data name="WHEA_INTERNAL_ERROR" xml:space="preserve">
+    <value>WHEA_INTERNAL_ERROR</value>
+  </data>
+  <data name="CRYPTO_SELF_TEST_FAILURE" xml:space="preserve">
+    <value>CRYPTO_SELF_TEST_FAILURE</value>
+  </data>
+  <data name="WHEA_UNCORRECTABLE_ERROR" xml:space="preserve">
+    <value>WHEA_UNCORRECTABLE_ERROR</value>
+  </data>
+  <data name="NMR_INVALID_STATE" xml:space="preserve">
+    <value>NMR_INVALID_STATE</value>
+  </data>
+  <data name="NETIO_INVALID_POOL_CALLER" xml:space="preserve">
+    <value>NETIO_INVALID_POOL_CALLER</value>
+  </data>
+  <data name="PAGE_NOT_ZERO" xml:space="preserve">
+    <value>PAGE_NOT_ZERO</value>
+  </data>
+  <data name="WORKER_THREAD_RETURNED_WITH_BAD_IO_PRIORITY" xml:space="preserve">
+    <value>WORKER_THREAD_RETURNED_WITH_BAD_IO_PRIORITY</value>
+  </data>
+  <data name="WORKER_THREAD_RETURNED_WITH_BAD_PAGING_IO_PRIORITY" xml:space="preserve">
+    <value>WORKER_THREAD_RETURNED_WITH_BAD_PAGING_IO_PRIORITY</value>
+  </data>
+  <data name="MUI_NO_VALID_SYSTEM_LANGUAGE" xml:space="preserve">
+    <value>MUI_NO_VALID_SYSTEM_LANGUAGE</value>
+  </data>
+  <data name="FAULTY_HARDWARE_CORRUPTED_PAGE" xml:space="preserve">
+    <value>FAULTY_HARDWARE_CORRUPTED_PAGE</value>
+  </data>
+  <data name="EXFAT_FILE_SYSTEM" xml:space="preserve">
+    <value>EXFAT_FILE_SYSTEM</value>
+  </data>
+  <data name="VOLSNAP_OVERLAPPED_TABLE_ACCESS" xml:space="preserve">
+    <value>VOLSNAP_OVERLAPPED_TABLE_ACCESS</value>
+  </data>
+  <data name="INVALID_MDL_RANGE" xml:space="preserve">
+    <value>INVALID_MDL_RANGE</value>
+  </data>
+  <data name="VHD_BOOT_INITIALIZATION_FAILED" xml:space="preserve">
+    <value>VHD_BOOT_INITIALIZATION_FAILED</value>
+  </data>
+  <data name="DYNAMIC_ADD_PROCESSOR_MISMATCH" xml:space="preserve">
+    <value>DYNAMIC_ADD_PROCESSOR_MISMATCH</value>
+  </data>
+  <data name="INVALID_EXTENDED_PROCESSOR_STATE" xml:space="preserve">
+    <value>INVALID_EXTENDED_PROCESSOR_STATE</value>
+  </data>
+  <data name="RESOURCE_OWNER_POINTER_INVALID" xml:space="preserve">
+    <value>RESOURCE_OWNER_POINTER_INVALID</value>
+  </data>
+  <data name="DPC_WATCHDOG_VIOLATION" xml:space="preserve">
+    <value>DPC_WATCHDOG_VIOLATION</value>
+  </data>
+  <data name="DRIVE_EXTENDER" xml:space="preserve">
+    <value>DRIVE_EXTENDER</value>
+  </data>
+  <data name="REGISTRY_FILTER_DRIVER_EXCEPTION" xml:space="preserve">
+    <value>REGISTRY_FILTER_DRIVER_EXCEPTION</value>
+  </data>
+  <data name="VHD_BOOT_HOST_VOLUME_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value>VHD_BOOT_HOST_VOLUME_NOT_ENOUGH_SPACE</value>
+  </data>
+  <data name="WIN32K_HANDLE_MANAGER" xml:space="preserve">
+    <value>WIN32K_HANDLE_MANAGER</value>
+  </data>
+  <data name="GPIO_CONTROLLER_DRIVER_ERROR" xml:space="preserve">
+    <value>GPIO_CONTROLLER_DRIVER_ERROR</value>
+  </data>
+  <data name="KERNEL_SECURITY_CHECK_FAILURE" xml:space="preserve">
+    <value>KERNEL_SECURITY_CHECK_FAILURE</value>
+  </data>
+  <data name="KERNEL_MODE_HEAP_CORRUPTION" xml:space="preserve">
+    <value>KERNEL_MODE_HEAP_CORRUPTION</value>
+  </data>
+  <data name="PASSIVE_INTERRUPT_ERROR" xml:space="preserve">
+    <value>PASSIVE_INTERRUPT_ERROR</value>
+  </data>
+  <data name="INVALID_IO_BOOST_STATE" xml:space="preserve">
+    <value>INVALID_IO_BOOST_STATE</value>
+  </data>
+  <data name="CRITICAL_INITIALIZATION_FAILURE" xml:space="preserve">
+    <value>CRITICAL_INITIALIZATION_FAILURE</value>
+  </data>
+  <data name="STORAGE_DEVICE_ABNORMALITY_DETECTED" xml:space="preserve">
+    <value>STORAGE_DEVICE_ABNORMALITY_DETECTED</value>
+  </data>
+  <data name="VIDEO_ENGINE_TIMEOUT_DETECTED" xml:space="preserve">
+    <value>VIDEO_ENGINE_TIMEOUT_DETECTED</value>
+  </data>
+  <data name="VIDEO_TDR_APPLICATION_BLOCKED" xml:space="preserve">
+    <value>VIDEO_TDR_APPLICATION_BLOCKED</value>
+  </data>
+  <data name="PROCESSOR_DRIVER_INTERNAL" xml:space="preserve">
+    <value>PROCESSOR_DRIVER_INTERNAL</value>
+  </data>
+  <data name="BUGCODE_USB3_DRIVER" xml:space="preserve">
+    <value>BUGCODE_USB3_DRIVER</value>
+  </data>
+  <data name="SECURE_BOOT_VIOLATION" xml:space="preserve">
+    <value>SECURE_BOOT_VIOLATION</value>
+  </data>
+  <data name="ABNORMAL_RESET_DETECTED" xml:space="preserve">
+    <value>ABNORMAL_RESET_DETECTED</value>
+  </data>
+  <data name="REFS_FILE_SYSTEM" xml:space="preserve">
+    <value>REFS_FILE_SYSTEM</value>
+  </data>
+  <data name="KERNEL_WMI_INTERNAL" xml:space="preserve">
+    <value>KERNEL_WMI_INTERNAL</value>
+  </data>
+  <data name="SOC_SUBSYSTEM_FAILURE" xml:space="preserve">
+    <value>SOC_SUBSYSTEM_FAILURE</value>
+  </data>
+  <data name="FATAL_ABNORMAL_RESET_ERROR" xml:space="preserve">
+    <value>FATAL_ABNORMAL_RESET_ERROR</value>
+  </data>
+  <data name="EXCEPTION_SCOPE_INVALID" xml:space="preserve">
+    <value>EXCEPTION_SCOPE_INVALID</value>
+  </data>
+  <data name="SOC_CRITICAL_DEVICE_REMOVED" xml:space="preserve">
+    <value>SOC_CRITICAL_DEVICE_REMOVED</value>
+  </data>
+  <data name="PDC_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>PDC_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="TCPIP_AOAC_NIC_ACTIVE_REFERENCE_LEAK" xml:space="preserve">
+    <value>TCPIP_AOAC_NIC_ACTIVE_REFERENCE_LEAK</value>
+  </data>
+  <data name="UNSUPPORTED_INSTRUCTION_MODE" xml:space="preserve">
+    <value>UNSUPPORTED_INSTRUCTION_MODE</value>
+  </data>
+  <data name="INVALID_PUSH_LOCK_FLAGS" xml:space="preserve">
+    <value>INVALID_PUSH_LOCK_FLAGS</value>
+  </data>
+  <data name="KERNEL_LOCK_ENTRY_LEAKED_ON_THREAD_TERMINATION" xml:space="preserve">
+    <value>KERNEL_LOCK_ENTRY_LEAKED_ON_THREAD_TERMINATION</value>
+  </data>
+  <data name="UNEXPECTED_STORE_EXCEPTION" xml:space="preserve">
+    <value>UNEXPECTED_STORE_EXCEPTION</value>
+  </data>
+  <data name="OS_DATA_TAMPERING" xml:space="preserve">
+    <value>OS_DATA_TAMPERING</value>
+  </data>
+  <data name="WINSOCK_DETECTED_HUNG_CLOSESOCKET_LIVEDUMP" xml:space="preserve">
+    <value>WINSOCK_DETECTED_HUNG_CLOSESOCKET_LIVEDUMP</value>
+  </data>
+  <data name="KERNEL_THREAD_PRIORITY_FLOOR_VIOLATION" xml:space="preserve">
+    <value>KERNEL_THREAD_PRIORITY_FLOOR_VIOLATION</value>
+  </data>
+  <data name="ILLEGAL_IOMMU_PAGE_FAULT" xml:space="preserve">
+    <value>ILLEGAL_IOMMU_PAGE_FAULT</value>
+  </data>
+  <data name="HAL_ILLEGAL_IOMMU_PAGE_FAULT" xml:space="preserve">
+    <value>HAL_ILLEGAL_IOMMU_PAGE_FAULT</value>
+  </data>
+  <data name="SDBUS_INTERNAL_ERROR" xml:space="preserve">
+    <value>SDBUS_INTERNAL_ERROR</value>
+  </data>
+  <data name="WORKER_THREAD_RETURNED_WITH_SYSTEM_PAGE_PRIORITY_ACTIVE" xml:space="preserve">
+    <value>WORKER_THREAD_RETURNED_WITH_SYSTEM_PAGE_PRIORITY_ACTIVE</value>
+  </data>
+  <data name="PDC_WATCHDOG_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>PDC_WATCHDOG_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="SOC_SUBSYSTEM_FAILURE_LIVEDUMP" xml:space="preserve">
+    <value>SOC_SUBSYSTEM_FAILURE_LIVEDUMP</value>
+  </data>
+  <data name="BUGCODE_NDIS_DRIVER_LIVE_DUMP" xml:space="preserve">
+    <value>BUGCODE_NDIS_DRIVER_LIVE_DUMP</value>
+  </data>
+  <data name="CONNECTED_STANDBY_WATCHDOG_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CONNECTED_STANDBY_WATCHDOG_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="WIN32K_ATOMIC_CHECK_FAILURE" xml:space="preserve">
+    <value>WIN32K_ATOMIC_CHECK_FAILURE</value>
+  </data>
+  <data name="LIVE_SYSTEM_DUMP" xml:space="preserve">
+    <value>LIVE_SYSTEM_DUMP</value>
+  </data>
+  <data name="KERNEL_AUTO_BOOST_INVALID_LOCK_RELEASE" xml:space="preserve">
+    <value>KERNEL_AUTO_BOOST_INVALID_LOCK_RELEASE</value>
+  </data>
+  <data name="WORKER_THREAD_TEST_CONDITION" xml:space="preserve">
+    <value>WORKER_THREAD_TEST_CONDITION</value>
+  </data>
+  <data name="WIN32K_CRITICAL_FAILURE" xml:space="preserve">
+    <value>WIN32K_CRITICAL_FAILURE</value>
+  </data>
+  <data name="CLUSTER_CSV_STATUS_IO_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_STATUS_IO_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="CLUSTER_RESOURCE_CALL_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_RESOURCE_CALL_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="CLUSTER_CSV_SNAPSHOT_DEVICE_INFO_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_SNAPSHOT_DEVICE_INFO_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="CLUSTER_CSV_STATE_TRANSITION_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_STATE_TRANSITION_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="CLUSTER_CSV_VOLUME_ARRIVAL_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_VOLUME_ARRIVAL_LIVEDUMP</value>
+  </data>
+  <data name="CLUSTER_CSV_VOLUME_REMOVAL_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_VOLUME_REMOVAL_LIVEDUMP</value>
+  </data>
+  <data name="CLUSTER_CSV_CLUSTER_WATCHDOG_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_CLUSTER_WATCHDOG_LIVEDUMP</value>
+  </data>
+  <data name="INVALID_RUNDOWN_PROTECTION_FLAGS" xml:space="preserve">
+    <value>INVALID_RUNDOWN_PROTECTION_FLAGS</value>
+  </data>
+  <data name="INVALID_SLOT_ALLOCATOR_FLAGS" xml:space="preserve">
+    <value>INVALID_SLOT_ALLOCATOR_FLAGS</value>
+  </data>
+  <data name="ERESOURCE_INVALID_RELEASE" xml:space="preserve">
+    <value>ERESOURCE_INVALID_RELEASE</value>
+  </data>
+  <data name="CLUSTER_CSV_STATE_TRANSITION_INTERVAL_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSV_STATE_TRANSITION_INTERVAL_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="CRYPTO_LIBRARY_INTERNAL_ERROR" xml:space="preserve">
+    <value>CRYPTO_LIBRARY_INTERNAL_ERROR</value>
+  </data>
+  <data name="CLUSTER_CSV_CLUSSVC_DISCONNECT_WATCHDOG" xml:space="preserve">
+    <value>CLUSTER_CSV_CLUSSVC_DISCONNECT_WATCHDOG</value>
+  </data>
+  <data name="COREMSGCALL_INTERNAL_ERROR" xml:space="preserve">
+    <value>COREMSGCALL_INTERNAL_ERROR</value>
+  </data>
+  <data name="COREMSG_INTERNAL_ERROR" xml:space="preserve">
+    <value>COREMSG_INTERNAL_ERROR</value>
+  </data>
+  <data name="PREVIOUS_FATAL_ABNORMAL_RESET_ERROR" xml:space="preserve">
+    <value>PREVIOUS_FATAL_ABNORMAL_RESET_ERROR</value>
+  </data>
+  <data name="ELAM_DRIVER_DETECTED_FATAL_ERROR" xml:space="preserve">
+    <value>ELAM_DRIVER_DETECTED_FATAL_ERROR</value>
+  </data>
+  <data name="CLUSTER_CLUSPORT_STATUS_IO_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CLUSPORT_STATUS_IO_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="PROFILER_CONFIGURATION_ILLEGAL" xml:space="preserve">
+    <value>PROFILER_CONFIGURATION_ILLEGAL</value>
+  </data>
+  <data name="PDC_LOCK_WATCHDOG_LIVEDUMP" xml:space="preserve">
+    <value>PDC_LOCK_WATCHDOG_LIVEDUMP</value>
+  </data>
+  <data name="PDC_UNEXPECTED_REVOCATION_LIVEDUMP" xml:space="preserve">
+    <value>PDC_UNEXPECTED_REVOCATION_LIVEDUMP</value>
+  </data>
+  <data name="MICROCODE_REVISION_MISMATCH" xml:space="preserve">
+    <value>MICROCODE_REVISION_MISMATCH</value>
+  </data>
+  <data name="VIDEO_DWMINIT_TIMEOUT_FALLBACK_BDD" xml:space="preserve">
+    <value>VIDEO_DWMINIT_TIMEOUT_FALLBACK_BDD</value>
+  </data>
+  <data name="CLUSTER_CSVFS_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_CSVFS_LIVEDUMP</value>
+  </data>
+  <data name="BAD_OBJECT_HEADER" xml:space="preserve">
+    <value>BAD_OBJECT_HEADER</value>
+  </data>
+  <data name="SECURE_KERNEL_ERROR" xml:space="preserve">
+    <value>SECURE_KERNEL_ERROR</value>
+  </data>
+  <data name="HYPERGUARD_VIOLATION" xml:space="preserve">
+    <value>HYPERGUARD_VIOLATION</value>
+  </data>
+  <data name="SECURE_FAULT_UNHANDLED" xml:space="preserve">
+    <value>SECURE_FAULT_UNHANDLED</value>
+  </data>
+  <data name="KERNEL_PARTITION_REFERENCE_VIOLATION" xml:space="preserve">
+    <value>KERNEL_PARTITION_REFERENCE_VIOLATION</value>
+  </data>
+  <data name="WIN32K_CRITICAL_FAILURE_LIVEDUMP" xml:space="preserve">
+    <value>WIN32K_CRITICAL_FAILURE_LIVEDUMP</value>
+  </data>
+  <data name="PF_DETECTED_CORRUPTION" xml:space="preserve">
+    <value>PF_DETECTED_CORRUPTION</value>
+  </data>
+  <data name="KERNEL_AUTO_BOOST_LOCK_ACQUISITION_WITH_RAISED_IRQL" xml:space="preserve">
+    <value>KERNEL_AUTO_BOOST_LOCK_ACQUISITION_WITH_RAISED_IRQL</value>
+  </data>
+  <data name="VIDEO_DXGKRNL_LIVEDUMP" xml:space="preserve">
+    <value>VIDEO_DXGKRNL_LIVEDUMP</value>
+  </data>
+  <data name="SMB_SERVER_LIVEDUMP" xml:space="preserve">
+    <value>SMB_SERVER_LIVEDUMP</value>
+  </data>
+  <data name="LOADER_ROLLBACK_DETECTED" xml:space="preserve">
+    <value>LOADER_ROLLBACK_DETECTED</value>
+  </data>
+  <data name="WIN32K_SECURITY_FAILURE" xml:space="preserve">
+    <value>WIN32K_SECURITY_FAILURE</value>
+  </data>
+  <data name="UFX_LIVEDUMP" xml:space="preserve">
+    <value>UFX_LIVEDUMP</value>
+  </data>
+  <data name="KERNEL_STORAGE_SLOT_IN_USE" xml:space="preserve">
+    <value>KERNEL_STORAGE_SLOT_IN_USE</value>
+  </data>
+  <data name="WORKER_THREAD_RETURNED_WHILE_ATTACHED_TO_SILO" xml:space="preserve">
+    <value>WORKER_THREAD_RETURNED_WHILE_ATTACHED_TO_SILO</value>
+  </data>
+  <data name="TTM_FATAL_ERROR" xml:space="preserve">
+    <value>TTM_FATAL_ERROR</value>
+  </data>
+  <data name="WIN32K_POWER_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>WIN32K_POWER_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="CLUSTER_SVHDX_LIVEDUMP" xml:space="preserve">
+    <value>CLUSTER_SVHDX_LIVEDUMP</value>
+  </data>
+  <data name="TTM_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>TTM_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="WIN32K_CALLOUT_WATCHDOG_LIVEDUMP" xml:space="preserve">
+    <value>WIN32K_CALLOUT_WATCHDOG_LIVEDUMP</value>
+  </data>
+  <data name="WIN32K_CALLOUT_WATCHDOG_BUGCHECK" xml:space="preserve">
+    <value>WIN32K_CALLOUT_WATCHDOG_BUGCHECK</value>
+  </data>
+  <data name="CALL_HAS_NOT_RETURNED_WATCHDOG_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>CALL_HAS_NOT_RETURNED_WATCHDOG_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="DRIPS_SW_HW_DIVERGENCE_LIVEDUMP" xml:space="preserve">
+    <value>DRIPS_SW_HW_DIVERGENCE_LIVEDUMP</value>
+  </data>
+  <data name="USB_DRIPS_BLOCKER_SURPRISE_REMOVAL_LIVEDUMP" xml:space="preserve">
+    <value>USB_DRIPS_BLOCKER_SURPRISE_REMOVAL_LIVEDUMP</value>
+  </data>
+  <data name="BLUETOOTH_ERROR_RECOVERY_LIVEDUMP" xml:space="preserve">
+    <value>BLUETOOTH_ERROR_RECOVERY_LIVEDUMP</value>
+  </data>
+  <data name="SMB_REDIRECTOR_LIVEDUMP" xml:space="preserve">
+    <value>SMB_REDIRECTOR_LIVEDUMP</value>
+  </data>
+  <data name="VIDEO_DXGKRNL_BLACK_SCREEN_LIVEDUMP" xml:space="preserve">
+    <value>VIDEO_DXGKRNL_BLACK_SCREEN_LIVEDUMP</value>
+  </data>
+  <data name="VIDEO_MINIPORT_FAILED_LIVEDUMP" xml:space="preserve">
+    <value>VIDEO_MINIPORT_FAILED_LIVEDUMP</value>
+  </data>
+  <data name="VIDEO_MINIPORT_BLACK_SCREEN_LIVEDUMP" xml:space="preserve">
+    <value>VIDEO_MINIPORT_BLACK_SCREEN_LIVEDUMP</value>
+  </data>
+  <data name="DRIVER_VERIFIER_DETECTED_VIOLATION_LIVEDUMP" xml:space="preserve">
+    <value>DRIVER_VERIFIER_DETECTED_VIOLATION_LIVEDUMP</value>
+  </data>
+  <data name="IO_THREADPOOL_DEADLOCK_LIVEDUMP" xml:space="preserve">
+    <value>IO_THREADPOOL_DEADLOCK_LIVEDUMP</value>
+  </data>
+  <data name="FAST_ERESOURCE_PRECONDITION_VIOLATION" xml:space="preserve">
+    <value>FAST_ERESOURCE_PRECONDITION_VIOLATION</value>
+  </data>
+  <data name="STORE_DATA_STRUCTURE_CORRUPTION" xml:space="preserve">
+    <value>STORE_DATA_STRUCTURE_CORRUPTION</value>
+  </data>
+  <data name="MANUALLY_INITIATED_POWER_BUTTON_HOLD" xml:space="preserve">
+    <value>MANUALLY_INITIATED_POWER_BUTTON_HOLD</value>
+  </data>
+  <data name="USER_MODE_HEALTH_MONITOR_LIVEDUMP" xml:space="preserve">
+    <value>USER_MODE_HEALTH_MONITOR_LIVEDUMP</value>
+  </data>
+  <data name="SYNTHETIC_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>SYNTHETIC_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="INVALID_SILO_DETACH" xml:space="preserve">
+    <value>INVALID_SILO_DETACH</value>
+  </data>
+  <data name="EXRESOURCE_TIMEOUT_LIVEDUMP" xml:space="preserve">
+    <value>EXRESOURCE_TIMEOUT_LIVEDUMP</value>
+  </data>
+  <data name="INVALID_CALLBACK_STACK_ADDRESS" xml:space="preserve">
+    <value>INVALID_CALLBACK_STACK_ADDRESS</value>
+  </data>
+  <data name="INVALID_KERNEL_STACK_ADDRESS" xml:space="preserve">
+    <value>INVALID_KERNEL_STACK_ADDRESS</value>
+  </data>
+  <data name="HARDWARE_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>HARDWARE_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="CPI_FIRMWARE_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>CPI_FIRMWARE_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="TELEMETRY_ASSERTS_LIVEDUMP" xml:space="preserve">
+    <value>TELEMETRY_ASSERTS_LIVEDUMP</value>
+  </data>
+  <data name="WORKER_THREAD_INVALID_STATE" xml:space="preserve">
+    <value>WORKER_THREAD_INVALID_STATE</value>
+  </data>
+  <data name="WFP_INVALID_OPERATION" xml:space="preserve">
+    <value>WFP_INVALID_OPERATION</value>
+  </data>
+  <data name="UCMUCSI_LIVEDUMP" xml:space="preserve">
+    <value>UCMUCSI_LIVEDUMP</value>
+  </data>
+  <data name="DRIVER_PNP_WATCHDOG" xml:space="preserve">
+    <value>DRIVER_PNP_WATCHDOG</value>
+  </data>
+  <data name="WORKER_THREAD_RETURNED_WITH_NON_DEFAULT_WORKLOAD_CLASS" xml:space="preserve">
+    <value>WORKER_THREAD_RETURNED_WITH_NON_DEFAULT_WORKLOAD_CLASS</value>
+  </data>
+  <data name="EFS_FATAL_ERROR" xml:space="preserve">
+    <value>EFS_FATAL_ERROR</value>
+  </data>
+  <data name="UCMUCSI_FAILURE" xml:space="preserve">
+    <value>UCMUCSI_FAILURE</value>
+  </data>
+  <data name="HAL_IOMMU_INTERNAL_ERROR" xml:space="preserve">
+    <value>HAL_IOMMU_INTERNAL_ERROR</value>
+  </data>
+  <data name="HAL_BLOCKED_PROCESSOR_INTERNAL_ERROR" xml:space="preserve">
+    <value>HAL_BLOCKED_PROCESSOR_INTERNAL_ERROR</value>
+  </data>
+  <data name="IPI_WATCHDOG_TIMEOUT" xml:space="preserve">
+    <value>IPI_WATCHDOG_TIMEOUT</value>
+  </data>
+  <data name="DMA_COMMON_BUFFER_VECTOR_ERROR" xml:space="preserve">
+    <value>DMA_COMMON_BUFFER_VECTOR_ERROR</value>
+  </data>
+  <data name="XBOX_ERACTRL_CS_TIMEOUT" xml:space="preserve">
+    <value>XBOX_ERACTRL_CS_TIMEOUT</value>
+  </data>
+  <data name="BC_BLUETOOTH_VERIFIER_FAULT" xml:space="preserve">
+    <value>BC_BLUETOOTH_VERIFIER_FAULT</value>
+  </data>
+  <data name="BC_BTHMINI_VERIFIER_FAULT" xml:space="preserve">
+    <value>BC_BTHMINI_VERIFIER_FAULT</value>
+  </data>
+  <data name="HYPERVISOR_ERROR" xml:space="preserve">
+    <value>HYPERVISOR_ERROR</value>
+  </data>
+  <data name="SYSTEM_THREAD_EXCEPTION_NOT_HANDLED_M" xml:space="preserve">
+    <value>SYSTEM_THREAD_EXCEPTION_NOT_HANDLED_M</value>
+  </data>
+  <data name="UNEXPECTED_KERNEL_MODE_TRAP_M" xml:space="preserve">
+    <value>UNEXPECTED_KERNEL_MODE_TRAP_M</value>
+  </data>
+  <data name="KERNEL_MODE_EXCEPTION_NOT_HANDLED_M" xml:space="preserve">
+    <value>KERNEL_MODE_EXCEPTION_NOT_HANDLED_M</value>
+  </data>
+  <data name="THREAD_STUCK_IN_DEVICE_DRIVER_M" xml:space="preserve">
+    <value>THREAD_STUCK_IN_DEVICE_DRIVER_M</value>
+  </data>
+  <data name="THREAD_TERMINATE_HELD_MUTEX" xml:space="preserve">
+    <value>THREAD_TERMINATE_HELD_MUTEX</value>
+  </data>
+  <data name="STATUS_CANNOT_LOAD_REGISTRY_FILE" xml:space="preserve">
+    <value>STATUS_CANNOT_LOAD_REGISTRY_FILE</value>
+  </data>
+  <data name="WINLOGON_FATAL_ERROR" xml:space="preserve">
+    <value>WINLOGON_FATAL_ERROR</value>
+  </data>
+  <data name="STATUS_IMAGE_CHECKSUM_MISMATCH" xml:space="preserve">
+    <value>STATUS_IMAGE_CHECKSUM_MISMATCH</value>
+  </data>
+  <data name="MANUALLY_INITIATED_CRASH1" xml:space="preserve">
+    <value>MANUALLY_INITIATED_CRASH1</value>
+  </data>
+  <data name="EXCEPTION_ACCESS_VIOLATION" xml:space="preserve">
+    <value>EXCEPTION_ACCESS_VIOLATION</value>
+  </data>
+  <data name="EXCEPTION_ARRAY_BOUNDS_EXCEEDED" xml:space="preserve">
+    <value>EXCEPTION_ARRAY_BOUNDS_EXCEEDED</value>
+  </data>
+  <data name="EXCEPTION_BREAKPOINT" xml:space="preserve">
+    <value>EXCEPTION_BREAKPOINT</value>
+  </data>
+  <data name="EXCEPTION_DATATYPE_MISALIGNMENT" xml:space="preserve">
+    <value>EXCEPTION_DATATYPE_MISALIGNMENT</value>
+  </data>
+  <data name="EXCEPTION_FLT_DENORMAL_OPERAND" xml:space="preserve">
+    <value>EXCEPTION_FLT_DENORMAL_OPERAND</value>
+  </data>
+  <data name="EXCEPTION_FLT_DIVIDE_BY_ZERO" xml:space="preserve">
+    <value>EXCEPTION_FLT_DIVIDE_BY_ZERO</value>
+  </data>
+  <data name="EXCEPTION_FLT_INEXACT_RESULT" xml:space="preserve">
+    <value>EXCEPTION_FLT_INEXACT_RESULT</value>
+  </data>
+  <data name="EXCEPTION_FLT_INVALID_OPERATION" xml:space="preserve">
+    <value>EXCEPTION_FLT_INVALID_OPERATION</value>
+  </data>
+  <data name="EXCEPTION_FLT_OVERFLOW" xml:space="preserve">
+    <value>EXCEPTION_FLT_OVERFLOW</value>
+  </data>
+  <data name="EXCEPTION_FLT_STACK_CHECK" xml:space="preserve">
+    <value>EXCEPTION_FLT_STACK_CHECK</value>
+  </data>
+  <data name="EXCEPTION_FLT_UNDERFLOW" xml:space="preserve">
+    <value>EXCEPTION_FLT_UNDERFLOW</value>
+  </data>
+  <data name="EXCEPTION_ILLEGAL_INSTRUCTION" xml:space="preserve">
+    <value>EXCEPTION_ILLEGAL_INSTRUCTION</value>
+  </data>
+  <data name="EXCEPTION_IN_PAGE_ERROR" xml:space="preserve">
+    <value>EXCEPTION_IN_PAGE_ERROR</value>
+  </data>
+  <data name="EXCEPTION_INT_DIVIDE_BY_ZERO" xml:space="preserve">
+    <value>EXCEPTION_INT_DIVIDE_BY_ZERO</value>
+  </data>
+  <data name="EXCEPTION_INT_OVERFLOW" xml:space="preserve">
+    <value>EXCEPTION_INT_OVERFLOW</value>
+  </data>
+  <data name="EXCEPTION_INVALID_DISPOSITION" xml:space="preserve">
+    <value>EXCEPTION_INVALID_DISPOSITION</value>
+  </data>
+  <data name="EXCEPTION_NONCONTINUABLE_EXCEPTION" xml:space="preserve">
+    <value>EXCEPTION_NONCONTINUABLE_EXCEPTION</value>
+  </data>
+  <data name="EXCEPTION_PRIV_INSTRUCTION" xml:space="preserve">
+    <value>EXCEPTION_PRIV_INSTRUCTION</value>
+  </data>
+  <data name="EXCEPTION_SINGLE_STEP" xml:space="preserve">
+    <value>EXCEPTION_SINGLE_STEP</value>
+  </data>
+  <data name="EXCEPTION_STACK_OVERFLOW" xml:space="preserve">
+    <value>EXCEPTION_STACK_OVERFLOW</value>
+  </data>
+  <data name="EXCEPTION_GUARD_PAGE" xml:space="preserve">
+    <value>EXCEPTION_GUARD_PAGE</value>
+  </data>
+  <data name="EXCEPTION_INVALID_HANDLE" xml:space="preserve">
+    <value>EXCEPTION_INVALID_HANDLE</value>
+  </data>
+  <data name="EXCEPTION_POSSIBLE_DEADLOCK" xml:space="preserve">
+    <value>EXCEPTION_POSSIBLE_DEADLOCK</value>
+  </data>
+  <data name="CONTROL_C_EXIT" xml:space="preserve">
+    <value>CONTROL_C_EXIT</value>
+  </data>
+  <data name="UnknownException" xml:space="preserve">
+    <value>unknown exception</value>
+  </data>
+  <data name="ContinuableException" xml:space="preserve">
+    <value>continuable exception</value>
+  </data>
+  <data name="NonContinuableException" xml:space="preserve">
+    <value>non-continuable exception</value>
+  </data>
+  <data name="ExceptionUnwinding" xml:space="preserve">
+    <value>, unwind is in progress</value>
+  </data>
+  <data name="ExceptionExitUnwind" xml:space="preserve">
+    <value>, exit unwind is in progress</value>
+  </data>
+  <data name="ExceptionStackInvalid" xml:space="preserve">
+    <value>, stack out of limits or unaligned</value>
+  </data>
+  <data name="ExceptionNestingLevel" xml:space="preserve">
+    <value>, nested exception handler call</value>
+  </data>
+  <data name="ExceptionTargetUnwind" xml:space="preserve">
+    <value>, target unwind in progress</value>
+  </data>
+  <data name="ExceptionCollidedUnwind" xml:space="preserve">
+    <value>, collided exception handler call</value>
+  </data>
+  <data name="FLG_DISABLE_DBGPRINT" xml:space="preserve">
+    <value>FLG_DISABLE_DBGPRINT</value>
+  </data>
+  <data name="FLG_KERNEL_STACK_TRACE_DB" xml:space="preserve">
+    <value>FLG_KERNEL_STACK_TRACE_DB</value>
+  </data>
+  <data name="FLG_USER_STACK_TRACE_DB" xml:space="preserve">
+    <value>FLG_USER_STACK_TRACE_DB</value>
+  </data>
+  <data name="FLG_DEBUG_INITIAL_COMMAND" xml:space="preserve">
+    <value>FLG_DEBUG_INITIAL_COMMAND</value>
+  </data>
+  <data name="FLG_DEBUG_INITIAL_COMMAND_EX" xml:space="preserve">
+    <value>FLG_DEBUG_INITIAL_COMMAND_EX</value>
+  </data>
+  <data name="FLG_HEAP_DISABLE_COALESCING" xml:space="preserve">
+    <value>FLG_HEAP_DISABLE_COALESCING</value>
+  </data>
+  <data name="FLG_DISABLE_PAGE_KERNEL_STACKS" xml:space="preserve">
+    <value>FLG_DISABLE_PAGE_KERNEL_STACKS</value>
+  </data>
+  <data name="FLG_DISABLE_PROTDLLS" xml:space="preserve">
+    <value>FLG_DISABLE_PROTDLLS</value>
+  </data>
+  <data name="FLG_DISABLE_STACK_EXTENSION" xml:space="preserve">
+    <value>FLG_DISABLE_STACK_EXTENSION</value>
+  </data>
+  <data name="FLG_CRITSEC_EVENT_CREATION" xml:space="preserve">
+    <value>FLG_CRITSEC_EVENT_CREATION</value>
+  </data>
+  <data name="FLG_APPLICATION_VERIFIER" xml:space="preserve">
+    <value>FLG_APPLICATION_VERIFIER</value>
+  </data>
+  <data name="FLG_ENABLE_HANDLE_EXCEPTIONS" xml:space="preserve">
+    <value>FLG_ENABLE_HANDLE_EXCEPTIONS</value>
+  </data>
+  <data name="FLG_ENABLE_CLOSE_EXCEPTIONS" xml:space="preserve">
+    <value>FLG_ENABLE_CLOSE_EXCEPTIONS</value>
+  </data>
+  <data name="FLG_ENABLE_CSRDEBUG" xml:space="preserve">
+    <value>FLG_ENABLE_CSRDEBUG</value>
+  </data>
+  <data name="FLG_ENABLE_EXCEPTION_LOGGING" xml:space="preserve">
+    <value>FLG_ENABLE_EXCEPTION_LOGGING</value>
+  </data>
+  <data name="FLG_HEAP_ENABLE_FREE_CHECK" xml:space="preserve">
+    <value>FLG_HEAP_ENABLE_FREE_CHECK</value>
+  </data>
+  <data name="FLG_HEAP_VALIDATE_PARAMETERS" xml:space="preserve">
+    <value>FLG_HEAP_VALIDATE_PARAMETERS</value>
+  </data>
+  <data name="FLG_HEAP_ENABLE_TAGGING" xml:space="preserve">
+    <value>FLG_HEAP_ENABLE_TAGGING</value>
+  </data>
+  <data name="FLG_HEAP_ENABLE_TAG_BY_DLL" xml:space="preserve">
+    <value>FLG_HEAP_ENABLE_TAG_BY_DLL</value>
+  </data>
+  <data name="FLG_HEAP_ENABLE_TAIL_CHECK" xml:space="preserve">
+    <value>FLG_HEAP_ENABLE_TAIL_CHECK</value>
+  </data>
+  <data name="FLG_HEAP_VALIDATE_ALL" xml:space="preserve">
+    <value>FLG_HEAP_VALIDATE_ALL</value>
+  </data>
+  <data name="FLG_ENABLE_KDEBUG_SYMBOL_LOAD" xml:space="preserve">
+    <value>FLG_ENABLE_KDEBUG_SYMBOL_LOAD</value>
+  </data>
+  <data name="FLG_ENABLE_HANDLE_TYPE_TAGGING" xml:space="preserve">
+    <value>FLG_ENABLE_HANDLE_TYPE_TAGGING</value>
+  </data>
+  <data name="FLG_HEAP_PAGE_ALLOCS" xml:space="preserve">
+    <value>FLG_HEAP_PAGE_ALLOCS</value>
+  </data>
+  <data name="FLG_POOL_ENABLE_TAGGING" xml:space="preserve">
+    <value>FLG_POOL_ENABLE_TAGGING</value>
+  </data>
+  <data name="FLG_ENABLE_SYSTEM_CRIT_BREAKS" xml:space="preserve">
+    <value>FLG_ENABLE_SYSTEM_CRIT_BREAKS</value>
+  </data>
+  <data name="FLG_MAINTAIN_OBJECT_TYPELIST" xml:space="preserve">
+    <value>FLG_MAINTAIN_OBJECT_TYPELIST</value>
+  </data>
+  <data name="FLG_MONITOR_SILENT_PROCESS_EXIT" xml:space="preserve">
+    <value>FLG_MONITOR_SILENT_PROCESS_EXIT</value>
+  </data>
+  <data name="FLG_SHOW_LDR_SNAPS" xml:space="preserve">
+    <value>FLG_SHOW_LDR_SNAPS</value>
+  </data>
+  <data name="FLG_STOP_ON_EXCEPTION" xml:space="preserve">
+    <value>FLG_STOP_ON_EXCEPTION</value>
+  </data>
+  <data name="FLG_STOP_ON_HUNG_GUI" xml:space="preserve">
+    <value>FLG_STOP_ON_HUNG_GUI</value>
+  </data>
+  <data name="FLG_STOP_ON_UNHANDLED_EXCEPTION" xml:space="preserve">
+    <value>FLG_STOP_ON_UNHANDLED_EXCEPTION</value>
+  </data>
+  <data name="AvailableSubsegmentList" xml:space="preserve">
+    <value>AvailableSubsegmentList</value>
+  </data>
+  <data name="FullSubsegmentList" xml:space="preserve">
+    <value>FullSubsegmentList</value>
+  </data>
+  <data name="RetiringSubsegmentList" xml:space="preserve">
+    <value>RetiringSubsegmentList</value>
+  </data>
+  <data name="PAGE_NOACCESS" xml:space="preserve">
+    <value>No Access</value>
+  </data>
+  <data name="PAGE_READONLY" xml:space="preserve">
+    <value>Read Only</value>
+  </data>
+  <data name="PAGE_READWRITE" xml:space="preserve">
+    <value>Read Write</value>
+  </data>
+  <data name="PAGE_WRITECOPY" xml:space="preserve">
+    <value>Write Copy</value>
+  </data>
+  <data name="PAGE_EXECUTE" xml:space="preserve">
+    <value>Execute</value>
+  </data>
+  <data name="PAGE_EXECUTE_READ" xml:space="preserve">
+    <value>Execute Read</value>
+  </data>
+  <data name="PAGE_EXECUTE_READWRITE" xml:space="preserve">
+    <value>Execute Read Write</value>
+  </data>
+  <data name="PAGE_EXECUTE_WRITECOPY" xml:space="preserve">
+    <value>Execute Read Copy</value>
+  </data>
+  <data name="PAGE_GUARD" xml:space="preserve">
+    <value>Guard</value>
+  </data>
+  <data name="PAGE_NOCACHE" xml:space="preserve">
+    <value>No Cache</value>
+  </data>
+  <data name="PAGE_WRITECOMBINE" xml:space="preserve">
+    <value>Write Combine</value>
+  </data>
+  <data name="PAGE_GRAPHICS_NOACCESS" xml:space="preserve">
+    <value>Graphics No Access</value>
+  </data>
+  <data name="PAGE_GRAPHICS_READONLY" xml:space="preserve">
+    <value>Graphics Read Only</value>
+  </data>
+  <data name="PAGE_GRAPHICS_READWRITE" xml:space="preserve">
+    <value>Graphics Read Write</value>
+  </data>
+  <data name="PAGE_GRAPHICS_EXECUTE" xml:space="preserve">
+    <value>Graphics Execute</value>
+  </data>
+  <data name="PAGE_GRAPHICS_EXECUTE_READ" xml:space="preserve">
+    <value>Graphics Execute Read</value>
+  </data>
+  <data name="PAGE_GRAPHICS_EXECUTE_READWRITE" xml:space="preserve">
+    <value>Graphics Execute Read Write</value>
+  </data>
+  <data name="PAGE_GRAPHICS_COHERENT" xml:space="preserve">
+    <value>Graphics Coherent</value>
+  </data>
+  <data name="PAGE_ENCLAVE_THREAD_CONTROL" xml:space="preserve">
+    <value>Enclave Thread Control</value>
+  </data>
+  <data name="PAGE_REVERT_TO_FILE_MAP" xml:space="preserve">
+    <value>Revert to File Map</value>
+  </data>
+  <data name="PAGE_TARGETS_NO_UPDATE" xml:space="preserve">
+    <value>Targets No Update</value>
+  </data>
+  <data name="PAGE_TARGETS_INVALID" xml:space="preserve">
+    <value>Targets Invalid</value>
+  </data>
+  <data name="PAGE_ENCLAVE_UNVALIDATED" xml:space="preserve">
+    <value>Enclave Unvalidated</value>
+  </data>
+  <data name="PAGE_ENCLAVE_DECOMMIT" xml:space="preserve">
+    <value>Enclave Decommit</value>
+  </data>
+  <data name="MINIDUMP_SYSMEMINFO1_FILECACHE_TRANSITIONREPURPOSECOUNT_FLAGS" xml:space="preserve">
+    <value>FileCache TransitionRePurposeCount</value>
+  </data>
+  <data name="MINIDUMP_SYSMEMINFO1_BASICPERF" xml:space="preserve">
+    <value>BasicPref</value>
+  </data>
+  <data name="MINIDUMP_SYSMEMINFO1_PERF_CCTOTALDIRTYPAGES_CCDIRTYPAGETHRESHOLD" xml:space="preserve">
+    <value>Pref CcTotalDirtyPages/CcDirtyPageThreshold</value>
+  </data>
+  <data name="MINIDUMP_SYSMEMINFO1_PERF_RESIDENTAVAILABLEPAGES_SHAREDCOMMITPAGES" xml:space="preserve">
+    <value>Pref ResidentAvailablePages/SharedCommittedPages</value>
+  </data>
+  <data name="MEM_COMMIT" xml:space="preserve">
+    <value>Commit</value>
+  </data>
+  <data name="MEM_FREE" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="MEM_RESERVE" xml:space="preserve">
+    <value>Reserve</value>
+  </data>
+  <data name="MEM_IMAGE" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="MEM_MAPPED" xml:space="preserve">
+    <value>Mapped</value>
+  </data>
+  <data name="MEM_PRIVATE" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="CV_AMD64_AL" xml:space="preserve">
+    <value>AL</value>
+  </data>
+  <data name="CV_AMD64_BL" xml:space="preserve">
+    <value>BL</value>
+  </data>
+  <data name="CV_AMD64_CL" xml:space="preserve">
+    <value>CL</value>
+  </data>
+  <data name="CV_AMD64_DL" xml:space="preserve">
+    <value>DL</value>
+  </data>
+  <data name="CV_AMD64_AX" xml:space="preserve">
+    <value>AX</value>
+  </data>
+  <data name="CV_AMD64_BX" xml:space="preserve">
+    <value>BX</value>
+  </data>
+  <data name="CV_AMD64_CX" xml:space="preserve">
+    <value>CX</value>
+  </data>
+  <data name="CV_AMD64_DX" xml:space="preserve">
+    <value>DX</value>
+  </data>
+  <data name="CV_AMD64_SP" xml:space="preserve">
+    <value>SP</value>
+  </data>
+  <data name="CV_AMD64_BP" xml:space="preserve">
+    <value>BP</value>
+  </data>
+  <data name="CV_AMD64_SI" xml:space="preserve">
+    <value>SI</value>
+  </data>
+  <data name="CV_AMD64_DI" xml:space="preserve">
+    <value>DI</value>
+  </data>
+  <data name="CV_AMD64_EAX" xml:space="preserve">
+    <value>EAX</value>
+  </data>
+  <data name="CV_AMD64_EBX" xml:space="preserve">
+    <value>EBX</value>
+  </data>
+  <data name="CV_AMD64_ECX" xml:space="preserve">
+    <value>ECX</value>
+  </data>
+  <data name="CV_AMD64_EDX" xml:space="preserve">
+    <value>EDX</value>
+  </data>
+  <data name="CV_AMD64_ESP" xml:space="preserve">
+    <value>ESP</value>
+  </data>
+  <data name="CV_AMD64_EBP" xml:space="preserve">
+    <value>EBP</value>
+  </data>
+  <data name="CV_AMD64_ESI" xml:space="preserve">
+    <value>ESI</value>
+  </data>
+  <data name="CV_AMD64_EDI" xml:space="preserve">
+    <value>EDI</value>
+  </data>
+  <data name="CV_AMD64_RAX" xml:space="preserve">
+    <value>RAX</value>
+  </data>
+  <data name="CV_AMD64_RBX" xml:space="preserve">
+    <value>RBX</value>
+  </data>
+  <data name="CV_AMD64_RCX" xml:space="preserve">
+    <value>RCX</value>
+  </data>
+  <data name="CV_AMD64_RDX" xml:space="preserve">
+    <value>RDX</value>
+  </data>
+  <data name="CV_AMD64_RSP" xml:space="preserve">
+    <value>RSP</value>
+  </data>
+  <data name="CV_AMD64_RBP" xml:space="preserve">
+    <value>RBP</value>
+  </data>
+  <data name="CV_AMD64_RSI" xml:space="preserve">
+    <value>RSI</value>
+  </data>
+  <data name="CV_AMD64_RDI" xml:space="preserve">
+    <value>RDI</value>
+  </data>
+  <data name="CV_AMD64_R8B" xml:space="preserve">
+    <value>R8B</value>
+  </data>
+  <data name="CV_AMD64_R9B" xml:space="preserve">
+    <value>R9B</value>
+  </data>
+  <data name="CV_AMD64_R10B" xml:space="preserve">
+    <value>R10B</value>
+  </data>
+  <data name="CV_AMD64_R11B" xml:space="preserve">
+    <value>R11B</value>
+  </data>
+  <data name="CV_AMD64_R12B" xml:space="preserve">
+    <value>R12B</value>
+  </data>
+  <data name="CV_AMD64_R13B" xml:space="preserve">
+    <value>R13B</value>
+  </data>
+  <data name="CV_AMD64_R14B" xml:space="preserve">
+    <value>R14B</value>
+  </data>
+  <data name="CV_AMD64_R15B" xml:space="preserve">
+    <value>R15B</value>
+  </data>
+  <data name="CV_AMD64_R8W" xml:space="preserve">
+    <value>R8W</value>
+  </data>
+  <data name="CV_AMD64_R9W" xml:space="preserve">
+    <value>R9W</value>
+  </data>
+  <data name="CV_AMD64_R10W" xml:space="preserve">
+    <value>R10W</value>
+  </data>
+  <data name="CV_AMD64_R11W" xml:space="preserve">
+    <value>R11W</value>
+  </data>
+  <data name="CV_AMD64_R12W" xml:space="preserve">
+    <value>R12W</value>
+  </data>
+  <data name="CV_AMD64_R13W" xml:space="preserve">
+    <value>R13W</value>
+  </data>
+  <data name="CV_AMD64_R14W" xml:space="preserve">
+    <value>R14W</value>
+  </data>
+  <data name="CV_AMD64_R15W" xml:space="preserve">
+    <value>R15W</value>
+  </data>
+  <data name="CV_AMD64_R8D" xml:space="preserve">
+    <value>R8D</value>
+  </data>
+  <data name="CV_AMD64_R9D" xml:space="preserve">
+    <value>R9D</value>
+  </data>
+  <data name="CV_AMD64_R10D" xml:space="preserve">
+    <value>R10D</value>
+  </data>
+  <data name="CV_AMD64_R11D" xml:space="preserve">
+    <value>R11D</value>
+  </data>
+  <data name="CV_AMD64_R12D" xml:space="preserve">
+    <value>R12D</value>
+  </data>
+  <data name="CV_AMD64_R13D" xml:space="preserve">
+    <value>R13D</value>
+  </data>
+  <data name="CV_AMD64_R14D" xml:space="preserve">
+    <value>R14D</value>
+  </data>
+  <data name="CV_AMD64_R15D" xml:space="preserve">
+    <value>R15D</value>
+  </data>
+  <data name="CV_AMD64_R8" xml:space="preserve">
+    <value>R8</value>
+  </data>
+  <data name="CV_AMD64_R9" xml:space="preserve">
+    <value>R9</value>
+  </data>
+  <data name="CV_AMD64_R10" xml:space="preserve">
+    <value>R10</value>
+  </data>
+  <data name="CV_AMD64_R11" xml:space="preserve">
+    <value>R11</value>
+  </data>
+  <data name="CV_AMD64_R12" xml:space="preserve">
+    <value>R12</value>
+  </data>
+  <data name="CV_AMD64_R13" xml:space="preserve">
+    <value>R13</value>
+  </data>
+  <data name="CV_AMD64_R14" xml:space="preserve">
+    <value>R14</value>
+  </data>
+  <data name="CV_AMD64_R15" xml:space="preserve">
+    <value>R15</value>
+  </data>
+  <data name="StreamStackDumpInline" xml:space="preserve">
+    <value>Inline</value>
+  </data>
+  <data name="StreamStackDumpParametersTitle" xml:space="preserve">
+    <value>Parameters</value>
+  </data>
+  <data name="StreamStackDumpLocalVariablesTitle" xml:space="preserve">
+    <value>Local Variables</value>
+  </data>
+  <data name="StreamStackDumpSymbolNamePrefix" xml:space="preserve">
+    <value>!</value>
+  </data>
+  <data name="StreamStackDumpSymbolDisplacementPrefix" xml:space="preserve">
+    <value>+</value>
+  </data>
+  <data name="StreamStackDumpModuleDisplacementPrefix" xml:space="preserve">
+    <value>+</value>
+  </data>
+  <data name="StreamStackDumpUnknownVariableType" xml:space="preserve">
+    <value>&lt;unknown&gt;</value>
+  </data>
+  <data name="StreamStackDumpFileNameLineNumberSeparator" xml:space="preserve">
+    <value>@</value>
+  </data>
+  <data name="StreamStackDumpFailedToFindAddressPrefix" xml:space="preserve">
+    <value>Failed to find </value>
+  </data>
+  <data name="StreamStackDumpFailedToFindAddressNameAddressSeparator" xml:space="preserve">
+    <value> address </value>
+  </data>
+  <data name="StreamStackDumpFailedToFindAddressPostfix" xml:space="preserve">
+    <value> in dump file</value>
+  </data>
+  <data name="Null" xml:space="preserve">
+    <value>(SymTagNull)</value>
+  </data>
+  <data name="Exe" xml:space="preserve">
+    <value>exe</value>
+  </data>
+  <data name="Compiland" xml:space="preserve">
+    <value>Compiland</value>
+  </data>
+  <data name="CompilandDetails" xml:space="preserve">
+    <value>CompilandDetails</value>
+  </data>
+  <data name="CompilandEnv" xml:space="preserve">
+    <value>CompilandEnv</value>
+  </data>
+  <data name="Function" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Block</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Annotation" xml:space="preserve">
+    <value>Annotation</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="PublicSymbol" xml:space="preserve">
+    <value>PublicSymbol</value>
+  </data>
+  <data name="UDT" xml:space="preserve">
+    <value>UserDefinedType</value>
+  </data>
+  <data name="Enum" xml:space="preserve">
+    <value>ENUM</value>
+  </data>
+  <data name="FunctionType" xml:space="preserve">
+    <value>FunctionType</value>
+  </data>
+  <data name="PointerType" xml:space="preserve">
+    <value>PointerType</value>
+  </data>
+  <data name="ArrayType" xml:space="preserve">
+    <value>ArrayType</value>
+  </data>
+  <data name="BaseType" xml:space="preserve">
+    <value>BaseType</value>
+  </data>
+  <data name="Typedef" xml:space="preserve">
+    <value>Typedef</value>
+  </data>
+  <data name="BaseClass" xml:space="preserve">
+    <value>BaseClass</value>
+  </data>
+  <data name="Friend" xml:space="preserve">
+    <value>Friend</value>
+  </data>
+  <data name="FunctionArgType" xml:space="preserve">
+    <value>FunctionArgType</value>
+  </data>
+  <data name="FuncDebugStart" xml:space="preserve">
+    <value>FuncDebugStart</value>
+  </data>
+  <data name="FuncDebugEnd" xml:space="preserve">
+    <value>FuncDebugEnd</value>
+  </data>
+  <data name="UsingNamespace" xml:space="preserve">
+    <value>UsingNamespace</value>
+  </data>
+  <data name="VTableShape" xml:space="preserve">
+    <value>VTableShape</value>
+  </data>
+  <data name="VTable" xml:space="preserve">
+    <value>VTable</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Thunk" xml:space="preserve">
+    <value>Thunk</value>
+  </data>
+  <data name="CustomType" xml:space="preserve">
+    <value>CustomType</value>
+  </data>
+  <data name="ManagedType" xml:space="preserve">
+    <value>ManagedType</value>
+  </data>
+  <data name="Dimension" xml:space="preserve">
+    <value>Dimension</value>
+  </data>
+  <data name="CallSite" xml:space="preserve">
+    <value>CallSite</value>
+  </data>
+  <data name="InlineSite" xml:space="preserve">
+    <value>InlineSite</value>
+  </data>
+  <data name="BaseInterface" xml:space="preserve">
+    <value>BaseInterface</value>
+  </data>
+  <data name="VectorType" xml:space="preserve">
+    <value>VectorType</value>
+  </data>
+  <data name="MatrixType" xml:space="preserve">
+    <value>MatrixType</value>
+  </data>
+  <data name="HLSLType" xml:space="preserve">
+    <value>HLSLType</value>
+  </data>
+  <data name="Caller" xml:space="preserve">
+    <value>Caller</value>
+  </data>
+  <data name="Callee" xml:space="preserve">
+    <value>Callee</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="HeapAllocationSite" xml:space="preserve">
+    <value>HeapAllocationSite</value>
+  </data>
+  <data name="CoffGroup" xml:space="preserve">
+    <value>CoffGroup</value>
+  </data>
+  <data name="Inlinee" xml:space="preserve">
+    <value>Inlinee</value>
+  </data>
+  <data name="NoType" xml:space="preserve">
+    <value>&lt;NoType&gt;</value>
+  </data>
+  <data name="Void" xml:space="preserve">
+    <value>void</value>
+  </data>
+  <data name="Char" xml:space="preserve">
+    <value>char</value>
+  </data>
+  <data name="WChar" xml:space="preserve">
+    <value>wchar_t</value>
+  </data>
+  <data name="Int" xml:space="preserve">
+    <value>int</value>
+  </data>
+  <data name="UInt" xml:space="preserve">
+    <value>unsigned int</value>
+  </data>
+  <data name="Float" xml:space="preserve">
+    <value>float</value>
+  </data>
+  <data name="BCD" xml:space="preserve">
+    <value>&lt;BCD&gt;</value>
+  </data>
+  <data name="Bool" xml:space="preserve">
+    <value>bool</value>
+  </data>
+  <data name="Long" xml:space="preserve">
+    <value>long</value>
+  </data>
+  <data name="ULong" xml:space="preserve">
+    <value>unsigned long</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>&lt;currency&gt;</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>&lt;date&gt;</value>
+  </data>
+  <data name="Variant" xml:space="preserve">
+    <value>VARIANT</value>
+  </data>
+  <data name="Complex" xml:space="preserve">
+    <value>&lt;complex&gt;</value>
+  </data>
+  <data name="Bit" xml:space="preserve">
+    <value>&lt;bit&gt;</value>
+  </data>
+  <data name="BSTR" xml:space="preserve">
+    <value>BSTR</value>
+  </data>
+  <data name="HResult" xml:space="preserve">
+    <value>HRESULT</value>
+  </data>
+  <data name="Char16" xml:space="preserve">
+    <value>char16_t</value>
+  </data>
+  <data name="Char32" xml:space="preserve">
+    <value>char32_t</value>
+  </data>
+  <data name="Char8" xml:space="preserve">
+    <value>char8_t</value>
+  </data>
+  <data name="struct_type" xml:space="preserve">
+    <value>struct</value>
+  </data>
+  <data name="class_type" xml:space="preserve">
+    <value>class</value>
+  </data>
+  <data name="union_type" xml:space="preserve">
+    <value>union</value>
+  </data>
+  <data name="interface_type" xml:space="preserve">
+    <value>interface</value>
+  </data>
+  <data name="near_c" xml:space="preserve">
+    <value>near c</value>
+  </data>
+  <data name="far_c" xml:space="preserve">
+    <value>far c</value>
+  </data>
+  <data name="near_pascal" xml:space="preserve">
+    <value>near pascal</value>
+  </data>
+  <data name="far_pascal" xml:space="preserve">
+    <value>far pascal</value>
+  </data>
+  <data name="near_fast" xml:space="preserve">
+    <value>near fast</value>
+  </data>
+  <data name="far_fast" xml:space="preserve">
+    <value>far fast</value>
+  </data>
+  <data name="skipped" xml:space="preserve">
+    <value>skipped</value>
+  </data>
+  <data name="near_std" xml:space="preserve">
+    <value>near std</value>
+  </data>
+  <data name="far_std" xml:space="preserve">
+    <value>far std</value>
+  </data>
+  <data name="near_sys" xml:space="preserve">
+    <value>near sys</value>
+  </data>
+  <data name="far_sys" xml:space="preserve">
+    <value>far sys</value>
+  </data>
+  <data name="thiscall" xml:space="preserve">
+    <value>thiscall</value>
+  </data>
+  <data name="mipscall" xml:space="preserve">
+    <value>mipscall</value>
+  </data>
+  <data name="generic" xml:space="preserve">
+    <value>generic</value>
+  </data>
+  <data name="alphacall" xml:space="preserve">
+    <value>alphacall</value>
+  </data>
+  <data name="ppccall" xml:space="preserve">
+    <value>ppccall</value>
+  </data>
+  <data name="shcall" xml:space="preserve">
+    <value>shcall</value>
+  </data>
+  <data name="armcall" xml:space="preserve">
+    <value>armcall</value>
+  </data>
+  <data name="am33call" xml:space="preserve">
+    <value>am33call</value>
+  </data>
+  <data name="tricall" xml:space="preserve">
+    <value>tricall</value>
+  </data>
+  <data name="sh5_call" xml:space="preserve">
+    <value>sh5_call</value>
+  </data>
+  <data name="m32rcall" xml:space="preserve">
+    <value>m32rcall</value>
+  </data>
+  <data name="clrcall" xml:space="preserve">
+    <value>clrcall</value>
+  </data>
+  <data name="inlinecall" xml:space="preserve">
+    <value>inline</value>
+  </data>
+  <data name="near_vector" xml:space="preserve">
+    <value>near vector</value>
+  </data>
+  <data name="swift" xml:space="preserve">
+    <value>swift</value>
+  </data>
+  <data name="reserved" xml:space="preserve">
+    <value>reserved</value>
+  </data>
+  <data name="data_is_local" xml:space="preserve">
+    <value>local</value>
+  </data>
+  <data name="data_is_unknown" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="data_is_static_local" xml:space="preserve">
+    <value>static local</value>
+  </data>
+  <data name="data_is_param" xml:space="preserve">
+    <value>param</value>
+  </data>
+  <data name="data_is_object_ptr" xml:space="preserve">
+    <value>object ptr</value>
+  </data>
+  <data name="data_is_file_static" xml:space="preserve">
+    <value>file static</value>
+  </data>
+  <data name="data_is_global" xml:space="preserve">
+    <value>global</value>
+  </data>
+  <data name="data_is_member" xml:space="preserve">
+    <value>member</value>
+  </data>
+  <data name="data_is_static_member" xml:space="preserve">
+    <value>static member</value>
+  </data>
+  <data name="data_is_constant" xml:space="preserve">
+    <value>constant</value>
+  </data>
+  <data name="SymbolNameNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="SymbolTypeUnsupported" xml:space="preserve">
+    <value>unsupported type</value>
+  </data>
+  <data name="SymbolOnType" xml:space="preserve">
+    <value>on type</value>
+  </data>
+  <data name="SymbolVariableUnknown" xml:space="preserve">
+    <value>&lt;unknown&gt;</value>
+  </data>
+  <data name="SymbolBcdValueUnsupported" xml:space="preserve">
+    <value>BCD value unsupported</value>
+  </data>
+  <data name="SymbolCurrencyValueUnsupported" xml:space="preserve">
+    <value>Currency value unsupported</value>
+  </data>
+  <data name="SymbolDateValueUnsupported" xml:space="preserve">
+    <value>Date value unsupported</value>
+  </data>
+  <data name="SymbolVariantValueUnsupported" xml:space="preserve">
+    <value>Variant value unsupported</value>
+  </data>
+  <data name="SymbolComplexValueUnsupported" xml:space="preserve">
+    <value>Complex value unsupported</value>
+  </data>
+  <data name="SymbolBSTRValueUnsupported" xml:space="preserve">
+    <value>BSTR value unsupported</value>
+  </data>
+  <data name="SymbolBitsTitle" xml:space="preserve">
+    <value>bits</value>
+  </data>
+  <data name="SymbolBitTitle" xml:space="preserve">
+    <value>bit</value>
+  </data>
+  <data name="SymbolEnumTitle" xml:space="preserve">
+    <value>enum</value>
+  </data>
+  <data name="SymbolReferenceTitle" xml:space="preserve">
+    <value>&amp;</value>
+  </data>
+  <data name="SymbolPointerTitle" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="SymbolInt8Title" xml:space="preserve">
+    <value>int8_t</value>
+  </data>
+  <data name="SymbolInt16Title" xml:space="preserve">
+    <value>int16_t</value>
+  </data>
+  <data name="SymbolInt32Title" xml:space="preserve">
+    <value>int32_t</value>
+  </data>
+  <data name="SymbolInt64Title" xml:space="preserve">
+    <value>int64_t</value>
+  </data>
+  <data name="SymbolInt128Title" xml:space="preserve">
+    <value>int128_t</value>
+  </data>
+  <data name="SymbolInt256Title" xml:space="preserve">
+    <value>int256_t</value>
+  </data>
+  <data name="SymbolUInt8Title" xml:space="preserve">
+    <value>uint8_t</value>
+  </data>
+  <data name="SymbolUInt16Title" xml:space="preserve">
+    <value>uint16_t</value>
+  </data>
+  <data name="SymbolUInt32Title" xml:space="preserve">
+    <value>uint32_t</value>
+  </data>
+  <data name="SymbolUInt64Title" xml:space="preserve">
+    <value>uint64_t</value>
+  </data>
+  <data name="SymbolUInt128Title" xml:space="preserve">
+    <value>uint128_t</value>
+  </data>
+  <data name="SymbolUInt256Title" xml:space="preserve">
+    <value>uint256_t</value>
+  </data>
+  <data name="SymbolFloat32Title" xml:space="preserve">
+    <value>float32</value>
+  </data>
+  <data name="SymbolFloat64Title" xml:space="preserve">
+    <value>float64</value>
+  </data>
+  <data name="SymbolFloat128Title" xml:space="preserve">
+    <value>float128</value>
+  </data>
+  <data name="SymbolFloat256Title" xml:space="preserve">
+    <value>float256</value>
+  </data>
+  <data name="SymbolFailedToFindTitle" xml:space="preserve">
+    <value>failed to find</value>
+  </data>
+  <data name="SymbolTitle" xml:space="preserve">
+    <value>symbol</value>
+  </data>
+  <data name="SymbolIsZeroLength" xml:space="preserve">
+    <value>is zero length</value>
+  </data>
+  <data name="SymbolMemoryAddressInRange" xml:space="preserve">
+    <value>memory address range in dump file</value>
+  </data>
+  <data name="workstation" xml:space="preserve">
+    <value>workstation</value>
+  </data>
+  <data name="home_server" xml:space="preserve">
+    <value>home server</value>
+  </data>
+  <data name="professional_edition" xml:space="preserve">
+    <value>professional edition</value>
+  </data>
+  <data name="server" xml:space="preserve">
+    <value>server</value>
+  </data>
+  <data name="server_2019" xml:space="preserve">
+    <value>server 2019</value>
+  </data>
+  <data name="server_v_next" xml:space="preserve">
+    <value>server v next</value>
+  </data>
+  <data name="windows_server_2022" xml:space="preserve">
+    <value>Windows Server 2022</value>
+  </data>
+  <data name="windows_server_2022_preview" xml:space="preserve">
+    <value>Windows Server 2022 (preview)</value>
+  </data>
+  <data name="windows_server_2019_2004" xml:space="preserve">
+    <value>Windows Server 2019 2004</value>
+  </data>
+  <data name="windows_server_2019_2009_20H2" xml:space="preserve">
+    <value>Windows Server 2019 2009 20H2</value>
+  </data>
+  <data name="windows_server_2019_1903" xml:space="preserve">
+    <value>Windows Server 2019 1903</value>
+  </data>
+  <data name="windows_server_2019_1909" xml:space="preserve">
+    <value>Windows Server 2019 1909</value>
+  </data>
+  <data name="windows_server_2019_20H2" xml:space="preserve">
+    <value>Windows Server 2019 20H2</value>
+  </data>
+  <data name="windows_server_vnext" xml:space="preserve">
+    <value>Windows Server vNext</value>
+  </data>
+  <data name="windows_server_2019" xml:space="preserve">
+    <value>Windows Server 2019</value>
+  </data>
+  <data name="windows_server_2019_datacenter" xml:space="preserve">
+    <value>Windows Server 2019 (Semi-Annual Channel) (Datacenter, Standard)</value>
+  </data>
+  <data name="windows_server_2016_fall_creators_update" xml:space="preserve">
+    <value>Windows Server 2016 Fall Creators Update</value>
+  </data>
+  <data name="windows_server_2016" xml:space="preserve">
+    <value>Windows Server 2016</value>
+  </data>
+  <data name="windows_server_2012_R2" xml:space="preserve">
+    <value>Windows Server 2012 R2</value>
+  </data>
+  <data name="windows_server_2012" xml:space="preserve">
+    <value>Windows Server 2012</value>
+  </data>
+  <data name="windows_server_2008_R2" xml:space="preserve">
+    <value>Windows Server 2008 R2</value>
+  </data>
+  <data name="windows_server_2008" xml:space="preserve">
+    <value>Windows Server 2008</value>
+  </data>
+  <data name="windows_server_home_server" xml:space="preserve">
+    <value>Windows Home Server</value>
+  </data>
+  <data name="windows_server_2003" xml:space="preserve">
+    <value>Windows Server 2003</value>
+  </data>
+  <data name="windows_11_23H2" xml:space="preserve">
+    <value>Windows 11 23H2</value>
+  </data>
+  <data name="windows_11_22H2" xml:space="preserve">
+    <value>Windows 11 22H2</value>
+  </data>
+  <data name="windows_11" xml:space="preserve">
+    <value>Windows 11</value>
+  </data>
+  <data name="windows_10_22H2" xml:space="preserve">
+    <value>Windows 10 22H2</value>
+  </data>
+  <data name="windows_10_21H2" xml:space="preserve">
+    <value>Windows 10 21H2</value>
+  </data>
+  <data name="windows_10_21H1" xml:space="preserve">
+    <value>Windows 10 21H1</value>
+  </data>
+  <data name="windows_10_20H2" xml:space="preserve">
+    <value>Windows 10 20H2</value>
+  </data>
+  <data name="windows_10_2004" xml:space="preserve">
+    <value>Windows 10 2004</value>
+  </data>
+  <data name="windows_10_1909" xml:space="preserve">
+    <value>Windows 10 1909</value>
+  </data>
+  <data name="windows_10_1903" xml:space="preserve">
+    <value>Windows 10 1903</value>
+  </data>
+  <data name="windows_10_october_2018" xml:space="preserve">
+    <value>Windows 10 October 2018</value>
+  </data>
+  <data name="windows_10_april_2018" xml:space="preserve">
+    <value>Windows 10 April 2018</value>
+  </data>
+  <data name="windows_10_fall_creators_update" xml:space="preserve">
+    <value>Windows 10 Fall Creators Update</value>
+  </data>
+  <data name="windows_10_creators_update" xml:space="preserve">
+    <value>Windows 10 Creators Update</value>
+  </data>
+  <data name="windows_10_anniversary_update" xml:space="preserve">
+    <value>Windows 10 Anniversary Update</value>
+  </data>
+  <data name="windows_10_november_update" xml:space="preserve">
+    <value>Windows 10 November Update</value>
+  </data>
+  <data name="windows_10_gold" xml:space="preserve">
+    <value>Windows 10 Gold</value>
+  </data>
+  <data name="windows_10" xml:space="preserve">
+    <value>Windows 10</value>
+  </data>
+  <data name="windows_8_1" xml:space="preserve">
+    <value>Windows 8.1</value>
+  </data>
+  <data name="windows_8" xml:space="preserve">
+    <value>Windows 8</value>
+  </data>
+  <data name="windows_7" xml:space="preserve">
+    <value>Windows 7</value>
+  </data>
+  <data name="windows_vista" xml:space="preserve">
+    <value>Windows Vista</value>
+  </data>
+  <data name="windows_server" xml:space="preserve">
+    <value>Windows Server</value>
+  </data>
+  <data name="windows_xp" xml:space="preserve">
+    <value>Windows XP</value>
+  </data>
+  <data name="windows_2000" xml:space="preserve">
+    <value>Windows 2000</value>
+  </data>
+  <data name="MINIDUMP_PROCESS_VM_COUNTERS" xml:space="preserve">
+    <value>vm counters</value>
+  </data>
+  <data name="MINIDUMP_PROCESS_VM_COUNTERS_VIRTUALSIZE" xml:space="preserve">
+    <value>vm counters virtual size</value>
+  </data>
+  <data name="MINIDUMP_PROCESS_VM_COUNTERS_EX" xml:space="preserve">
+    <value>vm counters extension</value>
+  </data>
+  <data name="MINIDUMP_PROCESS_VM_COUNTERS_EX2" xml:space="preserve">
+    <value>vm counters extension 2</value>
+  </data>
+  <data name="MINIDUMP_PROCESS_VM_COUNTERS_JOB" xml:space="preserve">
+    <value>vm counters job</value>
+  </data>
+  <data name="VS_FF_DEBUG" xml:space="preserve">
+    <value>debug build</value>
+  </data>
+  <data name="VS_FF_INFOINFERRED" xml:space="preserve">
+    <value>info inferred build</value>
+  </data>
+  <data name="VS_FF_PATCHED" xml:space="preserve">
+    <value>patched build</value>
+  </data>
+  <data name="VS_FF_PRERELEASE" xml:space="preserve">
+    <value>pre-release build</value>
+  </data>
+  <data name="VS_FF_PRIVATEBUILD" xml:space="preserve">
+    <value>private build</value>
+  </data>
+  <data name="VS_FF_SPECIALBUILD" xml:space="preserve">
+    <value>special build</value>
+  </data>
+  <data name="VOS__WINDOWS16" xml:space="preserve">
+    <value>16bit Windows</value>
+  </data>
+  <data name="VOS__WINDOWS32" xml:space="preserve">
+    <value>32bit Windows</value>
+  </data>
+  <data name="VOS__PM16" xml:space="preserve">
+    <value>16bit Presentation Manager</value>
+  </data>
+  <data name="VOS__PM32" xml:space="preserve">
+    <value>32bit Presentation Manager</value>
+  </data>
+  <data name="VOS_DOS" xml:space="preserve">
+    <value>MS-DOS</value>
+  </data>
+  <data name="VOS_NT" xml:space="preserve">
+    <value>Windows NT</value>
+  </data>
+  <data name="VOS_OS216" xml:space="preserve">
+    <value>16bit OS/2</value>
+  </data>
+  <data name="VOS_OS232" xml:space="preserve">
+    <value>32bit OS/2</value>
+  </data>
+  <data name="VOS_WINCE" xml:space="preserve">
+    <value>Windows CE</value>
+  </data>
+  <data name="dump_file_type_invalid" xml:space="preserve">
+    <value>invalid</value>
+  </data>
+  <data name="dump_file_type_user_mode_dump" xml:space="preserve">
+    <value>user mode dump</value>
+  </data>
+  <data name="dump_file_type_kernel_mode_dump_x86" xml:space="preserve">
+    <value>kernel mode x86 dump</value>
+  </data>
+  <data name="dump_file_type_kernel_mode_dump_x64" xml:space="preserve">
+    <value>kernel mode x64 dump</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_INTEL" xml:space="preserve">
+    <value>x86</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_MIPS" xml:space="preserve">
+    <value>mips</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_ALPHA" xml:space="preserve">
+    <value>alpha</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_PPC" xml:space="preserve">
+    <value>powerpc</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_SHX" xml:space="preserve">
+    <value>shx</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_ARM" xml:space="preserve">
+    <value>arm</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_IA64" xml:space="preserve">
+    <value>itanium</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_ALPHA64" xml:space="preserve">
+    <value>alpha64</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_MSIL" xml:space="preserve">
+    <value>msil</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_AMD64" xml:space="preserve">
+    <value>x64</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_IA32_ON_WIN64" xml:space="preserve">
+    <value>x86 on win64</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_NEUTRAL" xml:space="preserve">
+    <value>neutral</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_ARM64" xml:space="preserve">
+    <value>arm64</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_ARM32_ON_WIN64" xml:space="preserve">
+    <value>arm32 on win64</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_IA32_ON_ARM64" xml:space="preserve">
+    <value>x86 on arm64</value>
+  </data>
+  <data name="PROCESSOR_ARCHITECTURE_UNKNOWN" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="VER_NT_WORKSTATION" xml:space="preserve">
+    <value>NT Workstation</value>
+  </data>
+  <data name="VER_NT_SERVER" xml:space="preserve">
+    <value>NT Server</value>
+  </data>
+  <data name="VER_NT_DOMAIN_CONTROLLER" xml:space="preserve">
+    <value>NT Domain Controller</value>
+  </data>
+  <data name="VER_PLATFORM_WIN32_NT" xml:space="preserve">
+    <value>Win32 NT</value>
+  </data>
+  <data name="VER_PLATFORM_WIN32s" xml:space="preserve">
+    <value>Win32s</value>
+  </data>
+  <data name="VER_PLATFORM_WIN32_WINDOWS" xml:space="preserve">
+    <value>Win32</value>
+  </data>
+  <data name="VER_SUITE_SMALLBUSINESS" xml:space="preserve">
+    <value>Small Business Server</value>
+  </data>
+  <data name="VER_SUITE_ENTERPRISE" xml:space="preserve">
+    <value>Enterprise Edition / Advanced Server</value>
+  </data>
+  <data name="VER_SUITE_BACKOFFICE" xml:space="preserve">
+    <value>BackOffice</value>
+  </data>
+  <data name="VER_SUITE_COMMUNICATIONS" xml:space="preserve">
+    <value>Communications</value>
+  </data>
+  <data name="VER_SUITE_TERMINAL_VER_SUITE_SINGLEUSERTS" xml:space="preserve">
+    <value>Terminal Services</value>
+  </data>
+  <data name="VER_SUITE_TERMINAL" xml:space="preserve">
+    <value>Application Server</value>
+  </data>
+  <data name="VER_SUITE_SINGLEUSERTS" xml:space="preserve">
+    <value>Single User</value>
+  </data>
+  <data name="VER_SUITE_SMALLBUSINESS_RESTRICTED" xml:space="preserve">
+    <value>Small Business Server Restricted</value>
+  </data>
+  <data name="VER_SUITE_EMBEDDEDNT" xml:space="preserve">
+    <value>Windows XP Embedded</value>
+  </data>
+  <data name="VER_SUITE_DATACENTER" xml:space="preserve">
+    <value>Datacenter Edition</value>
+  </data>
+  <data name="VER_SUITE_PERSONAL" xml:space="preserve">
+    <value>Windows Vista Home Premium, Windows Vista Home Basic, or Windows XP Home Edition</value>
+  </data>
+  <data name="VER_SUITE_BLADE" xml:space="preserve">
+    <value>Web Edition</value>
+  </data>
+  <data name="VER_SUITE_EMBEDDED_RESTRICTED" xml:space="preserve">
+    <value>Embedded Restricted</value>
+  </data>
+  <data name="VER_SUITE_SECURITY_APPLIANCE" xml:space="preserve">
+    <value>Security Appliance</value>
+  </data>
+  <data name="VER_SUITE_STORAGE_SERVER" xml:space="preserve">
+    <value>Storage Server</value>
+  </data>
+  <data name="VER_SUITE_COMPUTE_SERVER" xml:space="preserve">
+    <value>Compute Server</value>
+  </data>
+  <data name="VER_SUITE_WH_SERVER" xml:space="preserve">
+    <value>Home Server</value>
+  </data>
+  <data name="VER_SUITE_MULTIUSERTS" xml:space="preserve">
+    <value>Multi User</value>
+  </data>
+  <data name="SECURITY_MANDATORY_UNTRUSTED_RID" xml:space="preserve">
+    <value>untrusted</value>
+  </data>
+  <data name="SECURITY_MANDATORY_LOW_RID" xml:space="preserve">
+    <value>low</value>
+  </data>
+  <data name="SECURITY_MANDATORY_MEDIUM_RID" xml:space="preserve">
+    <value>normal</value>
+  </data>
+  <data name="SECURITY_MANDATORY_MEDIUM_PLUS_RID" xml:space="preserve">
+    <value>above normal</value>
+  </data>
+  <data name="SECURITY_MANDATORY_HIGH_RID" xml:space="preserve">
+    <value>elevated</value>
+  </data>
+  <data name="SECURITY_MANDATORY_SYSTEM_RID" xml:space="preserve">
+    <value>system</value>
+  </data>
+  <data name="SECURITY_MANDATORY_PROTECTED_PROCESS_RID" xml:space="preserve">
+    <value>protected</value>
+  </data>
+  <data name="OperationDbUnused" xml:space="preserve">
+    <value>Unused</value>
+  </data>
+  <data name="OperationDbOPEN" xml:space="preserve">
+    <value>OPEN</value>
+  </data>
+  <data name="OperationDbCLOSE" xml:space="preserve">
+    <value>CLOSE</value>
+  </data>
+  <data name="OperationDbBADREF" xml:space="preserve">
+    <value>BADREF</value>
+  </data>
+  <data name="MiniHandleObjectInformationNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="MiniThreadInformation1" xml:space="preserve">
+    <value>MiniThreadInformation1</value>
+  </data>
+  <data name="MiniMutantInformation1" xml:space="preserve">
+    <value>MiniMutantInformation1</value>
+  </data>
+  <data name="MiniMutantInformation2" xml:space="preserve">
+    <value>MiniMutantInformation2</value>
+  </data>
+  <data name="MiniProcessInformation1" xml:space="preserve">
+    <value>MiniProcessInformation1</value>
+  </data>
+  <data name="MiniProcessInformation2" xml:space="preserve">
+    <value>MiniProcessInformation2</value>
+  </data>
+  <data name="MiniEventInformation1" xml:space="preserve">
+    <value>MiniEventInformation1</value>
+  </data>
+  <data name="MiniSectionInformation1" xml:space="preserve">
+    <value>MiniSectionInformation1</value>
+  </data>
+  <data name="MiniSemaphoreInformation1" xml:space="preserve">
+    <value>MiniSemaphoreInformation1</value>
+  </data>
+  <data name="MiniHandleObjectInformationTypeMax" xml:space="preserve">
+    <value>MiniHandleObjectInformationTypeMax</value>
+  </data>
+  <data name="MEM_EXECUTE_OPTION_DISABLE" xml:space="preserve">
+    <value>MEM_EXECUTE_OPTION_DISABLE</value>
+  </data>
+  <data name="MEM_EXECUTE_OPTION_ENABLE" xml:space="preserve">
+    <value>MEM_EXECUTE_OPTION_ENABLE</value>
+  </data>
+  <data name="MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION" xml:space="preserve">
+    <value>MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION</value>
+  </data>
+  <data name="MEM_EXECUTE_OPTION_PERMANENT" xml:space="preserve">
+    <value>MEM_EXECUTE_OPTION_PERMANENT</value>
+  </data>
+  <data name="MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE" xml:space="preserve">
+    <value>MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE</value>
+  </data>
+  <data name="MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE" xml:space="preserve">
+    <value>MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE</value>
+  </data>
+  <data name="VFT_APP" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="VFT_DLL" xml:space="preserve">
+    <value>DLL</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_COMM" xml:space="preserve">
+    <value>Communications Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_DISPLAY" xml:space="preserve">
+    <value>Display Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_INSTALLABLE" xml:space="preserve">
+    <value>Installable Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_KEYBOARD" xml:space="preserve">
+    <value>Keyboard Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_LANGUAGE" xml:space="preserve">
+    <value>Language Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_MOUSE" xml:space="preserve">
+    <value>Mouse Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_NETWORK" xml:space="preserve">
+    <value>Network Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_PRINTER" xml:space="preserve">
+    <value>Printer Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_SOUND" xml:space="preserve">
+    <value>Sound Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_SYSTEM" xml:space="preserve">
+    <value>System Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_VERSIONED_PRINTER" xml:space="preserve">
+    <value>Versioned Printer Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_DRV_INPUTMETHOD" xml:space="preserve">
+    <value>Input Method Driver</value>
+  </data>
+  <data name="VFT_DRV_VFT2_UNKNOWN" xml:space="preserve">
+    <value>Unknown Driver</value>
+  </data>
+  <data name="VFT_DRV" xml:space="preserve">
+    <value>Driver</value>
+  </data>
+  <data name="VFT_FONT_VFT2_FONT_RASTER" xml:space="preserve">
+    <value>Raster Font</value>
+  </data>
+  <data name="VFT_FONT_VFT2_FONT_TRUETYPE" xml:space="preserve">
+    <value>TrueType Font</value>
+  </data>
+  <data name="VFT_FONT_VFT2_FONT_VECTOR" xml:space="preserve">
+    <value>Vector Font</value>
+  </data>
+  <data name="VFT_FONT_VFT2_UNKNOWN" xml:space="preserve">
+    <value>Unknown Font</value>
+  </data>
+  <data name="VFT_FONT" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="VFT_STATIC_LIB" xml:space="preserve">
+    <value>Static-Link Library</value>
+  </data>
+  <data name="VFT_UNKNOWN" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="VFT_VXD" xml:space="preserve">
+    <value>Virtual Device</value>
+  </data>
+  <data name="SymNone" xml:space="preserve">
+    <value>SymNone</value>
+  </data>
+  <data name="SymCoff" xml:space="preserve">
+    <value>SymCoff</value>
+  </data>
+  <data name="SymCv" xml:space="preserve">
+    <value>SymCv</value>
+  </data>
+  <data name="SymPdb" xml:space="preserve">
+    <value>SymPdb</value>
+  </data>
+  <data name="SymExport" xml:space="preserve">
+    <value>SymExport</value>
+  </data>
+  <data name="SymDeferred" xml:space="preserve">
+    <value>SymDeferred</value>
+  </data>
+  <data name="SymSym" xml:space="preserve">
+    <value>SymSym</value>
+  </data>
+  <data name="SymDia" xml:space="preserve">
+    <value>SymDia</value>
+  </data>
+  <data name="SymVirtual" xml:space="preserve">
+    <value>SymVirtual</value>
+  </data>
+  <data name="NumSymTypes" xml:space="preserve">
+    <value>NumSymTypes</value>
   </data>
 </root>

@@ -367,20 +367,50 @@
     <ClCompile Include="Models\MiniDumpPageParameters.cpp">
       <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtils\mini_dump_stream_type_impl.cpp">
-      <Filter>DlgHelpUtils</Filter>
+    <ClCompile Include="Utility\GetResourceValue.cpp">
+      <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtils\flags_string_utils_impl.cpp">
-      <Filter>DlgHelpUtils</Filter>
+    <ClCompile Include="DlgHelpUtilsResource\exception_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtils\size_units_impl.cpp">
-      <Filter>DlgHelpUtils</Filter>
+    <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtils\stream_hex_dump_impl.cpp">
-      <Filter>DlgHelpUtils</Filter>
+    <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtils\time_units_impl.cpp">
-      <Filter>DlgHelpUtils</Filter>
+    <ClCompile Include="DlgHelpUtilsResource\lfh_subsegment_location_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\memory_info_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\mini_dump_stream_type_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\register_names_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\size_units_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\stream_hex_dump_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\thread_info_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\time_units_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\stream_stack_dump_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\symbol_type_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resource.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -524,6 +554,9 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Utility\DataGridColumnSorter.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\GetResourceValue.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
@@ -695,7 +728,7 @@
     <Filter Include="Controls\SettingsExpander">
       <UniqueIdentifier>{0ca69060-4681-4145-be4f-6d98d94e2149}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DlgHelpUtils">
+    <Filter Include="DlgHelpUtilsResource">
       <UniqueIdentifier>{1cb4cba9-a8d3-494e-b3f5-e7795f34eb64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

@@ -83,13 +83,13 @@ namespace dlg_help_utils::time_units
 
     std::tuple<std::wstring, std::wstring> const& get_label_strings(const time_unit_type type)
     {
-        auto const& type_strings = details::get_type_strings();
+        auto const& type_strings = resources::get_type_strings();
         return type_strings.at(type);
     }
 
     time_unit_type get_label_type(std::wstring_view const label)
     {
-        auto const& type_strings = details::get_type_strings();
+        auto const& type_strings = resources::get_type_strings();
         if(auto const type = utilities::get_label_type_from_labels(label, type_strings); type.has_value())
         {
             return type.value();
