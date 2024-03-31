@@ -31,11 +31,10 @@ namespace winrt::MiniDumpExplorer::implementation
             { SettingsTag, xaml_typename<SettingsPage>() },
         };
 
-    DefaultPage::DefaultPage()
+    void DefaultPage::InitializeComponent()
     {
-        logger::Log().LogMessage(log_level::debug, "DefaultPage");
-        InitializeComponent();
-        logger::Log().LogMessage(log_level::debug, "DefaultPage post InitializeComponent");
+        DefaultPageT::InitializeComponent();
+        logger::Log().LogMessage(log_level::debug, "Navigate to default pages recent page");
         ContentFrame().Navigate(xaml_typename<RecentPage>());
     }
 

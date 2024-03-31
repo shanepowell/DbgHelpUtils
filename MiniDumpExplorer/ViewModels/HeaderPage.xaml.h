@@ -18,6 +18,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         HeaderPage();
 
+        void InitializeComponent();
         void OnNavigatedTo(Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 
         [[nodiscard]] MiniDumpExplorer::RecentFileItem FileItem() const { return fileItem_; }

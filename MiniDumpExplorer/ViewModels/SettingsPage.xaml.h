@@ -10,6 +10,8 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         SettingsPage();
 
+        void InitializeComponent();
+
         hstring Version() const { return version_; }
         hstring OsVersion() const { return osVersion_; }
         uint16_t SuiteMask() const { return suiteMask_; }

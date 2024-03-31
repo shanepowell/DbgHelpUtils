@@ -10,6 +10,8 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         MainWindow();
 
+        void InitializeComponent();
+
         fire_and_forget MenuFileOpen_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args);
         fire_and_forget MenuFileOpen_Exit(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args) const;
 

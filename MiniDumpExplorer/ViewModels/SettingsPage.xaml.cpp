@@ -35,11 +35,14 @@ namespace winrt::MiniDumpExplorer::implementation
     SettingsPage::SettingsPage()
         : GlobalOptionsNotifyPropertyChangedBase({ L"SuiteMask" },{ L"ExampleSize" })
     {
+    }
+
+    void SettingsPage::InitializeComponent()
+    {
+        SettingsPageT::InitializeComponent();
+
         LoadVersionInformation();
-        InitializeComponent();
-
         onSettingsPageLoadedEvent_ = Loaded(RoutedEventHandler{this, &SettingsPage::OnSettingsPageLoaded});
-
         SetupFlyoutMenus();
     }
 

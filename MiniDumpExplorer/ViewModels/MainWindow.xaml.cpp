@@ -25,11 +25,15 @@ namespace winrt::MiniDumpExplorer::implementation
     MainWindow::MainWindow()
     {
         logger::Log().LogMessage(log_level::debug, "MainWindow");
-        InitializeComponent();
         ExtendsContentIntoTitleBar(true);
         SetTitleBar(AppTitleBar());
+    }
+
+    void MainWindow::InitializeComponent()
+    {
+        MainWindowT::InitializeComponent();
         OpenDefaultTab();
-        logger::Log().LogMessage(log_level::debug, "MainWindow post setup");
+        logger::Log().LogMessage(log_level::debug, "MainWindow InitializeComponent complete");
     }
 
     fire_and_forget MainWindow::MenuFileOpen_Click(Windows::Foundation::IInspectable const&, RoutedEventArgs const&)

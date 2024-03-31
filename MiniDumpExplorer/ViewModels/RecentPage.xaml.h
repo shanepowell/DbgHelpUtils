@@ -11,6 +11,8 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         RecentPage();
 
+        void InitializeComponent();
+
         [[nodiscard]] IDataGridDataSource ItemsSource() const noexcept { return recentFileItemsDataSource_; }
         void ClearAllRecentFiles(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
         void LoadSelectedFile(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;

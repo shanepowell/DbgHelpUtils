@@ -38,8 +38,6 @@ using namespace dlg_help_utils;
 App::App()
     : log_queue_{Windows::System::DispatcherQueueController::CreateOnDedicatedThread()}
 {
-    InitializeComponent();
-
     UnhandledException([this](IInspectable const&, UnhandledExceptionEventArgs const& e)
     {
         try

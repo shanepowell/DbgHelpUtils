@@ -34,7 +34,11 @@ namespace winrt::MiniDumpExplorer::implementation
             },
             { })
     {
-        InitializeComponent();
+    }
+
+    void HeaderPage::InitializeComponent()
+    {
+        HeaderPageT::InitializeComponent();
         SetupFlyoutMenus();
     }
 

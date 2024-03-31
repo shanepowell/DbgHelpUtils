@@ -19,9 +19,11 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    RecentPage::RecentPage()
+    RecentPage::RecentPage() = default;
+
+    void RecentPage::InitializeComponent()
     {
-        InitializeComponent();
+        RecentPageT::InitializeComponent();
 
         [[maybe_unused]] auto task = RecentPageLoad();
 

@@ -16,10 +16,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpPageParameters;
 
-    StreamsPage::StreamsPage()
-    {
-        InitializeComponent();
-    }
+    StreamsPage::StreamsPage() = default;
 
     void StreamsPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
     {

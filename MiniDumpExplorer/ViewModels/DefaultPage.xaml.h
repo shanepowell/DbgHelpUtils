@@ -6,8 +6,9 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct DefaultPage : DefaultPageT<DefaultPage>
     {
-        DefaultPage();
+        DefaultPage() = default;
 
+        void InitializeComponent();
         void NavigationView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 
     private:

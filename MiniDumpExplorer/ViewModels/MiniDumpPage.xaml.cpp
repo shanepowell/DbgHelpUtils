@@ -82,20 +82,23 @@ namespace winrt::MiniDumpExplorer::implementation
             //{ mini_dump_stream_type::enum_names::SystemMemoryInfoStream, xaml_typename<SystemMemoryInfoStreamPage>() },
             //{ mini_dump_stream_type::enum_names::ProcessVmCountersStream, xaml_typename<ProcessVmCountersStreamPage>() },
             //{ mini_dump_stream_type::enum_names::ThreadNamesStream, xaml_typename<ThreadNamesStreamPage>() },
-            //{ UnsupportedStreamTag, xaml_typename<UnsupportedStreamPage>() },
+            { UnsupportedStreamTag, xaml_typename<UnsupportedStreamPage>() },
         };
 
 
     MiniDumpPage::MiniDumpPage(Windows::Storage::StorageFile const& file)
     {
-        InitializeComponent();
-
-        NavigationView().SelectedItem(NavigationView().MenuItems().GetAt(0));
-
         file_ = file;
     }
 
     MiniDumpPage::~MiniDumpPage() = default;
+
+    void MiniDumpPage::InitializeComponent()
+    {
+        MiniDumpPageT::InitializeComponent();
+
+        NavigationView().SelectedItem(NavigationView().MenuItems().GetAt(0));
+    }
 
     void MiniDumpPage::NavigationView_SelectionChanged([[maybe_unused]] Controls::NavigationView const& sender, Controls::NavigationViewSelectionChangedEventArgs const& args)
     {

@@ -25,6 +25,8 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpPage& operator=(MiniDumpPage const&) = delete;
         MiniDumpPage& operator=(MiniDumpPage &&) = delete;
 
+        void InitializeComponent();
+
         void NavigationView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 
         [[nodiscard]] dlg_help_utils::mini_dump const& MiniDump() const { return *miniDump_; }
