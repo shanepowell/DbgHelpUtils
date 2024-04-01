@@ -35,6 +35,12 @@
     <Page Include="Controls\DataGrid\DataGridTheme.xaml">
       <Filter>Controls\DataGrid</Filter>
     </Page>
+    <Page Include="ViewModels\UnsupportedStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\ThreadListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -412,6 +418,12 @@
     <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resource.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
+    <ClCompile Include="Models\ThreadListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -545,6 +557,9 @@
       <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Models\GlobalOptionsNotifyPropertyChangedBase.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\MiniDumpPageBase.h">
       <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Utility\SortObservableVector.h">

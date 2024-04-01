@@ -31,6 +31,49 @@ using namespace std::string_view_literals;
 using namespace dlg_help_utils::string_conversation;
 using namespace dlg_help_utils;
 
+namespace
+{
+    fire_and_forget QueueLogMessage(
+        Windows::System::DispatcherQueueController const& log_queue,
+        // required to keep alive the app when switched to the logging queue thread
+        [[maybe_unused]] com_ptr<App> const lifetime,
+        logger::log_command const command,
+        log_level const level,
+        std::string log_line,  // NOLINT(performance-unnecessary-value-param)
+        log_level const current_level,
+        std::chrono::system_clock::time_point const now_day,
+        std::function<void(logger::log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> const& filter)
+    {
+        try
+        {
+            // switch to logging queue thread
+            co_await resume_foreground(log_queue.DispatcherQueue());
+
+            // log message on logging queue thread
+            filter(command, level, std::move(log_line), current_level, now_day);
+        }
+        catch(exceptions::wide_runtime_error const& e)
+        {
+            auto const line = std::format(L"[QueueLogMessage][wide_runtime_error:{}]: {}", acp_to_wstring(typeid(e).name()), e.message());
+            OutputDebugStringW(line.c_str());
+        }
+        catch(std::exception const& e)
+        {
+            auto const line = std::format(L"[QueueLogMessage][exception:{}]: {}", acp_to_wstring(typeid(e).name()), acp_to_wstring(e.what()));
+            OutputDebugStringW(line.c_str());
+        }
+        catch(hresult_error const& e)
+        {
+            auto const line = std::format(L"[QueueLogMessage][hresult_error:{}]: hresult_error: {} / code: {}", acp_to_wstring(typeid(e).name()), e.message(), stream_hex_dump::to_hex(e.code().value));
+            OutputDebugStringW(line.c_str());
+        }
+        catch(...)
+        {
+            OutputDebugStringW(L"[QueueLogMessage]: unhandled unknown exception");
+        }
+    }
+}
+
 /// <summary>
 /// Initializes the singleton application object.  This is the first line of authored code
 /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -72,7 +115,7 @@ void App::OnLaunched([[maybe_unused]]LaunchActivatedEventArgs const& e)
         {
             if(auto const self = weakPtr.get())
             {
-                self->QueueLogMessage(command, level, std::move(log_line), current_level, now_day, filter);
+                QueueLogMessage(self->log_queue_, self->get_strong(), command, level, std::move(log_line), current_level, now_day, filter);
             }
         });
     logger::Log().LogMessage(log_level::info, L"Starting"sv);
@@ -84,43 +127,4 @@ void App::OnLaunched([[maybe_unused]]LaunchActivatedEventArgs const& e)
     ThemeHelper::SetDefaultTheme(window);
     WindowHelper::TrackWindow(window);
     window.Activate();
-}
-
-fire_and_forget App::QueueLogMessage(logger::log_command const command,
-    log_level const level,
-    std::string log_line,  // NOLINT(performance-unnecessary-value-param)
-    log_level const current_level,
-    std::chrono::system_clock::time_point const now_day,
-    std::function<void(logger::log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> const& filter)
-{
-    try
-    {
-        // make sure App instance doesn't go out from under use when we switch threads
-        auto lifetime = get_strong();
-
-        // switch to logging queue thread
-        co_await resume_foreground(log_queue_.DispatcherQueue());
-
-        // log message on logging queue thread
-        filter(command, level, std::move(log_line), current_level, now_day);
-    }
-    catch(exceptions::wide_runtime_error const& e)
-    {
-        auto const line = std::format(L"[QueueLogMessage][wide_runtime_error:{}]: {}", acp_to_wstring(typeid(e).name()), e.message());
-        OutputDebugStringW(line.c_str());
-    }
-    catch(std::exception const& e)
-    {
-        auto const line = std::format(L"[QueueLogMessage][exception:{}]: {}", acp_to_wstring(typeid(e).name()), acp_to_wstring(e.what()));
-        OutputDebugStringW(line.c_str());
-    }
-    catch(hresult_error const& e)
-    {
-        auto const line = std::format(L"[QueueLogMessage][hresult_error:{}]: hresult_error: {} / code: {}", acp_to_wstring(typeid(e).name()), e.message(), stream_hex_dump::to_hex(e.code().value));
-        OutputDebugStringW(line.c_str());
-    }
-    catch(...)
-    {
-        OutputDebugStringW(L"[QueueLogMessage]: unhandled unknown exception");
-    }
 }

@@ -36,4 +36,14 @@ namespace winrt::MiniDumpExplorer::implementation
 
         return stream_entry_->StreamType;
     }
+
+    std::wstring DirectoryStreamEntry::StreamTypeTag() const
+    {
+        if(stream_entry_ == nullptr)
+        {
+            return {};
+        }
+
+        return dlg_help_utils::mini_dump_stream_type::to_enum_wstring(static_cast<MINIDUMP_STREAM_TYPE>(stream_entry_->StreamType));
+    }
 }

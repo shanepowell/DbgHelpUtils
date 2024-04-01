@@ -1,33 +1,36 @@
 ﻿#pragma once
 
-template<typename T>
-struct NotifyPropertyChangedBase
+namespace winrt::MiniDumpExplorer::implementation
 {
-protected:
-    NotifyPropertyChangedBase() = default;
-
-public:
-    winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value)
+    template<typename T>
+    struct NotifyPropertyChangedBase
     {
-        return propertyChanged_.add(value);
-    }
+    protected:
+        NotifyPropertyChangedBase() = default;
 
-    void PropertyChanged(winrt::event_token const& token)
-    {
-        propertyChanged_.remove(token);
-    }
+    public:
+        event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value)
+        {
+            return propertyChanged_.add(value);
+        }
 
-protected:
-    T* Self() noexcept
-    {
-        return static_cast<T*>(this);
-    }
+        void PropertyChanged(event_token const& token)
+        {
+            propertyChanged_.remove(token);
+        }
 
-    void RaisePropertyChanged(std::wstring_view const& propertyName)
-    {
-        propertyChanged_(*Self(), winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(propertyName));
-    }
+    protected:
+        T* Self() noexcept
+        {
+            return static_cast<T*>(this);
+        }
 
-private:
-    winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
-};
+        void RaisePropertyChanged(std::wstring_view const& propertyName)
+        {
+            propertyChanged_(*Self(), Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(propertyName));
+        }
+
+    private:
+        event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> propertyChanged_;
+    };
+}

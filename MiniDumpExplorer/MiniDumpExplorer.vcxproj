@@ -367,6 +367,7 @@
       <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\MiniDumpPageBase.h" />
     <ClInclude Include="Models\MiniDumpPageParameters.h">
       <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -378,6 +379,22 @@
     </ClInclude>
     <ClInclude Include="Models\RecentFileItemsDataSource.h">
       <DependentUpon>Models\RecentFileItemsDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\ThreadListStreamEntriesDataSource.h">
+      <DependentUpon>Models\ThreadListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\ThreadListStreamEntry.h">
+      <DependentUpon>Models\ThreadListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ThreadListStreamPage.h">
+      <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\UnsupportedStreamPage.xaml.h">
+      <DependentUpon>ViewModels\UnsupportedStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Utility\BindingInfo.h" />
@@ -482,6 +499,12 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Controls\DataGrid\DataGridTheme.xaml" />
+    <Page Include="ViewModels\ThreadListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\UnsupportedStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\DefaultPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -704,6 +727,20 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\RecentFileItemsDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadListStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadListStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ThreadListStreamPage.cpp">
+      <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\UnsupportedStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\UnsupportedStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Utility\BindingInfo.cpp" />
@@ -1034,6 +1071,22 @@
     </Midl>
     <Midl Include="Models\RecentFileItemsDataSource.idl">
       <DependentUpon>Models\RecentFileItemsDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\ThreadListStreamEntriesDataSource.idl">
+      <DependentUpon>Models\ThreadListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\ThreadListStreamEntry.idl">
+      <DependentUpon>Models\ThreadListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\ThreadListStreamPage.idl">
+      <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\UnsupportedStreamPage.idl">
+      <DependentUpon>ViewModels\UnsupportedStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\DefaultPage.idl">

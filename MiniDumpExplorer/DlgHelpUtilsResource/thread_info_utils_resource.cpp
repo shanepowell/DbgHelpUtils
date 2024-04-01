@@ -29,6 +29,24 @@ namespace
 
         return dump_flag_masks;
     }
+
+
+    std::unordered_map<uint32_t, std::wstring> const& thread_priority_classes()
+    {
+        winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+        static std::unordered_map<uint32_t, std::wstring> const thread_priority_classes =
+        {
+            {ABOVE_NORMAL_PRIORITY_CLASS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/ABOVE_NORMAL_PRIORITY_CLASS").ValueAsString()}},
+            {BELOW_NORMAL_PRIORITY_CLASS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/BELOW_NORMAL_PRIORITY_CLASS").ValueAsString()}},
+            {HIGH_PRIORITY_CLASS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/HIGH_PRIORITY_CLASS").ValueAsString()}},
+            {IDLE_PRIORITY_CLASS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/IDLE_PRIORITY_CLASS").ValueAsString()}},
+            {NORMAL_PRIORITY_CLASS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/NORMAL_PRIORITY_CLASS").ValueAsString()}},
+            {PROCESS_MODE_BACKGROUND_END, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PROCESS_MODE_BACKGROUND_END").ValueAsString()}},
+            {REALTIME_PRIORITY_CLASS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/REALTIME_PRIORITY_CLASS").ValueAsString()}},
+        };
+
+        return thread_priority_classes;
+    }
 }
 
 namespace dlg_help_utils::thread_info_utils
@@ -41,5 +59,10 @@ namespace dlg_help_utils::thread_info_utils
     std::vector<std::wstring_view> dump_flags_to_strings(uint32_t const dump_flags)
     {
         return flags_string_utils::generate_flags_strings(dump_flags, dump_flag_masks());
+    }
+
+    std::wstring thread_priority_class_to_string(uint32_t const thread_priority_class)
+    {
+        return flags_string_utils::generate_enum_string(thread_priority_class, thread_priority_classes());
     }
 }

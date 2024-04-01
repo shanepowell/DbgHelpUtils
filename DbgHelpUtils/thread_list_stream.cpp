@@ -10,7 +10,7 @@ namespace dlg_help_utils
 {
     thread_list_stream::thread_list_stream(mini_dump const& dump, size_t const index)
         : dump_{dump}
-          , index_{index}
+        , index_{index}
     {
         auto const* entry = dump.find_stream_type(ThreadListStream, index_);
         if (entry == nullptr)

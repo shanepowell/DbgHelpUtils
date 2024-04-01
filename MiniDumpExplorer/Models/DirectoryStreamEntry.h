@@ -19,6 +19,7 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t StreamType() const;
         hstring StreamTypeName() const { return stream_type_name_; }
         MiniDumpExplorer::MiniDumpLocationDescriptor Location() const { return location_; }
+        std::wstring StreamTypeTag() const;
 
     private:
         uint32_t index_{};

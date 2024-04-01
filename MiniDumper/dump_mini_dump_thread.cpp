@@ -284,7 +284,7 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log
         }
         log << L'\n';
         log << std::format(L"   Priority: {}\n", locale_formatting::to_wstring(thread->Priority));
-        log << std::format(L"   PriorityClass: {}\n", locale_formatting::to_wstring(thread->PriorityClass));
+        log << std::format(L"   PriorityClass: {} ({})\n", thread_info_utils::thread_priority_class_to_string(thread->PriorityClass), to_hex_full(thread->PriorityClass));
         log << std::format(L"   SuspendCount: {}\n", locale_formatting::to_wstring(thread->SuspendCount));
         log << std::format(L"   TEB: {}\n", to_hex_full(thread->Teb));
 

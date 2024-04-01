@@ -219,7 +219,7 @@ namespace DataGridInternal
 
     Windows::Foundation::IInspectable DataGridDataConnection::GetDataItem(int32_t const index) const
     {
-        if(index > Count() || index < 0)
+        if(index >= Count() || index < 0)
         {
             return nullptr;
         }

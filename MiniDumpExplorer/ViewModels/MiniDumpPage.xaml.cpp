@@ -6,6 +6,7 @@
 
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_stream_type.h"
+#include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
 
@@ -62,7 +63,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { HeaderTag, xaml_typename<HeaderPage>() },
             { StreamsTag, xaml_typename<StreamsPage>() },
             { SettingsTag, xaml_typename<SettingsPage>() },
-            //{ mini_dump_stream_type::enum_names::ThreadListStream, xaml_typename<ThreadListStreamPage>() },
+            { mini_dump_stream_type::enum_names::ThreadListStream, xaml_typename<ThreadListStreamPage>() },
             //{ mini_dump_stream_type::enum_names::ModuleListStream, xaml_typename<ModuleListStreamPage>() },
             //{ mini_dump_stream_type::enum_names::MemoryListStream, xaml_typename<MemoryListStreamPage>() },
             //{ mini_dump_stream_type::enum_names::ExceptionStream, xaml_typename<ExceptionStreamPage>() },
@@ -195,6 +196,11 @@ namespace winrt::MiniDumpExplorer::implementation
         co_return true;
     }
 
+    void MiniDumpPage::SelectNavigationItemTag(std::wstring const& tag)
+    {
+        FindAndSelectNavigationTag(tag, NavigationView().MenuItems());
+    }
+
     event_token MiniDumpPage::MiniDumpLoaded(Windows::Foundation::EventHandler<MiniDumpExplorer::MiniDumpPage> const& value)
     {
         return miniDumpLoadedHandler_.add(value);
@@ -203,6 +209,36 @@ namespace winrt::MiniDumpExplorer::implementation
     void MiniDumpPage::MiniDumpLoaded(event_token const& value)
     {
         miniDumpLoadedHandler_.remove(value);
+    }
+
+    bool MiniDumpPage::FindAndSelectNavigationTag(std::wstring const& tag, Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable> const& menuItems)
+    {
+        for (auto const& item : menuItems)
+        {
+            if (auto const menuItem = item.try_as<Controls::NavigationViewItem>();
+                menuItem)
+            {
+                if(auto const parameters = menuItem.Tag().try_as<MiniDumpExplorer::MiniDumpPageParameters>();
+                    parameters && parameters.NavigationItemTag() == tag)
+                {
+                    NavigationView().SelectedItem(menuItem);
+                    return true;
+                }
+
+                if(auto const itemTag = unbox_value_or<hstring>(menuItem.Tag(), L"");
+                    !itemTag.empty() && string_utils::equals(itemTag, tag))
+                {
+                    NavigationView().SelectedItem(menuItem);
+                    return true;
+                }
+
+                if(FindAndSelectNavigationTag(tag, menuItem.MenuItems()))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     Controls::NavigationViewItem MiniDumpPage::CreateNavigationViewItemForStreamType(MINIDUMP_STREAM_TYPE const stream_type, uint32_t const stream_index, MINIDUMP_LOCATION_DESCRIPTOR const& location) const

@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass UnsupportedStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        UnsupportedStreamPage();
+
+        String HexDump { get; };
+    }
+}

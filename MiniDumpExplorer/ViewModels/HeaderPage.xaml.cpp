@@ -42,26 +42,6 @@ namespace winrt::MiniDumpExplorer::implementation
         SetupFlyoutMenus();
     }
 
-    void HeaderPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
-    {
-        auto const miniDumpPageParameters = e.Parameter().as<MiniDumpExplorer::MiniDumpPageParameters>();
-        if(auto const miniDumpPage = miniDumpPageParameters.MiniDump().as<MiniDumpPage>();
-            miniDumpPage->MiniDumpOpened())
-        {
-            SetupMinidumpHeader(miniDumpPage->MiniDump(), miniDumpPage->File().Path());
-        }
-        else
-        {
-            miniDumpLoadedEvent_ = miniDumpPage->MiniDumpLoaded([weakThis{ get_weak() }]([[maybe_unused]] auto const& sender, auto const& args)
-            {
-                if (auto strongThis{ weakThis.get() }; strongThis)
-                {
-                    strongThis->MiniDumpLoaded(args);
-                }
-            });
-        }
-    }
-
     hstring HeaderPage::DumpType() const
     {
         if(!mini_dump_)
@@ -187,13 +167,11 @@ namespace winrt::MiniDumpExplorer::implementation
         UIHelper::CreateStandardSizeNumberMenu(headerFileSize());
     }
 
-    void HeaderPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPage const& miniDumpPage)
+    void HeaderPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters)
     {
-        auto const internalMiniDumpPage = miniDumpPage.as<MiniDumpPage>();
+        auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
 
-        SetupMinidumpHeader(internalMiniDumpPage->MiniDump(), internalMiniDumpPage->File().Path());
-        internalMiniDumpPage->MiniDumpLoaded(miniDumpLoadedEvent_);
-        miniDumpLoadedEvent_ = {};
+        SetupMinidumpHeader(miniDumpPage->MiniDump(), miniDumpPage->File().Path());
         RaisePropertyChanged(L"DumpType");
         RaisePropertyChanged(L"Signature");
         RaisePropertyChanged(L"IsValid");

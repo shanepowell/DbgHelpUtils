@@ -2,7 +2,6 @@
 #pragma once
 
 #include "App.xaml.g.h"
-#include "Utility/logger.h"
 #include "Triggers/ControlSizeTrigger.h"
 #include "Triggers/IsEqualStateTrigger.h"
 #include "Triggers/IsNullOrEmptyStateTrigger.h"
@@ -72,6 +71,8 @@
 #include "Models\MiniDumpLocationDescriptor.h"
 #include "Models\DirectoryStreamEntriesDataSource.h"
 #include "Models\MiniDumpPageParameters.h"
+#include "Models\ThreadListStreamEntriesDataSource.h"
+#include "Models\ThreadListStreamEntry.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
@@ -80,9 +81,6 @@ namespace winrt::MiniDumpExplorer::implementation
         App();
 
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
-    
-    private:
-        fire_and_forget QueueLogMessage(logger::log_command command, log_level level, std::string log_line, log_level const current_level, std::chrono::system_clock::time_point now_day, std::function<void (logger::log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> const& filter);
 
     private:
         Microsoft::UI::Xaml::Window window{ nullptr };

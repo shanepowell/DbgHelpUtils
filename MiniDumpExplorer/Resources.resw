@@ -3117,4 +3117,25 @@
   <data name="NumSymTypes" xml:space="preserve">
     <value>NumSymTypes</value>
   </data>
+  <data name="ABOVE_NORMAL_PRIORITY_CLASS" xml:space="preserve">
+    <value>ABOVE_NORMAL_PRIORITY_CLASS</value>
+  </data>
+  <data name="BELOW_NORMAL_PRIORITY_CLASS" xml:space="preserve">
+    <value>BELOW_NORMAL_PRIORITY_CLASS</value>
+  </data>
+  <data name="HIGH_PRIORITY_CLASS" xml:space="preserve">
+    <value>HIGH_PRIORITY_CLASS</value>
+  </data>
+  <data name="IDLE_PRIORITY_CLASS" xml:space="preserve">
+    <value>IDLE_PRIORITY_CLASS</value>
+  </data>
+  <data name="NORMAL_PRIORITY_CLASS" xml:space="preserve">
+    <value>NORMAL_PRIORITY_CLASS</value>
+  </data>
+  <data name="PROCESS_MODE_BACKGROUND_END" xml:space="preserve">
+    <value>PROCESS_MODE_BACKGROUND_END</value>
+  </data>
+  <data name="REALTIME_PRIORITY_CLASS" xml:space="preserve">
+    <value>REALTIME_PRIORITY_CLASS</value>
+  </data>
 </root>

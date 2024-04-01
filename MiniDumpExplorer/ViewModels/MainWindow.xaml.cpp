@@ -108,6 +108,7 @@ namespace winrt::MiniDumpExplorer::implementation
         newItem.Header(box_value(rm.MainResourceMap().GetValue(L"Resources/DefaultTabHeader").ValueAsString()));
         const Controls::SymbolIconSource iconSource;
         iconSource.Symbol(Controls::Symbol::Admin);
+        newItem.IsClosable(false);
         newItem.IconSource(iconSource);
         newItem.Content(winrt::make<DefaultPage>());
 

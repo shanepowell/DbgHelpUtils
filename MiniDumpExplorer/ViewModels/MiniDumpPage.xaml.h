@@ -25,6 +25,7 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpPage& operator=(MiniDumpPage const&) = delete;
         MiniDumpPage& operator=(MiniDumpPage &&) = delete;
 
+        // ReSharper disable once CppHidingFunction
         void InitializeComponent();
 
         void NavigationView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
@@ -35,10 +36,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
         Windows::Foundation::IAsyncOperation<bool> LoadMiniDump();
 
+        void SelectNavigationItemTag(std::wstring const& tag);
+
         event_token MiniDumpLoaded(Windows::Foundation::EventHandler<MiniDumpExplorer::MiniDumpPage> const& value);
         void MiniDumpLoaded(event_token const& value);
 
     private:
+        bool FindAndSelectNavigationTag(std::wstring const& tag, Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable> const& menuItems);
         Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStreamType(MINIDUMP_STREAM_TYPE stream_type, uint32_t stream_index, MINIDUMP_LOCATION_DESCRIPTOR const& location) const;
         Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStream(std::wstring const& title, std::wstring const& tag, uint32_t stream_index, Microsoft::UI::Xaml::Controls::Symbol symbol) const;
 

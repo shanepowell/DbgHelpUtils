@@ -3,6 +3,7 @@
 #include "HeaderPage.g.h"
 
 #include "Models/GlobalOptionsNotifyPropertyChangedBase.h"
+#include "Models/MiniDumpPageBase.h"
 
 namespace dlg_help_utils
 {
@@ -14,12 +15,18 @@ namespace winrt::MiniDumpExplorer::implementation
     struct MiniDumpPage;
     struct RecentFileItem;
 
-    struct HeaderPage : HeaderPageT<HeaderPage>, GlobalOptionsNotifyPropertyChangedBase<HeaderPage>
+    struct HeaderPage : HeaderPageT<HeaderPage>, GlobalOptionsNotifyPropertyChangedBase<HeaderPage>, MiniDumpPageBase<HeaderPage>
     {
         HeaderPage();
 
+        // ReSharper disable once CppHidingFunction
         void InitializeComponent();
-        void OnNavigatedTo(Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
+
+        // ReSharper disable once CppHidingFunction
+        void OnNavigatedTo(Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
+        {
+            MiniDumpPageBase::OnNavigatedTo(e);
+        }
 
         [[nodiscard]] MiniDumpExplorer::RecentFileItem FileItem() const { return fileItem_; }
         [[nodiscard]] hstring DumpType() const;
@@ -40,7 +47,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     private:
         void SetupFlyoutMenus();
-        void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPage const& miniDumpPage);
+        void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
         void SetupMinidumpHeader(dlg_help_utils::mini_dump const& miniDump, hstring const& path);
         fire_and_forget LoadFileItemIcon() const;
 
@@ -49,7 +56,6 @@ namespace winrt::MiniDumpExplorer::implementation
         dlg_help_utils::mini_dump const* mini_dump_{nullptr};
         uint32_t data_crc32_{0};
         Windows::Foundation::Collections::IObservableVector<hstring> flagsList_{single_threaded_observable_vector<hstring>()};
-        event_token miniDumpLoadedEvent_;
     };
 }
 

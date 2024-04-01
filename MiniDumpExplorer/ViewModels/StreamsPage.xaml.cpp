@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "StreamsPage.xaml.h"
-#include "MiniDumpPage.xaml.h"
 
+#include "MiniDumpPage.xaml.h"
 #include "Models/DirectoryStreamEntriesDataSource.h"
+#include "Models/DirectoryStreamEntry.h"
 
 #if __has_include("StreamsPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -18,39 +19,48 @@ namespace winrt::MiniDumpExplorer::implementation
 
     StreamsPage::StreamsPage() = default;
 
-    void StreamsPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
+    void StreamsPage::InitializeComponent()
     {
-        auto const miniDumpPageParameters = e.Parameter().as<MiniDumpExplorer::MiniDumpPageParameters>();
-        if(auto const miniDumpPage = miniDumpPageParameters.MiniDump().as<MiniDumpPage>();
-            miniDumpPage->MiniDumpOpened())
-        {
-            MiniDumpLoaded(miniDumpPage->MiniDump());
-        }
-        else
-        {
-            miniDumpLoadedEvent_ = miniDumpPage->MiniDumpLoaded([weakThis{ get_weak() }]([[maybe_unused]] auto const& sender, auto const& args)
-            {
-                if (auto strongThis{ weakThis.get() }; strongThis)
-                {
-                    auto const internalMiniDumpPage = args.template as<MiniDumpPage>();
-                    strongThis->MiniDumpLoaded(internalMiniDumpPage->MiniDump());
-                }
-            });
-        }
-    }
+        StreamsPageT::InitializeComponent();
 
+        onRowDoubleTapped_ = StreamsDataGrid().RowDoubleTapped({ this, &StreamsPage::OnRowDoubleTapped });
+    }
 
     void StreamsPage::SelectStream([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
+        SelectCurrentlySelectedStream();
     }
 
     void StreamsPage::OnRowDoubleTapped([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] DataGridRowDetailsEventArgs const& e) const
     {
+        SelectCurrentlySelectedStream();
     }
 
-    void StreamsPage::MiniDumpLoaded(dlg_help_utils::mini_dump const& miniDump)
+    void StreamsPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters)
     {
-        mini_dump_ = &miniDump;
-        directoryStreamEntriesDataSource_.as<DirectoryStreamEntriesDataSource>()->LoadMiniDumpStreams(*mini_dump_);
+        miniDumpPage_ = parameters.MiniDump();
+        auto const miniDumpPage = miniDumpPage_.as<MiniDumpPage>();
+        directoryStreamEntriesDataSource_.as<DirectoryStreamEntriesDataSource>()->LoadMiniDumpStreams(miniDumpPage->MiniDump());
+    }
+
+    void StreamsPage::SelectCurrentlySelectedStream() const
+    {
+        try
+        {
+            if (auto const selectedStream = directoryStreamEntriesDataSource_.CollectionView().CurrentItem();
+                selectedStream)
+            {
+                if (auto const selectedStreamEntry = selectedStream.as<DirectoryStreamEntry>();
+                    selectedStreamEntry)
+                {
+                    auto const miniDumpPage = miniDumpPage_.as<MiniDumpPage>();
+                    miniDumpPage->SelectNavigationItemTag(selectedStreamEntry->StreamTypeTag());
+                }
+            }
+        }
+        catch(...)
+        {
+            logger::Log().HandleUnknownException();
+        }
     }
 }
