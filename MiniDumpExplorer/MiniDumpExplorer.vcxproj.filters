@@ -41,6 +41,9 @@
     <Page Include="ViewModels\ThreadListStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ModuleListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -422,6 +425,18 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\ThreadListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ModuleListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ModuleListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\VsFixedFileInfo.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\CvInfoPdb70.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

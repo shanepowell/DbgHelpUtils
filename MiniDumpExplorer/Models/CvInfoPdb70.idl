@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass CvInfoPdb70 : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        CvInfoPdb70();
+
+        Boolean IsValid { get; };
+        Guid Signature { get; };
+        UInt32 Age { get; };
+        String PdbFileName { get; };
+    }
+}

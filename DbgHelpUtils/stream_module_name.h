@@ -6,6 +6,7 @@ namespace dlg_help_utils
     class stream_module_name
     {
     public:
+        stream_module_name() = default;
         explicit stream_module_name(std::wstring_view const& name);
 
         [[nodiscard]] std::wstring_view const& name() const { return name_; }

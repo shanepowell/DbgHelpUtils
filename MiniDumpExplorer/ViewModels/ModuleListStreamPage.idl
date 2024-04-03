@@ -1,0 +1,12 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ModuleListStreamPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ModuleListStreamPage();
+
+        IDataGridDataSource ItemsSource { get; };
+    }
+}

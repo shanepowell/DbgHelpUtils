@@ -4,6 +4,7 @@
 
 #include "DbgHelpUtils/mini_dump.h"
 
+#include <functional>
 #include <memory>
 
 
@@ -42,7 +43,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void MiniDumpLoaded(event_token const& value);
 
     private:
-        bool FindAndSelectNavigationTag(std::wstring const& tag, Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable> const& menuItems);
+        std::function<void()> FindAndSelectNavigationTag(std::wstring const& tag, Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable> const& menuItems);
         Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStreamType(MINIDUMP_STREAM_TYPE stream_type, uint32_t stream_index, MINIDUMP_LOCATION_DESCRIPTOR const& location) const;
         Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStream(std::wstring const& title, std::wstring const& tag, uint32_t stream_index, Microsoft::UI::Xaml::Controls::Symbol symbol) const;
 

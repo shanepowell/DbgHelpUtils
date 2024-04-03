@@ -73,6 +73,11 @@
 #include "Models\MiniDumpPageParameters.h"
 #include "Models\ThreadListStreamEntriesDataSource.h"
 #include "Models\ThreadListStreamEntry.h"
+#include "Models\ModuleListStreamEntriesDataSource.h"
+#include "Models\ModuleListStreamEntry.h"
+#include "Models\VsFixedFileInfo.h"
+#include "Models\CvInfoPdb70.h"
+
 
 namespace winrt::MiniDumpExplorer::implementation
 {

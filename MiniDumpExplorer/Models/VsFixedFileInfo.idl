@@ -1,0 +1,24 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass VsFixedFileInfo : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        VsFixedFileInfo();
+        
+        UInt32 Signature { get; };
+        UInt32 InfoVersion { get; };
+        String InfoVersionString { get; };
+        String FileVersion { get; };
+        String ProductVersion { get; };
+        UInt32 FileFlagsMask { get; };
+        UInt32 FileFlags { get; };
+        IObservableVector<String> FileFlagsList { get; };
+        UInt32 FileOS { get; };
+        String FileOSString { get; };
+        UInt32 FileType { get; };
+        String FileTypeString { get; };
+        UInt32 FileSubtype { get; };
+        Int64 FileDate { get; };
+    }
+}

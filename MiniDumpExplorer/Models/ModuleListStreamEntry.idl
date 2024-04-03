@@ -1,0 +1,27 @@
+import "Models\VsFixedFileInfo.idl";
+import "Models\CvInfoPdb70.idl";
+import "Models\MiniDumpLocationDescriptor.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ModuleListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ModuleListStreamEntry();
+
+        UInt32 Index { get; };
+        String Name { get; };
+        String Path { get; };
+        UInt64 Base { get; };
+        UInt32 CheckSum { get; };
+        UInt32 SizeOfImage { get; };
+        UInt32 TimeDateStamp { get; };
+        VsFixedFileInfo FileInfo { get; };
+        MiniDumpLocationDescriptor CvRecord { get; };
+        CvInfoPdb70 PdbInfo { get; };
+        MiniDumpLocationDescriptor MiscRecord { get; };
+        UInt64 Reserved0 { get; };
+        UInt64 Reserved1 { get; };
+    }
+}

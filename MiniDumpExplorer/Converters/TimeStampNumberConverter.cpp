@@ -26,10 +26,25 @@ namespace winrt::MiniDumpExplorer::implementation
 
         if (ConverterTools::TryParseBool(parameter))
         {
-            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(dlg_help_utils::time_utils::to_utc_time(v)); }, value, value);
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v)
+            {
+                if(v == 0)
+                {
+                    return box_value(hstring(L""));
+                }
+                return box_value(dlg_help_utils::time_utils::to_utc_time(v));
+            }, value, value);
         }
 
-        return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(dlg_help_utils::time_utils::to_local_time(v)); }, value, value);
+        return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v)
+        {
+            if(v == 0)
+            {
+                return box_value(hstring(L""));
+            }
+
+            return box_value(dlg_help_utils::time_utils::to_local_time(v));
+        }, value, value);
     }
 
     Windows::Foundation::IInspectable TimeStampNumberConverter::ConvertBack(Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, [[maybe_unused]] Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)

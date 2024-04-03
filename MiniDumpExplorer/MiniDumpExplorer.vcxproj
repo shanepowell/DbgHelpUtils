@@ -345,6 +345,10 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\CvInfoPdb70.h">
+      <DependentUpon>Models\CvInfoPdb70.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Helpers\TypeHelper.h" />
     <ClInclude Include="Helpers\UISettingsHelper.h" />
     <ClInclude Include="Helpers\VisualStates.h" />
@@ -372,6 +376,10 @@
       <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\ModuleListStreamEntriesDataSource.h">
+      <DependentUpon>Models\ModuleListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\NotifyPropertyChangedBase.h" />
     <ClInclude Include="Models\RecentFileItem.h">
       <DependentUpon>Models\RecentFileItem.cpp</DependentUpon>
@@ -387,6 +395,18 @@
     </ClInclude>
     <ClInclude Include="Models\ThreadListStreamEntry.h">
       <DependentUpon>Models\ThreadListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\ModuleListStreamEntry.h">
+      <DependentUpon>Models\ModuleListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\VsFixedFileInfo.h">
+      <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ModuleListStreamPage.xaml.h">
+      <DependentUpon>ViewModels\ModuleListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\ThreadListStreamPage.h">
@@ -499,6 +519,9 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Controls\DataGrid\DataGridTheme.xaml" />
+    <Page Include="ViewModels\ModuleListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\ThreadListStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -691,6 +714,9 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\CvInfoPdb70.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="DlgHelpUtilsResource\exception_utils_resource.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resource.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resource.cpp" />
@@ -723,6 +749,9 @@
     <ClCompile Include="Models\MiniDumpPageParameters.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\ModuleListStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\RecentFileItem.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -733,6 +762,16 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\ThreadListStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\ModuleListStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\VsFixedFileInfo.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ModuleListStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\ModuleListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ThreadListStreamPage.cpp">
@@ -1045,6 +1084,10 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\CvInfoPdb70.idl">
+      <DependentUpon>Models\CvInfoPdb70.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\DirectoryStreamEntriesDataSource.idl">
       <DependentUpon>Models\DirectoryStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1065,6 +1108,10 @@
       <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\ModuleListStreamEntriesDataSource.idl">
+      <DependentUpon>Models\ModuleListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\RecentFileItem.idl">
       <DependentUpon>Models\RecentFileItem.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1079,6 +1126,18 @@
     </Midl>
     <Midl Include="Models\ThreadListStreamEntry.idl">
       <DependentUpon>Models\ThreadListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\ModuleListStreamEntry.idl">
+      <DependentUpon>Models\ModuleListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\VsFixedFileInfo.idl">
+      <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\ModuleListStreamPage.idl">
+      <DependentUpon>ViewModels\ModuleListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ThreadListStreamPage.idl">
