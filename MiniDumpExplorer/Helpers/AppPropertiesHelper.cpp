@@ -143,8 +143,8 @@ std::vector<std::wstring> AppPropertiesHelper::GetStringVectorProperty(std::wstr
     }
     while(size.value() > sizeof(wchar_t) * (value.length() - 1))
     {
-        value.resize((size.value() + 1) / sizeof(wchar_t));
-        size = get_registry_value(key.get(), propertyName, REG_SZ, value.data(), static_cast<DWORD>(sizeof(wchar_t) * (value.length() - 1)));
+        value.resize((size.value() + 2) / sizeof(wchar_t));
+        size = get_registry_value(key.get(), propertyName, REG_MULTI_SZ, value.data(), static_cast<DWORD>(sizeof(wchar_t) * (value.length() - 1)));
 
         if(!size.has_value())
         {

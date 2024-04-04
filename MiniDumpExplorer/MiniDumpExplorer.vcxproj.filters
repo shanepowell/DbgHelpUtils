@@ -44,6 +44,9 @@
     <Page Include="ViewModels\ModuleListStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\MemoryListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -437,6 +440,12 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\CvInfoPdb70.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MemoryListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MemoryListStreamEntry.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

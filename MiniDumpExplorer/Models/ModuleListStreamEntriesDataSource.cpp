@@ -8,7 +8,8 @@
 #include "Utility/DataGridColumnSorter.h"
 
 #if __has_include("ModuleListStreamEntriesDataSource.g.cpp")
-#include "ModuleListStreamEntriesDataSource.g.cpp"
+// ReSharper disable once CppUnusedIncludeDirective
+#include "ModuleListStreamEntriesDataSource.g.cpp"  // NOLINT(bugprone-suspicious-include)
 #endif
 
 using namespace winrt;

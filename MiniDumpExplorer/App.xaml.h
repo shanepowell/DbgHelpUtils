@@ -77,6 +77,8 @@
 #include "Models\ModuleListStreamEntry.h"
 #include "Models\VsFixedFileInfo.h"
 #include "Models\CvInfoPdb70.h"
+#include "Models\MemoryListStreamEntriesDataSource.h"
+#include "Models\MemoryListStreamEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

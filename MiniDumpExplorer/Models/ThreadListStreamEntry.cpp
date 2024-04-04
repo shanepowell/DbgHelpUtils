@@ -19,7 +19,6 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"Id",
                 L"Priority",
                 L"PriorityClass",
-                L"SuspendCount",
                 L"TEB",
             }, { })
     {

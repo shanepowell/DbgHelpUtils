@@ -1,0 +1,15 @@
+import "Models\MiniDumpLocationDescriptor.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MemoryListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MemoryListStreamEntry();
+
+        UInt32 Index { get; };
+        UInt64 StartOfMemoryRange { get; };
+        MiniDumpLocationDescriptor Memory { get; };
+    }
+}
