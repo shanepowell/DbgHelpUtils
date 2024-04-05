@@ -10,6 +10,7 @@ namespace MiniDumpExplorer
 
         UInt32 Index { get; };
         UInt64 StartOfMemoryRange { get; };
+        UInt64 EndOfMemoryRange { get; };
         MiniDumpLocationDescriptor Memory { get; };
     }
 }

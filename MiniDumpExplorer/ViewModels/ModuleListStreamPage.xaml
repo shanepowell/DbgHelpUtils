@@ -62,10 +62,10 @@
                                           Binding="{Binding Name,Mode=OneWay}"
                                           Tag="Name" />
                 <local:DataGridTextColumn Header="Base"
-                                          Binding="{Binding Base,Converter={StaticResource HexNumberConverter},ConverterParameter=8,Mode=OneWay}"
+                                          Binding="{Binding Base,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="Base" />
                 <local:DataGridTextColumn Header="CheckSum"
-                                          Binding="{Binding CheckSum,Converter={StaticResource HexNumberConverter},ConverterParameter=8,Mode=OneWay}"
+                                          Binding="{Binding CheckSum,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="CheckSum" />
                 <local:DataGridTextColumn Header="Size Of Image"
                                           Binding="{Binding SizeOfImage,Converter={StaticResource SizeNumberConverter},Mode=OneWay}"

@@ -18,6 +18,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         uint32_t Index() const { return index_; }
         uint64_t StartOfMemoryRange() const { return memory_range_->StartOfMemoryRange; }
+        uint64_t EndOfMemoryRange() const { return memory_range_->StartOfMemoryRange + memory_range_->Memory.DataSize; }
         MiniDumpExplorer::MiniDumpLocationDescriptor Memory() const { return memory_; }
 
         void Set(uint32_t index, MINIDUMP_MEMORY_DESCRIPTOR const* memory_range);

@@ -23,6 +23,7 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 {L"Index", Utility::MakeComparer(&MiniDumpExplorer::MemoryListStreamEntry::Index)},
                 {L"StartOfMemoryRange", Utility::MakeComparer(&MiniDumpExplorer::MemoryListStreamEntry::StartOfMemoryRange)},
+                {L"EndOfMemoryRange", Utility::MakeComparer(&MiniDumpExplorer::MemoryListStreamEntry::EndOfMemoryRange)},
                 {L"MemorySize", [](MiniDumpExplorer::MemoryListStreamEntry const& a, MiniDumpExplorer::MemoryListStreamEntry const& b)
                     {
                         return Utility::SortCompare(a.Memory().DataSize(), b.Memory().DataSize());

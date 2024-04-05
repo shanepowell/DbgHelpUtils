@@ -57,13 +57,13 @@
                                           Binding="{Binding Index,Mode=OneWay}"
                                           Tag="Index" />
                 <local:DataGridTextColumn Header="ID"
-                                          Binding="{Binding Id,Converter={StaticResource HexNumberConverter},ConverterParameter=4,Mode=OneWay}"
+                                          Binding="{Binding Id,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="Id" />
                 <local:DataGridTextColumn Header="Name"
                                           Binding="{Binding Name,Mode=OneWay}"
                                           Tag="Name" />
                 <local:DataGridTextColumn Header="Priority"
-                                          Binding="{Binding Priority,Converter={StaticResource HexNumberConverter},ConverterParameter=4,Mode=OneWay}"
+                                          Binding="{Binding Priority,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="Priority" />
                 <local:DataGridTextColumn Header="PriorityClass"
                                           Binding="{Binding PriorityClassType,Mode=OneWay}"
@@ -72,7 +72,7 @@
                                           Binding="{Binding SuspendCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}"
                                           Tag="SuspendCount" />
                 <local:DataGridTextColumn Header="TEB"
-                                          Binding="{Binding TEB,Converter={StaticResource HexNumberConverter},ConverterParameter=8,Mode=OneWay}"
+                                          Binding="{Binding TEB,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="TEB" />
             </local:DataGrid.Columns>
         </local:DataGrid>

@@ -59,10 +59,10 @@
                                           Binding="{Binding Index,Mode=OneWay}"
                                           Tag="Index" />
                 <local:DataGridTextColumn Header="Start" 
-                                          Binding="{Binding StartOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=8,Mode=OneWay}"
+                                          Binding="{Binding StartOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="StartOfMemoryRange" />
                 <local:DataGridTextColumn Header="End" 
-                                          Binding="{Binding EndOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=8,Mode=OneWay}"
+                                          Binding="{Binding EndOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="EndOfMemoryRange" />
                 <local:DataGridTextColumn Header="Size"
                                           Binding="{Binding Location.DataSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}"
