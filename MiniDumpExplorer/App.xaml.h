@@ -79,6 +79,9 @@
 #include "Models\CvInfoPdb70.h"
 #include "Models\MemoryListStreamEntriesDataSource.h"
 #include "Models\MemoryListStreamEntry.h"
+#include "Models\Memory64ListStreamEntriesDataSource.h"
+#include "Models\Memory64ListStreamEntry.h"
+#include "Models\MiniDumpLocationDescriptor64.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

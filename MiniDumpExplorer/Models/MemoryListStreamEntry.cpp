@@ -30,5 +30,4 @@ namespace winrt::MiniDumpExplorer::implementation
 
         memory_.as<MiniDumpLocationDescriptor>()->Set(memory_range->Memory);
     }
-
 }

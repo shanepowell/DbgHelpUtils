@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MiniDumpLocationDescriptor.h"
+
 #if __has_include("MiniDumpLocationDescriptor.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "MiniDumpLocationDescriptor.g.cpp"  // NOLINT(bugprone-suspicious-include)

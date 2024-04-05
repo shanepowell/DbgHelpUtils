@@ -367,6 +367,14 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Models\GlobalOptionsNotifyPropertyChangedBase.h" />
+    <ClInclude Include="Models\Memory64ListStreamEntriesDataSource.h">
+      <DependentUpon>Models\Memory64ListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\Memory64ListStreamEntry.h">
+      <DependentUpon>Models\Memory64ListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\MemoryListStreamEntriesDataSource.h">
       <DependentUpon>Models\MemoryListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -377,6 +385,10 @@
     </ClInclude>
     <ClInclude Include="Models\MiniDumpLocationDescriptor.h">
       <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\MiniDumpLocationDescriptor64.h">
+      <DependentUpon>Models\MiniDumpLocationDescriptor64.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Models\MiniDumpPageBase.h" />
@@ -411,6 +423,10 @@
     </ClInclude>
     <ClInclude Include="Models\VsFixedFileInfo.h">
       <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\Memory64ListStreamPage.xaml.h">
+      <DependentUpon>ViewModels\Memory64ListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\MemoryListStreamPage.xaml.h">
@@ -531,6 +547,9 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Controls\DataGrid\DataGridTheme.xaml" />
+    <Page Include="ViewModels\Memory64ListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\MemoryListStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -758,6 +777,12 @@
     <ClCompile Include="Models\GlobalOptionItems.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\Memory64ListStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\Memory64ListStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\MemoryListStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -765,6 +790,9 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\MiniDumpLocationDescriptor.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpLocationDescriptor64.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\MiniDumpPageParameters.cpp">
@@ -789,6 +817,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\VsFixedFileInfo.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\Memory64ListStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\Memory64ListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\MemoryListStreamPage.xaml.cpp">
@@ -1125,6 +1157,14 @@
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\Memory64ListStreamEntriesDataSource.idl">
+      <DependentUpon>Models\Memory64ListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\Memory64ListStreamEntry.idl">
+      <DependentUpon>Models\Memory64ListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\MemoryListStreamEntriesDataSource.idl">
       <DependentUpon>Models\MemoryListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1135,6 +1175,10 @@
     </Midl>
     <Midl Include="Models\MiniDumpLocationDescriptor.idl">
       <DependentUpon>Models\MiniDumpLocationDescriptor.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MiniDumpLocationDescriptor64.idl">
+      <DependentUpon>Models\MiniDumpLocationDescriptor64.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\MiniDumpPageParameters.idl">
@@ -1167,6 +1211,10 @@
     </Midl>
     <Midl Include="Models\VsFixedFileInfo.idl">
       <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\Memory64ListStreamPage.idl">
+      <DependentUpon>ViewModels\Memory64ListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\MemoryListStreamPage.idl">

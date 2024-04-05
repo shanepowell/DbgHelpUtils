@@ -1,0 +1,12 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MiniDumpLocationDescriptor64 : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MiniDumpLocationDescriptor64();
+
+        UInt64 DataSize { get; };
+        UInt64 Rva { get; };
+    }
+}

@@ -47,6 +47,9 @@
     <Page Include="ViewModels\MemoryListStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\Memory64ListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -446,6 +449,15 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\MemoryListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\Memory64ListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\Memory64ListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpLocationDescriptor64.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,0 +1,10 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass Memory64ListStreamEntriesDataSource : IDataGridDataSource
+    {
+        Memory64ListStreamEntriesDataSource();
+    }
+}

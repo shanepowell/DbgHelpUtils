@@ -4,6 +4,7 @@
 
 #include "GlobalOptionsNotifyPropertyChangedBase.h"
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include "DbgHelpUtils/windows_setup.h"
 #include <DbgHelp.h>
 
@@ -22,8 +23,8 @@ namespace winrt::MiniDumpExplorer::implementation
         void Set(uint32_t index, MINIDUMP_MEMORY_DESCRIPTOR const* memory_range);
 
     private:
-        uint32_t index_;
-        MINIDUMP_MEMORY_DESCRIPTOR const* memory_range_;
+        uint32_t index_{};
+        MINIDUMP_MEMORY_DESCRIPTOR const* memory_range_{nullptr};
         MiniDumpExplorer::MiniDumpLocationDescriptor memory_{};
     };
 }
