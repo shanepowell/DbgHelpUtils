@@ -1,4 +1,5 @@
 ﻿#include "exception_utils.h"
+#include "flags_string_utils.h"
 
 #include "windows_setup.h"
 
@@ -446,52 +447,36 @@ namespace
         {static_cast<uint32_t>(EXCEPTION_POSSIBLE_DEADLOCK), L"EXCEPTION_POSSIBLE_DEADLOCK"s},
         {static_cast<uint32_t>(CONTROL_C_EXIT), L"CONTROL_C_EXIT"s},
     };
+
+    std::unordered_map<uint32_t, std::wstring> const g_exception_flags =
+    {
+        {EXCEPTION_NONCONTINUABLE, L"EXCEPTION_NONCONTINUABLE"s},
+        {EXCEPTION_UNWINDING, L"EXCEPTION_UNWINDING"s},
+        {EXCEPTION_EXIT_UNWIND, L"EXCEPTION_EXIT_UNWIND"s},
+        {EXCEPTION_STACK_INVALID, L"EXCEPTION_STACK_INVALID"s},
+        {EXCEPTION_NESTED_CALL, L"EXCEPTION_NESTED_CALL"s},
+        {EXCEPTION_TARGET_UNWIND, L"EXCEPTION_NESTED_CALL"s},
+        {EXCEPTION_COLLIDED_UNWIND, L"EXCEPTION_NESTED_CALL"s},
+    };
 }
 
-namespace dlg_help_utils::exception_utils::resources
+namespace dlg_help_utils::exception_utils
 {
-    std::unordered_map<uint32_t, std::wstring> const& get_exception_code_descriptions()
+    std::vector<std::wstring_view> exception_flags_to_list(uint32_t const exception_flags)
     {
-        return g_exception_code_descriptions;
+        return flags_string_utils::generate_flags_strings(exception_flags, g_exception_flags);
     }
 
-    std::wstring_view get_unknown_exception_string()
+    namespace resources
     {
-        return L"unknown exception"sv;
-    }
+        std::unordered_map<uint32_t, std::wstring> const& get_exception_code_descriptions()
+        {
+            return g_exception_code_descriptions;
+        }
 
-    std::wstring_view get_exception_continuable(bool const exception_continuable)
-    {
-        return exception_continuable ? L"continuable exception"sv : L"non-continuable exception"sv;
-    }
-
-    std::wstring_view get_exception_unwinding(bool const exception_unwinding)
-    {
-        return exception_unwinding ? L", unwind is in progress"sv : L""sv;
-    }
-
-    std::wstring_view get_exception_exit_unwind(bool const exception_exit_unwind)
-    {
-        return exception_exit_unwind ? L", exit unwind is in progress"sv : L""sv;
-    }
-
-    std::wstring_view get_exception_stack_invalid(bool const exception_stack_invalid)
-    {
-        return exception_stack_invalid ? L", stack out of limits or unaligned"sv : L""sv;
-    }
-
-    std::wstring_view get_exception_nesting_level(bool const exception_nesting_level)
-    {
-        return exception_nesting_level ? L", nested exception handler call"sv : L""sv;
-    }
-
-    std::wstring_view get_exception_target_unwind(bool const exception_target_unwind)
-    {
-        return exception_target_unwind ? L", target unwind in progress"sv : L""sv;
-    }
-
-    std::wstring_view get_exception_collided_unwind(bool const exception_collided_unwind)
-    {
-        return exception_collided_unwind ? L", collided exception handler call"sv : L""sv;
+        std::wstring_view get_unknown_exception_string()
+        {
+            return L"unknown exception"sv;
+        }
     }
 }

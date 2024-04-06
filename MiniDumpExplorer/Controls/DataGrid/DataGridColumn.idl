@@ -26,7 +26,8 @@ namespace MiniDumpExplorer
         Windows.Foundation.IReference<DataGridSortDirection> SortDirection;
         Object Tag;
         Microsoft.UI.Xaml.Visibility Visibility;
-        DataGridLength Width;
+        Object Width;
+        DataGridLength WidthLength;
         static DataGridColumn GetColumnContainingElement(Microsoft.UI.Xaml.FrameworkElement element);
         Microsoft.UI.Xaml.FrameworkElement GetCellContent(Object dataItem);
     }

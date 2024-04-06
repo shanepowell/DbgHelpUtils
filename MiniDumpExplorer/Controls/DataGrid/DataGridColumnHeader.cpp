@@ -897,7 +897,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
             auto const internalDragColumn = interactionInfo.DragColumn.as<DataGridColumn>();
             desiredWidth = std::max(internalDragColumn->ActualMinWidth(), std::min(internalDragColumn->ActualMaxWidth(), desiredWidth));
-            internalDragColumn->Resize(interactionInfo.DragColumn.Width().Value(), interactionInfo.DragColumn.Width().UnitType(), interactionInfo.DragColumn.Width().DesiredValue(), desiredWidth, true);
+            internalDragColumn->Resize(interactionInfo.DragColumn.WidthLength().Value(), interactionInfo.DragColumn.WidthLength().UnitType(), interactionInfo.DragColumn.WidthLength().DesiredValue(), desiredWidth, true);
 
             internalOwningGrid->UpdateHorizontalOffset(interactionInfo.OriginalHorizontalOffset);
 

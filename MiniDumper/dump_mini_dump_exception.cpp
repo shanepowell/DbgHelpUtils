@@ -5,6 +5,7 @@
 #include "DbgHelpUtils/exception_stream.h"
 #include "DbgHelpUtils/exception_utils.h"
 #include "DbgHelpUtils/find_thread_stack.h"
+#include "DbgHelpUtils/join.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
@@ -27,7 +28,7 @@ void dump_mini_dump_exception_stream_data(std::wostream& log, mini_dump const& m
     auto const& exception = exception_stream.exception();
     log << std::format(L"  ThreadId: {}\n", to_hex(exception.ThreadId));
     log << std::format(L"  ExceptionCode: {0} ({1})\n", exception_utils::exception_code_to_string(exception.ExceptionRecord.ExceptionCode), to_hex(exception.ExceptionRecord.ExceptionCode));
-    log << std::format(L"  ExceptionFlags: {0} ({1})\n", exception_utils::exception_flags_to_string(exception.ExceptionRecord.ExceptionFlags), to_hex(exception.ExceptionRecord.ExceptionFlags));
+    log << std::format(L"  ExceptionFlags: {0} ({1})\n", wjoin(exception_utils::exception_flags_to_list(exception.ExceptionRecord.ExceptionFlags), L", "sv), to_hex(exception.ExceptionRecord.ExceptionFlags));
     log << std::format(L"  ExceptionRecord: {}\n", to_hex(exception.ExceptionRecord.ExceptionRecord));
     log << std::format(L"  ExceptionAddress: {}\n", to_hex(exception.ExceptionRecord.ExceptionAddress));
     log << std::format(L"  NumberParameters: {}\n", locale_formatting::to_wstring(exception.ExceptionRecord.NumberParameters));

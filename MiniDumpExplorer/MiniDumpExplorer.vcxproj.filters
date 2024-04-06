@@ -50,6 +50,9 @@
     <Page Include="ViewModels\Memory64ListStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ExceptionStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -458,6 +461,15 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\MiniDumpLocationDescriptor64.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpException.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpExceptionParameter.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ExceptionParametersDataSource.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

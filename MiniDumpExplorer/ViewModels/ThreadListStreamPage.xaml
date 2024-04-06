@@ -47,8 +47,6 @@
             CanUserSortColumns="True"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
-            ColumnHeaderHeight="32"
-            MaxColumnWidth="1000"
             IsReadOnly="True"
             ItemsSource="{x:Bind ItemsSource}"
             >

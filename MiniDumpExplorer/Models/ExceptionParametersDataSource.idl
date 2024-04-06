@@ -1,0 +1,13 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+import "Models\MiniDumpException.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ExceptionParametersDataSource : IDataGridDataSource
+    {
+        ExceptionParametersDataSource();
+
+        void SetException(MiniDumpException exception);
+    }
+}

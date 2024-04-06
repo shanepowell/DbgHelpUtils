@@ -11,7 +11,7 @@ enum : uint64_t
 namespace dlg_help_utils::exception_utils
 {
     std::wstring_view exception_code_to_string(uint32_t exception_code);
-    std::wstring exception_flags_to_string(uint32_t exception_flags);
+    std::vector<std::wstring_view> exception_flags_to_list(uint32_t exception_flags);
 
     namespace resources
     {

@@ -12,6 +12,8 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "DataGridRowsPresenterAutomationPeer.h"
 
+#include "Utility/logger.h"
+
 #if __has_include("DataGridRowsPresenter.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "DataGridRowsPresenter.g.cpp"  // NOLINT(bugprone-suspicious-include)

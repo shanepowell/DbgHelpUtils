@@ -1,0 +1,15 @@
+import "Models\MiniDumpException.idl";
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ExceptionStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ExceptionStreamPage();
+
+        UInt32 ThreadId { get; };
+        MiniDumpException Exception { get; };
+        IDataGridDataSource ExceptionParametersSource { get; };
+    }
+}

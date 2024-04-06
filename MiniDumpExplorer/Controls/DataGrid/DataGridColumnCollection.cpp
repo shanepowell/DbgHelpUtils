@@ -196,7 +196,7 @@ namespace DataGridInternal
                 internalColumn->IsVisible())
             {
                 internalColumn->EnsureWidth();
-                if (internalColumn->Width().IsStar())
+                if (internalColumn->WidthLength().IsStar())
                 {
                     impl_->visibleStarColumnCount_++;
                 }

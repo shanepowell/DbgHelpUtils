@@ -15,6 +15,8 @@
 #include "Utility/OptionalUtility.h"
 #include "Utility/ValidationUtil.h"
 
+#include <format>
+
 // ReSharper disable once CppUnusedIncludeDirective
 #include "DataGridColumnInternal.h"
 
@@ -408,7 +410,31 @@ namespace winrt::MiniDumpExplorer::implementation
         }
     }
 
-    MiniDumpExplorer::DataGridLength DataGridColumn::Width() const
+    Windows::Foundation::IInspectable DataGridColumn::Width() const
+    {
+        return WidthLength();
+    }
+
+    void DataGridColumn::Width(Windows::Foundation::IInspectable const& value)
+    {
+        if(auto const valueString = value.try_as<hstring>();
+            valueString)
+        {
+            WidthLength(MiniDumpExplorer::DataGridLength::ConvertFromString(valueString.value()));
+            return;
+        }
+
+        if(auto const valueLength = value.try_as<MiniDumpExplorer::DataGridLength>();
+            valueLength)
+        {
+            WidthLength(valueLength);
+            return;
+        }
+
+        throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"dataGridRow unsupported width set type {}", get_class_name(value))};
+    }
+
+    MiniDumpExplorer::DataGridLength DataGridColumn::WidthLength() const
     {
         if (width_)
         {
@@ -422,7 +448,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return MiniDumpExplorer::DataGridLength::Auto();
     }
 
-    void DataGridColumn::Width(MiniDumpExplorer::DataGridLength const& value)
+    void DataGridColumn::WidthLength(MiniDumpExplorer::DataGridLength const& value)
     {
         if (!width_ || width_ != value)
         {
@@ -435,7 +461,7 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 auto const isDesignMode = Windows::ApplicationModel::DesignMode::DesignModeEnabled();
                 if (auto const width = CoerceWidth(value);
-                    width.IsStar() != Width().IsStar() || isDesignMode)
+                    width.IsStar() != WidthLength().IsStar() || isDesignMode)
                 {
                     // If a column has changed either from or to a star value, we want to recalculate all
                     // star column widths.  They are recalculated during Measure based off what the value we set here.
@@ -474,7 +500,7 @@ namespace winrt::MiniDumpExplorer::implementation
     double DataGridColumn::ActualMinWidth() const
     {
         auto const minWidth = minWidth_.value_or(owningGrid_ ? owningGrid_.MinColumnWidth() : 0.0);
-        if (Width().IsStar())
+        if (WidthLength().IsStar())
         {
             return std::max<>(DataGrid::MinimumStarColumnWidth, minWidth);
         }
@@ -592,12 +618,12 @@ namespace winrt::MiniDumpExplorer::implementation
                 auto totalStarValues = 0.0;
                 auto totalStarDesiredValues = 0.0;
                 auto totalNonStarDisplayWidths = 0.0;
-                for (auto const& column : internalOwnerGrid->ColumnsInternal().GetDisplayedColumns([this](MiniDumpExplorer::DataGridColumn const& c) { return c.as<DataGridColumn>()->IsVisible() && c != *this && !std::isnan(c.Width().DesiredValue()); }))
+                for (auto const& column : internalOwnerGrid->ColumnsInternal().GetDisplayedColumns([this](MiniDumpExplorer::DataGridColumn const& c) { return c.as<DataGridColumn>()->IsVisible() && c != *this && !std::isnan(c.WidthLength().DesiredValue()); }))
                 {
-                    if (column.Width().IsStar())
+                    if (column.WidthLength().IsStar())
                     {
-                        totalStarValues += column.Width().Value();
-                        totalStarDesiredValues += column.Width().DesiredValue();
+                        totalStarValues += column.WidthLength().Value();
+                        totalStarDesiredValues += column.WidthLength().DesiredValue();
                     }
                     else
                     {
@@ -674,7 +700,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGridColumn::EnsureWidth()
     {
-        SetWidthInternalNoCallback(CoerceWidth(Width()));
+        SetWidthInternalNoCallback(CoerceWidth(WidthLength()));
     }
 
     FrameworkElement DataGridColumn::GenerateElementInternal(MiniDumpExplorer::DataGridCell const& cell, Windows::Foundation::IInspectable const& dataItem)
@@ -739,19 +765,19 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             column.as<DataGridColumn>()->EnsureWidth();
             totalDisplayWidth += column.ActualWidth();
-            starColumnsCount += (column != *this && column.Width().IsStar()) ? 1 : 0;
+            starColumnsCount += (column != *this && column.WidthLength().IsStar()) ? 1 : 0;
         }
 
         bool const hasInfiniteAvailableWidth = !internalOwnerGrid->RowsPresenterAvailableSize().has_value() || std::isinf(internalOwnerGrid->RowsPresenterAvailableSize().value().Width);
 
         // If we're using star sizing, we can only resize the column as much as the columns to the
         // right will allow (i.e. until they hit their max or min widths).
-        if (!hasInfiniteAvailableWidth && (starColumnsCount > 0 || (unitType == DataGridLengthUnitType::Star && Width().IsStar() && userInitiated)))
+        if (!hasInfiniteAvailableWidth && (starColumnsCount > 0 || (unitType == DataGridLengthUnitType::Star && WidthLength().IsStar() && userInitiated)))
         {
-            auto limitedDisplayValue = Width().DisplayValue();
+            auto limitedDisplayValue = WidthLength().DisplayValue();
             auto const availableIncrease = std::max<>(0.0, internalOwnerGrid->CellsWidth() - totalDisplayWidth);
             
-            if (auto desiredChange = newDisplayValue - Width().DisplayValue();
+            if (auto desiredChange = newDisplayValue - WidthLength().DisplayValue();
                 desiredChange > availableIncrease)
             {
                 // The desired change is greater than the amount of available space,
@@ -772,7 +798,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 limitedDisplayValue += desiredChange + internalOwnerGrid->IncreaseColumnWidths(DisplayIndex() + 1, -desiredChange, userInitiated);
             }
 
-            if (ActualCanUserResize() || (Width().IsStar() && !userInitiated))
+            if (ActualCanUserResize() || (WidthLength().IsStar() && !userInitiated))
             {
                 newDisplayValue = limitedDisplayValue;
             }
@@ -781,7 +807,7 @@ namespace winrt::MiniDumpExplorer::implementation
         if (userInitiated)
         {
             newDesiredValue = newDisplayValue;
-            if (!Width().IsStar())
+            if (!WidthLength().IsStar())
             {
                 inheritsWidth_ = false;
                 newValue = newDisplayValue;
@@ -791,7 +817,7 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 // Recalculate star weight of this column based on the new desired value
                 inheritsWidth_ = false;
-                newValue = (Width().Value() * newDisplayValue) / ActualWidth();
+                newValue = (WidthLength().Value() * newDisplayValue) / ActualWidth();
             }
         }
 
@@ -805,13 +831,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGridColumn::SetWidthDesiredValue(double const desiredValue)
     {
-        auto const width = Width();
+        auto const width = WidthLength();
         SetWidthInternalNoCallback(MiniDumpExplorer::DataGridLength{width.Value(), width.UnitType(), desiredValue, width.DisplayValue()});
     }
 
     void DataGridColumn::SetWidthDisplayValue(double const displayValue)
     {
-        auto const width = Width();
+        auto const width = WidthLength();
         SetWidthInternalNoCallback(MiniDumpExplorer::DataGridLength{width.Value(), width.UnitType(), width.DesiredValue(), displayValue});
     }
 
@@ -822,9 +848,9 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGridColumn::SetWidthStarValue(double const value)
     {
-        assert(Width().IsStar());
+        assert(WidthLength().IsStar());
 
-        auto const width = Width();
+        auto const width = WidthLength();
         inheritsWidth_ = false;
         SetWidthInternalNoCallback(MiniDumpExplorer::DataGridLength{value, width.UnitType(), width.DesiredValue(), width.DisplayValue()});
     }

@@ -16,4 +16,18 @@ namespace dlg_help_utils
         }
         return out;
     }
+
+    template<typename V>
+    std::wstring wjoin(V const& v,  std::wstring_view const& delimiter)
+    {
+        std::wstring out;
+        auto i = std::begin(v);
+        auto e = std::end(v);
+        if (i != std::end(v))
+        {
+            out += *i++;
+            for (; i != e; ++i) out.append(delimiter).append(*i);
+        }
+        return out;
+    }
 }

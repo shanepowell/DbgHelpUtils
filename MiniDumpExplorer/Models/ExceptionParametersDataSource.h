@@ -1,21 +1,17 @@
 #pragma once
 
-#include "ThreadListStreamEntriesDataSource.g.h"
-
-namespace dlg_help_utils
-{
-    class thread_list_stream;
-}
+#include "ExceptionParametersDataSource.g.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct DataGrid;
     struct DataGridColumnEventArgs;
-    struct ThreadListStreamEntry;
+    struct MiniDumpException;
+    struct MiniDumpExceptionParameter;
 
-    struct ThreadListStreamEntriesDataSource : ThreadListStreamEntriesDataSourceT<ThreadListStreamEntriesDataSource>
+    struct ExceptionParametersDataSource : ExceptionParametersDataSourceT<ExceptionParametersDataSource>
     {
-        ThreadListStreamEntriesDataSource();
+        ExceptionParametersDataSource();
 
         [[nodiscard]] bool IsReadOnly() const;
         [[nodiscard]] bool CanSort() const;
@@ -37,21 +33,21 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
         void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const;
 
-        void LoadMiniDumpThreadStream(dlg_help_utils::thread_list_stream const& thread_list) const;
+        void SetException(MiniDumpExplorer::MiniDumpException const& exception) const;
 
     private:
         void SetupDataProperties();
 
     private:
         Microsoft::UI::Xaml::Data::CollectionViewSource collectionViewSource_{};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::ThreadListStreamEntry> entries_{winrt::single_threaded_observable_vector<MiniDumpExplorer::ThreadListStreamEntry>()};
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::MiniDumpExceptionParameter> entries_{winrt::single_threaded_observable_vector<MiniDumpExplorer::MiniDumpExceptionParameter>()};
         Windows::Foundation::Collections::IVector<IDataGridDataSourcePropertyInfo> dataProperties_{winrt::single_threaded_vector<IDataGridDataSourcePropertyInfo>()};
     };
 }
 
 namespace winrt::MiniDumpExplorer::factory_implementation
 {
-    struct ThreadListStreamEntriesDataSource : ThreadListStreamEntriesDataSourceT<ThreadListStreamEntriesDataSource, implementation::ThreadListStreamEntriesDataSource>
+    struct ExceptionParametersDataSource : ExceptionParametersDataSourceT<ExceptionParametersDataSource, implementation::ExceptionParametersDataSource>
     {
     };
 }

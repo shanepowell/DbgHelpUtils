@@ -194,7 +194,7 @@ namespace winrt::MiniDumpExplorer::implementation
             EnsureCellDisplay(*cell, shouldDisplayCell);
             if (shouldDisplayCell)
             {
-                auto const columnWidth = column.Width();
+                auto const columnWidth = column.WidthLength();
                 auto const autoGrowWidth = columnWidth.IsSizeToCells() || columnWidth.IsAuto();
                 if (column != lastVisibleColumn)
                 {
@@ -203,13 +203,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
                 // If we're not using star sizing or the current column can't be resized,
                 // then just set the display width according to the column's desired width
-                if (!internalOwningGrid->UsesStarSizing() || (!internalColumn->ActualCanUserResize() && !column.Width().IsStar()))
+                if (!internalOwningGrid->UsesStarSizing() || (!internalColumn->ActualCanUserResize() && !column.WidthLength().IsStar()))
                 {
                     // In the edge-case where we're given infinite width, and we have star columns, the
                     // star columns grow to their predefined limit of 10,000 (or their MaxWidth)
-                    auto const newDisplayWidth = column.Width().IsStar() ?
+                    auto const newDisplayWidth = column.WidthLength().IsStar() ?
                         std::min(internalColumn->ActualMaxWidth(), DataGrid::MaximumStarColumnWidth) :
-                        std::max(internalColumn->ActualMinWidth(), std::min(internalColumn->ActualMaxWidth(), column.Width().DesiredValue()));
+                        std::max(internalColumn->ActualMinWidth(), std::min(internalColumn->ActualMaxWidth(), column.WidthLength().DesiredValue()));
                     internalColumn->SetWidthDisplayValue(newDisplayWidth);
                 }
 

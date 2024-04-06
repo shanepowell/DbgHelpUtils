@@ -13,6 +13,7 @@
 #include "Helpers/TypeHelper.h"
 #include "Helpers/UIHelper.h"
 #include "Utility/SuspendedHandlers.h"
+#include "Utility/logger.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;

@@ -13,6 +13,7 @@ namespace dlg_help_utils
     class exception_stream
     {
     public:
+        exception_stream() = default;
         explicit exception_stream(mini_dump const& dump, size_t index = 0);
 
         [[nodiscard]] bool found() const { return found_; }

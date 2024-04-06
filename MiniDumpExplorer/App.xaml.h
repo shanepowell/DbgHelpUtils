@@ -82,6 +82,9 @@
 #include "Models\Memory64ListStreamEntriesDataSource.h"
 #include "Models\Memory64ListStreamEntry.h"
 #include "Models\MiniDumpLocationDescriptor64.h"
+#include "Models\MiniDumpException.h"
+#include "Models\MiniDumpExceptionParameter.h"
+#include "Models\ExceptionParametersDataSource.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

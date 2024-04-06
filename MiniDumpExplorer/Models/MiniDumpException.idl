@@ -1,0 +1,19 @@
+import "Models\MiniDumpExceptionParameter.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MiniDumpException : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MiniDumpException();
+
+        UInt32 ExceptionCode { get; };
+        String ExceptionCodeString { get; };
+        UInt32 ExceptionFlags { get; };
+        IObservableVector<String> ExceptionFlagsList { get; };
+        UInt64 ExceptionRecord { get; };
+        UInt64 ExceptionAddress { get; };
+        IObservableVector<MiniDumpExceptionParameter> ExceptionInformation { get; };
+    }
+}

@@ -6,6 +6,8 @@
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct Memory64ListStreamEntriesDataSource;
+
     struct Memory64ListStreamPage : Memory64ListStreamPageT<Memory64ListStreamPage>, MiniDumpPageBase<Memory64ListStreamPage>
     {
         Memory64ListStreamPage();

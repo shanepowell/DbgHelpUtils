@@ -1731,29 +1731,26 @@
   <data name="UnknownException" xml:space="preserve">
     <value>unknown exception</value>
   </data>
-  <data name="ContinuableException" xml:space="preserve">
-    <value>continuable exception</value>
+  <data name="EXCEPTION_NONCONTINUABLE" xml:space="preserve">
+    <value>EXCEPTION_NONCONTINUABLE</value>
   </data>
-  <data name="NonContinuableException" xml:space="preserve">
-    <value>non-continuable exception</value>
+  <data name="EXCEPTION_UNWINDING" xml:space="preserve">
+    <value>EXCEPTION_UNWINDING</value>
   </data>
-  <data name="ExceptionUnwinding" xml:space="preserve">
-    <value>, unwind is in progress</value>
+  <data name="EXCEPTION_EXIT_UNWIND" xml:space="preserve">
+    <value>EXCEPTION_EXIT_UNWIND</value>
   </data>
-  <data name="ExceptionExitUnwind" xml:space="preserve">
-    <value>, exit unwind is in progress</value>
+  <data name="EXCEPTION_STACK_INVALID" xml:space="preserve">
+    <value>EXCEPTION_STACK_INVALID</value>
   </data>
-  <data name="ExceptionStackInvalid" xml:space="preserve">
-    <value>, stack out of limits or unaligned</value>
+  <data name="EXCEPTION_NESTED_CALL" xml:space="preserve">
+    <value>EXCEPTION_NESTED_CALL</value>
   </data>
-  <data name="ExceptionNestingLevel" xml:space="preserve">
-    <value>, nested exception handler call</value>
+  <data name="EXCEPTION_TARGET_UNWIND" xml:space="preserve">
+    <value>EXCEPTION_NESTED_CALL</value>
   </data>
-  <data name="ExceptionTargetUnwind" xml:space="preserve">
-    <value>, target unwind in progress</value>
-  </data>
-  <data name="ExceptionCollidedUnwind" xml:space="preserve">
-    <value>, collided exception handler call</value>
+  <data name="EXCEPTION_COLLIDED_UNWIND" xml:space="preserve">
+    <value>EXCEPTION_NESTED_CALL</value>
   </data>
   <data name="FLG_DISABLE_DBGPRINT" xml:space="preserve">
     <value>FLG_DISABLE_DBGPRINT</value>

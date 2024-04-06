@@ -1,0 +1,12 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MiniDumpExceptionParameter : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MiniDumpExceptionParameter(UInt32 index, UInt64 parameter);
+        
+        UInt32 Index { get; };
+        UInt64 Parameter { get; };
+    }
+}

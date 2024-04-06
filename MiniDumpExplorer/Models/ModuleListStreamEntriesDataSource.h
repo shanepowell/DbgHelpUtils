@@ -46,8 +46,6 @@ namespace winrt::MiniDumpExplorer::implementation
         Microsoft::UI::Xaml::Data::CollectionViewSource collectionViewSource_{};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::ModuleListStreamEntry> entries_{winrt::single_threaded_observable_vector<MiniDumpExplorer::ModuleListStreamEntry>()};
         Windows::Foundation::Collections::IVector<IDataGridDataSourcePropertyInfo> dataProperties_{winrt::single_threaded_vector<IDataGridDataSourcePropertyInfo>()};
-        bool ignoreNextRecentFilesChanged_{false};
-        bool loaded_{false};
     };
 }
 

@@ -55,8 +55,10 @@ namespace winrt::MiniDumpExplorer::implementation
         void Tag(Windows::Foundation::IInspectable const& value);
         Microsoft::UI::Xaml::Visibility Visibility() const;
         void Visibility(Microsoft::UI::Xaml::Visibility value);
-        MiniDumpExplorer::DataGridLength Width() const;
-        void Width(MiniDumpExplorer::DataGridLength const& value);
+        Windows::Foundation::IInspectable Width() const;
+        void Width(Windows::Foundation::IInspectable const& value);
+        MiniDumpExplorer::DataGridLength WidthLength() const;
+        void WidthLength(MiniDumpExplorer::DataGridLength const& value);
 
         bool ActualCanUserResize() const;
         double ActualMaxWidth() const;
