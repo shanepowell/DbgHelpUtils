@@ -453,6 +453,10 @@
       <DependentUpon>ViewModels\ModuleListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\SystemInfoStreamPage.xaml.h">
+      <DependentUpon>ViewModels\SystemInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\ThreadListStreamPage.h">
       <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -573,6 +577,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ModuleListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\SystemInfoStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ThreadListStreamPage.xaml">
@@ -861,6 +868,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\ModuleListStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\ModuleListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\SystemInfoStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\SystemInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ThreadListStreamPage.cpp">
@@ -1271,6 +1282,10 @@
     </Midl>
     <Midl Include="ViewModels\ModuleListStreamPage.idl">
       <DependentUpon>ViewModels\ModuleListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\SystemInfoStreamPage.idl">
+      <DependentUpon>ViewModels\SystemInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ThreadListStreamPage.idl">

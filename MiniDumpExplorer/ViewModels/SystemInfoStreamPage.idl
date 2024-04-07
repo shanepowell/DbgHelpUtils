@@ -1,0 +1,35 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SystemInfoStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        SystemInfoStreamPage();
+
+        UInt16 ProcessorArchitecture { get; };
+        String ProcessorArchitectureString { get; };
+        UInt16 ProcessorLevel { get; };
+        UInt16 ProcessorRevision { get; };
+        UInt16 ProcessorModel { get; };
+        UInt16 ProcessorStepping { get; };
+        UInt8 NumberOfProcessors { get; };
+        UInt8 ProductType { get; };
+        String ProductTypeString { get; };
+        UInt32 OsMajorVersion { get; };
+        UInt32 OsMinorVersion { get; };
+        UInt32 OsBuildNumber { get; };
+        String OsVersionMajorMinorBuildString { get; };
+        String OsVersion { get; };
+        UInt32 OsPlatformId { get; };
+        String OsPlatformIdString { get; };
+        String CsdVersion { get; };
+        UInt16 SuiteMask { get; };
+        IObservableVector<String> SuiteMaskList { get; };
+        UInt16 Reserved2 { get; };
+        String X86CpuInfoVendorId { get; };
+        UInt32 X86CpuInfoVersionInformation { get; };
+        UInt32 X86CpuInfoFeatureInformation { get; };
+        UInt32 X86CpuInfoAMDExtendedCpuFeatures { get; };
+        UInt64 OtherCpuInfoProcessorFeatures1 { get; };
+        UInt64 OtherCpuInfoProcessorFeatures2 { get; };
+    }
+}

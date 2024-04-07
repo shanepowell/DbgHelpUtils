@@ -11,6 +11,7 @@ namespace dlg_help_utils
     class system_info_stream
     {
     public:
+        system_info_stream() = default;
         explicit system_info_stream(mini_dump const& dump, size_t index = 0);
 
         [[nodiscard]] bool found() const { return found_; }

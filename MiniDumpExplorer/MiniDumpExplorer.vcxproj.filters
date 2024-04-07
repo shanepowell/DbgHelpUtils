@@ -53,6 +53,9 @@
     <Page Include="ViewModels\ExceptionStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\SystemInfoStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
