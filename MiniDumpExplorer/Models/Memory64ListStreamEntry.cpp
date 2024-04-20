@@ -20,6 +20,10 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"EndOfMemoryRange"
             }, 
             {
+            },
+            {
+            },
+            {
             })
     {
     }

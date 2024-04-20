@@ -20,8 +20,7 @@ using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils::system_time_utils;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t index,
-                                          std::wstring_view const& name);
+void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, uint32_t feature);
 
 void dump_mini_dump_system_info_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
@@ -82,19 +81,22 @@ void dump_mini_dump_misc_info_stream_data(std::wostream& log, mini_dump const& m
     }
 
     auto const& info = misc_info.misc_info();
-    log << std::format(L"  Flags: {}\n", to_hex(info.Flags1));
+    log << std::format(L"  Flags: {} - ({})\n", to_hex(info.Flags1), system_info_utils::misc_info_flags_to_string(info.Flags1));
 
     if (info.Flags1 & MINIDUMP_MISC1_PROCESS_ID)
     {
         log << std::format(L"  ProcessId: {}", to_hex(info.ProcessId));
     }
 
+    auto const local_info = misc_info_stream::get_dump_file_timezone_info(mini_dump);
+
     if (info.Flags1 & MINIDUMP_MISC1_PROCESS_TIMES)
     {
         using namespace time_units;
-        log << std::format(L"  ProcessCreateTime: [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(info.ProcessCreateTime), time_utils::to_utc_time(info.ProcessCreateTime));
-        log << std::format(L"  ProcessUserTime: {0}s ({1})\n", locale_formatting::to_wstring(info.ProcessUserTime), std::chrono::seconds{info.ProcessUserTime});
-        log << std::format(L"  ProcessKernelTime: {0}s ({1})\n", locale_formatting::to_wstring(info.ProcessKernelTime), std::chrono::seconds{info.ProcessKernelTime});
+
+        log << std::format(L"  ProcessCreateTime: [local: {0}] [UTC: {1}] [DumpLocale: {2}]\n", from_dump_file_to_local_timestamp_string(info.ProcessCreateTime, local_info), from_dump_file_to_utc_timestamp_string(info.ProcessCreateTime, local_info), to_dump_file_timestamp_string(info.ProcessCreateTime, local_info));
+        log << std::format(L"  ProcessUserTime: {0} ({1}\n", to_timespan_wstring(std::chrono::seconds{info.ProcessUserTime}), std::chrono::seconds{info.ProcessUserTime});
+        log << std::format(L"  ProcessKernelTime: {0} ({1})\n", to_timespan_wstring(std::chrono::seconds{info.ProcessKernelTime}), std::chrono::seconds{info.ProcessKernelTime});
     }
 
     if (misc_info.misc_info_version() == 1)
@@ -141,14 +143,14 @@ void dump_mini_dump_misc_info_stream_data(std::wostream& log, mini_dump const& m
 
     if (info.Flags1 & MINIDUMP_MISC3_TIMEZONE)
     {
-        log << std::format(L"  TimeZoneId: {}\n", locale_formatting::to_wstring(info_3.TimeZoneId));
-        log << std::format(L"    Bias: {}\n", locale_formatting::to_wstring(info_3.TimeZone.Bias));
+        log << std::format(L"  TimeZoneId: {0} ({1})\n", locale_formatting::to_wstring(info_3.TimeZoneId), system_info_utils::time_zone_id_to_string(info_3.TimeZoneId));
+        log << std::format(L"    Bias: {}\n", time_units::to_timespan_wstring(chrono::minutes{info_3.TimeZone.Bias}));
         log << std::format(L"    StandardName: {}\n", info_3.TimeZone.StandardName);
-        log << std::format(L"    StandardDate: {}\n", to_wstring(info_3.TimeZone.StandardDate));
-        log << std::format(L"    StandardBias: {}\n", locale_formatting::to_wstring(info_3.TimeZone.StandardBias));
+        log << std::format(L"    StandardDate: {}\n", to_raw_wstring(info_3.TimeZone.StandardDate));
+        log << std::format(L"    StandardBias: {}\n", time_units::to_timespan_wstring(chrono::minutes{info_3.TimeZone.StandardBias}));
         log << std::format(L"    DaylightName: {}\n", info_3.TimeZone.DaylightName);
-        log << std::format(L"    DaylightDate: {}\n", to_wstring(info_3.TimeZone.DaylightDate));
-        log << std::format(L"    DaylightBias: {}\n", locale_formatting::to_wstring(info_3.TimeZone.DaylightBias));
+        log << std::format(L"    DaylightDate: {}\n", to_raw_wstring(info_3.TimeZone.DaylightDate));
+        log << std::format(L"    DaylightBias: {}\n", time_units::to_timespan_wstring(chrono::minutes{info_3.TimeZone.DaylightBias}));
     }
 
     if (misc_info.misc_info_version() == 3)
@@ -190,30 +192,22 @@ void dump_mini_dump_misc_info_stream_data(std::wostream& log, mini_dump const& m
             log << std::format(L"    ContextSize: {0} ({1})\n", locale_formatting::to_wstring(info_5.XStateData.ContextSize), to_wstring(bytes{info_5.XStateData.ContextSize}));
             log << std::format(L"    EnabledFeatures: {0}\n",  to_hex(info_5.XStateData.EnabledFeatures));
 
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_LEGACY_FLOATING_POINT, L"XSTATE_LEGACY_FLOATING_POINT"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_LEGACY_SSE, L"XSTATE_LEGACY_SSE"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX, L"XSTATE_AVX"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_MPX_BNDREGS, L"XSTATE_MPX_BNDREGS"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_MPX_BNDCSR, L"XSTATE_MPX_BNDCSR"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX512_KMASK, L"XSTATE_AVX512_KMASK"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX512_ZMM_H, L"XSTATE_AVX512_ZMM_H"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_AVX512_ZMM, L"XSTATE_AVX512_ZMM"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_IPT, L"XSTATE_IPT"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_CET_U, L"XSTATE_CET_U"sv);
-            dump_mini_dump_xstate_config_feature(log, info_5.XStateData, XSTATE_LWP, L"XSTATE_LWP"sv);
+            for(uint32_t feature = 0; feature< MAXIMUM_XSTATE_FEATURES; ++feature)
+            {
+                dump_mini_dump_xstate_config_feature(log, info_5.XStateData, feature);
+            }
         }
     }
 }
 
-void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, size_t const index,
-                                          std::wstring_view const& name)
+void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, uint32_t const feature)
 {
-    if (auto const mask = 1ui64 << index; (xstate.EnabledFeatures & mask) == mask)
+    if (auto const mask = 1ui64 << feature; (xstate.EnabledFeatures & mask) == mask)
     {
         using namespace size_units::base_16;
-        log << std::format(L"      {}\n", name);
-        log << std::format(L"        Offset: {}\n", to_hex(xstate.Features[index].Offset));
-        log << std::format(L"        Size: {0} ({1})", to_hex(xstate.Features[index].Size), to_wstring(bytes{xstate.Features[index].Size}));
+        log << std::format(L"      {}\n", system_info_utils::xstate_data_feature_to_string(feature));
+        log << std::format(L"        Offset: {}\n", to_hex(xstate.Features[feature].Offset));
+        log << std::format(L"        Size: {0} ({1})", to_hex(xstate.Features[feature].Size), to_wstring(bytes{xstate.Features[feature].Size}));
     }
 }
 

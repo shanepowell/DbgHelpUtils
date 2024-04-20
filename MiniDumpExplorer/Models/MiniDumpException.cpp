@@ -22,7 +22,12 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"ExceptionAddress",
                 L"ExceptionInformation"
             },
-            { })
+            {
+            },
+            {
+            },
+            {
+            })
     {
     }
 

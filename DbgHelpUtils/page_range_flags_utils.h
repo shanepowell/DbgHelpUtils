@@ -19,7 +19,7 @@ namespace dlg_help_utils::page_range_flags_utils
     };
 
     std::wstring dump_page_range_flags_to_string(page_range_flags flags);
-    std::vector<std::wstring_view> dump_page_range_flags_to_strings(page_range_flags flags);
+    std::vector<std::wstring> dump_page_range_flags_to_strings(page_range_flags flags);
 
     std::wstring dump_page_range_to_string(page_range_flags value);
 }

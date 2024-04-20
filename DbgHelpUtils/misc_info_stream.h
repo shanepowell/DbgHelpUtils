@@ -4,6 +4,8 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 
+#include "time_utils.h"
+
 namespace dlg_help_utils
 {
     class mini_dump;
@@ -11,6 +13,7 @@ namespace dlg_help_utils
     class misc_info_stream
     {
     public:
+        misc_info_stream() = default;
         explicit misc_info_stream(mini_dump const& dump, size_t index = 0);
 
         [[nodiscard]] bool found() const { return found_; }
@@ -22,6 +25,9 @@ namespace dlg_help_utils
         [[nodiscard]] MINIDUMP_MISC_INFO_3 const& misc_info_3() const { return *misc_info_3_; }
         [[nodiscard]] MINIDUMP_MISC_INFO_4 const& misc_info_4() const { return *misc_info_4_; }
         [[nodiscard]] MINIDUMP_MISC_INFO_5 const& misc_info_5() const { return *misc_info_5_; }
+
+
+        [[nodiscard]] static time_utils::locale_timezone_info get_dump_file_timezone_info(mini_dump const& dump, size_t index = 0);
 
     private:
         bool found_{false};

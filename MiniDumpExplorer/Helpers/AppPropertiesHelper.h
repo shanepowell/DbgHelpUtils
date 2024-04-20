@@ -19,6 +19,8 @@ public:
     static std::wstring GetStringProperty(std::wstring const& propertyName, std::wstring const& defaultValue = {});
     static void SetIntProperty(std::wstring const& propertyName, int value);
     static int GetIntProperty(std::wstring const& propertyName, int defaultValue);
+    static void SetUnsignedIntProperty(std::wstring const& propertyName, unsigned int value);
+    static unsigned int GetUnsignedIntProperty(std::wstring const& propertyName, unsigned int defaultValue);
     static void SetStringVectorProperty(std::wstring const& propertyName, std::vector<std::wstring> const& value);
     static std::vector<std::wstring> GetStringVectorProperty(std::wstring const& propertyName, std::vector<std::wstring> const& defaultValue = {});
 

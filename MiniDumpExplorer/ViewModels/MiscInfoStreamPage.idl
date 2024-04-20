@@ -1,0 +1,61 @@
+import "models\TimeZoneInformation.idl";
+import "models\DumpFileTimeStamp.idl";
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass MiscInfoStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MiscInfoStreamPage();
+
+        UInt32 Flags { get; };
+        IObservableVector<String> FlagsList { get; };
+        
+        Boolean HasProcessId { get; };
+        UInt32 ProcessId { get; };
+
+        Boolean HasProcessTimes { get; };
+        DumpFileTimeStamp ProcessCreateTime { get; };
+        UInt32 ProcessUserTime { get; };
+        UInt32 ProcessKernelTime { get; };
+
+        Boolean HasProcessorPowerInfo { get; };
+        UInt32 ProcessorMaxMhz { get; };
+        UInt32 ProcessorCurrentMhz { get; };
+        UInt32 ProcessorMhzLimit { get; };
+        UInt32 ProcessorMaxIdleState { get; };
+        UInt32 ProcessorCurrentIdleState { get; };
+
+        Boolean HasProcessIntegrityInfo { get; };
+        UInt32 ProcessIntegrityLevel { get; };
+        String ProcessIntegrityLevelString { get; };
+
+        Boolean HasProcessExecuteFlags { get; };
+        UInt32 ProcessExecuteFlags { get; };
+        IObservableVector<String> ProcessExecuteFlagsList { get; };
+
+        Boolean HasProtectedProcess { get; };
+        UInt32 ProtectedProcess { get; };
+
+        Boolean HasTimeZone { get; };
+        UInt32 TimeZoneId { get; };
+        String TimeZoneIdString { get; };
+        TimeZoneInformation TimeZone { get; };
+
+        Boolean HasBuildString { get; };
+        String BuildString { get; };
+        String DbgBldStr { get; };
+
+        Boolean HasProcessCookie { get; };
+        UInt32 ProcessCookie { get; };
+
+        Boolean HasXStateData { get; };
+        UInt32 XStateDataSize { get; };
+        Boolean IsXStateConfigFeatureMscInfo { get; };
+        UInt32 XStateDataContextSize { get; };
+        UInt64 XStateDataEnabledFeatures { get; };
+
+        IDataGridDataSource XStateDataEnabledFeaturesSource { get; };
+    }
+}

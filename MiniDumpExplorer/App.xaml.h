@@ -85,6 +85,11 @@
 #include "Models\MiniDumpException.h"
 #include "Models\MiniDumpExceptionParameter.h"
 #include "Models\ExceptionParametersDataSource.h"
+#include "Models\TimeZoneInformation.h"
+#include "Models\XStateDataEnabledFeature.h"
+#include "Models\XStateDataEnabledFeaturesDataSource.h"
+#include "Converters\DurationConverter.h"
+#include "Models\DumpFileTimeStamp.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

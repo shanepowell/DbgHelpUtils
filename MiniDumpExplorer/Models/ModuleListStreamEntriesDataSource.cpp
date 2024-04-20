@@ -27,7 +27,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 {L"Base", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::Base)},
                 {L"CheckSum", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::CheckSum)},
                 {L"SizeOfImage", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::SizeOfImage)},
-                {L"TimeDateStamp", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::TimeDateStamp)},
+                {L"BuildFileHash", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::BuildFileHash)},
                 {L"FileVersion", [](MiniDumpExplorer::ModuleListStreamEntry const& a, MiniDumpExplorer::ModuleListStreamEntry const& b)
                     {
                         return Utility::SortCompare(a.FileInfo().FileVersion(), b.FileInfo().FileVersion());
@@ -148,14 +148,14 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void ModuleListStreamEntriesDataSource::LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const& module_list) const
+    void ModuleListStreamEntriesDataSource::LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const& module_list, dlg_help_utils::time_utils::locale_timezone_info const& dump_file_timezone_info) const
     {
         entries_.Clear();
 
         for (size_t index = 0; auto const& module : module_list.list())
         {
             MiniDumpExplorer::ModuleListStreamEntry entry;
-            entry.as<ModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(module));
+            entry.as<ModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(module), dump_file_timezone_info);
             entries_.Append(entry);
             ++index;
         }

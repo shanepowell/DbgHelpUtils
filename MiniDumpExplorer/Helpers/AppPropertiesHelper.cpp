@@ -115,6 +115,27 @@ int AppPropertiesHelper::GetIntProperty(std::wstring const& propertyName, int co
     return value;
 }
 
+void AppPropertiesHelper::SetUnsignedIntProperty(std::wstring const& propertyName, unsigned int const value)
+{
+    ValidateAppName();
+    auto const key = open_registry_key(HKEY_CURRENT_USER, _appRegistryPath);
+    set_registry_value(key.get(), propertyName, REG_DWORD, &value, sizeof(value));
+}
+
+unsigned int AppPropertiesHelper::GetUnsignedIntProperty(std::wstring const& propertyName, unsigned int const defaultValue)
+{
+    ValidateAppName();
+    auto const key = open_registry_key(HKEY_CURRENT_USER, _appRegistryPath);
+    unsigned int value{};
+    if(auto const size = get_registry_value(key.get(), propertyName, REG_DWORD, &value, sizeof(value));
+        !size.has_value() || size.value() != sizeof(value))
+    {
+        return defaultValue;
+    }
+
+    return value;
+}
+
 void AppPropertiesHelper::SetStringVectorProperty(std::wstring const& propertyName, std::vector<std::wstring> const& value)
 {
     ValidateAppName();

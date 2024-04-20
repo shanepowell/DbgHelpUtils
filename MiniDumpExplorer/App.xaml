@@ -19,6 +19,7 @@
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <local:BoolNegationConverter x:Key="BoolNegationConverter"/>
             <local:TimeStampNumberConverter x:Key="TimeStampNumberConverter"/>
+            <local:DurationConverter x:Key="DurationConverter"/>
 
             <x:Double x:Key="Breakpoint640Plus">641</x:Double>
             <x:String x:Key="AppTitleName">MiniDump Explorer</x:String>

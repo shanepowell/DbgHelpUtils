@@ -15,7 +15,13 @@ namespace winrt::MiniDumpExplorer::implementation
         : GlobalOptionsNotifyPropertyChangedBase(
             {
                 L"Age",
-            }, { })
+            },
+            {
+            },
+            {
+            },
+            {
+            })
     {
     }
 

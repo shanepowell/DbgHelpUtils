@@ -462,7 +462,7 @@ namespace
 
 namespace dlg_help_utils::exception_utils
 {
-    std::vector<std::wstring_view> exception_flags_to_list(uint32_t const exception_flags)
+    std::vector<std::wstring> exception_flags_to_list(uint32_t const exception_flags)
     {
         return flags_string_utils::generate_flags_strings(exception_flags, g_exception_flags);
     }

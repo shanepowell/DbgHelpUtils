@@ -56,6 +56,9 @@
     <Page Include="ViewModels\SystemInfoStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\MiscInfoStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -391,46 +394,46 @@
     <ClCompile Include="Utility\GetResourceValue.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\exception_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\exception_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\lfh_subsegment_location_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\lfh_subsegment_location_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\memory_info_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\memory_info_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\mini_dump_stream_type_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\mini_dump_stream_type_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\register_names_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\register_names_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\size_units_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\size_units_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\stream_hex_dump_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\stream_hex_dump_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\thread_info_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\thread_info_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\time_units_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\time_units_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\stream_stack_dump_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\stream_stack_dump_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\symbol_type_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\symbol_type_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resource.cpp">
+    <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
     <ClCompile Include="Models\ThreadListStreamEntriesDataSource.cpp">
@@ -473,6 +476,24 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\ExceptionParametersDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\TimeZoneInformation.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\XStateDataEnabledFeature.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\XStateDataEnabledFeaturesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\DurationConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\DumpFileTimeStamp.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,8 @@ namespace winrt::MiniDumpExplorer::implementation
         NotifyPropertyChangedBase() = default;
 
     public:
+        virtual ~NotifyPropertyChangedBase() = default;
+
         event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value)
         {
             return propertyChanged_.add(value);

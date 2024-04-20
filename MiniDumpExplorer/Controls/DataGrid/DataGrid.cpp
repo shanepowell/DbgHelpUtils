@@ -1337,7 +1337,11 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         if (RowsPresenterAvailableSize().has_value())
         {
-            return std::max(0.0, RowsPresenterAvailableSize()->Width - ActualRowHeaderWidth());
+            if(auto const width = RowsPresenterAvailableSize()->Width;
+                !std::isinf(width))
+            {
+                return std::max(0.0, width - ActualRowHeaderWidth());
+            }
         }
 
         return ColumnsInternal().VisibleEdgedColumnsWidth();

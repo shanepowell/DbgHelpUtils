@@ -12,7 +12,17 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     MiniDumpLocationDescriptor::MiniDumpLocationDescriptor()
-        : GlobalOptionsNotifyPropertyChangedBase({ L"Rva" }, { L"DataSize" })
+        : GlobalOptionsNotifyPropertyChangedBase(
+            {
+                L"Rva"
+            },
+            {
+                L"DataSize"
+            },
+            {
+            },
+            {
+            })
     {
     }
 

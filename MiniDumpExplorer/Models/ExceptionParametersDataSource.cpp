@@ -131,7 +131,7 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void ExceptionParametersDataSource::SetException([[maybe_unused]] MiniDumpExplorer::MiniDumpException const& exception) const
+    void ExceptionParametersDataSource::SetException(MiniDumpExplorer::MiniDumpException const& exception) const
     {
         entries_.Clear();
         for (auto const& parameter : exception.ExceptionInformation())

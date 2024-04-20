@@ -2,7 +2,7 @@
 #include "VsFixedFileInfo.h"
 
 #include "DbgHelpUtils/system_info_utils.h"
-#include "DbgHelpUtils/time_utils.h"
+#include "Models/DumpFileTimeStamp.h"
 
 #if __has_include("VsFixedFileInfo.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -25,11 +25,18 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"FileOS",
                 L"FileType",
                 L"FileSubtype",
-            }, { })
+            },
+            {
+            }, 
+            {
+                L"FileDate"
+            },
+            {
+            })
     {
     }
 
-    void VsFixedFileInfo::Set(VS_FIXEDFILEINFO const& file_info)
+    void VsFixedFileInfo::Set(VS_FIXEDFILEINFO const& file_info, time_utils::locale_timezone_info const& dump_file_timezone_info)
     {
         file_info_ = &file_info;
         info_version_ = system_info_utils::version_info_to_string(file_info_->dwStrucVersion);
@@ -44,7 +51,7 @@ namespace winrt::MiniDumpExplorer::implementation
             FILETIME ft;
             ft.dwHighDateTime = file_info_->dwFileDateMS;
             ft.dwLowDateTime = file_info_->dwFileDateLS;
-            file_date_ = time_utils::filetime_to_time_t(ft);
+            file_date_.as<DumpFileTimeStamp>()->Set(ft, dump_file_timezone_info);
         }
         file_version_ = system_info_utils::version_info_to_string(file_info_->dwFileVersionMS, file_info_->dwFileVersionLS);
         product_version_ = system_info_utils::version_info_to_string(file_info_->dwProductVersionMS, file_info_->dwProductVersionLS);

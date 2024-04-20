@@ -15,7 +15,16 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     DirectoryStreamEntry::DirectoryStreamEntry()
-        : GlobalOptionsNotifyPropertyChangedBase({ L"StreamType" }, { })
+        : GlobalOptionsNotifyPropertyChangedBase(
+            {
+                L"StreamType"
+            },
+            {
+            },
+            {
+            },
+            {
+            })
     {
     }
 

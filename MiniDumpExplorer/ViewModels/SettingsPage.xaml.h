@@ -20,7 +20,10 @@ namespace winrt::MiniDumpExplorer::implementation
         hstring CsdVersion() const { return csdVersion_; }
         hstring ProcessorArchitecture() const { return processorArchitecture_; }
         Windows::Foundation::Collections::IObservableVector<hstring> SuiteMaskList() const { return suiteMaskList_; }
+        static uint64_t ExampleNumber();
         static uint64_t ExampleSize();
+        static uint64_t ExampleDuration();
+        static uint64_t ExampleDate();
 
         void ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LogLevelModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -28,6 +31,15 @@ namespace winrt::MiniDumpExplorer::implementation
         void UnitSizeFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void UnitFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void UnitBaseModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void TimeStampLocaleChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void DateFormatChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void DateLayoutChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void UseAltCalendarToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void Time24HourToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void NoTimeMarkerToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void NoTimeSecondsToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void NoTimeMinutesOrSecondsToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void DurationFormatChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
         void SetupFlyoutMenus();
@@ -36,6 +48,11 @@ namespace winrt::MiniDumpExplorer::implementation
 
         void OnNumberDisplayFormatChanged() override;
         void OnSizeNumberDisplayFormatChanged() override;
+        void OnTimeStampFormatChanged() override;
+        void OnDurationFormatChanged() override;
+
+        static int ToDateFormatIndex(uint32_t dateFormatFlags);
+        static int ToDateLayoutIndex(uint32_t dateFormatFlags);
 
     private:
         event_token onSettingsPageLoadedEvent_;

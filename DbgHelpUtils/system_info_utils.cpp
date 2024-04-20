@@ -14,7 +14,7 @@
 #include "flags_string_utils.h"
 #include "mini_dump.h"
 #include "stream_hex_dump.h"
-#include "system_info_utils_resource.h"
+#include "system_info_utils_resources.h"
 
 
 // #define MEM_EXECUTE_OPTION_VALID_FLAGS 0x3f

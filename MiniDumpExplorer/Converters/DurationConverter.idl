@@ -1,0 +1,8 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass DurationConverter : Microsoft.UI.Xaml.Data.IValueConverter
+    {
+        DurationConverter();
+    }
+}

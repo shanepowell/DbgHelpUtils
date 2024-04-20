@@ -35,7 +35,7 @@ namespace dlg_help_utils::page_range_flags_utils
         return flags_string_utils::generate_flags_string(flags, dump_page_range_flags);
     }
 
-    std::vector<std::wstring_view> dump_page_range_flags_to_strings(page_range_flags const flags)
+    std::vector<std::wstring> dump_page_range_flags_to_strings(page_range_flags const flags)
     {
         return flags_string_utils::generate_flags_strings(flags, dump_page_range_flags);
     }

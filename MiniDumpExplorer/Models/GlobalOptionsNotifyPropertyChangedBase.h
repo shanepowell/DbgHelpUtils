@@ -11,9 +11,15 @@ namespace winrt::MiniDumpExplorer::implementation
         using NotifyPropertyChangedBase<T>::Self;
         using NotifyPropertyChangedBase<T>::RaisePropertyChanged;
 
-        GlobalOptionsNotifyPropertyChangedBase(std::vector<std::wstring_view> numberDisplayFormatProperties, std::vector<std::wstring_view> sizeNumberDisplayFormatProperties)
+        GlobalOptionsNotifyPropertyChangedBase(std::vector<std::wstring_view> numberDisplayFormatProperties,
+            std::vector<std::wstring_view> sizeNumberDisplayFormatProperties,
+            std::vector<std::wstring_view> timeStampFormatProperties,
+            std::vector<std::wstring_view> durationFormatProperties
+        )
             : numberDisplayFormatProperties_{std::move(numberDisplayFormatProperties)}
             , sizeNumberDisplayFormatProperties_{std::move(sizeNumberDisplayFormatProperties)}
+            , timeStampFormatProperties_{std::move(timeStampFormatProperties)}
+            , durationFormatProperties_{std::move(durationFormatProperties)}
         {
             if(!numberDisplayFormatProperties_.empty())
             {
@@ -41,6 +47,32 @@ namespace winrt::MiniDumpExplorer::implementation
                         return false;
                     });
             }
+            if(!timeStampFormatProperties_.empty())
+            {
+                GlobalOptions::Options().OnTimeStampFormatChanged([this, ptr = Self()->get_weak()](auto const, auto const, auto const, auto const&, auto const, auto const&)
+                    {
+                        if(auto const self = ptr.get())
+                        {
+                            ProcessTimeStampFormatChanged();
+                            return true;
+                        }
+
+                        return false;
+                    });
+            }
+            if(!durationFormatProperties_.empty())
+            {
+                GlobalOptions::Options().OnDurationFormatChanged([this, ptr = Self()->get_weak()](auto const)
+                    {
+                        if(auto const self = ptr.get())
+                        {
+                            ProcessDurationFormatChanged();
+                            return true;
+                        }
+
+                        return false;
+                    });
+            }
         }
 
         virtual void OnNumberDisplayFormatChanged()
@@ -48,6 +80,14 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         virtual void OnSizeNumberDisplayFormatChanged()
+        {
+        }
+
+        virtual void OnTimeStampFormatChanged()
+        {
+        }
+
+        virtual void OnDurationFormatChanged()
         {
         }
 
@@ -64,6 +104,18 @@ namespace winrt::MiniDumpExplorer::implementation
             OnSizeNumberDisplayFormatChanged();
         }
 
+        void ProcessTimeStampFormatChanged()
+        {
+            RaisePropertiesChanged(timeStampFormatProperties_);
+            OnTimeStampFormatChanged();
+        }
+
+        void ProcessDurationFormatChanged()
+        {
+            RaisePropertiesChanged(durationFormatProperties_);
+            OnDurationFormatChanged();
+        }
+
         void RaisePropertiesChanged(std::vector<std::wstring_view> const& properties)
         {
             for(auto const& propertyName : properties)
@@ -76,5 +128,7 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         std::vector<std::wstring_view> numberDisplayFormatProperties_;
         std::vector<std::wstring_view> sizeNumberDisplayFormatProperties_;
+        std::vector<std::wstring_view> timeStampFormatProperties_;
+        std::vector<std::wstring_view> durationFormatProperties_;
     };
 }

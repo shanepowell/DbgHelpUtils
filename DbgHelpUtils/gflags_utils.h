@@ -45,5 +45,5 @@ namespace dlg_help_utils::gflags_utils
         // ReSharper restore IdentifierTypo
     };
 
-    std::vector<std::wstring_view> dump_gflags_to_strings(gflags nt_global_flags);
+    std::vector<std::wstring> dump_gflags_to_strings(gflags nt_global_flags);
 }

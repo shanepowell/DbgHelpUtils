@@ -21,20 +21,20 @@ namespace dlg_help_utils::exception_utils
 
             static std::unordered_map<uint32_t, std::wstring> const exception_flags =
             {
-                {EXCEPTION_NONCONTINUABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_NONCONTINUABLE").ValueAsString()}},//, L"EXCEPTION_NONCONTINUABLE"s},
-                {EXCEPTION_UNWINDING, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_UNWINDING").ValueAsString()}},//, L"EXCEPTION_UNWINDING"s},
-                {EXCEPTION_EXIT_UNWIND, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_EXIT_UNWIND").ValueAsString()}},//, L"EXCEPTION_EXIT_UNWIND"s},
-                {EXCEPTION_STACK_INVALID, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_STACK_INVALID").ValueAsString()}},//, L"EXCEPTION_STACK_INVALID"s},
-                {EXCEPTION_NESTED_CALL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_NESTED_CALL").ValueAsString()}},//, L"EXCEPTION_NESTED_CALL"s},
-                {EXCEPTION_TARGET_UNWIND, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_TARGET_UNWIND").ValueAsString()}},//, L"EXCEPTION_NESTED_CALL"s},
-                {EXCEPTION_COLLIDED_UNWIND, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_COLLIDED_UNWIND").ValueAsString()}},//, L"EXCEPTION_NESTED_CALL"s},
+                {EXCEPTION_NONCONTINUABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_NONCONTINUABLE").ValueAsString()}},
+                {EXCEPTION_UNWINDING, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_UNWINDING").ValueAsString()}},
+                {EXCEPTION_EXIT_UNWIND, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_EXIT_UNWIND").ValueAsString()}},
+                {EXCEPTION_STACK_INVALID, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_STACK_INVALID").ValueAsString()}},
+                {EXCEPTION_NESTED_CALL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_NESTED_CALL").ValueAsString()}},
+                {EXCEPTION_TARGET_UNWIND, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_TARGET_UNWIND").ValueAsString()}},
+                {EXCEPTION_COLLIDED_UNWIND, std::wstring{rm.MainResourceMap().GetValue(L"Resources/EXCEPTION_COLLIDED_UNWIND").ValueAsString()}},
             };
 
             return exception_flags;
         }
     }
 
-    std::vector<std::wstring_view> exception_flags_to_list(uint32_t const exception_flags)
+    std::vector<std::wstring> exception_flags_to_list(uint32_t const exception_flags)
     {
         return flags_string_utils::generate_flags_strings(exception_flags, exception_flags_map());
     }

@@ -9,6 +9,7 @@
 
 #include "ControlHelpers.h"
 #include "Utility/InspectableUtility.h"
+#include "Models/GlobalOptionItems.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -28,7 +29,7 @@ namespace
         return Input::FocusManager::GetFocusedElement();
     }
 
-    Controls::ToggleMenuFlyoutItem CreateGlobalOptionsBoundPropertyItem(GlobalOptionItems const& globalOptions, hstring const& resourceName, hstring const& propertyName, bool const disableWhenFalse)
+    Controls::ToggleMenuFlyoutItem CreateGlobalOptionsCheckedBoundPropertyItem(GlobalOptionItems const& globalOptions, hstring const& resourceName, hstring const& propertyName)
     {
         auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
         auto const menuItem = Controls::ToggleMenuFlyoutItem{};
@@ -42,15 +43,22 @@ namespace
             menuItem.SetBinding(Controls::ToggleMenuFlyoutItem::IsCheckedProperty(), binding);
         }
 
-        if(disableWhenFalse)
+        return menuItem;
+    }
+
+    Controls::RadioMenuFlyoutItem CreateGlobalOptionsGroupCheckedBoundPropertyItem(GlobalOptionItems const& globalOptions, hstring const& resourceName, hstring const& propertyName, hstring const& groupName)
+    {
+        auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+        auto const menuItem = Controls::RadioMenuFlyoutItem{};
+        menuItem.Text(rm.MainResourceMap().GetValue(resourceName).ValueAsString());
+        menuItem.GroupName(groupName);
+
         {
             Data::Binding binding{};
-            binding.Mode(Data::BindingMode::OneWay);
+            binding.Mode(Data::BindingMode::TwoWay);
             binding.Path(PropertyPath{propertyName});
             binding.Source(globalOptions);
-            BoolNegationConverter converter{};
-            binding.Converter(converter);
-            menuItem.SetBinding(Controls::Control::IsEnabledProperty(), binding);
+            menuItem.SetBinding(Controls::RadioMenuFlyoutItem::IsCheckedProperty(), binding);
         }
 
         return menuItem;
@@ -191,7 +199,7 @@ Controls::MenuFlyoutItem UIHelper::CreateCopyValue(Controls::TextBlock const& co
 Controls::MenuFlyoutItem UIHelper::CreateHexNumberDisplayFormatOption()
 {
     GlobalOptionItems optionItems{};
-    return CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/HexNumberDisplayFormatOptionMenuItem", L"DisplayHexadecimalNumericFormat", false);
+    return CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/HexNumberDisplayFormatOptionMenuItem", implementation::GlobalOptionItems::DisplayHexadecimalNumericFormatString);
 }
 
 Controls::MenuFlyoutSubItem UIHelper::CreateSizeNumberDisplayUnitFormatOption()
@@ -203,15 +211,17 @@ Controls::MenuFlyoutSubItem UIHelper::CreateSizeNumberDisplayUnitFormatOption()
 
     GlobalOptionItems optionItems{};
 
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatAutoMenuItem", L"SizeNumberDisplayUnitFormatAuto", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatBytesMenuItem", L"SizeNumberDisplayUnitFormatBytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatKilobytesMenuItem", L"SizeNumberDisplayUnitFormatKilobytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatMegabytesMenuItem", L"SizeNumberDisplayUnitFormatMegabytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatGigabytesMenuItem", L"SizeNumberDisplayUnitFormatGigabytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatTerabytesMenuItem", L"SizeNumberDisplayUnitFormatTerabytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatPetabytesMenuItem", L"SizeNumberDisplayUnitFormatPetabytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatExabytesMenuItem", L"SizeNumberDisplayUnitFormatExabytes", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatRawMenuItem", L"SizeNumberDisplayUnitFormatRaw", true));
+    hstring groupName{L"SizeNumberDisplayUnitOptions"};
+
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatAutoMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatAutoString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatBytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatBytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatKilobytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatKilobytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatMegabytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatMegabytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatGigabytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatGigabytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatTerabytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatTerabytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatPetabytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatPetabytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatExabytesMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatExabytesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayUnitFormatRawMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayUnitFormatRawString, groupName));
 
     return menu;
 }
@@ -225,8 +235,10 @@ Controls::MenuFlyoutSubItem UIHelper::CreateSizeNumberDisplayPrintFormatOption()
 
     GlobalOptionItems optionItems{};
 
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayPrintFormatFullMenuItem", L"SizeNumberDisplayPrintFormatFull", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayPrintFormatCompactMenuItem", L"SizeNumberDisplayPrintFormatCompact", true));
+    hstring groupName{L"SizeNumberDisplayPrintFormatOptions"};
+
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayPrintFormatFullMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayPrintFormatFullString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayPrintFormatCompactMenuItem", implementation::GlobalOptionItems::SizeNumberDisplayPrintFormatCompactString, groupName));
 
     return menu;
 }
@@ -240,32 +252,117 @@ Controls::MenuFlyoutSubItem UIHelper::CreateSizeNumberDisplayBaseOption()
 
     GlobalOptionItems optionItems{};
 
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayBase10MenuItem", L"SizeNumberDisplayBase10", true));
-    menu.Items().Append(CreateGlobalOptionsBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayBase16MenuItem", L"SizeNumberDisplayBase16", true));
+    hstring groupName{L"SizeNumberDisplayBaseOptions"};
+
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayBase10MenuItem", implementation::GlobalOptionItems::SizeNumberDisplayBase10String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/SizeNumberDisplayBase16MenuItem", implementation::GlobalOptionItems::SizeNumberDisplayBase16String, groupName));
 
     return menu;
 }
 
-void UIHelper::CreateStandardHexNumberMenu(Controls::TextBlock const& control)
+Controls::MenuFlyoutSubItem UIHelper::CreateTimeStampLocale()
 {
-    auto const menu = Controls::MenuFlyout{};
+    auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+    auto const menu = Controls::MenuFlyoutSubItem{};
 
-    menu.Items().Append(CreateCopyValue(control));
-    menu.Items().Append(Controls::MenuFlyoutSeparator{});
-    menu.Items().Append(CreateHexNumberDisplayFormatOption());
+    menu.Text(rm.MainResourceMap().GetValue(L"Resources/TimeStampLocaleMenu").ValueAsString());
 
-    control.ContextFlyout(menu);
+    GlobalOptionItems optionItems{};
+
+    hstring groupName{L"TimeStampLocaleOptions"};
+
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/TimeStampLocaleLocalMenuItem", implementation::GlobalOptionItems::TimeStampLocaleLocalString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/TimeStampLocaleUtcMenuItem", implementation::GlobalOptionItems::TimeStampLocaleUtcString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/TimeStampLocaleDumpFileMenuItem", implementation::GlobalOptionItems::TimeStampLocaleDumpFileString, groupName));
+
+    return menu;
 }
 
-void UIHelper::CreateStandardSizeNumberMenu(Controls::TextBlock const& control)
+Controls::MenuFlyoutSubItem UIHelper::CreateDateFormatFlags()
+{
+    auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+    auto const menu = Controls::MenuFlyoutSubItem{};
+
+    menu.Text(rm.MainResourceMap().GetValue(L"Resources/DateFormatFlagsMenu").ValueAsString());
+
+    GlobalOptionItems optionItems{};
+
+    {
+        hstring groupName1{L"DateFormatFlagsOptions1"};
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatLongDateMenuItem", implementation::GlobalOptionItems::DateFormatLongDateString, groupName1));
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatShortDateMenuItem", implementation::GlobalOptionItems::DateFormatShortDateString, groupName1));
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatYearMonthMenuItem", implementation::GlobalOptionItems::DateFormatYearMonthString, groupName1));
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatMonthDayMenuItem", implementation::GlobalOptionItems::DateFormatMonthDayString, groupName1));
+    }
+
+    menu.Items().Append(Controls::MenuFlyoutSeparator{});
+
+    {
+        hstring groupName2{L"DateFormatFlagsOptions2"};
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatLeftToRightReadingMenuItem", implementation::GlobalOptionItems::DateFormatLeftToRightReadingString, groupName2));
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatRightToLeftReadingMenuItem", implementation::GlobalOptionItems::DateFormatRightToLeftReadingString, groupName2));
+        menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatAutoLayoutMenuItem", implementation::GlobalOptionItems::DateFormatAutoLayoutString, groupName2));
+    }
+
+    menu.Items().Append(Controls::MenuFlyoutSeparator{});
+    menu.Items().Append(CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/DateFormatUseAltCalendarMenuItem", implementation::GlobalOptionItems::DateFormatUseAltCalendarString));
+
+    return menu;
+}
+
+Controls::MenuFlyoutSubItem UIHelper::CreateTimeFormatFlags()
+{
+    auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+    auto const menu = Controls::MenuFlyoutSubItem{};
+
+    menu.Text(rm.MainResourceMap().GetValue(L"Resources/TimeFormatFlagsMenu").ValueAsString());
+
+    GlobalOptionItems optionItems{};
+
+    menu.Items().Append(CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/TimeFormat24HourMenuItem", implementation::GlobalOptionItems::TimeFormat24HourString));
+    menu.Items().Append(CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/TimeFormatNoTimeMarkerMenuItem", implementation::GlobalOptionItems::TimeFormatNoTimeMarkerString));
+    menu.Items().Append(CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/TimeFormatNoSecondsMenuItem", implementation::GlobalOptionItems::TimeFormatNoSecondsString));
+    menu.Items().Append(CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/TimeFormatNoMinutesOrSecondsMenuItem", implementation::GlobalOptionItems::TimeFormatNoMinutesOrSecondsString));
+
+    return menu;
+}
+
+Controls::MenuFlyoutSubItem UIHelper::CreateDurationFormat()
+{
+    auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+    auto const menu = Controls::MenuFlyoutSubItem{};
+
+    menu.Text(rm.MainResourceMap().GetValue(L"Resources/DurationFormatMenu").ValueAsString());
+
+    GlobalOptionItems optionItems{};
+
+    hstring groupName{L"DurationFormatOptions"};
+
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatTimeSpanMenuItem", implementation::GlobalOptionItems::DurationFormatTimeSpanString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatAutoMenuItem", implementation::GlobalOptionItems::DurationFormatAutoString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatMillisecondsMenuItem", implementation::GlobalOptionItems::DurationFormatMillisecondsString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatSecondsMenuItem", implementation::GlobalOptionItems::DurationFormatSecondsString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatMinutesMenuItem", implementation::GlobalOptionItems::DurationFormatMinutesString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatHoursMenuItem", implementation::GlobalOptionItems::DurationFormatHoursString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatDaysMenuItem", implementation::GlobalOptionItems::DurationFormatDaysString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatWeeksMenuItem", implementation::GlobalOptionItems::DurationFormatWeeksString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatMonthsMenuItem", implementation::GlobalOptionItems::DurationFormatMonthsString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatYearsMenuItem", implementation::GlobalOptionItems::DurationFormatYearsString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatRawMenuItem", implementation::GlobalOptionItems::DurationFormatRawString, groupName));
+
+    return menu;
+}
+
+void UIHelper::CreateSingleControlMenu(std::vector<Controls::MenuFlyoutItemBase> const& menus, Controls::TextBlock const& control)
 {
     auto const menu = Controls::MenuFlyout{};
 
     menu.Items().Append(CreateCopyValue(control));
     menu.Items().Append(Controls::MenuFlyoutSeparator{});
-    menu.Items().Append(CreateSizeNumberDisplayUnitFormatOption());
-    menu.Items().Append(CreateSizeNumberDisplayPrintFormatOption());
-    menu.Items().Append(CreateSizeNumberDisplayBaseOption());
+    for(auto item : menus)
+    {
+        menu.Items().Append(item);
+    }
 
     control.ContextFlyout(menu);
 }

@@ -13,6 +13,9 @@ namespace MiniDumpExplorer
         String PlatformId { get; };
         String CsdVersion { get; };
         String ProcessorArchitecture { get; };
+        UInt64 ExampleNumber { get; };
         UInt64 ExampleSize { get; };
+        UInt64 ExampleDuration { get; };
+        UInt64 ExampleDate { get; };
     }
 }

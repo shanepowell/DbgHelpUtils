@@ -4,6 +4,7 @@
 #include "DbgHelpUtils/common_symbol_names.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
+#include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
@@ -440,6 +441,8 @@ void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump c
         return;
     }
 
+    auto const local_info = misc_info_stream::get_dump_file_timezone_info(mini_dump);
+
     log << std::format(L"NumberOfEntries: {}\n", locale_formatting::to_wstring(thread_info_list.size()));
     for (size_t i = 0; auto const& thread : thread_info_list.list())
     {
@@ -454,15 +457,19 @@ void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump c
         log << std::format(L"   Affinity: {}\n", to_hex_full(thread->Affinity));
         if (thread->CreateTime > 0)
         {
-            log << std::format(L"   CreateTime [local: {0}] [UTC: {1}]\n"
-                , time_utils::to_local_time(time_utils::filetime_to_time_t(thread->CreateTime))
-                , time_utils::to_utc_time(time_utils::filetime_to_time_t(thread->CreateTime)));
+            log << std::format(L"   CreateTime [local: {0}] [UTC: {1}] [DumpLocale: {2}]\n"
+                , from_dump_file_to_local_timestamp_string(time_utils::filetime_to_time_t(thread->CreateTime), local_info)
+                , from_dump_file_to_utc_timestamp_string(time_utils::filetime_to_time_t(thread->CreateTime), local_info)
+                , to_dump_file_timestamp_string(time_utils::filetime_to_time_t(thread->CreateTime), local_info)
+            );
         }
         if (thread->ExitTime > 0)
         {
-            log << std::format(L"   ExitTime [local: {0}] [UTC: {1}]\n"
-                , time_utils::to_local_time(time_utils::filetime_to_time_t(thread->ExitTime))
-                , time_utils::to_utc_time(time_utils::filetime_to_time_t(thread->ExitTime)));
+            log << std::format(L"   ExitTime [local: {0}] [UTC: {1}] [DumpLocale: {2}]\n"
+                , from_dump_file_to_local_timestamp_string(time_utils::filetime_to_time_t(thread->ExitTime), local_info)
+                , from_dump_file_to_utc_timestamp_string(time_utils::filetime_to_time_t(thread->ExitTime), local_info)
+                , to_dump_file_timestamp_string(time_utils::filetime_to_time_t(thread->ExitTime), local_info)
+            );
         }
         log << std::format(L"   UserTime: {0} ({1})\n", locale_formatting::to_wstring(thread->UserTime), time_utils::duration_to_ms(thread->UserTime));
         log << std::format(L"   KernelTime: {0} ({1})\n", locale_formatting::to_wstring(thread->KernelTime), time_utils::duration_to_ms(thread->KernelTime));

@@ -71,12 +71,8 @@
                 <TextBlock x:Name="headerDumpFileCrc32" Text="{x:Bind DumpFileCrc32,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" />
             </StackPanel>
 
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="Timestamp Local" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="{x:Bind TimeDateStamp,Converter={StaticResource TimeStampNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-                <TextBlock Text="UTC" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="20,0,0,0" />
-                <TextBlock Text="{x:Bind TimeDateStamp,Converter={StaticResource TimeStampNumberConverter},ConverterParameter=True,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" />
-            </StackPanel>
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Timestamp" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
+            <TextBlock x:Name="timeDateStamp" Grid.Row="9" Grid.Column="1" Text="{x:Bind TimeDateStamp,Converter={StaticResource TimeStampNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <TextBlock Grid.Row="10" Grid.Column="0" Text="Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
             <TextBlock x:Name="headerFlags" Grid.Row="10" Grid.Column="1" Text="{x:Bind Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" IsTextSelectionEnabled="True" />

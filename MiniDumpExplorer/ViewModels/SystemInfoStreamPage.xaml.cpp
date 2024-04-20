@@ -32,7 +32,12 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"OtherCpuInfoProcessorFeatures1",
                 L"OtherCpuInfoProcessorFeatures2"
             },
-            { })
+            {
+            }, 
+            {
+            },
+            {
+            })
     {
     }
 
@@ -44,17 +49,17 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void SystemInfoStreamPage::SetupFlyoutMenus()
     {
-        UIHelper::CreateStandardHexNumberMenu(processorLevel());
-        UIHelper::CreateStandardHexNumberMenu(processorModel());
-        UIHelper::CreateStandardHexNumberMenu(processorStepping());
-        UIHelper::CreateStandardHexNumberMenu(processorRevision());
-        UIHelper::CreateStandardHexNumberMenu(suiteMask());
-        UIHelper::CreateStandardHexNumberMenu(reserved2());
-        UIHelper::CreateStandardHexNumberMenu(x86CpuInfoVersionInformation());
-        UIHelper::CreateStandardHexNumberMenu(x86CpuInfoFeatureInformation());
-        UIHelper::CreateStandardHexNumberMenu(x86CpuInfoAMDExtendedCpuFeatures());
-        UIHelper::CreateStandardHexNumberMenu(otherCpuInfoProcessorFeatures1());
-        UIHelper::CreateStandardHexNumberMenu(otherCpuInfoProcessorFeatures2());
+        UIHelper::CreateStandardHexNumberMenu(processorLevel(), 
+            processorModel(), 
+            processorStepping(), 
+            processorRevision(), 
+            suiteMask(), 
+            reserved2(), 
+            x86CpuInfoVersionInformation(), 
+            x86CpuInfoFeatureInformation(), 
+            x86CpuInfoAMDExtendedCpuFeatures(), 
+            otherCpuInfoProcessorFeatures1(),
+            otherCpuInfoProcessorFeatures2());
     }
 
     void SystemInfoStreamPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters)

@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "DbgHelpUtils/system_info_utils.h"
-#include "DbgHelpUtils/system_info_utils_resource.h"
+#include "DbgHelpUtils/system_info_utils_resources.h"
 
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
@@ -245,6 +245,19 @@ namespace
         return suite_masks;
     }
 
+    std::unordered_map<uint32_t, std::wstring> const& timezone_ids()
+    {
+        winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+        static std::unordered_map<uint32_t, std::wstring> const timezone_ids =
+        {
+            {static_cast<unsigned short>(TIME_ZONE_ID_UNKNOWN), std::wstring{rm.MainResourceMap().GetValue(L"Resources/TIME_ZONE_ID_UNKNOWN").ValueAsString()}},
+            {static_cast<unsigned short>(TIME_ZONE_ID_STANDARD), std::wstring{rm.MainResourceMap().GetValue(L"Resources/TIME_ZONE_ID_STANDARD").ValueAsString()}},
+            {static_cast<unsigned short>(TIME_ZONE_ID_DAYLIGHT), std::wstring{rm.MainResourceMap().GetValue(L"Resources/TIME_ZONE_ID_DAYLIGHT").ValueAsString()}},
+        };
+
+        return timezone_ids;
+    }
+
     std::unordered_map<uint32_t, std::wstring> const& process_integrity_levels()
     {
         winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
@@ -365,6 +378,51 @@ namespace
 
         return sym_types;
     }
+
+
+    std::unordered_map<uint32_t, std::wstring> const& misc_info_flags()
+    {
+        winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+        static std::unordered_map<uint32_t, std::wstring> const misc_info_flags =
+        {
+            { MINIDUMP_MISC1_PROCESS_ID, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC1_PROCESS_ID").ValueAsString()}},
+            { MINIDUMP_MISC1_PROCESS_TIMES, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC1_PROCESS_TIMES").ValueAsString()}},
+            { MINIDUMP_MISC1_PROCESSOR_POWER_INFO, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC1_PROCESSOR_POWER_INFO").ValueAsString()}},
+            { MINIDUMP_MISC3_PROCESS_INTEGRITY, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC3_PROCESS_INTEGRITY").ValueAsString()}},
+            { MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS").ValueAsString()}},
+            { MINIDUMP_MISC3_TIMEZONE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC3_TIMEZONE").ValueAsString()}},
+            { MINIDUMP_MISC3_PROTECTED_PROCESS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC3_PROTECTED_PROCESS").ValueAsString()}},
+            { MINIDUMP_MISC4_BUILDSTRING, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC4_BUILDSTRING").ValueAsString()}},
+            { MINIDUMP_MISC5_PROCESS_COOKIE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/MINIDUMP_MISC5_PROCESS_COOKIE").ValueAsString()}},
+        };
+
+        return misc_info_flags;
+    }
+
+
+    std::unordered_map<uint32_t, std::wstring> const& xstate_data_features()
+    {
+        winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+        static std::unordered_map<uint32_t, std::wstring> const xstate_data_features =
+        {
+            {XSTATE_LEGACY_FLOATING_POINT, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_LEGACY_FLOATING_POINT").ValueAsString()}},
+            {XSTATE_LEGACY_SSE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_LEGACY_SSE").ValueAsString()}},
+            {XSTATE_AVX, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_AVX").ValueAsString()}},
+            {XSTATE_MPX_BNDREGS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_MPX_BNDREGS").ValueAsString()}},
+            {XSTATE_MPX_BNDCSR, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_MPX_BNDCSR").ValueAsString()}},
+            {XSTATE_AVX512_KMASK, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_AVX512_KMASK").ValueAsString()}},
+            {XSTATE_AVX512_ZMM_H, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_AVX512_ZMM_H").ValueAsString()}},
+            {XSTATE_AVX512_ZMM, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_AVX512_ZMM").ValueAsString()}},
+            {XSTATE_IPT, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_IPT").ValueAsString()}},
+            {XSTATE_CET_U, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_CET_U").ValueAsString()}},
+            {XSTATE_CET_S, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_CET_S").ValueAsString()}},
+            {XSTATE_AMX_TILE_CONFIG, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_AMX_TILE_CONFIG").ValueAsString()}},
+            {XSTATE_AMX_TILE_DATA, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_AMX_TILE_DATA").ValueAsString()}},
+            {XSTATE_LWP, std::wstring{rm.MainResourceMap().GetValue(L"Resources/XSTATE_LWP").ValueAsString()}},
+        };
+
+        return xstate_data_features;
+    }
 }
 
 namespace dlg_help_utils::system_info_utils
@@ -407,9 +465,24 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_enum_string(key, version_strings());
     }
 
-    std::vector<std::wstring_view> suite_mask_to_strings(unsigned short const suite_mask)
+    std::vector<std::wstring> suite_mask_to_strings(unsigned short const suite_mask)
     {
         return flags_string_utils::generate_flags_strings(suite_mask, suite_masks());
+    }
+
+    std::wstring misc_info_flags_to_string(uint32_t const flags)
+    {
+        return flags_string_utils::generate_flags_string(flags, misc_info_flags());
+    }
+
+    std::vector<std::wstring> misc_info_flags_to_strings(uint32_t const flags)
+    {
+        return flags_string_utils::generate_flags_strings(flags, misc_info_flags());
+    }
+
+    std::wstring time_zone_id_to_string(uint32_t const timezone_id)
+    {
+        return flags_string_utils::generate_enum_string(timezone_id, timezone_ids());
     }
 
     std::wstring process_integrity_level_to_string(uint32_t const process_integrity_level)
@@ -422,7 +495,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags, vm_counters_2_flag_masks());
     }
 
-    std::vector<std::wstring_view> vm_counters_2_flags_to_strings(uint16_t const flags)
+    std::vector<std::wstring> vm_counters_2_flags_to_strings(uint16_t const flags)
     {
         return flags_string_utils::generate_flags_strings(flags, vm_counters_2_flag_masks());
     }
@@ -437,7 +510,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_enum_string(static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION_TYPE>(type), object_information_types());
     }
 
-    std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t const flags)
+    std::vector<std::wstring> process_execute_flags_to_strings(uint32_t const flags)
     {
         return flags_string_utils::generate_flags_strings(static_cast<mem_execute_options>(flags), process_execute_flags());
     }
@@ -447,7 +520,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags & mask, version_file_flag_masks());
     }
 
-    std::vector<std::wstring_view> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)
+    std::vector<std::wstring> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)
     {
         return flags_string_utils::generate_flags_strings(flags & mask, version_file_flag_masks());
     }
@@ -457,7 +530,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(file_os, version_file_os_masks());
     }
 
-    std::vector<std::wstring_view> version_file_os_to_strings(uint32_t const file_os)
+    std::vector<std::wstring> version_file_os_to_strings(uint32_t const file_os)
     {
         return flags_string_utils::generate_flags_strings(file_os, version_file_os_masks());
     }
@@ -470,5 +543,10 @@ namespace dlg_help_utils::system_info_utils
     std::wstring sym_type_to_string(uint32_t const type)
     {
         return flags_string_utils::generate_enum_string(static_cast<SYM_TYPE>(type), sym_types());
+    }
+
+    std::wstring xstate_data_feature_to_string(uint32_t const feature)
+    {
+        return flags_string_utils::generate_enum_string(feature, xstate_data_features());
     }
 }

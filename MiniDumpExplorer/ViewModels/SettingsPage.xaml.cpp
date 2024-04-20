@@ -33,7 +33,20 @@ namespace winrt::MiniDumpExplorer::implementation
     }
 
     SettingsPage::SettingsPage()
-        : GlobalOptionsNotifyPropertyChangedBase({ L"SuiteMask" },{ L"ExampleSize" })
+        : GlobalOptionsNotifyPropertyChangedBase(
+            {
+                L"SuiteMask",
+                L"ExampleNumber"
+            },
+            {
+                L"ExampleSize"
+            }, 
+            {
+                L"ExampleDate"
+            },
+            {
+                L"ExampleDuration"
+            })
     {
     }
 
@@ -71,6 +84,15 @@ namespace winrt::MiniDumpExplorer::implementation
         unitSizeFormatMode().SelectedIndex(static_cast<int>(options.SizeNumberDisplayFormat()));
         unitFormatMode().SelectedIndex(static_cast<int>(options.SizeFormat()));
         unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
+        timeStampLocale().SelectedIndex(static_cast<int>(options.TimeStampLocale()));
+        dateFormat().SelectedIndex(ToDateFormatIndex(options.DateFormatFlags()));
+        dateLayout().SelectedIndex(ToDateLayoutIndex(options.DateFormatFlags()));
+        useAltCalendar().IsOn((options.DateFormatFlags() & DATE_USE_ALT_CALENDAR) == DATE_USE_ALT_CALENDAR);
+        time24Hour().IsOn((options.TimeFormatFlags() & TIME_FORCE24HOURFORMAT) == TIME_FORCE24HOURFORMAT);
+        noTimeMarker().IsOn((options.TimeFormatFlags() & TIME_NOTIMEMARKER) == TIME_NOTIMEMARKER);
+        noTimeSeconds().IsOn((options.TimeFormatFlags() & TIME_NOSECONDS) == TIME_NOSECONDS);
+        noTimeMinutesOrSeconds().IsOn((options.TimeFormatFlags() & TIME_NOMINUTESORSECONDS) == TIME_NOMINUTESORSECONDS);
+        durationFormat().SelectedIndex(static_cast<int>(options.DurationFormat()));
     }
 
     void SettingsPage::LoadVersionInformation()
@@ -122,7 +144,88 @@ namespace winrt::MiniDumpExplorer::implementation
         unitBaseMode().SelectedIndex(static_cast<int>(options.SizeBase()));
     }
 
+    void SettingsPage::OnTimeStampFormatChanged()
+    {
+        auto const& options = GlobalOptions::Options();
+        timeStampLocale().SelectedIndex(static_cast<int>(options.TimeStampLocale()));
+        dateFormat().SelectedIndex(ToDateFormatIndex(options.DateFormatFlags()));
+        dateLayout().SelectedIndex(ToDateLayoutIndex(options.DateFormatFlags()));
+        useAltCalendar().IsOn((options.DateFormatFlags() & DATE_USE_ALT_CALENDAR) == DATE_USE_ALT_CALENDAR);
+        time24Hour().IsOn((options.TimeFormatFlags() & TIME_FORCE24HOURFORMAT) == TIME_FORCE24HOURFORMAT);
+        noTimeMarker().IsOn((options.TimeFormatFlags() & TIME_NOTIMEMARKER) == TIME_NOTIMEMARKER);
+        noTimeSeconds().IsOn((options.TimeFormatFlags() & TIME_NOSECONDS) == TIME_NOSECONDS);
+        noTimeMinutesOrSeconds().IsOn((options.TimeFormatFlags() & TIME_NOMINUTESORSECONDS) == TIME_NOMINUTESORSECONDS);
+    }
+
+    void SettingsPage::OnDurationFormatChanged()
+    {
+        auto const& options = GlobalOptions::Options();
+        durationFormat().SelectedIndex(static_cast<int>(options.DurationFormat()));
+    }
+
+    int SettingsPage::ToDateFormatIndex(uint32_t const dateFormatFlags)
+    {
+        if ((dateFormatFlags & DATE_LONGDATE) == DATE_LONGDATE)
+        {
+            return 0;
+        }
+
+        if ((dateFormatFlags & DATE_SHORTDATE) == DATE_SHORTDATE)
+        {
+            return 1;
+        }
+
+        if ((dateFormatFlags & DATE_YEARMONTH) == DATE_YEARMONTH)
+        {
+            return 2;
+        }
+
+        if ((dateFormatFlags & DATE_MONTHDAY) == DATE_MONTHDAY)
+        {
+            return 3;
+        }
+
+        return 1;
+    }
+
+    int SettingsPage::ToDateLayoutIndex(uint32_t const dateFormatFlags)
+    {
+        
+        if ((dateFormatFlags & DATE_AUTOLAYOUT) == DATE_AUTOLAYOUT)
+        {
+            return 0;
+        }
+
+        if ((dateFormatFlags & DATE_LTRREADING) == DATE_LTRREADING)
+        {
+            return 1;
+        }
+
+        if ((dateFormatFlags & DATE_RTLREADING) == DATE_RTLREADING)
+        {
+            return 2;
+        }
+
+        return 0;
+    }
+
+    uint64_t SettingsPage::ExampleNumber()
+    {
+        return 1234567890123456789ULL;
+    }
+
     uint64_t SettingsPage::ExampleSize()
+    {
+        return 1234567890123456789ULL;
+    }
+
+    uint64_t SettingsPage::ExampleDate()
+    {
+        static const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        return now;
+    }
+
+    uint64_t SettingsPage::ExampleDuration()
     {
         return 1234567890123456789ULL;
     }
@@ -173,13 +276,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void SettingsPage::NumberFormatModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
     {
-        const auto new_number_format = static_cast<NumberDisplayFormat>(numberFormatMode().SelectedIndex());
+        const auto new_number_format = static_cast<NumberDisplayFormatType>(numberFormatMode().SelectedIndex());
         GlobalOptions::Options().NumberDisplayFormat(new_number_format);
     }
 
     void SettingsPage::UnitSizeFormatModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
     {
-        const auto value = static_cast<SizeNumberDisplayFormat>(unitSizeFormatMode().SelectedIndex());
+        const auto value = static_cast<SizeNumberDisplayFormatType>(unitSizeFormatMode().SelectedIndex());
         GlobalOptions::Options().SizeNumberDisplayFormat(value);
     }
 
@@ -191,14 +294,135 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void SettingsPage::UnitBaseModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
     {
-        const auto value = static_cast<SizeDisplayNumberBase>(unitBaseMode().SelectedIndex());
+        const auto value = static_cast<SizeDisplayNumberBaseType>(unitBaseMode().SelectedIndex());
         GlobalOptions::Options().SizeBase(value);
+    }
+
+    void SettingsPage::TimeStampLocaleChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        const auto value = static_cast<TimeStampLocaleType>(timeStampLocale().SelectedIndex());
+        GlobalOptions::Options().TimeStampLocale(value);
+    }
+
+    void SettingsPage::DateFormatChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        auto const dateFormatFlags = [this]()
+        {
+            switch (dateFormat().SelectedIndex())
+            {
+            case 0:
+                return DATE_LONGDATE;
+            case 1:
+                return DATE_SHORTDATE;
+            case 2:
+                return DATE_YEARMONTH;
+            case 3:
+                return DATE_MONTHDAY;
+            default:
+                return 0;
+            }
+        }();
+
+        GlobalOptions::Options().DateFormatFlags(GlobalOptions::Options().DateFormatFlags() & ~(DATE_LONGDATE | DATE_SHORTDATE | DATE_YEARMONTH | DATE_MONTHDAY) | dateFormatFlags);
+    }
+
+    void SettingsPage::DateLayoutChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        auto const dateFormatFlags = [this]()
+        {
+            switch (dateLayout().SelectedIndex())
+            {
+            case 0:
+                return DATE_AUTOLAYOUT;
+            case 1:
+                return DATE_LTRREADING;
+            case 2:
+                return DATE_RTLREADING;
+            default:
+                return 0;
+            }
+        }();
+
+        GlobalOptions::Options().DateFormatFlags(GlobalOptions::Options().DateFormatFlags() & ~(DATE_AUTOLAYOUT | DATE_LTRREADING | DATE_RTLREADING) | dateFormatFlags);
+    }
+
+    void SettingsPage::UseAltCalendarToggled([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        if (auto const isChecked = useAltCalendar().IsOn();
+            isChecked)
+        {
+            GlobalOptions::Options().DateFormatFlags(GlobalOptions::Options().DateFormatFlags() | DATE_USE_ALT_CALENDAR);
+        }
+        else
+        {
+            GlobalOptions::Options().DateFormatFlags(GlobalOptions::Options().DateFormatFlags() & ~DATE_USE_ALT_CALENDAR);
+        }
+    }
+
+    void SettingsPage::Time24HourToggled([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        if (auto const isChecked = time24Hour().IsOn();
+            isChecked)
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() | TIME_FORCE24HOURFORMAT);
+        }
+        else
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() & ~TIME_FORCE24HOURFORMAT);
+        }
+    }
+
+    void SettingsPage::NoTimeMarkerToggled([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        if (auto const isChecked = noTimeMarker().IsOn();
+            isChecked)
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() | TIME_NOTIMEMARKER);
+        }
+        else
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() & ~TIME_NOTIMEMARKER);
+        }
+    }
+
+    void SettingsPage::NoTimeSecondsToggled([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        if (auto const isChecked = noTimeSeconds().IsOn();
+            isChecked)
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() | TIME_NOSECONDS);
+        }
+        else
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() & ~TIME_NOSECONDS);
+        }
+    }
+
+    void SettingsPage::NoTimeMinutesOrSecondsToggled([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        if (auto const isChecked = noTimeMinutesOrSeconds().IsOn();
+            isChecked)
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() | TIME_NOMINUTESORSECONDS);
+        }
+        else
+        {
+            GlobalOptions::Options().TimeFormatFlags(GlobalOptions::Options().TimeFormatFlags() & ~TIME_NOMINUTESORSECONDS);
+        }
+    }
+
+    void SettingsPage::DurationFormatChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        const auto value = static_cast<DurationFormatType>(durationFormat().SelectedIndex());
+        GlobalOptions::Options().DurationFormat(value);
     }
 
     void SettingsPage::SetupFlyoutMenus()
     {
-        UIHelper::CreateStandardHexNumberMenu(suiteMaskTextBlock());
+        UIHelper::CreateStandardHexNumberMenu(exampleNumberDisplay(), suiteMaskTextBlock());
         UIHelper::CreateStandardSizeNumberMenu(exampleSizeDisplay());
+        UIHelper::CreateStandardTimeStampMenu(exampleDateDisplay());
+        UIHelper::CreateStandardDurationMenu(exampleDurationDisplay());
     }
 }
 

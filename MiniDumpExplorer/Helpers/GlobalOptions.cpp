@@ -3,7 +3,6 @@
 
 #include <filesystem>
 
-#include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 
 using namespace std::string_literals;
@@ -14,6 +13,13 @@ namespace
     const std::wstring SizeNumberDisplayFormatProperty = L"SizeNumberDisplayFormat";
     const std::wstring SizeFormatProperty = L"SizeFormat";
     const std::wstring SizeBaseProperty = L"SizeBase";
+    const std::wstring TimeStampLocaleProperty = L"TimeStampLocale";
+    const std::wstring TimeStampLocaleIdProperty = L"TimeStampLocaleId";
+    const std::wstring DateFormatFlagsProperty = L"DateFormatFlags";
+    const std::wstring DateFormatProperty = L"DateFormat";
+    const std::wstring TimeFormatFlagsProperty = L"TimeFormatFlags";
+    const std::wstring TimeFormatProperty = L"TimeFormat";
+    const std::wstring DurationFormatProperty = L"DurationFormat";
     const std::wstring ApplicationThemeProperty = L"ApplicationTheme"s;
     const std::wstring LogLevelProperty = L"LogLevel"s;
     const std::wstring RecentFilesProperty = L"RecentFiles"s;
@@ -22,10 +28,17 @@ namespace
 GlobalOptions::GlobalOptions(key)
     : applicationTheme_{AppPropertiesHelper::GetEnumProperty(ApplicationThemeProperty, winrt::Microsoft::UI::Xaml::ElementTheme::Default)}
     , logLevel_{AppPropertiesHelper::GetEnumProperty<log_level>(LogLevelProperty, log_level::info)}
-    , numberDisplayFormat_{AppPropertiesHelper::GetEnumProperty(NumberDisplayFormatProperty, NumberDisplayFormat::Hexadecimal)}
-    , sizeNumberDisplayFormat_{AppPropertiesHelper::GetEnumProperty(SizeNumberDisplayFormatProperty, SizeNumberDisplayFormat::Auto)}
+    , numberDisplayFormat_{AppPropertiesHelper::GetEnumProperty(NumberDisplayFormatProperty, NumberDisplayFormatType::Hexadecimal)}
+    , sizeNumberDisplayFormat_{AppPropertiesHelper::GetEnumProperty(SizeNumberDisplayFormatProperty, SizeNumberDisplayFormatType::Auto)}
     , sizeFormat_{AppPropertiesHelper::GetEnumProperty(SizeFormatProperty, dlg_help_utils::size_units::print::full)}
-    , sizeBase_{AppPropertiesHelper::GetEnumProperty(SizeBaseProperty, SizeDisplayNumberBase::Base16)}
+    , sizeBase_{AppPropertiesHelper::GetEnumProperty(SizeBaseProperty, SizeDisplayNumberBaseType::Base16)}
+    , timeStamp_{AppPropertiesHelper::GetEnumProperty(TimeStampLocaleProperty, TimeStampLocaleType::Local)}
+    , locale_id_{AppPropertiesHelper::GetUnsignedIntProperty(TimeStampLocaleIdProperty, LOCALE_USER_DEFAULT)}
+    , date_format_flags_{AppPropertiesHelper::GetUnsignedIntProperty(DateFormatFlagsProperty, DATE_LONGDATE | DATE_AUTOLAYOUT)}
+    , date_format_{AppPropertiesHelper::GetStringProperty(DateFormatProperty)}
+    , time_format_flags_{AppPropertiesHelper::GetUnsignedIntProperty(TimeFormatFlagsProperty, 0)}
+    , time_format_{AppPropertiesHelper::GetStringProperty(TimeFormatProperty)}
+    , durationFormat_{AppPropertiesHelper::GetEnumProperty(DurationFormatProperty, DurationFormatType::TimeSpan)}
     , recentFiles_{AppPropertiesHelper::GetStringVectorProperty(RecentFilesProperty)}
 {
 }
@@ -57,12 +70,42 @@ void GlobalOptions::LogLevel(log_level const value)
     AppPropertiesHelper::SetEnumProperty(LogLevelProperty, value);
 }
 
-void GlobalOptions::NumberDisplayFormat(::NumberDisplayFormat const value)
+void GlobalOptions::NumberDisplayFormat(NumberDisplayFormatType const value)
 {
     ApplyValue(value, numberDisplayFormat_, NumberDisplayFormatProperty, numberDisplayFormatCallbacks_, [](auto const& callback, auto const value) { return callback(value); });
 }
 
-void GlobalOptions::SizeNumberDisplayFormat(::SizeNumberDisplayFormat const value)
+void GlobalOptions::TimeStampLocale(TimeStampLocaleType const value)
+{
+    ApplyValue(value, timeStamp_, TimeStampLocaleProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(value, locale_id_, date_format_flags_, date_format_, time_format_flags_, time_format_); });
+}
+
+void GlobalOptions::LocaleId(LCID const value)
+{
+    ApplyValue(value, locale_id_, TimeStampLocaleIdProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(timeStamp_, value, date_format_flags_, date_format_, time_format_flags_, time_format_); });
+}
+
+void GlobalOptions::DateFormatFlags(DWORD const value)
+{
+    ApplyValue(value, date_format_flags_, DateFormatFlagsProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(timeStamp_, locale_id_, value, date_format_, time_format_flags_, time_format_); });
+}
+
+void GlobalOptions::DateFormat(std::wstring const& value)
+{
+    ApplyValue(value, date_format_, DateFormatProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const& value) { return callback(timeStamp_, locale_id_, date_format_flags_, value, time_format_flags_, time_format_); });
+}
+
+void GlobalOptions::TimeFormatFlags(DWORD const value)
+{
+    ApplyValue(value, time_format_flags_, TimeFormatFlagsProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(timeStamp_, locale_id_, date_format_flags_, date_format_, value, time_format_); });
+}
+
+void GlobalOptions::TimeFormat(std::wstring const& value)
+{
+    ApplyValue(value, time_format_, TimeFormatProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const& value) { return callback(timeStamp_, locale_id_, date_format_flags_, date_format_, time_format_flags_, value); });
+}
+
+void GlobalOptions::SizeNumberDisplayFormat(SizeNumberDisplayFormatType const value)
 {
     ApplyValue(value, sizeNumberDisplayFormat_, SizeNumberDisplayFormatProperty, sizeNumberDisplayFormatCallbacks_, [this](auto const& callback, auto value) { return callback(value, SizeFormat(), SizeBase()); });
 }
@@ -72,19 +115,34 @@ void GlobalOptions::SizeFormat(dlg_help_utils::size_units::print const value)
     ApplyValue(value, sizeFormat_, SizeFormatProperty, sizeNumberDisplayFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(SizeNumberDisplayFormat(), value, SizeBase()); });
 }
 
-void GlobalOptions::SizeBase(SizeDisplayNumberBase const value)
+void GlobalOptions::SizeBase(SizeDisplayNumberBaseType const value)
 {
     ApplyValue(value, sizeBase_, SizeBaseProperty, sizeNumberDisplayFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(SizeNumberDisplayFormat(), SizeFormat(), value); });
 }
 
-void GlobalOptions::OnNumberDisplayFormatChanged(std::function<bool(::NumberDisplayFormat)> callback)
+void GlobalOptions::DurationFormat(DurationFormatType const value)
+{
+    ApplyValue(value, durationFormat_, DurationFormatProperty, durationFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(value); });
+}
+
+void GlobalOptions::OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback)
 {
     numberDisplayFormatCallbacks_.push_back(std::move(callback));
 }
 
-void GlobalOptions::OnSizeNumberDisplayFormatChanged(std::function<bool(::SizeNumberDisplayFormat, dlg_help_utils::size_units::print, SizeDisplayNumberBase)> callback)
+void GlobalOptions::OnSizeNumberDisplayFormatChanged(std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)> callback)
 {
     sizeNumberDisplayFormatCallbacks_.push_back(std::move(callback));
+}
+
+void GlobalOptions::OnTimeStampFormatChanged(std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)> callback)
+{
+    timeStampFormatCallbacks_.push_back(std::move(callback));
+}
+
+void GlobalOptions::OnDurationFormatChanged(std::function<bool(DurationFormatType)> callback)
+{
+    durationFormatCallbacks_.push_back(std::move(callback));
 }
 
 void GlobalOptions::RecentFiles(std::vector<std::wstring> value)

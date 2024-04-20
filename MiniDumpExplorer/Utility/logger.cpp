@@ -13,6 +13,7 @@
 
 #include "DbgHelpUtils/file_version_info.h"
 #include "DbgHelpUtils/system_time_utils.h"
+#include "DbgHelpUtils/time_utils.h"
 
 using namespace dlg_help_utils;
 using namespace std::string_literals;
@@ -186,17 +187,14 @@ void logger::log_header()
 
     // how do we know when process was started/restarted
     FILETIME creation_time, exit_time, kernel_time, user_time;
-    SYSTEMTIME creation_system_time;
-    if (GetProcessTimes(GetCurrentProcess(), &creation_time, &exit_time, &kernel_time, &user_time))
+    if (!GetProcessTimes(GetCurrentProcess(), &creation_time, &exit_time, &kernel_time, &user_time))
     {
-        SYSTEMTIME utc;
-        FileTimeToSystemTime(&creation_time, &utc);
-        SystemTimeToTzSpecificLocalTime(nullptr, &utc, &creation_system_time);
+        windows_error::throw_windows_api_error(L"GetProcessTimes");
     }
 
     run_log_command(log_command::log_message, log_level::system, string_conversation::wstring_to_utf8(std::format(L"[Module: {0}]  [Version: {1}]  [Config: {2}] [PID: {3}] [{4}]", path.wstring(), version_info.file_version(), config, stream_hex_dump::to_hex(GetCurrentProcessId()), binary_type_string.empty() ? stream_hex_dump::to_hex(binary_type) : binary_type_string)), filter);
     run_log_command(log_command::log_message, log_level::system, std::format("[TZ: {}]  [DST: {}]", tz_name, daylight == 0 ? "off":"on"), filter);
-    run_log_command(log_command::log_message, log_level::system, string_conversation::wstring_to_utf8(std::format(L"[Started: {}]", system_time_utils::to_wstring(creation_system_time))), filter);
+    run_log_command(log_command::log_message, log_level::system, string_conversation::wstring_to_utf8(std::format(L"[Started: {}]", time_utils::to_local_timestamp_string(creation_time))), filter);
     run_log_command(log_command::log_message, log_level::system, "##################################################################", filter);
 }
 

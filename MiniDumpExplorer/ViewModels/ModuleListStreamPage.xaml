@@ -68,9 +68,9 @@
                 <local:DataGridTextColumn Header="Size Of Image"
                                           Binding="{Binding SizeOfImage,Converter={StaticResource SizeNumberConverter},Mode=OneWay}"
                                           Tag="SizeOfImage" />
-                <local:DataGridTextColumn Header="Time Stamp"
-                                          Binding="{Binding TimeDateStamp,Converter={StaticResource TimeStampNumberConverter},Mode=OneWay}"
-                                          Tag="TimeDateStamp" />
+                <local:DataGridTextColumn Header="Build File Hash"
+                                          Binding="{Binding BuildFileHash,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
+                                          Tag="BuildFileHash" />
                 <local:DataGridTextColumn Header="File Version"
                                           Binding="{Binding FileInfo.FileVersion,Mode=OneWay}"
                                           Tag="FileVersion" />

@@ -4,8 +4,15 @@
 
 #include "GlobalOptionsNotifyPropertyChangedBase.h"
 
+namespace dlg_help_utils::time_utils
+{
+    struct locale_timezone_info;
+}
+
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct DumpFileTimeStamp;
+
     struct VsFixedFileInfo : VsFixedFileInfoT<VsFixedFileInfo>, GlobalOptionsNotifyPropertyChangedBase<VsFixedFileInfo>
     {
         VsFixedFileInfo();
@@ -23,9 +30,9 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t FileType() const { return file_info_->dwFileType; }
         uint32_t FileSubtype() const  { return file_info_->dwFileSubtype; }
         hstring FileTypeString() const { return file_type_; }
-        int64_t FileDate() const { return file_date_; }
+        MiniDumpExplorer::DumpFileTimeStamp FileDate() const { return file_date_; }
 
-        void Set(VS_FIXEDFILEINFO const& file_info);
+        void Set(VS_FIXEDFILEINFO const& file_info, dlg_help_utils::time_utils::locale_timezone_info const& dump_file_timezone_info);
 
     private:
         VS_FIXEDFILEINFO const* file_info_{nullptr};
@@ -35,7 +42,7 @@ namespace winrt::MiniDumpExplorer::implementation
         Windows::Foundation::Collections::IObservableVector<hstring> fileFlagsList_{single_threaded_observable_vector<hstring>()};
         hstring file_os_;
         hstring file_type_;
-        int64_t file_date_{0};
+        MiniDumpExplorer::DumpFileTimeStamp file_date_{};
     };
 }
 

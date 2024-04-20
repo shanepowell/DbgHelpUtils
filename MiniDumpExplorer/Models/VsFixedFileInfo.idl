@@ -1,3 +1,5 @@
+import "Models\DumpFileTimeStamp.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
@@ -19,6 +21,6 @@ namespace MiniDumpExplorer
         UInt32 FileType { get; };
         String FileTypeString { get; };
         UInt32 FileSubtype { get; };
-        Int64 FileDate { get; };
+        DumpFileTimeStamp FileDate { get; };
     }
 }

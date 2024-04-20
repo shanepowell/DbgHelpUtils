@@ -16,7 +16,7 @@ namespace MiniDumpExplorer
         UInt64 Base { get; };
         UInt32 CheckSum { get; };
         UInt32 SizeOfImage { get; };
-        UInt32 TimeDateStamp { get; };
+        UInt32 BuildFileHash { get; };
         VsFixedFileInfo FileInfo { get; };
         MiniDumpLocationDescriptor CvRecord { get; };
         CvInfoPdb70 PdbInfo { get; };

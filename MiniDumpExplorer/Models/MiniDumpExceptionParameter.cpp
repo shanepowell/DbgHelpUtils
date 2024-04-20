@@ -16,7 +16,12 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 L"Parameter"
             },
-            { })
+            {
+            }, 
+            {
+            },
+            {
+            })
         , index_(index)
         , parameter_(parameter)
     {

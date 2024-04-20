@@ -42,13 +42,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
         switch(GlobalOptions::Options().NumberDisplayFormat())
         {
-        case NumberDisplayFormat::Hexadecimal:
+        case NumberDisplayFormatType::Hexadecimal:
             return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([hex_full, width](auto const v)
             {
                 return box_value(hex_full ? stream_hex_dump::to_hex_full(v) : stream_hex_dump::to_hex(v, width));
             }, value, value);
 
-        case NumberDisplayFormat::Decimal:
+        case NumberDisplayFormatType::Decimal:
             return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
 
         default:

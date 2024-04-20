@@ -30,36 +30,36 @@ namespace winrt::MiniDumpExplorer::implementation
 
         switch(options.SizeBase())
         {
-        case SizeDisplayNumberBase::Base10:
+        case SizeDisplayNumberBaseType::Base10:
         {
             using namespace dlg_help_utils::size_units::base_10;
             switch(options.SizeNumberDisplayFormat())
             {
-            case SizeNumberDisplayFormat::Auto:
+            case SizeNumberDisplayFormatType::Auto:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Bytes:
+            case SizeNumberDisplayFormatType::Bytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_bytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Kilobytes:
+            case SizeNumberDisplayFormatType::Kilobytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_kilobytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Megabytes:
+            case SizeNumberDisplayFormatType::Megabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_megabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Gigabytes:
+            case SizeNumberDisplayFormatType::Gigabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_gigabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Terabytes:
+            case SizeNumberDisplayFormatType::Terabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_terabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Petabytes:
+            case SizeNumberDisplayFormatType::Petabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_petabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Exabytes:
+            case SizeNumberDisplayFormatType::Exabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Raw:
+            case SizeNumberDisplayFormatType::Raw:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
 
             default:
@@ -67,36 +67,36 @@ namespace winrt::MiniDumpExplorer::implementation
             }
             break;
         }
-        case SizeDisplayNumberBase::Base16:
+        case SizeDisplayNumberBaseType::Base16:
         {
             using namespace dlg_help_utils::size_units::base_16;
             switch(options.SizeNumberDisplayFormat())
             {
-            case SizeNumberDisplayFormat::Auto:
+            case SizeNumberDisplayFormatType::Auto:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Bytes:
+            case SizeNumberDisplayFormatType::Bytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_bytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Kilobytes:
+            case SizeNumberDisplayFormatType::Kilobytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_kilobytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Megabytes:
+            case SizeNumberDisplayFormatType::Megabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_megabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Gigabytes:
+            case SizeNumberDisplayFormatType::Gigabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_gigabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Terabytes:
+            case SizeNumberDisplayFormatType::Terabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_terabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Petabytes:
+            case SizeNumberDisplayFormatType::Petabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_petabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Exabytes:
+            case SizeNumberDisplayFormatType::Exabytes:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
 
-            case SizeNumberDisplayFormat::Raw:
+            case SizeNumberDisplayFormatType::Raw:
                 return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
 
             default:
@@ -127,12 +127,12 @@ namespace winrt::MiniDumpExplorer::implementation
         auto const str = value.as<hstring>();
         switch(GlobalOptions::Options().SizeBase())
         {
-        case SizeDisplayNumberBase::Base10:
+        case SizeDisplayNumberBaseType::Base10:
         {
             using namespace dlg_help_utils::size_units::base_10;
             return box_value(from_wstring(std::wstring(str.begin(), str.end())).count());
         }
-        case SizeDisplayNumberBase::Base16:
+        case SizeDisplayNumberBaseType::Base16:
         {
             using namespace dlg_help_utils::size_units::base_16;
             return box_value(from_wstring(std::wstring(str.begin(), str.end())).count());

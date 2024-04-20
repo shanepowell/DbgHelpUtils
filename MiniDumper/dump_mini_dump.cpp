@@ -12,6 +12,7 @@
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/mini_dump_type.h"
+#include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/symbol_engine.h"
 #include "DbgHelpUtils/system_info_utils.h"
@@ -337,7 +338,11 @@ void dump_mini_dump_header(std::wostream& log, mini_dump const& dump_file, dump_
         log << std::format(L" (crc32:{})", to_hex(dump_file.data_crc32()));
     }
     log << L'\n';
-    log << std::format(L" Timestamp [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(header->TimeDateStamp), time_utils::to_utc_time(header->TimeDateStamp));
+    auto const dump_file_timezone_info = misc_info_stream::get_dump_file_timezone_info(dump_file);
+    log << std::format(L" Timestamp [local: {0}] [UTC: {1}] [DumpLocale: {2}]\n",
+        from_dump_file_to_local_timestamp_string(header->TimeDateStamp, dump_file_timezone_info),
+        from_dump_file_to_utc_timestamp_string(header->TimeDateStamp, dump_file_timezone_info),
+        to_dump_file_timestamp_string(header->TimeDateStamp, dump_file_timezone_info));
     log << std::format(L" Flags [{}] - \n", to_hex(header->Flags));
     for (auto const& type : mini_dump_type::to_strings(static_cast<MINIDUMP_TYPE>(header->Flags)))
     {

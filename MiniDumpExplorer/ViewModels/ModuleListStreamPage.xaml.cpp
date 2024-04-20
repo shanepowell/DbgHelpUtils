@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ModuleListStreamPage.xaml.h"
 
+#include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/module_list_stream.h"
 #include "Models/ModuleListStreamEntriesDataSource.h"
@@ -37,6 +38,7 @@ namespace winrt::MiniDumpExplorer::implementation
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
         auto const& miniDump = miniDumpPage->MiniDump();
 
+        auto const dump_file_timezone_info = dlg_help_utils::misc_info_stream::get_dump_file_timezone_info(miniDump);
         dlg_help_utils::module_list_stream const module_list{miniDump, parameters.StreamIndex()};
 
         if(!module_list.found())
@@ -45,6 +47,6 @@ namespace winrt::MiniDumpExplorer::implementation
             return;
         }
 
-        modulesStreamEntriesDataSource_.as<ModuleListStreamEntriesDataSource>()->LoadMiniDumpModuleStream(module_list);
+        modulesStreamEntriesDataSource_.as<ModuleListStreamEntriesDataSource>()->LoadMiniDumpModuleStream(module_list, dump_file_timezone_info);
     }
 }

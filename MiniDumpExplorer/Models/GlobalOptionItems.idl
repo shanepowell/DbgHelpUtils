@@ -23,5 +23,33 @@ namespace MiniDumpExplorer
 
         Boolean SizeNumberDisplayBase16;
         Boolean SizeNumberDisplayBase10;
+
+        Boolean TimeStampLocaleLocal;
+        Boolean TimeStampLocaleUtc;
+        Boolean TimeStampLocaleDumpFile;
+        Boolean DateFormatLongDate;
+        Boolean DateFormatShortDate;
+        Boolean DateFormatUseAltCalendar;
+        Boolean DateFormatYearMonth;
+        Boolean DateFormatMonthDay;
+        Boolean DateFormatLeftToRightReading;
+        Boolean DateFormatRightToLeftReading;
+        Boolean DateFormatAutoLayout;
+        Boolean TimeFormat24Hour;
+        Boolean TimeFormatNoTimeMarker;
+        Boolean TimeFormatNoSeconds;
+        Boolean TimeFormatNoMinutesOrSeconds;
+
+        Boolean DurationFormatTimeSpan;
+        Boolean DurationFormatAuto;
+        Boolean DurationFormatMilliseconds;
+        Boolean DurationFormatSeconds;
+        Boolean DurationFormatMinutes;
+        Boolean DurationFormatHours;
+        Boolean DurationFormatDays;
+        Boolean DurationFormatWeeks;
+        Boolean DurationFormatMonths;
+        Boolean DurationFormatYears;
+        Boolean DurationFormatRaw;
     }
 }

@@ -20,7 +20,13 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"Priority",
                 L"PriorityClass",
                 L"TEB",
-            }, { })
+            },
+            {
+            }, 
+            {
+            },
+            {
+            })
     {
     }
 

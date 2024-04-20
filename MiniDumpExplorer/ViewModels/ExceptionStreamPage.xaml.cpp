@@ -19,7 +19,12 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 L"ThreadId"
             },
-            { })
+            {
+            }, 
+            {
+            },
+            {
+            })
     {
     }
 
@@ -51,10 +56,6 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void ExceptionStreamPage::SetupFlyoutMenus()
     {
-        UIHelper::CreateStandardHexNumberMenu(threadId());
-        UIHelper::CreateStandardHexNumberMenu(exceptionCode());
-        UIHelper::CreateStandardHexNumberMenu(exceptionFlags());
-        UIHelper::CreateStandardHexNumberMenu(exceptionRecord());
-        UIHelper::CreateStandardHexNumberMenu(exceptionAddress());
+        UIHelper::CreateStandardHexNumberMenu(threadId(), exceptionCode(), exceptionFlags(), exceptionRecord(), exceptionAddress());
     }
 }

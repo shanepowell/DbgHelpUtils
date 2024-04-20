@@ -9,7 +9,7 @@ namespace dlg_help_utils::chrono_unit_utilities
     template <typename Us1, typename Us2>
     void convert_to_string(std::wostream& os, Us1 us1, Us2 us2, std::wstring const& us1_name, std::wstring const& us1_plural_name)
     {
-        os << us1.count();
+        os << locale_formatting::to_wstring(us1.count());
 
         if (us2.count() > 0)
         {
@@ -22,13 +22,13 @@ namespace dlg_help_utils::chrono_unit_utilities
             }
         }
 
-        os << L" " << (us1.count() <= 1 ? us1_name : us1_plural_name);
+        os << L" " << (us1.count() == 1 ? us1_name : us1_plural_name);
     }
 
     template <typename Us1, typename Us2>
     void convert_to_compact_string(std::wostream& os, Us1 us1, Us2 us2, std::wstring const& us_name)
     {
-        os << us1.count();
+        os << locale_formatting::to_wstring(us1.count());
 
         if (us2.count() > 0)
         {

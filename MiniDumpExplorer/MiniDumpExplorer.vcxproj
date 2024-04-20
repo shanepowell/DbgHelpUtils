@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.props')" />
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
   <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.props')" />
-  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
@@ -309,6 +309,10 @@
       <DependentUpon>Converters\BoolToVisibilityConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Converters\DurationConverter.h">
+      <DependentUpon>Converters\DurationConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Converters\HexNumberConverter.h">
       <DependentUpon>Converters\HexNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -360,6 +364,10 @@
     </ClInclude>
     <ClInclude Include="Models\DirectoryStreamEntry.h">
       <DependentUpon>Models\DirectoryStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\DumpFileTimeStamp.h">
+      <DependentUpon>Models\DumpFileTimeStamp.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Models\ExceptionParametersDataSource.h">
@@ -433,8 +441,20 @@
       <DependentUpon>Models\ModuleListStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\TimeZoneInformation.h">
+      <DependentUpon>Models\TimeZoneInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\VsFixedFileInfo.h">
       <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\XStateDataEnabledFeature.h">
+      <DependentUpon>Models\XStateDataEnabledFeature.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\XStateDataEnabledFeaturesDataSource.h">
+      <DependentUpon>Models\XStateDataEnabledFeaturesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\ExceptionStreamPage.xaml.h">
@@ -447,6 +467,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\MemoryListStreamPage.xaml.h">
       <DependentUpon>ViewModels\MemoryListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\MiscInfoStreamPage.xaml.h">
+      <DependentUpon>ViewModels\MiscInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\ModuleListStreamPage.xaml.h">
@@ -574,6 +598,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\MemoryListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\MiscInfoStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ModuleListStreamPage.xaml">
@@ -747,6 +774,9 @@
     <ClCompile Include="Converters\BoolToVisibilityConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Converters\DurationConverter.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Converters\HexNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -774,23 +804,24 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp" />
     <ClCompile Include="Models\CvInfoPdb70.cpp">
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DlgHelpUtilsResource\exception_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\lfh_subsegment_location_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\memory_info_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\mini_dump_stream_type_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\register_names_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\size_units_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\stream_hex_dump_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\stream_stack_dump_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\symbol_type_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\thread_info_utils_resource.cpp" />
-    <ClCompile Include="DlgHelpUtilsResource\time_units_resource.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\exception_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\flags_string_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\gflags_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\lfh_subsegment_location_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\memory_info_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\mini_dump_stream_type_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\register_names_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\size_units_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\stream_hex_dump_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\stream_stack_dump_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\symbol_type_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\system_info_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\thread_info_utils_resources.cpp" />
+    <ClCompile Include="DlgHelpUtilsResource\time_units_resources.cpp" />
     <ClCompile Include="Helpers\TypeHelper.cpp" />
     <ClCompile Include="Helpers\UISettingsHelper.cpp" />
     <ClCompile Include="Helpers\VisualStates.cpp" />
@@ -798,6 +829,9 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\DirectoryStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\DumpFileTimeStamp.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\ExceptionParametersDataSource.cpp">
@@ -851,7 +885,16 @@
     <ClCompile Include="Models\ModuleListStreamEntry.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\TimeZoneInformation.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\VsFixedFileInfo.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\XStateDataEnabledFeature.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\XStateDataEnabledFeaturesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ExceptionStreamPage.xaml.cpp">
@@ -864,6 +907,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\MemoryListStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\MemoryListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\MiscInfoStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\MiscInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ModuleListStreamPage.xaml.cpp">
@@ -1148,6 +1195,10 @@
       <DependentUpon>Converters\BoolToVisibilityConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Converters\DurationConverter.idl">
+      <DependentUpon>Converters\DurationConverter.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Converters\HexNumberConverter.idl">
       <DependentUpon>Converters\HexNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1194,6 +1245,10 @@
     </Midl>
     <Midl Include="Models\DirectoryStreamEntry.idl">
       <DependentUpon>Models\DirectoryStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\DumpFileTimeStamp.idl">
+      <DependentUpon>Models\DumpFileTimeStamp.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\ExceptionParametersDataSource.idl">
@@ -1264,8 +1319,20 @@
       <DependentUpon>Models\ModuleListStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\TimeZoneInformation.idl">
+      <DependentUpon>Models\TimeZoneInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\VsFixedFileInfo.idl">
       <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\XStateDataEnabledFeature.idl">
+      <DependentUpon>Models\XStateDataEnabledFeature.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\XStateDataEnabledFeaturesDataSource.idl">
+      <DependentUpon>Models\XStateDataEnabledFeaturesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ExceptionStreamPage.idl">
@@ -1278,6 +1345,10 @@
     </Midl>
     <Midl Include="ViewModels\MemoryListStreamPage.idl">
       <DependentUpon>ViewModels\MemoryListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\MiscInfoStreamPage.idl">
+      <DependentUpon>ViewModels\MiscInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ModuleListStreamPage.idl">
@@ -1430,7 +1501,9 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Resources.resw" />
+    <PRIResource Include="Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
@@ -1460,21 +1533,21 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.targets')" />
     <Import Project="..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.targets')" />
-    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240111.5\build\native\Microsoft.Windows.CppWinRT.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.3233\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.5.240311000\build\native\Microsoft.WindowsAppSDK.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.targets'))" />
   </Target>
 </Project>

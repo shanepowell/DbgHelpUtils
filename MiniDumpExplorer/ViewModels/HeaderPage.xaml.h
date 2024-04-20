@@ -14,6 +14,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpPage;
     struct RecentFileItem;
+    struct DumpFileTimeStamp;
 
     struct HeaderPage : HeaderPageT<HeaderPage>, GlobalOptionsNotifyPropertyChangedBase<HeaderPage>, MiniDumpPageBase<HeaderPage>
     {
@@ -41,7 +42,7 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] uint32_t StreamDirectoryRva() const;
         [[nodiscard]] uint32_t CheckSum() const;
         [[nodiscard]] uint32_t DumpFileCrc32() const { return data_crc32_; }
-        [[nodiscard]] uint32_t TimeDateStamp() const;
+        [[nodiscard]] MiniDumpExplorer::DumpFileTimeStamp TimeDateStamp() const { return timeDateStamp_; }
         [[nodiscard]] uint64_t Flags() const;
         [[nodiscard]] Windows::Foundation::Collections::IObservableVector<hstring> FlagsList() const { return flagsList_; }
 
@@ -55,6 +56,7 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpExplorer::RecentFileItem fileItem_{nullptr};
         dlg_help_utils::mini_dump const* mini_dump_{nullptr};
         uint32_t data_crc32_{0};
+        MiniDumpExplorer::DumpFileTimeStamp timeDateStamp_{};
         Windows::Foundation::Collections::IObservableVector<hstring> flagsList_{single_threaded_observable_vector<hstring>()};
     };
 }

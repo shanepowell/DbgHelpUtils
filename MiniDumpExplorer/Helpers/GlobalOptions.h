@@ -5,13 +5,13 @@
 #include "DbgHelpUtils/size_units.h"
 #include "Utility/log_level.h"
 
-enum class NumberDisplayFormat
+enum class NumberDisplayFormatType
 {
     Hexadecimal,
     Decimal
 };
 
-enum class SizeNumberDisplayFormat
+enum class SizeNumberDisplayFormatType
 {
     Auto,
     Bytes,
@@ -24,10 +24,32 @@ enum class SizeNumberDisplayFormat
     Raw
 };
 
-enum class SizeDisplayNumberBase
+enum class SizeDisplayNumberBaseType
 {
     Base10,
     Base16
+};
+
+enum class TimeStampLocaleType
+{
+    Local,
+    UTC,
+    DumpFile
+};
+
+enum class DurationFormatType
+{
+    TimeSpan,
+    Auto,
+    Milliseconds,
+    Seconds,
+    Minutes,
+    Hours,
+    Days,
+    Weeks,
+    Months,
+    Years,
+    Raw
 };
 
 class GlobalOptions
@@ -44,20 +66,43 @@ public:
     log_level LogLevel() const { return logLevel_; }
     void LogLevel(log_level value);
 
-    NumberDisplayFormat NumberDisplayFormat() const { return numberDisplayFormat_; }
-    void NumberDisplayFormat(::NumberDisplayFormat value);
+    NumberDisplayFormatType NumberDisplayFormat() const { return numberDisplayFormat_; }
+    void NumberDisplayFormat(NumberDisplayFormatType value);
 
-    SizeNumberDisplayFormat SizeNumberDisplayFormat() const { return sizeNumberDisplayFormat_; }
-    void SizeNumberDisplayFormat(::SizeNumberDisplayFormat value);
+    TimeStampLocaleType TimeStampLocale() const { return timeStamp_; }
+    void TimeStampLocale(TimeStampLocaleType value);
+
+    LCID LocaleId() const { return locale_id_; }
+    void LocaleId(LCID value);
+
+    DWORD DateFormatFlags() const { return date_format_flags_; }
+    void DateFormatFlags(DWORD value);
+
+    std::wstring const& DateFormat() const { return date_format_; }
+    void DateFormat(std::wstring const&  value);
+
+    DWORD TimeFormatFlags() const { return time_format_flags_; }
+    void TimeFormatFlags(DWORD value);
+
+    std::wstring const& TimeFormat() const { return time_format_; }
+    void TimeFormat(std::wstring const&  value);
+
+    SizeNumberDisplayFormatType SizeNumberDisplayFormat() const { return sizeNumberDisplayFormat_; }
+    void SizeNumberDisplayFormat(SizeNumberDisplayFormatType value);
 
     dlg_help_utils::size_units::print SizeFormat() const { return sizeFormat_; }
     void SizeFormat(dlg_help_utils::size_units::print value);
 
-    SizeDisplayNumberBase SizeBase() const { return sizeBase_; }
-    void SizeBase(SizeDisplayNumberBase value);
+    SizeDisplayNumberBaseType SizeBase() const { return sizeBase_; }
+    void SizeBase(SizeDisplayNumberBaseType value);
 
-    void OnNumberDisplayFormatChanged(std::function<bool(::NumberDisplayFormat)> callback);
-    void OnSizeNumberDisplayFormatChanged(std::function<bool(::SizeNumberDisplayFormat, dlg_help_utils::size_units::print, SizeDisplayNumberBase)> callback);
+    DurationFormatType DurationFormat() const { return durationFormat_; }
+    void DurationFormat(DurationFormatType value);
+
+    void OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback);
+    void OnSizeNumberDisplayFormatChanged(std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)> callback);
+    void OnTimeStampFormatChanged(std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)> callback);
+    void OnDurationFormatChanged(std::function<bool(DurationFormatType)> callback);
 
     std::vector<std::wstring> const& RecentFiles() const { return recentFiles_; }
     void RecentFiles(std::vector<std::wstring> value);
@@ -85,9 +130,13 @@ private:
         {
             AppPropertiesHelper::SetStringProperty(valueName, existingValue);
         }
-        else if constexpr (std::is_same_v<T, int>)
+        else if constexpr (std::is_same_v<T, int> || std::is_same_v<T, long>)
         {
             AppPropertiesHelper::SetIntProperty(valueName, existingValue);
+        }
+        else if constexpr (std::is_same_v<T, unsigned int> || std::is_same_v<T, unsigned long>)
+        {
+            AppPropertiesHelper::SetUnsignedIntProperty(valueName, existingValue);
         }
         else if constexpr (std::is_same_v<T, std::vector<std::wstring>>)
         {
@@ -114,12 +163,21 @@ private:
 private:
     winrt::Microsoft::UI::Xaml::ElementTheme applicationTheme_;
     std::atomic<log_level> logLevel_;
-    ::NumberDisplayFormat numberDisplayFormat_;
-    ::SizeNumberDisplayFormat sizeNumberDisplayFormat_;
+    NumberDisplayFormatType numberDisplayFormat_;
+    SizeNumberDisplayFormatType sizeNumberDisplayFormat_;
     dlg_help_utils::size_units::print sizeFormat_;
-    SizeDisplayNumberBase sizeBase_;
+    SizeDisplayNumberBaseType sizeBase_;
+    TimeStampLocaleType timeStamp_;
+    LCID locale_id_;
+    DWORD date_format_flags_;
+    std::wstring date_format_;
+    DWORD time_format_flags_;
+    std::wstring time_format_;
+    DurationFormatType durationFormat_;
     std::vector<std::wstring> recentFiles_;
-    std::vector<std::function<bool(::NumberDisplayFormat)>> numberDisplayFormatCallbacks_;
-    std::vector<std::function<bool(::SizeNumberDisplayFormat, dlg_help_utils::size_units::print, SizeDisplayNumberBase)>> sizeNumberDisplayFormatCallbacks_;
+    std::vector<std::function<bool(NumberDisplayFormatType)>> numberDisplayFormatCallbacks_;
+    std::vector<std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)>> sizeNumberDisplayFormatCallbacks_;
     std::vector<std::function<bool(std::vector<std::wstring> const&)>> recentFilesCallbacks_;
+    std::vector<std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)>> timeStampFormatCallbacks_;
+    std::vector<std::function<bool(DurationFormatType)>> durationFormatCallbacks_;
 };

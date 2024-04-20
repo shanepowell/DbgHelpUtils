@@ -1,0 +1,17 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass TimeZoneInformation : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TimeZoneInformation();
+
+        Int32 Bias { get; };
+        String StandardName{ get; };
+        String StandardDateString{ get; };
+        Int32 StandardBias{ get; };
+        String DaylightName{ get; };
+        String DaylightDateString{ get; };
+        Int32 DaylightBias{ get; };
+    }
+}

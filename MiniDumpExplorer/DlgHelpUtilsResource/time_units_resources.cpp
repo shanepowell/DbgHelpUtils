@@ -3,8 +3,6 @@
 
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
-#include "DbgHelpUtils/wide_runtime_error.h"
-
 using namespace std::string_literals;
 
 namespace dlg_help_utils::time_units::resources

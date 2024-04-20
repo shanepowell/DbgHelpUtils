@@ -19,6 +19,10 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"StartOfMemoryRange"
             }, 
             {
+            }, 
+            {
+            },
+            {
             })
     {
     }

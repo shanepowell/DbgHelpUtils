@@ -90,9 +90,9 @@ namespace dlg_help_utils::flags_string_utils
     }
 
     template <typename T, typename TContainer>
-    std::vector<std::wstring_view> generate_flags_strings(T dump_flags, TContainer const& flag_masks)
+    std::vector<std::wstring> generate_flags_strings(T dump_flags, TContainer const& flag_masks)
     {
-        std::vector<std::wstring_view> rv;
+        std::vector<std::wstring> rv;
 
         for (auto const& [option, title] : flag_masks)
         {
@@ -105,6 +105,11 @@ namespace dlg_help_utils::flags_string_utils
                 dump_flags = mask_flag_option(dump_flags, option);
                 rv.emplace_back(title);
             }
+        }
+
+        if (cast_enum_value(dump_flags) > 0)
+        {
+            rv.emplace_back(std::format(L"{} [{}]", resources::get_unknown_flags_string(), stream_hex_dump::to_hex(cast_enum_value(dump_flags))));
         }
 
         return rv;

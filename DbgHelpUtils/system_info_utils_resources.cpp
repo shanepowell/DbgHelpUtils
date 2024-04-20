@@ -1,5 +1,5 @@
 ﻿#include "system_info_utils.h"
-#include "system_info_utils_resource.h"
+#include "system_info_utils_resources.h"
 
 #include "flags_string_utils.h"
 #include "mini_dump.h"
@@ -194,6 +194,13 @@ namespace
         {SECURITY_MANDATORY_PROTECTED_PROCESS_RID, L"protected"s},
     };
 
+    std::unordered_map<uint32_t, std::wstring> g_timezone_ids =
+    {
+        {TIME_ZONE_ID_UNKNOWN, L"unknown"s},
+        {TIME_ZONE_ID_STANDARD, L"standard"s},
+        {TIME_ZONE_ID_DAYLIGHT, L"daylight"s},
+    };
+
     std::unordered_map<eHANDLE_TRACE_OPERATIONS, std::wstring> g_trace_operations =
     {
         {OperationDbUnused, L"Unused"s},
@@ -267,6 +274,37 @@ namespace
         {SymVirtual, L"SymVirtual"s},
         {NumSymTypes, L"NumSymTypes"s},
     };
+
+    std::unordered_map<uint32_t, std::wstring> g_misc_info_flags =
+    {
+        { MINIDUMP_MISC1_PROCESS_ID, L"MINIDUMP_MISC1_PROCESS_ID"s},
+        { MINIDUMP_MISC1_PROCESS_TIMES, L"MINIDUMP_MISC1_PROCESS_TIMES"s},
+        { MINIDUMP_MISC1_PROCESSOR_POWER_INFO, L"MINIDUMP_MISC1_PROCESSOR_POWER_INFO"s},
+        { MINIDUMP_MISC3_PROCESS_INTEGRITY, L"MINIDUMP_MISC3_PROCESS_INTEGRITY"s},
+        { MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS, L"MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS"s},
+        { MINIDUMP_MISC3_TIMEZONE, L"MINIDUMP_MISC3_TIMEZONE"s},
+        { MINIDUMP_MISC3_PROTECTED_PROCESS, L"MINIDUMP_MISC3_PROTECTED_PROCESS"s},
+        { MINIDUMP_MISC4_BUILDSTRING, L"MINIDUMP_MISC4_BUILDSTRING"s},
+        { MINIDUMP_MISC5_PROCESS_COOKIE, L"MINIDUMP_MISC5_PROCESS_COOKIE"s},
+    };
+
+    std::unordered_map<uint32_t, std::wstring> g_xstate_data_features =
+    {
+        {XSTATE_LEGACY_FLOATING_POINT, L"XSTATE_LEGACY_FLOATING_POINT"s},
+        {XSTATE_LEGACY_SSE, L"XSTATE_LEGACY_SSE"s},
+        {XSTATE_AVX, L"XSTATE_AVX"s},
+        {XSTATE_MPX_BNDREGS, L"XSTATE_MPX_BNDREGS"s},
+        {XSTATE_MPX_BNDCSR, L"XSTATE_MPX_BNDCSR"s},
+        {XSTATE_AVX512_KMASK, L"XSTATE_AVX512_KMASK"s},
+        {XSTATE_AVX512_ZMM_H, L"XSTATE_AVX512_ZMM_H"s},
+        {XSTATE_AVX512_ZMM, L"XSTATE_AVX512_ZMM"s},
+        {XSTATE_IPT, L"XSTATE_IPT"s},
+        {XSTATE_CET_U, L"XSTATE_CET_U"s},
+        {XSTATE_CET_S, L"XSTATE_CET_S"s},
+        {XSTATE_AMX_TILE_CONFIG, L"XSTATE_AMX_TILE_CONFIG"s},
+        {XSTATE_AMX_TILE_DATA, L"XSTATE_AMX_TILE_DATA"s},
+        {XSTATE_LWP, L"XSTATE_LWP"s},
+    };
 }
 
 namespace dlg_help_utils::system_info_utils
@@ -309,9 +347,24 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_enum_string(key, g_version_strings);
     }
 
-    std::vector<std::wstring_view> suite_mask_to_strings(unsigned short const suite_mask)
+    std::vector<std::wstring> suite_mask_to_strings(unsigned short const suite_mask)
     {
         return flags_string_utils::generate_flags_strings(suite_mask, g_suite_masks);
+    }
+
+    std::wstring misc_info_flags_to_string(uint32_t const flags)
+    {
+        return flags_string_utils::generate_flags_string(flags, g_misc_info_flags);
+    }
+
+    std::vector<std::wstring> misc_info_flags_to_strings(uint32_t const flags)
+    {
+        return flags_string_utils::generate_flags_strings(flags, g_misc_info_flags);
+    }
+
+    std::wstring time_zone_id_to_string(uint32_t const timezone_id)
+    {
+        return flags_string_utils::generate_enum_string(timezone_id, g_timezone_ids);
     }
 
     std::wstring process_integrity_level_to_string(uint32_t const process_integrity_level)
@@ -324,7 +377,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags, g_vm_counters_2_flag_masks);
     }
 
-    std::vector<std::wstring_view> vm_counters_2_flags_to_strings(uint16_t const flags)
+    std::vector<std::wstring> vm_counters_2_flags_to_strings(uint16_t const flags)
     {
         return flags_string_utils::generate_flags_strings(flags, g_vm_counters_2_flag_masks);
     }
@@ -339,7 +392,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_enum_string(static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION_TYPE>(type), g_object_information_types);
     }
 
-    std::vector<std::wstring_view> process_execute_flags_to_strings(uint32_t const flags)
+    std::vector<std::wstring> process_execute_flags_to_strings(uint32_t const flags)
     {
         return flags_string_utils::generate_flags_strings(static_cast<mem_execute_options>(flags), g_process_execute_flags);
     }
@@ -349,7 +402,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags & mask, g_version_file_flag_masks);
     }
 
-    std::vector<std::wstring_view> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)
+    std::vector<std::wstring> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)
     {
         return flags_string_utils::generate_flags_strings(flags & mask, g_version_file_flag_masks);
     }
@@ -359,7 +412,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(file_os, g_version_file_os_masks);
     }
 
-    std::vector<std::wstring_view> version_file_os_to_strings(uint32_t const file_os)
+    std::vector<std::wstring> version_file_os_to_strings(uint32_t const file_os)
     {
         return flags_string_utils::generate_flags_strings(file_os, g_version_file_os_masks);
     }
@@ -372,5 +425,10 @@ namespace dlg_help_utils::system_info_utils
     std::wstring sym_type_to_string(uint32_t const type)
     {
         return flags_string_utils::generate_enum_string(static_cast<SYM_TYPE>(type), g_sym_types);
+    }
+
+    std::wstring xstate_data_feature_to_string(uint32_t const feature)
+    {
+        return flags_string_utils::generate_enum_string(feature, g_xstate_data_features);
     }
 }

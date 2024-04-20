@@ -5,6 +5,10 @@
 namespace dlg_help_utils
 {
     class module_list_stream;
+    namespace time_utils
+    {
+        struct locale_timezone_info;
+    }
 }
 
 namespace winrt::MiniDumpExplorer::implementation
@@ -37,7 +41,7 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
         void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const;
 
-        void LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const& module_list) const;
+        void LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const& module_list, dlg_help_utils::time_utils::locale_timezone_info const& dump_file_timezone_info) const;
 
     private:
         void SetupDataProperties();

@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass XStateDataEnabledFeature : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        XStateDataEnabledFeature();
+
+        UInt32 Feature { get; };
+        String FeatureString { get; };
+        UInt32 Offset { get; };
+        UInt32 Size { get; };
+    }
+}

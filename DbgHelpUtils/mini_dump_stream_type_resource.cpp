@@ -12,7 +12,7 @@ namespace
 {
     using namespace dlg_help_utils::mini_dump_stream_type;
 
-    std::unordered_map<MINIDUMP_STREAM_TYPE, std::tuple<std::wstring, std::wstring>> const type_map =
+    std::unordered_map<MINIDUMP_STREAM_TYPE, std::tuple<std::wstring, std::wstring>> const g_type_map =  // NOLINT(clang-diagnostic-exit-time-destructors, cppcoreguidelines-interfaces-global-init)
     {
         {UnusedStream, {L"Unused"s, enum_names::UnusedStream}},
         {ReservedStream0, {L"Reserved 0"s, enum_names::ReservedStream0}},
@@ -65,8 +65,8 @@ namespace dlg_help_utils::mini_dump_stream_type
             return std::format(L"User Stream Type [{}]", to_hex(type));
         }
 
-        auto const it = type_map.find(type);
-        if (it == type_map.end())
+        auto const it = g_type_map.find(type);
+        if (it == g_type_map.end())
         {
             return std::format(L"Unknown Stream Type [{}]", to_hex(type));
         }
@@ -81,8 +81,8 @@ namespace dlg_help_utils::mini_dump_stream_type
             return to_hex(type);
         }
 
-        auto const it = type_map.find(type);
-        if (it == type_map.end())
+        auto const it = g_type_map.find(type);
+        if (it == g_type_map.end())
         {
             return std::format(L"unknown stream type [{}]", to_hex(type));
         }

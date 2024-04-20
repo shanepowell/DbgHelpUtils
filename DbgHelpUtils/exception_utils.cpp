@@ -1,7 +1,6 @@
 ﻿#include "exception_utils.h"
 
 #include "windows_setup.h"
-#include <sstream>
 
 #include "flags_string_utils.h"
 

@@ -4,9 +4,11 @@
 
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_type.h"
+#include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/system_info_utils.h"
 #include "Helpers/UIHelper.h"
 #include "Models/RecentFileItem.h"
+#include "Models/DumpFileTimeStamp.h"
 #include "Utility/logger.h"
 
 #if __has_include("HeaderPage.g.cpp")
@@ -32,7 +34,13 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"DumpFileCrc32",
                 L"Flags"
             },
-            { })
+            {
+            }, 
+            {
+                L"TimeDateStamp"
+            },
+            {
+            })
     {
     }
 
@@ -137,15 +145,6 @@ namespace winrt::MiniDumpExplorer::implementation
         return mini_dump_->header()->CheckSum;
     }
 
-    uint32_t HeaderPage::TimeDateStamp() const
-    {
-        if(!mini_dump_)
-        {
-            return {};
-        }
-        return mini_dump_->header()->TimeDateStamp;
-    }
-
     uint64_t HeaderPage::Flags() const
     {
         if(!mini_dump_)
@@ -157,12 +156,14 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void HeaderPage::SetupFlyoutMenus()
     {
-        UIHelper::CreateStandardHexNumberMenu(headerVersion());
-        UIHelper::CreateStandardHexNumberMenu(headerInternalVersion());
-        UIHelper::CreateStandardHexNumberMenu(headerStreamDirectoryRva());
-        UIHelper::CreateStandardHexNumberMenu(headerCheckSum());
-        UIHelper::CreateStandardHexNumberMenu(headerDumpFileCrc32());
-        UIHelper::CreateStandardHexNumberMenu(headerFlags());
+        UIHelper::CreateStandardHexNumberMenu(headerVersion(),
+            headerInternalVersion(),
+            headerStreamDirectoryRva(),
+            headerCheckSum(),
+            headerDumpFileCrc32(),
+            headerFlags());
+
+        UIHelper::CreateStandardTimeStampMenu(timeDateStamp());
 
         UIHelper::CreateStandardSizeNumberMenu(headerFileSize());
     }
@@ -200,6 +201,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         fileItem_ = MiniDumpExplorer::RecentFileItem{0, path};
+        timeDateStamp_.as<DumpFileTimeStamp>()->Set(mini_dump_->header()->TimeDateStamp, dlg_help_utils::misc_info_stream::get_dump_file_timezone_info(*mini_dump_));
 
         // ReSharper disable once CppExpressionWithoutSideEffects
         LoadFileItemIcon();

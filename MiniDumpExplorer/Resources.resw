@@ -405,6 +405,54 @@
   <data name="BytesPlural" xml:space="preserve">
     <value>bytes</value>
   </data>
+  <data name="YearSingular" xml:space="preserve">
+    <value>year</value>
+  </data>
+  <data name="YearPlural" xml:space="preserve">
+    <value>years</value>
+  </data>
+  <data name="MonthSingular" xml:space="preserve">
+    <value>month</value>
+  </data>
+  <data name="MonthPlural" xml:space="preserve">
+    <value>months</value>
+  </data>
+  <data name="WeekSingular" xml:space="preserve">
+    <value>week</value>
+  </data>
+  <data name="WeekPlural" xml:space="preserve">
+    <value>weeks</value>
+  </data>
+  <data name="DaySingular" xml:space="preserve">
+    <value>day</value>
+  </data>
+  <data name="DayPlural" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="HourSingular" xml:space="preserve">
+    <value>hour</value>
+  </data>
+  <data name="HourPlural" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="MinuteSingular" xml:space="preserve">
+    <value>minute</value>
+  </data>
+  <data name="MinutePlural" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="SecondSingular" xml:space="preserve">
+    <value>second</value>
+  </data>
+  <data name="SecondPlural" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="MillisecondSingular" xml:space="preserve">
+    <value>millisecond</value>
+  </data>
+  <data name="MillisecondPlural" xml:space="preserve">
+    <value>milliseconds</value>
+  </data>
   <data name="BytesCompact" xml:space="preserve">
     <value>b</value>
   </data>
@@ -3134,5 +3182,176 @@
   </data>
   <data name="REALTIME_PRIORITY_CLASS" xml:space="preserve">
     <value>REALTIME_PRIORITY_CLASS</value>
+  </data>
+  <data name="MINIDUMP_MISC1_PROCESS_ID" xml:space="preserve">
+    <value>MINIDUMP_MISC1_PROCESS_ID</value>
+  </data>
+  <data name="MINIDUMP_MISC1_PROCESS_TIMES" xml:space="preserve">
+    <value>MINIDUMP_MISC1_PROCESS_TIMES</value>
+  </data>
+  <data name="MINIDUMP_MISC1_PROCESSOR_POWER_INFO" xml:space="preserve">
+    <value>MINIDUMP_MISC1_PROCESSOR_POWER_INFO</value>
+  </data>
+  <data name="MINIDUMP_MISC3_PROCESS_INTEGRITY" xml:space="preserve">
+    <value>MINIDUMP_MISC3_PROCESS_INTEGRITY</value>
+  </data>
+  <data name="MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS" xml:space="preserve">
+    <value>MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS</value>
+  </data>
+  <data name="MINIDUMP_MISC3_TIMEZONE" xml:space="preserve">
+    <value>MINIDUMP_MISC3_TIMEZONE</value>
+  </data>
+  <data name="MINIDUMP_MISC3_PROTECTED_PROCESS" xml:space="preserve">
+    <value>MINIDUMP_MISC3_PROTECTED_PROCESS</value>
+  </data>
+  <data name="MINIDUMP_MISC4_BUILDSTRING" xml:space="preserve">
+    <value>MINIDUMP_MISC4_BUILDSTRING</value>
+  </data>
+  <data name="MINIDUMP_MISC5_PROCESS_COOKIE" xml:space="preserve">
+    <value>MINIDUMP_MISC5_PROCESS_COOKIE</value>
+  </data>
+  <data name="XSTATE_LEGACY_FLOATING_POINT" xml:space="preserve">
+    <value>XSTATE_LEGACY_FLOATING_POINT</value>
+  </data>
+  <data name="XSTATE_LEGACY_SSE" xml:space="preserve">
+    <value>XSTATE_LEGACY_SSE</value>
+  </data>
+  <data name="XSTATE_AVX" xml:space="preserve">
+    <value>XSTATE_AVX</value>
+  </data>
+  <data name="XSTATE_MPX_BNDREGS" xml:space="preserve">
+    <value>XSTATE_MPX_BNDREGS</value>
+  </data>
+  <data name="XSTATE_MPX_BNDCSR" xml:space="preserve">
+    <value>XSTATE_MPX_BNDCSR</value>
+  </data>
+  <data name="XSTATE_AVX512_KMASK" xml:space="preserve">
+    <value>XSTATE_AVX512_KMASK</value>
+  </data>
+  <data name="XSTATE_AVX512_ZMM_H" xml:space="preserve">
+    <value>XSTATE_AVX512_ZMM_H</value>
+  </data>
+  <data name="XSTATE_AVX512_ZMM" xml:space="preserve">
+    <value>XSTATE_AVX512_ZMM</value>
+  </data>
+  <data name="XSTATE_IPT" xml:space="preserve">
+    <value>XSTATE_IPT</value>
+  </data>
+  <data name="XSTATE_CET_U" xml:space="preserve">
+    <value>XSTATE_CET_U</value>
+  </data>
+  <data name="XSTATE_CET_S" xml:space="preserve">
+    <value>XSTATE_CET_S</value>
+  </data>
+  <data name="XSTATE_AMX_TILE_CONFIG" xml:space="preserve">
+    <value>XSTATE_AMX_TILE_CONFIG</value>
+  </data>
+  <data name="XSTATE_AMX_TILE_DATA" xml:space="preserve">
+    <value>XSTATE_AMX_TILE_DATA</value>
+  </data>
+  <data name="XSTATE_LWP" xml:space="preserve">
+    <value>XSTATE_LWP</value>
+  </data>
+  <data name="TimeStampLocaleMenu" xml:space="preserve">
+    <value>Time Stamp Locale</value>
+  </data>
+  <data name="TimeStampLocaleLocalMenuItem" xml:space="preserve">
+    <value>Local Locale</value>
+  </data>
+  <data name="TimeStampLocaleUtcMenuItem" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="TimeStampLocaleDumpFileMenuItem" xml:space="preserve">
+    <value>Dump File Locale</value>
+  </data>
+  <data name="DurationFormatMenu" xml:space="preserve">
+    <value>Duration Format</value>
+  </data>
+  <data name="DurationFormatTimeSpanMenuItem" xml:space="preserve">
+    <value>TimeSpan</value>
+  </data>
+  <data name="DurationFormatAutoMenuItem" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="DurationFormatMillisecondsMenuItem" xml:space="preserve">
+    <value>Milliseconds</value>
+  </data>
+  <data name="DurationFormatSecondsMenuItem" xml:space="preserve">
+    <value>Seconds</value>
+  </data>
+  <data name="DurationFormatMinutesMenuItem" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="DurationFormatHoursMenuItem" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="DurationFormatDaysMenuItem" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="DurationFormatWeeksMenuItem" xml:space="preserve">
+    <value>Weeks</value>
+  </data>
+  <data name="DurationFormatMonthsMenuItem" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="DurationFormatYearsMenuItem" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="DurationFormatRawMenuItem" xml:space="preserve">
+    <value>Raw</value>
+  </data>
+  <data name="TimezoneNameUtc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="DateFormatFlagsMenu" xml:space="preserve">
+    <value>Date Format</value>
+  </data>
+  <data name="DateFormatLongDateMenuItem" xml:space="preserve">
+    <value>Long Date</value>
+  </data>
+  <data name="DateFormatShortDateMenuItem" xml:space="preserve">
+    <value>Short Date</value>
+  </data>
+  <data name="DateFormatUseAltCalendarMenuItem" xml:space="preserve">
+    <value>Use Alternate Calendar</value>
+  </data>
+  <data name="DateFormatYearMonthMenuItem" xml:space="preserve">
+    <value>Year Month</value>
+  </data>
+  <data name="DateFormatMonthDayMenuItem" xml:space="preserve">
+    <value>Month Day</value>
+  </data>
+  <data name="DateFormatLeftToRightReadingMenuItem" xml:space="preserve">
+    <value>Left to Right</value>
+  </data>
+  <data name="DateFormatRightToLeftReadingMenuItem" xml:space="preserve">
+    <value>Right to Left</value>
+  </data>
+  <data name="DateFormatAutoLayoutMenuItem" xml:space="preserve">
+    <value>Auto Layout</value>
+  </data>
+  <data name="TimeFormatFlagsMenu" xml:space="preserve">
+    <value>Time Format</value>
+  </data>
+  <data name="TimeFormat24HourMenuItem" xml:space="preserve">
+    <value>24 Hour</value>
+  </data>
+  <data name="TimeFormatNoTimeMarkerMenuItem" xml:space="preserve">
+    <value>No Timer Marker</value>
+  </data>
+  <data name="TimeFormatNoSecondsMenuItem" xml:space="preserve">
+    <value>No Seconds</value>
+  </data>
+  <data name="TimeFormatNoMinutesOrSecondsMenuItem" xml:space="preserve">
+    <value>No Minutes or Seconds</value>
+  </data>
+  <data name="TIME_ZONE_ID_UNKNOWN" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="TIME_ZONE_ID_STANDARD" xml:space="preserve">
+    <value>standard</value>
+  </data>
+  <data name="TIME_ZONE_ID_DAYLIGHT" xml:space="preserve">
+    <value>daylight</value>
   </data>
 </root>

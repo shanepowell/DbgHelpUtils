@@ -8,6 +8,7 @@
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_memory_walker.h"
+#include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/module_list_stream.h"
 #include "DbgHelpUtils/process_environment_block.h"
 #include "DbgHelpUtils/stream_module.h"
@@ -26,7 +27,7 @@ using namespace dlg_help_utils;
 
 namespace
 {
-    void dump_vs_fixed_file_info(std::wostream& log, VS_FIXEDFILEINFO const& file_info, int const prefix_length)
+    void dump_vs_fixed_file_info(std::wostream& log, VS_FIXEDFILEINFO const& file_info, int const prefix_length, time_utils::locale_timezone_info const& dump_file_timezone_info)
     {
         std::wstring prefix(prefix_length, L' ');
         log << std::format(L"{0}Signature: {1}\n", prefix, to_hex(file_info.dwSignature));
@@ -42,14 +43,18 @@ namespace
             FILETIME ft;
             ft.dwHighDateTime = file_info.dwFileDateMS;
             ft.dwLowDateTime = file_info.dwFileDateLS;
-            auto const time_stamp = time_utils::filetime_to_time_t(ft);
-            log << std::format(L"{0}File Date: [local: {1}] [UTC: {2}]\n", prefix, time_utils::to_local_time(time_stamp), time_utils::to_utc_time(time_stamp));
+            auto const st = time_utils::filetime_to_system_time(ft);
+
+            log << std::format(L"{0}File Date: [local: {1}] [UTC: {2}] [DumpLocale: {3}]\n", prefix, 
+                from_dump_file_to_local_timestamp_string(st, dump_file_timezone_info),
+                from_dump_file_to_utc_timestamp_string(st, dump_file_timezone_info),
+                to_dump_file_timestamp_string(st, dump_file_timezone_info));
         }
         log << std::format(L"{0}File Version: {1}\n", prefix, system_info_utils::version_info_to_string(file_info.dwFileVersionMS, file_info.dwFileVersionLS));
         log << std::format(L"{0}Product Version: {1}\n", prefix, system_info_utils::version_info_to_string(file_info.dwProductVersionMS, file_info.dwProductVersionLS));
     }
 
-    void dump_version_info(std::wostream& log, file_version_info const& version_info, int const prefix_length)
+    void dump_version_info(std::wostream& log, file_version_info const& version_info, int const prefix_length, time_utils::locale_timezone_info const& dump_file_timezone_info)
     {
         std::wstring prefix(prefix_length, L' ');
         log << std::format(L"{0}Original Filename: {1}\n", prefix, version_info.original_filename());
@@ -68,7 +73,7 @@ namespace
         if(auto const file_info = version_info.file_info(); file_info.has_value())
         {
             log << L'\n';
-            dump_vs_fixed_file_info(log, *file_info, prefix_length);
+            dump_vs_fixed_file_info(log, *file_info, prefix_length, dump_file_timezone_info);
         }
     }
 }
@@ -86,6 +91,8 @@ void dump_mini_dump_module_list_stream_data(std::wostream& log, mini_dump const&
     }
 
     using namespace size_units::base_16;
+
+    auto const dump_file_timezone_info = misc_info_stream::get_dump_file_timezone_info(mini_dump);
 
     auto const modules = options.filter_values(L"module");
     auto const module_bases = vector_to_hash_set<uint64_t>(options.filter_values(L"module_base"s));
@@ -112,9 +119,12 @@ void dump_mini_dump_module_list_stream_data(std::wostream& log, mini_dump const&
         log << std::format(L"   Base: {}\n", to_hex_full(stream_module->BaseOfImage));
         log << std::format(L"   CheckSum: {}\n", to_hex(stream_module->CheckSum));
         log << std::format(L"   Size: {0} ({1})\n", locale_formatting::to_wstring(stream_module->SizeOfImage), to_wstring(bytes{stream_module->SizeOfImage}));
-        log << std::format(L"   Timestamp [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(stream_module->TimeDateStamp), time_utils::to_utc_time(stream_module->TimeDateStamp));
+
+        //  see https://devblogs.microsoft.com/oldnewthing/20180103-00/?p=97705
+        log << std::format(L"   BuildFileHash: {0} (was TimeDateStamp)\n", to_hex_full(stream_module->TimeDateStamp));
+
         log << L"   VersionInfo: \n";
-        dump_vs_fixed_file_info(log, stream_module->VersionInfo, 5);
+        dump_vs_fixed_file_info(log, stream_module->VersionInfo, 5, dump_file_timezone_info);
         log << std::format(L"   CvRecord (size): {0} ({1})\n", locale_formatting::to_wstring(stream_module->CvRecord.DataSize), to_wstring(bytes{stream_module->CvRecord.DataSize}));
 
         if (stream_module.pdb_info().is_valid())
@@ -175,7 +185,9 @@ void dump_mini_dump_unloaded_module_list_stream_data(std::wostream& log, mini_du
         log << std::format(L"   Base: {}\n", to_hex_full(module->BaseOfImage));
         log << std::format(L"   CheckSum: {}\n", locale_formatting::to_wstring(module->CheckSum));
         log << std::format(L"   Size: {0} ({1})\n", locale_formatting::to_wstring(module->SizeOfImage), to_wstring(bytes{module->SizeOfImage}));
-        log << std::format(L"   Timestamp [local: {0}] [UTC: {1}]\n", time_utils::to_local_time(module->TimeDateStamp), time_utils::to_utc_time(module->TimeDateStamp));
+
+        //  see https://devblogs.microsoft.com/oldnewthing/20180103-00/?p=97705
+        log << std::format(L"   BuildFileHash: {0} (was TimeDateStamp)\n", to_hex_full(module->TimeDateStamp));
 
         ++i;
     }
@@ -184,6 +196,8 @@ void dump_mini_dump_unloaded_module_list_stream_data(std::wostream& log, mini_du
 
 void dump_mini_dump_loaded_modules(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, dbg_help::symbol_engine& symbol_engine)
 {
+    auto const dump_file_timezone_info = misc_info_stream::get_dump_file_timezone_info(mini_dump);
+
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
     for (auto const& loaded_module : symbol_engine.loaded_modules())
     {
@@ -208,7 +222,7 @@ void dump_mini_dump_loaded_modules(std::wostream& log, mini_dump const& mini_dum
             version_info.has_version_info())
         {
             log << L'\n';
-            dump_version_info(log, version_info, 4);
+            dump_version_info(log, version_info, 4, dump_file_timezone_info);
         }
         else if(auto memory = peb.walker().get_process_memory_stream(info.BaseOfImage, info.ImageSize);
                 !memory.eof())
@@ -217,7 +231,7 @@ void dump_mini_dump_loaded_modules(std::wostream& log, mini_dump const& mini_dum
                 memory_version_info.has_version_info())
             {
                 log << L'\n';
-                dump_version_info(log, memory_version_info, 4);
+                dump_version_info(log, memory_version_info, 4, dump_file_timezone_info);
             }
         }
 
