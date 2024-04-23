@@ -4,6 +4,7 @@
 #include <DbgHelp.h>
 #include <avrfsdk.h>
 #include <experimental/generator>
+#include <limits>
 
 namespace dlg_help_utils
 {
@@ -12,7 +13,7 @@ namespace dlg_help_utils
     class handle_operation_list_stream
     {
     public:
-        explicit handle_operation_list_stream(mini_dump const& dump, size_t index = 0);
+        explicit handle_operation_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] bool is_valid() const { return is_valid_; }

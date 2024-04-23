@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include <limits>
 
 namespace dlg_help_utils
 {
@@ -8,7 +9,7 @@ namespace dlg_help_utils
     class comment_stream_a
     {
     public:
-        explicit comment_stream_a(mini_dump const& dump, size_t index = 0);
+        explicit comment_stream_a(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] size_t index() const { return index_; }

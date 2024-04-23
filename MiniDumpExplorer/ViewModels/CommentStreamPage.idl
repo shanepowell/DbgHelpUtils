@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass CommentStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        CommentStreamPage();
+
+        String Comment { get; };
+    }
+}

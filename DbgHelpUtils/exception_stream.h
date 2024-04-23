@@ -4,6 +4,8 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 
+#include <limits>
+
 #include "stream_thread_context.h"
 
 namespace dlg_help_utils
@@ -14,7 +16,7 @@ namespace dlg_help_utils
     {
     public:
         exception_stream() = default;
-        explicit exception_stream(mini_dump const& dump, size_t index = 0);
+        explicit exception_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] size_t index() const { return index_; }

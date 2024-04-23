@@ -457,6 +457,10 @@
       <DependentUpon>Models\XStateDataEnabledFeaturesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\CommentStreamPage.xaml.h">
+      <DependentUpon>ViewModels\CommentStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\ExceptionStreamPage.xaml.h">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -591,6 +595,9 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Controls\DataGrid\DataGridTheme.xaml" />
+    <Page Include="ViewModels\CommentStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\ExceptionStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -895,6 +902,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\XStateDataEnabledFeaturesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\CommentStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\CommentStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ExceptionStreamPage.xaml.cpp">
@@ -1333,6 +1344,10 @@
     </Midl>
     <Midl Include="Models\XStateDataEnabledFeaturesDataSource.idl">
       <DependentUpon>Models\XStateDataEnabledFeaturesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\CommentStreamPage.idl">
+      <DependentUpon>ViewModels\CommentStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ExceptionStreamPage.idl">

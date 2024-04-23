@@ -5,6 +5,7 @@
 #include <DbgHelp.h>
 
 #include "time_utils.h"
+#include <limits>
 
 namespace dlg_help_utils
 {
@@ -14,7 +15,7 @@ namespace dlg_help_utils
     {
     public:
         misc_info_stream() = default;
-        explicit misc_info_stream(mini_dump const& dump, size_t index = 0);
+        explicit misc_info_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] bool is_valid() const { return is_valid_; }

@@ -5,6 +5,7 @@
 #include <DbgHelp.h>
 #include <map>
 #include <experimental/generator>
+#include <limits>
 
 #include "stream_handle.h"
 
@@ -15,7 +16,7 @@ namespace dlg_help_utils
     class handle_data_stream
     {
     public:
-        explicit handle_data_stream(mini_dump const& dump, size_t index = 0);
+        explicit handle_data_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] bool is_valid() const { return is_valid_; }

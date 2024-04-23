@@ -4,6 +4,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <vector>
+#include <limits>
 
 #include "stream_module.h"
 
@@ -14,7 +15,7 @@ namespace dlg_help_utils
     class module_list_stream
     {
     public:
-        explicit module_list_stream(mini_dump const& dump, size_t index = 0);
+        explicit module_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] size_t index() const { return index_; }

@@ -37,6 +37,7 @@ namespace dlg_help_utils
         [[nodiscard]] void const* rva64(MINIDUMP_LOCATION_DESCRIPTOR64 location) const;
         [[nodiscard]] void const* rva64(RVA64 rva) const;
         [[nodiscard]] MINIDUMP_DIRECTORY const* find_stream_type(MINIDUMP_STREAM_TYPE type, size_t& index) const;
+        [[nodiscard]] MINIDUMP_DIRECTORY const* get_stream_type(MINIDUMP_STREAM_TYPE type, size_t index) const;
         [[nodiscard]] std::wstring const& version_string() const { return version_string_; }
 
     private:

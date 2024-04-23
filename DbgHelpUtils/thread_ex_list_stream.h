@@ -6,6 +6,7 @@
 #include <DbgHelp.h>
 #include <optional>
 #include <experimental/generator>
+#include <limits>
 
 #include "stream_thread_ex.h"
 
@@ -16,7 +17,7 @@ namespace dlg_help_utils
     class thread_ex_list_stream
     {
     public:
-        explicit thread_ex_list_stream(mini_dump const& dump, size_t index = 0);
+        explicit thread_ex_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] size_t index() const { return index_; }

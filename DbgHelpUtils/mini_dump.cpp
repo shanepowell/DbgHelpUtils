@@ -166,13 +166,39 @@ namespace dlg_help_utils
             throw wide_runtime_error{L"no stream directory found"s};
         }
 
-        for (; index < header_->NumberOfStreams; ++index)
+        if(index != std::numeric_limits<size_t>::max())
+        {
+            return get_stream_type(type, index);
+        }
+
+        for (index = 0; index < header_->NumberOfStreams; ++index)
         {
             auto const& entry = directory_[index];
             if (static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType) == type)
             {
                 return &entry;
             }
+        }
+
+        return nullptr;
+    }
+
+    MINIDUMP_DIRECTORY const* mini_dump::get_stream_type(MINIDUMP_STREAM_TYPE const type, size_t const index) const
+    {
+        if (header_ == nullptr)
+        {
+            throw wide_runtime_error{L"no header found"s};
+        }
+
+        if (directory_ == nullptr)
+        {
+            throw wide_runtime_error{L"no stream directory found"s};
+        }
+
+        auto const& entry = directory_[index];
+        if (static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType) == type)
+        {
+            return &entry;
         }
 
         return nullptr;

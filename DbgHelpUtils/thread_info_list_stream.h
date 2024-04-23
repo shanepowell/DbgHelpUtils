@@ -4,6 +4,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <experimental/generator>
+#include <limits>
 
 #include "stream_thread_info.h"
 
@@ -14,7 +15,7 @@ namespace dlg_help_utils
     class thread_info_list_stream
     {
     public:
-        explicit thread_info_list_stream(mini_dump const& dump, size_t index = 0);
+        explicit thread_info_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] bool is_valid() const { return is_valid_; }

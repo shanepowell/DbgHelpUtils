@@ -5,6 +5,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <experimental/generator>
+#include <limits>
 
 #include "stream_thread_name.h"
 
@@ -15,7 +16,7 @@ namespace dlg_help_utils
     class thread_names_list_stream
     {
     public:
-        explicit thread_names_list_stream(mini_dump const& dump, size_t index = 0);
+        explicit thread_names_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
         [[nodiscard]] size_t index() const { return index_; }
