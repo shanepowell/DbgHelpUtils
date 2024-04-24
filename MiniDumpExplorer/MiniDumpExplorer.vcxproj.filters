@@ -62,6 +62,9 @@
     <Page Include="ViewModels\CommentStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ThreadExListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -497,6 +500,12 @@
       <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
     <ClCompile Include="Models\DumpFileTimeStamp.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadExListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadExListStreamEntry.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

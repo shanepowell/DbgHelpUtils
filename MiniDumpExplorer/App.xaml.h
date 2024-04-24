@@ -90,6 +90,8 @@
 #include "Models\XStateDataEnabledFeaturesDataSource.h"
 #include "Converters\DurationConverter.h"
 #include "Models\DumpFileTimeStamp.h"
+#include "Models\ThreadExListStreamEntriesDataSource.h"
+#include "Models\ThreadExListStreamEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

@@ -1,0 +1,12 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ThreadExListStreamPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ThreadExListStreamPage();
+
+        IDataGridDataSource ItemsSource { get; };
+    }
+}

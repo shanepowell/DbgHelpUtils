@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MiniDumpPage.xaml.h"
 
+#include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Xaml.Interop.h>
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
@@ -9,6 +10,7 @@
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
+#include "Utility/logger.h"
 
 #if __has_include("MiniDumpPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -68,7 +70,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { mini_dump_stream_type::enum_names::MemoryListStream, xaml_typename<MemoryListStreamPage>() },
             { mini_dump_stream_type::enum_names::ExceptionStream, xaml_typename<ExceptionStreamPage>() },
             { mini_dump_stream_type::enum_names::SystemInfoStream, xaml_typename<SystemInfoStreamPage>() },
-            //{ mini_dump_stream_type::enum_names::ThreadExListStream, xaml_typename<ThreadExListStreamPage>() },
+            { mini_dump_stream_type::enum_names::ThreadExListStream, xaml_typename<ThreadExListStreamPage>() },
             { mini_dump_stream_type::enum_names::Memory64ListStream, xaml_typename<Memory64ListStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamA, xaml_typename<CommentStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamW, xaml_typename<CommentStreamPage>() },
@@ -130,8 +132,15 @@ namespace winrt::MiniDumpExplorer::implementation
 
     Windows::Foundation::IAsyncOperation<bool> MiniDumpPage::LoadMiniDump()
     {
+        Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
         try
         {
+            auto self = get_strong();
+
+            apartment_context ui_thread; 
+            co_await resume_background();
+
+            logger::Log().LogMessage(log_level::info, std::format(L"Loading MiniDump: {}", file_.Path()));
             auto const fullPath = static_cast<std::wstring>(file_.Path());
             miniDump_ = std::make_unique<mini_dump>(fullPath);
 
@@ -141,11 +150,19 @@ namespace winrt::MiniDumpExplorer::implementation
             GlobalOptions::Options().AddRecentFile(fullPath);
 
             valid_ = miniDump_->is_valid();
+            auto const* directory = miniDump_->directory();
 
-            if (auto const* directory = miniDump_->directory();
-                valid_ && miniDump_->type() == dump_file_type::user_mode_dump && directory != nullptr)
+            if(!valid_)
             {
-                Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+                openError_ = rm.MainResourceMap().GetValue(L"Resources/InvalidMinidumpFile").ValueAsString();
+            }
+            logger::Log().LogMessage(log_level::debug, L"MiniDump Opened: {}");
+
+            co_await ui_thread;
+
+            if (valid_ && miniDump_->type() == dump_file_type::user_mode_dump && directory != nullptr)
+            {
+                logger::Log().LogMessage(log_level::debug, L"MiniDump Setup UI Elements");
                 auto const streamsTitleName = rm.MainResourceMap().GetValue(L"Resources/StreamsTitleName").ValueAsString();
                 const Controls::NavigationViewItem item;
                 item.Content(box_value(streamsTitleName));
@@ -157,6 +174,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
                 auto const* header = miniDump_->header();
 
+                logger::Log().LogMessage(log_level::debug, L"MiniDump Setup Stream Entry UI Elements");
                 for (uint32_t index = 0; index < header->NumberOfStreams; ++index)
                 {
                     auto const& stream_entry = directory[index];
@@ -166,9 +184,12 @@ namespace winrt::MiniDumpExplorer::implementation
                         item.MenuItems().Append(streamItem);
                     }
                 }
+                logger::Log().LogMessage(log_level::debug, L"MiniDump UI Elements Setup");
             }
 
+            logger::Log().LogMessage(log_level::debug, L"Trigger MiniDump Loaded handler");
             miniDumpLoadedHandler_(*this, MiniDumpExplorer::MiniDumpPage{*this});
+            logger::Log().LogMessage(log_level::debug, L"MiniDump Loaded handler complete");
         }
         catch (wide_runtime_error const& e)
         {
@@ -184,7 +205,6 @@ namespace winrt::MiniDumpExplorer::implementation
         if(!openError_.empty())
         {
             const Controls::ContentDialog dialog;
-            Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
             dialog.Title(box_value(rm.MainResourceMap().GetValue(L"Resources/LoadMiniDumpErrorTitle").ValueAsString()));
             dialog.Content(box_value(openError_));
             dialog.CloseButtonText(rm.MainResourceMap().GetValue(L"Resources/LoadMiniDumpErrorCloseButton").ValueAsString());

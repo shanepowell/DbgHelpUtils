@@ -1,0 +1,18 @@
+    namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ThreadExListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadExListStreamEntry();
+
+        UInt32 Index { get; };
+        UInt32 Id { get; };
+        String Name { get; };
+        UInt32 Priority { get; };
+        UInt32 PriorityClass { get; };
+        String PriorityClassType { get; };
+        UInt32 SuspendCount { get; };
+        UInt64 TEB { get; };
+    }
+}

@@ -120,6 +120,9 @@
   <data name="DefaultTabHeader" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="InvalidMinidumpFile" xml:space="preserve">
+    <value>Invalid MiniDump File</value>
+  </data>
   <data name="StreamsTitleName" xml:space="preserve">
     <value>Streams</value>
   </data>
