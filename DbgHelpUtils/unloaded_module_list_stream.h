@@ -16,6 +16,7 @@ namespace dlg_help_utils
     class unloaded_module_list_stream
     {
     public:
+        unloaded_module_list_stream() = default;
         explicit unloaded_module_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -34,11 +35,11 @@ namespace dlg_help_utils
         [[nodiscard]] std::vector<stream_unloaded_module> build_modules() const;
 
     private:
-        mini_dump const& dump_;
-        MINIDUMP_UNLOADED_MODULE_LIST const* module_list_;
-        size_t const index_;
-        bool const found_;
-        bool const is_valid_;
+        mini_dump const* dump_ {nullptr};
+        MINIDUMP_UNLOADED_MODULE_LIST const* module_list_{nullptr};
+        size_t index_{};
+        bool found_{false};
+        bool is_valid_{false};
         MINIDUMP_UNLOADED_MODULE const* list_{get_unloaded_module()};
         std::vector<stream_unloaded_module> const modules_{build_modules()};
     };

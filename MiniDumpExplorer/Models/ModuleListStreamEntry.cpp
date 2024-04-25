@@ -19,11 +19,11 @@ namespace winrt::MiniDumpExplorer::implementation
     ModuleListStreamEntry::ModuleListStreamEntry()
         : GlobalOptionsNotifyPropertyChangedBase(
             {
-                L"Base",
                 L"CheckSum",
                 L"Reserved0",
                 L"Reserved1",
                 L"BuildFileHash",
+                L"BaseOfImage",
             }, 
             {
                 L"SizeOfImage"

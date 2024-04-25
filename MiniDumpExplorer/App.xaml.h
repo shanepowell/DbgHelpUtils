@@ -92,6 +92,8 @@
 #include "Models\DumpFileTimeStamp.h"
 #include "Models\ThreadExListStreamEntriesDataSource.h"
 #include "Models\ThreadExListStreamEntry.h"
+#include "Models\UnloadedModuleListStreamEntriesDataSource.h"
+#include "Models\UnloadedModuleListStreamEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

@@ -24,8 +24,8 @@ namespace winrt::MiniDumpExplorer::implementation
                 {L"Index", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::Index)},
                 {L"Name", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::Name)},
                 {L"Path", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::Path)},
-                {L"Base", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::Base)},
                 {L"CheckSum", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::CheckSum)},
+                {L"BaseOfImage", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::BaseOfImage)},
                 {L"SizeOfImage", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::SizeOfImage)},
                 {L"BuildFileHash", Utility::MakeComparer(&MiniDumpExplorer::ModuleListStreamEntry::BuildFileHash)},
                 {L"FileVersion", [](MiniDumpExplorer::ModuleListStreamEntry const& a, MiniDumpExplorer::ModuleListStreamEntry const& b)

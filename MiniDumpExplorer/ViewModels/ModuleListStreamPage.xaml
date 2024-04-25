@@ -59,9 +59,9 @@
                 <local:DataGridTextColumn Header="Name"
                                           Binding="{Binding Name,Mode=OneWay}"
                                           Tag="Name" />
-                <local:DataGridTextColumn Header="Base"
-                                          Binding="{Binding Base,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
-                                          Tag="Base" />
+                <local:DataGridTextColumn Header="Base Of Image"
+                                          Binding="{Binding BaseOfImage,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
+                                          Tag="BaseOfImage" />
                 <local:DataGridTextColumn Header="CheckSum"
                                           Binding="{Binding CheckSum,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="CheckSum" />

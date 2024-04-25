@@ -1,0 +1,17 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass UnloadedModuleListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        UnloadedModuleListStreamEntry();
+
+        UInt32 Index { get; };
+        String Name { get; };
+        String Path { get; };
+        UInt64 BaseOfImage { get; };
+        UInt32 CheckSum { get; };
+        UInt32 SizeOfImage { get; };
+        UInt32 BuildFileHash { get; };
+    }
+}

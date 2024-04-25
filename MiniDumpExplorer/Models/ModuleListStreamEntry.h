@@ -24,8 +24,8 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t Index() const { return index_; }
         hstring Name() const { return name_; }
         hstring Path() const { return path_; }
-        uint64_t Base() const { return module_->BaseOfImage; }
         uint32_t CheckSum() const { return module_->CheckSum; }
+        uint64_t BaseOfImage() const { return module_->BaseOfImage; }
         uint32_t SizeOfImage() const { return module_->SizeOfImage; }
 
         // not a TimeStamp any longer, really a BuildFileHash

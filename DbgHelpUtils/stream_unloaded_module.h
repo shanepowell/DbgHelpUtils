@@ -13,11 +13,12 @@ namespace dlg_help_utils
     class stream_unloaded_module : public stream_module_name
     {
     public:
+        stream_unloaded_module() = default;
         explicit stream_unloaded_module(mini_dump const& dump, MINIDUMP_UNLOADED_MODULE const& module);
 
-        MINIDUMP_UNLOADED_MODULE const* operator->() const { return &module_; }
+        MINIDUMP_UNLOADED_MODULE const* operator->() const { return module_; }
 
     private:
-        MINIDUMP_UNLOADED_MODULE const& module_;
+        MINIDUMP_UNLOADED_MODULE const* module_{nullptr};
     };
 }

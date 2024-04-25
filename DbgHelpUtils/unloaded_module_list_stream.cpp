@@ -6,7 +6,7 @@
 namespace dlg_help_utils
 {
     unloaded_module_list_stream::unloaded_module_list_stream(mini_dump const& dump, size_t index)
-        : dump_{dump}
+        : dump_{&dump}
         , module_list_{get_unloaded_module_list(dump, index)}
         , index_{index}
         , found_{module_list_ != nullptr}
@@ -73,7 +73,7 @@ namespace dlg_help_utils
         rv.reserve(module_list_->NumberOfEntries);
         for (size_t index = 0; index < module_list_->NumberOfEntries; ++index)
         {
-            rv.emplace_back(dump_, list_[index]);
+            rv.emplace_back(*dump_, list_[index]);
         }
 
         return rv;
