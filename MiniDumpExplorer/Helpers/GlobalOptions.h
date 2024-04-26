@@ -42,6 +42,7 @@ enum class DurationFormatType
 {
     TimeSpan,
     Auto,
+    FileTime,
     Milliseconds,
     Seconds,
     Minutes,

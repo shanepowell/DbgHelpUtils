@@ -17,6 +17,7 @@ namespace dlg_help_utils::time_units::resources
             rv[time_unit_type::minute] = make_pair(L"minute"s, L"minutes"s);
             rv[time_unit_type::second] = make_pair(L"second"s, L"seconds"s);
             rv[time_unit_type::millisecond] = make_pair(L"millisecond"s, L"milliseconds"s);
+            rv[time_unit_type::filetime_nanosecond] = make_pair(L"nanosecond"s, L"nanoseconds"s);
             return rv;
         }
 

@@ -6,8 +6,8 @@
 namespace dlg_help_utils
 {
     thread_info_list_stream::thread_info_list_stream(mini_dump const& dump, size_t const index)
-        : dump_{dump}
-          , index_{index}
+        : dump_{&dump}
+        , index_{index}
     {
         auto const* entry = dump.find_stream_type(ThreadInfoListStream, index_);
         if (entry == nullptr)
@@ -32,7 +32,7 @@ namespace dlg_help_utils
 
     std::experimental::generator<stream_thread_info> thread_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
-        thread_names_list_stream const names_list{dump_};
+        thread_names_list_stream const names_list{*dump_};
         for (size_t index = 0; index < thread_info_list_->NumberOfEntries; ++index)
         {
             // ReSharper disable once CppAwaiterTypeIsNotClass

@@ -51,6 +51,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     wchar_t const * const GlobalOptionItems::DurationFormatTimeSpanString = L"DurationFormatTimeSpan";
     wchar_t const * const GlobalOptionItems::DurationFormatAutoString = L"DurationFormatAuto";
+    wchar_t const * const GlobalOptionItems::DurationFormatFileTimeString = L"DurationFormatFileTime";
     wchar_t const * const GlobalOptionItems::DurationFormatMillisecondsString = L"DurationFormatMilliseconds";
     wchar_t const * const GlobalOptionItems::DurationFormatSecondsString = L"DurationFormatSeconds";
     wchar_t const * const GlobalOptionItems::DurationFormatMinutesString = L"DurationFormatMinutes";
@@ -97,6 +98,7 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 DurationFormatTimeSpanString,
                 DurationFormatAutoString,
+                DurationFormatFileTimeString,
                 DurationFormatMillisecondsString,
                 DurationFormatSecondsString,
                 DurationFormatMinutesString,
@@ -528,6 +530,19 @@ namespace winrt::MiniDumpExplorer::implementation
         if(value)
         {
             GlobalOptions::Options().DurationFormat(DurationFormatType::Auto);
+        }
+    }
+
+    bool GlobalOptionItems::DurationFormatFileTime()
+    {
+        return GlobalOptions::Options().DurationFormat() == DurationFormatType::FileTime;
+    }
+
+    void GlobalOptionItems::DurationFormatFileTime(bool const value)
+    {
+        if(value)
+        {
+            GlobalOptions::Options().DurationFormat(DurationFormatType::FileTime);
         }
     }
 

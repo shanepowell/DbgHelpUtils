@@ -42,6 +42,7 @@ namespace MiniDumpExplorer
 
         Boolean DurationFormatTimeSpan;
         Boolean DurationFormatAuto;
+        Boolean DurationFormatFileTime;
         Boolean DurationFormatMilliseconds;
         Boolean DurationFormatSeconds;
         Boolean DurationFormatMinutes;

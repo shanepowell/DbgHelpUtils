@@ -340,6 +340,7 @@ Controls::MenuFlyoutSubItem UIHelper::CreateDurationFormat()
 
     menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatTimeSpanMenuItem", implementation::GlobalOptionItems::DurationFormatTimeSpanString, groupName));
     menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatAutoMenuItem", implementation::GlobalOptionItems::DurationFormatAutoString, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatFileTimeMenuItem", implementation::GlobalOptionItems::DurationFormatFileTimeString, groupName));
     menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatMillisecondsMenuItem", implementation::GlobalOptionItems::DurationFormatMillisecondsString, groupName));
     menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatSecondsMenuItem", implementation::GlobalOptionItems::DurationFormatSecondsString, groupName));
     menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/DurationFormatMinutesMenuItem", implementation::GlobalOptionItems::DurationFormatMinutesString, groupName));

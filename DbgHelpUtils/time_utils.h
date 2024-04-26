@@ -24,8 +24,6 @@ namespace dlg_help_utils::time_utils
     std::wstring to_local_timestamp_string(FILETIME const& ft);
     std::wstring to_utc_timestamp_string(FILETIME const& ft);
 
-    time_t filetime_to_time_t(FILETIME ft);
-    time_t filetime_to_time_t(uint64_t ft);
     uint64_t to_file_time(SYSTEMTIME const& st);
     uint64_t to_file_time(FILETIME const& ft);
     time_t to_time_t(SYSTEMTIME const& st);
@@ -35,7 +33,6 @@ namespace dlg_help_utils::time_utils
     FILETIME to_filetime(uint64_t st);
     SYSTEMTIME filetime_to_system_time(FILETIME const& ft);
     FILETIME system_time_to_filetime(SYSTEMTIME const& st);
-    std::chrono::milliseconds duration_to_ms(uint64_t duration); // 100-nanosecond internals to ms
 
     namespace resources
     {

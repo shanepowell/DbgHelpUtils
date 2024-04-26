@@ -456,6 +456,12 @@
   <data name="MillisecondPlural" xml:space="preserve">
     <value>milliseconds</value>
   </data>
+  <data name="NanosecondSingular" xml:space="preserve">
+    <value>nanosecond</value>
+  </data>
+  <data name="NanosecondPlural" xml:space="preserve">
+    <value>nanoseconds</value>
+  </data>
   <data name="BytesCompact" xml:space="preserve">
     <value>b</value>
   </data>
@@ -3275,6 +3281,9 @@
   </data>
   <data name="DurationFormatAutoMenuItem" xml:space="preserve">
     <value>Auto</value>
+  </data>
+  <data name="DurationFormatFileTimeMenuItem" xml:space="preserve">
+    <value>Nanoseconds</value>
   </data>
   <data name="DurationFormatMillisecondsMenuItem" xml:space="preserve">
     <value>Milliseconds</value>

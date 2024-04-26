@@ -150,6 +150,7 @@
                             <ComboBox x:Name="durationFormat" AutomationProperties.AutomationId="durationFormatComboBox" SelectionChanged="DurationFormatChanged">
                                 <ComboBoxItem Content="TimeSpan" />
                                 <ComboBoxItem Content="Auto" />
+                                <ComboBoxItem Content="Nanoseconds" />
                                 <ComboBoxItem Content="Milliseconds" />
                                 <ComboBoxItem Content="Seconds" />
                                 <ComboBoxItem Content="Minutes" />
@@ -167,7 +168,7 @@
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                            IsTextSelectionEnabled="True"
                                            TextAlignment="Right"
-                                           Text="{x:Bind ExampleDuration, Converter={StaticResource DurationConverter},ConverterParameter=milliseconds, Mode=OneWay}">
+                                           Text="{x:Bind ExampleDuration, Converter={StaticResource DurationConverter},ConverterParameter=filetime, Mode=OneWay}">
                                 </TextBlock>
                             </StackPanel>
                         </local:SettingsCard>

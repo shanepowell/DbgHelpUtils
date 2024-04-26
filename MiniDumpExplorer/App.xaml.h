@@ -96,6 +96,8 @@
 #include "Models\UnloadedModuleListStreamEntry.h"
 #include "Models\MemoryInfoListStreamEntriesDataSource.h"
 #include "Models\MemoryInfoListStreamEntry.h"
+#include "Models\ThreadInfoListStreamEntriesDataSource.h"
+#include "Models\ThreadInfoListStreamEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

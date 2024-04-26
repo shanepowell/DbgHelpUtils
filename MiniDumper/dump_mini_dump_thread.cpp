@@ -457,22 +457,24 @@ void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump c
         log << std::format(L"   Affinity: {}\n", to_hex_full(thread->Affinity));
         if (thread->CreateTime > 0)
         {
+            auto const st = time_utils::filetime_to_system_time(time_utils::to_filetime(thread->CreateTime));
             log << std::format(L"   CreateTime [local: {0}] [UTC: {1}] [DumpLocale: {2}]\n"
-                , from_dump_file_to_local_timestamp_string(time_utils::filetime_to_time_t(thread->CreateTime), local_info)
-                , from_dump_file_to_utc_timestamp_string(time_utils::filetime_to_time_t(thread->CreateTime), local_info)
-                , to_dump_file_timestamp_string(time_utils::filetime_to_time_t(thread->CreateTime), local_info)
+                , from_dump_file_to_local_timestamp_string(st, local_info)
+                , from_dump_file_to_utc_timestamp_string(st, local_info)
+                , to_dump_file_timestamp_string(st, local_info)
             );
         }
         if (thread->ExitTime > 0)
         {
+            auto const st = time_utils::filetime_to_system_time(time_utils::to_filetime(thread->ExitTime));
             log << std::format(L"   ExitTime [local: {0}] [UTC: {1}] [DumpLocale: {2}]\n"
-                , from_dump_file_to_local_timestamp_string(time_utils::filetime_to_time_t(thread->ExitTime), local_info)
-                , from_dump_file_to_utc_timestamp_string(time_utils::filetime_to_time_t(thread->ExitTime), local_info)
-                , to_dump_file_timestamp_string(time_utils::filetime_to_time_t(thread->ExitTime), local_info)
+                , from_dump_file_to_local_timestamp_string(st, local_info)
+                , from_dump_file_to_utc_timestamp_string(st, local_info)
+                , to_dump_file_timestamp_string(st, local_info)
             );
         }
-        log << std::format(L"   UserTime: {0} ({1})\n", locale_formatting::to_wstring(thread->UserTime), time_utils::duration_to_ms(thread->UserTime));
-        log << std::format(L"   KernelTime: {0} ({1})\n", locale_formatting::to_wstring(thread->KernelTime), time_utils::duration_to_ms(thread->KernelTime));
+        log << std::format(L"   UserTime: {0} ({1})\n", to_timespan_wstring(filetime_nanoseconds{thread->UserTime}), locale_formatting::to_wstring(thread->UserTime));
+        log << std::format(L"   KernelTime: {0} ({1})\n", to_timespan_wstring(filetime_nanoseconds{thread->KernelTime}), locale_formatting::to_wstring(thread->KernelTime));
         log << std::format(L"   ExitStatus: {}\n", locale_formatting::to_wstring(thread->ExitStatus));
         log << std::format(L"   DumpFlags: {0} ({1})\n", thread_info_utils::dump_flags_to_string(thread->DumpFlags), to_hex(thread->DumpFlags));
         log << std::format(L"   DumpError: {}\n", to_hex(thread->DumpError));

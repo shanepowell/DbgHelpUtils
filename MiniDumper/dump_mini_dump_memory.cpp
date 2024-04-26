@@ -271,7 +271,7 @@ void dump_mini_dump_system_memory_info_stream_data(std::wostream& log, mini_dump
         // ReSharper disable StringLiteralTypo
         {
             using namespace time_units;
-            log << std::format(L"  IdleProcessTime: {0} ({1})\n", locale_formatting::to_wstring(info.PerfInfo.IdleProcessTime), time_utils::duration_to_ms(info.PerfInfo.IdleProcessTime));
+            log << std::format(L"  IdleProcessTime: {0} ({1})\n", to_timespan_wstring(filetime_nanoseconds{info.PerfInfo.IdleProcessTime}), locale_formatting::to_wstring(info.PerfInfo.IdleProcessTime));
         }
 
         {

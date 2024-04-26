@@ -15,6 +15,7 @@ namespace dlg_help_utils
     class thread_info_list_stream
     {
     public:
+        thread_info_list_stream() = default;
         explicit thread_info_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -25,10 +26,10 @@ namespace dlg_help_utils
         [[nodiscard]] std::experimental::generator<stream_thread_info> list() const;
 
     private:
-        mini_dump const& dump_;
+        mini_dump const* dump_{nullptr};
         bool found_{false};
         bool is_valid_{false};
-        size_t index_;
+        size_t index_{};
         MINIDUMP_THREAD_INFO_LIST const* thread_info_list_{nullptr};
         MINIDUMP_THREAD_INFO const* list_{nullptr};
     };

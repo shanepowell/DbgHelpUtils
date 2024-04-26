@@ -71,6 +71,9 @@
     <Page Include="ViewModels\MemoryInfoListStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ThreadInfoListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -524,6 +527,12 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\MemoryInfoListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadInfoListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadInfoListStreamEntry.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

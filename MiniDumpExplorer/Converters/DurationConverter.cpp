@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DurationConverter.h"
 
+#include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/time_units.h"
 #include "Helpers/GlobalOptions.h"
@@ -32,7 +33,8 @@ namespace winrt::MiniDumpExplorer::implementation
         std::wstring parameterValue{unbox_value_or<hstring>(parameter, L"")};
         return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t, int64_t, int32_t, int16_t, int8_t>([&parameterValue](auto const v)
         {
-            std::chrono::milliseconds duration;
+            using namespace dlg_help_utils::time_units;
+            filetime_nanoseconds duration;
 
             auto durationFormat = GlobalOptions::Options().DurationFormat();
 
@@ -60,6 +62,16 @@ namespace winrt::MiniDumpExplorer::implementation
                     durationFormat = DurationFormatType::Milliseconds;
                 }
             }
+            else if(dlg_help_utils::string_utils::iequals(parameterValue, L"filetime"))
+            {
+                duration = filetime_nanoseconds{v};
+                /*
+                if(durationFormat == DurationFormatType::Raw)
+                {
+                    durationFormat = DurationFormatType::FileTime;
+                }
+                */
+            }
             else if(dlg_help_utils::string_utils::iequals(parameterValue, L"hours"))
             {
                 duration = std::chrono::hours{v};
@@ -70,7 +82,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
             else if(dlg_help_utils::string_utils::iequals(parameterValue, L"days"))
             {
-                duration = std::chrono::days{v};
+                duration = days{v};
                 if(durationFormat == DurationFormatType::Raw)
                 {
                     durationFormat = DurationFormatType::Days;
@@ -78,7 +90,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
             else if(dlg_help_utils::string_utils::iequals(parameterValue, L"weeks"))
             {
-                duration = std::chrono::weeks{v};
+                duration = weeks{v};
                 if(durationFormat == DurationFormatType::Raw)
                 {
                     durationFormat = DurationFormatType::Weeks;
@@ -86,7 +98,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
             else if(dlg_help_utils::string_utils::iequals(parameterValue, L"months"))
             {
-                duration = std::chrono::months{v};
+                duration = months{v};
                 if(durationFormat == DurationFormatType::Raw)
                 {
                     durationFormat = DurationFormatType::Months;
@@ -94,7 +106,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
             else if(dlg_help_utils::string_utils::iequals(parameterValue, L"years"))
             {
-                duration = std::chrono::years{v};
+                duration = years{v};
                 if(durationFormat == DurationFormatType::Raw)
                 {
                     durationFormat = DurationFormatType::Years;
@@ -108,27 +120,31 @@ namespace winrt::MiniDumpExplorer::implementation
             switch(durationFormat)
             {
             case DurationFormatType::Auto:
-            case DurationFormatType::Raw:
                 break;
 
+            case DurationFormatType::Raw:
+                return box_value(locale_formatting::to_wstring(duration.count()));
+
             case DurationFormatType::TimeSpan:
-                return box_value(dlg_help_utils::time_units::to_timespan_wstring(duration));
+                return box_value(to_timespan_wstring(duration));
+            case DurationFormatType::FileTime:
+                return box_value(to_nanoseconds_wstring(duration));
             case DurationFormatType::Milliseconds:
-                return box_value(dlg_help_utils::time_units::to_milliseconds_wstring(duration));
+                return box_value(to_milliseconds_wstring(duration));
             case DurationFormatType::Seconds:
-                return box_value(dlg_help_utils::time_units::to_seconds_wstring(duration));
+                return box_value(to_seconds_wstring(duration));
             case DurationFormatType::Minutes:
-                return box_value(dlg_help_utils::time_units::to_minutes_wstring(duration));
+                return box_value(to_minutes_wstring(duration));
             case DurationFormatType::Hours:
-                return box_value(dlg_help_utils::time_units::to_hours_wstring(duration));
+                return box_value(to_hours_wstring(duration));
             case DurationFormatType::Days:
-                return box_value(dlg_help_utils::time_units::to_days_wstring(duration));
+                return box_value(to_days_wstring(duration));
             case DurationFormatType::Weeks:
-                return box_value(dlg_help_utils::time_units::to_weeks_wstring(duration));
+                return box_value(to_weeks_wstring(duration));
             case DurationFormatType::Months:
-                return box_value(dlg_help_utils::time_units::to_months_wstring(duration));
+                return box_value(to_months_wstring(duration));
             case DurationFormatType::Years:
-                return box_value(dlg_help_utils::time_units::to_years_wstring(duration));
+                return box_value(to_years_wstring(duration));
             }
 
             return box_value(dlg_help_utils::time_units::to_wstring(duration));

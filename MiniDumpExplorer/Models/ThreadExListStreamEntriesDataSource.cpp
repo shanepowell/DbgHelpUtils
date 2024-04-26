@@ -187,5 +187,4 @@ namespace winrt::MiniDumpExplorer::implementation
     void ThreadExListStreamEntriesDataSource::SetupDataProperties()
     {
     }
-
 }

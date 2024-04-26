@@ -1,5 +1,6 @@
 ﻿#include "time_utils.h"
 
+#include "time_units.h"
 #include "wide_runtime_error.h"
 #include "windows_error.h"
 
@@ -7,6 +8,19 @@ namespace dlg_help_utils::time_utils
 {
     namespace 
     {
+        time_t filetime_to_time_t(uint64_t const ft)
+        {
+            return static_cast<time_t>(ft / 10000000ULL - 11644473600ULL);
+        }
+
+        time_t filetime_to_time_t(FILETIME const ft)
+        {
+            ULARGE_INTEGER ull;
+            ull.LowPart = ft.dwLowDateTime;
+            ull.HighPart = ft.dwHighDateTime;
+            return filetime_to_time_t(ull.QuadPart);
+        }
+
         std::wstring to_unknown_timezone_name(TIME_ZONE_INFORMATION const& tzi)
         {
             if(tzi.Bias == 0)
@@ -410,19 +424,6 @@ namespace dlg_help_utils::time_utils
         return get_locale_date_time(filetime_to_system_time(ft), resources::get_utc_timezone_name());
     }
 
-    time_t filetime_to_time_t(FILETIME const ft)
-    {
-        ULARGE_INTEGER ull;
-        ull.LowPart = ft.dwLowDateTime;
-        ull.HighPart = ft.dwHighDateTime;
-        return filetime_to_time_t(ull.QuadPart);
-    }
-
-    time_t filetime_to_time_t(uint64_t const ft)
-    {
-        return static_cast<time_t>(ft / 10000000ULL - 11644473600ULL);
-    }
-
     uint64_t to_file_time(SYSTEMTIME const& st)
     {
         return to_file_time(system_time_to_filetime(st));
@@ -493,10 +494,5 @@ namespace dlg_help_utils::time_utils
         }
 
         return ft;
-    }
-
-    std::chrono::milliseconds duration_to_ms(uint64_t const duration)
-    {
-        return std::chrono::milliseconds{duration / 10000ULL};
     }
 }

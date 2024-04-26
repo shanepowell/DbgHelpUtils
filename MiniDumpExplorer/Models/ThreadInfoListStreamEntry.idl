@@ -1,0 +1,26 @@
+import "Models\DumpFileTimeStamp.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ThreadInfoListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadInfoListStreamEntry();
+
+        UInt32 Index { get; };
+        UInt32 Id { get; };
+        String Name { get; };
+        UInt32 DumpFlags { get; };
+        IObservableVector<String> DumpFlagsList { get; };
+        String DumpFlagsListString { get; };
+        UInt32 DumpError { get; };
+        UInt32 ExitStatus { get; };
+        DumpFileTimeStamp CreateTime { get; };
+        DumpFileTimeStamp ExitTime { get; };
+        UInt64 KernelTime { get; };
+        UInt64 UserTime { get; };
+        UInt64 StartAddress { get; };
+        UInt64 Affinity { get; };
+    }
+}

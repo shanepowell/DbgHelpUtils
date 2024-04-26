@@ -18,7 +18,8 @@ namespace dlg_help_utils::time_units::resources
             { time_unit_type::hour, L"Hour"s },
             { time_unit_type::minute, L"Minute"s },
             { time_unit_type::second, L"Second"s },
-            { time_unit_type::millisecond, L"Millisecond"s }
+            { time_unit_type::millisecond, L"Millisecond"s },
+            { time_unit_type::filetime_nanosecond, L"Nanosecond"s }
         };
 
         std::unordered_map<time_unit_type, std::tuple<std::wstring, std::wstring>> populate_type_strings()

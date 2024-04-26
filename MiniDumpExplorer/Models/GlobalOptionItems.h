@@ -45,6 +45,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         static wchar_t const * const DurationFormatTimeSpanString;
         static wchar_t const * const DurationFormatAutoString;
+        static wchar_t const * const DurationFormatFileTimeString;
         static wchar_t const * const DurationFormatMillisecondsString;
         static wchar_t const * const DurationFormatSecondsString;
         static wchar_t const * const DurationFormatMinutesString;
@@ -122,6 +123,8 @@ namespace winrt::MiniDumpExplorer::implementation
         static void DurationFormatTimeSpan(bool value);
         static bool DurationFormatAuto();
         static void DurationFormatAuto(bool value);
+        static bool DurationFormatFileTime();
+        static void DurationFormatFileTime(bool value);
         static bool DurationFormatMilliseconds();
         static void DurationFormatMilliseconds(bool value);
         static bool DurationFormatSeconds();
