@@ -1,21 +1,21 @@
 #pragma once
 
-#include "Memory64ListStreamEntriesDataSource.g.h"
+#include "MemoryInfoListStreamEntriesDataSource.g.h"
 
 namespace dlg_help_utils
 {
-    class memory64_list_stream;
+    class memory_info_list_stream;
 }
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct DataGrid;
     struct DataGridColumnEventArgs;
-    struct Memory64ListStreamEntry;
+    struct MemoryInfoListStreamEntry;
 
-    struct Memory64ListStreamEntriesDataSource : Memory64ListStreamEntriesDataSourceT<Memory64ListStreamEntriesDataSource>
+    struct MemoryInfoListStreamEntriesDataSource : MemoryInfoListStreamEntriesDataSourceT<MemoryInfoListStreamEntriesDataSource>
     {
-        Memory64ListStreamEntriesDataSource();
+        MemoryInfoListStreamEntriesDataSource();
 
         [[nodiscard]] bool IsReadOnly() const;
         [[nodiscard]] bool CanSort() const;
@@ -37,21 +37,21 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
         void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const;
 
-        fire_and_forget LoadMiniDumpMemoryStream(dlg_help_utils::memory64_list_stream memory_list);
+        fire_and_forget LoadMiniDumpMemoryStream(dlg_help_utils::memory_info_list_stream const memory_list);
 
     private:
         void SetupDataProperties();
 
     private:
         Microsoft::UI::Xaml::Data::CollectionViewSource collectionViewSource_{};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Memory64ListStreamEntry> entries_{winrt::single_threaded_observable_vector<MiniDumpExplorer::Memory64ListStreamEntry>()};
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::MemoryInfoListStreamEntry> entries_{winrt::single_threaded_observable_vector<MiniDumpExplorer::MemoryInfoListStreamEntry>()};
         Windows::Foundation::Collections::IVector<IDataGridDataSourcePropertyInfo> dataProperties_{winrt::single_threaded_vector<IDataGridDataSourcePropertyInfo>()};
     };
 }
 
 namespace winrt::MiniDumpExplorer::factory_implementation
 {
-    struct Memory64ListStreamEntriesDataSource : Memory64ListStreamEntriesDataSourceT<Memory64ListStreamEntriesDataSource, implementation::Memory64ListStreamEntriesDataSource>
+    struct MemoryInfoListStreamEntriesDataSource : MemoryInfoListStreamEntriesDataSourceT<MemoryInfoListStreamEntriesDataSource, implementation::MemoryInfoListStreamEntriesDataSource>
     {
     };
 }

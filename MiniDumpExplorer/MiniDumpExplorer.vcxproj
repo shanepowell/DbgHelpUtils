@@ -387,6 +387,14 @@
       <DependentUpon>Models\Memory64ListStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\MemoryInfoListStreamEntriesDataSource.h">
+      <DependentUpon>Models\MemoryInfoListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\MemoryInfoListStreamEntry.h">
+      <DependentUpon>Models\MemoryInfoListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\MemoryListStreamEntriesDataSource.h">
       <DependentUpon>Models\MemoryListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -483,6 +491,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\Memory64ListStreamPage.xaml.h">
       <DependentUpon>ViewModels\Memory64ListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\MemoryInfoListStreamPage.xaml.h">
+      <DependentUpon>ViewModels\MemoryInfoListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\MemoryListStreamPage.xaml.h">
@@ -626,6 +638,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\Memory64ListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\MemoryInfoListStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\MemoryListStreamPage.xaml">
@@ -883,6 +898,12 @@
     <ClCompile Include="Models\Memory64ListStreamEntry.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\MemoryInfoListStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MemoryInfoListStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\MemoryListStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -956,6 +977,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\Memory64ListStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\Memory64ListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\MemoryInfoListStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\MemoryInfoListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\MemoryListStreamPage.xaml.cpp">
@@ -1328,6 +1353,14 @@
       <DependentUpon>Models\Memory64ListStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\MemoryInfoListStreamEntriesDataSource.idl">
+      <DependentUpon>Models\MemoryInfoListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MemoryInfoListStreamEntry.idl">
+      <DependentUpon>Models\MemoryInfoListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\MemoryListStreamEntriesDataSource.idl">
       <DependentUpon>Models\MemoryListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1422,6 +1455,10 @@
     </Midl>
     <Midl Include="ViewModels\Memory64ListStreamPage.idl">
       <DependentUpon>ViewModels\Memory64ListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\MemoryInfoListStreamPage.idl">
+      <DependentUpon>ViewModels\MemoryInfoListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\MemoryListStreamPage.idl">

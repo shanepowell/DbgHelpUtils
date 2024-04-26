@@ -15,6 +15,8 @@
 
 #include <unordered_map>
 
+#include "Helpers/WindowHelper.h"
+
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 
@@ -170,7 +172,7 @@ namespace winrt::MiniDumpExplorer::implementation
             co_return;
         }
 
-        LoadRecordFilesIntoCollection(recentFiles);
+        co_await LoadRecordFilesIntoCollection(recentFiles);
     }
 
     // ReSharper restore CppMemberFunctionMayBeStatic
@@ -197,9 +199,15 @@ namespace winrt::MiniDumpExplorer::implementation
         co_await LoadRecordFilesIntoCollection(GlobalOptions::Options().RecentFiles());
     }
 
-    Windows::Foundation::IAsyncAction RecentFileItemsDataSource::LoadRecordFilesIntoCollection(std::vector<std::wstring> const& recentFiles)
+    Windows::Foundation::IAsyncAction RecentFileItemsDataSource::LoadRecordFilesIntoCollection(std::vector<std::wstring> const recentFiles)
     {
+        // ReSharper disable once CppTooWideScope
+        apartment_context ui_thread;
+
         recentItems_.Clear();
+
+        auto weak_self = get_weak();
+        co_await resume_background();
 
         logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files..." : "Reloading recent files...");
 
@@ -207,11 +215,34 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t index{0};
         for(const auto& file : recentFiles)
         {
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
             MiniDumpExplorer::RecentFileItem item{index, hstring{file}};
             if(auto const internalItem = item.as<RecentFileItem>();
                 internalItem->Exists())
             {
-                recentItems_.Append(item);
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                co_await ui_thread;
+
+                if(auto const self = weak_self.get();
+                    self && !WindowHelper::IsExiting())
+                {
+                    recentItems_.Append(item);
+                }
+                else
+                {
+                    // it's been removed while loading the items
+                    co_return;
+                }
+
+                co_await resume_background();
                 ++index;
             }
             else
@@ -220,21 +251,26 @@ namespace winrt::MiniDumpExplorer::implementation
             }
         }
 
-        if(removedItems)
+        co_await ui_thread;
+
+        if(auto const self = weak_self.get();
+            self && !WindowHelper::IsExiting())
         {
-            SaveRecentFiles();
+            if(removedItems)
+            {
+                SaveRecentFiles();
+            }
+
+            loaded_ = true;
+
+            logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files icons" : "Reloading recent files icons");
+
+            for (auto recentItem : recentItems_)
+            {
+                co_await recentItem.as<RecentFileItem>()->LoadIconAsync();
+            }
+
+            logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files complete" : "Reloading recent files complete");
         }
-
-        loaded_ = true;
-
-        logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files icons" : "Reloading recent files icons");
-
-        for (auto recentItem : recentItems_)
-        {
-            co_await recentItem.as<RecentFileItem>()->LoadIconAsync();
-        }
-
-        logger::Log().LogMessage(log_level::debug, loaded_ ? "Loading recent files complete" : "Reloading recent files complete");
     }
-
 }

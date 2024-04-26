@@ -72,82 +72,86 @@ void GlobalOptions::LogLevel(log_level const value)
 
 void GlobalOptions::NumberDisplayFormat(NumberDisplayFormatType const value)
 {
-    ApplyValue(value, numberDisplayFormat_, NumberDisplayFormatProperty, numberDisplayFormatCallbacks_, [](auto const& callback, auto const value) { return callback(value); });
+    ApplyValue(value, numberDisplayFormat_, NumberDisplayFormatProperty, numberDisplayFormatCallbacks_, numberDisplayFormatCallbacksMutex_, [](auto const& callback, auto const value) { return callback(value); });
 }
 
 void GlobalOptions::TimeStampLocale(TimeStampLocaleType const value)
 {
-    ApplyValue(value, timeStamp_, TimeStampLocaleProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(value, locale_id_, date_format_flags_, date_format_, time_format_flags_, time_format_); });
+    ApplyValue(value, timeStamp_, TimeStampLocaleProperty, timeStampFormatCallbacks_, timeStampFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(value, locale_id_, date_format_flags_, date_format_, time_format_flags_, time_format_); });
 }
 
 void GlobalOptions::LocaleId(LCID const value)
 {
-    ApplyValue(value, locale_id_, TimeStampLocaleIdProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(timeStamp_, value, date_format_flags_, date_format_, time_format_flags_, time_format_); });
+    ApplyValue(value, locale_id_, TimeStampLocaleIdProperty, timeStampFormatCallbacks_, timeStampFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(timeStamp_, value, date_format_flags_, date_format_, time_format_flags_, time_format_); });
 }
 
 void GlobalOptions::DateFormatFlags(DWORD const value)
 {
-    ApplyValue(value, date_format_flags_, DateFormatFlagsProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(timeStamp_, locale_id_, value, date_format_, time_format_flags_, time_format_); });
+    ApplyValue(value, date_format_flags_, DateFormatFlagsProperty, timeStampFormatCallbacks_, timeStampFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(timeStamp_, locale_id_, value, date_format_, time_format_flags_, time_format_); });
 }
 
 void GlobalOptions::DateFormat(std::wstring const& value)
 {
-    ApplyValue(value, date_format_, DateFormatProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const& value) { return callback(timeStamp_, locale_id_, date_format_flags_, value, time_format_flags_, time_format_); });
+    ApplyValue(value, date_format_, DateFormatProperty, timeStampFormatCallbacks_, timeStampFormatCallbacksMutex_, [this](auto const& callback, auto const& value) { return callback(timeStamp_, locale_id_, date_format_flags_, value, time_format_flags_, time_format_); });
 }
 
 void GlobalOptions::TimeFormatFlags(DWORD const value)
 {
-    ApplyValue(value, time_format_flags_, TimeFormatFlagsProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(timeStamp_, locale_id_, date_format_flags_, date_format_, value, time_format_); });
+    ApplyValue(value, time_format_flags_, TimeFormatFlagsProperty, timeStampFormatCallbacks_, timeStampFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(timeStamp_, locale_id_, date_format_flags_, date_format_, value, time_format_); });
 }
 
 void GlobalOptions::TimeFormat(std::wstring const& value)
 {
-    ApplyValue(value, time_format_, TimeFormatProperty, timeStampFormatCallbacks_, [this](auto const& callback, auto const& value) { return callback(timeStamp_, locale_id_, date_format_flags_, date_format_, time_format_flags_, value); });
+    ApplyValue(value, time_format_, TimeFormatProperty, timeStampFormatCallbacks_, timeStampFormatCallbacksMutex_, [this](auto const& callback, auto const& value) { return callback(timeStamp_, locale_id_, date_format_flags_, date_format_, time_format_flags_, value); });
 }
 
 void GlobalOptions::SizeNumberDisplayFormat(SizeNumberDisplayFormatType const value)
 {
-    ApplyValue(value, sizeNumberDisplayFormat_, SizeNumberDisplayFormatProperty, sizeNumberDisplayFormatCallbacks_, [this](auto const& callback, auto value) { return callback(value, SizeFormat(), SizeBase()); });
+    ApplyValue(value, sizeNumberDisplayFormat_, SizeNumberDisplayFormatProperty, sizeNumberDisplayFormatCallbacks_, sizeNumberDisplayFormatCallbacksMutex_, [this](auto const& callback, auto value) { return callback(value, SizeFormat(), SizeBase()); });
 }
 
 void GlobalOptions::SizeFormat(dlg_help_utils::size_units::print const value)
 {
-    ApplyValue(value, sizeFormat_, SizeFormatProperty, sizeNumberDisplayFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(SizeNumberDisplayFormat(), value, SizeBase()); });
+    ApplyValue(value, sizeFormat_, SizeFormatProperty, sizeNumberDisplayFormatCallbacks_, sizeNumberDisplayFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(SizeNumberDisplayFormat(), value, SizeBase()); });
 }
 
 void GlobalOptions::SizeBase(SizeDisplayNumberBaseType const value)
 {
-    ApplyValue(value, sizeBase_, SizeBaseProperty, sizeNumberDisplayFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(SizeNumberDisplayFormat(), SizeFormat(), value); });
+    ApplyValue(value, sizeBase_, SizeBaseProperty, sizeNumberDisplayFormatCallbacks_, sizeNumberDisplayFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(SizeNumberDisplayFormat(), SizeFormat(), value); });
 }
 
 void GlobalOptions::DurationFormat(DurationFormatType const value)
 {
-    ApplyValue(value, durationFormat_, DurationFormatProperty, durationFormatCallbacks_, [this](auto const& callback, auto const value) { return callback(value); });
+    ApplyValue(value, durationFormat_, DurationFormatProperty, durationFormatCallbacks_, durationFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(value); });
 }
 
 void GlobalOptions::OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback)
 {
+    std::lock_guard lock{numberDisplayFormatCallbacksMutex_};
     numberDisplayFormatCallbacks_.push_back(std::move(callback));
 }
 
 void GlobalOptions::OnSizeNumberDisplayFormatChanged(std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)> callback)
 {
+    std::lock_guard lock{sizeNumberDisplayFormatCallbacksMutex_};
     sizeNumberDisplayFormatCallbacks_.push_back(std::move(callback));
 }
 
 void GlobalOptions::OnTimeStampFormatChanged(std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)> callback)
 {
+    std::lock_guard lock{timeStampFormatCallbacksMutex_};
     timeStampFormatCallbacks_.push_back(std::move(callback));
 }
 
 void GlobalOptions::OnDurationFormatChanged(std::function<bool(DurationFormatType)> callback)
 {
+    std::lock_guard lock{durationFormatCallbacksMutex_};
     durationFormatCallbacks_.push_back(std::move(callback));
 }
 
 void GlobalOptions::RecentFiles(std::vector<std::wstring> value)
 {
-    ApplyValue(std::move(value), recentFiles_, RecentFilesProperty, recentFilesCallbacks_, [](auto const& callback, auto const& value) { return callback(value); });
+    ApplyValue(std::move(value), recentFiles_, RecentFilesProperty, recentFilesCallbacks_, recentFilesCallbacksMutex_, [](auto const& callback, auto const& value) { return callback(value); });
 }
 
 void GlobalOptions::AddRecentFile(std::wstring const& fullPath)
@@ -183,6 +187,7 @@ void GlobalOptions::AddRecentFile(std::wstring const& fullPath)
 
 void GlobalOptions::OnRecentFiles(std::function<bool(std::vector<std::wstring> const&)> callback)
 {
+    std::lock_guard lock{recentFilesCallbacksMutex_};
     recentFilesCallbacks_.push_back(std::move(callback));
 }
 

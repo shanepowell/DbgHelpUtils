@@ -11,6 +11,7 @@
 using namespace std::string_view_literals;
 
 std::vector<winrt::Microsoft::UI::Xaml::Window> WindowHelper::activeWindows_{};
+std::atomic_bool WindowHelper::exiting_{};
 
 winrt::Microsoft::UI::Xaml::Window WindowHelper::CreateNewWindow()
 {
@@ -23,11 +24,13 @@ winrt::Microsoft::UI::Xaml::Window WindowHelper::CreateNewWindow()
 void WindowHelper::TrackWindow(winrt::Microsoft::UI::Xaml::Window const& window)
 {
     activeWindows_.push_back(window);
+    exiting_ = false;
     window.Closed([window](auto const&, auto const&)
     {
         activeWindows_.erase(std::ranges::find(activeWindows_, window));
         if(activeWindows_.empty())
         {
+            exiting_ = true;
             logger::Log().LogMessage(log_level::info, L"Exiting"sv);
             logger::Log().Flush();
             logger::Log().Close();

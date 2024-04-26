@@ -37,7 +37,7 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
         void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const;
 
-        void LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump) const;
+        fire_and_forget LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump);
 
     private:
         void SetupDataProperties();

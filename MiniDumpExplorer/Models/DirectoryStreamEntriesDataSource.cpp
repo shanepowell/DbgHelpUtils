@@ -3,6 +3,7 @@
 
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
+#include "Helpers/WindowHelper.h"
 #include "Models/DirectoryStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
 
@@ -137,23 +138,56 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void DirectoryStreamEntriesDataSource::LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump) const
+    fire_and_forget DirectoryStreamEntriesDataSource::LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump)
     {
+        // ReSharper disable once CppTooWideScope
+        apartment_context ui_thread;
+
         entries_.Clear();
+
+        auto weak_self = get_weak();
+        co_await resume_background();
+
         auto const* header = mini_dump.header();
         auto const* directory = mini_dump.directory();
 
         if(directory == nullptr)
         {
-            return;
+            co_return;
         }
 
         for (size_t index = 0; index < header->NumberOfStreams; ++index)
         {
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
             auto const& stream_entry = directory[index];
             MiniDumpExplorer::DirectoryStreamEntry entry;
             entry.as<DirectoryStreamEntry>()->Set(static_cast<uint32_t>(index), &stream_entry);
-            entries_.Append(entry);
+
+
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
+            co_await ui_thread;
+
+            if(auto const self = weak_self.get();
+                self && !WindowHelper::IsExiting())
+            {
+                entries_.Append(entry);
+            }
+            else
+            {
+                // it's been removed while loading the items
+                co_return;
+            }
+
+            co_await resume_background();
+
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <functional>
+#include <mutex>
 
 #include "AppPropertiesHelper.h"
 #include "DbgHelpUtils/size_units.h"
@@ -114,7 +115,7 @@ public:
 
 private:
     template<typename T, typename CVT, typename CT>
-    void ApplyValue(T newValue, T& existingValue, std::wstring const& valueName, CVT& callbacks, CT callback)
+    void ApplyValue(T newValue, T& existingValue, std::wstring const& valueName, std::vector<CVT>& callbacks, std::mutex& callbacksMutex, CT callback)
     {
         if(existingValue == newValue)
         {
@@ -147,6 +148,7 @@ private:
             static_assert(false);
         }
 
+        std::lock_guard lock{callbacksMutex};
         for (auto it = callbacks.begin(); it != callbacks.end(); )
         {
             if(!callback(*it, existingValue))
@@ -175,9 +177,14 @@ private:
     std::wstring time_format_;
     DurationFormatType durationFormat_;
     std::vector<std::wstring> recentFiles_;
+    std::mutex numberDisplayFormatCallbacksMutex_;
     std::vector<std::function<bool(NumberDisplayFormatType)>> numberDisplayFormatCallbacks_;
+    std::mutex sizeNumberDisplayFormatCallbacksMutex_;
     std::vector<std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)>> sizeNumberDisplayFormatCallbacks_;
+    std::mutex recentFilesCallbacksMutex_;
     std::vector<std::function<bool(std::vector<std::wstring> const&)>> recentFilesCallbacks_;
+    std::mutex timeStampFormatCallbacksMutex_;
     std::vector<std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)>> timeStampFormatCallbacks_;
+    std::mutex durationFormatCallbacksMutex_;
     std::vector<std::function<bool(DurationFormatType)>> durationFormatCallbacks_;
 };

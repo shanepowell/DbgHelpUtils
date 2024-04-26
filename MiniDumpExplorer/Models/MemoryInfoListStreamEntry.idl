@@ -1,0 +1,24 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MemoryInfoListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MemoryInfoListStreamEntry();
+
+        UInt32 Index { get; };
+        UInt64 BaseAddress { get; };
+        UInt64 AllocationBase { get; };
+        UInt32 AllocationProtect { get; };
+        IObservableVector<String> AllocationProtectList { get; };
+        String AllocationProtectListString { get; };
+        UInt64 RegionSize { get; };
+        UInt32 State { get; };
+        String StateString { get; };
+        UInt32 Protect { get; };
+        IObservableVector<String> ProtectList { get; };
+        String ProtectListString { get; };
+        UInt32 Type { get; };
+        String TypeString { get; };
+    }
+}

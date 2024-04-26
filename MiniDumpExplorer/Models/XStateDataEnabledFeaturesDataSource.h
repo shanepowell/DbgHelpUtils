@@ -2,9 +2,10 @@
 
 #include "XStateDataEnabledFeaturesDataSource.g.h"
 
-// ReSharper disable once CppUnusedIncludeDirective
-#include "windows_setup.h"
-#include <DbgHelp.h>
+namespace dlg_help_utils
+{
+    class misc_info_stream;
+}
 
 namespace winrt::MiniDumpExplorer::implementation
 {
@@ -36,7 +37,7 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
         void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const;
 
-        void SetXStateData(XSTATE_CONFIG_FEATURE_MSC_INFO const& xStateData) const;
+        fire_and_forget SetXStateData(dlg_help_utils::misc_info_stream misc_info_stream);
 
     private:
         void SetupDataProperties();

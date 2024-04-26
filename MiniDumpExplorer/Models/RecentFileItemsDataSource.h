@@ -42,7 +42,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void SetupDataProperties();
         void SaveRecentFiles();
         fire_and_forget OnRecentFilesChanged(std::vector<std::wstring> const& recentFiles);
-        Windows::Foundation::IAsyncAction LoadRecordFilesIntoCollection(std::vector<std::wstring> const& recentFiles);
+        Windows::Foundation::IAsyncAction LoadRecordFilesIntoCollection(std::vector<std::wstring> recentFiles);
 
     private:
         Microsoft::UI::Xaml::Data::CollectionViewSource collectionViewSource_{};

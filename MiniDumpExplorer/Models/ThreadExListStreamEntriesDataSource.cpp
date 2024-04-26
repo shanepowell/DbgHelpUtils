@@ -4,6 +4,7 @@
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
 #include "DbgHelpUtils/thread_ex_list_stream.h"
+#include "Helpers/WindowHelper.h"
 #include "Models/ThreadExListStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
 
@@ -138,15 +139,46 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void ThreadExListStreamEntriesDataSource::LoadMiniDumpThreadStream(dlg_help_utils::thread_ex_list_stream const& thread_list) const
+    fire_and_forget ThreadExListStreamEntriesDataSource::LoadMiniDumpThreadStream(dlg_help_utils::thread_ex_list_stream const thread_list)
     {
+        // ReSharper disable once CppTooWideScope
+        apartment_context ui_thread;
+
         entries_.Clear();
+
+        auto weak_self = get_weak();
+        co_await resume_background();
 
         for (size_t index = 0; auto const& thread : thread_list.list())
         {
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
             MiniDumpExplorer::ThreadExListStreamEntry entry;
             entry.as<ThreadExListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(thread));
-            entries_.Append(entry);
+
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
+            co_await ui_thread;
+
+            if(auto const self = weak_self.get();
+                self && !WindowHelper::IsExiting())
+            {
+                entries_.Append(entry);
+            }
+            else
+            {
+                // it's been removed while loading the items
+                co_return;
+            }
+
+            co_await resume_background();
+
             ++index;
         }
     }

@@ -78,7 +78,7 @@ namespace winrt::MiniDumpExplorer::implementation
             //{ mini_dump_stream_type::enum_names::FunctionTableStream, xaml_typename<FunctionTableStreamPage>() },
             { mini_dump_stream_type::enum_names::UnloadedModuleListStream, xaml_typename<UnloadedModuleListStreamPage>() },
             { mini_dump_stream_type::enum_names::MiscInfoStream, xaml_typename<MiscInfoStreamPage>() },
-            //{ mini_dump_stream_type::enum_names::MemoryInfoListStream, xaml_typename<MemoryInfoListStreamPage>() },
+            { mini_dump_stream_type::enum_names::MemoryInfoListStream, xaml_typename<MemoryInfoListStreamPage>() },
             //{ mini_dump_stream_type::enum_names::ThreadInfoListStream, xaml_typename<ThreadInfoListStreamPage>() },
             //{ mini_dump_stream_type::enum_names::HandleOperationListStream, xaml_typename<HandleOperationListStreamPage>() },
             //{ mini_dump_stream_type::enum_names::TokenStream, xaml_typename<TokenStreamPage>() },
@@ -142,12 +142,10 @@ namespace winrt::MiniDumpExplorer::implementation
 
             logger::Log().LogMessage(log_level::info, std::format(L"Loading MiniDump: {}", file_.Path()));
             auto const fullPath = static_cast<std::wstring>(file_.Path());
-            miniDump_ = std::make_unique<mini_dump>(fullPath);
+            miniDump_ = std::make_shared<mini_dump>(fullPath);
 
             valid_ = false;
             miniDump_->open_mini_dump();
-
-            GlobalOptions::Options().AddRecentFile(fullPath);
 
             valid_ = miniDump_->is_valid();
             auto const* directory = miniDump_->directory();
@@ -159,6 +157,8 @@ namespace winrt::MiniDumpExplorer::implementation
             logger::Log().LogMessage(log_level::debug, L"MiniDump Opened: {}");
 
             co_await ui_thread;
+
+            GlobalOptions::Options().AddRecentFile(fullPath);
 
             if (valid_ && miniDump_->type() == dump_file_type::user_mode_dump && directory != nullptr)
             {

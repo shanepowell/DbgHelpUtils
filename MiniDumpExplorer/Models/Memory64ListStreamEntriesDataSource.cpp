@@ -4,6 +4,7 @@
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
 #include "DbgHelpUtils/memory64_list_stream.h"
+#include "Helpers/WindowHelper.h"
 #include "Models/Memory64ListStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
 
@@ -139,15 +140,46 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void Memory64ListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory64_list_stream const& memory_list) const
+    fire_and_forget Memory64ListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory64_list_stream const memory_list)
     {
+        // ReSharper disable once CppTooWideScope
+        apartment_context ui_thread;
+
         entries_.Clear();
+
+        auto weak_self = get_weak();
+        co_await resume_background();
 
         for (size_t index = 0; auto const memory_range : memory_list.list())
         {
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
             MiniDumpExplorer::Memory64ListStreamEntry entry;
             entry.as<Memory64ListStreamEntry>()->Set(static_cast<uint32_t>(index), memory_range);
-            entries_.Append(entry);
+
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
+            co_await ui_thread;
+
+            if(auto const self = weak_self.get();
+                self && !WindowHelper::IsExiting())
+            {
+                entries_.Append(entry);
+            }
+            else
+            {
+                // it's been removed while loading the items
+                co_return;
+            }
+
+            co_await resume_background();
+
             ++index;
         }
     }

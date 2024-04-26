@@ -68,6 +68,9 @@
     <Page Include="ViewModels\UnloadedModuleListStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\MemoryInfoListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -515,6 +518,12 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\UnloadedModuleListStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MemoryInfoListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MemoryInfoListStreamEntry.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,8 +20,8 @@ namespace
 {
     Windows::Foundation::IAsyncOperation<Media::ImageSource> GetIconFromFile(hstring const& file, Windows::Storage::FileProperties::ThumbnailMode const thumbnailMode = Windows::Storage::FileProperties::ThumbnailMode::DocumentsView)
     {
-        const auto& fileStorage = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(file);
-        const auto& fileThumbnail = co_await fileStorage.GetThumbnailAsync(thumbnailMode);
+        const auto fileStorage = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(file);
+        const auto fileThumbnail = co_await fileStorage.GetThumbnailAsync(thumbnailMode);
 
         Media::Imaging::BitmapImage bitmapImage;
         bitmapImage.SetSource(fileThumbnail);

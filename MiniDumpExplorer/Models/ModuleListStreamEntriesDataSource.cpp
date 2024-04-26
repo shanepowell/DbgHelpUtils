@@ -4,6 +4,8 @@
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
 #include "DbgHelpUtils/module_list_stream.h"
+#include "DbgHelpUtils/time_utils.h"
+#include "Helpers/WindowHelper.h"
 #include "Models/ModuleListStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
 
@@ -148,15 +150,46 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void ModuleListStreamEntriesDataSource::LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const& module_list, dlg_help_utils::time_utils::locale_timezone_info const& dump_file_timezone_info) const
+    fire_and_forget ModuleListStreamEntriesDataSource::LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const module_list, dlg_help_utils::time_utils::locale_timezone_info const dump_file_timezone_info)
     {
+        // ReSharper disable once CppTooWideScope
+        apartment_context ui_thread;
+
         entries_.Clear();
+
+        auto weak_self = get_weak();
+        co_await resume_background();
 
         for (size_t index = 0; auto const& module : module_list.list())
         {
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
             MiniDumpExplorer::ModuleListStreamEntry entry;
             entry.as<ModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(module), dump_file_timezone_info);
-            entries_.Append(entry);
+
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
+            co_await ui_thread;
+
+            if(auto const self = weak_self.get();
+                self && !WindowHelper::IsExiting())
+            {
+                entries_.Append(entry);
+            }
+            else
+            {
+                // it's been removed while loading the items
+                co_return;
+            }
+
+            co_await resume_background();
+
             ++index;
         }
     }

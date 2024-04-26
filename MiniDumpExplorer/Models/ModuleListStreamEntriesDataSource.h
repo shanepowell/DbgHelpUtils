@@ -41,7 +41,7 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] hstring GetPropertyDisplayName(hstring const& propertyPath);
         void Sort(MiniDumpExplorer::DataGrid const& dataGrid, MiniDumpExplorer::DataGridColumnEventArgs const& args) const;
 
-        void LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream const& module_list, dlg_help_utils::time_utils::locale_timezone_info const& dump_file_timezone_info) const;
+        fire_and_forget LoadMiniDumpModuleStream(dlg_help_utils::module_list_stream module_list, dlg_help_utils::time_utils::locale_timezone_info dump_file_timezone_info);
 
     private:
         void SetupDataProperties();

@@ -135,7 +135,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         if(IsXStateConfigFeatureMscInfo())
         {
-            xStateDataEnabledFeaturesDataSource_.as<XStateDataEnabledFeaturesDataSource>()->SetXStateData(misc_info_stream_.misc_info_5().XStateData);
+            xStateDataEnabledFeaturesDataSource_.as<XStateDataEnabledFeaturesDataSource>()->SetXStateData(misc_info_stream_);
         }
 
         RaisePropertyChanged(L"Flags");

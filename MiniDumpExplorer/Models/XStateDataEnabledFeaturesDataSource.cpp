@@ -3,8 +3,15 @@
 
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
+#include "Helpers/WindowHelper.h"
 #include "Models/XStateDataEnabledFeature.h"
 #include "Utility/DataGridColumnSorter.h"
+
+// ReSharper disable once CppUnusedIncludeDirective
+#include "DbgHelpUtils/windows_setup.h"
+#include <DbgHelp.h>
+
+#include "DbgHelpUtils/misc_info_stream.h"
 
 #if __has_include("XStateDataEnabledFeaturesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -134,17 +141,55 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    void XStateDataEnabledFeaturesDataSource::SetXStateData(XSTATE_CONFIG_FEATURE_MSC_INFO const& xStateData) const
+    fire_and_forget XStateDataEnabledFeaturesDataSource::SetXStateData(dlg_help_utils::misc_info_stream const misc_info_stream)
     {
+        auto const& xStateData = misc_info_stream.misc_info_5().XStateData;
+
+        // ReSharper disable once CppTooWideScope
+        apartment_context ui_thread;
+
         entries_.Clear();
+
+        auto weak_self = get_weak();
+        co_await resume_background();
 
         for(uint32_t feature = 0; feature< MAXIMUM_XSTATE_FEATURES; ++feature)
         {
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
             if (auto const mask = 1ui64 << feature; (xStateData.EnabledFeatures & mask) == mask)
             {
-                MiniDumpExplorer::XStateDataEnabledFeature data{};
-                data.as<XStateDataEnabledFeature>()->Set(feature, xStateData.Features[feature]);
-                entries_.Append(data);
+                MiniDumpExplorer::XStateDataEnabledFeature entry{};
+                entry.as<XStateDataEnabledFeature>()->Set(feature, xStateData.Features[feature]);
+
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                co_await ui_thread;
+
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                if(auto const self = weak_self.get();
+                    self && !WindowHelper::IsExiting())
+                {
+                    entries_.Append(entry);
+                }
+                else
+                {
+                    // it's been removed while loading the items
+                    co_return;
+                }
+
+                co_await resume_background();
+
             }
         }
     }

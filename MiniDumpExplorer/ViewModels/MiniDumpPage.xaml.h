@@ -32,6 +32,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void NavigationView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 
         [[nodiscard]] dlg_help_utils::mini_dump const& MiniDump() const { return *miniDump_; }
+        [[nodiscard]] std::shared_ptr<dlg_help_utils::mini_dump> const& MiniDumpInstance() const { return miniDump_; }
         [[nodiscard]] bool MiniDumpOpened() const { return miniDump_ != nullptr; }
         [[nodiscard]] Windows::Storage::StorageFile File() const { return file_; }
 
@@ -49,7 +50,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     private:
         Windows::Storage::StorageFile file_{ nullptr };
-        std::unique_ptr<dlg_help_utils::mini_dump> miniDump_;
+        std::shared_ptr<dlg_help_utils::mini_dump> miniDump_;
         std::wstring openError_;
         static std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> pageMap_;
         bool valid_{ false };
