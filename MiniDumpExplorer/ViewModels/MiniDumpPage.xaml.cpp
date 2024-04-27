@@ -10,6 +10,7 @@
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
+#include "Models/FileCrc32.h"
 #include "Utility/logger.h"
 
 #if __has_include("MiniDumpPage.g.cpp")
@@ -158,6 +159,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
             co_await ui_thread;
 
+            fileCrc32_.as<FileCrc32>()->Set(miniDump_);
             GlobalOptions::Options().AddRecentFile(fullPath);
 
             if (valid_ && miniDump_->type() == dump_file_type::user_mode_dump && directory != nullptr)

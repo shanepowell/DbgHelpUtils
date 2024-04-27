@@ -68,7 +68,7 @@
             <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}">
                 <TextBlock x:Name="headerCheckSum" Text="{x:Bind CheckSum,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text="File CRC32" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="20,0,0,0" />
-                <TextBlock x:Name="headerDumpFileCrc32" Text="{x:Bind DumpFileCrc32,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" />
+                <TextBlock x:Name="headerDumpFileCrc32" Text="{x:Bind DumpFileCrc32.Crc32,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" />
             </StackPanel>
 
             <TextBlock Grid.Row="9" Grid.Column="0" Text="Timestamp" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />

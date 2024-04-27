@@ -15,6 +15,8 @@ namespace dlg_help_utils
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct FileCrc32;
+
     struct MiniDumpPage : MiniDumpPageT<MiniDumpPage>
     {
         MiniDumpPage(Windows::Storage::StorageFile const& file);
@@ -35,6 +37,7 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] std::shared_ptr<dlg_help_utils::mini_dump> const& MiniDumpInstance() const { return miniDump_; }
         [[nodiscard]] bool MiniDumpOpened() const { return miniDump_ != nullptr; }
         [[nodiscard]] Windows::Storage::StorageFile File() const { return file_; }
+        [[nodiscard]] MiniDumpExplorer::FileCrc32 DumpFileCrc32() const { return fileCrc32_; }
 
         Windows::Foundation::IAsyncOperation<bool> LoadMiniDump();
 
@@ -52,6 +55,7 @@ namespace winrt::MiniDumpExplorer::implementation
         Windows::Storage::StorageFile file_{ nullptr };
         std::shared_ptr<dlg_help_utils::mini_dump> miniDump_;
         std::wstring openError_;
+        MiniDumpExplorer::FileCrc32 fileCrc32_;
         static std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> pageMap_;
         bool valid_{ false };
         event<Windows::Foundation::EventHandler<MiniDumpExplorer::MiniDumpPage>> miniDumpLoadedHandler_;

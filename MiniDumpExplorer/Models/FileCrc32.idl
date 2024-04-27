@@ -1,0 +1,12 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass FileCrc32 : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        FileCrc32();
+
+        UInt32 Crc32 { get; };
+        Boolean IsCalculatingCrc32 { get; };
+    }
+}

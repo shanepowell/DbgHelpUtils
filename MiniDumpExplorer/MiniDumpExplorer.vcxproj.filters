@@ -535,6 +535,9 @@
     <ClCompile Include="Models\ThreadInfoListStreamEntry.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="Models\FileCrc32.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

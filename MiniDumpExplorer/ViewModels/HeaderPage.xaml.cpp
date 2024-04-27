@@ -31,7 +31,6 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"NumberOfStreams",
                 L"StreamDirectoryRva",
                 L"CheckSum",
-                L"DumpFileCrc32",
                 L"Flags"
             },
             {
@@ -172,7 +171,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
 
-        SetupMinidumpHeader(miniDumpPage->MiniDump(), miniDumpPage->File().Path());
+        SetupMinidumpHeader(miniDumpPage->MiniDumpInstance(), miniDumpPage->File().Path(), miniDumpPage->DumpFileCrc32());
         RaisePropertyChanged(L"DumpType");
         RaisePropertyChanged(L"Signature");
         RaisePropertyChanged(L"IsValid");
@@ -184,17 +183,17 @@ namespace winrt::MiniDumpExplorer::implementation
         RaisePropertyChanged(L"NumberOfStreams");
         RaisePropertyChanged(L"StreamDirectoryRva");
         RaisePropertyChanged(L"CheckSum");
-        RaisePropertyChanged(L"DumpFileCrc32");
         RaisePropertyChanged(L"TimeDateStamp");
         RaisePropertyChanged(L"Flags");
         RaisePropertyChanged(L"FlagsList");
         RaisePropertyChanged(L"FileItem");
+        RaisePropertyChanged(L"DumpFileCrc32");
     }
 
-    void HeaderPage::SetupMinidumpHeader(dlg_help_utils::mini_dump const& miniDump, hstring const& path)
+    void HeaderPage::SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32)
     {
-        mini_dump_ = &miniDump;
-        data_crc32_ = mini_dump_->data_crc32();
+        mini_dump_ = miniDump;
+        fileCrc32_ = std::move(fileCrc32);
         for (auto const& type : dlg_help_utils::mini_dump_type::to_strings(static_cast<MINIDUMP_TYPE>(mini_dump_->header()->Flags)))
         {
             flagsList_.Append(type);

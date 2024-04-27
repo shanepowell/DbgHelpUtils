@@ -374,6 +374,10 @@
       <DependentUpon>Models\ExceptionParametersDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\FileCrc32.h">
+      <DependentUpon>Models\FileCrc32.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\GlobalOptionItems.h">
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -904,6 +908,9 @@
     <ClCompile Include="Models\ExceptionParametersDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\FileCrc32.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\GlobalOptionItems.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1364,6 +1371,10 @@
     </Midl>
     <Midl Include="Models\ExceptionParametersDataSource.idl">
       <DependentUpon>Models\ExceptionParametersDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\FileCrc32.idl">
+      <DependentUpon>Models\FileCrc32.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\GlobalOptionItems.idl">

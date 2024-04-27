@@ -41,23 +41,23 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] uint32_t NumberOfStreams() const;
         [[nodiscard]] uint32_t StreamDirectoryRva() const;
         [[nodiscard]] uint32_t CheckSum() const;
-        [[nodiscard]] uint32_t DumpFileCrc32() const { return data_crc32_; }
         [[nodiscard]] MiniDumpExplorer::DumpFileTimeStamp TimeDateStamp() const { return timeDateStamp_; }
         [[nodiscard]] uint64_t Flags() const;
         [[nodiscard]] Windows::Foundation::Collections::IObservableVector<hstring> FlagsList() const { return flagsList_; }
+        [[nodiscard]] MiniDumpExplorer::FileCrc32 DumpFileCrc32() const { return fileCrc32_; }
 
     private:
         void SetupFlyoutMenus();
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
-        void SetupMinidumpHeader(dlg_help_utils::mini_dump const& miniDump, hstring const& path);
+        void SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32);
         fire_and_forget LoadFileItemIcon() const;
 
     private:
         MiniDumpExplorer::RecentFileItem fileItem_{nullptr};
-        dlg_help_utils::mini_dump const* mini_dump_{nullptr};
-        uint32_t data_crc32_{0};
+        std::shared_ptr<dlg_help_utils::mini_dump> mini_dump_{};
         MiniDumpExplorer::DumpFileTimeStamp timeDateStamp_{};
         Windows::Foundation::Collections::IObservableVector<hstring> flagsList_{single_threaded_observable_vector<hstring>()};
+        MiniDumpExplorer::FileCrc32 fileCrc32_{};
     };
 }
 

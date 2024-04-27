@@ -1,5 +1,6 @@
 import "Models\RecentFileItem.idl";
 import "Models\DumpFileTimeStamp.idl";
+import "Models\FileCrc32.idl";
 
 namespace MiniDumpExplorer
 {
@@ -20,7 +21,7 @@ namespace MiniDumpExplorer
         UInt32 NumberOfStreams { get; };
         UInt32 StreamDirectoryRva { get; };
         UInt32 CheckSum { get; };
-        UInt32 DumpFileCrc32 { get; };
+        FileCrc32 DumpFileCrc32 { get; };
         DumpFileTimeStamp TimeDateStamp { get; };
         UInt64 Flags { get; };
         IObservableVector<String> FlagsList { get; };

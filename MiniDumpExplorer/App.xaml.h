@@ -98,6 +98,7 @@
 #include "Models\MemoryInfoListStreamEntry.h"
 #include "Models\ThreadInfoListStreamEntriesDataSource.h"
 #include "Models\ThreadInfoListStreamEntry.h"
+#include "Models\FileCrc32.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation
