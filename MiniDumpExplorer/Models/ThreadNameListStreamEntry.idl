@@ -1,0 +1,13 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ThreadNameListStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadNameListStreamEntry();
+
+        UInt32 Index { get; };
+        UInt32 Id { get; };
+        String Name { get; };
+    }
+}

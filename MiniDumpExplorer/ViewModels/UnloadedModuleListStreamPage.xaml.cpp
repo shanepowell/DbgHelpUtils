@@ -2,7 +2,6 @@
 #include "UnloadedModuleListStreamPage.xaml.h"
 
 #include "DbgHelpUtils/misc_info_stream.h"
-#include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/unloaded_module_list_stream.h"
 #include "Models/UnloadedModuleListStreamEntriesDataSource.h"
 

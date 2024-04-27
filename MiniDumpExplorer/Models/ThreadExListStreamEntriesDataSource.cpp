@@ -157,7 +157,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
 
             MiniDumpExplorer::ThreadExListStreamEntry entry;
-            entry.as<ThreadExListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(thread));
+            entry.as<ThreadExListStreamEntry>()->Set(static_cast<uint32_t>(index), thread);
 
             if(WindowHelper::IsExiting())
             {

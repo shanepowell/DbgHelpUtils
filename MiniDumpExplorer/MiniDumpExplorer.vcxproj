@@ -469,6 +469,14 @@
       <DependentUpon>Models\ModuleListStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\ThreadNameListStreamEntry.h">
+      <DependentUpon>Models\ThreadNameListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\ThreadNamesStreamEntriesDataSource.h">
+      <DependentUpon>Models\ThreadNamesStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\TimeZoneInformation.h">
       <DependentUpon>Models\TimeZoneInformation.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -535,6 +543,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\ThreadListStreamPage.h">
       <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ThreadNamesStreamPage.xaml.h">
+      <DependentUpon>ViewModels\ThreadNamesStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\UnloadedModuleListStreamPage.xaml.h">
@@ -678,6 +690,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ThreadListStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\ThreadNamesStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\UnloadedModuleListStreamPage.xaml">
@@ -977,6 +992,12 @@
     <ClCompile Include="Models\ModuleListStreamEntry.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\ThreadNameListStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadNamesStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\TimeZoneInformation.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1037,6 +1058,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\ThreadListStreamPage.cpp">
       <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ThreadNamesStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\ThreadNamesStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\UnloadedModuleListStreamPage.xaml.cpp">
@@ -1465,6 +1490,14 @@
       <DependentUpon>Models\ModuleListStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\ThreadNameListStreamEntry.idl">
+      <DependentUpon>Models\ThreadNameListStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\ThreadNamesStreamEntriesDataSource.idl">
+      <DependentUpon>Models\ThreadNamesStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\TimeZoneInformation.idl">
       <DependentUpon>Models\TimeZoneInformation.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1531,6 +1564,10 @@
     </Midl>
     <Midl Include="ViewModels\ThreadListStreamPage.idl">
       <DependentUpon>ViewModels\ThreadListStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\ThreadNamesStreamPage.idl">
+      <DependentUpon>ViewModels\ThreadNamesStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\UnloadedModuleListStreamPage.idl">

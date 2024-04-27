@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "MemoryListStreamPage.xaml.h"
 
-#include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/memory_list_stream.h"
 #include "Models/MemoryListStreamEntriesDataSource.h"
 

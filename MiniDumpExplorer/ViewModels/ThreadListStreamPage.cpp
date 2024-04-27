@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "ThreadListStreamPage.h"
 
-#include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/thread_list_stream.h"
 #include "Models/ThreadListStreamEntriesDataSource.h"
 

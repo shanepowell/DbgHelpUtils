@@ -157,7 +157,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
 
             MiniDumpExplorer::UnloadedModuleListStreamEntry entry;
-            entry.as<UnloadedModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(module));
+            entry.as<UnloadedModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), module);
 
             if(WindowHelper::IsExiting())
             {

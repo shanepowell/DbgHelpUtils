@@ -168,7 +168,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
 
             MiniDumpExplorer::ModuleListStreamEntry entry;
-            entry.as<ModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), std::move(module), dump_file_timezone_info);
+            entry.as<ModuleListStreamEntry>()->Set(static_cast<uint32_t>(index), module, dump_file_timezone_info);
 
             if(WindowHelper::IsExiting())
             {

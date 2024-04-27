@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MiniDumpExplorer.ThreadNamesStreamPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock 
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Text="Thread Names"
+            FontSize="24"
+            Margin="5,0,0,20"
+            HorizontalAlignment="Left" />
+
+        <local:DataGrid
+            x:Name="ThreadNamesDataGrid"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="12"
+            AlternatingRowBackground="Transparent"
+            AlternatingRowForeground="White"
+            HeadersVisibility="Column"
+            RowDetailsVisibilityMode="Collapsed"
+            SelectionMode="Single"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            HorizontalScrollBarVisibility="Visible"
+            VerticalScrollBarVisibility="Visible"
+            AreRowDetailsFrozen="False"
+            AreRowGroupHeadersFrozen="True"
+            AutoGenerateColumns="False"
+            CanUserSortColumns="True"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            IsReadOnly="True"
+            ItemsSource="{x:Bind ItemsSource}"
+            >
+            <local:DataGrid.Columns>
+                <local:DataGridTextColumn Header="Index"
+                                          Binding="{Binding Index,Mode=OneWay}"
+                                          Tag="Index" />
+                <local:DataGridTextColumn Header="ID"
+                                          Binding="{Binding Id,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
+                                          Tag="Id" />
+                <local:DataGridTextColumn Header="Name"
+                                          Binding="{Binding Name,Mode=OneWay}"
+                                          Tag="Name" />
+            </local:DataGrid.Columns>
+        </local:DataGrid>
+    </Grid>
+</Page>

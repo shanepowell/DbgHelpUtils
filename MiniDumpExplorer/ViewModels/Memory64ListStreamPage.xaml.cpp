@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Memory64ListStreamPage.xaml.h"
 
-#include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/memory64_list_stream.h"
 #include "Models/Memory64ListStreamEntriesDataSource.h"
 
