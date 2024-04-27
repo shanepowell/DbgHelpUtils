@@ -8,8 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv" Margin="5">
-        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5" Margin="12,12,0,0">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv" Margin="12,5,5,5">
+        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -48,35 +48,36 @@
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Signature" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{x:Bind Signature,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-                <TextBlock Text="Invalid" Foreground="Red" Visibility="{x:Bind IsValid,Converter={StaticResource BoolToVisibilityConverter},ConverterParameter=True}" Margin="10,0,0,0" />
+                <TextBlock Text="Invalid" Foreground="Red" Visibility="{x:Bind IsValid,Converter={StaticResource BoolToVisibilityConverter},ConverterParameter=True,Mode=OneWay}" Margin="10,0,0,0" />
             </StackPanel>
 
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="Version" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Version" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}">
                 <TextBlock x:Name="headerVersion" Text="{x:Bind Version,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text="Internal" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="20,0,0,0" />
                 <TextBlock x:Name="headerInternalVersion" Text="{x:Bind InternalVersion,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" />
             </StackPanel>
 
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Number Of Streams" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <TextBlock Grid.Row="6" Grid.Column="1" Text="{x:Bind NumberOfStreams,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Number Of Streams" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="6" Grid.Column="1" Text="{x:Bind NumberOfStreams,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="Stream Directory RVA" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <TextBlock x:Name="headerStreamDirectoryRva" Grid.Row="7" Grid.Column="1" Text="{x:Bind StreamDirectoryRva,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Stream Directory RVA" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock x:Name="headerStreamDirectoryRva" Grid.Row="7" Grid.Column="1" Text="{x:Bind StreamDirectoryRva,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="8" Grid.Column="0" Text="CheckSum" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="CheckSum" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}">
                 <TextBlock x:Name="headerCheckSum" Text="{x:Bind CheckSum,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text="File CRC32" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="20,0,0,0" />
-                <TextBlock x:Name="headerDumpFileCrc32" Text="{x:Bind DumpFileCrc32.Crc32,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" />
+                <TextBlock x:Name="headerDumpFileCrc32" Text="{x:Bind DumpFileCrc32.Crc32,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Margin="5,0,0,0" Visibility="{x:Bind DumpFileCrc32.IsCalculating,Converter={StaticResource BoolToVisibilityConverter},ConverterParameter=True,Mode=OneWay}" />
+                <ProgressRing IsActive="{x:Bind DumpFileCrc32.IsCalculating,Mode=OneWay}" Margin="5,0,0,0" />
             </StackPanel>
 
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="Timestamp" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <TextBlock x:Name="timeDateStamp" Grid.Row="9" Grid.Column="1" Text="{x:Bind TimeDateStamp,Converter={StaticResource TimeStampNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Timestamp" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock x:Name="timeDateStamp" Grid.Row="9" Grid.Column="1" Text="{x:Bind TimeDateStamp,Converter={StaticResource TimeStampNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
 
-            <TextBlock Grid.Row="10" Grid.Column="0" Text="Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" />
-            <TextBlock x:Name="headerFlags" Grid.Row="10" Grid.Column="1" Text="{x:Bind Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" IsTextSelectionEnabled="True" />
-            <ListBox Grid.Row="11" Grid.Column="1" ItemsSource="{x:Bind FlagsList,Mode=OneWay}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,5,0,0" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock x:Name="headerFlags" Grid.Row="10" Grid.Column="1" Text="{x:Bind Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="11" Grid.Column="1" ItemsSource="{x:Bind FlagsList,Mode=OneWay}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" Margin="0,5,0,0" />
         </Grid>
     </ScrollViewer>
 </Page>

@@ -8,8 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv" Margin="5">
-        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5" Margin="12,12,0,0">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv"  Margin="12,5,5,5">
+        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>

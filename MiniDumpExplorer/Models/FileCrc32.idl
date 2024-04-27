@@ -7,6 +7,6 @@ namespace MiniDumpExplorer
         FileCrc32();
 
         UInt32 Crc32 { get; };
-        Boolean IsCalculatingCrc32 { get; };
+        Boolean IsCalculating { get; };
     }
 }

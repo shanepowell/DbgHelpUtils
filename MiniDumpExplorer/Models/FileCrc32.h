@@ -16,7 +16,7 @@ namespace winrt::MiniDumpExplorer::implementation
         FileCrc32();
 
         uint32_t Crc32() const { return crc32_; }
-        bool IsCalculatingCrc32() const { return is_calculating_; }
+        bool IsCalculating() const { return is_calculating_; }
 
         void Set(std::shared_ptr<dlg_help_utils::mini_dump> const& dump_file);
 

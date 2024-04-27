@@ -32,8 +32,8 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         is_calculating_ = true;
 
+        RaisePropertyChanged(L"IsCalculating");
         RaisePropertyChanged(L"Crc32");
-        RaisePropertyChanged(L"IsCalculatingCrc32");
 
         CalculateCrc32(dump_file);
     }
@@ -60,8 +60,8 @@ namespace winrt::MiniDumpExplorer::implementation
             crc32_ = crc32;
             is_calculating_ = false;
 
+            RaisePropertyChanged(L"IsCalculating");
             RaisePropertyChanged(L"Crc32");
-            RaisePropertyChanged(L"IsCalculatingCrc32");
         }
     }
 }
