@@ -101,6 +101,8 @@
 #include "Models\FileCrc32.h"
 #include "Models\ThreadNamesStreamEntriesDataSource.h"
 #include "Models\ThreadNameListStreamEntry.h"
+#include "Models\HandleDataStreamEntriesDataSource.h"
+#include "Models\HandleDataStreamEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

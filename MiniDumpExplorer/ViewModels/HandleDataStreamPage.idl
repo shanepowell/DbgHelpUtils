@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass HandleDataStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        HandleDataStreamPage();
+
+        IDataGridDataSource ItemsSource { get; };
+
+        UInt32 Index { get; };
+        UInt32 HandleDescriptorVersion { get; };
+        UInt32 TotalHandles { get; };
+    }
+}

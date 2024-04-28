@@ -7,6 +7,8 @@
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct MiniDumpLocationDescriptor64;
+
     struct Memory64ListStreamEntry : Memory64ListStreamEntryT<Memory64ListStreamEntry>, GlobalOptionsNotifyPropertyChangedBase<Memory64ListStreamEntry>
     {
         Memory64ListStreamEntry();

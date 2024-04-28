@@ -383,6 +383,14 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Models\GlobalOptionsNotifyPropertyChangedBase.h" />
+    <ClInclude Include="Models\HandleDataStreamEntriesDataSource.h">
+      <DependentUpon>Models\HandleDataStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\HandleDataStreamEntry.h">
+      <DependentUpon>Models\HandleDataStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\Memory64ListStreamEntriesDataSource.h">
       <DependentUpon>Models\Memory64ListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -507,6 +515,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\ExceptionStreamPage.xaml.h">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\HandleDataStreamPage.xaml.h">
+      <DependentUpon>ViewModels\HandleDataStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\Memory64ListStreamPage.xaml.h">
@@ -663,6 +675,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ExceptionStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\HandleDataStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\Memory64ListStreamPage.xaml">
@@ -929,6 +944,12 @@
     <ClCompile Include="Models\GlobalOptionItems.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\HandleDataStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\HandleDataStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\Memory64ListStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1022,6 +1043,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\ExceptionStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\HandleDataStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\HandleDataStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\Memory64ListStreamPage.xaml.cpp">
@@ -1406,6 +1431,14 @@
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\HandleDataStreamEntriesDataSource.idl">
+      <DependentUpon>Models\HandleDataStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\HandleDataStreamEntry.idl">
+      <DependentUpon>Models\HandleDataStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\Memory64ListStreamEntriesDataSource.idl">
       <DependentUpon>Models\Memory64ListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1528,6 +1561,10 @@
     </Midl>
     <Midl Include="ViewModels\ExceptionStreamPage.idl">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\HandleDataStreamPage.idl">
+      <DependentUpon>ViewModels\HandleDataStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\Memory64ListStreamPage.idl">

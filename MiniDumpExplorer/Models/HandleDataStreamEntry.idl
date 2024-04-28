@@ -1,0 +1,13 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass HandleDataStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        HandleDataStreamEntry();
+
+        UInt32 Index { get; };
+        String Type { get; };
+        UInt32 TotalHandles { get; };
+    }
+}

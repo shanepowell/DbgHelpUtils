@@ -3366,4 +3366,7 @@
   <data name="TIME_ZONE_ID_DAYLIGHT" xml:space="preserve">
     <value>daylight</value>
   </data>
+  <data name="HandleDataStreamEntryUnNamedType" xml:space="preserve">
+    <value>&lt;unnamed&gt;</value>
+  </data>
 </root>

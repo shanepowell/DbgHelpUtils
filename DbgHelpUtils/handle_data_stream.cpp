@@ -5,8 +5,8 @@
 namespace dlg_help_utils
 {
     handle_data_stream::handle_data_stream(mini_dump const& dump, size_t const index)
-        : dump_{dump}
-          , index_{index}
+        : dump_{&dump}
+        , index_{index}
     {
         auto const* entry = dump.find_stream_type(HandleDataStream, index_);
         if (entry == nullptr)
@@ -51,7 +51,7 @@ namespace dlg_help_utils
         {
             // ReSharper disable once CppAwaiterTypeIsNotClass
             co_yield stream_handle{
-                dump_, list_ + (index * handle_data_list_->SizeOfDescriptor), handle_descriptor_version_
+                *dump_, list_ + (index * handle_data_list_->SizeOfDescriptor), handle_descriptor_version_
             };
         }
     }

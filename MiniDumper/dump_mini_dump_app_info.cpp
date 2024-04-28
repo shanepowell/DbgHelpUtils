@@ -26,7 +26,7 @@ std::wstring_view get_type_name(std::wstring_view const& type_name)
 {
     if (type_name.empty())
     {
-        return L"none"sv;
+        return L"<unnamed>"sv;
     }
 
     return type_name;
@@ -233,7 +233,7 @@ void dump_mini_dump_handle_data_stream_data(std::wostream& log, mini_dump const&
     log << std::format(L"NumberOfDescriptors: {}\n", locale_formatting::to_wstring(handle_data.size()));
     for (auto const& handle_type_total : handle_data.handle_type_totals())
     {
-        log << std::format(L" {0}: {1}", get_type_name(handle_type_total.first), locale_formatting::to_wstring(handle_type_total.second));
+        log << std::format(L"  {0}: {1}\n", get_type_name(handle_type_total.first), locale_formatting::to_wstring(handle_type_total.second));
     }
     log << L'\n';
 
