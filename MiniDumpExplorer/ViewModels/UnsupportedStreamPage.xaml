@@ -9,18 +9,22 @@
     mc:Ignorable="d">
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv" Margin="12,5,5,5">
-        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}">
+        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind HexDump,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" FontFamily="Courier New" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Bind HexDump,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" FontFamily="Courier New" />
         </Grid>
     </ScrollViewer>
 </Page>

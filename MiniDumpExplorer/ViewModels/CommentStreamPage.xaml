@@ -16,11 +16,15 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Comment" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="0"
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Comment" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="2"
                        Grid.Column="1"
                        Text="{x:Bind Comment,Mode=OneWay}"
                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"

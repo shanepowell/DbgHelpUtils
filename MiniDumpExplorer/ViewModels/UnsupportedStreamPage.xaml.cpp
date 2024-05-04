@@ -25,6 +25,7 @@ namespace winrt::MiniDumpExplorer::implementation
         auto const& miniDump = miniDumpPage->MiniDump();
         auto const* header = miniDump.header();
         auto const* directory = miniDump.directory();
+        index_ = parameters.StreamIndex();
 
         if(directory == nullptr || parameters.StreamIndex() >= header->NumberOfStreams)
         {

@@ -24,10 +24,13 @@ namespace winrt::MiniDumpExplorer::implementation
 
         hstring HexDump() const { return streamDataHexDump_; }
 
+        uint32_t Index() const { return index_; }
+
     protected:
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
 
     private:
+        uint32_t index_{};
         hstring streamDataHexDump_{};
     };
 }

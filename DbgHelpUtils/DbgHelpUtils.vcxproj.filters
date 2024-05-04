@@ -483,6 +483,9 @@
     <ClCompile Include="time_utils_resources.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="function_info_utils_resources.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1011,6 +1014,9 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="system_info_utils_resources.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="function_info_utils.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>

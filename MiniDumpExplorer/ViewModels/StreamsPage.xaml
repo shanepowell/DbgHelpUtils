@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid ColumnSpacing="5" RowSpacing="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -53,7 +53,7 @@
             ItemsSource="{x:Bind ItemsSource}"
             >
             <local:DataGrid.Columns>
-                <local:DataGridTextColumn Header="Index"
+                <local:DataGridTextColumn Header="Stream Index"
                                           Binding="{Binding Index,Mode=OneWay}"
                                           Tag="Index" />
                 <local:DataGridTextColumn Header="Name"

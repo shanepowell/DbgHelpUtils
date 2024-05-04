@@ -76,7 +76,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { mini_dump_stream_type::enum_names::CommentStreamA, xaml_typename<CommentStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamW, xaml_typename<CommentStreamPage>() },
             { mini_dump_stream_type::enum_names::HandleDataStream, xaml_typename<HandleDataStreamPage>() },
-            //{ mini_dump_stream_type::enum_names::FunctionTableStream, xaml_typename<FunctionTableStreamPage>() },
+            { mini_dump_stream_type::enum_names::FunctionTableStream, xaml_typename<FunctionTableStreamPage>() },
             { mini_dump_stream_type::enum_names::UnloadedModuleListStream, xaml_typename<UnloadedModuleListStreamPage>() },
             { mini_dump_stream_type::enum_names::MiscInfoStream, xaml_typename<MiscInfoStreamPage>() },
             { mini_dump_stream_type::enum_names::MemoryInfoListStream, xaml_typename<MemoryInfoListStreamPage>() },

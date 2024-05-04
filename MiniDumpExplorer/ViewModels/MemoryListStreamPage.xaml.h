@@ -2,13 +2,14 @@
 
 #include "MemoryListStreamPage.g.h"
 
+#include "Models/NotifyPropertyChangedBase.h"
 #include "Models/MiniDumpPageBase.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct MemoryListStreamEntriesDataSource;
 
-    struct MemoryListStreamPage : MemoryListStreamPageT<MemoryListStreamPage>, MiniDumpPageBase<MemoryListStreamPage>
+    struct MemoryListStreamPage : MemoryListStreamPageT<MemoryListStreamPage>, MiniDumpPageBase<MemoryListStreamPage>, NotifyPropertyChangedBase<MemoryListStreamPage>
     {
         MemoryListStreamPage();
 
@@ -23,6 +24,9 @@ namespace winrt::MiniDumpExplorer::implementation
 
         [[nodiscard]] IDataGridDataSource ItemsSource() const noexcept { return memoryStreamEntriesDataSource_; }
 
+        uint32_t Index() const { return index_; }
+        uint32_t TotalEntries() const { return total_entries_; }
+
         void SelectMemoryRange(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
 
     private:
@@ -31,6 +35,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
     private:
         event_token onRowDoubleTapped_;
+        uint32_t index_{};
+        uint32_t total_entries_{};
         MiniDumpExplorer::MemoryListStreamEntriesDataSource memoryStreamEntriesDataSource_{};
     };
 }

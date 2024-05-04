@@ -17,12 +17,14 @@ namespace winrt::MiniDumpExplorer::implementation
             MiniDumpPageBase::OnNavigatedTo(e);
         }
 
+        uint32_t Index() const { return index_; }
         hstring Comment() const { return comment_; }
 
     private:
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
 
     private:
+        uint32_t index_{};
         hstring comment_{};
     };
 }

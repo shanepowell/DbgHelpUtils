@@ -378,6 +378,14 @@
       <DependentUpon>Models\FileCrc32.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\FunctionStreamEntry.h">
+      <DependentUpon>Models\FunctionStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\FunctionTableStreamEntriesDataSource.h">
+      <DependentUpon>Models\FunctionTableStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\GlobalOptionItems.h">
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -515,6 +523,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\ExceptionStreamPage.xaml.h">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\FunctionTableStreamPage.xaml.h">
+      <DependentUpon>ViewModels\FunctionTableStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\HandleDataStreamPage.xaml.h">
@@ -675,6 +687,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ExceptionStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\FunctionTableStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\HandleDataStreamPage.xaml">
@@ -905,6 +920,7 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp" />
     <ClCompile Include="Models\CvInfoPdb70.cpp">
       <SubType>Code</SubType>
@@ -939,6 +955,12 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\FileCrc32.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\FunctionStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\FunctionTableStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\GlobalOptionItems.cpp">
@@ -1043,6 +1065,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\ExceptionStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\FunctionTableStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\FunctionTableStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\HandleDataStreamPage.xaml.cpp">
@@ -1427,6 +1453,14 @@
       <DependentUpon>Models\FileCrc32.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\FunctionStreamEntry.idl">
+      <DependentUpon>Models\FunctionStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\FunctionTableStreamEntriesDataSource.idl">
+      <DependentUpon>Models\FunctionTableStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\GlobalOptionItems.idl">
       <DependentUpon>Models\GlobalOptionItems.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1561,6 +1595,10 @@
     </Midl>
     <Midl Include="ViewModels\ExceptionStreamPage.idl">
       <DependentUpon>ViewModels\ExceptionStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\FunctionTableStreamPage.idl">
+      <DependentUpon>ViewModels\FunctionTableStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\HandleDataStreamPage.idl">

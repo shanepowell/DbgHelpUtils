@@ -5,6 +5,7 @@ namespace MiniDumpExplorer
     {
         CommentStreamPage();
 
+        UInt32 Index { get; };
         String Comment { get; };
     }
 }

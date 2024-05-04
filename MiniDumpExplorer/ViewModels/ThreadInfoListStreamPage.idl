@@ -3,10 +3,13 @@ import "Controls\DataGrid\DataGridDataSource.idl";
 namespace MiniDumpExplorer
 {
     [default_interface]
-    runtimeclass ThreadInfoListStreamPage : Microsoft.UI.Xaml.Controls.Page
+    runtimeclass ThreadInfoListStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         ThreadInfoListStreamPage();
 
         IDataGridDataSource ItemsSource { get; };
+        
+        UInt32 Index { get; };
+        UInt64 TotalEntries { get; };
     }
 }

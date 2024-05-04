@@ -1,0 +1,15 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass FunctionStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        FunctionStreamEntry();
+
+        UInt32 Index { get; };
+        UInt64 MinimumAddress { get; };
+        UInt64 MaximumAddress { get; };
+        UInt64 BaseAddress { get; };
+        UInt32 EntryCount { get; };
+    }
+}

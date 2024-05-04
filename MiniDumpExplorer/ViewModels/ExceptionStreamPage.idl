@@ -8,6 +8,7 @@ namespace MiniDumpExplorer
     {
         ExceptionStreamPage();
 
+        UInt32 Index { get; };
         UInt32 ThreadId { get; };
         MiniDumpException Exception { get; };
         IDataGridDataSource ExceptionParametersSource { get; };

@@ -36,6 +36,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
         auto const& miniDump = miniDumpPage->MiniDump();
+        index_ = parameters.StreamIndex();
 
         auto const dump_file_timezone_info = dlg_help_utils::misc_info_stream::get_dump_file_timezone_info(miniDump);
         dlg_help_utils::module_list_stream const module_list{miniDump, parameters.StreamIndex()};
@@ -46,6 +47,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return;
         }
 
+        total_entries_ = module_list.module_list().NumberOfModules;
         modulesStreamEntriesDataSource_.as<ModuleListStreamEntriesDataSource>()->LoadMiniDumpModuleStream(module_list, dump_file_timezone_info);
     }
 }

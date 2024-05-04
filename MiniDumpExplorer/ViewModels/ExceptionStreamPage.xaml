@@ -16,6 +16,8 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -25,31 +27,34 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Thread ID" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="threadId" Grid.Row="0" Grid.Column="1" Text="{x:Bind ThreadId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Exception Code" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Thread ID" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="threadId" Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Exception Code" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock x:Name="exceptionCode" Text="{x:Bind Exception.ExceptionCode,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=":" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="10,0,10,0" />
                 <TextBlock Text="{x:Bind Exception.ExceptionCodeString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Exception Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="exceptionFlags" Grid.Row="2" Grid.Column="1" Text="{x:Bind Exception.ExceptionFlags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <ListBox Grid.Row="3" Grid.Column="1" ItemsSource="{x:Bind Exception.ExceptionFlagsList,Mode=OneWay}" Margin="0,5,0,0" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Exception Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="exceptionFlags" Grid.Row="4" Grid.Column="1" Text="{x:Bind Exception.ExceptionFlags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="5" Grid.Column="1" ItemsSource="{x:Bind Exception.ExceptionFlagsList,Mode=OneWay}" Margin="0,5,0,0" />
 
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="Exception Record" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="exceptionRecord" Grid.Row="4" Grid.Column="1" Text="{x:Bind Exception.ExceptionRecord,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Exception Record" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="exceptionRecord" Grid.Row="6" Grid.Column="1" Text="{x:Bind Exception.ExceptionRecord,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="Exception Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="exceptionAddress" Grid.Row="5" Grid.Column="1" Text="{x:Bind Exception.ExceptionAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Exception Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="exceptionAddress" Grid.Row="7" Grid.Column="1" Text="{x:Bind Exception.ExceptionAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Parameters" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Parameters" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
 
             <local:DataGrid 
                 x:Name="ExceptionParameters"
-                Grid.Row="6"
+                Grid.Row="8"
                 Grid.Column="1"
                 AlternatingRowBackground="Transparent"
                 AlternatingRowForeground="White"

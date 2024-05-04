@@ -21,6 +21,8 @@ namespace winrt::MiniDumpExplorer::implementation
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
         auto const& miniDump = miniDumpPage->MiniDump();
 
+        index_ = parameters.StreamIndex();
+
         if (dlg_help_utils::comment_stream_w const comment{miniDump, parameters.StreamIndex()};
             comment.found())
         {

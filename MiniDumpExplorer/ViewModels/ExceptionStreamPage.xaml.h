@@ -25,6 +25,7 @@ namespace winrt::MiniDumpExplorer::implementation
             MiniDumpPageBase::OnNavigatedTo(e);
         }
 
+        uint32_t Index() const { return static_cast<uint32_t>(exception_stream_.index()); }
         uint32_t ThreadId() const { return exception_stream_.exception().ThreadId; }
         MiniDumpExplorer::MiniDumpException Exception() const { return exception_; }
 

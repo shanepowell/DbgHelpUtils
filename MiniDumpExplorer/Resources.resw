@@ -3369,4 +3369,16 @@
   <data name="HandleDataStreamEntryUnNamedType" xml:space="preserve">
     <value>&lt;unnamed&gt;</value>
   </data>
+  <data name="function_table_entry_type_unknown" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="function_table_entry_type_fpo_data" xml:space="preserve">
+    <value>fpo_data</value>
+  </data>
+  <data name="function_table_entry_type_mage_function_entry" xml:space="preserve">
+    <value>image function entry</value>
+  </data>
+  <data name="function_table_entry_type_image_function_entry_64" xml:space="preserve">
+    <value>image function 64 entry</value>
+  </data>
 </root>

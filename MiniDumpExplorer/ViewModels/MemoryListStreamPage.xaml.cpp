@@ -35,6 +35,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
         auto const& miniDump = miniDumpPage->MiniDump();
+        index_ = parameters.StreamIndex();
 
         dlg_help_utils::memory_list_stream const memory_list{miniDump, parameters.StreamIndex()};
 
@@ -44,6 +45,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return;
         }
 
+        total_entries_ = memory_list.memory_list().NumberOfMemoryRanges;
         memoryStreamEntriesDataSource_.as<MemoryListStreamEntriesDataSource>()->LoadMiniDumpMemoryStream(memory_list);
     }
 }

@@ -16,6 +16,17 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>   <!-- 10 -->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -25,30 +36,24 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 20 -->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="System Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Processor Architecture" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ProcessorArchitectureString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="System Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Processor Level" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="processorLevel" Grid.Row="2" Grid.Column="1" Text="{x:Bind ProcessorLevel,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Processor Architecture" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ProcessorArchitectureString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Processor Revision" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Processor Level" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="processorLevel" Grid.Row="4" Grid.Column="1" Text="{x:Bind ProcessorLevel,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Processor Revision" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="Model" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="processorModel" Text="{x:Bind ProcessorModel,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text="Stepping" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="20,0,5,0" />
@@ -58,52 +63,52 @@
                 <TextBlock Text=")" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="5,0,0,0" />
             </StackPanel>
 
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="Number Of Processors" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind NumberOfProcessors,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Number Of Processors" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="6" Grid.Column="1" Text="{x:Bind NumberOfProcessors,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="Product Type" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="5" Grid.Column="1" Text="{x:Bind ProductTypeString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Product Type" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="{x:Bind ProductTypeString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Text="OS Version Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,20,0,5" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Text="OS Version Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,20,0,5" />
 
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="OS Version" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="OS Version" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{x:Bind OsVersionMajorMinorBuildString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="20,0,20,0" />
                 <TextBlock Text="{x:Bind OsVersion,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
 
-            <TextBlock Grid.Row="8" Grid.Column="0" Text="Platform Id" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="8" Grid.Column="1" Text="{x:Bind OsPlatformIdString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Platform Id" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="10" Grid.Column="1" Text="{x:Bind OsPlatformIdString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="CSD Version" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="9" Grid.Column="1" Text="{x:Bind CsdVersion,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="CSD Version" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="11" Grid.Column="1" Text="{x:Bind CsdVersion,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="10" Grid.Column="0" Text="Suite Mask" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="suiteMask"  Grid.Row="10" Grid.Column="1" Text="{x:Bind SuiteMask,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <ListBox Grid.Row="11" Grid.Column="1" ItemsSource="{x:Bind SuiteMaskList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="Suite Mask" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="suiteMask"  Grid.Row="12" Grid.Column="1" Text="{x:Bind SuiteMask,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="13" Grid.Column="1" ItemsSource="{x:Bind SuiteMaskList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
-            <TextBlock Grid.Row="12" Grid.Column="0" Text="Reserved2" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="reserved2" Grid.Row="12" Grid.Column="1" Text="{x:Bind Reserved2,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="14" Grid.Column="0" Text="Reserved2" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="reserved2" Grid.Row="14" Grid.Column="1" Text="{x:Bind Reserved2,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Text="CPU Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,20,0,0" />
-            <TextBlock Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Text="X86 CPU Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Margin="0,15,0,5" />
+            <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Text="CPU Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" Margin="0,20,0,0" />
+            <TextBlock Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Text="X86 CPU Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Margin="0,15,0,5" />
 
-            <TextBlock Grid.Row="15" Grid.Column="0" Text="Vendor Id" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="15" Grid.Column="1" Text="{x:Bind X86CpuInfoVendorId,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="17" Grid.Column="0" Text="Vendor Id" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="17" Grid.Column="1" Text="{x:Bind X86CpuInfoVendorId,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="16" Grid.Column="0" Text="Version Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="x86CpuInfoVersionInformation" Grid.Row="16" Grid.Column="1" Text="{x:Bind X86CpuInfoVersionInformation,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="18" Grid.Column="0" Text="Version Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="x86CpuInfoVersionInformation" Grid.Row="18" Grid.Column="1" Text="{x:Bind X86CpuInfoVersionInformation,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="17" Grid.Column="0" Text="Feature Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="x86CpuInfoFeatureInformation" Grid.Row="17" Grid.Column="1" Text="{x:Bind X86CpuInfoFeatureInformation,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="19" Grid.Column="0" Text="Feature Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="x86CpuInfoFeatureInformation" Grid.Row="19" Grid.Column="1" Text="{x:Bind X86CpuInfoFeatureInformation,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="18" Grid.Column="0" Text="AMD Extended CPU Features" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="x86CpuInfoAMDExtendedCpuFeatures" Grid.Row="18" Grid.Column="1" Text="{x:Bind X86CpuInfoAMDExtendedCpuFeatures,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="20" Grid.Column="0" Text="AMD Extended CPU Features" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="x86CpuInfoAMDExtendedCpuFeatures" Grid.Row="20" Grid.Column="1" Text="{x:Bind X86CpuInfoAMDExtendedCpuFeatures,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="19" Grid.Column="0" Text="Other CPU Information Processor Features" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="otherCpuInfoProcessorFeatures1" Grid.Row="19" Grid.Column="1" Text="{x:Bind OtherCpuInfoProcessorFeatures1,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock x:Name="otherCpuInfoProcessorFeatures2" Grid.Row="20" Grid.Column="1" Text="{x:Bind OtherCpuInfoProcessorFeatures2,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="21" Grid.Column="0" Text="Other CPU Information Processor Features" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="otherCpuInfoProcessorFeatures1" Grid.Row="21" Grid.Column="1" Text="{x:Bind OtherCpuInfoProcessorFeatures1,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="otherCpuInfoProcessorFeatures2" Grid.Row="22" Grid.Column="1" Text="{x:Bind OtherCpuInfoProcessorFeatures2,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
         </Grid>
     </ScrollViewer>
 </Page>

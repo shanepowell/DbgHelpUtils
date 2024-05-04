@@ -80,6 +80,9 @@
     <Page Include="ViewModels\HandleDataStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\FunctionTableStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -555,6 +558,15 @@
     </ClCompile>
     <ClCompile Include="Models\HandleDataStreamEntry.cpp">
       <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\FunctionTableStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\FunctionStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

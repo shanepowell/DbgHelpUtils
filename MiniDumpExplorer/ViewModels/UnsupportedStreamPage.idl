@@ -5,6 +5,7 @@ namespace MiniDumpExplorer
     {
         UnsupportedStreamPage();
 
+        UInt32 Index { get; };
         String HexDump { get; };
     }
 }

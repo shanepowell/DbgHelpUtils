@@ -4,6 +4,8 @@ namespace MiniDumpExplorer
     runtimeclass SystemInfoStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         SystemInfoStreamPage();
+        
+        UInt32 Index { get; };
 
         UInt16 ProcessorArchitecture { get; };
         String ProcessorArchitectureString { get; };

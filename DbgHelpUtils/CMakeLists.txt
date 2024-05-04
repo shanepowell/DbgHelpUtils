@@ -214,6 +214,8 @@ set(StreamUtilities
     "exception_utils.h"
     "find_thread_stack.cpp"
     "find_thread_stack.h"
+    "function_info_utils.h"
+    "function_info_utils_resources.cpp"
     "gflags_utils_resources.cpp"
     "gflags_utils.h"
     "lfh_subsegment_location_utils_resources.cpp"

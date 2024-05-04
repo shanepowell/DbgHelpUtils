@@ -1,0 +1,16 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass FunctionTableStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        FunctionTableStreamPage();
+
+        IDataGridDataSource ItemsSource { get; };
+
+        UInt32 Index { get; };
+        UInt32 TotalFunctions { get; };
+        String EntryType { get; };
+    }
+}

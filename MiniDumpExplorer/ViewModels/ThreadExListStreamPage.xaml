@@ -7,8 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid ColumnSpacing="5" RowSpacing="5">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="10" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -18,8 +21,14 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Total Threads" />
+        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind TotalEntries,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+        
         <TextBlock 
-            Grid.Row="0"
+            Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Text="Threads Extended"
@@ -29,7 +38,7 @@
 
         <local:DataGrid
             x:Name="ThreadsExDataGrid"
-            Grid.Row="1"
+            Grid.Row="4"
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Margin="12"
@@ -76,7 +85,7 @@
             </local:DataGrid.Columns>
         </local:DataGrid>
         <Button
-            Grid.Row="2"
+            Grid.Row="5"
             Grid.Column="2"
             Click="SelectThread"
             Margin="10">Select</Button>

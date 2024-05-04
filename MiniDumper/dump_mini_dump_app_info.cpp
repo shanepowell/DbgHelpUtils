@@ -2,6 +2,7 @@
 
 #include "dump_file_options.h"
 #include "DbgHelpUtils/filesystem_utils.h"
+#include "DbgHelpUtils/function_info_utils.h"
 #include "DbgHelpUtils/function_table_stream.h"
 #include "DbgHelpUtils/handle_data_stream.h"
 #include "DbgHelpUtils/handle_operation_list_stream.h"
@@ -88,6 +89,7 @@ void dump_mini_dump_function_table_stream_data(std::wostream& log, mini_dump con
 
     using namespace size_units::base_16;
     log << std::format(L"NumberOfDescriptors: {}\n", locale_formatting::to_wstring(function_table.size()));
+    log << std::format(L"EntryType: {}\n", function_info_utils::function_entry_type_to_string(function_table.entry_type()));
     for (size_t i = 0; auto const& table : function_table.list())
     {
         log << std::format(L" Function[{}]:\n", i);

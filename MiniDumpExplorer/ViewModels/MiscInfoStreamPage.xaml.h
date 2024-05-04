@@ -30,6 +30,7 @@ namespace winrt::MiniDumpExplorer::implementation
             MiniDumpPageBase::OnNavigatedTo(e);
         }
 
+        uint32_t Index() const { return static_cast<uint32_t>(misc_info_stream_.index()); }
         uint32_t Flags() const { return misc_info_stream_.misc_info().Flags1; }
         Windows::Foundation::Collections::IObservableVector<hstring> FlagsList() const { return flagsList_; }
         

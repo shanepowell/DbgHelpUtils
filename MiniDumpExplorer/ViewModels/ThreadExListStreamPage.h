@@ -2,13 +2,14 @@
 
 #include "ThreadExListStreamPage.g.h"
 
+#include "Models/NotifyPropertyChangedBase.h"
 #include "Models/MiniDumpPageBase.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct ThreadExListStreamEntriesDataSource;
 
-    struct ThreadExListStreamPage : ThreadExListStreamPageT<ThreadExListStreamPage>, MiniDumpPageBase<ThreadExListStreamPage>
+    struct ThreadExListStreamPage : ThreadExListStreamPageT<ThreadExListStreamPage>, MiniDumpPageBase<ThreadExListStreamPage>, NotifyPropertyChangedBase<ThreadExListStreamPage>
     {
         ThreadExListStreamPage();
 
@@ -23,6 +24,9 @@ namespace winrt::MiniDumpExplorer::implementation
 
         [[nodiscard]] IDataGridDataSource ItemsSource() const noexcept { return threadsStreamEntriesDataSource_; }
 
+        uint32_t Index() const { return index_; }
+        uint32_t TotalEntries() const { return total_entries_; }
+
         void SelectThread(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
 
     private:
@@ -31,6 +35,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
     private:
         event_token onRowDoubleTapped_;
+        uint32_t index_{};
+        uint32_t total_entries_{};
         MiniDumpExplorer::ThreadExListStreamEntriesDataSource threadsStreamEntriesDataSource_{};
     };
 }

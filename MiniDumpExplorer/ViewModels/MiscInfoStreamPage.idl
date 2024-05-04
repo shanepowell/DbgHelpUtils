@@ -9,6 +9,8 @@ namespace MiniDumpExplorer
     {
         MiscInfoStreamPage();
 
+        UInt32 Index { get; };
+
         UInt32 Flags { get; };
         IObservableVector<String> FlagsList { get; };
         
