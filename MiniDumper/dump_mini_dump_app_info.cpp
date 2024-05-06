@@ -187,6 +187,7 @@ void dump_mini_dump_handle_operation_list_stream_data(std::wostream& log, mini_d
         log << std::format(L" Handle[{}]:\n", locale_formatting::to_wstring(i));
         log << std::format(L"   Handle: {}\n", to_hex_full(entry->Handle));
         log << std::format(L"   ProcessId: {}\n", to_hex(entry->ProcessId));
+        log << std::format(L"   ThreadId: {}\n", to_hex(entry->ThreadId));
         log << std::format(L"   OperationType: {0} ({1})\n", system_info_utils::handle_trace_operation_to_string(entry->OperationType), locale_formatting::to_wstring(entry->OperationType));
         log << L"   BackTraceInformation:\n";
         log << std::format(L"     Index: {}\n", locale_formatting::to_wstring(entry->BackTraceInformation.Index));

@@ -51,17 +51,28 @@ void dump_mini_dump_system_info_stream_data(std::wostream& log, mini_dump const&
     }
     log << std::format(L"  Reserved2: {}\n", to_hex(info.Reserved2));
     log << L"  CPU:\n";
-    log << L"    X86CpuInfo\n";
-    log << std::format(L"      VendorId: {}\n", system_info.vendor_id());
-    log << std::format(L"      VersionInformation: {}\n", to_hex(info.Cpu.X86CpuInfo.VersionInformation));
-    if (system_info.is_intel())
+
+    if(system_info.has_x86_cpu_info())
     {
+        log << L"    X86CpuInfo\n";
+        log << std::format(L"      VendorId: {}\n", system_info.vendor_id());
+        log << std::format(L"      VersionInformation: {}\n", to_hex(info.Cpu.X86CpuInfo.VersionInformation));
+        if (system_info.is_intel())
+        {
+        }
+        log << std::format(L"      FeatureInformation: {}\n", to_hex(info.Cpu.X86CpuInfo.FeatureInformation));
+        log << std::format(L"      AMDExtendedCpuFeatures: {}\n", to_hex(info.Cpu.X86CpuInfo.AMDExtendedCpuFeatures));
     }
-    log << std::format(L"      FeatureInformation: {}\n", to_hex(info.Cpu.X86CpuInfo.FeatureInformation));
-    log << std::format(L"      AMDExtendedCpuFeatures: {}\n", to_hex(info.Cpu.X86CpuInfo.AMDExtendedCpuFeatures));
-    log << L"    OtherCpuInfo\n";
-    log << std::format(L"      ProcessorFeatures: {0} - {1}\n", to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[0]), to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[1]));
-    log << L'\n';
+    else
+    {
+        log << L"    OtherCpuInfo\n";
+        log << std::format(L"      ProcessorFeatures: {0} - {1}\n", to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[0]), to_hex(info.Cpu.OtherCpuInfo.ProcessorFeatures[1]));
+        for (auto const& value : system_info_utils::other_processor_features_to_strings(info.Cpu.OtherCpuInfo.ProcessorFeatures[0], info.Cpu.OtherCpuInfo.ProcessorFeatures[1]))
+        {
+            log << std::format(L"        {}\n", value);
+        }
+        log << L'\n';
+    }
 }
 
 void dump_mini_dump_misc_info_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)

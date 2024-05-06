@@ -24,12 +24,15 @@ namespace dlg_help_utils
             csd_version_ = string_stream::to_string(dump, system_info_->CSDVersionRva);
         }
 
-        vendor_id_ = string_conversation::acp_to_wstring(std::string_view{
-            reinterpret_cast<char const*>(system_info_->Cpu.X86CpuInfo.VendorId),
-            sizeof(system_info_->Cpu.X86CpuInfo.VendorId)
-        });
-        is_intel_ = vendor_id_ == L"GenuineIntel"sv;
-        is_amd_ = vendor_id_ == L"AuthenticAMD"sv;
+        if(has_x86_cpu_info())
+        {
+            vendor_id_ = string_conversation::acp_to_wstring(std::string_view{
+                reinterpret_cast<char const*>(system_info_->Cpu.X86CpuInfo.VendorId),
+                sizeof(system_info_->Cpu.X86CpuInfo.VendorId)
+            });
+            is_intel_ = vendor_id_ == L"GenuineIntel"sv;
+            is_amd_ = vendor_id_ == L"AuthenticAMD"sv;
+        }
 
         if ((system_info_->ProcessorRevision & 0xFF00) == 0xFF00)
         {
@@ -67,5 +70,10 @@ namespace dlg_help_utils
     bool system_info_stream::is_x64() const
     {
         return found() && system_info().ProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64;
+    }
+
+    bool system_info_stream::has_x86_cpu_info() const
+    {
+        return system_info().ProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL;
     }
 }

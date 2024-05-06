@@ -1,0 +1,13 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass AvrfBackTraceInformation : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        AvrfBackTraceInformation();
+
+        UInt32 Depth { get; };
+        UInt32 Index { get; };
+        IObservableVector<UInt64> ReturnAddresses { get; };
+    }
+}

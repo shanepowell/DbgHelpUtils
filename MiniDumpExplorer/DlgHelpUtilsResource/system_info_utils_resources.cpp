@@ -423,6 +423,63 @@ namespace
 
         return xstate_data_features;
     }
+
+
+    std::unordered_map<uint64_t, std::wstring> const& other_processor_features()
+    {
+        winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+        static std::unordered_map<uint64_t, std::wstring> const other_processor_features =
+        {
+            {1ULL << PF_FLOATING_POINT_PRECISION_ERRATA, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_FLOATING_POINT_PRECISION_ERRATA").ValueAsString()}},
+            {1ULL << PF_FLOATING_POINT_EMULATED, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_FLOATING_POINT_EMULATED").ValueAsString()}},
+            {1ULL << PF_COMPARE_EXCHANGE_DOUBLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_COMPARE_EXCHANGE_DOUBLE").ValueAsString()}},
+            {1ULL << PF_MMX_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_MMX_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_PPC_MOVEMEM_64BIT_OK, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_PPC_MOVEMEM_64BIT_OK").ValueAsString()}},
+            {1ULL << PF_ALPHA_BYTE_INSTRUCTIONS, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ALPHA_BYTE_INSTRUCTIONS").ValueAsString()}},
+            {1ULL << PF_XMMI_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_XMMI_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_3DNOW_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_3DNOW_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_RDTSC_INSTRUCTION_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_RDTSC_INSTRUCTION_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_PAE_ENABLED, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_PAE_ENABLED").ValueAsString()}},
+            {1ULL << PF_XMMI64_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_XMMI64_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_SSE_DAZ_MODE_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_SSE_DAZ_MODE_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_NX_ENABLED, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_NX_ENABLED").ValueAsString()}},
+            {1ULL << PF_SSE3_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_SSE3_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_COMPARE_EXCHANGE128, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_COMPARE_EXCHANGE128").ValueAsString()}},
+            {1ULL << PF_COMPARE64_EXCHANGE128, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_COMPARE64_EXCHANGE128").ValueAsString()}},
+            {1ULL << PF_CHANNELS_ENABLED, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_CHANNELS_ENABLED").ValueAsString()}},
+            {1ULL << PF_XSAVE_ENABLED, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_XSAVE_ENABLED").ValueAsString()}},
+            {1ULL << PF_ARM_VFP_32_REGISTERS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_VFP_32_REGISTERS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_NEON_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_NEON_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_SECOND_LEVEL_ADDRESS_TRANSLATION, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_SECOND_LEVEL_ADDRESS_TRANSLATION").ValueAsString()}},
+            {1ULL << PF_VIRT_FIRMWARE_ENABLED, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_VIRT_FIRMWARE_ENABLED").ValueAsString()}},
+            {1ULL << PF_RDWRFSGSBASE_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_RDWRFSGSBASE_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_FASTFAIL_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_FASTFAIL_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_DIVIDE_INSTRUCTION_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_DIVIDE_INSTRUCTION_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_64BIT_LOADSTORE_ATOMIC, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_64BIT_LOADSTORE_ATOMIC").ValueAsString()}},
+            {1ULL << PF_ARM_EXTERNAL_CACHE_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_EXTERNAL_CACHE_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_FMAC_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_FMAC_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_RDRAND_INSTRUCTION_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_RDRAND_INSTRUCTION_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V8_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V8_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_RDTSCP_INSTRUCTION_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_RDTSCP_INSTRUCTION_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_RDPID_INSTRUCTION_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_RDPID_INSTRUCTION_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_MONITORX_INSTRUCTION_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_MONITORX_INSTRUCTION_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_SSSE3_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_SSSE3_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_SSE4_1_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_SSE4_1_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_SSE4_2_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_SSE4_2_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_AVX_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_AVX_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_AVX2_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_AVX2_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_AVX512F_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_AVX512F_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ERMS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ERMS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+            {1ULL << PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE, std::wstring{rm.MainResourceMap().GetValue(L"Resources/PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE").ValueAsString()}},
+        };
+
+        return other_processor_features;
+    }
 }
 
 namespace dlg_help_utils::system_info_utils
@@ -548,5 +605,15 @@ namespace dlg_help_utils::system_info_utils
     std::wstring xstate_data_feature_to_string(uint32_t const feature)
     {
         return flags_string_utils::generate_enum_string(feature, xstate_data_features());
+    }
+
+    std::wstring other_processor_features_to_string(uint64_t const features1, [[maybe_unused]] uint64_t const features2)
+    {
+        return flags_string_utils::generate_flags_string(features1, other_processor_features());
+    }
+
+    std::vector<std::wstring> other_processor_features_to_strings(uint64_t const features1, [[maybe_unused]] uint64_t const features2)
+    {
+        return flags_string_utils::generate_flags_strings(features1, other_processor_features());
     }
 }

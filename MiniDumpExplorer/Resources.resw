@@ -3381,4 +3381,142 @@
   <data name="function_table_entry_type_image_function_entry_64" xml:space="preserve">
     <value>image function 64 entry</value>
   </data>
+  <data name="PF_FLOATING_POINT_PRECISION_ERRATA" xml:space="preserve">
+    <value>PF_FLOATING_POINT_PRECISION_ERRATA</value>
+  </data>
+  <data name="PF_FLOATING_POINT_EMULATED" xml:space="preserve">
+    <value>PF_FLOATING_POINT_EMULATED</value>
+  </data>
+  <data name="PF_COMPARE_EXCHANGE_DOUBLE" xml:space="preserve">
+    <value>PF_COMPARE_EXCHANGE_DOUBLE</value>
+  </data>
+  <data name="PF_MMX_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_MMX_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_PPC_MOVEMEM_64BIT_OK" xml:space="preserve">
+    <value>PF_PPC_MOVEMEM_64BIT_OK</value>
+  </data>
+  <data name="PF_ALPHA_BYTE_INSTRUCTIONS" xml:space="preserve">
+    <value>PF_ALPHA_BYTE_INSTRUCTIONS</value>
+  </data>
+  <data name="PF_XMMI_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_XMMI_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_3DNOW_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_3DNOW_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_RDTSC_INSTRUCTION_AVAILABLE" xml:space="preserve">
+    <value>PF_RDTSC_INSTRUCTION_AVAILABLE</value>
+  </data>
+  <data name="PF_PAE_ENABLED" xml:space="preserve">
+    <value>PF_PAE_ENABLED</value>
+  </data>
+  <data name="PF_XMMI64_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_XMMI64_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_SSE_DAZ_MODE_AVAILABLE" xml:space="preserve">
+    <value>PF_SSE_DAZ_MODE_AVAILABLE</value>
+  </data>
+  <data name="PF_NX_ENABLED" xml:space="preserve">
+    <value>PF_NX_ENABLED</value>
+  </data>
+  <data name="PF_SSE3_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_SSE3_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_COMPARE_EXCHANGE128" xml:space="preserve">
+    <value>PF_COMPARE_EXCHANGE128</value>
+  </data>
+  <data name="PF_COMPARE64_EXCHANGE128" xml:space="preserve">
+    <value>PF_COMPARE64_EXCHANGE128</value>
+  </data>
+  <data name="PF_CHANNELS_ENABLED" xml:space="preserve">
+    <value>PF_CHANNELS_ENABLED</value>
+  </data>
+  <data name="PF_XSAVE_ENABLED" xml:space="preserve">
+    <value>PF_XSAVE_ENABLED</value>
+  </data>
+  <data name="PF_ARM_VFP_32_REGISTERS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_VFP_32_REGISTERS_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_NEON_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_NEON_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_SECOND_LEVEL_ADDRESS_TRANSLATION" xml:space="preserve">
+    <value>PF_SECOND_LEVEL_ADDRESS_TRANSLATION</value>
+  </data>
+  <data name="PF_VIRT_FIRMWARE_ENABLED" xml:space="preserve">
+    <value>PF_VIRT_FIRMWARE_ENABLED</value>
+  </data>
+  <data name="PF_RDWRFSGSBASE_AVAILABLE" xml:space="preserve">
+    <value>PF_RDWRFSGSBASE_AVAILABLE</value>
+  </data>
+  <data name="PF_FASTFAIL_AVAILABLE" xml:space="preserve">
+    <value>PF_FASTFAIL_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_DIVIDE_INSTRUCTION_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_DIVIDE_INSTRUCTION_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_64BIT_LOADSTORE_ATOMIC" xml:space="preserve">
+    <value>PF_ARM_64BIT_LOADSTORE_ATOMIC</value>
+  </data>
+  <data name="PF_ARM_EXTERNAL_CACHE_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_EXTERNAL_CACHE_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_FMAC_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_FMAC_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_RDRAND_INSTRUCTION_AVAILABLE" xml:space="preserve">
+    <value>PF_RDRAND_INSTRUCTION_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V8_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V8_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_RDTSCP_INSTRUCTION_AVAILABLE" xml:space="preserve">
+    <value>PF_RDTSCP_INSTRUCTION_AVAILABLE</value>
+  </data>
+  <data name="PF_RDPID_INSTRUCTION_AVAILABLE" xml:space="preserve">
+    <value>PF_RDPID_INSTRUCTION_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_MONITORX_INSTRUCTION_AVAILABLE" xml:space="preserve">
+    <value>PF_MONITORX_INSTRUCTION_AVAILABLE</value>
+  </data>
+  <data name="PF_SSSE3_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_SSSE3_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_SSE4_1_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_SSE4_1_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_SSE4_2_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_SSE4_2_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_AVX_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_AVX_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_AVX2_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_AVX2_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_AVX512F_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_AVX512F_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_ERMS_AVAILABLE" xml:space="preserve">
+    <value>PF_ERMS_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
+    <value>PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE</value>
+  </data>
 </root>

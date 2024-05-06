@@ -1,0 +1,19 @@
+import "Models\AvrfBackTraceInformation.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass HandleOperationStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        HandleOperationStreamEntry();
+
+        UInt32 Index { get; };
+        UInt64 Handle { get; };
+        UInt32 ProcessId { get; };
+        UInt32 ThreadId { get; };
+        UInt32 OperationType { get; };
+        String OperationTypeString { get; };
+        AvrfBackTraceInformation BackTraceInformation { get; };
+    }
+}

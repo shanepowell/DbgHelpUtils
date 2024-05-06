@@ -83,6 +83,9 @@
     <Page Include="ViewModels\FunctionTableStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\HandleOperationListStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -567,6 +570,15 @@
     </ClCompile>
     <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp">
       <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\HandleOperationListStreamEntriesDataSource.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\HandleOperationStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\AvrfBackTraceInformation.cpp">
+      <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

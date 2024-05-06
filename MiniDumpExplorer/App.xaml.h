@@ -105,6 +105,9 @@
 #include "Models\HandleDataStreamEntry.h"
 #include "Models\FunctionTableStreamEntriesDataSource.h"
 #include "Models\FunctionStreamEntry.h"
+#include "Models\HandleOperationListStreamEntriesDataSource.h"
+#include "Models\HandleOperationStreamEntry.h"
+#include "Models\AvrfBackTraceInformation.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

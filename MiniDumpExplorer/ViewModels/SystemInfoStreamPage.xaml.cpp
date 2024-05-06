@@ -82,10 +82,22 @@ namespace winrt::MiniDumpExplorer::implementation
         osVersion_ = dlg_help_utils::system_info_utils::windows_version_to_string(info.MajorVersion, info.MinorVersion, info.BuildNumber, info.ProductType, info.ProcessorArchitecture, info.SuiteMask);
         osPlatformIdString_ = dlg_help_utils::system_info_utils::platform_id_to_string(info.PlatformId);
         csdVersion_ = system_info_stream_.csd_version();
-        x86CpuInfoVendorId_ = system_info_stream_.vendor_id();
         for (auto const& value : dlg_help_utils::system_info_utils::suite_mask_to_strings(info.SuiteMask))
         {
             suiteMaskList_.Append(value);
+        }
+
+        if(system_info_stream_.has_x86_cpu_info())
+        {
+            x86CpuInfoVendorId_ = system_info_stream_.vendor_id();
+        }
+        else
+        {
+            otherCpuInfoProcessorFeaturesList_.Clear();
+            for (auto const& value : dlg_help_utils::system_info_utils::other_processor_features_to_strings(info.Cpu.OtherCpuInfo.ProcessorFeatures[0], info.Cpu.OtherCpuInfo.ProcessorFeatures[1]))
+            {
+                otherCpuInfoProcessorFeaturesList_.Append(value);
+            }
         }
 
         RaisePropertyChanged(L"ProcessorArchitecture");
@@ -107,11 +119,20 @@ namespace winrt::MiniDumpExplorer::implementation
         RaisePropertyChanged(L"CsdVersion");
         RaisePropertyChanged(L"SuiteMask");
         RaisePropertyChanged(L"Reserved2");
-        RaisePropertyChanged(L"X86CpuInfoVendorId");
-        RaisePropertyChanged(L"X86CpuInfoVersionInformation");
-        RaisePropertyChanged(L"X86CpuInfoFeatureInformation");
-        RaisePropertyChanged(L"X86CpuInfoAMDExtendedCpuFeatures");
-        RaisePropertyChanged(L"OtherCpuInfoProcessorFeatures1");
-        RaisePropertyChanged(L"OtherCpuInfoProcessorFeatures2");
+        RaisePropertyChanged(L"HasX86CpuInfo");
+
+        if(system_info_stream_.has_x86_cpu_info())
+        {
+            RaisePropertyChanged(L"X86CpuInfoVendorId");
+            RaisePropertyChanged(L"X86CpuInfoVersionInformation");
+            RaisePropertyChanged(L"X86CpuInfoFeatureInformation");
+            RaisePropertyChanged(L"X86CpuInfoAMDExtendedCpuFeatures");
+        }
+        else
+        {
+            RaisePropertyChanged(L"OtherCpuInfoProcessorFeatures1");
+            RaisePropertyChanged(L"OtherCpuInfoProcessorFeatures2");
+            RaisePropertyChanged(L"OtherCpuInfoProcessorFeaturesList");
+        }
     }
 }

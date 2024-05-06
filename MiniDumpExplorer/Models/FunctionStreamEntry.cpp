@@ -2,7 +2,8 @@
 #include "FunctionStreamEntry.h"
 
 #if __has_include("FunctionStreamEntry.g.cpp")
-#include "FunctionStreamEntry.g.cpp"
+// ReSharper disable once CppUnusedIncludeDirective
+#include "FunctionStreamEntry.g.cpp"  // NOLINT(bugprone-suspicious-include)
 #endif
 
 using namespace winrt;

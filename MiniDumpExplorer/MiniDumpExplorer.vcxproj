@@ -349,6 +349,10 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\AvrfBackTraceInformation.h">
+      <DependentUpon>Models\AvrfBackTraceInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\CvInfoPdb70.h">
       <DependentUpon>Models\CvInfoPdb70.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -397,6 +401,14 @@
     </ClInclude>
     <ClInclude Include="Models\HandleDataStreamEntry.h">
       <DependentUpon>Models\HandleDataStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\HandleOperationListStreamEntriesDataSource.h">
+      <DependentUpon>Models\HandleOperationListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\HandleOperationStreamEntry.h">
+      <DependentUpon>Models\HandleOperationStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Models\Memory64ListStreamEntriesDataSource.h">
@@ -531,6 +543,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\HandleDataStreamPage.xaml.h">
       <DependentUpon>ViewModels\HandleDataStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\HandleOperationListStreamPage.xaml.h">
+      <DependentUpon>ViewModels\HandleOperationListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\Memory64ListStreamPage.xaml.h">
@@ -693,6 +709,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\HandleDataStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\HandleOperationListStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\Memory64ListStreamPage.xaml">
@@ -922,6 +941,9 @@
     </ClCompile>
     <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp" />
+    <ClCompile Include="Models\AvrfBackTraceInformation.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\CvInfoPdb70.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -970,6 +992,12 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\HandleDataStreamEntry.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\HandleOperationListStreamEntriesDataSource.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\HandleOperationStreamEntry.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\Memory64ListStreamEntriesDataSource.cpp">
@@ -1073,6 +1101,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\HandleDataStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\HandleDataStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\HandleOperationListStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\HandleOperationListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\Memory64ListStreamPage.xaml.cpp">
@@ -1429,6 +1461,10 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\AvrfBackTraceInformation.idl">
+      <DependentUpon>Models\AvrfBackTraceInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\CvInfoPdb70.idl">
       <DependentUpon>Models\CvInfoPdb70.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1471,6 +1507,14 @@
     </Midl>
     <Midl Include="Models\HandleDataStreamEntry.idl">
       <DependentUpon>Models\HandleDataStreamEntry.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\HandleOperationListStreamEntriesDataSource.idl">
+      <DependentUpon>Models\HandleOperationListStreamEntriesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\HandleOperationStreamEntry.idl">
+      <DependentUpon>Models\HandleOperationStreamEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\Memory64ListStreamEntriesDataSource.idl">
@@ -1603,6 +1647,10 @@
     </Midl>
     <Midl Include="ViewModels\HandleDataStreamPage.idl">
       <DependentUpon>ViewModels\HandleDataStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\HandleOperationListStreamPage.idl">
+      <DependentUpon>ViewModels\HandleOperationListStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\Memory64ListStreamPage.idl">

@@ -50,12 +50,14 @@ namespace winrt::MiniDumpExplorer::implementation
         uint16_t SuiteMask() const { return system_info_stream_.system_info().SuiteMask; }
         Windows::Foundation::Collections::IObservableVector<hstring> SuiteMaskList() const { return suiteMaskList_; }
         uint16_t Reserved2() const { return system_info_stream_.system_info().Reserved2; }
+        bool HasX86CpuInfo() const { return system_info_stream_.has_x86_cpu_info(); }
         hstring X86CpuInfoVendorId() const { return x86CpuInfoVendorId_; }
         uint32_t X86CpuInfoVersionInformation() const { return system_info_stream_.system_info().Cpu.X86CpuInfo.VersionInformation; }
         uint32_t X86CpuInfoFeatureInformation() const { return system_info_stream_.system_info().Cpu.X86CpuInfo.FeatureInformation; }
         uint32_t X86CpuInfoAMDExtendedCpuFeatures() const { return system_info_stream_.system_info().Cpu.X86CpuInfo.AMDExtendedCpuFeatures; }
         uint64_t OtherCpuInfoProcessorFeatures1() const { return system_info_stream_.system_info().Cpu.OtherCpuInfo.ProcessorFeatures[0]; }
         uint64_t OtherCpuInfoProcessorFeatures2() const { return system_info_stream_.system_info().Cpu.OtherCpuInfo.ProcessorFeatures[1]; }
+        Windows::Foundation::Collections::IObservableVector<hstring> OtherCpuInfoProcessorFeaturesList() const { return otherCpuInfoProcessorFeaturesList_; }
 
 
     private:
@@ -72,6 +74,7 @@ namespace winrt::MiniDumpExplorer::implementation
         hstring csdVersion_;
         hstring x86CpuInfoVendorId_;
         Windows::Foundation::Collections::IObservableVector<hstring> suiteMaskList_{single_threaded_observable_vector<hstring>()};
+        Windows::Foundation::Collections::IObservableVector<hstring> otherCpuInfoProcessorFeaturesList_{single_threaded_observable_vector<hstring>()};
     };
 }
 

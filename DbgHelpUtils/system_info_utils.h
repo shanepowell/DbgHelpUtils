@@ -36,6 +36,8 @@ namespace dlg_help_utils::system_info_utils
     std::wstring version_file_type_to_string(uint32_t file_type, uint32_t file_sub_type);
     std::wstring sym_type_to_string(uint32_t type);
     std::wstring xstate_data_feature_to_string(uint32_t feature);
+    std::wstring other_processor_features_to_string(uint64_t features1, uint64_t features2);
+    std::vector<std::wstring> other_processor_features_to_strings(uint64_t features1, uint64_t features2);
 
     std::filesystem::path const& get_running_application_path();
     std::filesystem::path const& get_run_from_directory();

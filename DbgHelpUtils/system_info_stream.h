@@ -24,6 +24,7 @@ namespace dlg_help_utils
         [[nodiscard]] bool is_amd() const { return is_amd_; }
         [[nodiscard]] bool is_x86() const;
         [[nodiscard]] bool is_x64() const;
+        [[nodiscard]] bool has_x86_cpu_info() const;
         [[nodiscard]] unsigned short processor_model() const { return processor_model_; }
         [[nodiscard]] unsigned short processor_stepping() const { return processor_stepping_; }
 

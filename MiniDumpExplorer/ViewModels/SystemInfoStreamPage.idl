@@ -27,11 +27,13 @@ namespace MiniDumpExplorer
         UInt16 SuiteMask { get; };
         IObservableVector<String> SuiteMaskList { get; };
         UInt16 Reserved2 { get; };
+        Boolean HasX86CpuInfo { get; };
         String X86CpuInfoVendorId { get; };
         UInt32 X86CpuInfoVersionInformation { get; };
         UInt32 X86CpuInfoFeatureInformation { get; };
         UInt32 X86CpuInfoAMDExtendedCpuFeatures { get; };
         UInt64 OtherCpuInfoProcessorFeatures1 { get; };
         UInt64 OtherCpuInfoProcessorFeatures2 { get; };
+        IObservableVector<String> OtherCpuInfoProcessorFeaturesList { get; };
     }
 }
