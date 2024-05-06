@@ -1,0 +1,10 @@
+import "Controls\DataGrid\DataGridDataSource.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass TokenStreamEntriesDataSource : IDataGridDataSource
+    {
+        TokenStreamEntriesDataSource();
+    }
+}

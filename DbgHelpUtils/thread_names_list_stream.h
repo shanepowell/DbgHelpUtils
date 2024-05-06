@@ -16,6 +16,7 @@ namespace dlg_help_utils
     class thread_names_list_stream
     {
     public:
+        thread_names_list_stream() = default;
         explicit thread_names_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -26,9 +27,9 @@ namespace dlg_help_utils
         [[nodiscard]] stream_thread_name get_thread_name_for_thread_id(uint32_t thread_id) const;
 
     private:
-        mini_dump const& dump_;
+        mini_dump const* dump_{nullptr};
         bool found_{false};
-        size_t index_;
+        size_t index_{};
         MINIDUMP_THREAD_NAME_LIST const* thread_name_list_{nullptr};
     };
 }

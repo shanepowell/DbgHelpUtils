@@ -5,7 +5,7 @@
 namespace dlg_help_utils
 {
     thread_names_list_stream::thread_names_list_stream(mini_dump const& dump, size_t const index)
-        : dump_{dump}
+        : dump_{&dump}
         , index_{index}
     {
         auto const* entry = dump.find_stream_type(ThreadNamesStream, index_);
@@ -22,7 +22,7 @@ namespace dlg_help_utils
     {
         for (size_t index = 0; index < thread_name_list_->NumberOfThreadNames; ++index)
         {
-            co_yield stream_thread_name{dump_, thread_name_list_->ThreadNames[index]};
+            co_yield stream_thread_name{*dump_, thread_name_list_->ThreadNames[index]};
         }
     }
 

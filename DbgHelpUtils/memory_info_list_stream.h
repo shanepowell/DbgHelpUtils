@@ -12,6 +12,7 @@ namespace dlg_help_utils
     class memory_info_list_stream
     {
     public:
+        memory_info_list_stream() = default;
         explicit memory_info_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -24,7 +25,7 @@ namespace dlg_help_utils
     private:
         bool found_{false};
         bool is_valid_{false};
-        size_t index_;
+        size_t index_{};
         MINIDUMP_MEMORY_INFO_LIST const* memory_info_list_{nullptr};
         MINIDUMP_MEMORY_INFO const* list_{nullptr};
     };

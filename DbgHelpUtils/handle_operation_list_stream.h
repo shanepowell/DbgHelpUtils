@@ -26,7 +26,7 @@ namespace dlg_help_utils
     private:
         bool found_{false};
         bool is_valid_{false};
-        size_t index_;
+        size_t index_{};
         MINIDUMP_HANDLE_OPERATION_LIST const* handle_operation_list_{nullptr};
         AVRF_HANDLE_OPERATION const* list_{nullptr};
     };

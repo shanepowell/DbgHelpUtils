@@ -17,6 +17,7 @@ namespace dlg_help_utils
     class thread_list_stream
     {
     public:
+        thread_list_stream() = default;
         explicit thread_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -31,9 +32,9 @@ namespace dlg_help_utils
                                                                memory64_list_stream const& memory64_list) const;
 
     private:
-        mini_dump const& dump_;
+        mini_dump const* dump_{nullptr};
         bool found_{false};
-        size_t index_;
+        size_t index_{};
         MINIDUMP_THREAD_LIST const* thread_list_{nullptr};
     };
 }

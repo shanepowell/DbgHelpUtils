@@ -36,7 +36,7 @@ namespace dlg_help_utils
         mini_dump const* dump_{nullptr};
         bool found_{false};
         bool is_valid_{false};
-        size_t index_;
+        size_t index_{};
         uint32_t handle_descriptor_version_{0};
         MINIDUMP_HANDLE_DATA_STREAM const* handle_data_list_{nullptr};
         uint8_t const* list_{nullptr};

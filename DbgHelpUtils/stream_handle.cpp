@@ -8,7 +8,7 @@ using namespace std::string_view_literals;
 namespace dlg_help_utils
 {
     stream_handle::stream_handle(mini_dump const& dump, void const* data, size_t const handle_descriptor_version)
-        : dump_{dump}
+        : dump_{&dump}
           , data_{data}
           , handle_descriptor_version_{handle_descriptor_version}
     {
@@ -28,13 +28,13 @@ namespace dlg_help_utils
             co_return;
         }
 
-        auto const* entry = static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION const*>(dump_.rva32(
+        auto const* entry = static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION const*>(dump_->rva32(
             descriptor_2().ObjectInfoRva));
         co_yield stream_handle_object_information{*entry};
 
         while (entry->NextInfoRva != 0)
         {
-            entry = static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION const*>(dump_.rva32(entry->NextInfoRva));
+            entry = static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION const*>(dump_->rva32(entry->NextInfoRva));
             co_yield stream_handle_object_information{*entry};
         }
     }

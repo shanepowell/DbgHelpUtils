@@ -39,7 +39,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         dlg_help_utils::memory_info_list_stream const memory_list{miniDump, parameters.StreamIndex()};
 
-        if(!memory_list.found())
+        if(!memory_list.found() || !memory_list.is_valid())
         {
             logger::Log().LogMessage(log_level::error, std::format("failed to load mini dump memory info list stream index:[{}]", parameters.StreamIndex()));
             return;

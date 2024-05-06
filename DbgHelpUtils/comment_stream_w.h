@@ -9,6 +9,7 @@ namespace dlg_help_utils
     class comment_stream_w
     {
     public:
+        comment_stream_w() = default;
         explicit comment_stream_w(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -17,7 +18,7 @@ namespace dlg_help_utils
 
     private:
         bool found_{false};
-        size_t index_;
+        size_t index_{};
         std::wstring comment_;
     };
 }

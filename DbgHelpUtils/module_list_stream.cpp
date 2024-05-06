@@ -6,7 +6,7 @@
 namespace dlg_help_utils
 {
     module_list_stream::module_list_stream(mini_dump const& dump, size_t index)
-        : dump_{dump}
+        : dump_{&dump}
         , module_list_{get_module_list(dump, index)}
         , index_{index}
         , found_{module_list_ != nullptr}
@@ -57,12 +57,12 @@ namespace dlg_help_utils
     std::vector<stream_module> module_list_stream::build_modules() const
     {
         std::vector<stream_module> rv;
-        if (!found()) return rv;
+        if (!found() || dump_ == nullptr) return rv;
 
         rv.reserve(module_list_->NumberOfModules);
         for (size_t index = 0; index < module_list_->NumberOfModules; ++index)
         {
-            rv.emplace_back(dump_, module_list_->Modules[index]);
+            rv.emplace_back(*dump_, module_list_->Modules[index]);
         }
 
         return rv;

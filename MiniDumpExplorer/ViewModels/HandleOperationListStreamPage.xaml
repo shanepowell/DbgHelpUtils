@@ -68,19 +68,19 @@
                 <local:DataGridTextColumn Header="Handle" 
                                           Binding="{Binding Handle,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="Handle" />
-                <local:DataGridTextColumn Header="ProcessId" 
+                <local:DataGridTextColumn Header="Process Id" 
                                           Binding="{Binding ProcessId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="ProcessId" />
-                <local:DataGridTextColumn Header="ThreadId" 
+                <local:DataGridTextColumn Header="Thread Id" 
                                           Binding="{Binding ThreadId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="ThreadId" />
-                <local:DataGridTextColumn Header="OperationType" 
+                <local:DataGridTextColumn Header="Operation Type" 
                                           Binding="{Binding OperationTypeString,Mode=OneWay}"
                                           Tag="OperationType" />
-                <local:DataGridTextColumn Header="BackTraceInformation Index" 
+                <local:DataGridTextColumn Header="BackTrace Information Index" 
                                           Binding="{Binding BackTraceInformation.Index,Mode=OneWay}"
                                           Tag="BackTraceInformation.Index" />
-                <local:DataGridTextColumn Header="BackTraceInformation Depth" 
+                <local:DataGridTextColumn Header="BackTrace Information Depth" 
                                           Binding="{Binding BackTraceInformation.Depth,Mode=OneWay}"
                                           Tag="BackTraceInformation.Depth" />
             </local:DataGrid.Columns>

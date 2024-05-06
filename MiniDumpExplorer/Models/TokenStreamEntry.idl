@@ -1,0 +1,14 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass TokenStreamEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TokenStreamEntry();
+
+        UInt32 Index { get; };
+        UInt32 TokenId { get; };
+        UInt64 TokenHandle { get; };
+        UInt32 TokenDataSize { get; };
+    }
+}

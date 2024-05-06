@@ -82,7 +82,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { mini_dump_stream_type::enum_names::MemoryInfoListStream, xaml_typename<MemoryInfoListStreamPage>() },
             { mini_dump_stream_type::enum_names::ThreadInfoListStream, xaml_typename<ThreadInfoListStreamPage>() },
             { mini_dump_stream_type::enum_names::HandleOperationListStream, xaml_typename<HandleOperationListStreamPage>() }, // no dmp examples to test against
-            //{ mini_dump_stream_type::enum_names::TokenStream, xaml_typename<TokenStreamPage>() },
+            { mini_dump_stream_type::enum_names::TokenStream, xaml_typename<TokenStreamPage>() },
             //{ mini_dump_stream_type::enum_names::SystemMemoryInfoStream, xaml_typename<SystemMemoryInfoStreamPage>() },
             //{ mini_dump_stream_type::enum_names::ProcessVmCountersStream, xaml_typename<ProcessVmCountersStreamPage>() },
             { mini_dump_stream_type::enum_names::ThreadNamesStream, xaml_typename<ThreadNamesStreamPage>() },

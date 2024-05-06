@@ -22,6 +22,7 @@ namespace dlg_help_utils
     class memory64_list_stream
     {
     public:
+        memory64_list_stream() = default;
         explicit memory64_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -40,10 +41,10 @@ namespace dlg_help_utils
         [[nodiscard]] std::vector<memory64_entry> build_memory_address_ranges() const;
 
     private:
-        mini_dump const& dump_;
-        MINIDUMP_MEMORY64_LIST const* memory_list_;
-        size_t const index_;
+        mini_dump const* dump_{nullptr};
+        MINIDUMP_MEMORY64_LIST const* memory_list_{nullptr};
+        size_t index_{};
         std::vector<memory64_entry> const memory_address_ranges_{build_memory_address_ranges()};
-        bool const found_;
+        bool found_{false};
     };
 }

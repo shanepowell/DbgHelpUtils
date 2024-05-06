@@ -40,7 +40,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         dlg_help_utils::unloaded_module_list_stream const module_list{miniDump, parameters.StreamIndex()};
 
-        if(!module_list.found())
+        if(!module_list.found() || !module_list.is_valid())
         {
             logger::Log().LogMessage(log_level::error, std::format("failed to load mini dump unloaded module list stream index:[{}]", parameters.StreamIndex()));
             return;

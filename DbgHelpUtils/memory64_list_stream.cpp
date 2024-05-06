@@ -11,7 +11,7 @@
 namespace dlg_help_utils
 {
     memory64_list_stream::memory64_list_stream(mini_dump const& dump, size_t index)
-        : dump_{dump}
+        : dump_{&dump}
         , memory_list_{get_memory_list(dump, index)}
         , index_{index}
         , found_{memory_list_ != nullptr}
@@ -28,7 +28,7 @@ namespace dlg_help_utils
 
         if (range_utils::range_contains(it->start_of_memory_range, it->location.DataSize, address, length))
         {
-            return static_cast<uint8_t const*>(dump_.rva64(it->location)) + (address - it->start_of_memory_range);
+            return static_cast<uint8_t const*>(dump_->rva64(it->location)) + (address - it->start_of_memory_range);
         }
 
         return nullptr;
@@ -46,7 +46,7 @@ namespace dlg_help_utils
 
         if (range_utils::range_union(it->start_of_memory_range, it->location.DataSize, address, length))
         {
-            return static_cast<uint8_t const*>(dump_.rva64(it->location)) + (address - it->start_of_memory_range);
+            return static_cast<uint8_t const*>(dump_->rva64(it->location)) + (address - it->start_of_memory_range);
         }
 
         return nullptr;

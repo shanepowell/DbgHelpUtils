@@ -41,7 +41,7 @@ namespace winrt::MiniDumpExplorer::implementation
         auto const dump_file_timezone_info = dlg_help_utils::misc_info_stream::get_dump_file_timezone_info(miniDump);
         dlg_help_utils::thread_info_list_stream const thread_list{miniDump, parameters.StreamIndex()};
 
-        if(!thread_list.found())
+        if(!thread_list.found() || !thread_list.is_valid())
         {
             logger::Log().LogMessage(log_level::error, std::format("failed to load mini dump thread info list stream index:[{}]", parameters.StreamIndex()));
             return;

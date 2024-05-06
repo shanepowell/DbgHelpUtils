@@ -15,7 +15,7 @@ namespace dlg_help_utils
     {
     public:
         stream_function_descriptor() = default;
-        stream_function_descriptor(MINIDUMP_FUNCTION_TABLE_DESCRIPTOR const& header, ULONG32 size_of_native_descriptor,
+        explicit stream_function_descriptor(MINIDUMP_FUNCTION_TABLE_DESCRIPTOR const& header, ULONG32 size_of_native_descriptor,
                                    ULONG32 size_of_function_entry, function_table_entry_type entry_type);
 
         MINIDUMP_FUNCTION_TABLE_DESCRIPTOR const* operator->() const { return header_; }

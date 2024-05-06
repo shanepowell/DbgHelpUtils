@@ -39,7 +39,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         dlg_help_utils::handle_operation_list_stream const operation_list_stream{miniDump, parameters.StreamIndex()};
 
-        if(!operation_list_stream.found())
+        if(!operation_list_stream.found() || !operation_list_stream.is_valid())
         {
             logger::Log().LogMessage(log_level::error, std::format("failed to load mini dump handle operation list stream index:[{}]", parameters.StreamIndex()));
             return;

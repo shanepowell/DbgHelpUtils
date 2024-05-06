@@ -73,10 +73,10 @@
                 <local:DataGridTextColumn Header="Priority"
                                           Binding="{Binding Priority,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="Priority" />
-                <local:DataGridTextColumn Header="PriorityClass"
+                <local:DataGridTextColumn Header="Priority Class"
                                           Binding="{Binding PriorityClassType,Mode=OneWay}"
                                           Tag="PriorityClass" />
-                <local:DataGridTextColumn Header="SuspendCount"
+                <local:DataGridTextColumn Header="Suspend Count"
                                           Binding="{Binding SuspendCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}"
                                           Tag="SuspendCount" />
                 <local:DataGridTextColumn Header="TEB"

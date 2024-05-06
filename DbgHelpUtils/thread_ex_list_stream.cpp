@@ -6,8 +6,8 @@
 namespace dlg_help_utils
 {
     thread_ex_list_stream::thread_ex_list_stream(mini_dump const& dump, size_t const index)
-        : dump_{dump}
-          , index_{index}
+        : dump_{&dump}
+        , index_{index}
     {
         auto const* entry = dump.find_stream_type(ThreadListStream, index_);
         if (entry == nullptr)
@@ -21,10 +21,10 @@ namespace dlg_help_utils
 
     std::experimental::generator<stream_thread_ex> thread_ex_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
-        thread_names_list_stream const names_list{dump_};
+        thread_names_list_stream const names_list{*dump_};
         for (size_t index = 0; index < thread_list_->NumberOfThreads; ++index)
         {
-            co_yield stream_thread_ex{dump_, thread_list_->Threads[index], names_list};
+            co_yield stream_thread_ex{*dump_, thread_list_->Threads[index], names_list};
         }
     }
 
@@ -35,7 +35,7 @@ namespace dlg_help_utils
         {
             if (thread_list_->Threads[index].ThreadId == thread_id)
             {
-                return stream_thread_ex{dump_, thread_list_->Threads[index], names_list};
+                return stream_thread_ex{*dump_, thread_list_->Threads[index], names_list};
             }
         }
 

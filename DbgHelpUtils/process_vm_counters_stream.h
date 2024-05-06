@@ -12,6 +12,7 @@ namespace dlg_help_utils
     class process_vm_counters_stream
     {
     public:
+        process_vm_counters_stream() = default;
         explicit process_vm_counters_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }

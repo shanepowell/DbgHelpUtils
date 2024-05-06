@@ -108,6 +108,8 @@
 #include "Models\HandleOperationListStreamEntriesDataSource.h"
 #include "Models\HandleOperationStreamEntry.h"
 #include "Models\AvrfBackTraceInformation.h"
+#include "Models\TokenStreamEntriesDataSource.h"
+#include "Models\TokenStreamEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

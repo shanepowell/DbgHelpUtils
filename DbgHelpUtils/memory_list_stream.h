@@ -15,6 +15,7 @@ namespace dlg_help_utils
     class memory_list_stream
     {
     public:
+        memory_list_stream() = default;
         explicit memory_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }
@@ -33,10 +34,10 @@ namespace dlg_help_utils
         [[nodiscard]] std::vector<MINIDUMP_MEMORY_DESCRIPTOR const*> build_memory_address_ranges() const;
 
     private:
-        mini_dump const& dump_;
-        MINIDUMP_MEMORY_LIST const* memory_list_;
-        size_t const index_;
+        mini_dump const* dump_{nullptr};
+        MINIDUMP_MEMORY_LIST const* memory_list_{nullptr};
+        size_t index_{};
         std::vector<MINIDUMP_MEMORY_DESCRIPTOR const*> memory_address_ranges_{build_memory_address_ranges()};
-        bool const found_;
+        bool found_{false};
     };
 }

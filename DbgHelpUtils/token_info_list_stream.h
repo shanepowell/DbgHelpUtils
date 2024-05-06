@@ -14,6 +14,7 @@ namespace dlg_help_utils
     class token_info_list_stream
     {
     public:
+        token_info_list_stream() = default;
         explicit token_info_list_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }

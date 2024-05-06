@@ -26,8 +26,7 @@ namespace dlg_help_utils
             && token_info_list_->TokenListSize == entry->Location.DataSize)
         {
             end_list_ = static_cast<uint8_t const*>(data) + entry->Location.DataSize;
-            list_ = reinterpret_cast<MINIDUMP_TOKEN_INFO_HEADER const*>(static_cast<uint8_t const*>(data) + sizeof(
-                MINIDUMP_TOKEN_INFO_LIST));
+            list_ = reinterpret_cast<MINIDUMP_TOKEN_INFO_HEADER const*>(static_cast<uint8_t const*>(data) + sizeof(MINIDUMP_TOKEN_INFO_LIST));
             is_valid_ = true;
         }
     }

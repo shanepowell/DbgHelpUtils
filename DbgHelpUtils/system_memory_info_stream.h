@@ -12,6 +12,7 @@ namespace dlg_help_utils
     class system_memory_info_stream
     {
     public:
+        system_memory_info_stream() = default;
         explicit system_memory_info_stream(mini_dump const& dump, size_t index = std::numeric_limits<size_t>::max());
 
         [[nodiscard]] bool found() const { return found_; }

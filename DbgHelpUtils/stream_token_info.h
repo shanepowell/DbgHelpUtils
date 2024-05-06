@@ -9,14 +9,15 @@ namespace dlg_help_utils
     class stream_token_info
     {
     public:
+        stream_token_info() = default;
         stream_token_info(MINIDUMP_TOKEN_INFO_HEADER const& header);
 
-        MINIDUMP_TOKEN_INFO_HEADER const* operator->() const { return &header_; }
+        MINIDUMP_TOKEN_INFO_HEADER const* operator->() const { return header_; }
         [[nodiscard]] void const* data() const { return data_; }
-        [[nodiscard]] size_t size() const { return header_.TokenSize - sizeof(MINIDUMP_TOKEN_INFO_HEADER); }
+        [[nodiscard]] size_t size() const { return header_->TokenSize - sizeof(MINIDUMP_TOKEN_INFO_HEADER); }
 
     private:
-        MINIDUMP_TOKEN_INFO_HEADER const& header_;
+        MINIDUMP_TOKEN_INFO_HEADER const* header_{nullptr};
         void const* data_{nullptr};
     };
 }
