@@ -456,6 +456,22 @@
       <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\MiniDumpSystemBasicInformation.h">
+      <DependentUpon>Models\MiniDumpSystemBasicInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\MiniDumpSystemBasicPerformanceInformation.h">
+      <DependentUpon>Models\MiniDumpSystemBasicPerformanceInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\MiniDumpSystemFileCacheInformation.h">
+      <DependentUpon>Models\MiniDumpSystemFileCacheInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\MinidumpSystemPerformanceInformation.h">
+      <DependentUpon>Models\MinidumpSystemPerformanceInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\ModuleListStreamEntriesDataSource.h">
       <DependentUpon>Models\ModuleListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -579,6 +595,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\SystemInfoStreamPage.xaml.h">
       <DependentUpon>ViewModels\SystemInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\SystemMemoryInfoStreamPage.xaml.h">
+      <DependentUpon>ViewModels\SystemMemoryInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\ThreadExListStreamPage.h">
@@ -742,6 +762,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\SystemInfoStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\SystemMemoryInfoStreamPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ThreadExListStreamPage.xaml">
@@ -1048,6 +1071,18 @@
     <ClCompile Include="Models\MiniDumpPageParameters.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\MiniDumpSystemBasicInformation.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpSystemBasicPerformanceInformation.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpSystemFileCacheInformation.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\MinidumpSystemPerformanceInformation.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\ModuleListStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1150,6 +1185,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\SystemInfoStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\SystemInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\SystemMemoryInfoStreamPage.xaml.cpp">
+      <DependentUpon>ViewModels\SystemMemoryInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ThreadExListStreamPage.cpp">
@@ -1586,6 +1625,22 @@
       <DependentUpon>Models\MiniDumpPageParameters.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\MiniDumpSystemBasicInformation.idl">
+      <DependentUpon>Models\MiniDumpSystemBasicInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MiniDumpSystemBasicPerformanceInformation.idl">
+      <DependentUpon>Models\MiniDumpSystemBasicPerformanceInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MiniDumpSystemFileCacheInformation.idl">
+      <DependentUpon>Models\MiniDumpSystemFileCacheInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\MinidumpSystemPerformanceInformation.idl">
+      <DependentUpon>Models\MinidumpSystemPerformanceInformation.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\ModuleListStreamEntriesDataSource.idl">
       <DependentUpon>Models\ModuleListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1708,6 +1763,10 @@
     </Midl>
     <Midl Include="ViewModels\SystemInfoStreamPage.idl">
       <DependentUpon>ViewModels\SystemInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\SystemMemoryInfoStreamPage.idl">
+      <DependentUpon>ViewModels\SystemMemoryInfoStreamPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ThreadExListStreamPage.idl">

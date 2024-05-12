@@ -110,6 +110,10 @@
 #include "Models\AvrfBackTraceInformation.h"
 #include "Models\TokenStreamEntriesDataSource.h"
 #include "Models\TokenStreamEntry.h"
+#include "Models\MiniDumpSystemBasicInformation.h"
+#include "Models\MiniDumpSystemFileCacheInformation.h"
+#include "Models\MiniDumpSystemBasicPerformanceInformation.h"
+#include "Models\MinidumpSystemPerformanceInformation.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

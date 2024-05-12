@@ -1,0 +1,22 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MiniDumpSystemFileCacheInformation : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MiniDumpSystemFileCacheInformation();
+
+        UInt64 CurrentSize { get; };
+        UInt64 PeakSize { get; };
+        UInt32 PageFaultCount { get; };
+        UInt64 MinimumWorkingSet { get; };
+        UInt64 MaximumWorkingSet { get; };
+        UInt64 CurrentSizeIncludingTransitionInPages { get; };
+        UInt64 CurrentSizeIncludingTransitionInPagesSize { get; };
+        UInt64 PeakSizeIncludingTransitionInPages { get; };
+        UInt64 PeakSizeIncludingTransitionInPagesSize { get; };
+        Boolean HasTransitionRePurposeCount { get; };
+        UInt32 TransitionRePurposeCount { get; };
+        UInt32 Flags { get; };
+    }
+}

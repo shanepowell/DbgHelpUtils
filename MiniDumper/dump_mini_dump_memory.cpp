@@ -304,7 +304,7 @@ void dump_mini_dump_system_memory_info_stream_data(std::wostream& log, mini_dump
             log << std::format(L"  PagedPoolAllocs: {}\n", locale_formatting::to_wstring(info.PerfInfo.PagedPoolAllocs));
             log << std::format(L"  PagedPoolFrees: {}\n", locale_formatting::to_wstring(info.PerfInfo.PagedPoolFrees));
             log << std::format(L"  NonPagedPoolFrees: {}\n", locale_formatting::to_wstring(info.PerfInfo.NonPagedPoolFrees));
-            log << std::format(L"  FreeSystemPtes: {}\n", locale_formatting::to_wstring(info.PerfInfo.FreeSystemPtes));
+            log << std::format(L"  FreeSystemPtes: {0} ({1})\n", locale_formatting::to_wstring(info.PerfInfo.FreeSystemPtes), to_wstring(bytes{info.PerfInfo.FreeSystemPtes * info.BasicInfo.PageSize}));
             log << std::format(L"  ResidentSystemCodePage: {0} ({1})\n", locale_formatting::to_wstring(info.PerfInfo.ResidentSystemCodePage), to_wstring(bytes{info.PerfInfo.ResidentSystemCodePage * info.BasicInfo.PageSize}));
             log << std::format(L"  TotalSystemDriverPages: {0} ({1})\n", locale_formatting::to_wstring(info.PerfInfo.TotalSystemDriverPages), to_wstring(bytes{info.PerfInfo.TotalSystemDriverPages * info.BasicInfo.PageSize}));
             log << std::format(L"  TotalSystemCodePages: {0} ({1})\n", locale_formatting::to_wstring(info.PerfInfo.TotalSystemCodePages), to_wstring(bytes{info.PerfInfo.TotalSystemCodePages * info.BasicInfo.PageSize}));

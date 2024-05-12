@@ -1,0 +1,19 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MiniDumpSystemBasicPerformanceInformation : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MiniDumpSystemBasicPerformanceInformation();
+
+        Boolean HasBasicPerfInfo { get; };
+        UInt64 AvailablePages { get; };
+        UInt64 AvailablePagesSize { get; };
+        UInt64 CommittedPages { get; };
+        UInt64 CommittedPagesSize { get; };
+        UInt64 CommitLimit { get; };
+        UInt64 CommitLimitSize { get; };
+        UInt64 PeakCommitment { get; };
+        UInt64 PeakCommitmentSize { get; };
+    }
+}

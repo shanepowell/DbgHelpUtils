@@ -1,0 +1,111 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass MinidumpSystemPerformanceInformation : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MinidumpSystemPerformanceInformation();
+
+        UInt64 IdleProcessTime { get; };
+        UInt64 IoReadTransferCount { get; };
+        UInt64 IoWriteTransferCount { get; };
+        UInt64 IoOtherTransferCount { get; };
+        UInt32 IoReadOperationCount { get; };
+        UInt32 IoWriteOperationCount { get; };
+        UInt32 IoOtherOperationCount { get; };
+        UInt32 AvailablePages { get; };
+        UInt64 AvailablePagesSize { get; };
+        UInt32 CommittedPages { get; };
+        UInt64 CommittedPagesSize { get; };
+        UInt32 CommitLimit { get; };
+        UInt64 CommitLimitSize { get; };
+        UInt32 PeakCommitment { get; };
+        UInt64 PeakCommitmentSize { get; };
+        UInt32 PageFaultCount { get; };
+        UInt32 CopyOnWriteCount { get; };
+        UInt32 TransitionCount { get; };
+        UInt32 CacheTransitionCount { get; };
+        UInt32 DemandZeroCount { get; };
+        UInt32 PageReadCount { get; };
+        UInt32 PageReadIoCount { get; };
+        UInt32 CacheReadCount { get; };
+        UInt32 CacheIoCount { get; };
+        UInt32 DirtyPagesWriteCount { get; };
+        UInt32 DirtyWriteIoCount { get; };
+        UInt32 MappedPagesWriteCount { get; };
+        UInt32 MappedWriteIoCount { get; };
+        UInt32 PagedPoolPages { get; };
+        UInt64 PagedPoolPagesSize { get; };
+        UInt32 NonPagedPoolPages { get; };
+        UInt64 NonPagedPoolPagesSize { get; };
+        UInt32 PagedPoolAllocs { get; };
+        UInt32 PagedPoolFrees { get; };
+        UInt32 NonPagedPoolAllocs { get; };
+        UInt32 NonPagedPoolFrees { get; };
+        UInt32 FreeSystemPtes { get; };
+        UInt64 FreeSystemPtesSize { get; };
+        UInt32 ResidentSystemCodePage { get; };
+        UInt64 ResidentSystemCodePageSize { get; };
+        UInt32 TotalSystemDriverPages { get; };
+        UInt64 TotalSystemDriverPagesSize { get; };
+        UInt32 TotalSystemCodePages { get; };
+        UInt64 TotalSystemCodePagesSize { get; };
+        UInt32 NonPagedPoolLookasideHits { get; };
+        UInt32 PagedPoolLookasideHits { get; };
+        UInt32 AvailablePagedPoolPages { get; };
+        UInt64 AvailablePagedPoolPagesSize { get; };
+        UInt32 ResidentSystemCachePage { get; };
+        UInt64 ResidentSystemCachePageSize { get; };
+        UInt32 ResidentPagedPoolPage { get; };
+        UInt64 ResidentPagedPoolPageSize { get; };
+        UInt32 ResidentSystemDriverPage { get; };
+        UInt64 ResidentSystemDriverPageSize { get; };
+        UInt32 CcFastReadNoWait { get; };
+        UInt32 CcFastReadWait { get; };
+        UInt32 CcFastReadResourceMiss { get; };
+        UInt32 CcFastReadNotPossible { get; };
+        UInt32 CcFastMdlReadNoWait { get; };
+        UInt32 CcFastMdlReadWait { get; };
+        UInt32 CcFastMdlReadResourceMiss { get; };
+        UInt32 CcFastMdlReadNotPossible { get; };
+        UInt32 CcMapDataNoWait { get; };
+        UInt32 CcMapDataWait { get; };
+        UInt32 CcMapDataNoWaitMiss { get; };
+        UInt32 CcMapDataWaitMiss { get; };
+        UInt32 CcPinMappedDataCount { get; };
+        UInt32 CcPinReadNoWait { get; };
+        UInt32 CcPinReadWait { get; };
+        UInt32 CcPinReadNoWaitMiss { get; };
+        UInt32 CcPinReadWaitMiss { get; };
+        UInt32 CcCopyReadNoWait { get; };
+        UInt32 CcCopyReadWait { get; };
+        UInt32 CcCopyReadNoWaitMiss { get; };
+        UInt32 CcCopyReadWaitMiss { get; };
+        UInt32 CcMdlReadNoWait { get; };
+        UInt32 CcMdlReadWait { get; };
+        UInt32 CcMdlReadNoWaitMiss { get; };
+        UInt32 CcMdlReadWaitMiss { get; };
+        UInt32 CcReadAheadIos { get; };
+        UInt32 CcLazyWriteIos { get; };
+        UInt32 CcLazyWritePages { get; };
+        UInt64 CcLazyWritePagesSize { get; };
+        UInt32 CcDataFlushes { get; };
+        UInt32 CcDataPages { get; };
+        UInt64 CcDataPagesSize { get; };
+        UInt32 ContextSwitches { get; };
+        UInt32 FirstLevelTbFills { get; };
+        UInt32 SecondLevelTbFills { get; };
+        UInt32 SystemCalls { get; };
+
+        Boolean HasCcTotalDirtyPagesCcDirtyPageThreshold { get; };
+        UInt64 CcTotalDirtyPages { get; };
+        UInt64 CcTotalDirtyPagesSize { get; };
+        UInt64 CcDirtyPageThreshold { get; };
+
+        Boolean HasResidentAvailablePagesSharedCommittedPages { get; };
+        Int64 ResidentAvailablePages { get; };
+        Int64 ResidentAvailablePagesSize { get; };
+        UInt64 SharedCommittedPages { get; };
+        UInt64 SharedCommittedPagesSize { get; };
+    }
+}

@@ -89,6 +89,9 @@
     <Page Include="ViewModels\TokenStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\SystemMemoryInfoStreamPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -587,6 +590,18 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\TokenStreamEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpSystemBasicInformation.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpSystemFileCacheInformation.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MiniDumpSystemBasicPerformanceInformation.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\MinidumpSystemPerformanceInformation.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

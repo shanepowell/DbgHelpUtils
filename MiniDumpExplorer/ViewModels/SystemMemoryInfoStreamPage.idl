@@ -1,0 +1,24 @@
+import "Models\MiniDumpSystemBasicInformation.idl";
+import "Models\MiniDumpSystemFileCacheInformation.idl";
+import "Models\MiniDumpSystemBasicPerformanceInformation.idl";
+import "Models\MinidumpSystemPerformanceInformation.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass SystemMemoryInfoStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        SystemMemoryInfoStreamPage();
+        
+        UInt32 Index { get; };
+
+        UInt16 Revision { get; };
+        UInt16 Flags { get; };
+        IObservableVector<String> FlagsList { get; };
+
+        MiniDumpSystemBasicInformation BasicInfo { get; };
+        MiniDumpSystemFileCacheInformation FileCacheInfo { get; };
+        MiniDumpSystemBasicPerformanceInformation BasicPerfInfo { get; };
+        MinidumpSystemPerformanceInformation PerfInfo { get; };
+    }
+}

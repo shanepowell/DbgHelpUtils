@@ -36,7 +36,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <!-- 20 -->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
