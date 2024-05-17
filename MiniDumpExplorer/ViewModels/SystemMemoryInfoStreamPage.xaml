@@ -22,7 +22,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -34,7 +34,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <!-- 20 -->
                 <RowDefinition Height="Auto"/>
@@ -44,14 +44,14 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <!-- 30 -->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -127,10 +127,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <!-- 110 -->
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
@@ -144,326 +140,326 @@
             <TextBlock x:Name="flags" Grid.Row="4" Grid.Column="1" Text="{x:Bind Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <ListBox Grid.Row="5" Grid.Column="1" ItemsSource="{x:Bind FlagsList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
-            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Text="Basic Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Text="Basic Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Margin="0,10,0,0" />
 
-            <TextBlock Grid.Row="8" Grid.Column="0" Text="Timer Resolution" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="8" Grid.Column="1" Text="{x:Bind BasicInfo.TimerResolution,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="Page Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="basicInfoPageSize" Grid.Row="9" Grid.Column="1" Text="{x:Bind BasicInfo.PageSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="10" Grid.Column="0" Text="Number Of Physical Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Timer Resolution" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="{x:Bind BasicInfo.TimerResolution,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Page Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="basicInfoPageSize" Grid.Row="8" Grid.Column="1" Text="{x:Bind BasicInfo.PageSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Number Of Physical Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{x:Bind BasicInfo.NumberOfPhysicalPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="basicInfoNumberOfPhysicalPagesSize" Text="{x:Bind BasicInfo.NumberOfPhysicalPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="11" Grid.Column="0" Text="Lowest Physical Page Number" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="11" Grid.Column="1" Text="{x:Bind BasicInfo.LowestPhysicalPageNumber,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="12" Grid.Column="0" Text="Highest Physical Page Number" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="12" Grid.Column="1" Text="{x:Bind BasicInfo.HighestPhysicalPageNumber,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="13" Grid.Column="0" Text="Allocation Granularity" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="basicInfoAllocationGranularity"  Grid.Row="13" Grid.Column="1" Text="{x:Bind BasicInfo.AllocationGranularity,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="14" Grid.Column="0" Text="Minimum User Mode Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="basicInfoMinimumUserModeAddress" Grid.Row="14" Grid.Column="1" Text="{x:Bind BasicInfo.MinimumUserModeAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="15" Grid.Column="0" Text="Maximum User Mode Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="basicInfoMaximumUserModeAddress" Grid.Row="15" Grid.Column="1" Text="{x:Bind BasicInfo.MaximumUserModeAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="16" Grid.Column="0" Text="Active Processors Affinity Mask" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="basicInfoActiveProcessorsAffinityMask" Grid.Row="16" Grid.Column="1" Text="{x:Bind BasicInfo.ActiveProcessorsAffinityMask,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="17" Grid.Column="0" Text="Number Of Processors" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="17" Grid.Column="1" Text="{x:Bind BasicInfo.NumberOfProcessors,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Lowest Physical Page Number" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="10" Grid.Column="1" Text="{x:Bind BasicInfo.LowestPhysicalPageNumber,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="Highest Physical Page Number" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="11" Grid.Column="1" Text="{x:Bind BasicInfo.HighestPhysicalPageNumber,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="Allocation Granularity" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="basicInfoAllocationGranularity"  Grid.Row="12" Grid.Column="1" Text="{x:Bind BasicInfo.AllocationGranularity,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="13" Grid.Column="0" Text="Minimum User Mode Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="basicInfoMinimumUserModeAddress" Grid.Row="13" Grid.Column="1" Text="{x:Bind BasicInfo.MinimumUserModeAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="14" Grid.Column="0" Text="Maximum User Mode Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="basicInfoMaximumUserModeAddress" Grid.Row="14" Grid.Column="1" Text="{x:Bind BasicInfo.MaximumUserModeAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="15" Grid.Column="0" Text="Active Processors Affinity Mask" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="basicInfoActiveProcessorsAffinityMask" Grid.Row="15" Grid.Column="1" Text="{x:Bind BasicInfo.ActiveProcessorsAffinityMask,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="16" Grid.Column="0" Text="Number Of Processors" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="16" Grid.Column="1" Text="{x:Bind BasicInfo.NumberOfProcessors,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Text="File Cache Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" />
+            <TextBlock Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Text="File Cache Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Margin="0,10,0,0" />
 
-            <TextBlock Grid.Row="20" Grid.Column="0" Text="Current Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoCurrentSize"  Grid.Row="20" Grid.Column="1" Text="{x:Bind FileCacheInfo.CurrentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="21" Grid.Column="0" Text="Peak Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoPeakSize"  Grid.Row="21" Grid.Column="1" Text="{x:Bind FileCacheInfo.PeakSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="22" Grid.Column="0" Text="Page Fault Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="22" Grid.Column="1" Text="{x:Bind FileCacheInfo.PageFaultCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="23" Grid.Column="0" Text="Minimum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoMinimumWorkingSet"  Grid.Row="23" Grid.Column="1" Text="{x:Bind FileCacheInfo.MinimumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="24" Grid.Column="0" Text="Maximum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoMaximumWorkingSet"  Grid.Row="24" Grid.Column="1" Text="{x:Bind FileCacheInfo.MaximumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="25" Grid.Column="0" Text="Current Size Including Transition In Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="25" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="18" Grid.Column="0" Text="Current Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="fileCacheInfoCurrentSize"  Grid.Row="18" Grid.Column="1" Text="{x:Bind FileCacheInfo.CurrentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="19" Grid.Column="0" Text="Peak Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="fileCacheInfoPeakSize"  Grid.Row="29" Grid.Column="1" Text="{x:Bind FileCacheInfo.PeakSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="20" Grid.Column="0" Text="Page Fault Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="20" Grid.Column="1" Text="{x:Bind FileCacheInfo.PageFaultCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="21" Grid.Column="0" Text="Minimum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="fileCacheInfoMinimumWorkingSet"  Grid.Row="21" Grid.Column="1" Text="{x:Bind FileCacheInfo.MinimumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="22" Grid.Column="0" Text="Maximum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="fileCacheInfoMaximumWorkingSet"  Grid.Row="22" Grid.Column="1" Text="{x:Bind FileCacheInfo.MaximumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="23" Grid.Column="0" Text="Current Size Including Transition In Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="23" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{x:Bind FileCacheInfo.CurrentSizeIncludingTransitionInPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="fileCacheInfoCurrentSizeIncludingTransitionInPagesSize" Text="{x:Bind FileCacheInfo.CurrentSizeIncludingTransitionInPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="26" Grid.Column="0" Text="Peak Size Including Transition In Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="26" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Grid.Row="24" Grid.Column="0" Text="Peak Size Including Transition In Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="24" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{x:Bind FileCacheInfo.PeakSizeIncludingTransitionInPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="fileCacheInfoPeakSizeIncludingTransitionInPagesSize" Text="{x:Bind FileCacheInfo.PeakSizeIncludingTransitionInPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="27" Grid.Column="0" Text="Transition RePurpose Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind FileCacheInfo.HasTransitionRePurposeCount,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <TextBlock Grid.Row="27" Grid.Column="1" Text="{x:Bind FileCacheInfo.TransitionRePurposeCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind FileCacheInfo.HasTransitionRePurposeCount,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <TextBlock Grid.Row="28" Grid.Column="0" Text="Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoFlags" Grid.Row="28" Grid.Column="1" Text="{x:Bind FileCacheInfo.Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="25" Grid.Column="0" Text="Transition RePurpose Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind FileCacheInfo.HasTransitionRePurposeCount,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="25" Grid.Column="1" Text="{x:Bind FileCacheInfo.TransitionRePurposeCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind FileCacheInfo.HasTransitionRePurposeCount,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="26" Grid.Column="0" Text="Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="fileCacheInfoFlags" Grid.Row="26" Grid.Column="1" Text="{x:Bind FileCacheInfo.Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="30" Grid.Column="0" Grid.ColumnSpan="2" Text="Basic Performance Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="27" Grid.Column="0" Grid.ColumnSpan="2" Text="Basic Performance Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" Margin="0,10,0,0" />
 
-            <TextBlock Grid.Row="31" Grid.Column="0" Text="Available Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="31" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="28" Grid.Column="0" Text="Available Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="28" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind BasicPerfInfo.AvailablePages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="basicPerfInfoAvailablePagesSize" Text="{x:Bind BasicPerfInfo.AvailablePagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="32" Grid.Column="0" Text="Committed Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="32" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="29" Grid.Column="0" Text="Committed Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="29" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind BasicPerfInfo.CommittedPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="basicPerfInfoCommittedPagesSize" Text="{x:Bind BasicPerfInfo.CommittedPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="33" Grid.Column="0" Text="Commit Limit" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="33" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="30" Grid.Column="0" Text="Commit Limit" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="30" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind BasicPerfInfo.CommitLimit,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="basicPerfInfoCommitLimitSize" Text="{x:Bind BasicPerfInfo.CommitLimitSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="34" Grid.Column="0" Text="Peak Commitment" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="34" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="31" Grid.Column="0" Text="Peak Commitment" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="31" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind BasicPerfInfo.HasBasicPerfInfo,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind BasicPerfInfo.PeakCommitment,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="basicPerfInfoPeakCommitmentSize" Text="{x:Bind BasicPerfInfo.PeakCommitmentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
 
-            <StackPanel Grid.Row="36" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" >
+            <StackPanel Grid.Row="32" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="0,10,0,0" >
                 <TextBlock Text="Performance Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" />
                 <TextBlock Text="CC = cache coherence" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="8" Margin="10,0,0,0" />
                 <TextBlock Text="MDL = Memory Descriptor List" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="8"  Margin="10,0,0,0" />
                 <TextBlock Text="TB = Translation Buffer" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="8"  Margin="10,0,0,0" />
             </StackPanel>
             
-            <TextBlock Grid.Row="37" Grid.Column="0" Text="Idle Process Time" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="perfInfoIdleProcessTime"  Grid.Row="37" Grid.Column="1" Text="{x:Bind PerfInfo.IdleProcessTime,Converter={StaticResource DurationConverter},ConverterParameter=filetime,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="38" Grid.Column="0" Text="IO Read Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="38" Grid.Column="1" Text="{x:Bind PerfInfo.IoReadTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="39" Grid.Column="0" Text="IO Write Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="39" Grid.Column="1" Text="{x:Bind PerfInfo.IoWriteTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="40" Grid.Column="0" Text="IO Other Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="40" Grid.Column="1" Text="{x:Bind PerfInfo.IoOtherTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="41" Grid.Column="0" Text="IO Read Operation Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="41" Grid.Column="1" Text="{x:Bind PerfInfo.IoReadOperationCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="42" Grid.Column="0" Text="IO Write Operation Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="42" Grid.Column="1" Text="{x:Bind PerfInfo.IoWriteOperationCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="43" Grid.Column="0" Text="IO Other Operation Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="43" Grid.Column="1" Text="{x:Bind PerfInfo.IoOtherOperationCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="44" Grid.Column="0" Text="Available Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="44" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="33" Grid.Column="0" Text="Idle Process Time" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="perfInfoIdleProcessTime"  Grid.Row="33" Grid.Column="1" Text="{x:Bind PerfInfo.IdleProcessTime,Converter={StaticResource DurationConverter},ConverterParameter=filetime,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="34" Grid.Column="0" Text="IO Read Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="34" Grid.Column="1" Text="{x:Bind PerfInfo.IoReadTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="35" Grid.Column="0" Text="IO Write Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="35" Grid.Column="1" Text="{x:Bind PerfInfo.IoWriteTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="36" Grid.Column="0" Text="IO Other Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="36" Grid.Column="1" Text="{x:Bind PerfInfo.IoOtherTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="37" Grid.Column="0" Text="IO Read Operation Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="37" Grid.Column="1" Text="{x:Bind PerfInfo.IoReadOperationCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="38" Grid.Column="0" Text="IO Write Operation Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="38" Grid.Column="1" Text="{x:Bind PerfInfo.IoWriteOperationCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="39" Grid.Column="0" Text="IO Other Operation Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="39" Grid.Column="1" Text="{x:Bind PerfInfo.IoOtherOperationCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="40" Grid.Column="0" Text="Available Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="40" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.AvailablePages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoAvailablePagesSize" Text="{x:Bind PerfInfo.AvailablePagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="45" Grid.Column="0" Text="Committed Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="45" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="41" Grid.Column="0" Text="Committed Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="41" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.CommittedPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoCommittedPagesSize" Text="{x:Bind PerfInfo.CommittedPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="46" Grid.Column="0" Text="Commit Limit" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="46" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="42" Grid.Column="0" Text="Commit Limit" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="42" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.CommitLimit,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoCommitLimitSize" Text="{x:Bind PerfInfo.CommitLimitSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="47" Grid.Column="0" Text="Peak Commitment" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="47" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="43" Grid.Column="0" Text="Peak Commitment" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="43" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.PeakCommitment,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoPeakCommitmentSize" Text="{x:Bind PerfInfo.PeakCommitmentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="48" Grid.Column="0" Text="Page Fault Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="48" Grid.Column="1" Text="{x:Bind PerfInfo.PageFaultCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="49" Grid.Column="0" Text="Copy On Write Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="49" Grid.Column="1" Text="{x:Bind PerfInfo.CopyOnWriteCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="50" Grid.Column="0" Text="Transition Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="50" Grid.Column="1" Text="{x:Bind PerfInfo.TransitionCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="51" Grid.Column="0" Text="Cache Transition Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="51" Grid.Column="1" Text="{x:Bind PerfInfo.CacheTransitionCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="52" Grid.Column="0" Text="Demand Zero Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="52" Grid.Column="1" Text="{x:Bind PerfInfo.DemandZeroCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="53" Grid.Column="0" Text="Page Read Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="53" Grid.Column="1" Text="{x:Bind PerfInfo.PageReadCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="54" Grid.Column="0" Text="Page Read IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="54" Grid.Column="1" Text="{x:Bind PerfInfo.PageReadIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="55" Grid.Column="0" Text="Cache Read Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="55" Grid.Column="1" Text="{x:Bind PerfInfo.CacheReadCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="56" Grid.Column="0" Text="Cache IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="56" Grid.Column="1" Text="{x:Bind PerfInfo.CacheIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="57" Grid.Column="0" Text="Dirty Pages Write Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="57" Grid.Column="1" Text="{x:Bind PerfInfo.DirtyPagesWriteCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="58" Grid.Column="0" Text="Dirty Write IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="58" Grid.Column="1" Text="{x:Bind PerfInfo.DirtyWriteIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="59" Grid.Column="0" Text="Mapped Pages Write Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="59" Grid.Column="1" Text="{x:Bind PerfInfo.MappedPagesWriteCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="60" Grid.Column="0" Text="Mapped Write IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="60" Grid.Column="1" Text="{x:Bind PerfInfo.MappedWriteIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="61" Grid.Column="0" Text="Paged Pool Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="61" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="44" Grid.Column="0" Text="Page Fault Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="44" Grid.Column="1" Text="{x:Bind PerfInfo.PageFaultCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="45" Grid.Column="0" Text="Copy On Write Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="45" Grid.Column="1" Text="{x:Bind PerfInfo.CopyOnWriteCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="46" Grid.Column="0" Text="Transition Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="46" Grid.Column="1" Text="{x:Bind PerfInfo.TransitionCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="47" Grid.Column="0" Text="Cache Transition Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="47" Grid.Column="1" Text="{x:Bind PerfInfo.CacheTransitionCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="48" Grid.Column="0" Text="Demand Zero Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="48" Grid.Column="1" Text="{x:Bind PerfInfo.DemandZeroCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="49" Grid.Column="0" Text="Page Read Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="49" Grid.Column="1" Text="{x:Bind PerfInfo.PageReadCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="50" Grid.Column="0" Text="Page Read IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="50" Grid.Column="1" Text="{x:Bind PerfInfo.PageReadIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="51" Grid.Column="0" Text="Cache Read Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="51" Grid.Column="1" Text="{x:Bind PerfInfo.CacheReadCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="52" Grid.Column="0" Text="Cache IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="52" Grid.Column="1" Text="{x:Bind PerfInfo.CacheIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="53" Grid.Column="0" Text="Dirty Pages Write Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="53" Grid.Column="1" Text="{x:Bind PerfInfo.DirtyPagesWriteCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="54" Grid.Column="0" Text="Dirty Write IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="54" Grid.Column="1" Text="{x:Bind PerfInfo.DirtyWriteIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="55" Grid.Column="0" Text="Mapped Pages Write Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="55" Grid.Column="1" Text="{x:Bind PerfInfo.MappedPagesWriteCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="56" Grid.Column="0" Text="Mapped Write IO Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="56" Grid.Column="1" Text="{x:Bind PerfInfo.MappedWriteIoCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="57" Grid.Column="0" Text="Paged Pool Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="57" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.PagedPoolPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoPeakPagedPoolPagesSize" Text="{x:Bind PerfInfo.PagedPoolPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="62" Grid.Column="0" Text="Non Paged Pool Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="62" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="58" Grid.Column="0" Text="Non Paged Pool Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="58" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.NonPagedPoolPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoNonPagedPoolPagesSize" Text="{x:Bind PerfInfo.NonPagedPoolPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="63" Grid.Column="0" Text="Paged Pool Allocations" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="63" Grid.Column="1" Text="{x:Bind PerfInfo.PagedPoolAllocs,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="64" Grid.Column="0" Text="Paged Pool Frees" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="64" Grid.Column="1" Text="{x:Bind PerfInfo.PagedPoolFrees,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="65" Grid.Column="0" Text="Non Paged Pool Allocations" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="65" Grid.Column="1" Text="{x:Bind PerfInfo.NonPagedPoolAllocs,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="66" Grid.Column="0" Text="Non Paged Pool Frees" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="66" Grid.Column="1" Text="{x:Bind PerfInfo.NonPagedPoolFrees,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="67" Grid.Column="0" Text="Free System Page Table Entries" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="67" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="59" Grid.Column="0" Text="Paged Pool Allocations" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="59" Grid.Column="1" Text="{x:Bind PerfInfo.PagedPoolAllocs,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="60" Grid.Column="0" Text="Paged Pool Frees" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="60" Grid.Column="1" Text="{x:Bind PerfInfo.PagedPoolFrees,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="61" Grid.Column="0" Text="Non Paged Pool Allocations" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="61" Grid.Column="1" Text="{x:Bind PerfInfo.NonPagedPoolAllocs,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="62" Grid.Column="0" Text="Non Paged Pool Frees" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="62" Grid.Column="1" Text="{x:Bind PerfInfo.NonPagedPoolFrees,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="63" Grid.Column="0" Text="Free System Page Table Entries" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="63" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.FreeSystemPtes,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoFreeSystemPtesSize" Text="{x:Bind PerfInfo.FreeSystemPtesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="68" Grid.Column="0" Text="Resident System Code Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="68" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="64" Grid.Column="0" Text="Resident System Code Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="64" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.ResidentSystemCodePage,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoResidentSystemCodePageSize" Text="{x:Bind PerfInfo.ResidentSystemCodePageSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="69" Grid.Column="0" Text="Total System Driver Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="69" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="65" Grid.Column="0" Text="Total System Driver Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="65" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.TotalSystemDriverPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoTotalSystemDriverPagesSize" Text="{x:Bind PerfInfo.TotalSystemDriverPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="70" Grid.Column="0" Text="Total System Code Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="70" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="66" Grid.Column="0" Text="Total System Code Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="66" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.TotalSystemCodePages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoTotalSystemCodePagesSize" Text="{x:Bind PerfInfo.TotalSystemCodePagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="71" Grid.Column="0" Text="Non Paged Pool Lookaside Hits" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="71" Grid.Column="1" Text="{x:Bind PerfInfo.NonPagedPoolLookasideHits,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="72" Grid.Column="0" Text="Paged Pool Lookaside Hits" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="72" Grid.Column="1" Text="{x:Bind PerfInfo.PagedPoolLookasideHits,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="73" Grid.Column="0" Text="Available Paged Pool Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="73" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="67" Grid.Column="0" Text="Non Paged Pool Lookaside Hits" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="67" Grid.Column="1" Text="{x:Bind PerfInfo.NonPagedPoolLookasideHits,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="68" Grid.Column="0" Text="Paged Pool Lookaside Hits" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="68" Grid.Column="1" Text="{x:Bind PerfInfo.PagedPoolLookasideHits,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="69" Grid.Column="0" Text="Available Paged Pool Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="69" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.AvailablePagedPoolPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoAvailablePagedPoolPagesSize" Text="{x:Bind PerfInfo.AvailablePagedPoolPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="74" Grid.Column="0" Text="Resident System Cache Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="74" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="70" Grid.Column="0" Text="Resident System Cache Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="70" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.ResidentSystemCachePage,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoResidentSystemCachePageSize" Text="{x:Bind PerfInfo.ResidentSystemCachePageSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="75" Grid.Column="0" Text="Resident Paged Pool Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="75" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="71" Grid.Column="0" Text="Resident Paged Pool Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="71" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.ResidentPagedPoolPage,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoResidentPagedPoolPageSize" Text="{x:Bind PerfInfo.ResidentPagedPoolPageSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="76" Grid.Column="0" Text="Resident System Driver Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="76" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="72" Grid.Column="0" Text="Resident System Driver Page" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="72" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.ResidentSystemDriverPage,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoResidentSystemDriverPageSize" Text="{x:Bind PerfInfo.ResidentSystemDriverPageSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="77" Grid.Column="0" Text="CC Fast Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="77" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="78" Grid.Column="0" Text="CC Fast Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="78" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="79" Grid.Column="0" Text="CC Fast Read Resource Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="79" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadResourceMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="80" Grid.Column="0" Text="CC Fast Read Not Possible" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="80" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadNotPossible,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="81" Grid.Column="0" Text="CC Fast MDL Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="81" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="82" Grid.Column="0" Text="CC Fast MDL Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="82" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="83" Grid.Column="0" Text="CC Fast MDL Read Resource Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="83" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadResourceMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="84" Grid.Column="0" Text="CC Fast MDL Read Not Possible" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="84" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadNotPossible,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="85" Grid.Column="0" Text="CC Map Data No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="85" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="86" Grid.Column="0" Text="CC Map Data Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="86" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="87" Grid.Column="0" Text="CC Map Data No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="87" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="88" Grid.Column="0" Text="CC Map Data Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="88" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="89" Grid.Column="0" Text="CC Pin Mapped Data Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="89" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinMappedDataCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="90" Grid.Column="0" Text="CC Pin Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="90" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="91" Grid.Column="0" Text="CC Pin Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="91" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="92" Grid.Column="0" Text="CC Pin Read No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="92" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="93" Grid.Column="0" Text="CC Pin Read Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="93" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="94" Grid.Column="0" Text="CC Copy Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="94" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="95" Grid.Column="0" Text="CC Copy Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="95" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="96" Grid.Column="0" Text="CC Copy Read No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="96" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="97" Grid.Column="0" Text="CC Copy Read Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="97" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="98" Grid.Column="0" Text="CC MDL Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="98" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="99" Grid.Column="0" Text="CC MDL Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="99" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="100" Grid.Column="0" Text="CC MDL Read No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="100" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="101" Grid.Column="0" Text="CC MDL Read Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="101" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="102" Grid.Column="0" Text="CC Read Ahead IO's" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="102" Grid.Column="1" Text="{x:Bind PerfInfo.CcReadAheadIos,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="103" Grid.Column="0" Text="CC Lazy Write IO's" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="103" Grid.Column="1" Text="{x:Bind PerfInfo.CcLazyWriteIos,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="104" Grid.Column="0" Text="CC Lazy Write Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="104" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="73" Grid.Column="0" Text="CC Fast Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="73" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="74" Grid.Column="0" Text="CC Fast Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="74" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="75" Grid.Column="0" Text="CC Fast Read Resource Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="75" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadResourceMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="76" Grid.Column="0" Text="CC Fast Read Not Possible" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="76" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastReadNotPossible,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="77" Grid.Column="0" Text="CC Fast MDL Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="77" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="78" Grid.Column="0" Text="CC Fast MDL Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="78" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="79" Grid.Column="0" Text="CC Fast MDL Read Resource Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="79" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadResourceMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="80" Grid.Column="0" Text="CC Fast MDL Read Not Possible" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="80" Grid.Column="1" Text="{x:Bind PerfInfo.CcFastMdlReadNotPossible,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="81" Grid.Column="0" Text="CC Map Data No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="81" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="82" Grid.Column="0" Text="CC Map Data Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="82" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="83" Grid.Column="0" Text="CC Map Data No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="83" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="84" Grid.Column="0" Text="CC Map Data Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="84" Grid.Column="1" Text="{x:Bind PerfInfo.CcMapDataWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="85" Grid.Column="0" Text="CC Pin Mapped Data Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="85" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinMappedDataCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="86" Grid.Column="0" Text="CC Pin Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="86" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="87" Grid.Column="0" Text="CC Pin Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="87" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="88" Grid.Column="0" Text="CC Pin Read No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="88" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="89" Grid.Column="0" Text="CC Pin Read Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="89" Grid.Column="1" Text="{x:Bind PerfInfo.CcPinReadWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="90" Grid.Column="0" Text="CC Copy Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="90" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="91" Grid.Column="0" Text="CC Copy Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="91" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="92" Grid.Column="0" Text="CC Copy Read No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="92" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="93" Grid.Column="0" Text="CC Copy Read Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="93" Grid.Column="1" Text="{x:Bind PerfInfo.CcCopyReadWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="94" Grid.Column="0" Text="CC MDL Read No Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="94" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadNoWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="95" Grid.Column="0" Text="CC MDL Read Wait" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="95" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadWait,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="96" Grid.Column="0" Text="CC MDL Read No Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="96" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadNoWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="97" Grid.Column="0" Text="CC MDL Read Wait Miss" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="97" Grid.Column="1" Text="{x:Bind PerfInfo.CcMdlReadWaitMiss,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="98" Grid.Column="0" Text="CC Read Ahead IO's" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="98" Grid.Column="1" Text="{x:Bind PerfInfo.CcReadAheadIos,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="99" Grid.Column="0" Text="CC Lazy Write IO's" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="99" Grid.Column="1" Text="{x:Bind PerfInfo.CcLazyWriteIos,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="100" Grid.Column="0" Text="CC Lazy Write Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="100" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.CcLazyWritePages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoCcLazyWritePagesSize" Text="{x:Bind PerfInfo.CcLazyWritePagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="105" Grid.Column="0" Text="CC Data Flushes" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="105" Grid.Column="1" Text="{x:Bind PerfInfo.CcDataFlushes,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="106" Grid.Column="0" Text="CC Data Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <StackPanel Grid.Row="106" Grid.Column="1" Orientation="Horizontal" >
+            <TextBlock Grid.Row="101" Grid.Column="0" Text="CC Data Flushes" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="101" Grid.Column="1" Text="{x:Bind PerfInfo.CcDataFlushes,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="102" Grid.Column="0" Text="CC Data Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <StackPanel Grid.Row="102" Grid.Column="1" Orientation="Horizontal" >
                 <TextBlock Text="{x:Bind PerfInfo.CcDataPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoCcDataPagesSize" Text="{x:Bind PerfInfo.CcDataPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="107" Grid.Column="0" Text="Context Switches" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="107" Grid.Column="1" Text="{x:Bind PerfInfo.ContextSwitches,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="108" Grid.Column="0" Text="First Level TB Fills" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="108" Grid.Column="1" Text="{x:Bind PerfInfo.FirstLevelTbFills,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="109" Grid.Column="0" Text="Second Level TB Fills" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="109" Grid.Column="1" Text="{x:Bind PerfInfo.SecondLevelTbFills,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="110" Grid.Column="0" Text="System Calls" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock Grid.Row="110" Grid.Column="1" Text="{x:Bind PerfInfo.SystemCalls,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="103" Grid.Column="0" Text="Context Switches" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="103" Grid.Column="1" Text="{x:Bind PerfInfo.ContextSwitches,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="104" Grid.Column="0" Text="First Level TB Fills" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="104" Grid.Column="1" Text="{x:Bind PerfInfo.FirstLevelTbFills,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="105" Grid.Column="0" Text="Second Level TB Fills" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="105" Grid.Column="1" Text="{x:Bind PerfInfo.SecondLevelTbFills,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="106" Grid.Column="0" Text="System Calls" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="106" Grid.Column="1" Text="{x:Bind PerfInfo.SystemCalls,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="111" Grid.Column="0" Text="CC Total Dirty Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="111" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="107" Grid.Column="0" Text="CC Total Dirty Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="107" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind PerfInfo.CcTotalDirtyPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoCcTotalDirtyPagesSize" Text="{x:Bind PerfInfo.CcTotalDirtyPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="112" Grid.Column="0" Text="CC Dirty Page Threshold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <TextBlock Grid.Row="112" Grid.Column="1" Text="{x:Bind PerfInfo.CcDirtyPageThreshold,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="108" Grid.Column="0" Text="CC Dirty Page Threshold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="108" Grid.Column="1" Text="{x:Bind PerfInfo.CcDirtyPageThreshold,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind PerfInfo.HasCcTotalDirtyPagesCcDirtyPageThreshold,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
 
-            <TextBlock Grid.Row="113" Grid.Column="0" Text="Resident Available Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="113" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="109" Grid.Column="0" Text="Resident Available Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="109" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind PerfInfo.ResidentAvailablePages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoResidentAvailablePagesSize" Text="{x:Bind PerfInfo.ResidentAvailablePagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             </StackPanel>
-            <TextBlock Grid.Row="114" Grid.Column="0" Text="Shared Committed Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
-            <StackPanel Grid.Row="114" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <TextBlock Grid.Row="110" Grid.Column="0" Text="Shared Committed Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <StackPanel Grid.Row="110" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind PerfInfo.HasResidentAvailablePagesSharedCommittedPages,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
                 <TextBlock Text="{x:Bind PerfInfo.SharedCommittedPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
                 <TextBlock Text=" - " Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,5,0" />
                 <TextBlock x:Name="perfInfoSharedCommittedPagesSize" Text="{x:Bind PerfInfo.SharedCommittedPagesSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />

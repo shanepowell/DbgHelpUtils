@@ -1,0 +1,45 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ProcessVmCountersStreamPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ProcessVmCountersStreamPage();
+        
+        UInt32 Index { get; };
+
+        UInt16 Revision { get; };
+        
+        Boolean HasFlags { get; };
+        UInt16 Flags { get; };
+        IObservableVector<String> FlagsList { get; };
+
+        Boolean HasVmCounters { get; };
+        UInt32 PageFaultCount { get; };
+        UInt64 PeakWorkingSetSize { get; };
+        UInt64 WorkingSetSize { get; };
+        UInt64 QuotaPeakPagedPoolUsage { get; };
+        UInt64 QuotaPagedPoolUsage { get; };
+        UInt64 QuotaPeakNonPagedPoolUsage { get; };
+        UInt64 QuotaNonPagedPoolUsage { get; };
+        UInt64 PagefileUsage { get; };
+        UInt64 PeakPagefileUsage { get; };
+
+        Boolean HasVirtualSize { get; };
+        UInt64 PeakVirtualSize { get; };
+        UInt64 VirtualSize { get; };
+        
+        Boolean HasPrivateUsage { get; };
+        UInt64 PrivateUsage { get; };
+        
+        Boolean HasVmCountersEx2 { get; };
+        UInt64 PrivateWorkingSetSize { get; };
+        UInt64 SharedCommitUsage { get; };
+
+        Boolean HasJob { get; };
+        UInt64 JobSharedCommitUsage { get; };
+        UInt64 JobPrivateCommitUsage { get; };
+        UInt64 JobPeakPrivateCommitUsage { get; };
+        UInt64 JobPrivateCommitLimit { get; };
+        UInt64 JobTotalCommitLimit { get; };
+    }
+}
