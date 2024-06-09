@@ -95,6 +95,9 @@
     <Page Include="ViewModels\ProcessVmCountersStreamPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ThreadEntryPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -607,6 +610,9 @@
     <ClCompile Include="Models\MinidumpSystemPerformanceInformation.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="ViewModels\SubPageNavigationEntries.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -756,6 +762,9 @@
     </ClInclude>
     <ClInclude Include="Utility\GetResourceValue.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\SubPageNavigationEntries.h">
+      <Filter>ViewModels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

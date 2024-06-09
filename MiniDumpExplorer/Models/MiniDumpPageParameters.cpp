@@ -11,10 +11,13 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    MiniDumpPageParameters::MiniDumpPageParameters(MiniDumpExplorer::MiniDumpPage const& miniDump, hstring const& navigationItemTag, uint32_t const streamIndex)
+    MiniDumpPageParameters::MiniDumpPageParameters(MiniDumpExplorer::MiniDumpPage const& miniDump, hstring const& findItemTag, hstring const& navigationItemTag, uint32_t const streamIndex, uint32_t const streamSubType, uint32_t const streamSubIndex)
         : miniDump_(miniDump)
+        , findItemTag_(findItemTag)
         , navigationItemTag_(navigationItemTag)
         , streamIndex_(streamIndex)
+        , streamSubType_(streamSubType)
+        , streamSubIndex_(streamSubIndex)
     {
     }
 }

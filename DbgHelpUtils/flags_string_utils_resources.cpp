@@ -6,7 +6,7 @@ namespace dlg_help_utils::flags_string_utils::resources
 {
     std::wstring get_unknown_flags_string()
     {
-        return L"unknown flags"s;
+        return L"unknown"s;
     }
 
     std::wstring get_flag_separator_string()
@@ -16,7 +16,7 @@ namespace dlg_help_utils::flags_string_utils::resources
 
     std::wstring get_unknown_enum_string()
     {
-        return L"unknown enum"s;
+        return L"unknown"s;
     }
 
     std::wstring get_none_options_string()

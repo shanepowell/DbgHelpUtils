@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MiniDumpExplorer.ThreadEntryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MiniDumpExplorer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv"  Margin="12,5,5,5">
+        <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>   <!-- 10 -->
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Thread.Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Thread Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Thread Id" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="threadId" Grid.Row="3" Grid.Column="1" Text="{x:Bind Thread.Id,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Name" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind Thread.Name,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Priority" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="threadPriority" Grid.Row="5" Grid.Column="1" Text="{x:Bind Thread.Priority,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Priority Class" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock Grid.Row="6" Grid.Column="1" Text="{x:Bind Thread.PriorityClassType,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Suspend Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="threadSuspendCount" Grid.Row="7" Grid.Column="1" Text="{x:Bind Thread.SuspendCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="TEB" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="threadTEB" Grid.Row="8" Grid.Column="1" Text="{x:Bind Thread.TEB,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+        </Grid>
+    </ScrollViewer>
+</Page>

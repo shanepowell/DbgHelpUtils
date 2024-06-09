@@ -5,10 +5,13 @@ namespace MiniDumpExplorer
     [default_interface]
     runtimeclass MiniDumpPageParameters
     {
-        MiniDumpPageParameters(MiniDumpPage miniDump, String navigationItemTag, UInt32 streamIndex);
+        MiniDumpPageParameters(MiniDumpPage miniDump, String findItemTag, String navigationItemTag, UInt32 streamIndex, UInt32 streamSubType, UInt32 streamSubIndex);
 
         MiniDumpPage MiniDump { get; };
+        String FindItemTag { get; };
         String NavigationItemTag { get; };
         UInt32 StreamIndex { get; };
+        UInt32 StreamSubType { get; };
+        UInt32 StreamSubIndex { get; };
     }
 }

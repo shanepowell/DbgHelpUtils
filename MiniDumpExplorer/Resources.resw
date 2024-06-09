@@ -337,13 +337,13 @@
     <value>Unknown Stream Type</value>
   </data>
   <data name="FlagsUnknown" xml:space="preserve">
-    <value>unknown flags</value>
+    <value>unknown</value>
   </data>
   <data name="FlagsSeparator" xml:space="preserve">
     <value>,</value>
   </data>
   <data name="EnumUnknown" xml:space="preserve">
-    <value>unknown enum</value>
+    <value>unknown</value>
   </data>
   <data name="FlagsNone" xml:space="preserve">
     <value>none</value>

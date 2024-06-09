@@ -31,6 +31,12 @@ namespace dlg_help_utils
                                                                memory_list_stream const& memory_list,
                                                                memory64_list_stream const& memory64_list) const;
 
+        [[nodiscard]] stream_thread get_thread(size_t index) const;
+        [[nodiscard]] stream_thread get_thread(size_t index,
+                                               thread_names_list_stream const& names_list,
+                                               memory_list_stream const& memory_list,
+                                               memory64_list_stream const& memory64_list) const;
+
     private:
         mini_dump const* dump_{nullptr};
         bool found_{false};

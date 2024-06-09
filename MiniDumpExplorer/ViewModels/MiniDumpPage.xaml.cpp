@@ -5,6 +5,7 @@
 #include <winrt/Windows.UI.Xaml.Interop.h>
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
+#include "SubPageNavigationEntries.h"
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/string_compare.h"
@@ -54,12 +55,13 @@ namespace
             {ProcessVmCountersStream, Controls::Symbol::DockBottom},
             {ThreadNamesStream, Controls::Symbol::List},
         };
-
 }
 
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpPageParameters;
+    const std::wstring MiniDumpPage::ThreadListEntryStreamTag = L"ThreadListEntryStream"s;
+
 
     std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> MiniDumpPage::pageMap_ =
         {
@@ -67,6 +69,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { StreamsTag, xaml_typename<StreamsPage>() },
             { SettingsTag, xaml_typename<SettingsPage>() },
             { mini_dump_stream_type::enum_names::ThreadListStream, xaml_typename<ThreadListStreamPage>() },
+            { ThreadListEntryStreamTag, xaml_typename<ThreadEntryPage>() },
             { mini_dump_stream_type::enum_names::ModuleListStream, xaml_typename<ModuleListStreamPage>() },
             { mini_dump_stream_type::enum_names::MemoryListStream, xaml_typename<MemoryListStreamPage>() },
             { mini_dump_stream_type::enum_names::ExceptionStream, xaml_typename<ExceptionStreamPage>() },
@@ -121,7 +124,7 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             if(!parameters)
             {
-                parameters = MiniDumpExplorer::MiniDumpPageParameters{*this, navigationItemTag, 0};
+                parameters = MiniDumpExplorer::MiniDumpPageParameters{*this, navigationItemTag, navigationItemTag, 0, 0, 0};
             }
 
             if(auto const it = pageMap_.find(navigationItemTag); it != pageMap_.end())
@@ -245,7 +248,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 menuItem)
             {
                 if(auto const parameters = menuItem.Tag().try_as<MiniDumpExplorer::MiniDumpPageParameters>();
-                    parameters && parameters.NavigationItemTag() == tag)
+                    parameters && parameters.FindItemTag() == tag)
                 {
                     return [this, menuItem]()
                     {
@@ -262,7 +265,6 @@ namespace winrt::MiniDumpExplorer::implementation
                     };
                 }
 
-                
                 if(auto action = FindAndSelectNavigationTag(tag, menuItem.MenuItems());
                     action)
                 {
@@ -298,18 +300,21 @@ namespace winrt::MiniDumpExplorer::implementation
             tag = UnsupportedStreamTag;
         }
 
-        return CreateNavigationViewItemForStream(title, tag, stream_index, icon);
+        return CreateNavigationViewItemForStream(stream_type, title, tag, tag, stream_index, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max(), icon);
     }
 
-    Controls::NavigationViewItem MiniDumpPage::CreateNavigationViewItemForStream(std::wstring const& title, std::wstring const& tag, uint32_t const stream_index, Controls::Symbol const symbol) const
+    Controls::NavigationViewItem MiniDumpPage::CreateNavigationViewItemForStream(MINIDUMP_STREAM_TYPE const stream_type, std::wstring const& title, std::wstring const& findTag, std::wstring const& tag, uint32_t const stream_index, uint32_t const stream_sub_type, uint32_t const stream_sub_index, Controls::Symbol const symbol) const
     {
         const Controls::NavigationViewItem item;
         item.Content(box_value(hstring{title}));
-        MiniDumpExplorer::MiniDumpPageParameters parameters{*this, tag, stream_index};
+        MiniDumpExplorer::MiniDumpPageParameters parameters{*this, findTag, tag, stream_index, stream_sub_type, stream_sub_index};
         item.Tag(parameters);
         const Controls::SymbolIcon iconSource;
         iconSource.Symbol(symbol);
         item.Icon(iconSource);
+
+        SubPageNavigationEntries::CreateNavigationViewItemEntriesForStream(stream_type, item, parameters, *miniDump_);
+
         return item;
     }
 }
