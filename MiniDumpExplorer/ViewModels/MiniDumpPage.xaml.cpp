@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MiniDumpPage.xaml.h"
 
+#include <filesystem>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Xaml.Interop.h>
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
@@ -11,6 +12,7 @@
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
+#include "Helpers/SymbolEngineHelper.h"
 #include "Models/FileCrc32.h"
 #include "Utility/logger.h"
 
@@ -141,11 +143,17 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             auto self = get_strong();
 
-            apartment_context ui_thread; 
+            apartment_context ui_thread;
+
+            auto& symbolEngineHelper = SymbolEngineHelper::Instance();
+            co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+
+            std::filesystem::path fullPath{static_cast<std::wstring>(file_.Path())};
+            symbolEngineHelper.symbol_engine().add_symbol_path(fullPath.parent_path());
+
             co_await resume_background();
 
-            logger::Log().LogMessage(log_level::info, std::format(L"Loading MiniDump: {}", file_.Path()));
-            auto const fullPath = static_cast<std::wstring>(file_.Path());
+            logger::Log().LogMessage(log_level::info, std::format(L"Loading MiniDump: {}", fullPath.wstring()));
             miniDump_ = std::make_shared<mini_dump>(fullPath);
 
             valid_ = false;

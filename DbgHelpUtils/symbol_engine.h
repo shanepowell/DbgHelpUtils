@@ -93,6 +93,8 @@ namespace dlg_help_utils::dbg_help
         symbol_engine& operator=(symbol_engine const&) = delete;
         symbol_engine& operator=(symbol_engine&&) = delete;
 
+        void add_symbol_path(std::filesystem::path const& path);
+
         void clear_modules();
         void load_module(std::wstring module_name
             , DWORD64 module_base
@@ -129,7 +131,7 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] std::optional<symbol_type_info> get_symbol_info(std::wstring const& symbol_name, throw_on_error_t throw_on_error = throw_on_error_t{false});
 
-        enum class symbol_walk_options
+        enum class symbol_walk_options : uint8_t
         {
             default_symbols,
             inline_variables
@@ -211,5 +213,7 @@ namespace dlg_help_utils::dbg_help
         HANDLE process_{create_fake_id()};
         HANDLE thread_{create_fake_id()};
         symbol_type_info_cache symbol_cache_;
+        std::wstring original_symbol_path_;
+        std::set<std::wstring> extra_symbol_paths_;
     };
 }

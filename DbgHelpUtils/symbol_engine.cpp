@@ -17,6 +17,7 @@
 #include "filesystem_utils.h"
 #include "guid_utils.h"
 #include "hex_dump.h"
+#include "join.h"
 #include "locale_number_formatting.h"
 #include "variable.h"
 #include "module_match.h"
@@ -1061,11 +1062,36 @@ namespace dlg_help_utils::dbg_help
 
         SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | (callback.symbol_load_debug() ? SYMOPT_DEBUG : 0));
         SymRegisterCallbackW64(process_, sym_register_callback_proc64, reinterpret_cast<ULONG64>(static_cast<i_symbol_callback*>(this)));
+
+        std::array<wchar_t, 8096> buffer;
+        if (!SymGetSearchPathW(process_, buffer.data(), static_cast<DWORD>(buffer.size() - 1)))
+        {
+            windows_error::throw_windows_api_error(L"SymGetSearchPath"sv);
+        }
+        buffer[buffer.size() - 1] = NULL;
+        original_symbol_path_ = buffer.data();
+        if(!original_symbol_path_.empty() && *original_symbol_path_.rbegin() != L';')
+        {
+            original_symbol_path_ += L';';
+        }
     }
 
     symbol_engine::~symbol_engine()
     {
         SymCleanup(process_);
+    }
+
+    void symbol_engine::add_symbol_path(std::filesystem::path const& path)
+    {
+        if(auto [_, inserted] = extra_symbol_paths_.insert(path.wstring());
+            inserted)
+        {
+            auto symbol_path = original_symbol_path_ + wjoin(extra_symbol_paths_ | std::views::reverse, L";"sv);
+            if (!SymSetSearchPathW(process_, symbol_path.c_str()))
+            {
+                windows_error::throw_windows_api_error(L"SymSetSearchPath"sv);
+            }
+        }
     }
 
     void symbol_engine::clear_modules()
