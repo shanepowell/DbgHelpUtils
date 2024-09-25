@@ -5,7 +5,7 @@
 
 namespace dlg_help_utils
 {
-    enum class dump_file_type : uint16_t;
+    enum class dump_file_type : uint8_t;
 }
 
 namespace dlg_help_utils::system_info_utils

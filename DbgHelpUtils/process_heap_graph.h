@@ -199,7 +199,7 @@ namespace dlg_help_utils::heap
 
         using can_contain_user_pointers_t = tagged_bool<struct can_contain_user_pointers_type>;
         using default_mark_as_other_node_t = tagged_bool<struct default_mark_as_other_node_type>;
-        enum class node_type
+        enum class node_type : uint8_t
         {
             system_node,
             system_node_user_container,

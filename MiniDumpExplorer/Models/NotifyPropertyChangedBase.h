@@ -3,7 +3,7 @@
 namespace winrt::MiniDumpExplorer::implementation
 {
     template<typename T>
-    struct NotifyPropertyChangedBase
+    struct NotifyPropertyChangedBase  // NOLINT(cppcoreguidelines-special-member-functions)
     {
     protected:
         NotifyPropertyChangedBase() = default;

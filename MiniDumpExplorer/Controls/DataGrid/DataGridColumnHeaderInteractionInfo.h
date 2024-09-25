@@ -5,7 +5,7 @@ namespace DataGridInternal
     class DataGridColumnHeaderInteractionInfo
     {
     public:
-        enum class drag_mode
+        enum class drag_mode : uint8_t
         {
             None = 0,
             PointerPressed = 1,

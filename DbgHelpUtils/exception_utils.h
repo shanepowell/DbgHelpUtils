@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 // missing from windows headers, so EXCEPTION_POSSIBLE_DEADLOCK failed unless we define it to be found
-enum : uint64_t
+enum : uint64_t  // NOLINT(performance-enum-size)
 {
     STATUS_POSSIBLE_DEADLOCK = 0xC0000194L
 };

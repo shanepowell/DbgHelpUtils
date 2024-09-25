@@ -29,7 +29,7 @@ namespace dlg_help_utils::time_units
     std::wstring to_months_wstring(filetime_nanoseconds ns);
     std::wstring to_years_wstring(filetime_nanoseconds ns);
 
-    enum class time_unit_type
+    enum class time_unit_type : uint8_t
     {
         year,
         month,
@@ -53,7 +53,7 @@ namespace dlg_help_utils::time_units
     template<> struct map_to_time_type<std::chrono::milliseconds> { static constexpr time_unit_type type = time_unit_type::millisecond; };
     template<> struct map_to_time_type<filetime_nanoseconds> { static constexpr time_unit_type type = time_unit_type::filetime_nanosecond; };
 
-    enum class string_type
+    enum class string_type : uint8_t
     {
         singular,
         plural

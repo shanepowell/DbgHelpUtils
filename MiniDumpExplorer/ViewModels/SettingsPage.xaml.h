@@ -10,6 +10,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         SettingsPage();
 
+        // ReSharper disable once CppHidingFunction
         void InitializeComponent();
 
         hstring Version() const { return version_; }

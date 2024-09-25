@@ -7,7 +7,7 @@
 
 namespace dlg_help_utils::heap::allocation_graph
 {
-    enum class process_heap_graph_heap_entry_type
+    enum class process_heap_graph_heap_entry_type : uint8_t
     {
         allocation,
         system_allocation,

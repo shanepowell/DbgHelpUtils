@@ -61,7 +61,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return box_value(hstring(L""));
         }
 
-        enum class TimeStampType
+        enum class TimeStampType : uint8_t
         {
             TimeT,
             FileTime,

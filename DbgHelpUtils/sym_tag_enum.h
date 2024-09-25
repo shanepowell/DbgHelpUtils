@@ -4,7 +4,7 @@ namespace dlg_help_utils::dbg_help
     // ReSharper disable CppInconsistentNaming
     // ReSharper disable IdentifierTypo
 
-    enum class sym_tag_enum
+    enum class sym_tag_enum : uint32_t  // NOLINT(performance-enum-size)
     {
         Null,
         Exe,

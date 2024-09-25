@@ -134,7 +134,7 @@ namespace dlg_help_utils::heap
         {
             if(std::ranges::find(front_padding_sizes, size_value.value()) != front_padding_sizes.end())
             {
-                return size_value.value();
+                return size_value;
             }
         }
 

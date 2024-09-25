@@ -2,8 +2,6 @@
 
 #include "RecentFileItemsDataSource.g.h"
 
-#include <functional>
-
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct DataGrid;

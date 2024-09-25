@@ -161,7 +161,7 @@ namespace winrt::MiniDumpExplorer::implementation
                     throw DataGridError::ValueMustBeBetween(L"value"sv, L"DisplayIndex"sv, 0, true, internalOwningGrid->ColumnsItemsInternal().size(), false);
                 }
 
-                // Will throw an error if a visible frozen column is placed inside a non-frozen area or vice-versa.
+                // Will throw an error if a visible frozen column is placed inside a non-frozen area or vice versa.
                 internalOwningGrid->OnColumnDisplayIndexChanging(*this, value);
                 displayIndexWithFiller_ = value;
                 dlg_help_utils::scope_exit clearInDisplayIndexAdjustments{ [owningGrid = internalOwningGrid] { owningGrid->InDisplayIndexAdjustments(false); } };

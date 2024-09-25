@@ -2,7 +2,7 @@
 
 namespace dlg_help_utils::dbg_help
 {
-    enum class basic_type
+    enum class basic_type : uint8_t
     {
         NoType = 0,
         Void = 1,

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// ReSharper disable CppRedundantQualifier
+#pragma once
 
 #include <optional>
 

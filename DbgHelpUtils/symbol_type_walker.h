@@ -5,7 +5,7 @@
 namespace dlg_help_utils::dbg_help
 {
     class symbol_type_info;
-    enum class sym_tag_enum;
+    enum class sym_tag_enum : uint32_t;
 }
 
 namespace dlg_help_utils::stream_stack_dump

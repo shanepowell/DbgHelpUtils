@@ -10,7 +10,7 @@ namespace dlg_help_utils
 {
     class comment_stream_w;
 
-    enum class dump_file_type : uint16_t
+    enum class dump_file_type : uint8_t
     {
         invalid,
         user_mode_dump,

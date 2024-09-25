@@ -6,13 +6,13 @@
 #include "DbgHelpUtils/size_units.h"
 #include "Utility/log_level.h"
 
-enum class NumberDisplayFormatType
+enum class NumberDisplayFormatType : uint8_t
 {
     Hexadecimal,
     Decimal
 };
 
-enum class SizeNumberDisplayFormatType
+enum class SizeNumberDisplayFormatType : uint8_t
 {
     Auto,
     Bytes,
@@ -25,20 +25,20 @@ enum class SizeNumberDisplayFormatType
     Raw
 };
 
-enum class SizeDisplayNumberBaseType
+enum class SizeDisplayNumberBaseType : uint8_t
 {
     Base10,
     Base16
 };
 
-enum class TimeStampLocaleType
+enum class TimeStampLocaleType : uint8_t
 {
     Local,
     UTC,
     DumpFile
 };
 
-enum class DurationFormatType
+enum class DurationFormatType : uint8_t
 {
     TimeSpan,
     Auto,

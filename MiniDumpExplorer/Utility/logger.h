@@ -22,7 +22,7 @@ public:
 
     void HandleUnknownException(std::source_location const& location = std::source_location::current()) const;
 
-    enum class log_command
+    enum class log_command : uint8_t
     {
         log_message,
         close_log_file
@@ -34,7 +34,7 @@ public:
 private:
     static void run_log_command(log_command command, log_level level, std::string_view const& message, std::function<void (log_command, log_level, std::string, log_level, std::chrono::local_time<std::chrono::seconds> const&)> const& filter);
     void do_run_log_command(log_command command, log_level level, std::string log_line, log_level current_level, std::chrono::local_time<std::chrono::seconds> const& now_day);
-    void write_log_message(std::string const& log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day);
+    void write_log_message(std::string const& log_line, log_level current_level, std::chrono::local_time<std::chrono::seconds> const& now_day);
 
     bool close_log_file(std::chrono::local_time<std::chrono::seconds> const& now) const;
     void open_log_file(log_level level, std::chrono::local_time<std::chrono::seconds> const& now = std::chrono::floor<std::chrono::days>(std::chrono::current_zone()->to_local(std::chrono::system_clock::now())));

@@ -178,7 +178,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 }
 
                 if(auto const self = weak_self.get();
-                    self && !WindowHelper::IsExiting())
+                    self && !WindowHelper::IsExiting())  // NOLINT(bugprone-branch-clone)
                 {
                     entries_.Append(entry);
                 }

@@ -5,8 +5,6 @@
 #include "GlobalOptionsNotifyPropertyChangedBase.h"
 #include "Utility/mini_dump_walker_store.h"
 
-#include <memory>
-
 namespace dlg_help_utils::dbg_help
 {
     class symbol_engine;

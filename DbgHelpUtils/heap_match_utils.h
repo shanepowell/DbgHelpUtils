@@ -11,7 +11,7 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::heap
 {
-    enum class heap_node_type;
+    enum class heap_node_type : uint8_t;
 
     class heap_match_utils
     {

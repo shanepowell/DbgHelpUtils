@@ -475,7 +475,7 @@ namespace winrt::MiniDumpExplorer::implementation
         virtual void OnRowDoubleTapped(MiniDumpExplorer::DataGridRowDetailsEventArgs const& e);
 
     private:
-        enum class ScrollBarVisualState
+        enum class ScrollBarVisualState : uint8_t
         {
             NoIndicator,
             TouchIndicator,
@@ -483,7 +483,7 @@ namespace winrt::MiniDumpExplorer::implementation
             MouseIndicatorFull
         };
 
-        enum class ScrollBarsSeparatorVisualState
+        enum class ScrollBarsSeparatorVisualState : uint8_t
         {
             SeparatorCollapsed,
             SeparatorExpanded,

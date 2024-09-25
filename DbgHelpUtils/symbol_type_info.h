@@ -89,7 +89,7 @@ namespace dlg_help_utils::dbg_help
         };
 
     private:
-        enum class optional_type
+        enum class optional_type : uint8_t
         {
             optional,
             required

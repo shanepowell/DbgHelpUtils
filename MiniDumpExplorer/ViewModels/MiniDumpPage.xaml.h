@@ -51,7 +51,7 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         std::function<void()> FindAndSelectNavigationTag(std::wstring const& tag, Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable> const& menuItems);
         Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStreamType(MINIDUMP_STREAM_TYPE stream_type, uint32_t stream_index, MINIDUMP_LOCATION_DESCRIPTOR const& location) const;
-        Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStream(MINIDUMP_STREAM_TYPE const stream_type, std::wstring const& title, std::wstring const& findTag, std::wstring const& tag, uint32_t stream_index, uint32_t stream_sub_type, uint32_t stream_sub_index, Microsoft::UI::Xaml::Controls::Symbol symbol) const;
+        Microsoft::UI::Xaml::Controls::NavigationViewItem CreateNavigationViewItemForStream(MINIDUMP_STREAM_TYPE stream_type, std::wstring const& title, std::wstring const& findTag, std::wstring const& tag, uint32_t stream_index, uint32_t stream_sub_type, uint32_t stream_sub_index, Microsoft::UI::Xaml::Controls::Symbol symbol) const;
 
     private:
         Windows::Storage::StorageFile file_{ nullptr };

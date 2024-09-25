@@ -9,7 +9,7 @@ namespace dlg_help_utils::heap
 {
     class crt_entry;
 
-    enum class segment_heap_front_padding_options_type
+    enum class segment_heap_front_padding_options_type : uint8_t
     {
         auto_padding_detect,
         padding_enabled,

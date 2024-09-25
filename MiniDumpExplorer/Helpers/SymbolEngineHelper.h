@@ -3,7 +3,6 @@
 #include <winrt/Windows.System.h>
 
 #include "DbgHelpUtils/i_symbol_load_callback.h"
-#include "DbgHelpUtils/null_stream.h"
 #include "DbgHelpUtils/symbol_engine.h"
 
 class SymbolEngineHelper : dlg_help_utils::dbg_help::i_symbol_load_callback

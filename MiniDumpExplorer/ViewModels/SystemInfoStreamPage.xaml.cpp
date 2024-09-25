@@ -87,7 +87,7 @@ namespace winrt::MiniDumpExplorer::implementation
             suiteMaskList_.Append(value);
         }
 
-        if(system_info_stream_.has_x86_cpu_info())
+        if(system_info_stream_.has_x86_cpu_info())  // NOLINT(bugprone-branch-clone)
         {
             x86CpuInfoVendorId_ = system_info_stream_.vendor_id();
         }

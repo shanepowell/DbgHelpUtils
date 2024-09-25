@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum class log_level
+enum class log_level : int8_t
 {
     system = -1,
     none,

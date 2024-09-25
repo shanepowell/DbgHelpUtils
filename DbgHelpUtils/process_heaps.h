@@ -20,7 +20,7 @@ namespace dlg_help_utils::heap
         class statistic_view_options;
     }
 
-    enum class heap_node_type;
+    enum class heap_node_type : uint8_t;
 
     class system_module_list;
     class crt_entry;

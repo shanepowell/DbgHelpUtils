@@ -2,7 +2,7 @@
 
 namespace dlg_help_utils::dbg_help
 {
-    enum class udt_kind_type
+    enum class udt_kind_type : uint8_t
     {
         struct_type = 0,
         class_type = 1,

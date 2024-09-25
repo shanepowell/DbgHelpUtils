@@ -156,16 +156,16 @@ namespace dlg_help_utils::symbol_type_utils::resources
             winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
             static std::unordered_map<data_kind, std::wstring> const data_kind_descriptions =
             {
-                { data_kind::data_is_local, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_local").ValueAsString()}},//L"local"s },
-                { data_kind::data_is_unknown, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_unknown").ValueAsString()}},//L"unknown"s },
-                { data_kind::data_is_static_local, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_static_local").ValueAsString()}},//L"static local"s },
-                { data_kind::data_is_param, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_param").ValueAsString()}},//L"param"s },
-                { data_kind::data_is_object_ptr, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_object_ptr").ValueAsString()}},//L"object ptr"s },
-                { data_kind::data_is_file_static, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_file_static").ValueAsString()}},//L"file static"s },
-                { data_kind::data_is_global, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_global").ValueAsString()}},//L"global"s },
-                { data_kind::data_is_member, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_member").ValueAsString()}},//L"member"s },
-                { data_kind::data_is_static_member, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_static_member").ValueAsString()}},//L"static member"s },
-                { data_kind::data_is_constant, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_constant").ValueAsString()}},//L"constant"s },
+                { data_kind::data_is_local, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_local").ValueAsString()}},
+                { data_kind::data_is_unknown, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_unknown").ValueAsString()}},
+                { data_kind::data_is_static_local, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_static_local").ValueAsString()}},
+                { data_kind::data_is_param, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_param").ValueAsString()}},
+                { data_kind::data_is_object_ptr, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_object_ptr").ValueAsString()}},
+                { data_kind::data_is_file_static, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_file_static").ValueAsString()}},
+                { data_kind::data_is_global, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_global").ValueAsString()}},
+                { data_kind::data_is_member, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_member").ValueAsString()}},
+                { data_kind::data_is_static_member, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_static_member").ValueAsString()}},
+                { data_kind::data_is_constant, std::wstring{rm.MainResourceMap().GetValue(L"Resources/data_is_constant").ValueAsString()}},
             };
 
             return data_kind_descriptions;

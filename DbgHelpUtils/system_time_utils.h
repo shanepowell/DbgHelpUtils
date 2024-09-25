@@ -3,7 +3,6 @@
 #include "windows_setup.h"
 
 #include <format>
-#include <ostream>
 
 namespace dlg_help_utils::system_time_utils
 {

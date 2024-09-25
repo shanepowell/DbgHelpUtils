@@ -2,7 +2,7 @@
 
 namespace dlg_help_utils::heap
 {
-    enum class heap_node_type
+    enum class heap_node_type : uint8_t
     {
         nt_heap_lfh_entry,
         nt_heap_segment_entry,

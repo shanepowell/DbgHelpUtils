@@ -73,7 +73,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         total_entries_ = thread_list.thread_list().NumberOfThreads;
-        threadsStreamEntriesDataSource_.as<ThreadListStreamEntriesDataSource>()->LoadMiniDumpThreadStream(miniDump, thread_list);
+        threadsStreamEntriesDataSource_.as<ThreadListStreamEntriesDataSource>()->LoadMiniDumpThreadStream(thread_list);
     }
 
     void ThreadListStreamPage::SelectCurrentlySelectedEntry() const

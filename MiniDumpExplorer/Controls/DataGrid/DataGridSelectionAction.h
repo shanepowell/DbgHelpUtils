@@ -2,7 +2,7 @@
 
 namespace DataGridInternal
 {
-    enum class DataGridSelectionAction
+    enum class DataGridSelectionAction : uint8_t
     {
         AddCurrentToSelection,
         None,

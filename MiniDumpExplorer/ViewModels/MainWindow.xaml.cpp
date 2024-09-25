@@ -140,7 +140,7 @@ namespace winrt::MiniDumpExplorer::implementation
         co_await OpenFileInTab(file);
     }
 
-    Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const file)
+    Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const& file)
     {
         auto miniDumpPage = winrt::make<MiniDumpPage>(file);
         if(!co_await miniDumpPage.LoadMiniDump())

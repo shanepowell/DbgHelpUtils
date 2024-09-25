@@ -8,6 +8,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         DefaultPage() = default;
 
+        // ReSharper disable once CppHidingFunction
         void InitializeComponent();
         void NavigationView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 

@@ -190,7 +190,7 @@ namespace winrt::MiniDumpExplorer::implementation
         RaisePropertyChanged(L"DumpFileCrc32");
     }
 
-    void HeaderPage::SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32)
+    void HeaderPage::SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32)  // NOLINT(performance-unnecessary-value-param)
     {
         mini_dump_ = miniDump;
         fileCrc32_ = std::move(fileCrc32);

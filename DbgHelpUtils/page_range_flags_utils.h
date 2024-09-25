@@ -5,7 +5,7 @@
 
 namespace dlg_help_utils::page_range_flags_utils
 {
-    enum class page_range_flags : uint16_t {
+    enum class page_range_flags : uint16_t {  // NOLINT(performance-enum-size)
         PAGE_RANGE_FLAGS_LFH_SUBSEGMENT = 0x01,
         PAGE_RANGE_FLAGS_COMMITTED      = 0x02,
         PAGE_RANGE_FLAGS_ALLOCATED      = 0x04,

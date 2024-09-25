@@ -33,7 +33,7 @@ namespace
 
 logger::logger(key)
 {
-    MessageFilter([this](log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)
+    MessageFilter([this](log_command const command, log_level const level, const std::string& log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)
     {
         do_run_log_command(command, level, std::move(log_line), current_level, now_day);
     });  // NOLINT(performance-unnecessary-value-param)

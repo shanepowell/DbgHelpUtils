@@ -10,6 +10,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         MainWindow();
 
+        // ReSharper disable once CppHidingFunction
         void InitializeComponent();
 
         fire_and_forget MenuFileOpen_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args);
@@ -26,7 +27,7 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         void OpenDefaultTab();
         Windows::Foundation::IAsyncAction OpenFileInNewTab();
-        static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile const file);
+        static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile const& file);
     };
 }
 

@@ -459,7 +459,7 @@ namespace dlg_help_utils::stream_utils
         case 8:
             if(auto const data = read_field_value<uint64_t>(walker, address.value()); data.has_value())
             {
-                return data.value();
+                return data;
             }
             throw_failed_to_read_from_address(symbol_name, address.value());
 

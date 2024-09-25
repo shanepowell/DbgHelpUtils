@@ -304,7 +304,7 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log
         {
             if (options.display_symbols())
             {
-                stream_stack_dump::dump_stack_to_stream(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
+                dump_stack_to_stream(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
                                                   thread.stack(), thread->Stack.Memory.DataSize,
                                                   thread.thread_context(), 5, options.display_stack_options());
             }
@@ -375,7 +375,7 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
         {
             if (options.display_symbols())
             {
-                stream_stack_dump::dump_stack_to_stream(log
+                dump_stack_to_stream(log
                     , mini_dump
                     , symbol_engine
                     , thread->Stack.StartOfMemoryRange

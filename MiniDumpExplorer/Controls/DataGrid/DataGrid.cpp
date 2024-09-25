@@ -71,7 +71,7 @@ namespace winrt::MiniDumpExplorer::implementation
         constexpr double MaxHeadersThickness = 32768;
 
         constexpr double DefaultMinColumnWidth = 20;
-        const double DefaultMaxColumnWidth = std::numeric_limits<double>::infinity();
+        constexpr double DefaultMaxColumnWidth = std::numeric_limits<double>::infinity();
 
         constexpr double DefaultIncrementalLoadingThreshold = 3.0;
         constexpr double DefaultDataFetchSize = 3.0;
@@ -79,6 +79,7 @@ namespace winrt::MiniDumpExplorer::implementation
         // 2 seconds delay used to hide the scroll bars for example when OS animations are turned off.
         constexpr int NoScrollBarCountdownMs = 2000;
 
+        // ReSharper disable once GrammarMistakeInComment
         /*
         const std::wstring ElementRowHeadersPresenterName = L"RowHeadersPresenter"s;
         /// <summary>

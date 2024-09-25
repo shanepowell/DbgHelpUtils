@@ -28,7 +28,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         ThreadStackEntry();
 
-        enum class variable_type
+        enum class variable_type : uint8_t
         {
             parameters,
             local_variables

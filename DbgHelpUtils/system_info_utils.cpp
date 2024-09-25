@@ -5,14 +5,10 @@
 #include "windows_setup.h"
 
 #include <avrfsdk.h>
-#include <map>
-#include <unordered_map>
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include <compare>
 
-#include "flags_string_utils.h"
-#include "mini_dump.h"
 #include "stream_hex_dump.h"
 #include "system_info_utils_resources.h"
 
@@ -21,7 +17,7 @@
 
 namespace dlg_help_utils::system_info_utils::resources
 {
-    enum class platform_type : uint16_t;
+    enum class platform_type : uint8_t;
 }
 
 using namespace std::string_literals;

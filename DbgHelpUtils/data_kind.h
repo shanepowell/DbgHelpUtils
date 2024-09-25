@@ -1,7 +1,7 @@
 ﻿#pragma once
 namespace dlg_help_utils::dbg_help
 {
-    enum class data_kind
+    enum class data_kind : uint8_t
     {
         data_is_local,
         data_is_unknown,

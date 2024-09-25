@@ -176,7 +176,7 @@ namespace winrt::MiniDumpExplorer::implementation
             co_await ui_thread;
 
             if(auto const self = weak_self.get();
-                self && !WindowHelper::IsExiting())
+                self && !WindowHelper::IsExiting())  // NOLINT(bugprone-branch-clone)
             {
                 entries_.Append(entry);
             }

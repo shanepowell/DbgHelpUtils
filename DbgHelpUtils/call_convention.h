@@ -3,7 +3,7 @@
 
 namespace dlg_help_utils::dbg_help
 {
-    enum class calling_convention
+    enum class calling_convention : uint8_t
     {
         near_c      = 0x00, // near right to left push, caller pops stack
         far_c       = 0x01, // far right to left push, caller pops stack

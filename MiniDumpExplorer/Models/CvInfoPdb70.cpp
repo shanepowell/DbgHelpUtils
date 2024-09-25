@@ -25,7 +25,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
     }
 
-    void CvInfoPdb70::Set(dlg_help_utils::cv_info_pdb70 cv_info_pdb70)
+    void CvInfoPdb70::Set(dlg_help_utils::cv_info_pdb70 cv_info_pdb70)  // NOLINT(performance-unnecessary-value-param)
     {
         cv_info_pdb70_ = std::move(cv_info_pdb70);
         pdb_file_name_ = cv_info_pdb70_.get_pdb_file_name();

@@ -6,7 +6,7 @@
 
 namespace dlg_help_utils::dbg_help
 {
-    enum class thread_context_type
+    enum class thread_context_type : uint8_t
     {
         x86,
         wow64,

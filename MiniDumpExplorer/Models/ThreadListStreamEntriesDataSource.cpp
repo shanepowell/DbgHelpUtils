@@ -139,7 +139,7 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    fire_and_forget ThreadListStreamEntriesDataSource::LoadMiniDumpThreadStream(dlg_help_utils::mini_dump const& mini_dump, dlg_help_utils::thread_list_stream const thread_list)
+    fire_and_forget ThreadListStreamEntriesDataSource::LoadMiniDumpThreadStream(dlg_help_utils::thread_list_stream const thread_list)
     {
         // ReSharper disable once CppTooWideScope
         apartment_context ui_thread;

@@ -11,6 +11,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         RecentPage();
 
+        // ReSharper disable once CppHidingFunction
         void InitializeComponent();
 
         [[nodiscard]] IDataGridDataSource ItemsSource() const noexcept { return recentFileItemsDataSource_; }

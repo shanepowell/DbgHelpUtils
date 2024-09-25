@@ -10,13 +10,13 @@
 
 namespace dlg_help_utils::size_units
 {
-    enum class print
+    enum class print : uint8_t
     {
         full,
         compact
     };
 
-    enum class size_unit_type
+    enum class size_unit_type : uint8_t
     {
         exabytes,
         petabytes,
@@ -75,37 +75,37 @@ namespace dlg_help_utils::size_units
 
     namespace base_10_literals
     {
-        constexpr base_10::bytes operator "" _b(const unsigned long long val)
+        constexpr base_10::bytes operator""_b(const unsigned long long val)
         {
             return to<base_10::bytes>(val);
         }
 
-        constexpr base_10::kilobytes operator "" _kb(const unsigned long long val)
+        constexpr base_10::kilobytes operator""_kb(const unsigned long long val)
         {
             return to<base_10::kilobytes>(val);
         }
 
-        constexpr base_10::megabytes operator "" _mb(const unsigned long long val)
+        constexpr base_10::megabytes operator""_mb(const unsigned long long val)
         {
             return to<base_10::megabytes>(val);
         }
 
-        constexpr base_10::gigabytes operator "" _gb(const unsigned long long val)
+        constexpr base_10::gigabytes operator""_gb(const unsigned long long val)
         {
             return to<base_10::gigabytes>(val);
         }
 
-        constexpr base_10::terabytes operator "" _tb(const unsigned long long val)
+        constexpr base_10::terabytes operator""_tb(const unsigned long long val)
         {
             return to<base_10::terabytes>(val);
         }
 
-        constexpr base_10::petabytes operator "" _pb(const unsigned long long val)
+        constexpr base_10::petabytes operator""_pb(const unsigned long long val)
         {
             return to<base_10::petabytes>(val);
         }
 
-        constexpr base_10::exabytes operator "" _eb(const unsigned long long val)
+        constexpr base_10::exabytes operator""_eb(const unsigned long long val)
         {
             return to<base_10::exabytes>(val);
         }
@@ -160,37 +160,37 @@ namespace dlg_help_utils::size_units
 
     namespace base_16_literals
     {
-        constexpr base_16::bytes operator "" _b(const unsigned long long val)
+        constexpr base_16::bytes operator""_b(const unsigned long long val)
         {
             return to<base_16::bytes>(val);
         }
 
-        constexpr base_16::kilobytes operator "" _kb(const unsigned long long val)
+        constexpr base_16::kilobytes operator""_kb(const unsigned long long val)
         {
             return to<base_16::kilobytes>(val);
         }
 
-        constexpr base_16::megabytes operator "" _mb(const unsigned long long val)
+        constexpr base_16::megabytes operator""_mb(const unsigned long long val)
         {
             return to<base_16::megabytes>(val);
         }
 
-        constexpr base_16::gigabytes operator "" _gb(const unsigned long long val)
+        constexpr base_16::gigabytes operator""_gb(const unsigned long long val)
         {
             return to<base_16::gigabytes>(val);
         }
 
-        constexpr base_16::terabytes operator "" _tb(const unsigned long long val)
+        constexpr base_16::terabytes operator""_tb(const unsigned long long val)
         {
             return to<base_16::terabytes>(val);
         }
 
-        constexpr base_16::petabytes operator "" _pb(const unsigned long long val)
+        constexpr base_16::petabytes operator""_pb(const unsigned long long val)
         {
             return to<base_16::petabytes>(val);
         }
 
-        constexpr base_16::exabytes operator "" _eb(const unsigned long long val)
+        constexpr base_16::exabytes operator""_eb(const unsigned long long val)
         {
             return to<base_16::exabytes>(val);
         }
@@ -212,7 +212,7 @@ namespace dlg_help_utils::size_units
     template<> struct map_to_size_type<base_16::kilobytes> { static constexpr size_unit_type type = size_unit_type::kilobytes; };
     template<> struct map_to_size_type<base_16::bytes> { static constexpr size_unit_type type = size_unit_type::bytes; };
 
-    enum class string_type
+    enum class string_type : uint8_t
     {
         singular,
         plural,

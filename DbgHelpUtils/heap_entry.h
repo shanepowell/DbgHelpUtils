@@ -36,7 +36,7 @@ namespace dlg_help_utils::heap
         {
         };
 
-        enum class user_requested_size_type
+        enum class user_requested_size_type : uint8_t
         {
             none,
             raw_gt_size,
@@ -45,7 +45,7 @@ namespace dlg_help_utils::heap
             bad_unused_size,
         };
 
-        enum class unused_bytes_type
+        enum class unused_bytes_type : uint8_t
         {
             none,
             unused_bytes_gt_data_area_size,

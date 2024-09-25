@@ -11,7 +11,7 @@
 
 namespace dlg_help_utils::system_info_utils::resources
 {
-    enum class mem_execute_options : uint32_t
+    enum class mem_execute_options : uint32_t  // NOLINT(performance-enum-size)
     {
         MEM_EXECUTE_OPTION_DISABLE = 0x1,
         MEM_EXECUTE_OPTION_ENABLE = 0x2,
@@ -21,7 +21,7 @@ namespace dlg_help_utils::system_info_utils::resources
         MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE = 0x20
     };
 
-    enum class platform_type : uint16_t
+    enum class platform_type : uint8_t
     {
         workstation,
         server,

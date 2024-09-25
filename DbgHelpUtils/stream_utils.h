@@ -95,7 +95,7 @@ namespace dlg_help_utils::stream_utils
         }
 
         T rv;
-        memcpy(&rv, reinterpret_cast<void const*>(field_address.value()), sizeof(T));
+        memcpy(&rv, reinterpret_cast<void const*>(field_address.value()), sizeof(T));  // NOLINT(performance-no-int-to-ptr)
         return rv;
     }
 
@@ -129,7 +129,7 @@ namespace dlg_help_utils::stream_utils
         }
 
         T value;
-        memcpy(&value, reinterpret_cast<void const*>(std::get<0>(field_bit_data.value())), sizeof(T));
+        memcpy(&value, reinterpret_cast<void const*>(std::get<0>(field_bit_data.value())), sizeof(T)); // NOLINT(performance-no-int-to-ptr)
 
         T const bit_mask = (~(std::numeric_limits<T>::max() << std::get<2>(field_bit_data.value()))) << std::get<1>(field_bit_data.value());
         auto data = value &= bit_mask;

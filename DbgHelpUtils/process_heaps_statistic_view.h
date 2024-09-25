@@ -24,7 +24,7 @@ namespace dlg_help_utils::heap
     class process_heaps_statistic_view
     {
     public:
-        enum class view_type
+        enum class view_type : uint8_t
         {
             by_size_frequency,
             by_size_ranges_frequency,
@@ -32,7 +32,7 @@ namespace dlg_help_utils::heap
             by_application_callsite_frequency
         };
 
-        enum class sort_column_type
+        enum class sort_column_type : uint8_t
         {
             size,
             allocated_average,
@@ -45,7 +45,7 @@ namespace dlg_help_utils::heap
             range_size_percent
         };
 
-        enum class sort_order_type
+        enum class sort_order_type : uint8_t
         {
             ascending,
             descending

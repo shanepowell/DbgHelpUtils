@@ -55,7 +55,7 @@ namespace dlg_help_utils::heap::statistic_views
         if(auto application_call_sites = entry.allocation_stack_trace() | std::views::filter(is_application_module_filter);
             std::ranges::begin(application_call_sites) != std::ranges::end(application_call_sites))
         {
-            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker().module_list(), walker().unloaded_module_list(), walker().symbol_engine()).value();
+            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker().module_list(), walker().unloaded_module_list(), walker().symbol_engine());
         }
 
         return std::nullopt;
@@ -89,7 +89,7 @@ namespace dlg_help_utils::heap::statistic_views
         if(auto application_call_sites = entries.front().allocation_stack_trace() | std::views::filter(is_application_module_filter) | std::views::filter(find_application_module_in_all_other_stacks_filter);
             std::ranges::begin(application_call_sites) != std::ranges::end(application_call_sites))
         {
-            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker().module_list(), walker().unloaded_module_list(), walker().symbol_engine()).value();
+            return stream_stack_dump::mini_dump_memory_walker::find_symbol_info(*std::ranges::begin(application_call_sites), walker().module_list(), walker().unloaded_module_list(), walker().symbol_engine());
         }
 
         return std::nullopt;

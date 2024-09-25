@@ -9,7 +9,7 @@
 
 namespace Utility
 {
-    enum class CompareResult
+    enum class CompareResult : uint8_t
     {
         Less,
         Equal,

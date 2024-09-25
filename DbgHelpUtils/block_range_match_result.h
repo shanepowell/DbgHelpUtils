@@ -2,7 +2,7 @@
 
 namespace dlg_help_utils::heap
 {
-    enum class block_range_match_result
+    enum class block_range_match_result : uint8_t
     {
         block_match,
         block_contains,

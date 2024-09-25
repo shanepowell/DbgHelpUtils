@@ -21,6 +21,7 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpPageBase& operator=(MiniDumpPageBase const&) = default;
         MiniDumpPageBase& operator=(MiniDumpPageBase &&) = default;
 
+        // ReSharper disable once CppHiddenFunction
         void OnNavigatedTo(Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
         {
             auto parameters = e.Parameter().as<MiniDumpExplorer::MiniDumpPageParameters>();

@@ -189,7 +189,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         wchar_t *name;
-        if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_SYMNAME, &name))
+        if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_SYMNAME, &name))  // NOLINT(bugprone-multi-level-implicit-pointer-conversion)
         {
             cache_info_->set_name(std::nullopt);
             throw_sym_get_type_info_error(L"TI_GET_SYMNAME"sv, optional_type::optional);
@@ -215,7 +215,7 @@ namespace dlg_help_utils::dbg_help
         }
         else
         {
-            cache_info_->set_length(rv.value());
+            cache_info_->set_length(rv);
         }
 
         return cache_info_->length();
@@ -294,7 +294,7 @@ namespace dlg_help_utils::dbg_help
         }
         else
         {
-            cache_info_->set_offset(rv.value());
+            cache_info_->set_offset(rv);
         }
 
         return cache_info_->offset();
