@@ -62,7 +62,7 @@ namespace dlg_help_utils::heap::allocation_graph
                 continue;
             }
 
-            return graph_node_variable_symbol_reference_data{ index(), symbol_reference.address(), it->second.variable_offset, it->second.variable_address, symbol_reference.symbol_type(), it->second.variable_symbol, it->second.name };
+            return graph_node_variable_symbol_reference_data{ .parent_node_index= index(), .parent_address= symbol_reference.address(), .variable_offset= it->second.variable_offset, .variable_address= it->second.variable_address, .parent_symbol_type= symbol_reference.symbol_type(), .variable_symbol_type= it->second.variable_symbol, .name= it->second.name };
         }
 
         return std::nullopt;

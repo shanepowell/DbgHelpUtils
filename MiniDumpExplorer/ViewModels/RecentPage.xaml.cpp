@@ -19,6 +19,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     RecentPage::RecentPage() = default;
 
     void RecentPage::InitializeComponent()

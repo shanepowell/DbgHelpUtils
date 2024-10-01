@@ -27,7 +27,7 @@ namespace dlg_help_utils::heap::statistic_views
         }
 
         template<typename It>
-        uint64_t create_stack_trace_key(It first, It last)
+        uint64_t create_stack_trace_key(It const& first, It const& last)
         {
             return std::accumulate(first, last, static_cast<uint64_t>(0), [](uint64_t seed, uint64_t const value) { hash_combine(seed, value); return seed; });
         }

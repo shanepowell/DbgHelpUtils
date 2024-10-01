@@ -477,11 +477,11 @@ namespace
 
             node_display_state state
             {
-                &node,
-                0,
-                print_max_size,
-                indent+2,
-                std::move(node_parents)
+                .node= &node,
+                .print_offset= 0,
+                .print_max_size= print_max_size,
+                .indent= indent + 2,
+                .parents= std::move(node_parents)
             };
 
             if(call_depth > options.graph_display_max_call_depth())

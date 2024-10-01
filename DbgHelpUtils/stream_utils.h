@@ -62,7 +62,7 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        T value;
+        T value{};
         if(stream.read(&value, sizeof(T)) != sizeof(T))
         {
             return std::nullopt;
@@ -128,7 +128,7 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        T value;
+        T value{};
         memcpy(&value, reinterpret_cast<void const*>(std::get<0>(field_bit_data.value())), sizeof(T)); // NOLINT(performance-no-int-to-ptr)
 
         T const bit_mask = (~(std::numeric_limits<T>::max() << std::get<2>(field_bit_data.value()))) << std::get<1>(field_bit_data.value());

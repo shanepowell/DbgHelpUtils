@@ -6,14 +6,11 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct DefaultPage : DefaultPageT<DefaultPage>
     {
-        DefaultPage() = default;
+        DefaultPage();
 
         // ReSharper disable once CppHidingFunction
         void InitializeComponent();
         void NavigationView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
-
-    private:
-        static std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> pageMap_;
     };
 }
 

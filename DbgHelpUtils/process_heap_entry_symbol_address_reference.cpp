@@ -25,6 +25,6 @@ namespace dlg_help_utils::heap::allocation_graph
     void process_heap_entry_symbol_address_reference::add_variable_symbol_reference(uint64_t const variable_address, uint64_t const variable_address_offset, size_t const pointer_size, dbg_help::symbol_type_info pointer_symbol_type, std::wstring name)
     {
         auto const end_variable_address = variable_address + pointer_size - 1;
-        variable_symbol_references_.insert(std::make_pair(end_variable_address, variable_symbol_data{variable_address_offset, variable_address, std::move(pointer_symbol_type), std::move(name)}));
+        variable_symbol_references_.insert(std::make_pair(end_variable_address, variable_symbol_data{.variable_offset= variable_address_offset, .variable_address= variable_address, .variable_symbol= std::move(pointer_symbol_type), .name= std::move(name)}));
     }
 }

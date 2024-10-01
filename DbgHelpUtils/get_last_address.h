@@ -5,7 +5,7 @@
 namespace dlg_help_utils
 {
     template<typename T>
-    uint64_t get_last_address(T entry)
+    uint64_t get_last_address(T const& entry)
     {
         return entry.user_address() + std::max(entry.user_requested_size().count(), 1LL) - 1;
     }

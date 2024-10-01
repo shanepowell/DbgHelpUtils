@@ -33,10 +33,10 @@ namespace
 
 logger::logger(key)
 {
-    MessageFilter([this](log_command const command, log_level const level, const std::string& log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)
+    MessageFilter([this](log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day) mutable // NOLINT(performance-unnecessary-value-param)
     {
         do_run_log_command(command, level, std::move(log_line), current_level, now_day);
-    });  // NOLINT(performance-unnecessary-value-param)
+    });
     open_log_file(GlobalOptions::Options().LogLevel());
 }
 
@@ -90,8 +90,7 @@ void logger::Flush() const
    }
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
-void logger::Close()
+void logger::Close() const
 {
     run_log_command(log_command::close_log_file, log_level::system, "", filter_);
 }
@@ -245,9 +244,7 @@ void logger::run_log_command(log_command const command, log_level const level, s
 
     auto const now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
     auto const now_day = std::chrono::floor<std::chrono::days>(now);
-    auto log_line = std::format("[{0:%T}][{1}][T:{2}] {3}\n", now, log_level_strings_[static_cast<int>(level) + 1], GetCurrentThreadId(), message);
-
-    filter(command, level, std::move(log_line), current_level, now_day);
+    filter(command, level, std::format("[{0:%T}][{1}][T:{2}] {3}\n", now, log_level_strings_[static_cast<size_t>(static_cast<int>(level) + 1)], GetCurrentThreadId(), message), current_level, now_day);
 }
 
 // ReSharper disable once CppPassValueParameterByConstReference

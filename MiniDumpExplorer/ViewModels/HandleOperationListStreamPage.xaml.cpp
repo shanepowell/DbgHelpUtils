@@ -14,6 +14,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     HandleOperationListStreamPage::HandleOperationListStreamPage() = default;
 
     void HandleOperationListStreamPage::InitializeComponent()
@@ -23,10 +24,12 @@ namespace winrt::MiniDumpExplorer::implementation
         onRowDoubleTapped_ = HandleOperationDataGrid().RowDoubleTapped({ this, &HandleOperationListStreamPage::OnRowDoubleTapped });
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void HandleOperationListStreamPage::SelectHandleOperation([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void HandleOperationListStreamPage::OnRowDoubleTapped([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] DataGridRowDetailsEventArgs const& e) const
     {
     }

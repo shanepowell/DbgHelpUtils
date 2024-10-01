@@ -27,7 +27,7 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         void OpenDefaultTab();
         Windows::Foundation::IAsyncAction OpenFileInNewTab();
-        static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile const& file);
+        static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile file);
     };
 }
 

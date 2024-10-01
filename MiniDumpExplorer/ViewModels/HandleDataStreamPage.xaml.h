@@ -36,9 +36,9 @@ namespace winrt::MiniDumpExplorer::implementation
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
 
     private:
-        uint32_t index_;
+        uint32_t index_{};
         dlg_help_utils::handle_data_stream handle_data_{};
-        event_token onRowDoubleTapped_;
+        event_token onRowDoubleTapped_{};
         MiniDumpExplorer::HandleDataStreamEntriesDataSource handleDataStreamEntriesDataSource_{};
     };
 }

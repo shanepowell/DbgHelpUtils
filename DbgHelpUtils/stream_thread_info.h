@@ -21,7 +21,7 @@ namespace dlg_help_utils
         [[nodiscard]] std::wstring_view const& thread_name() const { return thread_name_.name(); }
 
     private:
-        MINIDUMP_THREAD_INFO const* thread_info_;
+        MINIDUMP_THREAD_INFO const* thread_info_{nullptr};
         stream_thread_name thread_name_;
     };
 }

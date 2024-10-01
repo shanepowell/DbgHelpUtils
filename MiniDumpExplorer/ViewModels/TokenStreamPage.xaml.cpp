@@ -14,6 +14,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     TokenStreamPage::TokenStreamPage() = default;
 
     void TokenStreamPage::InitializeComponent()
@@ -23,10 +24,12 @@ namespace winrt::MiniDumpExplorer::implementation
         onRowDoubleTapped_ = TokensDataGrid().RowDoubleTapped({ this, &TokenStreamPage::OnRowDoubleTapped });
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void TokenStreamPage::SelectToken([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void TokenStreamPage::OnRowDoubleTapped([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] DataGridRowDetailsEventArgs const& e) const
     {
     }

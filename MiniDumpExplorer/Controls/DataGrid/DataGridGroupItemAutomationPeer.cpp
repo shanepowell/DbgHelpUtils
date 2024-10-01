@@ -304,7 +304,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
                 // the first cell is always the indentation filler cell if grouping is enabled, so skip it
                 assert(column + 1 < dgr->Cells().Count());
-                auto const cell = dgr->Cells()[column + 1];
+                auto const cell = dgr->Cells()[static_cast<size_t>(column) + 1];
                 if (auto const peer = Automation::Peers::FrameworkElementAutomationPeer::CreatePeerForElement(cell);
                     peer)
                 {

@@ -2128,6 +2128,7 @@ const std::map<winrt::guid, ObjectData> InterfaceIdToDependencyProperties = []()
           { L"nextbuttonstyle"s, []() { return winrt::Microsoft::UI::Xaml::Controls::PipsPager::NextButtonStyleProperty(); } },
           { L"selectedpipstyle"s, []() { return winrt::Microsoft::UI::Xaml::Controls::PipsPager::SelectedPipStyleProperty(); } },
           { L"normalpipstyle"s, []() { return winrt::Microsoft::UI::Xaml::Controls::PipsPager::NormalPipStyleProperty(); } },
+          { L"wrapmode"s, []() { return winrt::Microsoft::UI::Xaml::Controls::PipsPager::WrapModeProperty(); } },
         }
       }
     ));
@@ -2761,6 +2762,7 @@ const std::map<winrt::guid, ObjectData> InterfaceIdToDependencyProperties = []()
           { L"allowdroptabs"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TabView::AllowDropTabsProperty(); } },
           { L"selectedindex"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TabView::SelectedIndexProperty(); } },
           { L"selecteditem"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TabView::SelectedItemProperty(); } },
+          { L"cantearouttabs"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TabView::CanTearOutTabsProperty(); } },
         }
       }
     ));

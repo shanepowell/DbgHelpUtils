@@ -1362,8 +1362,8 @@ namespace winrt::MiniDumpExplorer::implementation
                 UpdateCurrentState(DisplayData().GetDisplayedElement(CurrentSlot()), CurrentColumnIndex(), true /*applyCellState*/);
             }
 
-            auto const oldFocusedColumn = FocusedColumn();
-            auto const internalOldFocusedColumn = oldFocusedColumn.try_as<DataGridColumn>();
+            auto const& oldFocusedColumn = FocusedColumn();
+            auto const& internalOldFocusedColumn = oldFocusedColumn.try_as<DataGridColumn>();
             FocusedColumn(nullptr);
 
             if (columnHeaderHasFocus_)
@@ -1407,10 +1407,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGrid::HorizontalOffset(double value)
     {
-        if (value < 0)
-        {
-            value = 0;
-        }
+        value = std::max(value, 0.0);
 
         if (auto const widthNotVisible = std::max(0.0, ColumnsInternal().VisibleEdgedColumnsWidth() - CellsWidth());
             value > widthNotVisible)
@@ -1737,7 +1734,7 @@ namespace winrt::MiniDumpExplorer::implementation
             columnHeadersPresenter_.as<DataGridColumnHeadersPresenter>()->OwningGrid(*this);
 
             // Columns were added before our Template was applied, add the ColumnHeaders now
-            auto sortedInternal = ColumnsItemsInternal();
+            std::vector<MiniDumpExplorer::DataGridColumn> sortedInternal = ColumnsItemsInternal();
             std::ranges::sort(sortedInternal, [](auto const& lhs, auto const& rhs) { return lhs.template as<DataGridColumn>()->DisplayIndexWithFiller() < rhs.template as<DataGridColumn>()->DisplayIndexWithFiller(); });
             for (auto const& column : sortedInternal)
             {
@@ -1963,7 +1960,7 @@ namespace winrt::MiniDumpExplorer::implementation
         CancelEdit(DataGridEditingUnit::Row, false /*raiseEvents*/);
 
         // We want to persist selection throughout a reset, so store away the selected items
-        auto const selectedItemsCache = selectedItems_.SelectedItemsCache();
+        auto&& selectedItemsCache = selectedItems_.SelectedItemsCache();
 
         if (recycleRows)
         {
@@ -2134,11 +2131,7 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             if (isForHorizontalScroll)
             {
-                auto newHorizontalOffset = HorizontalOffset() + offsetDelta;
-                if (newHorizontalOffset < 0)
-                {
-                    newHorizontalOffset = 0;
-                }
+                auto newHorizontalOffset = std::max(HorizontalOffset() + offsetDelta, 0.0);
 
                 if (auto const maxHorizontalOffset = std::max(0.0, ColumnsInternal().VisibleEdgedColumnsWidth() - CellsWidth());
                     newHorizontalOffset > maxHorizontalOffset)
@@ -2244,6 +2237,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 break;
             }
             // fallthrough
+            [[fallthrough]];
 
         case DataGridInternal::DataGridSelectionAction::SelectCurrent:
             ClearRowSelection(slot /*rowIndexException*/, true /*setAnchorRowIndex*/);
@@ -2633,7 +2627,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         if (EditingRow() && EditingColumnIndex() != InvalidIndex && !executingLostFocusActions_)
         {
-            auto const editingColumn = ColumnsItemsInternal()[EditingColumnIndex()];
+            auto const& editingColumn = ColumnsItemsInternal()[EditingColumnIndex()];
             if (auto const editingElement = editingColumn.GetCellContent(EditingRow());
                 editingElement && UIHelper::ContainsChild(editingElement, focusedObject_))
             {
@@ -2927,7 +2921,7 @@ namespace winrt::MiniDumpExplorer::implementation
             columnInternal->HeaderCell().as<DataGridColumnHeader>()->EnsureStyle(previousStyle);
         }
 
-        if (auto const fillerColumn = ColumnsInternal().FillerColumn())
+        if (auto const& fillerColumn = ColumnsInternal().FillerColumn())
         {
             auto const columnInternal = fillerColumn.as<DataGridColumn>();
             columnInternal->HeaderCell().as<DataGridColumnHeader>()->EnsureStyle(previousStyle);
@@ -3734,7 +3728,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         // Get or generate the editing row if it doesn't exist
-        auto dataGridRow = EditingRow();
+        MiniDumpExplorer::DataGridRow dataGridRow = EditingRow();
         if (!dataGridRow)
         {
             assert(!RowGroupHeadersTable().Contains(CurrentSlot()));
@@ -4813,7 +4807,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return false;
         }
 
-        auto const editingRow = EditingRow();
+        auto const& editingRow = EditingRow();
 
         if (raiseEvents)
         {
@@ -5108,7 +5102,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return hstring{ text.str() };
     }
 
-    double DataGrid::GetHorizontalSmallScrollDecrease()
+    double DataGrid::GetHorizontalSmallScrollDecrease() const
     {
         // If the first column is covered up, scroll to the start of it when the user clicks the left button
         if (negHorizontalOffset_ > 0)
@@ -5973,7 +5967,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
         }
 
-        const auto oldFocusedColumn = FocusedColumn();
+        auto const& oldFocusedColumn = FocusedColumn();
 
         ++noSelectionChangeCount_;
         auto handle = dlg_help_utils::make_scope_exit([this]()
@@ -6050,7 +6044,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     bool DataGrid::ProcessLeftMost(int32_t const firstVisibleColumnIndex, int32_t const firstVisibleSlot)
     {
-        auto const oldFocusedColumn = FocusedColumn();
+        auto const& oldFocusedColumn = FocusedColumn();
 
         ++noSelectionChangeCount_;
         {
@@ -6265,7 +6259,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
         }
 
-        auto const oldFocusedColumn = FocusedColumn();
+        auto const& oldFocusedColumn = FocusedColumn();
 
         ++noSelectionChangeCount_;
         {
@@ -6345,7 +6339,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     bool DataGrid::ProcessRightMost(int32_t const lastVisibleColumnIndex, int32_t const firstVisibleSlot)
     {
-        auto const oldFocusedColumn = FocusedColumn();
+        auto const& oldFocusedColumn = FocusedColumn();
 
         ++noSelectionChangeCount_;
         {
@@ -6667,8 +6661,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGrid::ResetEditingRow()
     {
-        auto const oldEditingRow = EditingRow();
-        auto const internalOldEditingRow = oldEditingRow.try_as<DataGridRow>();
+        auto const& oldEditingRow = EditingRow();
+        auto const& internalOldEditingRow = oldEditingRow.try_as<DataGridRow>();
         if (oldEditingRow &&
             oldEditingRow != focusedRow_ &&
             !IsSlotVisible(internalOldEditingRow->Slot()))
@@ -6747,8 +6741,8 @@ namespace winrt::MiniDumpExplorer::implementation
                 if (auto const groupHeader = element.try_as<MiniDumpExplorer::DataGridRowGroupHeader>();
                     groupHeader)
                 {
-                    auto const oldStyle = groupHeader.Level() < rowGroupHeaderStylesOld_.size() ? rowGroupHeaderStylesOld_[groupHeader.Level()] : oldLastStyle;
-                    auto const newStyle = groupHeader.Level() < rowGroupHeaderStyles_.Size() ? rowGroupHeaderStyles_.GetAt(groupHeader.Level()) : lastStyle;
+                    auto const& oldStyle = groupHeader.Level() < rowGroupHeaderStylesOld_.size() ? rowGroupHeaderStylesOld_[groupHeader.Level()] : oldLastStyle;
+                    auto const& newStyle = groupHeader.Level() < rowGroupHeaderStyles_.Size() ? rowGroupHeaderStyles_.GetAt(groupHeader.Level()) : lastStyle;
                     EnsureElementStyle(groupHeader, oldStyle, newStyle);
                 }
             }
@@ -7606,8 +7600,8 @@ namespace winrt::MiniDumpExplorer::implementation
                     for(auto const& bindingPath : column.as<DataGridColumn>()->BindingPaths())
                     {
                         std::wstring declaringPath;
-                        auto declaringItem = dataItem;
-                        auto bindingProperty = bindingPath;
+                        Windows::Foundation::IInspectable declaringItem = dataItem;
+                        std::wstring bindingProperty = bindingPath;
 
                         // Check for nested paths.
                         if (auto const lastIndexOfSeparator = StringHelper::LastIndexOfAny(bindingPath, TypeHelper::PropertyNameSeparator, TypeHelper::LeftIndexerToken);
@@ -7744,7 +7738,7 @@ namespace winrt::MiniDumpExplorer::implementation
             assert(EditingRow());
 
             // Determine the binding path.
-            auto bindingPath = it->second.path;
+            std::wstring bindingPath = it->second.path;
             auto const propertyName = std::wstring{e.PropertyName()};
             if (bindingPath.empty())
             {

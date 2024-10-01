@@ -27,11 +27,12 @@ using namespace std::string_literals;
 using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils;
 
-std::set<uint32_t> get_filtered_thread_ids(dump_file_options const& options);
-
-std::set<uint32_t> get_filtered_thread_ids(dump_file_options const& options)
+namespace
 {
-    return vector_to_hash_set<uint32_t>(options.filter_values(L"thread_id"s));
+    std::set<uint32_t> get_filtered_thread_ids(dump_file_options const& options)
+    {
+        return vector_to_hash_set<uint32_t>(options.filter_values(L"thread_id"s));
+    }
 }
 
 void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context const& thread_context, dump_file_options const& options)

@@ -75,7 +75,7 @@ namespace dlg_help_utils
                 throw exceptions::wide_runtime_error{std::format(L"Range value: [{}] format incorrect. Expecting <start>-<size> format", value)};
             }
 
-            return user_range{string_converter<uint64_t, uint64_t>(start), string_converter<uint64_t, uint64_t>(size)};
+            return user_range{.start= string_converter<uint64_t, uint64_t>(start), .size= string_converter<uint64_t, uint64_t>(size)};
         }
 
         template <>

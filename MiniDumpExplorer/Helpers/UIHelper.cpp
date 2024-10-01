@@ -150,7 +150,7 @@ hstring UIHelper::ObjectToString(Windows::Foundation::IInspectable const& object
 {
     if (auto const displayValue = object.try_as<hstring>(); displayValue)
     {
-        return displayValue.value();
+        return hstring{displayValue.value()};
     }
 
     if (auto const displayName = object.try_as<Windows::Foundation::IStringable>(); displayName)
@@ -168,7 +168,7 @@ hstring UIHelper::ObjectToString(Windows::Foundation::IInspectable const& object
         , object
         , false))
     {
-        return hstring{ss.str()};
+        return hstring{std::move(ss).str()};
     }
 
     // fallback
@@ -360,7 +360,7 @@ void UIHelper::CreateSingleControlMenu(std::vector<Controls::MenuFlyoutItemBase>
 
     menu.Items().Append(CreateCopyValue(control));
     menu.Items().Append(Controls::MenuFlyoutSeparator{});
-    for(auto item : menus)
+    for(auto const& item : menus)
     {
         menu.Items().Append(item);
     }

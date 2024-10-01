@@ -21,7 +21,7 @@ namespace dlg_help_utils
             if (auto const thread = thread_list.find_thread(thread_id, names_list, memory_list, memory64_list); thread.has_value())
             {
                 return thread_stack{
-                    thread->stack(), (*thread)->Stack.Memory.DataSize, (*thread)->Stack.StartOfMemoryRange
+                    .stack= thread->stack(), .stack_size= (*thread)->Stack.Memory.DataSize, .stack_start_address= (*thread)->Stack.StartOfMemoryRange
                 };
             }
         }
@@ -31,7 +31,7 @@ namespace dlg_help_utils
             if (auto const thread = thread_ex_list.find_thread(thread_id, names_list); thread.has_value())
             {
                 return thread_stack{
-                    thread->stack(), (*thread)->Stack.Memory.DataSize, (*thread)->Stack.StartOfMemoryRange
+                    .stack= thread->stack(), .stack_size= (*thread)->Stack.Memory.DataSize, .stack_start_address= (*thread)->Stack.StartOfMemoryRange
                 };
             }
         }

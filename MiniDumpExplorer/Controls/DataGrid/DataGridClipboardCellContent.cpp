@@ -12,9 +12,9 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     DataGridClipboardCellContent::DataGridClipboardCellContent(IInspectable const& item, MiniDumpExplorer::DataGridColumn const& column, IInspectable const& content)
-        : item_{std::move(item)}
-        , column_{std::move(column)}
-        , content_{std::move(content)}
+        : item_{item}
+        , column_{column}
+        , content_{content}
     {
     }
 }

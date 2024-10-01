@@ -9,7 +9,7 @@ using namespace winrt::Windows::Foundation;
 
 namespace ValidationUtil
 {
-    std::vector<Utility::BindingInfo> GetBindingInfoOfSingleElement(FrameworkElement const& element
+    std::vector<Utility::BindingInfo> GetBindingInfoOfSingleElement(FrameworkElement const& element  // NOLINT(misc-use-internal-linkage)
         , IInspectable const& inheritedDataContext
         , IInspectable const& dataItem
         , bool const twoWayOnly
@@ -17,7 +17,7 @@ namespace ValidationUtil
     {
         // Now see which of the possible dependency properties are being used
         std::vector<Utility::BindingInfo> bindingData;
-        for(auto const bindingTarget : GetDependencyProperties(element, useBlockList))
+        for(auto const& bindingTarget : GetDependencyProperties(element, useBlockList))
         {
             // We add bindings according to the same conditions as BindingGroups:
             //    Element.Binding.Mode == TwoWay
@@ -59,7 +59,7 @@ namespace ValidationUtil
         return bindingData;
     }
 
-    std::experimental::generator<DependencyProperty> GetDependencyProperties(FrameworkElement const& element, bool const useBlockList)
+    std::experimental::generator<DependencyProperty> GetDependencyProperties(FrameworkElement const& element, bool const useBlockList)  // NOLINT(misc-use-internal-linkage)
     {
         if(useBlockList &&
             (element.try_as<Controls::Panel>() || 

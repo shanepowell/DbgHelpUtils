@@ -19,6 +19,9 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpPageParameters;
 
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
+    UnsupportedStreamPage::UnsupportedStreamPage() = default;
+
     void UnsupportedStreamPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters)
     {
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();

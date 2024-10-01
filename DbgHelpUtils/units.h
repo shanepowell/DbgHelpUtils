@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// ReSharper disable CppClangTidyModernizeUseConstraints
+#pragma once
 #include <compare>
 #include <limits>
 #include <ratio>

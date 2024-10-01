@@ -39,7 +39,7 @@ namespace dlg_help_utils::time_units::resources
         }
     }
 
-    std::unordered_map<time_unit_type, std::tuple<std::wstring, std::wstring>> const& get_type_strings()
+    std::unordered_map<time_unit_type, std::tuple<std::wstring, std::wstring>> const& get_type_strings()  // NOLINT(misc-use-internal-linkage)
     {
         static std::unordered_map const data{populate_type_strings()};
         return data;

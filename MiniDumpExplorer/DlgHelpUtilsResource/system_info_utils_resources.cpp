@@ -522,7 +522,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_enum_string(key, version_strings());
     }
 
-    std::vector<std::wstring> suite_mask_to_strings(unsigned short const suite_mask)
+    std::vector<std::wstring> suite_mask_to_strings(unsigned short const suite_mask)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(suite_mask, suite_masks());
     }
@@ -532,7 +532,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags, misc_info_flags());
     }
 
-    std::vector<std::wstring> misc_info_flags_to_strings(uint32_t const flags)
+    std::vector<std::wstring> misc_info_flags_to_strings(uint32_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(flags, misc_info_flags());
     }
@@ -552,7 +552,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags, vm_counters_2_flag_masks());
     }
 
-    std::vector<std::wstring> vm_counters_2_flags_to_strings(uint16_t const flags)
+    std::vector<std::wstring> vm_counters_2_flags_to_strings(uint16_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(flags, vm_counters_2_flag_masks());
     }
@@ -567,7 +567,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_enum_string(static_cast<MINIDUMP_HANDLE_OBJECT_INFORMATION_TYPE>(type), object_information_types());
     }
 
-    std::vector<std::wstring> process_execute_flags_to_strings(uint32_t const flags)
+    std::vector<std::wstring> process_execute_flags_to_strings(uint32_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(static_cast<mem_execute_options>(flags), process_execute_flags());
     }
@@ -577,7 +577,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(flags & mask, version_file_flag_masks());
     }
 
-    std::vector<std::wstring> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)
+    std::vector<std::wstring> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(flags & mask, version_file_flag_masks());
     }
@@ -587,7 +587,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(file_os, version_file_os_masks());
     }
 
-    std::vector<std::wstring> version_file_os_to_strings(uint32_t const file_os)
+    std::vector<std::wstring> version_file_os_to_strings(uint32_t const file_os)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(file_os, version_file_os_masks());
     }
@@ -612,7 +612,7 @@ namespace dlg_help_utils::system_info_utils
         return flags_string_utils::generate_flags_string(features1, other_processor_features());
     }
 
-    std::vector<std::wstring> other_processor_features_to_strings(uint64_t const features1, [[maybe_unused]] uint64_t const features2)
+    std::vector<std::wstring> other_processor_features_to_strings(uint64_t const features1, [[maybe_unused]] uint64_t const features2)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(features1, other_processor_features());
     }

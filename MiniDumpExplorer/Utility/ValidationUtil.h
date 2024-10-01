@@ -60,11 +60,11 @@ namespace ValidationUtil
 
         while (!children.empty())
         {
-            auto child = children.back();
+            auto const& child = children.back();
             children.pop_back();
-            auto inheritedDataContext = dataContexts.back();
+            auto const& inheritedDataContext = dataContexts.back();
             dataContexts.pop_back();
-            auto dataContext = inheritedDataContext;
+            winrt::Windows::Foundation::IInspectable dataContext = inheritedDataContext;
 
             // Skip this particular child element if it is one of the excludedTypes
             if (!IsExcludedType<T...>(element))

@@ -745,7 +745,7 @@ namespace winrt::MiniDumpExplorer::implementation
         totalRowsHeight -= static_cast<double>(detailsCount) * RowDetailsHeightEstimate();
 
         // Update the RowHeightEstimate if we have more row information
-        if (DisplayData().LastScrollingSlot() >= lastEstimatedRow_)
+        if (DisplayData().LastScrollingSlot() >= lastEstimatedRow_)  // NOLINT(readability-use-std-min-max)
         {
             lastEstimatedRow_ = DisplayData().LastScrollingSlot();
             rowHeightEstimate_ = totalRowsHeight / (lastEstimatedRow_ + 1 - collapsedSlotsTable_.GetIndexCount(0, lastEstimatedRow_));

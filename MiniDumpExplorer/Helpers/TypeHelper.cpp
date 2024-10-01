@@ -68,7 +68,7 @@ namespace TypeHelper
         }
     }
 
-    std::wstring GetBindingPropertyName(winrt::Microsoft::UI::Xaml::Data::Binding const& binding)
+    std::wstring GetBindingPropertyName(winrt::Microsoft::UI::Xaml::Data::Binding const& binding)  // NOLINT(misc-use-internal-linkage)
     {
         auto const path = binding.Path();
         if(!path)
@@ -91,7 +91,7 @@ namespace TypeHelper
         return pathString.substr(lastPos + 1);
     }
 
-    std::experimental::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::guid const& id)
+    std::experimental::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::guid const& id)  // NOLINT(misc-use-internal-linkage)
     {
         if(auto const it = InterfaceIdToDependencyProperties.find(id);
             it != InterfaceIdToDependencyProperties.end())
@@ -103,7 +103,7 @@ namespace TypeHelper
         }
     }
 
-    std::experimental::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Windows::Foundation::IInspectable const& object)
+    std::experimental::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Windows::Foundation::IInspectable const& object)  // NOLINT(misc-use-internal-linkage)
     {
         if(!object)
         {
@@ -119,7 +119,7 @@ namespace TypeHelper
         }
     }
 
-    winrt::Microsoft::UI::Xaml::DependencyProperty GetDependencyProperty(winrt::Windows::Foundation::IInspectable const& object, std::wstring_view const& name)
+    winrt::Microsoft::UI::Xaml::DependencyProperty GetDependencyProperty(winrt::Windows::Foundation::IInspectable const& object, std::wstring_view const& name)  // NOLINT(misc-use-internal-linkage)
     {
         if(!object)
         {
@@ -139,7 +139,7 @@ namespace TypeHelper
         return nullptr;
     }
 
-    winrt::Microsoft::UI::Xaml::DependencyProperty GetDependencyProperty(winrt::guid const& id, std::wstring_view const& name)
+    winrt::Microsoft::UI::Xaml::DependencyProperty GetDependencyProperty(winrt::guid const& id, std::wstring_view const& name)  // NOLINT(misc-use-internal-linkage)
     {
         auto const it = InterfaceIdToDependencyProperties.find(id);
         if(it == InterfaceIdToDependencyProperties.end())
@@ -211,7 +211,7 @@ namespace TypeHelper
         return object;
     }
 
-    void SetDependencyPropertyValue(winrt::Windows::Foundation::IInspectable const& object, winrt::Microsoft::UI::Xaml::DependencyProperty const& dependencyProperty, winrt::Windows::Foundation::IInspectable const& value)
+    void SetDependencyPropertyValue(winrt::Windows::Foundation::IInspectable const& object, winrt::Microsoft::UI::Xaml::DependencyProperty const& dependencyProperty, winrt::Windows::Foundation::IInspectable const& value)  // NOLINT(misc-use-internal-linkage)
     {
         auto const dependencyObject = object.try_as<winrt::Microsoft::UI::Xaml::DependencyObject>();
 
@@ -358,7 +358,7 @@ namespace TypeHelper
         return property;
     }
 
-    winrt::Windows::Foundation::IInspectable GetDependencyPropertyValue(winrt::Windows::Foundation::IInspectable const& object, winrt::Microsoft::UI::Xaml::DependencyProperty const& dependencyProperty)
+    winrt::Windows::Foundation::IInspectable GetDependencyPropertyValue(winrt::Windows::Foundation::IInspectable const& object, winrt::Microsoft::UI::Xaml::DependencyProperty const& dependencyProperty)  // NOLINT(misc-use-internal-linkage)
     {
         auto const dependencyObject = object.try_as<winrt::Microsoft::UI::Xaml::DependencyObject>();
 

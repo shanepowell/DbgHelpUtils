@@ -14,6 +14,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     MemoryInfoListStreamPage::MemoryInfoListStreamPage() = default;
 
     void MemoryInfoListStreamPage::InitializeComponent()
@@ -23,10 +24,12 @@ namespace winrt::MiniDumpExplorer::implementation
         onRowDoubleTapped_ = MemoryInfoDataGrid().RowDoubleTapped({ this, &MemoryInfoListStreamPage::OnRowDoubleTapped });
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void MemoryInfoListStreamPage::SelectMemoryRange([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void MemoryInfoListStreamPage::OnRowDoubleTapped([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] DataGridRowDetailsEventArgs const& e) const
     {
     }

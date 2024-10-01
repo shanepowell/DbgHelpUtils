@@ -20,7 +20,19 @@ using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils::system_time_utils;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, uint32_t feature);
+namespace
+{
+    void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, uint32_t const feature)
+    {
+        if (auto const mask = 1ui64 << feature; (xstate.EnabledFeatures & mask) == mask)
+        {
+            using namespace size_units::base_16;
+            log << std::format(L"      {}\n", system_info_utils::xstate_data_feature_to_string(feature));
+            log << std::format(L"        Offset: {}\n", to_hex(xstate.Features[feature].Offset));
+            log << std::format(L"        Size: {0} ({1})", to_hex(xstate.Features[feature].Size), to_wstring(bytes{xstate.Features[feature].Size}));
+        }
+    }
+}
 
 void dump_mini_dump_system_info_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {
@@ -211,16 +223,6 @@ void dump_mini_dump_misc_info_stream_data(std::wostream& log, mini_dump const& m
     }
 }
 
-void dump_mini_dump_xstate_config_feature(std::wostream& log, XSTATE_CONFIG_FEATURE_MSC_INFO const& xstate, uint32_t const feature)
-{
-    if (auto const mask = 1ui64 << feature; (xstate.EnabledFeatures & mask) == mask)
-    {
-        using namespace size_units::base_16;
-        log << std::format(L"      {}\n", system_info_utils::xstate_data_feature_to_string(feature));
-        log << std::format(L"        Offset: {}\n", to_hex(xstate.Features[feature].Offset));
-        log << std::format(L"        Size: {0} ({1})", to_hex(xstate.Features[feature].Size), to_wstring(bytes{xstate.Features[feature].Size}));
-    }
-}
 
 void dump_mini_dump_process_vm_counters_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index)
 {

@@ -24,6 +24,6 @@ namespace dlg_help_utils::process
     memory_range global_symbol::variable_memory_range() const
     {
         auto const start = symbol_type().address().value_or(0);
-        return {start, start + symbol_type().length().value_or(0) };
+        return {.start_range= start, .end_range= start + symbol_type().length().value_or(0) };
     }
 }

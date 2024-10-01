@@ -31,7 +31,7 @@ namespace winrt::MiniDumpExplorer::implementation
         if(auto const content = OwningHeader().Content().try_as<hstring>();
             content.has_value())
         {
-            return content.value();
+            return to_hstring(content.value());
         }
         return base_type::GetNameCore();
     }

@@ -21,15 +21,18 @@ namespace
 {
     const std::wstring SettingsTag = L"Settings"s;
     const std::wstring RecentTag = L"Recent"s;
+
+    std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> pageMap_ =
+        {
+            { RecentTag, xaml_typename<MiniDumpExplorer::RecentPage>() },
+            { SettingsTag, xaml_typename<MiniDumpExplorer::SettingsPage>() },
+        };
 }
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> DefaultPage::pageMap_ =
-        {
-            { RecentTag, xaml_typename<RecentPage>() },
-            { SettingsTag, xaml_typename<SettingsPage>() },
-        };
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
+    DefaultPage::DefaultPage() = default;
 
     void DefaultPage::InitializeComponent()
     {

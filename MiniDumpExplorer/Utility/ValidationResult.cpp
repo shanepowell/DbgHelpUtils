@@ -22,12 +22,12 @@ namespace Utility
         memberNames_.push_back(memberName);
     }
 
-    bool ContainsEqualValidationResult(std::vector<ValidationResult> const& collection, ValidationResult const& target)
+    bool ContainsEqualValidationResult(std::vector<ValidationResult> const& collection, ValidationResult const& target)  // NOLINT(misc-use-internal-linkage)
     {
         return FindEqualValidationResult(collection, target).has_value();
     }
 
-    std::optional<ValidationResult> FindEqualValidationResult(std::vector<ValidationResult> const& collection, ValidationResult const& target)
+    std::optional<ValidationResult> FindEqualValidationResult(std::vector<ValidationResult> const& collection, ValidationResult const& target)  // NOLINT(misc-use-internal-linkage)
     {
         for(auto const& oldValidationResult : collection)
         {
@@ -53,7 +53,7 @@ namespace Utility
         return std::ranges::find(validationResult.MemberNames(), target) != validationResult.MemberNames().end();
     }
 
-    void AddIfNew(std::vector<ValidationResult>& collection, ValidationResult const& target)
+    void AddIfNew(std::vector<ValidationResult>& collection, ValidationResult const& target)  // NOLINT(misc-use-internal-linkage)
     {
         if(std::ranges::find(collection, target) == collection.end())
         {
@@ -61,7 +61,7 @@ namespace Utility
         }
     }
 
-    void Erase(std::vector<ValidationResult>& collection, ValidationResult const& target)
+    void Erase(std::vector<ValidationResult>& collection, ValidationResult const& target)  // NOLINT(misc-use-internal-linkage)
     {
         if(auto const it = std::ranges::find(collection, target);
             it != collection.end())

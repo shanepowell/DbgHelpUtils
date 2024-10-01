@@ -60,7 +60,7 @@ namespace winrt::MiniDumpExplorer::implementation
         if (auto const header = OwningHeader().Content().try_as<hstring>();
             header.has_value())
         {
-            return header.value();
+            return to_hstring(header.value());
         }
 
         return base_type::GetNameCore();

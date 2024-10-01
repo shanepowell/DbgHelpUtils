@@ -17,6 +17,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpPageParameters;
 
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     StreamsPage::StreamsPage() = default;
 
     void StreamsPage::InitializeComponent()

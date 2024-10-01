@@ -18,7 +18,7 @@ public:
     void LogMessage(log_level level, std::wstring_view const& message) const;
     void LogMessage(log_level level, std::string_view const& message) const;
     void Flush() const;
-    void Close();
+    void Close() const;
 
     void HandleUnknownException(std::source_location const& location = std::source_location::current()) const;
 
@@ -29,7 +29,7 @@ public:
     };
 
     void MessageFilter(std::function<void (log_command command, log_level level, std::string log_line, log_level current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)> filter) { filter_ = std::move(filter); }
-    std::function<void (log_command command, log_level level, std::string log_line, log_level current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)> MessageFilter() const { return filter_; }
+    std::function<void (log_command command, log_level level, std::string log_line, log_level current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)> const& MessageFilter() const { return filter_; }
 
 private:
     static void run_log_command(log_command command, log_level level, std::string_view const& message, std::function<void (log_command, log_level, std::string, log_level, std::chrono::local_time<std::chrono::seconds> const&)> const& filter);

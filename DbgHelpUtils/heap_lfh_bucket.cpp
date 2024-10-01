@@ -143,11 +143,11 @@ namespace dlg_help_utils::heap
 
         const std::map<size_t, BucketIndexMapData> bucket_index_map
         {
-            { 64, { 0, 16, 0, 0 } },
-            { 80, { 65, 64, 0x400, 1 } },
-            { 96, { 81, 128, 0x800, 1 } },
-            { 112, { 97, 256, 0x1000, 1 } },
-            { 0xFFFF, { 113, 512, 0x2000, 1 } }
+            { 64, { .offset= 0, .granularity= 16, .base_size= 0, .index_adjustment= 0}},
+            { 80, { .offset= 65, .granularity= 64, .base_size= 0x400, .index_adjustment= 1}},
+            { 96, { .offset= 81, .granularity= 128, .base_size= 0x800, .index_adjustment= 1}},
+            { 112, { .offset= 97, .granularity= 256, .base_size= 0x1000, .index_adjustment= 1}},
+            { 0xFFFF, { .offset= 113, .granularity= 512, .base_size= 0x2000, .index_adjustment= 1}}
         };
     }
 

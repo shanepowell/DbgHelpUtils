@@ -11,7 +11,7 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     DataGridCellEventArgs::DataGridCellEventArgs(MiniDumpExplorer::DataGridCell const& dataGridCell)
-        : cell_{std::move(dataGridCell)}
+        : cell_{dataGridCell}
     {
     }
 }

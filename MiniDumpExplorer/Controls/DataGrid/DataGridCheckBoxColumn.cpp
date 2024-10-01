@@ -221,7 +221,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void DataGridCheckBoxColumn::ConfigureCheckBox(Controls::CheckBox const& checkBox, Media::Brush const& computedRowForeground) const
     {
-        checkBox.Margin(Thickness{DefaultLeftMargin, 0.0, 0.0, 0.0});
+        checkBox.Margin(Thickness{.Left= DefaultLeftMargin, .Top= 0.0, .Right= 0.0, .Bottom= 0.0});
         checkBox.HorizontalAlignment(HorizontalAlignment::Left);
         checkBox.VerticalAlignment(VerticalAlignment::Center);
         checkBox.IsThreeState(IsThreeState());

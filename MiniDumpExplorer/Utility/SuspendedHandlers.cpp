@@ -58,7 +58,7 @@ namespace
     }
 }
 
-bool SuspendedHandlers::IsHandlerSuspended(DependencyObject const& dependencyObject, DependencyProperty const& dependencyProperty)
+bool SuspendedHandlers::IsHandlerSuspended(DependencyObject const& dependencyObject, DependencyProperty const& dependencyProperty)  // NOLINT(misc-use-internal-linkage)
 {
     auto const it = _suspendedHandlers.find(dependencyObject);
     if(it == _suspendedHandlers.end())
@@ -69,7 +69,7 @@ bool SuspendedHandlers::IsHandlerSuspended(DependencyObject const& dependencyObj
     return it->second.contains(dependencyProperty);
 }
 
-void SuspendedHandlers::SetValueNoCallback(DependencyObject const& obj, DependencyProperty const& dependencyProperty, winrt::Windows::Foundation::IInspectable const& value)
+void SuspendedHandlers::SetValueNoCallback(DependencyObject const& obj, DependencyProperty const& dependencyProperty, winrt::Windows::Foundation::IInspectable const& value)  // NOLINT(misc-use-internal-linkage)
 {
     SuspendHandler(obj, dependencyProperty, true);
     auto const handle = dlg_help_utils::make_scope_exit([&obj, &dependencyProperty]

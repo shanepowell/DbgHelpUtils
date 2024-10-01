@@ -613,10 +613,10 @@ namespace winrt::MiniDumpExplorer::implementation
             auto const columnIndex = columnIndexInserted <= CurrentColumnIndex() ? CurrentColumnIndex() + 1 : CurrentColumnIndex();
             auto const slot = CurrentSlot();
             ResetCurrentCellCore();
-            return DataGridInternal::DataGridCellCoordinates{ columnIndex, slot };
+            return DataGridInternal::DataGridCellCoordinates{ .ColumnIndex= columnIndex, .Slot= slot};
         }
 
-        return DataGridInternal::DataGridCellCoordinates{ InvalidIndex, InvalidIndex };
+        return DataGridInternal::DataGridCellCoordinates{ .ColumnIndex= InvalidIndex, .Slot= InvalidIndex };
     }
 
     void DataGrid::OnRemovedColumn_PostNotification(DataGridInternal::DataGridCellCoordinates const& newCurrentCellCoordinates)
@@ -677,7 +677,7 @@ namespace winrt::MiniDumpExplorer::implementation
         assert(internalDataGridColumn->Index() != InvalidIndex);
         assert(internalDataGridColumn->Index() < ColumnsItemsInternal().size());
 
-        DataGridInternal::DataGridCellCoordinates newCurrentCellCoordinates{ InvalidIndex, InvalidIndex };
+        DataGridInternal::DataGridCellCoordinates newCurrentCellCoordinates{ .ColumnIndex= InvalidIndex, .Slot= InvalidIndex };
 
         temporarilyResetCurrentCell_ = false;
         auto const columnIndex = internalDataGridColumn->Index();

@@ -17,23 +17,23 @@ namespace dlg_help_utils::heap
         auto const unused_bytes_value = stream_utils::read_field_value<uint16_t>(peb.walker(), unused_bytes_address);
         if(!unused_bytes_value.has_value())
         {
-            return {0, 0};
+            return {.unused_bytes= 0, .ust_address= 0};
         }
 
         if((unused_bytes_value.value() & 0x8000) == 0x8000)
         {
             // only 1 byte extra data
-            return {1, 0};
+            return {.unused_bytes= 1, .ust_address= 0};
         }
 
         // is UST data available
         if((unused_bytes_value.value() & 0x4000) != 0x4000)
         {
-            return {unused_bytes_value.value(), 0};
+            return {.unused_bytes= unused_bytes_value.value(), .ust_address= 0};
         }
 
         auto const unused_bytes = static_cast<uint64_t>(unused_bytes_value.value() & 0x3FFF);
-        return {unused_bytes, read_ust_address(peb, stack_trace, block_address, block_size, unused_bytes)};
+        return {.unused_bytes= unused_bytes, .ust_address= read_ust_address(peb, stack_trace, block_address, block_size, unused_bytes)};
     }
 
     uint64_t segment_heap_utils::read_ust_address(process::process_environment_block const& peb, ust_address_stack_trace const& stack_trace, uint64_t const block_address, uint64_t const block_size, uint64_t const unused_bytes)

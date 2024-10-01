@@ -150,7 +150,7 @@ namespace winrt::MiniDumpExplorer::implementation
         auto weak_self = get_weak();
         co_await resume_background();
 
-        for (size_t index = 0; auto const memory_range : memory_list.list())
+        for (size_t index = 0; auto const& memory_range : memory_list.list())
         {
             if(WindowHelper::IsExiting())
             {

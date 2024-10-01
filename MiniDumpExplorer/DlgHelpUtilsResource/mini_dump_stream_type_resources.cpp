@@ -15,7 +15,7 @@ namespace
 {
     using namespace dlg_help_utils::mini_dump_stream_type;
 
-    std::unordered_map<MINIDUMP_STREAM_TYPE, std::wstring> const type_map =
+    std::unordered_map<MINIDUMP_STREAM_TYPE, std::wstring> const type_map =  // NOLINT(cppcoreguidelines-interfaces-global-init)
     {
         {UnusedStream, enum_names::UnusedStream},
         {ReservedStream0, enum_names::ReservedStream0},

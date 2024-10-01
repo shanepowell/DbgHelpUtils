@@ -955,12 +955,12 @@ namespace
             break;
         }
 
-        return {registry, value, value_size};
+        return {.register_type= registry, .value= value, .value_size= value_size};
     }
 
     dlg_help_utils::dbg_help::frame_data_info get_frame_data_info(PSYMBOL_INFOW symbol_info, uint64_t const address)
     {
-        return dlg_help_utils::dbg_help::frame_data_info{static_cast<int>(symbol_info->Address), address + symbol_info->Address, symbol_info->Size};
+        return dlg_help_utils::dbg_help::frame_data_info{.data_offset= static_cast<int>(symbol_info->Address), .data_address= address + symbol_info->Address, .data_size= symbol_info->Size};
     }
 
     bool is_already_found(std::vector<dlg_help_utils::dbg_help::variable> const& variables, PSYMBOL_INFOW symbol_info)
@@ -1265,7 +1265,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         stream_module_name name{module_name};
-        modules_.insert(std::make_pair(std::move(module_name), module_info{handle, module_base, module_size, std::move(module_image_path), std::move(name)}));
+        modules_.insert(std::make_pair(std::move(module_name), module_info{.handle= handle, .base= module_base, .size= module_size, .module_image_path= std::move(module_image_path), .name= std::move(name)}));
     }
 
     void symbol_engine::load_module(std::wstring module_name
@@ -1288,7 +1288,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         stream_module_name name {module_name};
-        modules_.insert(std::make_pair(std::move(module_name), module_info{handle, module_base, module_size, std::move(module_image_path), std::move(name)}));
+        modules_.insert(std::make_pair(std::move(module_name), module_info{.handle= handle, .base= module_base, .size= module_size, .module_image_path= std::move(module_image_path), .name= std::move(name)}));
     }
 
     void symbol_engine::unload_module(std::wstring const& module_name)

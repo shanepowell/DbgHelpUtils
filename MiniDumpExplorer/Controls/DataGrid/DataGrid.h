@@ -583,7 +583,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void FlushSelectionChanged();
         bool FocusEditingCell(bool setFocus);
         static hstring FormatClipboardContent(MiniDumpExplorer::DataGridRowClipboardEventArgs const& e);
-        double GetHorizontalSmallScrollDecrease();
+        double GetHorizontalSmallScrollDecrease() const;
         double GetHorizontalSmallScrollIncrease();
         double GetVerticalSmallScrollIncrease();
         void HideScrollBars(bool useTransitions);
@@ -782,7 +782,7 @@ namespace winrt::MiniDumpExplorer::implementation
         Microsoft::UI::Xaml::Controls::ContentControl clipboardContentControl_{};
         Utility::IndexToValueTable<Microsoft::UI::Xaml::Visibility> collapsedSlotsTable_;
         bool columnHeaderHasFocus_{};
-        DataGridInternal::DataGridCellCoordinates currentCellCoordinates_{InvalidIndex, InvalidIndex};
+        DataGridInternal::DataGridCellCoordinates currentCellCoordinates_{.ColumnIndex= InvalidIndex, .Slot= InvalidIndex};
 
         // used to store the current column during a Reset
         int32_t desiredCurrentColumnIndex_{};

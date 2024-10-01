@@ -28,29 +28,32 @@ using namespace std::string_view_literals;
 using allocator_func = std::function<void*(size_t)>;
 using deallocator_func = std::function<void(void*)>;
 
-int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
-int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
-int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
-template<size_t N>
-bool AllocateBuffers(std::wostream& log, allocator_func const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, std::wstring_view const& type, std::vector<Allocation>& set);
-template<size_t N>
-void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations);
-
-template<size_t N, typename ...Args>
-void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations, Args... args)
+namespace
 {
-    DeallocateSomeBuffers(log, set, deallocator, allocations);
-    DeallocateSomeBuffers(log, set, deallocator, args...);
+    int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
+    int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
+    int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set);
+    template<size_t N>
+    bool AllocateBuffers(std::wostream& log, allocator_func const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t increase_amount, std::wstring_view const& type, std::vector<Allocation>& set);
+    template<size_t N>
+    void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations);
+
+    template<size_t N, typename ...Args>
+    void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations, Args... args)
+    {
+        DeallocateSomeBuffers(log, set, deallocator, allocations);
+        DeallocateSomeBuffers(log, set, deallocator, args...);
+    }
+
+    void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, void* allocation);
+
+    void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation);
+
+    void CreateOutput(std::wostream& log, std::wstring const& dump_filename);
+    void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename);
+
+    auto constexpr g_hex_length = sizeof(void*);
 }
-
-void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, void* allocation);
-
-void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation);
-
-void CreateOutput(std::wostream& log, std::wstring const& dump_filename);
-void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename);
-
-auto constexpr g_hex_length = sizeof(void*);
 
 int main(int const argc, char* argv[])
 {
@@ -184,257 +187,261 @@ int main(int const argc, char* argv[])
     return EXIT_FAILURE;
 }
 
-bool LfhAllocationsRound(std::wostream& log, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set, size_t const allocation_size)
+namespace
 {
-    std::array<void*, 0x12> backend_allocations{};
-
-    char fill_value = 'A';
-    if (!AllocateBuffers(log, allocator, backend_allocations, fill_value, allocation_size, 0, L"backend"sv, set))
+    bool LfhAllocationsRound(std::wostream& log, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set, size_t const allocation_size)
     {
-        return false;
-    }
+        std::array<void*, 0x12> backend_allocations{};
 
-    std::array<void*, 0x12> frontend_allocations{};
-    if (!AllocateBuffers(log, allocator, frontend_allocations, fill_value, allocation_size, 0, L"frontend"sv, set))
-    {
-        return false;
-    }
-
-    DeallocateSomeBuffers(log, set, deallocator, backend_allocations, frontend_allocations);
-
-    return true;
-}
-
-int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
-{
-    // ReSharper disable once CppTooWideScopeInitStatement
-    auto constexpr allocation_sizes = std::array{
-        0x00,
-        0x01,
-        0x02,
-        0x04,
-        0x10,
-        0x20,
-        0x40,
-    };
-
-    for (auto const allocation_size : allocation_sizes)
-    {
-        if(!LfhAllocationsRound(log, allocator, deallocator, set, allocation_size))
+        char fill_value = 'A';
+        if (!AllocateBuffers(log, allocator, backend_allocations, fill_value, allocation_size, 0, L"backend"sv, set))
         {
-            return EXIT_FAILURE;
+            return false;
         }
-    }
 
-    CreateOutput(log, dump_filename);
-
-    return EXIT_SUCCESS;
-}
-
-
-int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
-{
-    std::array<void*, 0x5> large_allocations{};
-    
-    if (char fill_value = 'A';
-        !AllocateBuffers(log, allocator, large_allocations, fill_value, 0x100000, 0, L"large"sv, set))
-    {
-        return EXIT_FAILURE;
-    }
-
-    DeallocateSomeBuffers(log, set, deallocator, large_allocations);
-
-    CreateOutput(log, dump_filename);
-
-    return EXIT_SUCCESS;
-}
-
-int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
-{
-    size_t allocation_size = 0x1;
-    size_t constexpr max_rounds = 6;
-
-    std::array<void*, 0x1> zero_allocations{};
-    std::array<std::array<void*, 0xF>, max_rounds> allocation_groups{};
-    std::array<std::array<void*, 0xE>, max_rounds - 1> small_allocation_groups{};
-
-    auto constexpr sizes_type = L"sizes"sv;
-
-    char fill_value = '0';
-    if (!AllocateBuffers(log, allocator, zero_allocations, fill_value, 0, 0, sizes_type, set))
-    {
-        return EXIT_FAILURE;
-    }
-
-
-    for(size_t index = 0; index < max_rounds; ++index)
-    {
-        fill_value = 'A';
-        if (!AllocateBuffers(log, allocator, allocation_groups[index], fill_value, allocation_size, allocation_size, sizes_type, set))
+        std::array<void*, 0x12> frontend_allocations{};
+        if (!AllocateBuffers(log, allocator, frontend_allocations, fill_value, allocation_size, 0, L"frontend"sv, set))
         {
-            return EXIT_FAILURE;
+            return false;
         }
-        if(allocation_size > 1)
+
+        DeallocateSomeBuffers(log, set, deallocator, backend_allocations, frontend_allocations);
+
+        return true;
+    }
+
+    int LfhAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
+    {
+        // ReSharper disable once CppTooWideScopeInitStatement
+        auto constexpr allocation_sizes = std::array{
+            0x00,
+            0x01,
+            0x02,
+            0x04,
+            0x10,
+            0x20,
+            0x40,
+        };
+
+        for (auto const allocation_size : allocation_sizes)
         {
-            if (!AllocateBuffers(log, allocator, small_allocation_groups[index - 1], fill_value, allocation_size + 1, 1, sizes_type, set))
+            if (!LfhAllocationsRound(log, allocator, deallocator, set, allocation_size))
             {
                 return EXIT_FAILURE;
             }
         }
-        allocation_size *= 0x10;
+
+        CreateOutput(log, dump_filename);
+
+        return EXIT_SUCCESS;
     }
 
-    for(auto& allocations : allocation_groups)
+
+    int LargeAllocations(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
     {
-        DeallocateSomeBuffers(log, set, deallocator, allocations);
+        std::array<void*, 0x5> large_allocations{};
+
+        if (char fill_value = 'A';
+            !AllocateBuffers(log, allocator, large_allocations, fill_value, 0x100000, 0, L"large"sv, set))
+        {
+            return EXIT_FAILURE;
+        }
+
+        DeallocateSomeBuffers(log, set, deallocator, large_allocations);
+
+        CreateOutput(log, dump_filename);
+
+        return EXIT_SUCCESS;
     }
 
-    for(auto& allocations : small_allocation_groups)
+    int AllocateSizeRanges(std::wostream& log, std::wstring const& dump_filename, allocator_func const& allocator, deallocator_func const& deallocator, std::vector<Allocation>& set)
     {
-        DeallocateSomeBuffers(log, set, deallocator, allocations);
+        size_t allocation_size = 0x1;
+        size_t constexpr max_rounds = 6;
+
+        std::array<void*, 0x1> zero_allocations{};
+        std::array<std::array<void*, 0xF>, max_rounds> allocation_groups{};
+        std::array<std::array<void*, 0xE>, max_rounds - 1> small_allocation_groups{};
+
+        auto constexpr sizes_type = L"sizes"sv;
+
+        char fill_value = '0';
+        if (!AllocateBuffers(log, allocator, zero_allocations, fill_value, 0, 0, sizes_type, set))
+        {
+            return EXIT_FAILURE;
+        }
+
+
+        for (size_t index = 0; index < max_rounds; ++index)
+        {
+            fill_value = 'A';
+            if (!AllocateBuffers(log, allocator, allocation_groups[index], fill_value, allocation_size, allocation_size, sizes_type, set))
+            {
+                return EXIT_FAILURE;
+            }
+            if (allocation_size > 1)
+            {
+                if (!AllocateBuffers(log, allocator, small_allocation_groups[index - 1], fill_value, allocation_size + 1, 1, sizes_type, set))
+                {
+                    return EXIT_FAILURE;
+                }
+            }
+            allocation_size *= 0x10;
+        }
+
+        for (auto& allocations : allocation_groups)
+        {
+            DeallocateSomeBuffers(log, set, deallocator, allocations);
+        }
+
+        for (auto& allocations : small_allocation_groups)
+        {
+            DeallocateSomeBuffers(log, set, deallocator, allocations);
+        }
+
+        CreateOutput(log, dump_filename);
+        return EXIT_SUCCESS;
     }
 
-    CreateOutput(log, dump_filename);
-    return EXIT_SUCCESS;
-}
+    template<size_t N>
+    bool AllocateBuffers(std::wostream& log, allocator_func const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, std::wstring_view const& type, std::vector<Allocation>& set)
+    {
+        for (auto& allocation : allocations)
+        {
+            using dlg_help_utils::stream_hex_dump::to_hex;
+            allocation = allocator(allocation_size);
+            log << std::format(L"{0} allocation [{1} / {2}] fill value [{3}] buffer size [{4} | {5}]\n"
+                , type
+                , to_hex(reinterpret_cast<uint64_t>(allocation), g_hex_length)
+                , reinterpret_cast<uint64_t>(allocation)
+                , fill_value
+                , to_hex(allocation_size)
+                , allocation_size);
+            if (allocation == nullptr)
+            {
+                log << std::format(L"Failed to allocate {} allocation\n", type);
+                return false;
+            }
 
-template<size_t N>
-bool AllocateBuffers(std::wostream& log, allocator_func const& allocator, std::array<void*, N>& allocations, char& fill_value, size_t allocation_size, size_t const increase_amount, std::wstring_view const& type, std::vector<Allocation>& set)
-{
-    for (auto& allocation : allocations)
+            memset(allocation, fill_value, allocation_size);
+
+            // make start uint32_t be a small value
+            if (allocation_size > sizeof(uint32_t))
+            {
+                uint32_t constexpr fake_offset{ 0x20 };
+                memcpy(allocation, &fake_offset, sizeof fake_offset);
+            }
+
+            set.emplace_back(Allocation{ .pointer = reinterpret_cast<uint64_t>(allocation), .size = allocation_size, .fill_char = fill_value, .allocated = true });
+
+            ++fill_value;
+            allocation_size += increase_amount;
+        }
+        return true;
+    }
+
+    template<size_t N>
+    void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations)
+    {
+        DeallocateSomeBuffer(log, set, deallocator, allocations[1]);
+        DeallocateSomeBuffer(log, set, deallocator, allocations[3]);
+    }
+
+    void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, void* allocation)
     {
         using dlg_help_utils::stream_hex_dump::to_hex;
-        allocation = allocator(allocation_size);
-        log << std::format(L"{0} allocation [{1} / {2}] fill value [{3}] buffer size [{4} | {5}]\n"
-            , type
+        deallocator(allocation);
+        log << std::format(L"deallocate [{0} / {1}]\n"
             , to_hex(reinterpret_cast<uint64_t>(allocation), g_hex_length)
-            , reinterpret_cast<uint64_t>(allocation)
-            , fill_value
-            , to_hex(allocation_size)
-            , allocation_size);
-        if(allocation == nullptr)
+            , reinterpret_cast<uint64_t>(allocation));
+        FreeAllocationInResultSet(set, allocation);
+    }
+
+    void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation)
+    {
+        if (auto const it = std::ranges::find_if(set, [allocation](Allocation const& a) { return a.allocated && a.pointer == reinterpret_cast<uint64_t>(allocation); });
+            it != set.end())
         {
-            log << std::format(L"Failed to allocate {} allocation\n", type);
-            return false;
+            it->allocated = false;
         }
-        
-        memset(allocation, fill_value, allocation_size);
+    }
 
-        // make start uint32_t be a small value
-        if(allocation_size > sizeof(uint32_t))
+    void CreateOutput(std::wostream& log, std::wstring const& free_dump_filename)
+    {
+        if (free_dump_filename.empty())
         {
-            uint32_t constexpr fake_offset{0x20};
-            memcpy(allocation, &fake_offset, sizeof fake_offset);
+            std::cout << "press enter to exit\n";
+            std::ignore = getchar();
+        }
+        else
+        {
+            GenerateDumpFile(log, free_dump_filename);
+        }
+    }
+
+    void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
+    {
+        // ReSharper disable once StringLiteralTypo
+        auto const command = std::format(L"procdump -ma {0} \"{1}\"", GetCurrentProcessId(), dump_filename);
+
+        using dlg_help_utils::stream_hex_dump::to_hex;
+
+        // Set the bInheritHandle flag so pipe handles are inherited. 
+        SECURITY_ATTRIBUTES security_attributes
+        {
+            .nLength = sizeof(SECURITY_ATTRIBUTES),
+            .lpSecurityDescriptor = nullptr,
+            .bInheritHandle = TRUE
+        };
+
+        // Create a pipe for the child process's STDOUT.
+        HANDLE out_write_pipe_handle{ nullptr };
+        HANDLE out_read_pipe_handle{ nullptr };
+        if (!CreatePipe(&out_read_pipe_handle, &out_write_pipe_handle, &security_attributes, 0))
+        {
+            log << std::format(L"Failed to create pipe : {}\n", to_hex(GetLastError()));
+            return;
         }
 
-        set.emplace_back(Allocation{reinterpret_cast<uint64_t>(allocation), allocation_size, fill_value, true});
+        using dlg_help_utils::handles::make_handle;
+        auto const out_write_handle = make_handle(out_write_pipe_handle, CloseHandle);
+        auto const out_read_handle = make_handle(out_read_pipe_handle, CloseHandle);
 
-        ++fill_value;
-        allocation_size += increase_amount;
+        STARTUPINFOW startup_info;
+        PROCESS_INFORMATION process_info;
+        memset(&startup_info, 0, sizeof(startup_info));
+        memset(&process_info, 0, sizeof(process_info));
+        startup_info.cb = sizeof(startup_info);
+        startup_info.hStdError = out_write_pipe_handle;
+        startup_info.hStdOutput = out_write_pipe_handle;
+        startup_info.hStdInput = out_read_pipe_handle;
+        startup_info.dwFlags |= STARTF_USESTDHANDLES;
+
+        if (command.size() >= MAX_PATH)
+        {
+            log << std::format(L"Command line [{0}] to long : {1} >= {2}\n", command, command.size(), MAX_PATH);
+            return;
+        }
+
+        wchar_t temp[MAX_PATH];
+        wcsncpy_s(temp, command.c_str(), command.size());
+        temp[command.size()] = 0;
+
+        if (!CreateProcessW(nullptr, temp, nullptr, nullptr, false, 0, nullptr, nullptr, &startup_info, &process_info))
+        {
+            log << std::format(L"CreateProcessW [{0}] failed : {1}\n", command, to_hex(GetLastError()));
+            return;
+        }
+
+        //Close thread handle. 
+        CloseHandle(process_info.hThread);
+
+        // Wait for dump to complete...
+        WaitForSingleObject(process_info.hProcess, INFINITE);
+
+        // Close process handle.
+        CloseHandle(process_info.hProcess);
+
+        log << std::format(L"Dump file created: {}\n", dump_filename);
     }
-    return true;
-}
-
-template<size_t N>
-void DeallocateSomeBuffers(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, std::array<void*, N>& allocations)
-{
-    DeallocateSomeBuffer(log, set, deallocator, allocations[1]);
-    DeallocateSomeBuffer(log, set, deallocator, allocations[3]);
-}
-
-void DeallocateSomeBuffer(std::wostream& log, std::vector<Allocation>& set, deallocator_func const& deallocator, void* allocation)
-{
-    using dlg_help_utils::stream_hex_dump::to_hex;
-    deallocator(allocation);
-    log << std::format(L"deallocate [{0} / {1}]\n"
-        , to_hex(reinterpret_cast<uint64_t>(allocation), g_hex_length)
-        , reinterpret_cast<uint64_t>(allocation));
-    FreeAllocationInResultSet(set, allocation);
-}
-
-void FreeAllocationInResultSet(std::vector<Allocation>& set, void* allocation)
-{
-    if(auto const it = std::ranges::find_if(set, [allocation](Allocation const& a) { return a.allocated && a.pointer == reinterpret_cast<uint64_t>(allocation); });
-        it != set.end())
-    {
-        it->allocated = false;
-    }
-}
-
-void CreateOutput(std::wostream& log, std::wstring const& free_dump_filename)
-{
-    if(free_dump_filename.empty())
-    {
-        std::cout << "press enter to exit\n";
-        std::ignore = getchar();
-    }
-    else
-    {
-        GenerateDumpFile(log, free_dump_filename);
-    }
-}
-
-void GenerateDumpFile(std::wostream& log, std::wstring const& dump_filename)
-{
-    // ReSharper disable once StringLiteralTypo
-    auto const command = std::format(L"procdump -ma {0} \"{1}\"", GetCurrentProcessId(), dump_filename);
-
-    using dlg_help_utils::stream_hex_dump::to_hex;
-
-    SECURITY_ATTRIBUTES security_attributes;
-
-    // Set the bInheritHandle flag so pipe handles are inherited. 
-    security_attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
-    security_attributes.bInheritHandle = TRUE;
-    security_attributes.lpSecurityDescriptor = nullptr;
-
-    // Create a pipe for the child process's STDOUT.
-    HANDLE out_write_pipe_handle{nullptr};
-    HANDLE out_read_pipe_handle{nullptr};
-    if (!CreatePipe(&out_read_pipe_handle, &out_write_pipe_handle, &security_attributes, 0))
-    {
-        log << std::format(L"Failed to create pipe : {}\n", to_hex(GetLastError()));
-        return;
-    }
-
-    using dlg_help_utils::handles::make_handle;
-    auto const out_write_handle = make_handle(out_write_pipe_handle, CloseHandle);
-    auto const out_read_handle = make_handle(out_read_pipe_handle, CloseHandle);
-
-    STARTUPINFOW startup_info;
-    PROCESS_INFORMATION process_info;
-    memset(&startup_info, 0, sizeof(startup_info));
-    memset(&process_info, 0, sizeof(process_info));
-    startup_info.cb = sizeof(startup_info);
-    startup_info.hStdError = out_write_pipe_handle;
-    startup_info.hStdOutput = out_write_pipe_handle;
-    startup_info.hStdInput = out_read_pipe_handle;
-    startup_info.dwFlags |= STARTF_USESTDHANDLES;
-
-    if(command.size() >= MAX_PATH)
-    {
-        log << std::format(L"Command line [{0}] to long : {1} >= {2}\n", command, command.size(), MAX_PATH);
-        return;
-    }
-
-    wchar_t temp[MAX_PATH];
-    wcsncpy_s(temp, command.c_str(), command.size());
-    temp[command.size()] = 0;
-
-    if (!CreateProcessW(nullptr, temp, nullptr, nullptr, false, 0, nullptr, nullptr, &startup_info, &process_info))
-    {
-        log << std::format(L"CreateProcessW [{0}] failed : {1}\n", command, to_hex(GetLastError()));
-        return;
-    }
-
-    //Close thread handle. 
-    CloseHandle(process_info.hThread);
-
-    // Wait for dump to complete...
-    WaitForSingleObject(process_info.hProcess, INFINITE);
-
-    // Close process handle.
-    CloseHandle(process_info.hProcess);
-
-    log << std::format(L"Dump file created: {}\n", dump_filename);
 }

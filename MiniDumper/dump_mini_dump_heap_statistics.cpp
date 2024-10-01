@@ -18,157 +18,161 @@
 using namespace std;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, stream_stack_dump::is_x86_target_t const is_x86_target, streamsize const hex_length)
+namespace
 {
-    using namespace size_units::base_16;
-    log << std::format(L"  {}:\n", heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()));
-    auto const single_line_range_title_length = 2 + hex_length;
-
-    if(view_by_size_frequency.is_range_single_value())
+    void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, stream_stack_dump::is_x86_target_t const is_x86_target, streamsize const hex_length)
     {
-        log << std::format(L" {0:<12} ", L"");
-        log << std::format(L"{0:<{1}} ", L"", single_line_range_title_length);
-    }
-    else
-    {
-        log << std::format(L" {0:<12} {1:<12} ", L"range", L"range");
-    }
+        using namespace size_units::base_16;
+        log << std::format(L"  {}:\n", heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()));
+        auto const single_line_range_title_length = 2 + hex_length;
 
-    log << std::format(L"{:<12} ", L"allocated");
-    log << std::format(L"{:<12} ", L"allocated");
-    log << std::format(L"{:<12} ", L"allocated");
-    log << std::format(L"{:<12} ", L"overhead");
-    log << std::format(L"{:<12} ", L"free");
-    log << std::format(L"{:<12} ", L"free");
-    log << std::format(L"{:<7} ", L"count");
-    log << std::format(L"{:<7} ", L"size");
-    log << L"\n";
-
-    if(view_by_size_frequency.is_range_single_value())
-    {
-        log << std::format(L" {0:<12} ", L"size");
-        log << std::format(L"{0:<{1}} ", L"size hex", single_line_range_title_length);
-    }
-    else
-    {
-        log << std::format(L" {0:<12} {1:<12} ", L"start", L"size");
-    }
-
-    log << std::format(L"{:<12} ", L"count");
-    log << std::format(L"{:<12} ", L"total");
-    log << std::format(L"{:<12} ", L"average");
-    log << std::format(L"{:<12} ", L"total");
-    log << std::format(L"{:<12} ", L"count");
-    log << std::format(L"{:<12} ", L"total");
-    log << std::format(L"{:<7} ", L"percent");
-    log << std::format(L"{:<7} ", L"percent");
-    log << L" application call site\n";
-
-    if(view_by_size_frequency.is_range_single_value())
-    {
-        log << std::format(L"={0:=<12}=", L"");
-        log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
-    }
-    else
-    {
-        log << std::format(L" {0:=<12}={1:=<12}=", L"", L"");
-    }
-
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<7}=", L"");
-    log << std::format(L"{:=<7}=", L"");
-    log << L"======================\n";
-
-    for(auto const& bucket : view_by_size_frequency.buckets())
-    {
-        if(view_by_size_frequency.is_range_single_value())
+        if (view_by_size_frequency.is_range_single_value())
         {
-            log << std::format(L" {:12} ", to_wstring(bucket.start_range()));
-            log << std::format(L"{0:{1}} ", stream_hex_dump::to_hex(bucket.start_range()), single_line_range_title_length);
+            log << std::format(L" {0:<12} ", L"");
+            log << std::format(L"{0:<{1}} ", L"", single_line_range_title_length);
         }
         else
         {
-            log << std::format(L" {0:12} {1:12} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
+            log << std::format(L" {0:<12} {1:<12} ", L"range", L"range");
         }
-        log << std::format(L"{:12} ", locale_formatting::to_wstring(bucket.allocated_count()));
-        log << std::format(L"{:12} ", to_wstring(bucket.allocated_total()));
-        log << std::format(L"{:12} ", to_wstring(bucket.allocated_average()));
-        log << std::format(L"{:12} ", to_wstring(bucket.overhead_total()));
-        log << std::format(L"{:12} ", locale_formatting::to_wstring(bucket.free_count()));
-        log << std::format(L"{:12} ", to_wstring(bucket.free_total()));
-        log << std::format(L"{:<7.2f} ", bucket.range_count_percent());
-        log << std::format(L"{:<7.2f} ", bucket.range_size_percent());
-        if(auto const& common_allocation_callsite = bucket.common_allocation_callsite();
-            common_allocation_callsite.has_value())
-        {
-            log << std::format(L" {0}", dump_stack_frame(common_allocation_callsite.value(), is_x86_target));
-        }
-        log << L'\n';
 
-        if(options.display_symbols() && !bucket.allocation_stack_trace().empty())
+        log << std::format(L"{:<12} ", L"allocated");
+        log << std::format(L"{:<12} ", L"allocated");
+        log << std::format(L"{:<12} ", L"allocated");
+        log << std::format(L"{:<12} ", L"overhead");
+        log << std::format(L"{:<12} ", L"free");
+        log << std::format(L"{:<12} ", L"free");
+        log << std::format(L"{:<7} ", L"count");
+        log << std::format(L"{:<7} ", L"size");
+        log << L"\n";
+
+        if (view_by_size_frequency.is_range_single_value())
         {
-            log << L"  Allocation Stack Trace:\n";
-            dump_stack_to_stream(log, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
+            log << std::format(L" {0:<12} ", L"size");
+            log << std::format(L"{0:<{1}} ", L"size hex", single_line_range_title_length);
+        }
+        else
+        {
+            log << std::format(L" {0:<12} {1:<12} ", L"start", L"size");
+        }
+
+        log << std::format(L"{:<12} ", L"count");
+        log << std::format(L"{:<12} ", L"total");
+        log << std::format(L"{:<12} ", L"average");
+        log << std::format(L"{:<12} ", L"total");
+        log << std::format(L"{:<12} ", L"count");
+        log << std::format(L"{:<12} ", L"total");
+        log << std::format(L"{:<7} ", L"percent");
+        log << std::format(L"{:<7} ", L"percent");
+        log << L" application call site\n";
+
+        if (view_by_size_frequency.is_range_single_value())
+        {
+            log << std::format(L"={0:=<12}=", L"");
+            log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
+        }
+        else
+        {
+            log << std::format(L" {0:=<12}={1:=<12}=", L"", L"");
+        }
+
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<7}=", L"");
+        log << std::format(L"{:=<7}=", L"");
+        log << L"======================\n";
+
+        for (auto const& bucket : view_by_size_frequency.buckets())
+        {
+            if (view_by_size_frequency.is_range_single_value())
+            {
+                log << std::format(L" {:12} ", to_wstring(bucket.start_range()));
+                log << std::format(L"{0:{1}} ", stream_hex_dump::to_hex(bucket.start_range()), single_line_range_title_length);
+            }
+            else
+            {
+                log << std::format(L" {0:12} {1:12} ", to_wstring(bucket.start_range()), to_wstring(bucket.end_range() - bucket.start_range()));
+            }
+            log << std::format(L"{:12} ", locale_formatting::to_wstring(bucket.allocated_count()));
+            log << std::format(L"{:12} ", to_wstring(bucket.allocated_total()));
+            log << std::format(L"{:12} ", to_wstring(bucket.allocated_average()));
+            log << std::format(L"{:12} ", to_wstring(bucket.overhead_total()));
+            log << std::format(L"{:12} ", locale_formatting::to_wstring(bucket.free_count()));
+            log << std::format(L"{:12} ", to_wstring(bucket.free_total()));
+            log << std::format(L"{:<7.2f} ", bucket.range_count_percent());
+            log << std::format(L"{:<7.2f} ", bucket.range_size_percent());
+            if (auto const& common_allocation_callsite = bucket.common_allocation_callsite();
+                common_allocation_callsite.has_value())
+            {
+                log << std::format(L" {0}", dump_stack_frame(common_allocation_callsite.value(), is_x86_target));
+            }
             log << L'\n';
+
+            if (options.display_symbols() && !bucket.allocation_stack_trace().empty())
+            {
+                log << L"  Allocation Stack Trace:\n";
+                dump_stack_to_stream(log, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
+                log << L'\n';
+            }
+
+            if (options.debug_heap_data())
+            {
+                log << L"  Entries:\n";
+                for (auto const& entry : bucket.entries())
+                {
+                    detail::print_process_entry(log, entry, peb, hex_length, options, 4);
+                }
+
+                log << L"  Free Entries:\n";
+                for (auto const& entry : bucket.free_entries())
+                {
+                    detail::print_process_entry(log, entry, peb, hex_length, options, 4);
+                }
+            }
         }
 
-        if(options.debug_heap_data())
+        if (view_by_size_frequency.is_range_single_value())
         {
-            log << L"  Entries:\n";
-            for(auto const& entry : bucket.entries())
-            {
-                detail::print_process_entry(log, entry, peb, hex_length, options, 4);
-            }
-
-            log << L"  Free Entries:\n";
-            for(auto const& entry : bucket.free_entries())
-            {
-                detail::print_process_entry(log, entry, peb, hex_length, options, 4);
-            }
+            log << std::format(L"={0:=<12}=", L"");
+            log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
         }
+        else
+        {
+            log << std::format(L" {0:=<12}={1:=<12}=", L"", L"");
+        }
+
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<8}=", L"");
+        log << std::format(L"{:=<12}=", L"");
+        log << std::format(L"{:=<7}=", L"");
+        log << std::format(L"{:=<7}=", L"");
+        log << L"======================\n";
+
+        if (view_by_size_frequency.is_range_single_value())
+        {
+            log << std::format(L" {:12} ", L"");
+            log << std::format(L"{0:>{1}} ", L"Total:", single_line_range_title_length);
+        }
+        else
+        {
+            log << std::format(L" {0:12} {1:>12} ", L"", L"Total:");
+        }
+        log << std::format(L"{:12} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
+        log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.allocated_total()));
+        log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.allocated_average()));
+        log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.overhead_total()));
+        log << std::format(L"{:12} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
+        log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.free_total()));
+        log << L'\n';
     }
 
-    if(view_by_size_frequency.is_range_single_value())
-    {
-        log << std::format(L"={0:=<12}=", L"");
-        log << std::format(L"{0:=<{1}}=", L"", single_line_range_title_length);
-    }
-    else
-    {
-        log << std::format(L" {0:=<12}={1:=<12}=", L"", L"");
-    }
-
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<8}=", L"");
-    log << std::format(L"{:=<12}=", L"");
-    log << std::format(L"{:=<7}=", L"");
-    log << std::format(L"{:=<7}=", L"");
-    log << L"======================\n";
-
-    if(view_by_size_frequency.is_range_single_value())
-    {
-        log << std::format(L" {:12} ", L"");
-        log << std::format(L"{0:>{1}} ", L"Total:", single_line_range_title_length);
-    }
-    else
-    {
-        log << std::format(L" {0:12} {1:>12} ", L"", L"Total:");
-    }
-    log << std::format(L"{:12} ", locale_formatting::to_wstring(view_by_size_frequency.allocated_count()));
-    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.allocated_total()));
-    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.allocated_average()));
-    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.overhead_total()));
-    log << std::format(L"{:12} ", locale_formatting::to_wstring(view_by_size_frequency.free_count()));
-    log << std::format(L"{:12} ", to_wstring(view_by_size_frequency.free_total()));
-    log << L'\n';
 }
 
 void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)

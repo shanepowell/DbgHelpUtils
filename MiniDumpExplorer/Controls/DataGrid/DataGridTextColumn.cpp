@@ -161,7 +161,7 @@ namespace winrt::MiniDumpExplorer::implementation
     FrameworkElement DataGridTextColumn::GenerateElement(MiniDumpExplorer::DataGridCell const& cell, [[maybe_unused]] Windows::Foundation::IInspectable const& dataItem)
     {
         Controls::TextBlock textBlockElement{};
-        textBlockElement.Margin(Thickness{LeftMargin, 0.0, RightMargin, 0.0});
+        textBlockElement.Margin(Thickness{.Left= LeftMargin, .Top= 0.0, .Right= RightMargin, .Bottom= 0.0});
         textBlockElement.VerticalAlignment(VerticalAlignment::Center);
         if (DependencyProperty::UnsetValue() != ReadLocalValue(FontFamilyProperty()))
         {

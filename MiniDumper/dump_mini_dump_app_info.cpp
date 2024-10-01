@@ -21,16 +21,17 @@ using namespace std::string_view_literals;
 using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils;
 
-std::wstring_view get_type_name(std::wstring_view const& type_name);
-
-std::wstring_view get_type_name(std::wstring_view const& type_name)
+namespace 
 {
-    if (type_name.empty())
+    std::wstring_view get_type_name(std::wstring_view const& type_name)
     {
-        return L"<unnamed>"sv;
-    }
+        if (type_name.empty())
+        {
+            return L"<unnamed>"sv;
+        }
 
-    return type_name;
+        return type_name;
+    }
 }
 
 void dump_mini_dump_token_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index, dump_file_options const& options)
@@ -240,7 +241,7 @@ void dump_mini_dump_handle_data_stream_data(std::wostream& log, mini_dump const&
     }
     log << L'\n';
 
-    auto const types = options.filter_values(L"type");
+    auto const& types = options.filter_values(L"type");
 
     for (size_t i{0}; auto const& entry : handle_data.list())
     {

@@ -111,7 +111,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint16_t lfh_index() const { return lfh_index_; }
 
         [[nodiscard]] std::vector<uint64_t> const& allocation_stack_trace() const { return allocation_stack_trace_; }
-        [[nodiscard]] memory_range memory_range() const { return dlg_help_utils::memory_range{ address(), address() + static_cast<uint64_t>(size().count()) }; }
+        [[nodiscard]] memory_range memory_range() const { return dlg_help_utils::memory_range{ .start_range= address(), .end_range= address() + static_cast<uint64_t>(size().count()) }; }
 
         static uint8_t constexpr FlagBusy = 0x01;
         static uint8_t constexpr FlagExtraPresent = 0x02;

@@ -66,7 +66,7 @@ namespace dlg_help_utils::dbg_help
         void set_type(HANDLE const process, DWORD64 const module_base, ULONG const type_index)
         {
             cache_->create_cached_symbol_type_info(process, module_base, type_index);
-            cached_type_ = symbol_key{process, module_base, type_index};
+            cached_type_ = symbol_key{.process= process, .module_base= module_base, .type_index= type_index};
             has_cached_type_ = true;
         }
 
@@ -188,7 +188,7 @@ namespace dlg_help_utils::dbg_help
             return cache_info_->name();
         }
 
-        wchar_t *name;
+        wchar_t *name{nullptr};
         if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_SYMNAME, &name))  // NOLINT(bugprone-multi-level-implicit-pointer-conversion)
         {
             cache_info_->set_name(std::nullopt);
@@ -394,7 +394,7 @@ namespace dlg_help_utils::dbg_help
 
     VARIANT symbol_type_info::const_value() const
     {
-        VARIANT rv;
+        VARIANT rv{};
         if(!SymGetTypeInfo(process_, module_base_, type_index_, TI_GET_VALUE, &rv))
         {
             throw_sym_get_type_info_error(L"TI_GET_VALUE"sv, optional_type::optional);
@@ -467,7 +467,7 @@ namespace dlg_help_utils::dbg_help
         {
             auto const count = children_count();
             if(count.value_or(0) == 0) co_return;
-            auto const size = sizeof(TI_FINDCHILDREN_PARAMS) + (sizeof(ULONG) * (count.value() - 1));
+            auto const size = sizeof(TI_FINDCHILDREN_PARAMS) + (sizeof(ULONG) * (static_cast<size_t>(count.value()) - 1));
             auto const buffer = std::make_unique<char[]>(size);
             memset(buffer.get(), 0, size);
             auto* find_children_params = reinterpret_cast<TI_FINDCHILDREN_PARAMS*>(buffer.get());
@@ -522,8 +522,8 @@ namespace dlg_help_utils::dbg_help
                 {
                     if(find_name_rest.empty())
                     {
-                        cache_info_->set_find_field_in_type(lookup_field_name, symbol_type_and_field_offset{child, offset});
-                        rv = symbol_type_and_field_offset{child, offset};
+                        cache_info_->set_find_field_in_type(lookup_field_name, symbol_type_and_field_offset{.type= child, .field_offset= offset});
+                        rv = symbol_type_and_field_offset{.type= child, .field_offset= offset};
                         return rv;
                     }
 
@@ -592,14 +592,14 @@ namespace dlg_help_utils::dbg_help
         }
 
         wchar_t* end_ptr{nullptr};
-        auto const module_base = std::wcstoull(module_base_string.data(), &end_ptr, 0);
+        auto const module_base = std::wcstoull(module_base_string.data(), &end_ptr, 0);  // NOLINT(bugprone-suspicious-stringview-data-usage)
         if(end_ptr == nullptr || *end_ptr != L':')
         {
             return std::nullopt;
         }
 
         end_ptr = nullptr;
-        auto const type_index = std::wcstoul(type_index_string.data(), &end_ptr, 0);
+        auto const type_index = std::wcstoul(type_index_string.data(), &end_ptr, 0);  // NOLINT(bugprone-suspicious-stringview-data-usage)
         if(end_ptr == nullptr || *end_ptr != L']')
         {
             return std::nullopt;

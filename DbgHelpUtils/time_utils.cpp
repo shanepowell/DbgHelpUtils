@@ -167,7 +167,7 @@ namespace dlg_help_utils::time_utils
                 st_time_zone = &localTzi;
             }
 
-            switch(locale_info.time_zone_id_year_ == st.wYear ? locale_info.time_zone_id_ : calculate_timezone_id(st, *locale_info.time_zone_))
+            switch(locale_info.time_zone_id_year_ == st.wYear ? locale_info.time_zone_id_ : calculate_timezone_id(st, *st_time_zone))
             {
             case TIME_ZONE_ID_DAYLIGHT:
                 return to_timezone_name(st_time_zone->DaylightName, *st_time_zone);

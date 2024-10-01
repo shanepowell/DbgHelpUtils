@@ -131,7 +131,7 @@ namespace winrt::MiniDumpExplorer::implementation
         picker.FileTypeFilter().Append(L".mdmp");
         picker.ViewMode(Windows::Storage::Pickers::PickerViewMode::List);
         picker.SuggestedStartLocation(Windows::Storage::Pickers::PickerLocationId::Downloads);
-        const auto file = co_await picker.PickSingleFileAsync();
+        const auto& file = co_await picker.PickSingleFileAsync();
         if(!file)
         {
             co_return;
@@ -140,7 +140,7 @@ namespace winrt::MiniDumpExplorer::implementation
         co_await OpenFileInTab(file);
     }
 
-    Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const& file)
+    Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const file)  // NOLINT(performance-unnecessary-value-param)
     {
         auto miniDumpPage = winrt::make<MiniDumpPage>(file);
         if(!co_await miniDumpPage.LoadMiniDump())

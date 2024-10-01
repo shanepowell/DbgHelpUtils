@@ -174,7 +174,7 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        return symbol_type_and_base_type_field_offset{data_type.value(), offset_data.value() + base_offset};
+        return symbol_type_and_base_type_field_offset{.type= data_type.value(), .field_offset= offset_data.value() + base_offset};
     }
 
     symbol_type_and_base_type_field_offset get_field_type_and_offset_in_type(dbg_help::symbol_type_info const& type, std::wstring_view const type_name, std::wstring_view const field_name, dbg_help::sym_tag_enum const tag)
@@ -216,7 +216,7 @@ namespace dlg_help_utils::stream_utils
             return std::nullopt;
         }
 
-        return symbol_type_and_value{field_data.type, value.value()};
+        return symbol_type_and_value{.type= field_data.type, .value= value.value()};
     }
 
     std::optional<uint64_t> find_field_pointer_value_in_type(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_and_base_type_field_offset const& field_data, uint64_t const memory_address)

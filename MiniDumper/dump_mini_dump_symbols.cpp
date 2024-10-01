@@ -438,15 +438,18 @@ void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& min
     }
 }
 
-template<typename T>
-void dump_address_type_array(std::wostream& log, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex)
+namespace
 {
-    log << std::format(L"{0} array @ [{1}] for [{2}] elements:\n"
-        , dt
-        , stream_hex_dump::to_hex_full(variable_stream.current_address())
-        , locale_formatting::to_wstring(memory_size / sizeof(T)));
-    print_utils::print_stream_array_lines<T>(log, variable_stream, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);
-    log << L'\n';
+    template<typename T>
+    void dump_address_type_array(std::wostream& log, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex)
+    {
+        log << std::format(L"{0} array @ [{1}] for [{2}] elements:\n"
+            , dt
+            , stream_hex_dump::to_hex_full(variable_stream.current_address())
+            , locale_formatting::to_wstring(memory_size / sizeof(T)));
+        print_utils::print_stream_array_lines<T>(log, variable_stream, memory_size / sizeof(T), elements_per_line, element_width, indent, dump_hex);
+        log << L'\n';
+    }
 }
 
 void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std::wstring const& address, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)

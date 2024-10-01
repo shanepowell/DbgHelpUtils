@@ -346,7 +346,7 @@ namespace dlg_help_utils::stream_stack_dump
                 generate_dump_address_to_stream(os, entry.stack, entry.address, entry);
             }
 
-            co_yield stack_function_call_entry{index, std::move(entry), std::move(os).str()};
+            co_yield stack_function_call_entry{.index= index, .symbol_info= std::move(entry), .line= std::move(os).str()};
             ++index;
         }
     }

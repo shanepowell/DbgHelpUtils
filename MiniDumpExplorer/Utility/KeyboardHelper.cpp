@@ -18,8 +18,8 @@ KeyboardHelper::MetaKeyState1 KeyboardHelper::GetMetaKeyState1()
 {
     return
     {
-        IsKeyDown(winrt::Windows::System::VirtualKey::Control),
-        IsKeyDown(winrt::Windows::System::VirtualKey::Shift)
+        .ctrl= IsKeyDown(winrt::Windows::System::VirtualKey::Control),
+        .shift= IsKeyDown(winrt::Windows::System::VirtualKey::Shift)
     };
 }
 
@@ -27,8 +27,8 @@ KeyboardHelper::MetaKeyState2 KeyboardHelper::GetMetaKeyState2()
 {
     return
     {
-        IsKeyDown(winrt::Windows::System::VirtualKey::Control),
-        IsKeyDown(winrt::Windows::System::VirtualKey::Shift),
-        IsKeyDown(winrt::Windows::System::VirtualKey::Menu)
+        .ctrl= IsKeyDown(winrt::Windows::System::VirtualKey::Control),
+        .shift= IsKeyDown(winrt::Windows::System::VirtualKey::Shift),
+        .alt= IsKeyDown(winrt::Windows::System::VirtualKey::Menu)
     };
 }

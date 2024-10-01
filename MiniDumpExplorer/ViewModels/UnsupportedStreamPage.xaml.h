@@ -14,7 +14,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct UnsupportedStreamPage : UnsupportedStreamPageT<UnsupportedStreamPage>, NotifyPropertyChangedBase<UnsupportedStreamPage>, MiniDumpPageBase<UnsupportedStreamPage>
     {
-        UnsupportedStreamPage() = default;
+        UnsupportedStreamPage();
 
         // ReSharper disable once CppHidingFunction
         void OnNavigatedTo(Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)

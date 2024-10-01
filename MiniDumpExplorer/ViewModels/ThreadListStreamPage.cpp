@@ -15,6 +15,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     ThreadListStreamPage::ThreadListStreamPage() = default;
 
     void ThreadListStreamPage::InitializeComponent()

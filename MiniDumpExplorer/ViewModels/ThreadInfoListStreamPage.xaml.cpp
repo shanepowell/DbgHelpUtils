@@ -15,6 +15,7 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
     ThreadInfoListStreamPage::ThreadInfoListStreamPage() = default;
 
     void ThreadInfoListStreamPage::InitializeComponent()
@@ -24,10 +25,12 @@ namespace winrt::MiniDumpExplorer::implementation
         onRowDoubleTapped_ = ThreadsInfoDataGrid().RowDoubleTapped({ this, &ThreadInfoListStreamPage::OnRowDoubleTapped });
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void ThreadInfoListStreamPage::SelectThread([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
     }
 
+    // ReSharper disable once CppMemberFunctionMayBeStatic
     void ThreadInfoListStreamPage::OnRowDoubleTapped([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] DataGridRowDetailsEventArgs const& e) const
     {
     }

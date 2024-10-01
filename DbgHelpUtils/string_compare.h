@@ -11,7 +11,7 @@ namespace dlg_help_utils::string_utils
             return false;
         }
 
-        return _wcsnicmp(str1.data(), str2.data(), str1.length()) == 0;
+        return _wcsnicmp(str1.data(), str2.data(), str1.length()) == 0;  // NOLINT(bugprone-suspicious-stringview-data-usage)
     }
 
     [[nodiscard]] inline bool equals(std::wstring_view const& str1, std::wstring_view const& str2)
@@ -21,13 +21,13 @@ namespace dlg_help_utils::string_utils
             return false;
         }
 
-        return wcsncmp(str1.data(), str2.data(), str1.length()) == 0;
+        return wcsncmp(str1.data(), str2.data(), str1.length()) == 0;  // NOLINT(bugprone-suspicious-stringview-data-usage)
     }
 
     [[nodiscard]] inline int icompare(std::wstring_view const& str1, std::wstring_view const& str2)
     {
         auto const max_length = std::min(str1.length(), str2.length());
-        auto const result = _wcsnicmp(str1.data(), str2.data(), max_length);
+        auto const result = _wcsnicmp(str1.data(), str2.data(), max_length);  // NOLINT(bugprone-suspicious-stringview-data-usage)
         if(result < 0)
         {
             return result;
@@ -50,7 +50,7 @@ namespace dlg_help_utils::string_utils
     [[nodiscard]] inline int compare(std::wstring_view const& str1, std::wstring_view const& str2)
     {
         auto const max_length = std::min(str1.length(), str2.length());
-        auto const result = wcsncmp(str1.data(), str2.data(), max_length);
+        auto const result = wcsncmp(str1.data(), str2.data(), max_length);  // NOLINT(bugprone-suspicious-stringview-data-usage)
         if(result < 0)
         {
             return result;

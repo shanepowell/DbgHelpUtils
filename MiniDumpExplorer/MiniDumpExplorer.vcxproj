@@ -1978,6 +1978,7 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="Controls\DataGrid\DataGridDataSourceFactory.idl" />
+    <None Include="cpp.hint" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

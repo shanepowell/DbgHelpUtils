@@ -65,7 +65,7 @@ namespace winrt::MiniDumpExplorer::implementation
     const std::wstring MiniDumpPage::ThreadListEntryStreamTag = L"ThreadListEntryStream"s;
 
 
-    std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> MiniDumpPage::pageMap_ =
+    std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> MiniDumpPage::pageMap_ =  // NOLINT(misc-use-internal-linkage)
         {
             { HeaderTag, xaml_typename<HeaderPage>() },
             { StreamsTag, xaml_typename<StreamsPage>() },

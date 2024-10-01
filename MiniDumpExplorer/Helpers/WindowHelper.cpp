@@ -10,8 +10,11 @@
 
 using namespace std::string_view_literals;
 
-std::vector<winrt::Microsoft::UI::Xaml::Window> WindowHelper::activeWindows_{};
-std::atomic_bool WindowHelper::exiting_{};
+namespace
+{
+    std::vector<winrt::Microsoft::UI::Xaml::Window> activeWindows_{};
+    std::atomic_bool exiting_{};
+}
 
 winrt::Microsoft::UI::Xaml::Window WindowHelper::CreateNewWindow()
 {
@@ -60,5 +63,15 @@ winrt::Microsoft::UI::Xaml::Window WindowHelper::GetWindowForElement(winrt::Micr
     }
 
     return winrt::Microsoft::UI::Xaml::Window{nullptr};
+}
+
+std::vector<winrt::Microsoft::UI::Xaml::Window> WindowHelper::ActiveWindows()
+{
+    return activeWindows_;
+}
+
+bool WindowHelper::IsExiting()
+{
+    return exiting_;
 }
 

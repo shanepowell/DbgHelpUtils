@@ -97,7 +97,7 @@ namespace dlg_help_utils::memory_info_utils
         return flags_string_utils::generate_flags_string(memory_protection_options, memory_protection_option_masks());
     }
 
-    std::vector<std::wstring> memory_protection_options_to_strings(uint32_t const memory_protection_options)
+    std::vector<std::wstring> memory_protection_options_to_strings(uint32_t const memory_protection_options)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(memory_protection_options, memory_protection_option_masks());
     }
@@ -117,7 +117,7 @@ namespace dlg_help_utils::memory_info_utils
         return flags_string_utils::generate_flags_string(flags, system_memory_info_flag_masks());
     }
 
-    std::vector<std::wstring> system_memory_info_flags_to_strings(uint16_t const flags)
+    std::vector<std::wstring> system_memory_info_flags_to_strings(uint16_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
         return flags_string_utils::generate_flags_strings(flags, system_memory_info_flag_masks());
     }

@@ -57,13 +57,16 @@ namespace dlg_help_utils
     {
         for (auto const* range : memory_address_ranges_)
         {
-            co_yield {range->StartOfMemoryRange, range->StartOfMemoryRange + range->Memory.DataSize};
+            co_yield {.start_range= range->StartOfMemoryRange, .end_range= range->StartOfMemoryRange + range->Memory.DataSize};
         }
     }
 
     std::vector<MINIDUMP_MEMORY_DESCRIPTOR const*>::const_iterator memory_list_stream::memory_address_ranges_upper_bound(uint64_t const address) const
     {
-        return std::upper_bound(memory_address_ranges_.begin(), memory_address_ranges_.end(), address, [](uint64_t const& address, MINIDUMP_MEMORY_DESCRIPTOR const* entry) { return address < entry->StartOfMemoryRange + entry->Memory.DataSize; });
+        MINIDUMP_MEMORY_DESCRIPTOR entry{.StartOfMemoryRange = address, .Memory = {}};
+        return std::ranges::upper_bound(memory_address_ranges_, 
+            &entry,
+            [](MINIDUMP_MEMORY_DESCRIPTOR const* address, MINIDUMP_MEMORY_DESCRIPTOR const* entry) { return address->StartOfMemoryRange < entry->StartOfMemoryRange + entry->Memory.DataSize; });
     }
 
     MINIDUMP_MEMORY_LIST const* memory_list_stream::get_memory_list(mini_dump const& dump, size_t& index)
