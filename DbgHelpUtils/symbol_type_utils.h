@@ -59,7 +59,8 @@ namespace dlg_help_utils::symbol_type_utils
         std::function<std::experimental::generator<dump_variable_symbol_data>()> sub_lines;
     };
 
-    std::experimental::generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+    dump_variable_symbol_data variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        , std::wstring_view const& prefix
         , dbg_help::symbol_type_info const& type
         , dbg_help::symbol_type_info const& display_type
         , uint64_t variable_address

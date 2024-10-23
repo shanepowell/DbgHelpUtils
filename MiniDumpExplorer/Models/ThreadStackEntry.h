@@ -53,7 +53,6 @@ namespace winrt::MiniDumpExplorer::implementation
         void SetDummy();
 
     private:
-        fire_and_forget LoadVariableSymbolAtChildren(std::shared_ptr<Utility::mini_dump_walker_store> walker_store, dlg_help_utils::dbg_help::variable variable, uint64_t variable_address, dlg_help_utils::mini_dump_memory_stream variable_stream);
         fire_and_forget LoadSubLinesChildren(std::shared_ptr<Utility::mini_dump_walker_store> walker_store, dlg_help_utils::symbol_type_utils::dump_variable_symbol_data data);
         static param::hstring GetVariableTypeTitle(variable_type type);
 

@@ -91,8 +91,6 @@ namespace winrt::MiniDumpExplorer::implementation
     void ThreadStackEntry::Set(std::shared_ptr<Utility::mini_dump_walker_store> const& walker_store, size_t const index, stack_function_call_entry entry, dbg_help::variable variable, bool const parameter)  // NOLINT(performance-unnecessary-value-param)
     // ReSharper restore CppParameterMayBeConst
     {
-        size_t constexpr hex_length = sizeof(uint64_t) * 2;
-
         entry_ = std::move(entry);
         variable_ = std::move(variable);
         index_ = index;
@@ -109,50 +107,29 @@ namespace winrt::MiniDumpExplorer::implementation
 
             os << (variable_.registry_value 
                     ? (variable_.frame_data 
-                        ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(variable_.registry_value->register_type), variable_.frame_data->data_offset, stream_hex_dump::to_hex(variable_.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
+                        ? std::format(L" [{0}{1:+}]", register_names::get_register_name(variable_.registry_value->register_type), variable_.frame_data->data_offset)
                         : std::format(L" [{}]", register_names::get_register_name(variable_.registry_value->register_type))
                       )
-                    : std::format(L" ({})", stream_hex_dump::to_hex(variable_.frame_data->data_address, hex_length))
+                    : L""
                   );
 
             if(variable_.frame_data)
             {
-                // ReSharper disable once CppTooWideScopeInitStatement
-                auto stream = walker_store->walker_.get_process_memory_stream(variable_.frame_data->data_address, variable_.frame_data->data_size);
-                if(stream.eof())
+                if(auto stream = walker_store->walker_.get_process_memory_stream(variable_.frame_data->data_address, variable_.frame_data->data_size);
+                    stream.eof())
                 {
-                    os << std::format(L"{}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(variable_.frame_data->data_address), resources::get_failed_to_find_address_postfix());
+                    os << std::format(L"({}){}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(variable_.frame_data->data_address), resources::get_failed_to_find_address_postfix());
+                    line_ = std::move(os).str();
                 }
                 else
                 {
-                    areChildrenLoaded_ = false;
-
-                    MiniDumpExplorer::ThreadStackEntry childEntry;
-                    childEntry.as<ThreadStackEntry>()->SetDummy();
-                    children_.Append(childEntry);
-
-                    loadChildren_ = [this, walker_store, variable = variable_, stream = std::move(stream)]() mutable
-                    {
-                        auto const address = variable.frame_data->data_address;
-                        LoadVariableSymbolAtChildren(std::move(walker_store), std::move(variable), address, std::move(stream));
-                    };
+                    Set(walker_store, symbol_type_utils::variable_symbol_at(walker_store->walker_, std::move(os).str(), variable_.symbol_info, variable_.symbol_info, variable_.frame_data->data_address, stream));
                 }
             }
             else if(variable_.registry_value)
             {
-                areChildrenLoaded_ = false;
-
-                MiniDumpExplorer::ThreadStackEntry childEntry;
-                childEntry.as<ThreadStackEntry>()->SetDummy();
-                children_.Append(childEntry);
-
-                loadChildren_ = [this, walker_store, variable = variable_]
-                {
-                    LoadVariableSymbolAtChildren(std::move(walker_store), std::move(variable), 0, {&variable.registry_value->value, variable.registry_value->value_size});
-                };
+                Set(walker_store, symbol_type_utils::variable_symbol_at(walker_store->walker_, std::move(os).str(), variable_.symbol_info, variable_.symbol_info, 0, {&variable.registry_value->value, variable.registry_value->value_size}));
             }
-
-            line_ = std::move(os).str();
         }
         else
         {
@@ -168,6 +145,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
         if(data.sub_lines)
         {
+            areChildrenLoaded_ = false;
+
             MiniDumpExplorer::ThreadStackEntry childEntry;
             childEntry.as<ThreadStackEntry>()->SetDummy();
             children_.Append(childEntry);
@@ -204,76 +183,6 @@ namespace winrt::MiniDumpExplorer::implementation
         Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
         loadingChildren_ = true;
         line_ = rm.MainResourceMap().GetValue(L"Resources/ThreadStackEntryLoading").ValueAsString();
-    }
-
-    // ReSharper disable CppParameterMayBeConst
-    fire_and_forget ThreadStackEntry::LoadVariableSymbolAtChildren(std::shared_ptr<Utility::mini_dump_walker_store> walker_store, dbg_help::variable variable, uint64_t const variable_address, mini_dump_memory_stream variable_stream)
-    // ReSharper restore CppParameterMayBeConst
-    {
-        auto anchor_self = get_strong();
-        auto weak_self = get_weak();
-
-        // ReSharper disable once CppTooWideScope
-        apartment_context ui_thread;
-
-        auto& symbolEngineHelper = SymbolEngineHelper::Instance();
-        co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
-
-        std::wstring const currentLine{line_};
-
-        {
-            logger::Log().LogMessage(log_level::debug, std::format(L"start LoadVariableSymbolAtChildren for line [{}]", currentLine));
-            mini_dump_memory_walker_create_handle create_handle{walker_store->walker_};
-            for (auto line : symbol_type_utils::variable_symbol_at(walker_store->walker_, variable.symbol_info, variable.symbol_info, variable_address, variable_stream))
-            {
-                // ReSharper disable once CppAssignedValueIsNeverUsed
-                anchor_self = {};
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
-
-                MiniDumpExplorer::ThreadStackEntry childEntry;
-                childEntry.as<ThreadStackEntry>()->Set(walker_store, std::move(line));
-
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
-
-                mini_dump_memory_walker_release_handle handle{walker_store->walker_};
-                {
-                    logger::Log().LogMessage(log_level::debug, std::format(L"LoadVariableSymbolAtChildren start UI update for line [{}]", currentLine));
-                    co_await ui_thread;
-
-                    anchor_self = weak_self.get();
-                    if(anchor_self && !WindowHelper::IsExiting())
-                    {
-                        children_.Append(childEntry);
-                    }
-                    else
-                    {
-                        // it's been removed while loading the items
-                        // need to switch QueueController thread to avoid symbol_engine callback fault
-                        co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
-                        co_return;
-                    }
-
-                    co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
-                    logger::Log().LogMessage(log_level::debug, std::format(L"LoadVariableSymbolAtChildren end UI update for line [{}]", currentLine));
-                }
-            }
-        }
-        logger::Log().LogMessage(log_level::debug, std::format(L"end LoadVariableSymbolAtChildren for line [{}]", currentLine));
-
-        co_await ui_thread;
-
-        if(WindowHelper::IsExiting())
-        {
-            co_return;
-        }
-
-        children_.RemoveAt(0);
     }
 
     // ReSharper disable CppParameterMayBeConst
