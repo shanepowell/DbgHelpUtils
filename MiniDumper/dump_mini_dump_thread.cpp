@@ -2,6 +2,7 @@
 
 #include "dump_file_options.h"
 #include "DbgHelpUtils/common_symbol_names.h"
+#include "DbgHelpUtils/context_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/misc_info_stream.h"
@@ -37,7 +38,7 @@ namespace
 
 void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context const& thread_context, dump_file_options const& options)
 {
-    log << L"  ThreadContext:\n";
+    log << L"\n  ThreadContext:\n";
     auto force_hex_dump = false;
     if (thread_context.x64_thread_context_available())
     {
@@ -45,15 +46,11 @@ void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context con
     }
     else if (thread_context.wow64_thread_context_available())
     {
-        dump_mini_dump_wow64_thread_context(log
-            , thread_context.wow64_thread_context()
-            , has_extended_registers_t{thread_context.wow64_thread_context_has_extended_registers()});
+        dump_mini_dump_wow64_thread_context(log, thread_context.wow64_thread_context());
     }
     else if (thread_context.x86_thread_context_available())
     {
-        dump_mini_dump_x86_thread_context(log
-            , thread_context.x86_thread_context()
-            , has_extended_registers_t{thread_context.x86_thread_context_has_extended_registers()});
+        dump_mini_dump_x86_thread_context(log, thread_context.x86_thread_context());
     }
     else
     {
@@ -69,116 +66,172 @@ void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context con
 
 void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context::context_x64 const& context)
 {
-    log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
-    log << std::format(L"    RIP: {}\n", to_hex_full(context.Rip));
-    log << std::format(L"    RSP: {}\n", to_hex_full(context.Rsp));
-    log << std::format(L"    RAX: {}\n", to_hex_full(context.Rax));
-    log << std::format(L"    RBX: {}\n", to_hex_full(context.Rbx));
-    log << std::format(L"    RCX: {}\n", to_hex_full(context.Rcx));
-    log << std::format(L"    RDX: {}\n", to_hex_full(context.Rdx));
-    log << std::format(L"    RDI: {}\n", to_hex_full(context.Rdi));
-    log << std::format(L"    RSI: {}\n", to_hex_full(context.Rsi));
-    log << std::format(L"    RBP: {}\n", to_hex_full(context.Rbp));
-    log << std::format(L"    R8: {}\n", to_hex_full(context.R8));
-    log << std::format(L"    R9: {}\n", to_hex_full(context.R9));
-    log << std::format(L"    R10: {}\n", to_hex_full(context.R10));
-    log << std::format(L"    R11: {}\n", to_hex_full(context.R11));
-    log << std::format(L"    R12: {}\n", to_hex_full(context.R12));
-    log << std::format(L"    R13: {}\n", to_hex_full(context.R13));
-    log << std::format(L"    R14: {}\n", to_hex_full(context.R14));
-    log << std::format(L"    R15: {}\n", to_hex_full(context.R15));
-    log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
-    log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
-    log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
-    log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
-    log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
-    log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
-    log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
-    log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
-    log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
-    log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
-    log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
-    log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
-    log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
-    log << std::format(L"    MxCsr: {}\n", to_hex_full(context.MxCsr));
-    log << L"    XMM:\n";
-    log << std::format(L"      Header: {0}-{1}\n", to_hex_full(context.Header[0]), to_hex_full(context.Header[1]));
-    log << std::format(L"      Legacy: {0}-{1}\n", to_hex_full(context.Legacy[0]), to_hex_full(context.Legacy[1]));
-    for (size_t index = 0; index < std::size(context.Legacy); index += 2)
+    log << std::format(L"    ContextFlags: ({}) {}\n", to_hex_full(context.ContextFlags), context_utils::resources::get_x64_thread_context_flags_to_string(context.ContextFlags));
+
+    if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
     {
-        log << std::format(L"      Legacy[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.Legacy[index]), to_hex_full(context.Legacy[index + 1]));
+        log << std::format(L"    RIP: {}\n", to_hex_full(context.Rip));
+        log << std::format(L"    RSP: {}\n", to_hex_full(context.Rsp));
     }
-    log << std::format(L"      Xmm0: {}\n", to_hex_full(context.Xmm0));
-    log << std::format(L"      Xmm1: {}\n", to_hex_full(context.Xmm1));
-    log << std::format(L"      Xmm2: {}\n", to_hex_full(context.Xmm2));
-    log << std::format(L"      Xmm3: {}\n", to_hex_full(context.Xmm3));
-    log << std::format(L"      Xmm4: {}\n", to_hex_full(context.Xmm4));
-    log << std::format(L"      Xmm5: {}\n", to_hex_full(context.Xmm5));
-    log << std::format(L"      Xmm6: {}\n", to_hex_full(context.Xmm6));
-    log << std::format(L"      Xmm7: {}\n", to_hex_full(context.Xmm7));
-    log << std::format(L"      Xmm8: {}\n", to_hex_full(context.Xmm8));
-    log << std::format(L"      Xmm9: {}\n", to_hex_full(context.Xmm9));
-    log << std::format(L"      Xmm10: {}\n", to_hex_full(context.Xmm10));
-    log << std::format(L"      Xmm11: {}\n", to_hex_full(context.Xmm11));
-    log << std::format(L"      Xmm12: {}\n", to_hex_full(context.Xmm12));
-    log << std::format(L"      Xmm13: {}\n", to_hex_full(context.Xmm13));
-    log << std::format(L"      Xmm14: {}\n", to_hex_full(context.Xmm14));
-    log << std::format(L"      Xmm15: {}\n", to_hex_full(context.Xmm15));
-    for (size_t index = 0; index < std::size(context.VectorRegister); index += 2)
+    if((context.ContextFlags & X64_CONTEXT_INTEGER) == X64_CONTEXT_INTEGER)
     {
-        log << std::format(L"    VectorRegister[{0}/{1}]: {2}-{3}\n"
-            , locale_formatting::to_wstring(index)
-            , locale_formatting::to_wstring(index + 1)
-            , to_hex_full(context.VectorRegister[index])
-            , to_hex_full(context.VectorRegister[index + 1]));
+        log << std::format(L"    RAX: {}\n", to_hex_full(context.Rax));
+        log << std::format(L"    RBX: {}\n", to_hex_full(context.Rbx));
+        log << std::format(L"    RCX: {}\n", to_hex_full(context.Rcx));
+        log << std::format(L"    RDX: {}\n", to_hex_full(context.Rdx));
+        log << std::format(L"    RDI: {}\n", to_hex_full(context.Rdi));
+        log << std::format(L"    RSI: {}\n", to_hex_full(context.Rsi));
     }
-    log << std::format(L"    VectorControl: {}\n", to_hex_full(context.VectorControl));
-    log << std::format(L"    DebugControl: {}\n", to_hex_full(context.DebugControl));
-    log << std::format(L"    LastBranchToRip: {}\n", to_hex_full(context.LastBranchToRip));
-    log << std::format(L"    LastBranchFromRip: {}\n", to_hex_full(context.LastBranchFromRip));
-    log << std::format(L"    LastExceptionToRip: {}\n", to_hex_full(context.LastExceptionToRip));
-    log << std::format(L"    LastExceptionFromRip: {}\n", to_hex_full(context.LastExceptionFromRip));
+    if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    RBP: {}\n", to_hex_full(context.Rbp));
+    }
+    if((context.ContextFlags & X64_CONTEXT_INTEGER) == X64_CONTEXT_INTEGER)
+    {
+        log << std::format(L"    R8: {}\n", to_hex_full(context.R8));
+        log << std::format(L"    R9: {}\n", to_hex_full(context.R9));
+        log << std::format(L"    R10: {}\n", to_hex_full(context.R10));
+        log << std::format(L"    R11: {}\n", to_hex_full(context.R11));
+        log << std::format(L"    R12: {}\n", to_hex_full(context.R12));
+        log << std::format(L"    R13: {}\n", to_hex_full(context.R13));
+        log << std::format(L"    R14: {}\n", to_hex_full(context.R14));
+        log << std::format(L"    R15: {}\n", to_hex_full(context.R15));
+    }
+    if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
+    }
+    if((context.ContextFlags & X64_CONTEXT_SEGMENTS) == X64_CONTEXT_SEGMENTS)
+    {
+        log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
+        log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
+        log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
+        log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
+    }
+    if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
+        log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+    }
+    if((context.ContextFlags & X64_CONTEXT_DEBUG_REGISTERS) == X64_CONTEXT_DEBUG_REGISTERS)
+    {
+        log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
+        log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
+        log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
+        log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
+        log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
+        log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
+    }
+    if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    MxCsr: ({}) {}\n", to_hex_full(context.MxCsr), context_utils::resources::get_mx_csr_register_to_string(context.MxCsr));
+    }
+    if((context.ContextFlags & X64_CONTEXT_FLOATING_POINT) == X64_CONTEXT_FLOATING_POINT)
+    {
+        log << L"    XMM:\n";
+        log << std::format(L"      Header: {0}-{1}\n", to_hex_full(context.Header[0]), to_hex_full(context.Header[1]));
+        log << std::format(L"      Legacy: {0}-{1}\n", to_hex_full(context.Legacy[0]), to_hex_full(context.Legacy[1]));
+        for (size_t index = 0; index < std::size(context.Legacy); index += 2)
+        {
+            log << std::format(L"      Legacy[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.Legacy[index]), to_hex_full(context.Legacy[index + 1]));
+        }
+        log << std::format(L"      Xmm0: {}\n", to_hex_full(context.Xmm0));
+        log << std::format(L"      Xmm1: {}\n", to_hex_full(context.Xmm1));
+        log << std::format(L"      Xmm2: {}\n", to_hex_full(context.Xmm2));
+        log << std::format(L"      Xmm3: {}\n", to_hex_full(context.Xmm3));
+        log << std::format(L"      Xmm4: {}\n", to_hex_full(context.Xmm4));
+        log << std::format(L"      Xmm5: {}\n", to_hex_full(context.Xmm5));
+        log << std::format(L"      Xmm6: {}\n", to_hex_full(context.Xmm6));
+        log << std::format(L"      Xmm7: {}\n", to_hex_full(context.Xmm7));
+        log << std::format(L"      Xmm8: {}\n", to_hex_full(context.Xmm8));
+        log << std::format(L"      Xmm9: {}\n", to_hex_full(context.Xmm9));
+        log << std::format(L"      Xmm10: {}\n", to_hex_full(context.Xmm10));
+        log << std::format(L"      Xmm11: {}\n", to_hex_full(context.Xmm11));
+        log << std::format(L"      Xmm12: {}\n", to_hex_full(context.Xmm12));
+        log << std::format(L"      Xmm13: {}\n", to_hex_full(context.Xmm13));
+        log << std::format(L"      Xmm14: {}\n", to_hex_full(context.Xmm14));
+        log << std::format(L"      Xmm15: {}\n", to_hex_full(context.Xmm15));
+
+        for (size_t index = 0; index < std::size(context.VectorRegister); index += 2)
+        {
+            log << std::format(L"    VectorRegister[{0}/{1}]: {2}-{3}\n"
+                , locale_formatting::to_wstring(index)
+                , locale_formatting::to_wstring(index + 1)
+                , to_hex_full(context.VectorRegister[index])
+                , to_hex_full(context.VectorRegister[index + 1]));
+        }
+        log << std::format(L"    VectorControl: {}\n", to_hex_full(context.VectorControl));
+    }
+    if((context.ContextFlags & X64_CONTEXT_DEBUG_REGISTERS) == X64_CONTEXT_DEBUG_REGISTERS)
+    {
+        log << std::format(L"    DebugControl: {}\n", to_hex_full(context.DebugControl));
+        log << std::format(L"    LastBranchToRip: {}\n", to_hex_full(context.LastBranchToRip));
+        log << std::format(L"    LastBranchFromRip: {}\n", to_hex_full(context.LastBranchFromRip));
+        log << std::format(L"    LastExceptionToRip: {}\n", to_hex_full(context.LastExceptionToRip));
+        log << std::format(L"    LastExceptionFromRip: {}\n", to_hex_full(context.LastExceptionFromRip));
+    }
 }
 
-void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context::context_x86 const& context, has_extended_registers_t const has_extended_registers)
+void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context::context_x86 const& context)
 {
-    log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
-    log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
-    log << std::format(L"    ESP: {}\n", to_hex_full(context.Esp));
-    log << std::format(L"    EAX: {}\n", to_hex_full(context.Eax));
-    log << std::format(L"    EBX: {}\n", to_hex_full(context.Ebx));
-    log << std::format(L"    ECX: {}\n", to_hex_full(context.Ecx));
-    log << std::format(L"    EDX: {}\n", to_hex_full(context.Edx));
-    log << std::format(L"    EDI: {}\n", to_hex_full(context.Edi));
-    log << std::format(L"    ESI: {}\n", to_hex_full(context.Esi));
-    log << std::format(L"    EBP: {}\n", to_hex_full(context.Ebp));
-    log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
-    log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
-    log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
-    log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
-    log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
-    log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
-    log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
-    log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
-    log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
-    log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
-    log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
-    log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
-    log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
+    log << std::format(L"    ContextFlags: ({}) {}\n", to_hex_full(context.ContextFlags), context_utils::resources::get_x86_thread_context_flags_to_string(context.ContextFlags));
+    if((context.ContextFlags & X86_CONTEXT_CONTROL) == X86_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
+        log << std::format(L"    ESP: {}\n", to_hex_full(context.Esp));
+    }
+    if((context.ContextFlags & X86_CONTEXT_INTEGER) == X86_CONTEXT_INTEGER)
+    {
+        log << std::format(L"    EAX: {}\n", to_hex_full(context.Eax));
+        log << std::format(L"    EBX: {}\n", to_hex_full(context.Ebx));
+        log << std::format(L"    ECX: {}\n", to_hex_full(context.Ecx));
+        log << std::format(L"    EDX: {}\n", to_hex_full(context.Edx));
+        log << std::format(L"    EDI: {}\n", to_hex_full(context.Edi));
+        log << std::format(L"    ESI: {}\n", to_hex_full(context.Esi));
+    }
+    if((context.ContextFlags & X86_CONTEXT_CONTROL) == X86_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    EBP: {}\n", to_hex_full(context.Ebp));
+        log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
+    }
+    if((context.ContextFlags & X86_CONTEXT_SEGMENTS) == X86_CONTEXT_SEGMENTS)
+    {
+        log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
+        log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
+        log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
+        log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
+    }
+    if((context.ContextFlags & X86_CONTEXT_CONTROL) == X86_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
+        log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+    }
+    if((context.ContextFlags & X86_CONTEXT_DEBUG_REGISTERS) == X86_CONTEXT_DEBUG_REGISTERS)
+    {
+        log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
+        log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
+        log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
+        log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
+        log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
+        log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
+    }
 
-    log << L"    FloatSave:\n";
-    log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
-    log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
-    log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
-    log << std::format(L"      ErrorOffset: {}\n", to_hex(context.FloatSave.ErrorOffset));
-    log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
-    log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
-    log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
-    log << L"      RegisterArea:\n";
-    hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
-    log << L'\n';
+    if((context.ContextFlags & X86_CONTEXT_FLOATING_POINT) == X86_CONTEXT_FLOATING_POINT)
+    {
+        log << L"    FloatSave:\n";
+        log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
+        log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
+        log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
+        log << std::format(L"      ErrorOffset: {}\n", to_hex(context.FloatSave.ErrorOffset));
+        log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
+        log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
+        log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
+        log << L"      RegisterArea:\n";
+        hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+        log << L'\n';
+    }
 
-    if (has_extended_registers)
+    if((context.ContextFlags & X86_CONTEXT_EXTENDED_REGISTERS) == X86_CONTEXT_EXTENDED_REGISTERS)
     {
         log << L"    ExtendedRegisters:\n";
         hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
@@ -186,46 +239,67 @@ void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context
     }
 }
 
-void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context, has_extended_registers_t const has_extended_registers)
+void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context)
 {
-    log << std::format(L"    ContextFlags: {}\n", to_hex_full(context.ContextFlags));
-    log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
-    log << std::format(L"    ESP: {}\n", to_hex_full(context.Esp));
-    log << std::format(L"    EAX: {}\n", to_hex_full(context.Eax));
-    log << std::format(L"    EBX: {}\n", to_hex_full(context.Ebx));
-    log << std::format(L"    ECX: {}\n", to_hex_full(context.Ecx));
-    log << std::format(L"    EDX: {}\n", to_hex_full(context.Edx));
-    log << std::format(L"    EDI: {}\n", to_hex_full(context.Edi));
-    log << std::format(L"    ESI: {}\n", to_hex_full(context.Esi));
-    log << std::format(L"    EBP: {}\n", to_hex_full(context.Ebp));
-    log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
-    log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
-    log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
-    log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
-    log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
-    log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
-    log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
-    log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
-    log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
-    log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
-    log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
-    log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
-    log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
+    log << std::format(L"    ContextFlags: ({}) {}\n", to_hex_full(context.ContextFlags), context_utils::resources::get_wow64_thread_context_flags_to_string(context.ContextFlags));
+    if((context.ContextFlags & WOW64_CONTEXT_CONTROL) == WOW64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    EIP: {}\n", to_hex_full(context.Eip));
+        log << std::format(L"    ESP: {}\n", to_hex_full(context.Esp));
+    }
+    if((context.ContextFlags & WOW64_CONTEXT_INTEGER) == WOW64_CONTEXT_INTEGER)
+    {
+        log << std::format(L"    EAX: {}\n", to_hex_full(context.Eax));
+        log << std::format(L"    EBX: {}\n", to_hex_full(context.Ebx));
+        log << std::format(L"    ECX: {}\n", to_hex_full(context.Ecx));
+        log << std::format(L"    EDX: {}\n", to_hex_full(context.Edx));
+        log << std::format(L"    EDI: {}\n", to_hex_full(context.Edi));
+        log << std::format(L"    ESI: {}\n", to_hex_full(context.Esi));
+    }
+    if((context.ContextFlags & WOW64_CONTEXT_CONTROL) == WOW64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    EBP: {}\n", to_hex_full(context.Ebp));
+        log << std::format(L"    CS: {}\n", to_hex_full(context.SegCs));
+    }
+    if((context.ContextFlags & WOW64_CONTEXT_SEGMENTS) == WOW64_CONTEXT_SEGMENTS)
+    {
+        log << std::format(L"    DS: {}\n", to_hex_full(context.SegDs));
+        log << std::format(L"    ES: {}\n", to_hex_full(context.SegEs));
+        log << std::format(L"    FS: {}\n", to_hex_full(context.SegFs));
+        log << std::format(L"    GS: {}\n", to_hex_full(context.SegGs));
+    }
+    if((context.ContextFlags & WOW64_CONTEXT_CONTROL) == WOW64_CONTEXT_CONTROL)
+    {
+        log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
+        log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+    }
+    if((context.ContextFlags & WOW64_CONTEXT_DEBUG_REGISTERS) == WOW64_CONTEXT_DEBUG_REGISTERS)
+    {
+        log << std::format(L"    DR0: {}\n", to_hex_full(context.Dr0));
+        log << std::format(L"    DR1: {}\n", to_hex_full(context.Dr1));
+        log << std::format(L"    DR2: {}\n", to_hex_full(context.Dr2));
+        log << std::format(L"    DR3: {}\n", to_hex_full(context.Dr3));
+        log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
+        log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
+    }
 
-    log << L"    FloatSave:\n";
-    log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
-    log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
-    log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
-    log << std::format(L"      ErrorOffset: {}\n", to_hex(context.FloatSave.ErrorOffset));
-    log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
-    log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
-    log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
-    log << std::format(L"      Cr0NpxState: {}\n", to_hex(context.FloatSave.Cr0NpxState));
-    log << L"      RegisterArea:\n";
-    hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
-    log << L'\n';
+    if((context.ContextFlags & WOW64_CONTEXT_FLOATING_POINT) == WOW64_CONTEXT_FLOATING_POINT)
+    {
+        log << L"    FloatSave:\n";
+        log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
+        log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
+        log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
+        log << std::format(L"      ErrorOffset: {}\n", to_hex(context.FloatSave.ErrorOffset));
+        log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
+        log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
+        log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
+        log << std::format(L"      Cr0NpxState: {}\n", to_hex(context.FloatSave.Cr0NpxState));
+        log << L"      RegisterArea:\n";
+        hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+        log << L'\n';
+    }
 
-    if (has_extended_registers)
+    if((context.ContextFlags & WOW64_CONTEXT_EXTENDED_REGISTERS) == WOW64_CONTEXT_EXTENDED_REGISTERS)
     {
         log << L"    ExtendedRegisters:\n";
         hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
@@ -488,4 +562,5 @@ void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump c
 void load_and_dump_teb(std::wostream& log, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, ULONG64 const teb_address)
 {
     symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_engine, common_symbol_names::teb_structure_symbol_name, teb_address);
+    log << "\n";
 }

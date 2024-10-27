@@ -37,12 +37,12 @@ namespace dlg_help_utils::thread_info_utils
 {
     std::wstring dump_flags_to_string(uint32_t const dump_flags)
     {
-        return flags_string_utils::generate_flags_string(dump_flags, g_dump_flag_masks);
+        return generate_flags_string(dump_flags, g_dump_flag_masks, flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> dump_flags_to_strings(uint32_t const dump_flags)
     {
-        return flags_string_utils::generate_flags_strings(dump_flags, g_dump_flag_masks);
+        return generate_flags_strings(dump_flags, g_dump_flag_masks, flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring thread_priority_class_to_string(uint32_t const thread_priority_class)

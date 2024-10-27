@@ -170,6 +170,7 @@
     <ClCompile Include="comment_stream_w.cpp" />
     <ClCompile Include="common_symbol_names.cpp" />
     <ClCompile Include="common_symbol_utils.cpp" />
+    <ClCompile Include="context_utils_resources.cpp" />
     <ClCompile Include="crt_entry.cpp" />
     <ClCompile Include="crt_heap.cpp" />
     <ClCompile Include="cv_info_pdb70.cpp" />
@@ -316,6 +317,7 @@
     <ClInclude Include="chrono_unit_convert_to_string.h" />
     <ClInclude Include="common_symbol_names.h" />
     <ClInclude Include="common_symbol_utils.h" />
+    <ClInclude Include="context_utils.h" />
     <ClInclude Include="crt_entry.h" />
     <ClInclude Include="crt_heap.h" />
     <ClInclude Include="double_utils.h" />

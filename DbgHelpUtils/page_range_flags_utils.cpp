@@ -32,12 +32,12 @@ namespace dlg_help_utils::page_range_flags_utils
 {
     std::wstring dump_page_range_flags_to_string(page_range_flags const flags)
     {
-        return flags_string_utils::generate_flags_string(flags, dump_page_range_flags);
+        return generate_flags_string(flags, dump_page_range_flags, flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> dump_page_range_flags_to_strings(page_range_flags const flags)
     {
-        return flags_string_utils::generate_flags_strings(flags, dump_page_range_flags);
+        return generate_flags_strings(flags, dump_page_range_flags, flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring dump_page_range_to_string(page_range_flags const value)

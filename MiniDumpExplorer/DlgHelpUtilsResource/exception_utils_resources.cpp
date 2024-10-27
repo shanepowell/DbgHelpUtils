@@ -36,7 +36,7 @@ namespace dlg_help_utils::exception_utils
 
     std::vector<std::wstring> exception_flags_to_list(uint32_t const exception_flags)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(exception_flags, exception_flags_map());
+        return generate_flags_strings(exception_flags, exception_flags_map(), flags_string_utils::mask_used_flags_t{true});
     }
 
     namespace resources

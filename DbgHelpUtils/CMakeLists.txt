@@ -207,6 +207,8 @@ set(StreamUtilities
     "common_symbol_names.h"
     "common_symbol_utils.cpp"
     "common_symbol_utils.h"
+    "context_utils.h"
+    "exception_utils_resources.cpp"
     "cv_info_pdb70.cpp"
     "cv_info_pdb70.h"
     "exception_utils.cpp"

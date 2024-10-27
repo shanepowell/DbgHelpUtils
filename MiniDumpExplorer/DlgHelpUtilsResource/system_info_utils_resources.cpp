@@ -524,17 +524,17 @@ namespace dlg_help_utils::system_info_utils
 
     std::vector<std::wstring> suite_mask_to_strings(unsigned short const suite_mask)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(suite_mask, suite_masks());
+        return generate_flags_strings(suite_mask, suite_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring misc_info_flags_to_string(uint32_t const flags)
     {
-        return flags_string_utils::generate_flags_string(flags, misc_info_flags());
+        return generate_flags_string(flags, misc_info_flags(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> misc_info_flags_to_strings(uint32_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(flags, misc_info_flags());
+        return generate_flags_strings(flags, misc_info_flags(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring time_zone_id_to_string(uint32_t const timezone_id)
@@ -549,12 +549,12 @@ namespace dlg_help_utils::system_info_utils
 
     std::wstring vm_counters_2_flags_to_string(uint16_t const flags)
     {
-        return flags_string_utils::generate_flags_string(flags, vm_counters_2_flag_masks());
+        return generate_flags_string(flags, vm_counters_2_flag_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> vm_counters_2_flags_to_strings(uint16_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(flags, vm_counters_2_flag_masks());
+        return generate_flags_strings(flags, vm_counters_2_flag_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring handle_trace_operation_to_string(uint32_t const type)
@@ -569,27 +569,27 @@ namespace dlg_help_utils::system_info_utils
 
     std::vector<std::wstring> process_execute_flags_to_strings(uint32_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(static_cast<mem_execute_options>(flags), process_execute_flags());
+        return generate_flags_strings(static_cast<mem_execute_options>(flags), process_execute_flags(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring version_file_flags_to_string(uint32_t const flags, uint32_t const mask)
     {
-        return flags_string_utils::generate_flags_string(flags & mask, version_file_flag_masks());
+        return generate_flags_string(flags & mask, version_file_flag_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> version_file_flags_to_strings(uint32_t const flags, uint32_t const mask)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(flags & mask, version_file_flag_masks());
+        return generate_flags_strings(flags & mask, version_file_flag_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring version_file_os_to_string(uint32_t const file_os)
     {
-        return flags_string_utils::generate_flags_string(file_os, version_file_os_masks());
+        return generate_flags_string(file_os, version_file_os_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> version_file_os_to_strings(uint32_t const file_os)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(file_os, version_file_os_masks());
+        return generate_flags_strings(file_os, version_file_os_masks(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::wstring version_file_type_to_string(uint32_t const file_type, uint32_t const file_sub_type)
@@ -609,11 +609,11 @@ namespace dlg_help_utils::system_info_utils
 
     std::wstring other_processor_features_to_string(uint64_t const features1, [[maybe_unused]] uint64_t const features2)
     {
-        return flags_string_utils::generate_flags_string(features1, other_processor_features());
+        return generate_flags_string(features1, other_processor_features(), flags_string_utils::mask_used_flags_t{true});
     }
 
     std::vector<std::wstring> other_processor_features_to_strings(uint64_t const features1, [[maybe_unused]] uint64_t const features2)  // NOLINT(misc-use-internal-linkage)
     {
-        return flags_string_utils::generate_flags_strings(features1, other_processor_features());
+        return generate_flags_strings(features1, other_processor_features(), flags_string_utils::mask_used_flags_t{true});
     }
 }

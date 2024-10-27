@@ -486,6 +486,9 @@
     <ClCompile Include="function_info_utils_resources.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="context_utils_resources.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1023,6 +1026,9 @@
       <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="mini_dump_memory_walker_create_handle.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="context_utils.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>

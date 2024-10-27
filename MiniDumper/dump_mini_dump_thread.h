@@ -21,9 +21,8 @@ namespace dlg_help_utils
 void dump_mini_dump_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context const& thread_context, dump_file_options const& options);
 void dump_mini_dump_x64_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context::context_x64 const& context);
 
-using has_extended_registers_t = dlg_help_utils::tagged_bool<struct has_extended_registers_type>;
-void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context, has_extended_registers_t has_extended_registers);
-void dump_mini_dump_x86_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context::context_x86 const& context, has_extended_registers_t has_extended_registers);
+void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context);
+void dump_mini_dump_x86_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context::context_x86 const& context);
 void dump_mini_dump_thread_names_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
 void dump_mini_dump_thread_list_stream_data(std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump

@@ -41,12 +41,20 @@ namespace dlg_help_utils::flags_string_utils
         return static_cast<T>(cast_enum_value(value) & ~cast_enum_value(option));;
     }
 
+    template <typename T>
+    T add_mask_flag_option(T const value, T const option)
+    {
+        return static_cast<T>(cast_enum_value(value) | cast_enum_value(option));;
+    }
+
+    using mask_used_flags_t = tagged_bool<struct mask_used_flags_type>;
 
     template <typename T, typename TContainer>
-    std::wstring generate_flags_string(T dump_flags, TContainer const& flag_masks)
+    std::wstring generate_flags_string(T dump_flags, TContainer const& flag_masks, mask_used_flags_t const mask_used_flags)
     {
         std::wostringstream ss;
         auto first{true};
+        T used_dump_flags{};
 
         for (auto const& [option, title] : flag_masks)
         {
@@ -57,7 +65,12 @@ namespace dlg_help_utils::flags_string_utils
             }
             else if (is_flag_option(dump_flags, option))
             {
-                dump_flags = mask_flag_option(dump_flags, option);
+                if(mask_used_flags)
+                {
+                    dump_flags = mask_flag_option(dump_flags, option);
+                }
+                used_dump_flags = add_mask_flag_option(used_dump_flags, option);
+
                 if (first)
                 {
                     first = false;
@@ -71,14 +84,15 @@ namespace dlg_help_utils::flags_string_utils
             }
         }
 
-        if (cast_enum_value(dump_flags) > 0)
+        if (T const left_over_dump_flags = mask_used_flags ? dump_flags : mask_flag_option(dump_flags, used_dump_flags);
+            cast_enum_value(left_over_dump_flags) > 0)
         {
             if (!first)
             {
                 ss << resources::get_flag_separator_string() << L" ";
             }
 
-            ss << std::format(L"{} [{}]", resources::get_unknown_flags_string(), stream_hex_dump::to_hex(cast_enum_value(dump_flags)));
+            ss << std::format(L"{} [{}]", resources::get_unknown_flags_string(), stream_hex_dump::to_hex(cast_enum_value(left_over_dump_flags)));
         }
         else if (first)
         {
@@ -89,9 +103,10 @@ namespace dlg_help_utils::flags_string_utils
     }
 
     template <typename T, typename TContainer>
-    std::vector<std::wstring> generate_flags_strings(T dump_flags, TContainer const& flag_masks)
+    std::vector<std::wstring> generate_flags_strings(T dump_flags, TContainer const& flag_masks, mask_used_flags_t const mask_used_flags)
     {
         std::vector<std::wstring> rv;
+        T used_dump_flags{};
 
         for (auto const& [option, title] : flag_masks)
         {
@@ -101,14 +116,19 @@ namespace dlg_help_utils::flags_string_utils
             }
             else if (is_flag_option(dump_flags, option))
             {
-                dump_flags = mask_flag_option(dump_flags, option);
+                if(mask_used_flags)
+                {
+                    dump_flags = mask_flag_option(dump_flags, option);
+                }
+                used_dump_flags = add_mask_flag_option(used_dump_flags, option);
                 rv.emplace_back(title);
             }
         }
 
-        if (cast_enum_value(dump_flags) > 0)
+        if (T const left_over_dump_flags = mask_used_flags ? dump_flags : mask_flag_option(dump_flags, used_dump_flags);
+            cast_enum_value(left_over_dump_flags) > 0)
         {
-            rv.emplace_back(std::format(L"{} [{}]", resources::get_unknown_flags_string(), stream_hex_dump::to_hex(cast_enum_value(dump_flags))));
+            rv.emplace_back(std::format(L"{} [{}]", resources::get_unknown_flags_string(), stream_hex_dump::to_hex(cast_enum_value(left_over_dump_flags))));
         }
 
         return rv;

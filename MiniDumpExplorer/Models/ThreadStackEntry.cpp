@@ -115,7 +115,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
             if(variable_.frame_data)
             {
-                if(auto stream = walker_store->walker_.get_process_memory_stream(variable_.frame_data->data_address, variable_.frame_data->data_size);
+                if(auto stream = walker_store->walker_.get_process_memory_stream(variable_.frame_data->data_address, variable_.frame_data->data_size);  // NOLINT(bugprone-branch-clone)
                     stream.eof())
                 {
                     os << std::format(L"({}){}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(variable_.frame_data->data_address), resources::get_failed_to_find_address_postfix());

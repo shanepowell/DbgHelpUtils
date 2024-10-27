@@ -49,6 +49,6 @@ namespace dlg_help_utils::gflags_utils
 {
     std::vector<std::wstring> dump_gflags_to_strings(gflags const nt_global_flags)
     {
-        return flags_string_utils::generate_flags_strings(nt_global_flags, dump_gflags);
+        return generate_flags_strings(nt_global_flags, dump_gflags, flags_string_utils::mask_used_flags_t{true});
     }
 }

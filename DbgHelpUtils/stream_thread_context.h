@@ -1,7 +1,71 @@
-﻿#pragma once
+﻿// ReSharper disable CppClangTidyModernizeMacroToEnum
+#pragma once
 
 #include "windows_setup.h"
 #include <DbgHelp.h>
+
+// x86 ContextFlags values
+
+#define X86_CONTEXT_i386    0x00010000L    // this assumes that i386 and
+#define X86_CONTEXT_i486    0x00010000L    // i486 have identical context records
+
+#define X86_CONTEXT_CONTROL         (X86_CONTEXT_i386 | 0x00000001L) // SS:SP, CS:IP, FLAGS, BP
+#define X86_CONTEXT_INTEGER         (X86_CONTEXT_i386 | 0x00000002L) // AX, BX, CX, DX, SI, DI
+#define X86_CONTEXT_SEGMENTS        (X86_CONTEXT_i386 | 0x00000004L) // DS, ES, FS, GS
+#define X86_CONTEXT_FLOATING_POINT  (X86_CONTEXT_i386 | 0x00000008L) // 387 state
+#define X86_CONTEXT_DEBUG_REGISTERS (X86_CONTEXT_i386 | 0x00000010L) // DB 0-3,6,7
+#define X86_CONTEXT_EXTENDED_REGISTERS  (X86_CONTEXT_i386 | 0x00000020L) // cpu specific extensions
+
+#define X86_CONTEXT_FULL (X86_CONTEXT_CONTROL | X86_CONTEXT_INTEGER |\
+                      X86_CONTEXT_SEGMENTS)
+
+#define X86_CONTEXT_ALL             (X86_CONTEXT_CONTROL | X86_CONTEXT_INTEGER | X86_CONTEXT_SEGMENTS | \
+                                 X86_CONTEXT_FLOATING_POINT | X86_CONTEXT_DEBUG_REGISTERS | \
+                                 X86_CONTEXT_EXTENDED_REGISTERS)
+
+#define X86_CONTEXT_XSTATE          (X86_CONTEXT_i386 | 0x00000040L)
+
+#define X86_CONTEXT_EXCEPTION_ACTIVE    0x08000000L
+#define X86_CONTEXT_SERVICE_ACTIVE      0x10000000L
+#define X86_CONTEXT_EXCEPTION_REQUEST   0x40000000L
+#define X86_CONTEXT_EXCEPTION_REPORTING 0x80000000L
+
+
+// x64 ContextFlags values
+
+#define X64_CONTEXT_AMD64   0x00100000L
+
+#define X64_CONTEXT_CONTROL         (X64_CONTEXT_AMD64 | 0x00000001L)
+#define X64_CONTEXT_INTEGER         (X64_CONTEXT_AMD64 | 0x00000002L)
+#define X64_CONTEXT_SEGMENTS        (X64_CONTEXT_AMD64 | 0x00000004L)
+#define X64_CONTEXT_FLOATING_POINT  (X64_CONTEXT_AMD64 | 0x00000008L)
+#define X64_CONTEXT_DEBUG_REGISTERS (X64_CONTEXT_AMD64 | 0x00000010L)
+
+#define X64_CONTEXT_FULL            (X64_CONTEXT_CONTROL | X64_CONTEXT_INTEGER | \
+                                 X64_CONTEXT_FLOATING_POINT)
+
+#define X64_CONTEXT_ALL             (X64_CONTEXT_CONTROL | X64_CONTEXT_INTEGER | \
+                                 X64_CONTEXT_SEGMENTS | X64_CONTEXT_FLOATING_POINT | \
+                                 X64_CONTEXT_DEBUG_REGISTERS)
+
+#define X64_CONTEXT_XSTATE          (X64_CONTEXT_AMD64 | 0x00000040L)
+#define X64_CONTEXT_KERNEL_CET      (X64_CONTEXT_AMD64 | 0x00000080L)
+
+#define X64_CONTEXT_EXCEPTION_ACTIVE    0x08000000L
+#define X64_CONTEXT_SERVICE_ACTIVE      0x10000000L
+#define X64_CONTEXT_EXCEPTION_REQUEST   0x40000000L
+#define X64_CONTEXT_EXCEPTION_REPORTING 0x80000000L
+
+//
+// ReSharper disable once CommentTypo
+// CONTEXT_UNWOUND_TO_CALL flag is set by the unwinder if it
+// has unwound to a call site, and cleared whenever it unwinds
+// through a trap frame.
+//
+
+#define X64_CONTEXT_UNWOUND_TO_CALL     0x20000000
+
+
 
 namespace dlg_help_utils
 {
@@ -14,6 +78,7 @@ namespace dlg_help_utils
         explicit stream_thread_context(mini_dump const& dump, MINIDUMP_LOCATION_DESCRIPTOR const& location);
 
         // ReSharper disable CommentTypo
+
 #ifdef _WIN64
 
 #define SIZE_OF_80387_REGISTERS      80
@@ -292,16 +357,6 @@ namespace dlg_help_utils
         [[nodiscard]] bool x64_thread_context_available() const { return x64_thread_context_available_; }
         [[nodiscard]] context_x64 const& x64_thread_context() const { return *x64_thread_context_; }
 
-        [[nodiscard]] bool x86_thread_context_has_extended_registers() const
-        {
-            return x86_thread_context_has_extended_registers_;
-        }
-
-        [[nodiscard]] bool wow64_thread_context_has_extended_registers() const
-        {
-            return wow64_thread_context_has_extended_registers_;
-        }
-
     private:
         void const* context_{nullptr};
         size_t size_{};
@@ -311,7 +366,5 @@ namespace dlg_help_utils
         WOW64_CONTEXT const* wow64_thread_context_{nullptr};
         bool x64_thread_context_available_{false};
         context_x64 const* x64_thread_context_{nullptr};
-        bool x86_thread_context_has_extended_registers_{false};
-        bool wow64_thread_context_has_extended_registers_{false};
     };
 }
