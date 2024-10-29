@@ -111,7 +111,7 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
     if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
     {
         log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
-        log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+        log << std::format(L"    EFlags: ({}) {}\n", to_hex_full(context.EFlags), context_utils::resources::get_flags_register_to_string(context.EFlags));
     }
     if((context.ContextFlags & X64_CONTEXT_DEBUG_REGISTERS) == X64_CONTEXT_DEBUG_REGISTERS)
     {
@@ -204,7 +204,7 @@ void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context
     if((context.ContextFlags & X86_CONTEXT_CONTROL) == X86_CONTEXT_CONTROL)
     {
         log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
-        log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+        log << std::format(L"    EFlags: ({}) {}\n", to_hex_full(context.EFlags), context_utils::resources::get_flags_register_to_string(context.EFlags));
     }
     if((context.ContextFlags & X86_CONTEXT_DEBUG_REGISTERS) == X86_CONTEXT_DEBUG_REGISTERS)
     {
@@ -271,7 +271,7 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
     if((context.ContextFlags & WOW64_CONTEXT_CONTROL) == WOW64_CONTEXT_CONTROL)
     {
         log << std::format(L"    SS: {}\n", to_hex_full(context.SegSs));
-        log << std::format(L"    EFlags: {}\n", to_hex_full(context.EFlags));
+        log << std::format(L"    EFlags: ({}) {}\n", to_hex_full(context.EFlags), context_utils::resources::get_flags_register_to_string(context.EFlags));
     }
     if((context.ContextFlags & WOW64_CONTEXT_DEBUG_REGISTERS) == WOW64_CONTEXT_DEBUG_REGISTERS)
     {

@@ -1,9 +1,11 @@
 ﻿#pragma once
+#include <optional>
 #include <unordered_map>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "hash_combine.h"
 #include "stream_hex_dump.h"
 
 namespace dlg_help_utils::flags_string_utils
@@ -15,6 +17,26 @@ namespace dlg_help_utils::flags_string_utils
         std::wstring get_unknown_enum_string();
         std::wstring get_none_options_string();
     }
+
+    template <typename T>
+    struct option_mask
+    {
+        T mask;
+        std::optional<T> value;
+
+        [[nodiscard]] std::size_t hash() const
+        {
+            std::size_t hash{ 0 };
+            hash_combine(hash, std::hash<T>{}(mask));
+            if (value.has_value())
+            {
+                hash_combine(hash, std::hash<T>{}(value.value()));
+            }
+            return hash;
+        }
+
+        auto operator<=>(option_mask const&) const = default; // NOLINT(clang-diagnostic-unused-member-function)
+    };
 
     template <typename T>
     auto cast_enum_value(T value)
@@ -30,21 +52,89 @@ namespace dlg_help_utils::flags_string_utils
     }
 
     template <typename T>
-    bool is_flag_option(T const value, T const option)
+    auto cast_enum_value(option_mask<T>  value)
     {
-        return static_cast<T>(cast_enum_value(value) & cast_enum_value(option)) == option;
+        if (value.value.has_value())
+        {
+            return cast_enum_value(value.value.value());
+        }
+        return cast_enum_value(value.mask);
+    }
+
+    template<typename T>
+    bool is_flags_default(T const value, option_mask<T> const& option)
+    {
+        if (option.value.has_value())
+        {
+            return cast_enum_value(option.value.value()) == 0 && value == option.value.value();
+        }
+
+        return cast_enum_value(option.mask) == 0 && value == option.mask;
+    }
+
+    template<typename T1, typename T2>
+    bool is_flags_default(T1 const value, T2 const option)
+    {
+
+        return cast_enum_value(option) == 0 && value == option;
+    }
+
+    template <typename T1, typename T2>
+    bool is_flag_option(T1 const value, T2 const option)
+    {
+        return static_cast<T1>(cast_enum_value(value) & cast_enum_value(option)) == option;
     }
 
     template <typename T>
-    T mask_flag_option(T const value, T const option)
+    bool is_flag_option(T const value, option_mask<T> const& option)
     {
-        return static_cast<T>(cast_enum_value(value) & ~cast_enum_value(option));;
+        if (option.value.has_value())
+        {
+            return static_cast<T>(cast_enum_value(value) & cast_enum_value(option.mask)) == option.value.value();
+        }
+
+        return static_cast<T>(cast_enum_value(value) & cast_enum_value(option.mask)) != 0;
+    }
+
+    template <typename T1, typename T2>
+    T1 mask_flag_option(T1 const value, T2 const option)
+    {
+        return static_cast<T1>(cast_enum_value(value) & ~cast_enum_value(option));;
     }
 
     template <typename T>
-    T add_mask_flag_option(T const value, T const option)
+    T mask_flag_option(T const value, option_mask<T> const& option)
     {
-        return static_cast<T>(cast_enum_value(value) | cast_enum_value(option));;
+        return static_cast<T>(cast_enum_value(value) & ~cast_enum_value(option.mask));
+    }
+
+    template <typename T1, typename T2>
+    T1 add_mask_flag_option(T1 const value, T2 const option)
+    {
+        return static_cast<T1>(cast_enum_value(value) | cast_enum_value(option));;
+    }
+
+    template <typename T>
+    T add_mask_flag_option(T const value, option_mask<T> const& option)
+    {
+        return static_cast<T>(cast_enum_value(value) | cast_enum_value(option.mask));
+    }
+
+    template<typename T1, typename T2, typename S>
+    std::wstring get_option_title([[maybe_unused]] T1 const value, [[maybe_unused]] T2 const option, S const& title)
+    {
+        return title;
+    }
+
+    template<typename T, typename S>
+    std::wstring get_option_title(T const value, option_mask<T> const& option, S const& title)
+    {
+        if (!option.value.has_value())
+        {
+            return std::format(L"{} ({})", title, stream_hex_dump::to_hex(cast_enum_value(value) & cast_enum_value(option.mask)));
+        }
+
+        return title;
     }
 
     using mask_used_flags_t = tagged_bool<struct mask_used_flags_type>;
@@ -58,10 +148,10 @@ namespace dlg_help_utils::flags_string_utils
 
         for (auto const& [option, title] : flag_masks)
         {
-            if (first && cast_enum_value(option) == 0 && dump_flags == option)
+            if (first && is_flags_default(dump_flags, option))
             {
                 first = false;
-                ss << title;
+                ss << get_option_title(dump_flags, option, title);
             }
             else if (is_flag_option(dump_flags, option))
             {
@@ -71,16 +161,20 @@ namespace dlg_help_utils::flags_string_utils
                 }
                 used_dump_flags = add_mask_flag_option(used_dump_flags, option);
 
-                if (first)
+                if (auto flag_title = get_option_title(dump_flags, option, title);
+                    !flag_title.empty())
                 {
-                    first = false;
-                }
-                else
-                {
-                    ss << resources::get_flag_separator_string() << L" ";
-                }
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        ss << resources::get_flag_separator_string() << L" ";
+                    }
 
-                ss << title;
+                    ss << std::move(flag_title);
+                }
             }
         }
 
@@ -110,9 +204,9 @@ namespace dlg_help_utils::flags_string_utils
 
         for (auto const& [option, title] : flag_masks)
         {
-            if (cast_enum_value(option) == 0 && dump_flags == option)
+            if (is_flags_default(dump_flags, option))
             {
-                rv.emplace_back(title);
+                rv.emplace_back(get_option_title(dump_flags, option, title));
             }
             else if (is_flag_option(dump_flags, option))
             {
@@ -121,7 +215,11 @@ namespace dlg_help_utils::flags_string_utils
                     dump_flags = mask_flag_option(dump_flags, option);
                 }
                 used_dump_flags = add_mask_flag_option(used_dump_flags, option);
-                rv.emplace_back(title);
+                if (auto flag_title = get_option_title(dump_flags, option, title);
+                    !flag_title.empty())
+                {
+                    rv.emplace_back(std::move(flag_title));
+                }
             }
         }
 
@@ -153,3 +251,13 @@ namespace dlg_help_utils::flags_string_utils
         }
     }
 }
+
+
+template <typename T>
+struct std::hash<dlg_help_utils::flags_string_utils::option_mask<T>>
+{
+    std::size_t operator()(dlg_help_utils::flags_string_utils::option_mask<T> const& v) const noexcept
+    {
+        return v.hash();
+    }
+};
