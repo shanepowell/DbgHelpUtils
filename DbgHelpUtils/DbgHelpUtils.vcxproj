@@ -303,6 +303,7 @@
     <ClCompile Include="unloaded_module_list_stream.cpp" />
     <ClCompile Include="ust_address_stack_trace.cpp" />
     <ClCompile Include="windows_error.cpp" />
+    <ClCompile Include="xstate_reader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allocation_stack_trace_helper.h" />
@@ -485,6 +486,7 @@
     <ClInclude Include="wide_runtime_error.h" />
     <ClInclude Include="windows_setup.h" />
     <ClInclude Include="write_header.h" />
+    <ClInclude Include="xstate_reader.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

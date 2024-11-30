@@ -489,6 +489,9 @@
     <ClCompile Include="context_utils_resources.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="xstate_reader.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1030,6 +1033,9 @@
     </ClInclude>
     <ClInclude Include="context_utils.h">
       <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="xstate_reader.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -254,7 +254,7 @@ namespace dlg_help_utils::flags_string_utils
 
 
 template <typename T>
-struct std::hash<dlg_help_utils::flags_string_utils::option_mask<T>>
+struct std::hash<dlg_help_utils::flags_string_utils::option_mask<T>>  // NOLINT(cert-dcl58-cpp)
 {
     std::size_t operator()(dlg_help_utils::flags_string_utils::option_mask<T> const& v) const noexcept
     {

@@ -22,6 +22,7 @@
 #include "DbgHelpUtils/time_utils.h"
 #include "DbgHelpUtils/time_units.h"
 #include "DbgHelpUtils/vector_to_hash_set.h"
+#include "DbgHelpUtils/xstate_reader.h"
 
 using namespace std;
 using namespace std::string_literals;
@@ -122,10 +123,9 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
         log << std::format(L"    DR6: {}\n", to_hex_full(context.Dr6));
         log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
     }
-    if((context.ContextFlags & X64_CONTEXT_CONTROL) == X64_CONTEXT_CONTROL)
-    {
-        log << std::format(L"    MxCsr: ({}) {}\n", to_hex_full(context.MxCsr), context_utils::resources::get_mx_csr_register_to_string(context.MxCsr));
-    }
+
+    log << std::format(L"    MxCsr: ({}) {}\n", to_hex_full(context.MxCsr), context_utils::resources::get_mx_csr_register_to_string(context.MxCsr));
+
     if((context.ContextFlags & X64_CONTEXT_FLOATING_POINT) == X64_CONTEXT_FLOATING_POINT)
     {
         log << L"    XMM:\n";
@@ -151,17 +151,26 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
         log << std::format(L"      Xmm13: {}\n", to_hex_full(context.Xmm13));
         log << std::format(L"      Xmm14: {}\n", to_hex_full(context.Xmm14));
         log << std::format(L"      Xmm15: {}\n", to_hex_full(context.Xmm15));
-
-        for (size_t index = 0; index < std::size(context.VectorRegister); index += 2)
-        {
-            log << std::format(L"    VectorRegister[{0}/{1}]: {2}-{3}\n"
-                , locale_formatting::to_wstring(index)
-                , locale_formatting::to_wstring(index + 1)
-                , to_hex_full(context.VectorRegister[index])
-                , to_hex_full(context.VectorRegister[index + 1]));
-        }
-        log << std::format(L"    VectorControl: {}\n", to_hex_full(context.VectorControl));
     }
+
+    if (xstate_reader xstate_reader{ &context };
+        xstate_reader.is_supported())
+    {
+        log << L"    AVX:\n";
+        if (xstate_reader.is_in_init_state())
+        {
+            log << L"      AVX is in the INIT state (YMM_H registers are all zero).\n";
+        }
+        else
+        {
+            for (auto const& ymm : xstate_reader.ymm_registers())
+            {
+                
+                log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
+            }
+        }
+    }
+
     if((context.ContextFlags & X64_CONTEXT_DEBUG_REGISTERS) == X64_CONTEXT_DEBUG_REGISTERS)
     {
         log << std::format(L"    DebugControl: {}\n", to_hex_full(context.DebugControl));
@@ -304,6 +313,24 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
         log << L"    ExtendedRegisters:\n";
         hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
         log << L'\n';
+    }
+
+    if (xstate_reader xstate_reader{ &context };
+        xstate_reader.is_supported())
+    {
+        log << L"    AVX:\n";
+        if (xstate_reader.is_in_init_state())
+        {
+            log << L"      AVX is in the INIT state (YMM_H registers are all zero).\n";
+        }
+        else
+        {
+            for (auto const& ymm : xstate_reader.ymm_registers())
+            {
+                
+                log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
+            }
+        }
     }
 }
 

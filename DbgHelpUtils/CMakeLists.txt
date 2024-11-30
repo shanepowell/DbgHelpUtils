@@ -252,6 +252,8 @@ set(StreamUtilities
     "system_info_utils_resources.h"
     "thread_info_utils_resources.cpp"
     "thread_info_utils.h"
+    "xstate_reader.cpp"
+    "xstate_reader.h"
 )
 source_group("StreamUtilities" FILES ${StreamUtilities})
 
