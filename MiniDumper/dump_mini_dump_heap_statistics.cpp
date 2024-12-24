@@ -3,6 +3,7 @@
 #include "dump_file_options.h"
 #include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/crt_heap.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/process_heaps.h"

@@ -2,6 +2,7 @@
 
 #include "dump_file_options.h"
 #include "DbgHelpUtils/guid_utils.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/mini_dump.h"

@@ -1,7 +1,5 @@
 ﻿#pragma once
-// ReSharper disable once CppUnusedIncludeDirective
 #include "DbgHelpUtils/stream_thread_context.h"
-#include "DbgHelpUtils/tagged_bool.h"
 #include "DbgHelpUtils/windows_setup.h"
 
 #include <ostream>

@@ -1,13 +1,13 @@
 ﻿#include "xstate_reader.h"
 
-namespace 
+namespace
 {
     // ReSharper disable CppInconsistentNaming
     // ReSharper disable IdentifierTypo
-    typedef BOOL (WINAPI *PGETXSTATEFEATURESMASK)(PCONTEXT Context, PDWORD64 FeatureMask);
+    typedef BOOL(WINAPI* PGETXSTATEFEATURESMASK)(PCONTEXT Context, PDWORD64 FeatureMask);
     PGETXSTATEFEATURESMASK pfnGetXStateFeaturesMask = nullptr;
 
-    typedef PVOID (WINAPI *LOCATEXSTATEFEATURE)(PCONTEXT Context, DWORD FeatureId, PDWORD Length);
+    typedef PVOID(WINAPI* LOCATEXSTATEFEATURE)(PCONTEXT Context, DWORD FeatureId, PDWORD Length);
     LOCATEXSTATEFEATURE pfnLocateXStateFeature = nullptr;
     // ReSharper restore IdentifierTypo
     // ReSharper restore CppInconsistentNaming
@@ -32,57 +32,60 @@ namespace
     }
 
 }
-
-xstate_reader::xstate_reader(dlg_help_utils::stream_thread_context::context_x64 const* context)
-    : context_{ context }
-    , supported_{(context->ContextFlags & X64_CONTEXT_XSTATE) == X64_CONTEXT_XSTATE}
+namespace dlg_help_utils
 {
-}
 
-xstate_reader::xstate_reader(WOW64_CONTEXT const* context)
-    : context_{ context }
-    , supported_{(context->ContextFlags & WOW64_CONTEXT_XSTATE) == WOW64_CONTEXT_XSTATE}
-{
-}
-
-bool xstate_reader::is_supported() const
-{
-    return supported_;
-}
-
-bool xstate_reader::is_in_init_state() const
-{
-    if (!is_supported())
+    xstate_reader::xstate_reader(dlg_help_utils::stream_thread_context::context_x64 const* context)
+        : context_{ context }
+        , supported_{ context && (context->ContextFlags & X64_CONTEXT_XSTATE) == X64_CONTEXT_XSTATE }
     {
-        return false;
     }
 
-    if (!load_xstate_functions())
+    xstate_reader::xstate_reader(WOW64_CONTEXT const* context)
+        : context_{ context }
+        , supported_{ context && (context->ContextFlags & WOW64_CONTEXT_XSTATE) == WOW64_CONTEXT_XSTATE }
     {
-        return false;
     }
 
-    DWORD64 featureMask = 0;
-    if (!pfnGetXStateFeaturesMask(static_cast<PCONTEXT>(const_cast<void*>(context_)), &featureMask))
+    bool xstate_reader::is_supported() const
     {
-        return false;
+        return supported_;
     }
-    return (featureMask & XSTATE_MASK_AVX) == XSTATE_MASK_AVX;
+
+    bool xstate_reader::is_in_init_state() const
+    {
+        if (!is_supported())
+        {
+            return false;
+        }
+
+        if (!load_xstate_functions())
+        {
+            return false;
+        }
+
+        DWORD64 featureMask = 0;
+        if (!pfnGetXStateFeaturesMask(static_cast<PCONTEXT>(const_cast<void*>(context_)), &featureMask))
+        {
+            return false;
+        }
+        return (featureMask & XSTATE_MASK_AVX) == XSTATE_MASK_AVX;
+    }
+
+    std::experimental::generator<xstate_reader::ymm_register> xstate_reader::ymm_registers() const
+    {
+        if (!is_supported())
+        {
+            co_return;
+        }
+        DWORD length = 0;
+        auto ymm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_LEGACY_SSE, &length));
+        auto xmm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_AVX, nullptr));
+
+        for (uint32_t index = 0; index < length / sizeof(M128A); ++index)
+        {
+            co_yield ymm_register{ .index = index, .xmm = xmm + index, .ymm = ymm + index };
+        }
+    }
+
 }
-
-std::experimental::generator<xstate_reader::ymm_register> xstate_reader::ymm_registers() const
-{
-    if (!is_supported())
-    {
-        co_return;
-    }
-    DWORD length = 0;
-    auto ymm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_LEGACY_SSE, &length));
-    auto xmm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_AVX, nullptr));
-
-    for (uint32_t index = 0; index < length / sizeof(M128A); ++index)
-    {
-        co_yield ymm_register{ index, xmm + index, ymm + index };
-    }
-}
-

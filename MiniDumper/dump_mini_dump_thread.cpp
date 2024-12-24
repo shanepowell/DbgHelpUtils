@@ -124,17 +124,26 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
         log << std::format(L"    DR7: {}\n", to_hex_full(context.Dr7));
     }
 
-    log << std::format(L"    MxCsr: ({}) {}\n", to_hex_full(context.MxCsr), context_utils::resources::get_mx_csr_register_to_string(context.MxCsr));
-
     if((context.ContextFlags & X64_CONTEXT_FLOATING_POINT) == X64_CONTEXT_FLOATING_POINT)
     {
-        log << L"    XMM:\n";
-        log << std::format(L"      Header: {0}-{1}\n", to_hex_full(context.Header[0]), to_hex_full(context.Header[1]));
-        log << std::format(L"      Legacy: {0}-{1}\n", to_hex_full(context.Legacy[0]), to_hex_full(context.Legacy[1]));
+        log << L"    Floating Point:\n";
+        log << std::format(L"      ControlWord: {}\n", to_hex_full(context.FltSave.ControlWord));
+        log << std::format(L"      StatusWord: {}\n", to_hex_full(context.FltSave.StatusWord));
+        log << std::format(L"      TagWord: {}\n", to_hex_full(context.FltSave.TagWord));
+        log << std::format(L"      ErrorOpcode: {}\n", to_hex_full(context.FltSave.ErrorOpcode));
+        log << std::format(L"      ErrorOffset: {}\n", to_hex_full(context.FltSave.ErrorOffset));
+        log << std::format(L"      ErrorSelector: {}\n", to_hex_full(context.FltSave.ErrorSelector));
+        log << std::format(L"      DataOffset: {}\n", to_hex_full(context.FltSave.DataOffset));
+        log << std::format(L"      DataSelector: {}\n", to_hex_full(context.FltSave.DataSelector));
+        log << std::format(L"      MxCsr: ({}) {}\n", to_hex_full(context.FltSave.MxCsr), context_utils::resources::get_mx_csr_register_to_string(context.FltSave.MxCsr));
+        log << std::format(L"      MxCsr_Mask: {}\n", to_hex_full(context.FltSave.MxCsr_Mask));
+        log << std::format(L"      FloatRegisters:\n");
         for (size_t index = 0; index < std::size(context.Legacy); index += 2)
         {
-            log << std::format(L"      Legacy[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.Legacy[index]), to_hex_full(context.Legacy[index + 1]));
+            log << std::format(L"        Register[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.Legacy[index]), to_hex_full(context.Legacy[index + 1]));
         }
+
+        log << L"    XMM:\n";
         log << std::format(L"      Xmm0: {}\n", to_hex_full(context.Xmm0));
         log << std::format(L"      Xmm1: {}\n", to_hex_full(context.Xmm1));
         log << std::format(L"      Xmm2: {}\n", to_hex_full(context.Xmm2));

@@ -6,7 +6,6 @@
 #include "DbgHelpUtils/crt_heap.h"
 #include "DbgHelpUtils/dph_heap.h"
 #include "DbgHelpUtils/heap_segment.h"
-#include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/memory_range.h"
 #include "DbgHelpUtils/mini_dump_memory_walker.h"
 #include "DbgHelpUtils/nt_heap.h"
