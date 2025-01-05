@@ -1,0 +1,12 @@
+import "Models\ThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ThreadContextView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        ThreadContextView();
+
+        ThreadContext ThreadContext { get; set; };
+    }
+}

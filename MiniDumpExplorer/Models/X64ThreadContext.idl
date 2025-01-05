@@ -1,0 +1,115 @@
+import "Models\M128A.idl";
+import "Models\YmmRegister.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass X64ThreadContext : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        X64ThreadContext();
+
+        UInt32 ContextFlags { get; };
+        IObservableVector<String> ContextFlagsList { get; };
+
+        Boolean HasControl { get; };
+        UInt64 Rip { get; };
+        UInt64 Rsp { get; };
+        UInt64 Rbp { get; };
+        UInt16 Cs { get; };
+        UInt16 Ss { get; };
+        UInt32 EFlags { get; };
+        IObservableVector<String> EFlagsList { get; };
+
+        Boolean HasInteger{ get; };
+        UInt64 Rax { get; };
+        UInt32 Eax { get; };
+        UInt16 Ax { get; };
+        UInt8 Al { get; };
+        UInt8 Ah { get; };
+        UInt64 Rbx { get; };
+        UInt32 Ebx { get; };
+        UInt16 Bx { get; };
+        UInt8 Bl { get; };
+        UInt8 Bh { get; };
+        UInt64 Rcx { get; };
+        UInt32 Ecx { get; };
+        UInt16 Cx { get; };
+        UInt8 Cl { get; };
+        UInt8 Ch { get; };
+        UInt64 Rdx { get; };
+        UInt32 Edx { get; };
+        UInt16 Dx { get; };
+        UInt8 Dl { get; };
+        UInt8 Dh { get; };
+        UInt64 Rdi { get; };
+        UInt32 Edi { get; };
+        UInt16 Di { get; };
+        UInt64 Rsi { get; };
+        UInt32 Esi { get; };
+        UInt16 Si { get; };
+        UInt64 R8 { get; };
+        UInt64 R9 { get; };
+        UInt64 R10 { get; };
+        UInt64 R11 { get; };
+        UInt64 R12 { get; };
+        UInt64 R13 { get; };
+        UInt64 R14 { get; };
+        UInt64 R15 { get; };
+
+        Boolean HasSegments { get; };
+        UInt16 Ds { get; };
+        UInt16 Es { get; };
+        UInt16 Fs { get; };
+        UInt16 Gs { get; };
+
+        Boolean HasDebugRegisters{ get; };
+        UInt64 Dr0{ get; };
+        UInt64 Dr1{ get; };
+        UInt64 Dr2{ get; };
+        UInt64 Dr3{ get; };
+        UInt64 Dr6{ get; };
+        UInt64 Dr7{ get; };
+        UInt64 DebugControl { get; };
+        UInt64 LastBranchToRip{ get; };
+        UInt64 LastBranchFromRip{ get; };
+        UInt64 LastExceptionToRip{ get; };
+        UInt64 LastExceptionFromRip{ get; };
+
+        Boolean HasFloatingPoint{ get; };
+        UInt16 ControlWord{ get; };
+        UInt16 StatusWord{ get; };
+        UInt8 TagWord{ get; };
+        UInt16 ErrorOpcode{ get; };
+        UInt32 ErrorOffset{ get; };
+        UInt16 ErrorSelector{ get; };
+        UInt32 DataOffset{ get; };
+        UInt16 DataSelector{ get; };
+        UInt32 MxCsr { get; };
+        IObservableVector<String> MxCsrList { get; };
+        UInt32 MxCsrMask { get; };
+        IObservableVector<M128A> FloatRegisters { get; };
+
+        IObservableVector<M128A> XmmRegisters { get; };
+        M128A Xmm0{ get; };
+        M128A Xmm1{ get; };
+        M128A Xmm2{ get; };
+        M128A Xmm3{ get; };
+        M128A Xmm4{ get; };
+        M128A Xmm5{ get; };
+        M128A Xmm6{ get; };
+        M128A Xmm7{ get; };
+        M128A Xmm8{ get; };
+        M128A Xmm9{ get; };
+        M128A Xmm10{ get; };
+        M128A Xmm11{ get; };
+        M128A Xmm12{ get; };
+        M128A Xmm13{ get; };
+        M128A Xmm14{ get; };
+        M128A Xmm15{ get; };
+
+        Boolean HasAvx{ get; };
+        Boolean HasAvxInInitState{ get; };
+        IObservableVector<YmmRegister> YmmRegisters{ get; };
+    }
+}

@@ -1,0 +1,12 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass M128A : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        M128A();
+
+        UInt64 Low{ get; };
+        Int64 High{ get; };
+    }
+}

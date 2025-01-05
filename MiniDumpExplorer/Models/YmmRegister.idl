@@ -1,0 +1,15 @@
+import "Models\M128A.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass YmmRegister : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        YmmRegister();
+
+        UInt32 Index{ get; };
+        M128A Xmm{ get; };
+        M128A Ymm{ get; };
+    }
+}

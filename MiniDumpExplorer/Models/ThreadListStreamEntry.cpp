@@ -8,6 +8,7 @@
 #include "Helpers/SymbolEngineHelper.h"
 #include "Helpers/WindowHelper.h"
 #include "Models/ThreadStackEntry.h"
+#include "Models/ThreadContext.h"
 #include "Utility/logger.h"
 
 #if __has_include("ThreadListStreamEntry.g.cpp")
@@ -44,6 +45,7 @@ namespace winrt::MiniDumpExplorer::implementation
         name_ = thread_.thread_name();
         priorityClassType_ = dlg_help_utils::thread_info_utils::thread_priority_class_to_string(thread_->PriorityClass);
         stack_.as<MiniDumpMemoryDescriptor>()->Set(thread_->Stack);
+        threadContext_.as<implementation::ThreadContext>()->Set(thread_.thread_context());
     }
 
     fire_and_forget ThreadListStreamEntry::LoadStack(dlg_help_utils::mini_dump const& mini_dump)

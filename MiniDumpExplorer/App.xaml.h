@@ -116,6 +116,10 @@
 #include "Models\MinidumpSystemPerformanceInformation.h"
 #include "Models\MiniDumpMemoryDescriptor.h"
 #include "Models\ThreadStackEntry.h"
+#include "Models\X64ThreadContext.h"
+#include "Models\M128A.h"
+#include "Models\YmmRegister.h"
+#include "Models\ThreadContext.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

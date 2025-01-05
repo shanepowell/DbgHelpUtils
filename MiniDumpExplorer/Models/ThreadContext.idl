@@ -1,0 +1,18 @@
+import "Models\X64ThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ThreadContext : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadContext();
+
+        Boolean HasX64ThreadContext{ get; };
+        X64ThreadContext X64ThreadContext{ get; };
+
+        Boolean HasX86ThreadContext{ get; };
+
+        Boolean HasWow64ThreadContext{ get; };
+    }
+}

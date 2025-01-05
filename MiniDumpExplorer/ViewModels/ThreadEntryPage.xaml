@@ -48,6 +48,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
@@ -91,6 +92,8 @@
                 Expanding="OnTreeViewItemExpanding"
                 Margin="0,5,0,0"
                 />
+            <TextBlock Grid.Row="14" Grid.Column="0" Text="Thread Context" VerticalAlignment="top"  Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+            <local:ThreadContextView Grid.Row="14" Grid.Column="1" ThreadContext="{x:Bind Thread.ThreadContext}" />
         </Grid>
     </ScrollViewer>
 </Page>

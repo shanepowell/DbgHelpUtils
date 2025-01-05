@@ -14,6 +14,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpMemoryDescriptor;
     struct ThreadStackEntry;
+    struct X64ThreadContext;
 
     struct ThreadListStreamEntry : ThreadListStreamEntryT<ThreadListStreamEntry>, GlobalOptionsNotifyPropertyChangedBase<ThreadListStreamEntry>
     {
@@ -32,6 +33,7 @@ namespace winrt::MiniDumpExplorer::implementation
         uint64_t TEB() const { return thread_->Teb; }
         MiniDumpExplorer::MiniDumpMemoryDescriptor Stack() const { return stack_; }
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::ThreadStackEntry> StackEntries() const { return stackEntries_; }
+        MiniDumpExplorer::ThreadContext ThreadContext() const { return threadContext_; }
 
     private:
         uint32_t index_{};
@@ -41,6 +43,7 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpExplorer::MiniDumpMemoryDescriptor stack_;
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::ThreadStackEntry> stackEntries_{single_threaded_observable_vector<MiniDumpExplorer::ThreadStackEntry>()};
         bool stackLoading_{false};
+        MiniDumpExplorer::ThreadContext threadContext_{};
     };
 }
 

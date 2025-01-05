@@ -98,6 +98,12 @@
     <Page Include="ViewModels\ThreadEntryPage.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\X64ThreadContextView.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\ThreadContextView.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -622,7 +628,21 @@
     <ClCompile Include="Helpers\SymbolEngineHelper.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\mini_dump_walker_store.cpp" />
+    <ClCompile Include="Utility\mini_dump_walker_store.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\X64ThreadContext.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\M128A.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\YmmRegister.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadContext.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -779,7 +799,9 @@
     <ClInclude Include="Helpers\SymbolEngineHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\mini_dump_walker_store.h" />
+    <ClInclude Include="Utility\mini_dump_walker_store.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

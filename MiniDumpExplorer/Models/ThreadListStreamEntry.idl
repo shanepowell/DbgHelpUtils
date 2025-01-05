@@ -1,5 +1,6 @@
 import  "Models/MiniDumpMemoryDescriptor.idl";
 import  "Models/ThreadStackEntry.idl";
+import  "Models/ThreadContext.idl";
 
 namespace MiniDumpExplorer
 {
@@ -19,5 +20,6 @@ namespace MiniDumpExplorer
         UInt64 TEB { get; };
         MiniDumpMemoryDescriptor Stack { get; };
         IObservableVector<ThreadStackEntry> StackEntries { get; };
+        ThreadContext ThreadContext{ get; };
     }
 }

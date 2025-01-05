@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.props')" />
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
@@ -350,6 +350,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Helpers\SymbolEngineHelper.h" />
+    <ClInclude Include="Models\M128A.h">
+      <DependentUpon>Models\M128A.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\MiniDumpMemoryDescriptor.h">
       <DependentUpon>Models\MiniDumpMemoryDescriptor.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -490,6 +494,10 @@
       <DependentUpon>Models\RecentFileItemsDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\ThreadContext.h">
+      <DependentUpon>Models\ThreadContext.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\ThreadExListStreamEntriesDataSource.h">
       <DependentUpon>Models\ThreadExListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -554,6 +562,10 @@
       <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\X64ThreadContext.h">
+      <DependentUpon>Models\X64ThreadContext.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\XStateDataEnabledFeature.h">
       <DependentUpon>Models\XStateDataEnabledFeature.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -562,8 +574,16 @@
       <DependentUpon>Models\XStateDataEnabledFeaturesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\YmmRegister.h">
+      <DependentUpon>Models\YmmRegister.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Utility\mini_dump_walker_store.h" />
     <ClInclude Include="ViewModels\SubPageNavigationEntries.h" />
+    <ClInclude Include="ViewModels\ThreadContextView.xaml.h">
+      <DependentUpon>ViewModels\ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\ThreadEntryPage.xaml.h">
       <DependentUpon>ViewModels\ThreadEntryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -746,10 +766,17 @@
     <ClInclude Include="Helpers\ThemeHelper.h" />
     <ClInclude Include="Helpers\UIHelper.h" />
     <ClInclude Include="Helpers\WindowHelper.h" />
+    <ClInclude Include="ViewModels\X64ThreadContextView.xaml.h">
+      <DependentUpon>ViewModels\X64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Controls\DataGrid\DataGridTheme.xaml" />
+    <Page Include="ViewModels\ThreadContextView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\ThreadEntryPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -835,6 +862,9 @@
     </Page>
     <Page Include="Themes\Generic.xaml" />
     <Page Include="Controls\SettingsExpander\SettingsExpanderTheme.xaml" />
+    <Page Include="ViewModels\X64ThreadContextView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Converters\BoolNegationConverter.cpp">
@@ -1005,6 +1035,9 @@
     <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp" />
     <ClCompile Include="Helpers\SymbolEngineHelper.cpp" />
+    <ClCompile Include="Models\M128A.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\MiniDumpMemoryDescriptor.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1121,6 +1154,9 @@
     <ClCompile Include="Models\RecentFileItemsDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\ThreadContext.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\ThreadExListStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1169,14 +1205,24 @@
     <ClCompile Include="Models\VsFixedFileInfo.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\X64ThreadContext.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\XStateDataEnabledFeature.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Models\XStateDataEnabledFeaturesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\YmmRegister.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Utility\mini_dump_walker_store.cpp" />
     <ClCompile Include="ViewModels\SubPageNavigationEntries.cpp" />
+    <ClCompile Include="ViewModels\ThreadContextView.xaml.cpp">
+      <DependentUpon>ViewModels\ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\ThreadEntryPage.xaml.cpp">
       <DependentUpon>ViewModels\ThreadEntryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1340,6 +1386,10 @@
     <ClCompile Include="Helpers\ThemeHelper.cpp" />
     <ClCompile Include="Helpers\UIHelper.cpp" />
     <ClCompile Include="Helpers\WindowHelper.cpp" />
+    <ClCompile Include="ViewModels\X64ThreadContextView.xaml.cpp">
+      <DependentUpon>ViewModels\X64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
@@ -1567,6 +1617,10 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\M128A.idl">
+      <DependentUpon>Models\M128A.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\MiniDumpMemoryDescriptor.idl">
       <DependentUpon>Models\MiniDumpMemoryDescriptor.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1699,6 +1753,10 @@
       <DependentUpon>Models\RecentFileItemsDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\ThreadContext.idl">
+      <DependentUpon>Models\ThreadContext.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\ThreadExListStreamEntriesDataSource.idl">
       <DependentUpon>Models\ThreadExListStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1763,12 +1821,24 @@
       <DependentUpon>Models\VsFixedFileInfo.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\X64ThreadContext.idl">
+      <DependentUpon>Models\X64ThreadContext.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\XStateDataEnabledFeature.idl">
       <DependentUpon>Models\XStateDataEnabledFeature.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Models\XStateDataEnabledFeaturesDataSource.idl">
       <DependentUpon>Models\XStateDataEnabledFeaturesDataSource.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\YmmRegister.idl">
+      <DependentUpon>Models\YmmRegister.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\ThreadContextView.idl">
+      <DependentUpon>ViewModels\ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ThreadEntryPage.idl">
@@ -1923,6 +1993,10 @@
       <DependentUpon>StyleExtension\StyleExtensions.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ViewModels\X64ThreadContextView.idl">
+      <DependentUpon>ViewModels\X64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LargeTile.scale-100.png" />
@@ -2025,8 +2099,8 @@
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" />
     <Import Project="..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.targets')" />
-    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets')" />
-    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.targets')" />
+    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -2037,8 +2111,8 @@
     <Error Condition="!Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1742\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240923002\build\native\Microsoft.WindowsAppSDK.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets'))" />
   </Target>
 </Project>
