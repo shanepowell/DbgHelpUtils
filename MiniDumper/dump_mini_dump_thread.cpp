@@ -138,9 +138,9 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
         log << std::format(L"      MxCsr: ({}) {}\n", to_hex_full(context.FltSave.MxCsr), context_utils::resources::get_mx_csr_register_to_string(context.FltSave.MxCsr));
         log << std::format(L"      MxCsr_Mask: {}\n", to_hex_full(context.FltSave.MxCsr_Mask));
         log << std::format(L"      FloatRegisters:\n");
-        for (size_t index = 0; index < std::size(context.Legacy); index += 2)
+        for (size_t index = 0; index < std::size(context.Legacy); ++index)
         {
-            log << std::format(L"        Register[{0}/{1}]: {2}-{3}\n", locale_formatting::to_wstring(index), locale_formatting::to_wstring(index + 1), to_hex_full(context.Legacy[index]), to_hex_full(context.Legacy[index + 1]));
+            log << std::format(L"        st{0}: {1}\n", locale_formatting::to_wstring(index), to_hex_full(context.Legacy[index]));
         }
 
         log << L"    XMM:\n";
@@ -170,13 +170,11 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
         {
             log << L"      AVX is in the INIT state (YMM_H registers are all zero).\n";
         }
-        else
+
+        for (auto const& ymm : xstate_reader.ymm_registers())
         {
-            for (auto const& ymm : xstate_reader.ymm_registers())
-            {
-                
-                log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
-            }
+            
+            log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
         }
     }
 
@@ -332,13 +330,11 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
         {
             log << L"      AVX is in the INIT state (YMM_H registers are all zero).\n";
         }
-        else
+
+        for (auto const& ymm : xstate_reader.ymm_registers())
         {
-            for (auto const& ymm : xstate_reader.ymm_registers())
-            {
-                
-                log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
-            }
+            
+            log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
         }
     }
 }

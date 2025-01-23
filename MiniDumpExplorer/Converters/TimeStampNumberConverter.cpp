@@ -108,7 +108,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 }
 
                 return box_value(dlg_help_utils::time_utils::to_local_timestamp_string(ft));
-            }, value, value);
+            }, value);
 
         case TimeStampLocaleType::UTC:
             return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, uint64_t, uint32_t>([type](auto const v)
@@ -130,7 +130,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 }
 
                 return box_value(dlg_help_utils::time_utils::to_utc_timestamp_string(ft));
-            }, value, value);
+            }, value);
         }
 
         throw hresult_invalid_argument();  // NOLINT(hicpp-exception-baseclass)

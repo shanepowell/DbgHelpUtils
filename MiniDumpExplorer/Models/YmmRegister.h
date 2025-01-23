@@ -13,14 +13,15 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         YmmRegister();
 
+        hstring Name() const { return name_; }
         uint32_t Index() const { return index_; }
 
         MiniDumpExplorer::M128A Xmm() const { return xmm_; }
         MiniDumpExplorer::M128A Ymm() const { return ymm_; }
-
         void Set(dlg_help_utils::xstate_reader::ymm_register const& ymmRegister);
 
     private:
+        hstring name_{};
         uint32_t index_{};
         MiniDumpExplorer::M128A xmm_{ nullptr };
         MiniDumpExplorer::M128A ymm_{ nullptr };

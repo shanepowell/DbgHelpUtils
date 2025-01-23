@@ -42,6 +42,10 @@ namespace winrt::MiniDumpExplorer::implementation
             {
             },
             {
+            },
+            {
+            },
+            {
             })
         , fullPath_{fullPath.c_str()}
         , index_{index}

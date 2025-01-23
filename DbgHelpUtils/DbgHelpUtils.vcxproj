@@ -208,6 +208,7 @@
     <ClCompile Include="heap_vs_entry.cpp" />
     <ClCompile Include="heap_vs_subsegment.cpp" />
     <ClCompile Include="hex_dump.cpp" />
+    <ClCompile Include="int128.cpp" />
     <ClCompile Include="interface_process_heaps_statistic_view_impl.cpp" />
     <ClCompile Include="large_alloc_entry.cpp" />
     <ClCompile Include="lfh_heap.cpp" />
@@ -350,6 +351,7 @@
     <ClInclude Include="heap_vs_context.h" />
     <ClInclude Include="heap_vs_entry.h" />
     <ClInclude Include="heap_vs_subsegment.h" />
+    <ClInclude Include="int128.h" />
     <ClInclude Include="interface_process_heaps_statistic_view_impl.h" />
     <ClInclude Include="join.h" />
     <ClInclude Include="large_alloc_entry.h" />
@@ -358,6 +360,7 @@
     <ClInclude Include="heap_subsegment.h" />
     <ClInclude Include="lfh_subsegment_location_utils.h" />
     <ClInclude Include="list_entry_walker.h" />
+    <ClInclude Include="m128a_utils.h" />
     <ClInclude Include="mini_dump_memory_walker_create_handle.h" />
     <ClInclude Include="mini_dump_memory_walker_release_handle.h" />
     <ClInclude Include="variable.h" />

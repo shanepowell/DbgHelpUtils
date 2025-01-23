@@ -27,6 +27,10 @@ namespace winrt::MiniDumpExplorer::implementation
             {
             },
             {
+            },
+            {
+            },
+            {
             })
     {
     }

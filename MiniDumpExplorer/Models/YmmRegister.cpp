@@ -17,6 +17,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void YmmRegister::Set(dlg_help_utils::xstate_reader::ymm_register const& ymmRegister)
     {
+        name_ = hstring{ std::format(L"YMM{}", ymmRegister.index) };
         index_ = ymmRegister.index;
         xmm_ = MiniDumpExplorer::M128A{};
         xmm_.as<M128A>()->Set(*ymmRegister.xmm);

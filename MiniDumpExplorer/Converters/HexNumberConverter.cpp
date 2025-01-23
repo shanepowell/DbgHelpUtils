@@ -1,12 +1,17 @@
 #include "pch.h"
 #include "HexNumberConverter.h"
 
+#include <ranges>
+
+#include "DbgHelpUtils/int128.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/string_conversation.h"
 #include "Helpers/GlobalOptions.h"
 #include "Utility/InspectableUtility.h"
+
+#include "Models/M128A.h"
 
 #if __has_include("HexNumberConverter.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -30,26 +35,62 @@ namespace winrt::MiniDumpExplorer::implementation
         std::wstring parameterValue{unbox_value_or<hstring>(parameter, L"0")};
         std::streamsize width{0};
         bool hex_full = false;
-        if(string_utils::iequals(parameterValue, L"full"))
+        bool is_uint128 = GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::UInt128;
+        for (auto param : std::views::split(parameterValue, L';'))
         {
-            hex_full = true;
+            if (auto const paramValue = std::wstring_view(param.begin(), param.end());
+                string_utils::iequals(paramValue, L"full"))
+            {
+                hex_full = true;
+            }
+            else if (string_utils::iequals(paramValue, L"uint128"))
+            {
+                is_uint128 = true;
+            }
+            else if (string_utils::iequals(paramValue, L"int128"))
+            {
+                is_uint128 = false;
+            }
+            else
+            {
+                auto widthParameter = string_conversation::wstring_to_utf8(paramValue);
+                std::from_chars(widthParameter.data(), widthParameter.data() + widthParameter.size(), width);
+            }
         }
-        else
+
+        if (auto m128a = value.try_as<M128A>();
+            m128a)
         {
-            auto widthParameter = string_conversation::wstring_to_utf8(parameterValue);
-            std::from_chars(widthParameter.data(), widthParameter.data() + widthParameter.size(), width);
+            switch(GlobalOptions::Options().NumberDisplayFormat())
+            {
+            case NumberDisplayFormatType::Hexadecimal:
+                return box_value(hex_full ? stream_hex_dump::to_hex_full(m128a->Get()) : stream_hex_dump::to_hex(m128a->Get(), width));
+
+            case NumberDisplayFormatType::Decimal:
+                if (is_uint128)
+                {
+                    return box_value(locale_formatting::to_wstring(std::to_uint128(m128a->Get())));
+                }
+
+                return box_value(locale_formatting::to_wstring(std::to_int128(m128a->Get())));
+
+            default:
+                break;
+            }
+
+            return value;
         }
 
         switch(GlobalOptions::Options().NumberDisplayFormat())
         {
         case NumberDisplayFormatType::Hexadecimal:
-            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([hex_full, width](auto const v)
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, int64_t, uint32_t, int32_t, uint16_t, int16_t, uint8_t, int8_t>([hex_full, width](auto const v)
             {
                 return box_value(hex_full ? stream_hex_dump::to_hex_full(v) : stream_hex_dump::to_hex(v, width));
-            }, value, value);
+            }, value);
 
         case NumberDisplayFormatType::Decimal:
-            return InspectableUtility::ProcessValueFromInspectable<uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
+            return InspectableUtility::ProcessValueFromInspectable<uint64_t, int64_t, uint32_t, int32_t, uint16_t, int16_t, uint8_t, int8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value);
 
         default:
             break;

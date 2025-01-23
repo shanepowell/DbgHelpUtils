@@ -52,5 +52,20 @@ namespace MiniDumpExplorer
         Boolean DurationFormatMonths;
         Boolean DurationFormatYears;
         Boolean DurationFormatRaw;
+
+        Boolean M128AViewDisplayFormatInt128;
+        Boolean M128AViewDisplayFormatUInt128;
+        Boolean M128AViewDisplayFormatInt64;
+        Boolean M128AViewDisplayFormatUInt64;
+        Boolean M128AViewDisplayFormatInt32;
+        Boolean M128AViewDisplayFormatUInt32;
+        Boolean M128AViewDisplayFormatInt16;
+        Boolean M128AViewDisplayFormatUInt16;
+        Boolean M128AViewDisplayFormatInt8;
+        Boolean M128AViewDisplayFormatUInt8;
+        Boolean M128AViewDisplayFormatFloat32;
+        Boolean M128AViewDisplayFormatFloat64;
+
+        Boolean FloatingPointOptionScientific;
     }
 }

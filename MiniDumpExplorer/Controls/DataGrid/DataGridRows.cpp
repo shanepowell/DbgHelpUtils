@@ -1533,7 +1533,7 @@ namespace winrt::MiniDumpExplorer::implementation
         return dataGridRow;
     }
 
-    MiniDumpExplorer::DataGridRowGroupHeader DataGrid::GenerateRowGroupHeader(int32_t const slot, std::shared_ptr<DataGridInternal::DataGridRowGroupInfo> const& rowGroupInfo)
+    MiniDumpExplorer::DataGridRowGroupHeader DataGrid::GenerateRowGroupHeader([[maybe_unused]] int32_t const slot, std::shared_ptr<DataGridInternal::DataGridRowGroupInfo> const& rowGroupInfo)
     {
         assert(slot != InvalidIndex);
         assert(rowGroupInfo);

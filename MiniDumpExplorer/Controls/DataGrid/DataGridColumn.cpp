@@ -431,7 +431,7 @@ namespace winrt::MiniDumpExplorer::implementation
             return;
         }
 
-        throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"dataGridRow unsupported width set type {}", get_class_name(value))};
+        throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"dataGridRow unsupported width set type {}", static_cast<std::wstring_view>(get_class_name(value)))};
     }
 
     MiniDumpExplorer::DataGridLength DataGridColumn::WidthLength() const

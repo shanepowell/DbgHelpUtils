@@ -5,6 +5,7 @@
 #include "Helpers/ThemeHelper.h"
 #include "Helpers/UIHelper.h"
 #include "Helpers/WindowHelper.h"
+#include "Models/M128A.h"
 #include "Utility/logger.h"
 
 #include "DbgHelpUtils/file_version_info.h"
@@ -13,6 +14,8 @@
 #include "DbgHelpUtils/windows_error.h"
 
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+
+#include "DbgHelpUtils/m128a_utils.h"
 
 #if __has_include("SettingsPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -46,6 +49,12 @@ namespace winrt::MiniDumpExplorer::implementation
             },
             {
                 L"ExampleDuration"
+            },
+            {
+                L"ExampleM128A"
+            },
+            {
+                L"ExampleDouble"
             })
     {
     }
@@ -93,6 +102,9 @@ namespace winrt::MiniDumpExplorer::implementation
         noTimeSeconds().IsOn((options.TimeFormatFlags() & TIME_NOSECONDS) == TIME_NOSECONDS);
         noTimeMinutesOrSeconds().IsOn((options.TimeFormatFlags() & TIME_NOMINUTESORSECONDS) == TIME_NOMINUTESORSECONDS);
         durationFormat().SelectedIndex(static_cast<int>(options.DurationFormat()));
+        m128aUnitFormatMode().SelectedIndex(static_cast<int>(options.M128AViewDisplayFormat()));
+
+        SetExampleM128ANumber();
     }
 
     void SettingsPage::LoadVersionInformation()
@@ -131,6 +143,12 @@ namespace winrt::MiniDumpExplorer::implementation
         processorArchitecture_ = system_info_utils::processor_architecture_to_string(system_info.wProcessorArchitecture);
     }
 
+    void SettingsPage::SetExampleM128ANumber() const
+    {
+        auto m128aExample = exampleM128A_.as<M128A>();
+        m128aExample->Set(MakeExampleM128A());
+    }
+
     void SettingsPage::OnNumberDisplayFormatChanged()
     {
         numberFormatMode().SelectedIndex(static_cast<int>(GlobalOptions::Options().NumberDisplayFormat()));
@@ -161,6 +179,42 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         auto const& options = GlobalOptions::Options();
         durationFormat().SelectedIndex(static_cast<int>(options.DurationFormat()));
+    }
+
+    void SettingsPage::OnM128AViewDisplayFormatChanged()
+    {
+        auto const& options = GlobalOptions::Options();
+        m128aUnitFormatMode().SelectedIndex(static_cast<int>(options.M128AViewDisplayFormat()));
+
+        SetExampleM128ANumber();
+    }
+
+    void SettingsPage::OnFloatingPointScientificDisplayFormatChanged()
+    {
+        RaisePropertyChanged(L"FloatingPointScientificDisplayFormat");
+    }
+
+    _M128A SettingsPage::MakeExampleM128A()
+    {
+        switch (GlobalOptions::Options().M128AViewDisplayFormat())
+        {
+        case M128AViewType::Int128:
+        case M128AViewType::UInt128:
+        case M128AViewType::Int64:
+        case M128AViewType::UInt64:
+        case M128AViewType::Int32:
+        case M128AViewType::UInt32:
+        case M128AViewType::Int16:
+        case M128AViewType::UInt16:
+        case M128AViewType::Int8:
+        case M128AViewType::UInt8:
+        default:
+            return {.Low= 9876543210987654321ULL, .High= -1234567890123456789LL};
+        case M128AViewType::Float32:
+            return m128a_utils::from_floats(234.5678f, -234.5678f, 987.654f, -987.654f);
+        case M128AViewType::Float64:
+            return m128a_utils::from_doubles(234.5678, -234.5678);
+        }
     }
 
     int SettingsPage::ToDateFormatIndex(uint32_t const dateFormatFlags)
@@ -225,6 +279,16 @@ namespace winrt::MiniDumpExplorer::implementation
         return now;
     }
 
+    MiniDumpExplorer::M128A SettingsPage::ExampleM128A()
+    {
+        return exampleM128A_;
+    }
+
+    double SettingsPage::ExampleDouble()
+    {
+        return 123.456e-2;
+    }
+
     bool SettingsPage::SymbolLoadDebug()
     {
         return GlobalOptions::Options().SymbolLoadDebug();
@@ -243,6 +307,16 @@ namespace winrt::MiniDumpExplorer::implementation
     void SettingsPage::SymbolLoadMemoryDebug(bool const value)
     {
         GlobalOptions::Options().SymbolLoadDebugMemory(value);
+    }
+
+    bool SettingsPage::FloatingPointScientificDisplayFormat()
+    {
+        return GlobalOptions::Options().FloatingPointScientificDisplayFormat();
+    }
+
+    void SettingsPage::FloatingPointScientificDisplayFormat(bool const value)
+    {
+        GlobalOptions::Options().FloatingPointScientificDisplayFormat(value);
     }
 
     uint64_t SettingsPage::ExampleDuration()
@@ -437,12 +511,19 @@ namespace winrt::MiniDumpExplorer::implementation
         GlobalOptions::Options().DurationFormat(value);
     }
 
+    void SettingsPage::M128aUnitFormatModeSelectionChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    {
+        const auto value = static_cast<M128AViewType>(m128aUnitFormatMode().SelectedIndex());
+        GlobalOptions::Options().M128AViewDisplayFormat(value);
+    }
+
     void SettingsPage::SetupFlyoutMenus()
     {
         UIHelper::CreateStandardHexNumberMenu(exampleNumberDisplay(), suiteMaskTextBlock());
         UIHelper::CreateStandardSizeNumberMenu(exampleSizeDisplay());
         UIHelper::CreateStandardTimeStampMenu(exampleDateDisplay());
         UIHelper::CreateStandardDurationMenu(exampleDurationDisplay());
+        UIHelper::CreateStandardFloatingPointMenu(exampleFloatingPointDisplay());
     }
 }
 

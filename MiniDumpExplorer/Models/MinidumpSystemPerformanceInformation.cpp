@@ -43,6 +43,10 @@ namespace winrt::MiniDumpExplorer::implementation
             },
             {
                 L"IdleProcessTime"
+            },
+            {
+            },
+            {
             })
     {
     }

@@ -9,6 +9,7 @@
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct M128A;
+    struct XmmRegister;
     struct YmmRegister;
 
     struct X64ThreadContext : X64ThreadContextT<X64ThreadContext>, GlobalOptionsNotifyPropertyChangedBase <X64ThreadContext>
@@ -51,17 +52,43 @@ namespace winrt::MiniDumpExplorer::implementation
         uint64_t Rdi() const { return context_.Rdi; }
         uint32_t Edi() const { return static_cast<uint32_t>(context_.Rdi); }
         uint16_t Di() const { return static_cast<uint16_t>(context_.Rdi); }
+        uint8_t Dil() const { return static_cast<uint8_t>(context_.Rdi); }
         uint64_t Rsi() const { return context_.Rsi; }
         uint32_t Esi() const { return static_cast<uint32_t>(context_.Rsi); }
         uint16_t Si() const { return static_cast<uint16_t>(context_.Rsi); }
+        uint8_t Sil() const { return static_cast<uint8_t>(context_.Rsi); }
         uint64_t R8() const { return context_.R8; }
+        uint32_t R8d() const { return static_cast<uint32_t>(context_.R8); }
+        uint16_t R8w() const { return static_cast<uint16_t>(context_.R8); }
+        uint8_t R8b() const { return static_cast<uint8_t>(context_.R8); }
         uint64_t R9() const { return context_.R9; }
+        uint32_t R9d() const { return static_cast<uint32_t>(context_.R9); }
+        uint16_t R9w() const { return static_cast<uint16_t>(context_.R9); }
+        uint8_t R9b() const { return static_cast<uint8_t>(context_.R9); }
         uint64_t R10() const { return context_.R10; }
+        uint32_t R10d() const { return static_cast<uint32_t>(context_.R10); }
+        uint16_t R10w() const { return static_cast<uint16_t>(context_.R10); }
+        uint8_t R10b() const { return static_cast<uint8_t>(context_.R10); }
         uint64_t R11() const { return context_.R11; }
+        uint32_t R11d() const { return static_cast<uint32_t>(context_.R11); }
+        uint16_t R11w() const { return static_cast<uint16_t>(context_.R11); }
+        uint8_t R11b() const { return static_cast<uint8_t>(context_.R11); }
         uint64_t R12() const { return context_.R12; }
+        uint32_t R12d() const { return static_cast<uint32_t>(context_.R12); }
+        uint16_t R12w() const { return static_cast<uint16_t>(context_.R12); }
+        uint8_t R12b() const { return static_cast<uint8_t>(context_.R12); }
         uint64_t R13() const { return context_.R13; }
+        uint32_t R13d() const { return static_cast<uint32_t>(context_.R13); }
+        uint16_t R13w() const { return static_cast<uint16_t>(context_.R13); }
+        uint8_t R13b() const { return static_cast<uint8_t>(context_.R13); }
         uint64_t R14() const { return context_.R14; }
+        uint32_t R14d() const { return static_cast<uint32_t>(context_.R14); }
+        uint16_t R14w() const { return static_cast<uint16_t>(context_.R14); }
+        uint8_t R14b() const { return static_cast<uint8_t>(context_.R14); }
         uint64_t R15() const { return context_.R15; }
+        uint32_t R15d() const { return static_cast<uint32_t>(context_.R15); }
+        uint16_t R15w() const { return static_cast<uint16_t>(context_.R15); }
+        uint8_t R15b() const { return static_cast<uint8_t>(context_.R15); }
 
         bool HasSegments() const { return (context_.ContextFlags & X64_CONTEXT_SEGMENTS) == X64_CONTEXT_SEGMENTS; }
         uint16_t Ds() const { return context_.SegDs; }
@@ -95,24 +122,8 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t MxCsr() const { return context_.FltSave.MxCsr; }
         Windows::Foundation::Collections::IObservableVector<hstring> MxCsrList() const { return mxCsrList_; }
         uint32_t MxCsrMask() const { return context_.FltSave.MxCsr_Mask; }
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::M128A> FloatRegisters() const { return floatRegisters_; }
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::M128A> XmmRegisters() const { return xmmRegisters_; }
-        MiniDumpExplorer::M128A Xmm0() const { return xmmRegisters_.GetAt(0); }
-        MiniDumpExplorer::M128A Xmm1() const { return xmmRegisters_.GetAt(1); }
-        MiniDumpExplorer::M128A Xmm2() const { return xmmRegisters_.GetAt(2); }
-        MiniDumpExplorer::M128A Xmm3() const { return xmmRegisters_.GetAt(3); }
-        MiniDumpExplorer::M128A Xmm4() const { return xmmRegisters_.GetAt(4); }
-        MiniDumpExplorer::M128A Xmm5() const { return xmmRegisters_.GetAt(5); }
-        MiniDumpExplorer::M128A Xmm6() const { return xmmRegisters_.GetAt(6); }
-        MiniDumpExplorer::M128A Xmm7() const { return xmmRegisters_.GetAt(7); }
-        MiniDumpExplorer::M128A Xmm8() const { return xmmRegisters_.GetAt(8); }
-        MiniDumpExplorer::M128A Xmm9() const { return xmmRegisters_.GetAt(9); }
-        MiniDumpExplorer::M128A Xmm10() const { return xmmRegisters_.GetAt(10); }
-        MiniDumpExplorer::M128A Xmm11() const { return xmmRegisters_.GetAt(11); }
-        MiniDumpExplorer::M128A Xmm12() const { return xmmRegisters_.GetAt(12); }
-        MiniDumpExplorer::M128A Xmm13() const { return xmmRegisters_.GetAt(13); }
-        MiniDumpExplorer::M128A Xmm14() const { return xmmRegisters_.GetAt(14); }
-        MiniDumpExplorer::M128A Xmm15() const { return xmmRegisters_.GetAt(15); }
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> FloatRegisters() const { return floatRegisters_; }
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> XmmRegisters() const { return xmmRegisters_; }
 
         bool HasAvx() const { return xstate_reader_.is_supported(); }
         bool HasAvxInInitState() const { return xstate_reader_.is_in_init_state(); }
@@ -121,15 +132,15 @@ namespace winrt::MiniDumpExplorer::implementation
         void Set(dlg_help_utils::stream_thread_context::context_x64 const& context);
 
     private:
-        static MiniDumpExplorer::M128A CreateM128A(_M128A const& value);
+        static MiniDumpExplorer::XmmRegister CreateM128A(std::wstring const& name, _M128A const& value);
 
     private:
         dlg_help_utils::stream_thread_context::context_x64 context_{};
         Windows::Foundation::Collections::IObservableVector<hstring> contextFlagsList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> eFlagsList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> mxCsrList_{single_threaded_observable_vector<hstring>()};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::M128A> floatRegisters_{single_threaded_observable_vector<MiniDumpExplorer::M128A>()};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::M128A> xmmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::M128A>()};
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> floatRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> xmmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::YmmRegister> ymmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::YmmRegister>()};
         dlg_help_utils::xstate_reader xstate_reader_{};
     };

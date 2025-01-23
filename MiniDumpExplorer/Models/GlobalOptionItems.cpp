@@ -62,6 +62,21 @@ namespace winrt::MiniDumpExplorer::implementation
     wchar_t const * const GlobalOptionItems::DurationFormatYearsString = L"DurationFormatYears";
     wchar_t const * const GlobalOptionItems::DurationFormatRawString = L"DurationFormatRaw";
 
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatInt128String = L"M128AViewDisplayFormatInt128";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatUInt128String = L"M128AViewDisplayFormatUInt128";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatInt64String =  L"M128AViewDisplayFormatInt64";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatUInt64String =  L"M128AViewDisplayFormatUInt64";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatInt32String =  L"M128AViewDisplayFormatInt32";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatUInt32String =  L"M128AViewDisplayFormatUInt32";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatInt16String =  L"M128AViewDisplayFormatInt16";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatUInt16String =  L"M128AViewDisplayFormatUInt16";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatInt8String =  L"M128AViewDisplayFormatInt8";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatUInt8String =  L"M128AViewDisplayFormatUInt8";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatFloat32String =  L"M128AViewDisplayFormatFloat32";
+    wchar_t const * const GlobalOptionItems::M128AViewDisplayFormatFloat64String =  L"M128AViewDisplayFormatFloat64";
+
+    wchar_t const * const GlobalOptionItems::FloatingPointOptionScientificString = L"FloatingPointOptionScientific";
+
     GlobalOptionItems::GlobalOptionItems()
         : GlobalOptionsNotifyPropertyChangedBase(
             {
@@ -108,6 +123,23 @@ namespace winrt::MiniDumpExplorer::implementation
                 DurationFormatMonthsString,
                 DurationFormatYearsString,
                 DurationFormatRawString
+            },
+            {
+                M128AViewDisplayFormatInt128String,
+                M128AViewDisplayFormatUInt128String,
+                M128AViewDisplayFormatInt64String,
+                M128AViewDisplayFormatUInt64String,
+                M128AViewDisplayFormatInt32String,
+                M128AViewDisplayFormatUInt32String,
+                M128AViewDisplayFormatInt16String,
+                M128AViewDisplayFormatUInt16String,
+                M128AViewDisplayFormatInt8String,
+                M128AViewDisplayFormatUInt8String,
+                M128AViewDisplayFormatFloat32String,
+                M128AViewDisplayFormatFloat64String
+            },
+            {
+                FloatingPointOptionScientificString
             })
     {
     }
@@ -661,5 +693,171 @@ namespace winrt::MiniDumpExplorer::implementation
         {
             GlobalOptions::Options().DurationFormat(DurationFormatType::Raw);
         }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatInt128()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Int128;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatInt128(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Int128);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatUInt128()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::UInt128;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatUInt128(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::UInt128);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatInt64()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Int64;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatInt64(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Int64);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatUInt64()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::UInt64;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatUInt64(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::UInt64);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatInt32()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Int32;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatInt32(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Int32);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatUInt32()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::UInt32;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatUInt32(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::UInt32);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatInt16()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Int16;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatInt16(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Int16);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatUInt16()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::UInt16;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatUInt16(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::UInt16);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatInt8()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Int8;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatInt8(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Int8);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatUInt8()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::UInt8;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatUInt8(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::UInt8);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatFloat32()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Float32;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatFloat32(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Float32);
+        }
+    }
+
+    bool GlobalOptionItems::M128AViewDisplayFormatFloat64()
+    {
+        return GlobalOptions::Options().M128AViewDisplayFormat() == M128AViewType::Float64;
+    }
+
+    void GlobalOptionItems::M128AViewDisplayFormatFloat64(const bool value)
+    {
+        if (value)
+        {
+            GlobalOptions::Options().M128AViewDisplayFormat(M128AViewType::Float64);
+        }
+    }
+
+    bool GlobalOptionItems::FloatingPointOptionScientific()
+    {
+        return GlobalOptions::Options().FloatingPointScientificDisplayFormat();
+    }
+
+    void GlobalOptionItems::FloatingPointOptionScientific(const bool value)
+    {
+        GlobalOptions::Options().FloatingPointScientificDisplayFormat(value);
     }
 }

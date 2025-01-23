@@ -3531,4 +3531,49 @@
   <data name="ThreadStackEntryLocalVariables" xml:space="preserve">
     <value>Local Variables</value>
   </data>
+  <data name="M128AOptionMenu" xml:space="preserve">
+    <value>M128A Format</value>
+  </data>
+  <data name="M128AOptionInt128MenuItem" xml:space="preserve">
+    <value>Int128</value>
+  </data>
+  <data name="M128AOptionUInt128MenuItem" xml:space="preserve">
+    <value>UInt128</value>
+  </data>
+  <data name="M128AOptionInt64MenuItem" xml:space="preserve">
+    <value>Int64</value>
+  </data>
+  <data name="M128AOptionUInt64MenuItem" xml:space="preserve">
+    <value>UInt64</value>
+  </data>
+  <data name="M128AOptionInt32MenuItem" xml:space="preserve">
+    <value>Int32</value>
+  </data>
+  <data name="M128AOptionUInt32MenuItem" xml:space="preserve">
+    <value>UInt32</value>
+  </data>
+  <data name="M128AOptionInt16MenuItem" xml:space="preserve">
+    <value>Int16</value>
+  </data>
+  <data name="M128AOptionUInt16MenuItem" xml:space="preserve">
+    <value>UInt16</value>
+  </data>
+  <data name="M128AOptionInt8MenuItem" xml:space="preserve">
+    <value>Int8</value>
+  </data>
+  <data name="M128AOptionUInt8MenuItem" xml:space="preserve">
+    <value>UInt8</value>
+  </data>
+  <data name="M128AOptionFloat32MenuItem" xml:space="preserve">
+    <value>Float32</value>
+  </data>
+  <data name="M128AOptionFloat64MenuItem" xml:space="preserve">
+    <value>Float64</value>
+  </data>
+  <data name="FloatingPointMenu" xml:space="preserve">
+    <value>Float Point Format</value>
+  </data>
+  <data name="FloatingPointOptionScientific" xml:space="preserve">
+    <value>Scientific Format</value>
+  </data>
 </root>

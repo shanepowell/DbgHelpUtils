@@ -148,7 +148,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
 
             return box_value(dlg_help_utils::time_units::to_wstring(duration));
-        }, value, value);
+        }, value);
     }
 
     Windows::Foundation::IInspectable DurationConverter::ConvertBack(Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, [[maybe_unused]] Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)

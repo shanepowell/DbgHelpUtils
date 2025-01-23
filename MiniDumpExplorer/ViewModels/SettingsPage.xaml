@@ -112,7 +112,7 @@
                         <local:SettingsCard Header="Example Number">
                             <StackPanel>
                                 <TextBlock x:Name="exampleNumberDisplay" 
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                            IsTextSelectionEnabled="True"
                                            TextAlignment="Right"
                                            Text="{x:Bind ExampleNumber, Converter={StaticResource HexNumberConverter}, Mode=OneWay}">
@@ -147,7 +147,7 @@
                         <local:SettingsCard Header="Example Size">
                             <StackPanel>
                                 <TextBlock x:Name="exampleSizeDisplay" 
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                            IsTextSelectionEnabled="True"
                                            TextAlignment="Right"
                                            Text="{x:Bind ExampleSize, Converter={StaticResource SizeNumberConverter}, Mode=OneWay}">
@@ -173,11 +173,46 @@
                         <local:SettingsCard Header="Example Duration">
                             <StackPanel>
                                 <TextBlock x:Name="exampleDurationDisplay" 
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                            IsTextSelectionEnabled="True"
                                            TextAlignment="Right"
                                            Text="{x:Bind ExampleDuration, Converter={StaticResource DurationConverter},ConverterParameter=filetime, Mode=OneWay}">
                                 </TextBlock>
+                            </StackPanel>
+                        </local:SettingsCard>
+                        <local:SettingsCard Description="Display floating point in scientific format."
+                                            Header="Floating Point Scientific Format">
+                            <ToggleSwitch IsOn="{x:Bind FloatingPointScientificDisplayFormat, Mode=TwoWay}"/>
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Example Floating Point">
+                            <StackPanel>
+                                <TextBlock x:Name="exampleFloatingPointDisplay" 
+                                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                           IsTextSelectionEnabled="True"
+                                           TextAlignment="Right"
+                                           Text="{x:Bind ExampleDouble, Converter={StaticResource LocalNumberConverter}, Mode=OneWay}">
+                                </TextBlock>
+                            </StackPanel>
+                        </local:SettingsCard>
+                        <local:SettingsCard Description="Select which M128A units format to use" Header="M128A Units format">
+                            <ComboBox x:Name="m128aUnitFormatMode" AutomationProperties.AutomationId="m128aUnitFormatModeComboBox" SelectionChanged="M128aUnitFormatModeSelectionChanged">
+                                <ComboBoxItem Content="int128" />
+                                <ComboBoxItem Content="uint128" />
+                                <ComboBoxItem Content="int64" />
+                                <ComboBoxItem Content="uint64" />
+                                <ComboBoxItem Content="int32" />
+                                <ComboBoxItem Content="uint32" />
+                                <ComboBoxItem Content="int16" />
+                                <ComboBoxItem Content="uint16" />
+                                <ComboBoxItem Content="int8" />
+                                <ComboBoxItem Content="uint8" />
+                                <ComboBoxItem Content="float32" />
+                                <ComboBoxItem Content="float64" />
+                            </ComboBox>
+                        </local:SettingsCard>
+                        <local:SettingsCard Header="Example M128A">
+                            <StackPanel>
+                                <local:M128AView Value="{x:Bind ExampleM128A, Mode=OneWay}" />
                             </StackPanel>
                         </local:SettingsCard>
                     </local:SettingsExpander.Items>
@@ -227,7 +262,7 @@
                         <local:SettingsCard Header="Example Date">
                             <StackPanel>
                                 <TextBlock x:Name="exampleDateDisplay" 
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                            IsTextSelectionEnabled="True"
                                            TextAlignment="Right"
                                            Text="{x:Bind ExampleDate, Converter={StaticResource TimeStampNumberConverter}, Mode=OneWay}">

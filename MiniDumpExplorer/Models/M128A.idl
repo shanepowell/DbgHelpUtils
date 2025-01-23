@@ -6,7 +6,90 @@ namespace MiniDumpExplorer
     {
         M128A();
 
-        UInt64 Low{ get; };
-        Int64 High{ get; };
+        IObservableVector<UInt8> UInt8 { get; };
+        UInt8 UInt8_0 { get; };
+        UInt8 UInt8_1 { get; };
+        UInt8 UInt8_2 { get; };
+        UInt8 UInt8_3 { get; };
+        UInt8 UInt8_4 { get; };
+        UInt8 UInt8_5 { get; };
+        UInt8 UInt8_6 { get; };
+        UInt8 UInt8_7 { get; };
+        UInt8 UInt8_8 { get; };
+        UInt8 UInt8_9 { get; };
+        UInt8 UInt8_10 { get; };
+        UInt8 UInt8_11 { get; };
+        UInt8 UInt8_12 { get; };
+        UInt8 UInt8_13 { get; };
+        UInt8 UInt8_14 { get; };
+        UInt8 UInt8_15 { get; };
+
+        IObservableVector<Object> Int8 { get; };
+        Object Int8_0 { get; };
+        Object Int8_1 { get; };
+        Object Int8_2 { get; };
+        Object Int8_3 { get; };
+        Object Int8_4 { get; };
+        Object Int8_5 { get; };
+        Object Int8_6 { get; };
+        Object Int8_7 { get; };
+        Object Int8_8 { get; };
+        Object Int8_9 { get; };
+        Object Int8_10 { get; };
+        Object Int8_11 { get; };
+        Object Int8_12 { get; };
+        Object Int8_13 { get; };
+        Object Int8_14 { get; };
+        Object Int8_15 { get; };
+
+        IObservableVector<UInt16> UInt16 { get; };
+        UInt16 UInt16_0 { get; };
+        UInt16 UInt16_1 { get; };
+        UInt16 UInt16_2 { get; };
+        UInt16 UInt16_3 { get; };
+        UInt16 UInt16_4 { get; };
+        UInt16 UInt16_5 { get; };
+        UInt16 UInt16_6 { get; };
+        UInt16 UInt16_7 { get; };
+
+        IObservableVector<Int16> Int16 { get; };
+        Int16 Int16_0 { get; };
+        Int16 Int16_1 { get; };
+        Int16 Int16_2 { get; };
+        Int16 Int16_3 { get; };
+        Int16 Int16_4 { get; };
+        Int16 Int16_5 { get; };
+        Int16 Int16_6 { get; };
+        Int16 Int16_7 { get; };
+
+        IObservableVector<UInt32> UInt32 { get; };
+        UInt32 UInt32_0 { get; };
+        UInt32 UInt32_1 { get; };
+        UInt32 UInt32_2 { get; };
+        UInt32 UInt32_3 { get; };
+
+        IObservableVector<Int32> Int32 { get; };
+        Int32 Int32_0 { get; };
+        Int32 Int32_1 { get; };
+        Int32 Int32_2 { get; };
+        Int32 Int32_3 { get; };
+
+        IObservableVector<UInt64> UInt64 { get; };
+        UInt64 UInt64_0 { get; };
+        UInt64 UInt64_1 { get; };
+
+        IObservableVector<Int64> Int64 { get; };
+        Int64 Int64_0 { get; };
+        Int64 Int64_1 { get; };
+
+        IObservableVector<Single> Float32 { get; };
+        Single Float32_0 { get; };
+        Single Float32_1 { get; };
+        Single Float32_2 { get; };
+        Single Float32_3 { get; };
+
+        IObservableVector<Double> Float64 { get; };
+        Double Float64_0 { get; };
+        Double Float64_1 { get; };
     }
 }

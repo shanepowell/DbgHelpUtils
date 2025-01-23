@@ -120,6 +120,7 @@
 #include "Models\M128A.h"
 #include "Models\YmmRegister.h"
 #include "Models\ThreadContext.h"
+#include "Models\XmmRegister.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

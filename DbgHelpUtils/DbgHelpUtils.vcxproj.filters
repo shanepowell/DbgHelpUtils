@@ -492,6 +492,9 @@
     <ClCompile Include="xstate_reader.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="int128.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1035,6 +1038,12 @@
       <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="xstate_reader.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="m128a_utils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="int128.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

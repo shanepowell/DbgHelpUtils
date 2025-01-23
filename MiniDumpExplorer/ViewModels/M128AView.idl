@@ -1,0 +1,25 @@
+import "Models\M128A.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass M128AView : Microsoft.UI.Xaml.Controls.UserControl, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        M128AView();
+
+        M128A Value{ get; set; };
+
+        Boolean IsInt128View{ get; };
+        Boolean IsUInt128View{ get; };
+        Boolean IsInt64View{ get; };
+        Boolean IsUInt64View{ get; };
+        Boolean IsInt32View{ get; };
+        Boolean IsUInt32View{ get; };
+        Boolean IsInt16View{ get; };
+        Boolean IsUInt16View{ get; };
+        Boolean IsInt8View{ get; };
+        Boolean IsUInt8View{ get; };
+        Boolean IsFloat32View{ get; };
+        Boolean IsFloat64View{ get; };
+    }
+}

@@ -26,6 +26,10 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"Bias",
                 L"StandardBias",
                 L"DaylightBias",
+            },
+            {
+            },
+            {
             })
     {
     }

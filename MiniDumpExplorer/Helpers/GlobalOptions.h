@@ -54,6 +54,22 @@ enum class DurationFormatType : uint8_t
     Raw
 };
 
+enum class M128AViewType : uint8_t
+{
+    Int128,
+    UInt128,
+    Int64,
+    UInt64,
+    Int32,
+    UInt32,
+    Int16,
+    UInt16,
+    Int8,
+    UInt8,
+    Float32,
+    Float64
+};
+
 class GlobalOptions
 {
 private:
@@ -107,10 +123,18 @@ public:
     bool SymbolLoadDebugMemory() const { return symbolLoadDebugMemory_; }
     void SymbolLoadDebugMemory(bool value);
 
+    M128AViewType M128AViewDisplayFormat() const { return m128AViewType_; }
+    void M128AViewDisplayFormat(M128AViewType value);
+
+    bool FloatingPointScientificDisplayFormat() const { return floatingPointScientificDisplayFormat_; }
+    void FloatingPointScientificDisplayFormat(bool value);
+
     void OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback);
     void OnSizeNumberDisplayFormatChanged(std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)> callback);
     void OnTimeStampFormatChanged(std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)> callback);
     void OnDurationFormatChanged(std::function<bool(DurationFormatType)> callback);
+    void OnM128AViewDisplayFormatChanged(std::function<bool(M128AViewType)> callback);
+    void OnFloatingPointScientificDisplayFormatChanged(std::function<bool(bool)> callback);
 
     std::vector<std::wstring> const& RecentFiles() const { return recentFiles_; }
     void RecentFiles(std::vector<std::wstring> value);
@@ -145,6 +169,10 @@ private:
         else if constexpr (std::is_same_v<T, unsigned int> || std::is_same_v<T, unsigned long>)
         {
             AppPropertiesHelper::SetUnsignedIntProperty(valueName, existingValue);
+        }
+        else if constexpr (std::is_same_v<T, bool>)
+        {
+            AppPropertiesHelper::SetBoolProperty(valueName, existingValue);
         }
         else if constexpr (std::is_same_v<T, std::vector<std::wstring>>)
         {
@@ -186,6 +214,8 @@ private:
     std::vector<std::wstring> recentFiles_;
     bool symbolLoadDebug_;
     bool symbolLoadDebugMemory_;
+    M128AViewType m128AViewType_;
+    bool floatingPointScientificDisplayFormat_;
     std::mutex numberDisplayFormatCallbacksMutex_;
     std::vector<std::function<bool(NumberDisplayFormatType)>> numberDisplayFormatCallbacks_;
     std::mutex sizeNumberDisplayFormatCallbacksMutex_;
@@ -196,4 +226,8 @@ private:
     std::vector<std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)>> timeStampFormatCallbacks_;
     std::mutex durationFormatCallbacksMutex_;
     std::vector<std::function<bool(DurationFormatType)>> durationFormatCallbacks_;
+    std::mutex m128aDisplayFormatCallbackMutex_;
+    std::vector<std::function<bool(M128AViewType)>> m128aDisplayFormatCallbacks_;
+    std::mutex floatingPointScientificDisplayFormatCallbackMutex_;
+    std::vector<std::function<bool(bool)>> floatingPointScientificDisplayFormatCallbacks_;
 };

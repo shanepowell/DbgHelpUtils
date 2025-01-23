@@ -56,6 +56,21 @@ namespace winrt::MiniDumpExplorer::implementation
         static wchar_t const * const DurationFormatYearsString;
         static wchar_t const * const DurationFormatRawString;
 
+        static wchar_t const * const M128AViewDisplayFormatInt128String;
+        static wchar_t const * const M128AViewDisplayFormatUInt128String;
+        static wchar_t const * const M128AViewDisplayFormatInt64String;
+        static wchar_t const * const M128AViewDisplayFormatUInt64String;
+        static wchar_t const * const M128AViewDisplayFormatInt32String;
+        static wchar_t const * const M128AViewDisplayFormatUInt32String;
+        static wchar_t const * const M128AViewDisplayFormatInt16String;
+        static wchar_t const * const M128AViewDisplayFormatUInt16String;
+        static wchar_t const * const M128AViewDisplayFormatInt8String;
+        static wchar_t const * const M128AViewDisplayFormatUInt8String;
+        static wchar_t const * const M128AViewDisplayFormatFloat32String;
+        static wchar_t const * const M128AViewDisplayFormatFloat64String;
+
+        static wchar_t const * const FloatingPointOptionScientificString;
+
         static bool DisplayHexadecimalNumericFormat();
         static void DisplayHexadecimalNumericFormat(bool value);
 
@@ -143,6 +158,34 @@ namespace winrt::MiniDumpExplorer::implementation
         static void DurationFormatYears(bool value);
         static bool DurationFormatRaw();
         static void DurationFormatRaw(bool value);
+
+        static bool M128AViewDisplayFormatInt128();
+        static void M128AViewDisplayFormatInt128(bool value);
+        static bool M128AViewDisplayFormatUInt128();
+        static void M128AViewDisplayFormatUInt128(bool value);
+        static bool M128AViewDisplayFormatInt64();
+        static void M128AViewDisplayFormatInt64(bool value);
+        static bool M128AViewDisplayFormatUInt64();
+        static void M128AViewDisplayFormatUInt64(bool value);
+        static bool M128AViewDisplayFormatInt32();
+        static void M128AViewDisplayFormatInt32(bool value);
+        static bool M128AViewDisplayFormatUInt32();
+        static void M128AViewDisplayFormatUInt32(bool value);
+        static bool M128AViewDisplayFormatInt16();
+        static void M128AViewDisplayFormatInt16(bool value);
+        static bool M128AViewDisplayFormatUInt16();
+        static void M128AViewDisplayFormatUInt16(bool value);
+        static bool M128AViewDisplayFormatInt8();
+        static void M128AViewDisplayFormatInt8(bool value);
+        static bool M128AViewDisplayFormatUInt8();
+        static void M128AViewDisplayFormatUInt8(bool value);
+        static bool M128AViewDisplayFormatFloat32();
+        static void M128AViewDisplayFormatFloat32(bool value);
+        static bool M128AViewDisplayFormatFloat64();
+        static void M128AViewDisplayFormatFloat64(bool value);
+
+        static bool FloatingPointOptionScientific();
+        static void FloatingPointOptionScientific(bool value);
     };
 }
 

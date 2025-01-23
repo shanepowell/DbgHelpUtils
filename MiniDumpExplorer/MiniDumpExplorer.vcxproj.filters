@@ -104,6 +104,12 @@
     <Page Include="ViewModels\ThreadContextView.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\M128AView.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\YmmRegisterView.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -641,6 +647,9 @@
       <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Models\ThreadContext.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\XmmRegister.cpp">
       <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>

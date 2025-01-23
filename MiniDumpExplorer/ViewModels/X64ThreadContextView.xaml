@@ -15,14 +15,394 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/> <!-- 7 -->
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Context Flags" />
         <TextBlock x:Name="contextFlags"  Grid.Row="0" Grid.Column="1" Text="{x:Bind ThreadContext.ContextFlags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
         <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Bind ThreadContext.ContextFlagsList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" ColumnSpacing="5" RowSpacing="5" Visibility="{x:Bind ThreadContext.HasControl,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="CS" />
+            <TextBlock x:Name="cs"  Grid.Row="0" Grid.Column="1" Text="{x:Bind ThreadContext.Cs,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="RIP" />
+            <TextBlock x:Name="rip"  Grid.Row="0" Grid.Column="3" Text="{x:Bind ThreadContext.Rip,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="SS" />
+            <TextBlock x:Name="ss"  Grid.Row="1" Grid.Column="1" Text="{x:Bind ThreadContext.Ss,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="RSP" />
+            <TextBlock x:Name="rsp"  Grid.Row="1" Grid.Column="3" Text="{x:Bind ThreadContext.Rsp,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="RBP" />
+            <TextBlock x:Name="rbp"  Grid.Row="1" Grid.Column="5" Text="{x:Bind ThreadContext.Rbp,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="EFlags" />
+            <TextBlock x:Name="eFlags"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Text="{x:Bind ThreadContext.EFlags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" ItemsSource="{x:Bind ThreadContext.EFlagsList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </Grid>
+
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" ColumnSpacing="5" RowSpacing="5" Visibility="{x:Bind ThreadContext.HasSegments,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/> <!-- 7 -->
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 0 --> 
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="DS" />
+            <TextBlock x:Name="ds"  Grid.Row="0" Grid.Column="1" Text="{x:Bind ThreadContext.Ds,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="ES" />
+            <TextBlock x:Name="es"  Grid.Row="0" Grid.Column="3" Text="{x:Bind ThreadContext.Es,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="FS" />
+            <TextBlock x:Name="fs"  Grid.Row="0" Grid.Column="5" Text="{x:Bind ThreadContext.Fs,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="6" Text="GS" />
+            <TextBlock x:Name="gs"  Grid.Row="0" Grid.Column="7" Text="{x:Bind ThreadContext.Gs,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+        </Grid>
+
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" ColumnSpacing="5" RowSpacing="5" Visibility="{x:Bind ThreadContext.HasInteger,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/> <!-- 9 -->
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 0 --> 
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 10 -->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 13 -->
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="RAX" />
+            <TextBlock x:Name="rax"  Grid.Row="0" Grid.Column="1" Text="{x:Bind ThreadContext.Rax,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="EAX" />
+            <TextBlock x:Name="eax"  Grid.Row="0" Grid.Column="3" Text="{x:Bind ThreadContext.Eax,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="AX" />
+            <TextBlock x:Name="ax"  Grid.Row="0" Grid.Column="5" Text="{x:Bind ThreadContext.Ax,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="6" Text="AH" />
+            <TextBlock x:Name="ah"  Grid.Row="0" Grid.Column="7" Text="{x:Bind ThreadContext.Ah,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="0" Grid.Column="8" Text="AL" />
+            <TextBlock x:Name="al"  Grid.Row="0" Grid.Column="9" Text="{x:Bind ThreadContext.Al,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="RBX" />
+            <TextBlock x:Name="rbx"  Grid.Row="1" Grid.Column="1" Text="{x:Bind ThreadContext.Rbx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="EBX" />
+            <TextBlock x:Name="ebx"  Grid.Row="1" Grid.Column="3" Text="{x:Bind ThreadContext.Ebx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="BX" />
+            <TextBlock x:Name="bx"  Grid.Row="1" Grid.Column="5" Text="{x:Bind ThreadContext.Bx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="6" Text="BH" />
+            <TextBlock x:Name="bh"  Grid.Row="1" Grid.Column="7" Text="{x:Bind ThreadContext.Bh,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="8" Text="BL" />
+            <TextBlock x:Name="bl"  Grid.Row="1" Grid.Column="9" Text="{x:Bind ThreadContext.Bl,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="RCX" />
+            <TextBlock x:Name="rcx"  Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadContext.Rcx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="ECX" />
+            <TextBlock x:Name="ecx"  Grid.Row="2" Grid.Column="3" Text="{x:Bind ThreadContext.Ecx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="4" Text="CX" />
+            <TextBlock x:Name="cx"  Grid.Row="2" Grid.Column="5" Text="{x:Bind ThreadContext.Cx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="6" Text="CH" />
+            <TextBlock x:Name="ch"  Grid.Row="2" Grid.Column="7" Text="{x:Bind ThreadContext.Ch,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="8" Text="CL" />
+            <TextBlock x:Name="cl"  Grid.Row="2" Grid.Column="9" Text="{x:Bind ThreadContext.Cl,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="RDX" />
+            <TextBlock x:Name="rdx"  Grid.Row="3" Grid.Column="1" Text="{x:Bind ThreadContext.Rdx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="EDX" />
+            <TextBlock x:Name="edx"  Grid.Row="3" Grid.Column="3" Text="{x:Bind ThreadContext.Edx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="4" Text="DX" />
+            <TextBlock x:Name="dx"  Grid.Row="3" Grid.Column="5" Text="{x:Bind ThreadContext.Dx,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="6" Text="DH" />
+            <TextBlock x:Name="dh"  Grid.Row="3" Grid.Column="7" Text="{x:Bind ThreadContext.Dh,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="8" Text="DL" />
+            <TextBlock x:Name="dl"  Grid.Row="3" Grid.Column="9" Text="{x:Bind ThreadContext.Dl,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="RDI" />
+            <TextBlock x:Name="rdi"  Grid.Row="4" Grid.Column="1" Text="{x:Bind ThreadContext.Rdi,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="EDI" />
+            <TextBlock x:Name="edi"  Grid.Row="4" Grid.Column="3" Text="{x:Bind ThreadContext.Edi,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="4" Grid.Column="4" Text="DI" />
+            <TextBlock x:Name="di"  Grid.Row="4" Grid.Column="5" Text="{x:Bind ThreadContext.Di,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="4" Grid.Column="6" Text="DIL" />
+            <TextBlock x:Name="dil"  Grid.Row="4" Grid.Column="7" Text="{x:Bind ThreadContext.Dil,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="RSI" />
+            <TextBlock x:Name="rsi"  Grid.Row="5" Grid.Column="1" Text="{x:Bind ThreadContext.Rsi,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="5" Grid.Column="2" Text="ESI" />
+            <TextBlock x:Name="esi"  Grid.Row="5" Grid.Column="3" Text="{x:Bind ThreadContext.Esi,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="5" Grid.Column="4" Text="SI" />
+            <TextBlock x:Name="si"  Grid.Row="5" Grid.Column="5" Text="{x:Bind ThreadContext.Si,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="5" Grid.Column="6" Text="SIL" />
+            <TextBlock x:Name="sil"  Grid.Row="5" Grid.Column="7" Text="{x:Bind ThreadContext.Sil,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="R8" />
+            <TextBlock x:Name="r8"  Grid.Row="6" Grid.Column="1" Text="{x:Bind ThreadContext.R8,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="R8D" />
+            <TextBlock x:Name="r8d"  Grid.Row="6" Grid.Column="3" Text="{x:Bind ThreadContext.R8d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="4" Text="R8W" />
+            <TextBlock x:Name="r8w"  Grid.Row="6" Grid.Column="5" Text="{x:Bind ThreadContext.R8w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="6" Text="R8B" />
+            <TextBlock x:Name="r8b"  Grid.Row="6" Grid.Column="7" Text="{x:Bind ThreadContext.R8b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="R9" />
+            <TextBlock x:Name="r9"  Grid.Row="7" Grid.Column="1" Text="{x:Bind ThreadContext.R9,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="2" Text="R9D" />
+            <TextBlock x:Name="r9d"  Grid.Row="7" Grid.Column="3" Text="{x:Bind ThreadContext.R9d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="4" Text="R9W" />
+            <TextBlock x:Name="r9w"  Grid.Row="7" Grid.Column="5" Text="{x:Bind ThreadContext.R9w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="6" Text="R9B" />
+            <TextBlock x:Name="r9b"  Grid.Row="7" Grid.Column="7" Text="{x:Bind ThreadContext.R9b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="R10" />
+            <TextBlock x:Name="r10"  Grid.Row="8" Grid.Column="1" Text="{x:Bind ThreadContext.R10,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="8" Grid.Column="2" Text="R10D" />
+            <TextBlock x:Name="r10d"  Grid.Row="8" Grid.Column="3" Text="{x:Bind ThreadContext.R10d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="8" Grid.Column="4" Text="R10W" />
+            <TextBlock x:Name="r10w"  Grid.Row="8" Grid.Column="5" Text="{x:Bind ThreadContext.R10w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="8" Grid.Column="6" Text="R10B" />
+            <TextBlock x:Name="r10b"  Grid.Row="8" Grid.Column="7" Text="{x:Bind ThreadContext.R10b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="R11" />
+            <TextBlock x:Name="r11"  Grid.Row="9" Grid.Column="1" Text="{x:Bind ThreadContext.R11,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="9" Grid.Column="2" Text="R11D" />
+            <TextBlock x:Name="r11d"  Grid.Row="9" Grid.Column="3" Text="{x:Bind ThreadContext.R11d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="9" Grid.Column="4" Text="R11W" />
+            <TextBlock x:Name="r11w"  Grid.Row="9" Grid.Column="5" Text="{x:Bind ThreadContext.R11w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="9" Grid.Column="6" Text="R11B" />
+            <TextBlock x:Name="r11b"  Grid.Row="9" Grid.Column="7" Text="{x:Bind ThreadContext.R11b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="R12" />
+            <TextBlock x:Name="r12"  Grid.Row="10" Grid.Column="1" Text="{x:Bind ThreadContext.R12,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="10" Grid.Column="2" Text="R12D" />
+            <TextBlock x:Name="r12d"  Grid.Row="10" Grid.Column="3" Text="{x:Bind ThreadContext.R12d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="10" Grid.Column="4" Text="R12W" />
+            <TextBlock x:Name="r12w"  Grid.Row="10" Grid.Column="5" Text="{x:Bind ThreadContext.R12w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="10" Grid.Column="6" Text="R12B" />
+            <TextBlock x:Name="r12b"  Grid.Row="10" Grid.Column="7" Text="{x:Bind ThreadContext.R12b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="R13" />
+            <TextBlock x:Name="r13"  Grid.Row="11" Grid.Column="1" Text="{x:Bind ThreadContext.R13,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="2" Text="R13D" />
+            <TextBlock x:Name="r13d"  Grid.Row="11" Grid.Column="3" Text="{x:Bind ThreadContext.R13d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="4" Text="R13W" />
+            <TextBlock x:Name="r13w"  Grid.Row="11" Grid.Column="5" Text="{x:Bind ThreadContext.R13w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="6" Text="R13B" />
+            <TextBlock x:Name="r13b"  Grid.Row="11" Grid.Column="7" Text="{x:Bind ThreadContext.R13b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="R14" />
+            <TextBlock x:Name="r14"  Grid.Row="12" Grid.Column="1" Text="{x:Bind ThreadContext.R14,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="12" Grid.Column="2" Text="R14D" />
+            <TextBlock x:Name="r14d"  Grid.Row="12" Grid.Column="3" Text="{x:Bind ThreadContext.R14d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="12" Grid.Column="4" Text="R14W" />
+            <TextBlock x:Name="r14w"  Grid.Row="12" Grid.Column="5" Text="{x:Bind ThreadContext.R14w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="12" Grid.Column="6" Text="R14B" />
+            <TextBlock x:Name="r14b"  Grid.Row="12" Grid.Column="7" Text="{x:Bind ThreadContext.R14b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="13" Grid.Column="0" Text="R15" />
+            <TextBlock x:Name="r15"  Grid.Row="13" Grid.Column="1" Text="{x:Bind ThreadContext.R15,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="13" Grid.Column="2" Text="R15D" />
+            <TextBlock x:Name="r15d"  Grid.Row="13" Grid.Column="3" Text="{x:Bind ThreadContext.R15d,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="13" Grid.Column="4" Text="R15W" />
+            <TextBlock x:Name="r15w"  Grid.Row="13" Grid.Column="5" Text="{x:Bind ThreadContext.R15w,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="13" Grid.Column="6" Text="R15B" />
+            <TextBlock x:Name="r15b"  Grid.Row="13" Grid.Column="7" Text="{x:Bind ThreadContext.R15b,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+        </Grid>
+
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnSpacing="5" RowSpacing="5" Visibility="{x:Bind ThreadContext.HasFloatingPoint,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/> <!-- 5 -->
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 0 -->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 8 -->
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Floating Point Registers" FontSize="15" FontWeight="Bold" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Control" />
+            <TextBlock x:Name="controlWord"  Grid.Row="1" Grid.Column="1" Text="{x:Bind ThreadContext.ControlWord,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="Status" />
+            <TextBlock x:Name="statusWord"  Grid.Row="1" Grid.Column="3" Text="{x:Bind ThreadContext.StatusWord,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="Tag" />
+            <TextBlock x:Name="tagWord"  Grid.Row="1" Grid.Column="5" Text="{x:Bind ThreadContext.TagWord,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Error OpCode" />
+            <TextBlock x:Name="errorOpcode"  Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadContext.ErrorOpcode,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="Error Offset" />
+            <TextBlock x:Name="errorOffset"  Grid.Row="2" Grid.Column="3" Text="{x:Bind ThreadContext.ErrorOffset,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="4" Text="Error Selector" />
+            <TextBlock x:Name="errorSelector"  Grid.Row="2" Grid.Column="5" Text="{x:Bind ThreadContext.ErrorSelector,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Data Offset" />
+            <TextBlock x:Name="dataOffset"  Grid.Row="3" Grid.Column="1" Text="{x:Bind ThreadContext.DataOffset,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="Data Selector" />
+            <TextBlock x:Name="dataSelector"  Grid.Row="3" Grid.Column="3" Text="{x:Bind ThreadContext.DataSelector,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="MX CSR" />
+            <TextBlock x:Name="mxCsr"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="5" Text="{x:Bind ThreadContext.MxCsr,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" ItemsSource="{x:Bind ThreadContext.MxCsrList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+            <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="6" ItemsSource="{x:Bind ThreadContext.FloatRegisters}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:XmmRegister">
+                        <Grid ColumnSpacing="5" RowSpacing="5" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/> <!-- 0 --> 
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" />
+                            <local:M128AView Grid.Row="0" Grid.Column="1" Value="{x:Bind Xmm, Mode=OneWay}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="5" Text="SSE" FontSize="15" FontWeight="Bold" />
+            <ListView Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="6" ItemsSource="{x:Bind ThreadContext.XmmRegisters}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:XmmRegister">
+                        <Grid ColumnSpacing="5" RowSpacing="5" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/> <!-- 0 --> 
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" />
+                            <local:M128AView Grid.Row="0" Grid.Column="1" Value="{x:Bind Xmm, Mode=OneWay}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" ColumnSpacing="5" RowSpacing="5" Visibility="{x:Bind ThreadContext.HasDebugRegisters,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 0 --> 
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Text="AVX" FontSize="15" FontWeight="Bold" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="AVX is in the INIT state (YMM_H registers are all zero)" Visibility="{x:Bind ThreadContext.HasAvxInInitState,Converter={StaticResource BoolToVisibilityConverter},ConverterParameter=True,Mode=OneWay}" />
+            <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{x:Bind ThreadContext.YmmRegisters}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:YmmRegister">
+                       <Grid ColumnSpacing="5" RowSpacing="5" >
+                           <Grid.ColumnDefinitions>
+                               <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                               <ColumnDefinition Width="Auto"/>
+                           </Grid.ColumnDefinitions>
+                           <Grid.RowDefinitions>
+                               <RowDefinition Height="Auto"/> <!-- 0 --> 
+                           </Grid.RowDefinitions>
+                           <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" />
+                           <local:YmmRegisterView Grid.Row="0" Grid.Column="1" Value="{x:Bind}" />
+                       </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" ColumnSpacing="5" RowSpacing="5" Visibility="{x:Bind ThreadContext.HasAvx,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- 0 -->
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 0 --> 
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 10 -->
+                <RowDefinition Height="Auto"/> <!-- 11 -->
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Debug Registers" FontSize="15" FontWeight="Bold" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="DR0" />
+            <TextBlock x:Name="dr0"  Grid.Row="1" Grid.Column="1" Text="{x:Bind ThreadContext.Dr0,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="DR1" />
+            <TextBlock x:Name="dr1"  Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadContext.Dr1,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="DR2" />
+            <TextBlock x:Name="dr2"  Grid.Row="3" Grid.Column="1" Text="{x:Bind ThreadContext.Dr2,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="DR3" />
+            <TextBlock x:Name="dr3"  Grid.Row="4" Grid.Column="1" Text="{x:Bind ThreadContext.Dr3,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="DR6" />
+            <TextBlock x:Name="dr6"  Grid.Row="5" Grid.Column="1" Text="{x:Bind ThreadContext.Dr6,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="DR7" />
+            <TextBlock x:Name="dr7"  Grid.Row="6" Grid.Column="1" Text="{x:Bind ThreadContext.Dr7,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Debug Control" />
+            <TextBlock x:Name="debugControl"  Grid.Row="7" Grid.Column="1" Text="{x:Bind ThreadContext.DebugControl,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Last Branch To RIP" />
+            <TextBlock x:Name="lastBranchToRip"  Grid.Row="8" Grid.Column="1" Text="{x:Bind ThreadContext.LastBranchToRip,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Last Branch From RIP" />
+            <TextBlock x:Name="lastBranchFromRip"  Grid.Row="9" Grid.Column="1" Text="{x:Bind ThreadContext.LastBranchFromRip,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Last Exception To RIP" />
+            <TextBlock x:Name="lastExceptionToRip"  Grid.Row="10" Grid.Column="1" Text="{x:Bind ThreadContext.LastExceptionToRip,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="Last Exception From RIP" />
+            <TextBlock x:Name="lastExceptionFromRip"  Grid.Row="11" Grid.Column="1" Text="{x:Bind ThreadContext.LastExceptionFromRip,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+        </Grid>
     </Grid>
 </UserControl>

@@ -17,6 +17,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <local:X64ThreadContextView Grid.Row="14" Grid.Column="1" ThreadContext="{x:Bind ThreadContext.X64ThreadContext}" Visibility="{x:Bind ThreadContext.HasX64ThreadContext,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+        <local:X64ThreadContextView Grid.Row="0" Grid.Column="0" ThreadContext="{x:Bind ThreadContext.X64ThreadContext}" Visibility="{x:Bind ThreadContext.HasX64ThreadContext,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
     </Grid>
 </UserControl>

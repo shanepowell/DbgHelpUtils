@@ -42,6 +42,10 @@ namespace winrt::MiniDumpExplorer::implementation
             {
                 L"ProcessUserTime",
                 L"ProcessKernelTime",
+            },
+            {
+            },
+            {
             })
     {
     }

@@ -36,31 +36,31 @@ namespace winrt::MiniDumpExplorer::implementation
             switch(options.SizeNumberDisplayFormat())
             {
             case SizeNumberDisplayFormatType::Auto:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Bytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_bytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_bytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Kilobytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_kilobytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_kilobytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Megabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_megabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_megabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Gigabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_gigabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_gigabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Terabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_terabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_terabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Petabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_petabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_petabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Exabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Raw:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value);
 
             default:
                 break;
@@ -73,31 +73,31 @@ namespace winrt::MiniDumpExplorer::implementation
             switch(options.SizeNumberDisplayFormat())
             {
             case SizeNumberDisplayFormatType::Auto:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Bytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_bytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_bytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Kilobytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_kilobytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_kilobytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Megabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_megabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_megabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Gigabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_gigabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_gigabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Terabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_terabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_terabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Petabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_petabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_petabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Exabytes:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([sizeFormat](auto const v) { return box_value(to_exabytes_wstring(bytes{v}, sizeFormat)); }, value);
 
             case SizeNumberDisplayFormatType::Raw:
-                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value, value);
+                return InspectableUtility::ProcessValueFromInspectable<int64_t, int32_t, int16_t, int8_t, uint64_t, uint32_t, uint16_t, uint8_t>([](auto const v) { return box_value(locale_formatting::to_wstring(v)); }, value);
 
             default:
                 break;

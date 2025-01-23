@@ -20,6 +20,8 @@ public:
     static winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem CreateDateFormatFlags();
     static winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem CreateTimeFormatFlags();
     static winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem CreateDurationFormat();
+    static winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem CreateM128AOption();
+    static winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem CreateFloatingPointOption();
 
     template<typename ...Args>
     static void CreateStandardHexNumberMenu(Args... args)
@@ -45,14 +47,34 @@ public:
         CreateControlMenu({CreateDurationFormat()}, args...);
     }
 
+    template<typename ...Args>
+    static void CreateStandardM128AFloatingPointMenu(Args... args)
+    {
+        CreateControlMenu({CreateFloatingPointOption(), CreateM128AOption()}, args...);
+    }
+
+    template<typename ...Args>
+    static void CreateStandardM128AHexNumberMenuMenu(Args... args)
+    {
+        CreateControlMenu({CreateHexNumberDisplayFormatOption(), CreateM128AOption()}, args...);
+    }
+
+    template<typename ...Args>
+    static void CreateStandardFloatingPointMenu(Args... args)
+    {
+        CreateControlMenu({CreateFloatingPointOption()}, args...);
+    }
+
 private:
-    static void CreateControlMenu(std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> const& menus, winrt::Microsoft::UI::Xaml::Controls::TextBlock const& control)
+
+    template<typename T>
+    static void CreateControlMenu(std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> const& menus, T const& control)
     {
         CreateSingleControlMenu(menus, control);
     }
 
-    template<typename ...Args>
-    static void CreateControlMenu(std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> const& menus, winrt::Microsoft::UI::Xaml::Controls::TextBlock const& control, Args... args)
+    template<typename T, typename ...Args>
+    static void CreateControlMenu(std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> const& menus, T const& control, Args... args)
     {
         CreateSingleControlMenu(menus, control);
         CreateControlMenu(menus, args...);

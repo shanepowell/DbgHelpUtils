@@ -1,0 +1,12 @@
+import "Models\YmmRegister.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass YmmRegisterView : Microsoft.UI.Xaml.Controls.UserControl, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        YmmRegisterView();
+
+        YmmRegister Value { get; set; };
+    }
+}

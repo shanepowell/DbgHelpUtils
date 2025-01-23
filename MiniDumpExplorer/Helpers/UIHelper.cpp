@@ -354,6 +354,43 @@ Controls::MenuFlyoutSubItem UIHelper::CreateDurationFormat()
     return menu;
 }
 
+Controls::MenuFlyoutSubItem UIHelper::CreateM128AOption()
+{
+    auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+    auto const menu = Controls::MenuFlyoutSubItem{};
+    menu.Text(rm.MainResourceMap().GetValue(L"Resources/M128AOptionMenu").ValueAsString());
+    GlobalOptionItems optionItems{};
+    hstring groupName{ L"M128AOptions" };
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionInt128MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatInt128String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionUInt128MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatUInt128String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionInt64MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatInt64String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionUInt64MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatUInt64String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionInt32MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatInt32String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionUInt32MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatUInt32String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionInt16MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatInt16String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionUInt16MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatUInt16String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionInt8MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatInt8String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionUInt8MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatUInt8String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionFloat32MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatFloat32String, groupName));
+    menu.Items().Append(CreateGlobalOptionsGroupCheckedBoundPropertyItem(optionItems, L"Resources/M128AOptionFloat64MenuItem", implementation::GlobalOptionItems::M128AViewDisplayFormatFloat64String, groupName));
+
+    return menu;
+}
+
+Controls::MenuFlyoutSubItem UIHelper::CreateFloatingPointOption()
+{
+    auto const& rm = Microsoft::Windows::ApplicationModel::Resources::ResourceManager{};
+    auto const menu = Controls::MenuFlyoutSubItem{};
+
+    menu.Text(rm.MainResourceMap().GetValue(L"Resources/FloatingPointMenu").ValueAsString());
+
+    GlobalOptionItems optionItems{};
+
+    menu.Items().Append(CreateGlobalOptionsCheckedBoundPropertyItem(optionItems, L"Resources/FloatingPointOptionScientific", implementation::GlobalOptionItems::FloatingPointOptionScientificString));
+
+    return menu;
+}
+
 void UIHelper::CreateSingleControlMenu(std::vector<Controls::MenuFlyoutItemBase> const& menus, Controls::TextBlock const& control)
 {
     auto const menu = Controls::MenuFlyout{};
@@ -367,4 +404,3 @@ void UIHelper::CreateSingleControlMenu(std::vector<Controls::MenuFlyoutItemBase>
 
     control.ContextFlyout(menu);
 }
-

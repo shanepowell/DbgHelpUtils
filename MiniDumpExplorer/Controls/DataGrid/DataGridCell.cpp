@@ -350,7 +350,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         if (!e.Handled() && internalOwningGrid->IsTabStop())
         {
-            bool const success = internalOwningGrid->Focus(FocusState::Programmatic);
+            [[maybe_unused]] bool const success = internalOwningGrid->Focus(FocusState::Programmatic);
             assert(success);
         }
 

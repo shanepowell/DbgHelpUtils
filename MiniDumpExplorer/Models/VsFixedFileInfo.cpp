@@ -32,6 +32,10 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"FileDate"
             },
             {
+            },
+            {
+            },
+            {
             })
     {
     }

@@ -6,6 +6,8 @@
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct M128A;
+
     struct SettingsPage : SettingsPageT<SettingsPage>, GlobalOptionsNotifyPropertyChangedBase<SettingsPage>
     {
         SettingsPage();
@@ -25,11 +27,15 @@ namespace winrt::MiniDumpExplorer::implementation
         static uint64_t ExampleSize();
         static uint64_t ExampleDuration();
         static uint64_t ExampleDate();
+        MiniDumpExplorer::M128A ExampleM128A();
+        static double ExampleDouble();
 
         static bool SymbolLoadDebug();
         static void SymbolLoadDebug(bool value);
         static bool SymbolLoadMemoryDebug();
         static void SymbolLoadMemoryDebug(bool value);
+        static bool FloatingPointScientificDisplayFormat();
+        static void FloatingPointScientificDisplayFormat(bool value);
 
         void ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LogLevelModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -46,17 +52,22 @@ namespace winrt::MiniDumpExplorer::implementation
         void NoTimeSecondsToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void NoTimeMinutesOrSecondsToggled(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void DurationFormatChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void M128aUnitFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
         void SetupFlyoutMenus();
         void OnSettingsPageLoaded(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LoadVersionInformation();
+        void SetExampleM128ANumber() const;
 
         void OnNumberDisplayFormatChanged() override;
         void OnSizeNumberDisplayFormatChanged() override;
         void OnTimeStampFormatChanged() override;
         void OnDurationFormatChanged() override;
-
+        void OnM128AViewDisplayFormatChanged() override;
+        void OnFloatingPointScientificDisplayFormatChanged() override;
+        
+        static _M128A MakeExampleM128A();
         static int ToDateFormatIndex(uint32_t dateFormatFlags);
         static int ToDateLayoutIndex(uint32_t dateFormatFlags);
 
@@ -70,6 +81,7 @@ namespace winrt::MiniDumpExplorer::implementation
         hstring platformId_{};
         hstring csdVersion_{};
         hstring processorArchitecture_{};
+        MiniDumpExplorer::M128A exampleM128A_{};
     };
 }
 

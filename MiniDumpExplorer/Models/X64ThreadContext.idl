@@ -1,4 +1,5 @@
 import "Models\M128A.idl";
+import "Models\XmmRegister.idl";
 import "Models\YmmRegister.idl";
 
 namespace MiniDumpExplorer
@@ -45,17 +46,43 @@ namespace MiniDumpExplorer
         UInt64 Rdi { get; };
         UInt32 Edi { get; };
         UInt16 Di { get; };
+        UInt8 Dil { get; };
         UInt64 Rsi { get; };
         UInt32 Esi { get; };
         UInt16 Si { get; };
+        UInt8 Sil { get; };
         UInt64 R8 { get; };
+        UInt32 R8d { get; };
+        UInt16 R8w { get; };
+        UInt8 R8b { get; };
         UInt64 R9 { get; };
+        UInt32 R9d { get; };
+        UInt16 R9w { get; };
+        UInt8 R9b { get; };
         UInt64 R10 { get; };
+        UInt32 R10d { get; };
+        UInt16 R10w { get; };
+        UInt8 R10b { get; };
         UInt64 R11 { get; };
+        UInt32 R11d { get; };
+        UInt16 R11w { get; };
+        UInt8 R11b { get; };
         UInt64 R12 { get; };
+        UInt32 R12d { get; };
+        UInt16 R12w { get; };
+        UInt8 R12b { get; };
         UInt64 R13 { get; };
+        UInt32 R13d { get; };
+        UInt16 R13w { get; };
+        UInt8 R13b { get; };
         UInt64 R14 { get; };
+        UInt32 R14d { get; };
+        UInt16 R14w { get; };
+        UInt8 R14b { get; };
         UInt64 R15 { get; };
+        UInt32 R15d { get; };
+        UInt16 R15w { get; };
+        UInt8 R15b { get; };
 
         Boolean HasSegments { get; };
         UInt16 Ds { get; };
@@ -88,25 +115,9 @@ namespace MiniDumpExplorer
         UInt32 MxCsr { get; };
         IObservableVector<String> MxCsrList { get; };
         UInt32 MxCsrMask { get; };
-        IObservableVector<M128A> FloatRegisters { get; };
+        IObservableVector<XmmRegister> FloatRegisters { get; };
 
-        IObservableVector<M128A> XmmRegisters { get; };
-        M128A Xmm0{ get; };
-        M128A Xmm1{ get; };
-        M128A Xmm2{ get; };
-        M128A Xmm3{ get; };
-        M128A Xmm4{ get; };
-        M128A Xmm5{ get; };
-        M128A Xmm6{ get; };
-        M128A Xmm7{ get; };
-        M128A Xmm8{ get; };
-        M128A Xmm9{ get; };
-        M128A Xmm10{ get; };
-        M128A Xmm11{ get; };
-        M128A Xmm12{ get; };
-        M128A Xmm13{ get; };
-        M128A Xmm14{ get; };
-        M128A Xmm15{ get; };
+        IObservableVector<XmmRegister> XmmRegisters { get; };
 
         Boolean HasAvx{ get; };
         Boolean HasAvxInInitState{ get; };

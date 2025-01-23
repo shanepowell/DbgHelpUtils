@@ -25,6 +25,8 @@ namespace
     const std::wstring RecentFilesProperty = L"RecentFiles"s;
     const std::wstring SymbolLoadDebugProperty = L"SymbolLoadDebug"s;
     const std::wstring SymbolLoadDebugMemoryProperty = L"SymbolLoadDebugMemory"s;
+    const std::wstring M128aDisplayFormatProperty = L"M128aDisplayFormat"s;
+    const std::wstring FloatingPointScientificDisplayFormatProperty = L"FloatingPointScientificDisplayFormat"s;
 }
 
 GlobalOptions::GlobalOptions(key)
@@ -44,6 +46,8 @@ GlobalOptions::GlobalOptions(key)
     , recentFiles_{AppPropertiesHelper::GetStringVectorProperty(RecentFilesProperty)}
     , symbolLoadDebug_{AppPropertiesHelper::GetBoolProperty(SymbolLoadDebugProperty, true)}
     , symbolLoadDebugMemory_{AppPropertiesHelper::GetBoolProperty(SymbolLoadDebugMemoryProperty, false)}
+    , m128AViewType_{AppPropertiesHelper::GetEnumProperty(M128aDisplayFormatProperty, M128AViewType::Int64)}
+    , floatingPointScientificDisplayFormat_{AppPropertiesHelper::GetBoolProperty(FloatingPointScientificDisplayFormatProperty, true)}
 {
 }
 
@@ -151,6 +155,16 @@ void GlobalOptions::SymbolLoadDebugMemory(bool const value)
     AppPropertiesHelper::SetBoolProperty(SymbolLoadDebugMemoryProperty, value);
 }
 
+void GlobalOptions::M128AViewDisplayFormat(M128AViewType const value)
+{
+    ApplyValue(value, m128AViewType_, M128aDisplayFormatProperty, m128aDisplayFormatCallbacks_, m128aDisplayFormatCallbackMutex_, [this](auto const& callback, auto const value) { return callback(value); });
+}
+
+void GlobalOptions::FloatingPointScientificDisplayFormat(bool const value)
+{
+    ApplyValue(value, floatingPointScientificDisplayFormat_, FloatingPointScientificDisplayFormatProperty, floatingPointScientificDisplayFormatCallbacks_, floatingPointScientificDisplayFormatCallbackMutex_, [this](auto const& callback, auto const value) { return callback(value); });
+}
+
 void GlobalOptions::OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback)
 {
     std::lock_guard lock{numberDisplayFormatCallbacksMutex_};
@@ -173,6 +187,18 @@ void GlobalOptions::OnDurationFormatChanged(std::function<bool(DurationFormatTyp
 {
     std::lock_guard lock{durationFormatCallbacksMutex_};
     durationFormatCallbacks_.push_back(std::move(callback));
+}
+
+void GlobalOptions::OnM128AViewDisplayFormatChanged(std::function<bool(M128AViewType)> callback)
+{
+    std::lock_guard lock{ m128aDisplayFormatCallbackMutex_ };
+    m128aDisplayFormatCallbacks_.push_back(std::move(callback));
+}
+
+void GlobalOptions::OnFloatingPointScientificDisplayFormatChanged(std::function<bool(bool)> callback)
+{
+    std::lock_guard lock{ floatingPointScientificDisplayFormatCallbackMutex_ };
+    floatingPointScientificDisplayFormatCallbacks_.push_back(std::move(callback));
 }
 
 void GlobalOptions::RecentFiles(std::vector<std::wstring> value)

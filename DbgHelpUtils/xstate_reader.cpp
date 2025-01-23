@@ -35,7 +35,7 @@ namespace
 namespace dlg_help_utils
 {
 
-    xstate_reader::xstate_reader(dlg_help_utils::stream_thread_context::context_x64 const* context)
+    xstate_reader::xstate_reader(stream_thread_context::context_x64 const* context)
         : context_{ context }
         , supported_{ context && (context->ContextFlags & X64_CONTEXT_XSTATE) == X64_CONTEXT_XSTATE }
     {
@@ -78,6 +78,12 @@ namespace dlg_help_utils
         {
             co_return;
         }
+ 
+        if (!load_xstate_functions())
+        {
+            co_return;
+        }
+
         DWORD length = 0;
         auto ymm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_LEGACY_SSE, &length));
         auto xmm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_AVX, nullptr));

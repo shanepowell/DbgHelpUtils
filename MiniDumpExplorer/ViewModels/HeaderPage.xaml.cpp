@@ -39,6 +39,10 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"TimeDateStamp"
             },
             {
+            },
+            {
+            },
+            {
             })
     {
     }

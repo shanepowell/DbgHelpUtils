@@ -1,3 +1,5 @@
+import "Models\M128A.idl";
+
 namespace MiniDumpExplorer
 {
     [default_interface]
@@ -17,8 +19,11 @@ namespace MiniDumpExplorer
         UInt64 ExampleSize { get; };
         UInt64 ExampleDuration { get; };
         UInt64 ExampleDate { get; };
+        M128A ExampleM128A{ get; };
+        Double ExampleDouble{ get; };
 
         Boolean SymbolLoadDebug;
         Boolean SymbolLoadMemoryDebug;
+        Boolean FloatingPointScientificDisplayFormat;
     }
 }
