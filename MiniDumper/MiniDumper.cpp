@@ -32,7 +32,7 @@ int main(int const argc, char* argv[])
         if (auto const result = cli.parse({ argc, argv });
             !result)
         {
-            std::cerr << std::format("Error in command line: {}\n", result.errorMessage());
+            std::cerr << std::format("Error in command line: {}\n", result.message());
             std::cerr << cli << "\n";
             return EXIT_FAILURE;
         }

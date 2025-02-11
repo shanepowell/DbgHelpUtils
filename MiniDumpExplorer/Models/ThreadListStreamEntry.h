@@ -14,7 +14,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpMemoryDescriptor;
     struct ThreadStackEntry;
-    struct X64ThreadContext;
+    struct ThreadContext;
 
     struct ThreadListStreamEntry : ThreadListStreamEntryT<ThreadListStreamEntry>, GlobalOptionsNotifyPropertyChangedBase<ThreadListStreamEntry>
     {

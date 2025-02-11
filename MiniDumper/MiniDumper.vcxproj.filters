@@ -139,9 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="system_modules.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="MiniDumper.ico">

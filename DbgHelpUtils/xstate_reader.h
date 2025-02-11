@@ -24,6 +24,7 @@ namespace dlg_help_utils
             PM128A ymm;
         };
         [[nodiscard]] std::experimental::generator<ymm_register> ymm_registers() const;
+        [[nodiscard]] ymm_register get_ymm_register(uint32_t index) const;
 
     private:
         void const* context_;

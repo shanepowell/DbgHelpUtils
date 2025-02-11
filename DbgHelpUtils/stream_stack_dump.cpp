@@ -157,7 +157,7 @@ namespace dlg_help_utils::stream_stack_dump
                 }
                 else if(variable.registry_value)
                 {
-                    mini_dump_memory_stream const stream{&variable.registry_value->value, variable.registry_value->value_size};
+                    auto const stream = dbg_help::to_stream(variable.registry_value->value);
                     dump_variable_symbol_at(os, walker, variable.symbol_info, variable.symbol_info, 0, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
                 }
             }

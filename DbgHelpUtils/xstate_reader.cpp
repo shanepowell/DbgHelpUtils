@@ -94,4 +94,19 @@ namespace dlg_help_utils
         }
     }
 
+    struct xstate_reader::ymm_register xstate_reader::get_ymm_register(uint32_t const index) const
+    {
+        if (!is_supported())
+        {
+            return {};
+        }
+        if (!load_xstate_functions())
+        {
+            return {};
+        }
+        DWORD length = 0;
+        auto ymm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_LEGACY_SSE, &length));
+        auto xmm = static_cast<PM128A>(pfnLocateXStateFeature(static_cast<PCONTEXT>(const_cast<void*>(context_)), XSTATE_AVX, nullptr));
+        return { .index = index, .xmm = xmm + index, .ymm = ymm + index };
+    }
 }

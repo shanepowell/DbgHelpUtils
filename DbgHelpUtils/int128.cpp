@@ -4,20 +4,8 @@
 #include <algorithm>
 #include <sstream>
 
-#include "windows_setup.h"
-
 namespace std
 {
-    int128_t to_int128(_M128A const& value)
-    {
-        return static_cast<int128_t>(value.High) << 64 | value.Low;
-    }
-
-    uint128_t to_uint128(_M128A const& value)
-    {
-        return static_cast<uint128_t>(value.High) << 64 | value.Low;
-    }
-
     std::wstring to_wstring(int128_t value)
     {
         std::wostringstream ss;

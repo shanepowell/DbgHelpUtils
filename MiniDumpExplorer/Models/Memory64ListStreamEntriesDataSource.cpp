@@ -142,45 +142,64 @@ namespace winrt::MiniDumpExplorer::implementation
 
     fire_and_forget Memory64ListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory64_list_stream const memory_list)
     {
-        // ReSharper disable once CppTooWideScope
-        apartment_context ui_thread;
-
-        entries_.Clear();
-
-        auto weak_self = get_weak();
-        co_await resume_background();
-
-        for (size_t index = 0; auto const& memory_range : memory_list.list())
+        try
         {
-            if(WindowHelper::IsExiting())
-            {
-                co_return;
-            }
+            // ReSharper disable once CppTooWideScope
+            apartment_context ui_thread;
 
-            MiniDumpExplorer::Memory64ListStreamEntry entry;
-            entry.as<Memory64ListStreamEntry>()->Set(static_cast<uint32_t>(index), memory_range);
+            entries_.Clear();
 
-            if(WindowHelper::IsExiting())
-            {
-                co_return;
-            }
-
-            co_await ui_thread;
-
-            if(auto const self = weak_self.get();
-                self && !WindowHelper::IsExiting())
-            {
-                entries_.Append(entry);
-            }
-            else
-            {
-                // it's been removed while loading the items
-                co_return;
-            }
-
+            auto weak_self = get_weak();
             co_await resume_background();
 
-            ++index;
+            for (size_t index = 0; auto const& memory_range : memory_list.list())
+            {
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                MiniDumpExplorer::Memory64ListStreamEntry entry;
+                entry.as<Memory64ListStreamEntry>()->Set(static_cast<uint32_t>(index), memory_range);
+
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                co_await ui_thread;
+
+                if(auto const self = weak_self.get();
+                    self && !WindowHelper::IsExiting())
+                {
+                    entries_.Append(entry);
+                }
+                else
+                {
+                    // it's been removed while loading the items
+                    co_return;
+                }
+
+                co_await resume_background();
+
+                ++index;
+            }
+        }
+        catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format(L"LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.message()));
+        }
+        catch (std::runtime_error const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.what()));
+        }
+        catch (std::exception const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.what()));
+        }
+        catch (...)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{}]", memory_list.index()));
         }
     }
 

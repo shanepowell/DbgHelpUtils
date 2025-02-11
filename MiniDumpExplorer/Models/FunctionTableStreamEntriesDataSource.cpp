@@ -136,50 +136,68 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
-
     fire_and_forget FunctionTableStreamEntriesDataSource::LoadMiniDumpFunctionTableStream(dlg_help_utils::function_table_stream const function_table)
     {
-        // ReSharper disable once CppTooWideScope
-        apartment_context ui_thread;
-
-        entries_.Clear();
-
-        auto weak_self = get_weak();
-        co_await resume_background();
-
-        for (size_t index = 0; auto const& function_stream : function_table.list())
+        try
         {
-            if(WindowHelper::IsExiting())
-            {
-                co_return;
-            }
+            // ReSharper disable once CppTooWideScope
+            apartment_context ui_thread;
 
-            MiniDumpExplorer::FunctionStreamEntry entry;
-            entry.as<FunctionStreamEntry>()->Set(static_cast<uint32_t>(index), function_stream);
+            entries_.Clear();
 
-            if(WindowHelper::IsExiting())
-            {
-                co_return;
-            }
-
-            co_await ui_thread;
-
-            if(auto const self = weak_self.get();
-                self && !WindowHelper::IsExiting())
-            {
-                entries_.Append(entry);
-            }
-            else
-            {
-                // it's been removed while loading the items
-                co_return;
-            }
-
+            auto weak_self = get_weak();
             co_await resume_background();
 
-            ++index;
+            for (size_t index = 0; auto const& function_stream : function_table.list())
+            {
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                MiniDumpExplorer::FunctionStreamEntry entry;
+                entry.as<FunctionStreamEntry>()->Set(static_cast<uint32_t>(index), function_stream);
+
+                if(WindowHelper::IsExiting())
+                {
+                    co_return;
+                }
+
+                co_await ui_thread;
+
+                if(auto const self = weak_self.get();
+                    self && !WindowHelper::IsExiting())
+                {
+                    entries_.Append(entry);
+                }
+                else
+                {
+                    // it's been removed while loading the items
+                    co_return;
+                }
+
+                co_await resume_background();
+
+                ++index;
+            }
         }
-    }
+        catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format(L"LoadMiniDumpFunctionTableStream failed for stream [{0}]: {1}\n", function_table.index(), e.message()));
+        }
+        catch (std::runtime_error const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpFunctionTableStream failed for stream [{0}]: {1}\n", function_table.index(), e.what()));
+        }
+        catch (std::exception const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpFunctionTableStream failed for stream [{0}]: {1}\n", function_table.index(), e.what()));
+        }
+        catch (...)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpFunctionTableStream failed for stream [{}]", function_table.index()));
+        }
+   }
 
     // ReSharper disable once CppMemberFunctionMayBeConst
     void FunctionTableStreamEntriesDataSource::SetupDataProperties()

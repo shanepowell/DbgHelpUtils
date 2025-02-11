@@ -19,8 +19,10 @@
 #include "hex_dump.h"
 #include "join.h"
 #include "locale_number_formatting.h"
+#include "m128a_utils.h"
 #include "variable.h"
 #include "module_match.h"
+#include "overload.h"
 #include "pe_file.h"
 #include "stream_hex_dump.h"
 #include "stream_thread_context.h"
@@ -31,6 +33,7 @@
 #include "sym_tag_enum.h"
 #include "wide_runtime_error.h"
 #include "windows_error.h"
+#include "xstate_reader.h"
 
 #pragma comment(lib, "dbghelp.lib")
 
@@ -38,7 +41,9 @@ auto constexpr cba_start_op_maybe = 0xA0000000;
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
+using namespace dlg_help_utils::m128a_utils;
 using namespace dlg_help_utils::stream_hex_dump;
+using namespace dlg_help_utils::dbg_help;
 
 namespace
 {
@@ -49,7 +54,7 @@ namespace
     auto constexpr downloading_xml_start = L"<Activity name=\"Downloading file "sv;
     auto constexpr downloading_xml_end = L"\" details=\""sv;
 
-    dlg_help_utils::dbg_help::i_stack_walk_callback* g_callback{nullptr};
+    i_stack_walk_callback* g_callback{nullptr};
 
 #pragma pack(push, 1)
     struct symbol_load_w64
@@ -234,7 +239,7 @@ namespace
     }
 
     void dump_sizeof_struct_data(ULONG64 const callback_data
-        , dlg_help_utils::dbg_help::i_symbol_load_callback const& callback)
+        , i_symbol_load_callback const& callback)
     {
         if (callback.symbol_load_debug_memory() && callback_data != 0)
         {
@@ -249,7 +254,7 @@ namespace
         , __in_opt ULONG64 const callback_data
         , __in_opt ULONG64 const user_context)
     {
-        auto& symbol_engine = *reinterpret_cast<dlg_help_utils::dbg_help::i_symbol_callback*>(user_context);
+        auto& symbol_engine = *reinterpret_cast<i_symbol_callback*>(user_context);
         auto& callback = symbol_engine.load_callback();
         // ReSharper disable once CommentTypo
         // If SYMOPT_DEBUG is set, then the symbol handler will pass
@@ -485,7 +490,7 @@ namespace
     // ReSharper disable CppParameterMayBeConst
     BOOL CALLBACK find_file_in_path_callback(_In_ PCWSTR filename, _In_ PVOID context)
     {
-        auto const& symbol_engine = *static_cast<dlg_help_utils::dbg_help::i_symbol_callback const*>(context);
+        auto const& symbol_engine = *static_cast<i_symbol_callback const*>(context);
         if (symbol_engine.loading_module_check_sum() == 0)
         {
             return FALSE;
@@ -519,7 +524,7 @@ namespace
 
     struct find_symbol_callback_context
     {
-        find_symbol_callback_context(HANDLE process, std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv, dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache, std::wstring_view find_mask)
+        find_symbol_callback_context(HANDLE process, std::vector<symbol_type_info>& rv, symbol_type_info_cache& symbol_cache, std::wstring_view find_mask)
         : process{process}
         , rv{rv}
         , symbol_cache{symbol_cache}
@@ -528,8 +533,8 @@ namespace
         }
 
         HANDLE process;
-        std::vector<dlg_help_utils::dbg_help::symbol_type_info>& rv;
-        dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
+        std::vector<symbol_type_info>& rv;
+        symbol_type_info_cache& symbol_cache;
         std::unordered_set<ULONG> tag_index_found;
         std::wstring_view find_mask;
     };
@@ -555,12 +560,12 @@ namespace
     struct local_variable_info
     {
         local_variable_info(HANDLE process
-            , dlg_help_utils::dbg_help::thread_context_type type
+            , thread_context_type type
             , uint64_t const frame_address_offset
             , void const* thread_context
-            , std::vector<dlg_help_utils::dbg_help::variable> &locals
-            , std::vector<dlg_help_utils::dbg_help::variable> &parameters
-            , dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache
+            , std::vector<variable> &locals
+            , std::vector<variable> &parameters
+            , symbol_type_info_cache& symbol_cache
             , std::optional<std::exception>& failure)
         : process{process}
         , type{type}
@@ -574,17 +579,17 @@ namespace
         }
 
         HANDLE process;
-        dlg_help_utils::dbg_help::thread_context_type type;
+        thread_context_type type;
         uint64_t frame_address_offset;
         void const* thread_context;
-        std::vector<dlg_help_utils::dbg_help::variable> &locals;
-        std::vector<dlg_help_utils::dbg_help::variable> &parameters;
-        dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
+        std::vector<variable> &locals;
+        std::vector<variable> &parameters;
+        symbol_type_info_cache& symbol_cache;
         std::optional<std::exception>& failure;
     };
 
     template<typename T>
-    std::pair<uint64_t,uint64_t> make_register_value(uint64_t const raw_value)
+    reg_value_t make_register_value(uint64_t const raw_value)
     {
         constexpr uint64_t size_masks[] =
         {
@@ -598,10 +603,10 @@ namespace
             0xFFFFFFFFFFFFFF,           // 7
             0xFFFFFFFFFFFFFFFF,         // 8
         };
-        return std::make_pair<uint64_t,uint64_t>(raw_value & size_masks[sizeof(T)], sizeof(T));
+        return static_cast<T>(raw_value & size_masks[sizeof(T)]);
     }
 
-    std::pair<uint64_t,uint64_t> get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context, uint64_t const address_offset)
+    reg_value_t get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context, uint64_t const address_offset)
     {
         switch(register_type) // NOLINT
         {
@@ -673,7 +678,7 @@ namespace
         }
     }
 
-    std::pair<uint64_t,uint64_t> get_wow64_register_value(CV_HREG_e register_type, WOW64_CONTEXT const& context, uint64_t const address_offset)
+    reg_value_t get_wow64_register_value(CV_HREG_e register_type, WOW64_CONTEXT const& context, uint64_t const address_offset)
     {
         switch(register_type) // NOLINT
         {
@@ -745,8 +750,10 @@ namespace
         }
     }
 
-    std::pair<uint64_t,uint64_t> get_x64_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x64 const& context, uint64_t const address_offset)
+    reg_value_t get_x64_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x64 const& context, uint64_t const address_offset)
     {
+        dlg_help_utils::xstate_reader xstate_reader{ &context };
+        
         switch(register_type) // NOLINT
         {
         case CV_AMD64_AL:
@@ -929,6 +936,911 @@ namespace
         case CV_AMD64_R15:
             return make_register_value<uint64_t>(context.R15);
 
+        case CV_AMD64_SIL:
+            return make_register_value<uint8_t>(context.Rsi);
+
+        case CV_AMD64_DIL:
+            return make_register_value<uint8_t>(context.Rdi);
+
+        case CV_AMD64_BPL:
+            return make_register_value<uint8_t>(context.Rbp);
+
+        case CV_AMD64_SPL:
+            return make_register_value<uint8_t>(context.Rsp);
+
+    //CV_AMD64_ST0      =  128,
+    //CV_AMD64_ST1      =  129,
+    //CV_AMD64_ST2      =  130,
+    //CV_AMD64_ST3      =  131,
+    //CV_AMD64_ST4      =  132,
+    //CV_AMD64_ST5      =  133,
+    //CV_AMD64_ST6      =  134,
+    //CV_AMD64_ST7      =  135,
+    //CV_AMD64_CTRL     =  136,
+    //CV_AMD64_STAT     =  137,
+    //CV_AMD64_TAG      =  138,
+    //CV_AMD64_FPIP     =  139,
+    //CV_AMD64_FPCS     =  140,
+    //CV_AMD64_FPDO     =  141,
+    //CV_AMD64_FPDS     =  142,
+    //CV_AMD64_ISEM     =  143,
+    //CV_AMD64_FPEIP    =  144,
+    //CV_AMD64_FPEDO    =  145,
+
+    //CV_AMD64_MM0      =  146,
+    //CV_AMD64_MM1      =  147,
+    //CV_AMD64_MM2      =  148,
+    //CV_AMD64_MM3      =  149,
+    //CV_AMD64_MM4      =  150,
+    //CV_AMD64_MM5      =  151,
+    //CV_AMD64_MM6      =  152,
+    //CV_AMD64_MM7      =  153,
+
+            // KATMAI registers
+        case CV_AMD64_XMM0:
+            return to_uint128(context.Xmm0);
+        case CV_AMD64_XMM1:
+            return to_uint128(context.Xmm1);
+        case CV_AMD64_XMM2:
+            return to_uint128(context.Xmm2);
+        case CV_AMD64_XMM3:
+            return to_uint128(context.Xmm3);
+        case CV_AMD64_XMM4:
+            return to_uint128(context.Xmm4);
+        case CV_AMD64_XMM5:
+            return to_uint128(context.Xmm5);
+        case CV_AMD64_XMM6:
+            return to_uint128(context.Xmm6);
+        case CV_AMD64_XMM7:
+            return to_uint128(context.Xmm7);
+
+            // KATMAI sub-registers
+        case CV_AMD64_XMM0_0:
+            return to_uint32_0(context.Xmm0);
+        case CV_AMD64_XMM0_1:
+            return to_uint32_1(context.Xmm0);
+        case CV_AMD64_XMM0_2:
+            return to_uint32_2(context.Xmm0);
+        case CV_AMD64_XMM0_3:
+            return to_uint32_3(context.Xmm0);
+        case CV_AMD64_XMM1_0:
+            return to_uint32_0(context.Xmm1);
+        case CV_AMD64_XMM1_1:
+            return to_uint32_1(context.Xmm1);
+        case CV_AMD64_XMM1_2:
+            return to_uint32_2(context.Xmm1);
+        case CV_AMD64_XMM1_3:
+            return to_uint32_3(context.Xmm1);
+        case CV_AMD64_XMM2_0:
+            return to_uint32_0(context.Xmm2);
+        case CV_AMD64_XMM2_1:
+            return to_uint32_1(context.Xmm2);
+        case CV_AMD64_XMM2_2:
+            return to_uint32_2(context.Xmm2);
+        case CV_AMD64_XMM2_3:
+            return to_uint32_3(context.Xmm2);
+        case CV_AMD64_XMM3_0:
+            return to_uint32_0(context.Xmm3);
+        case CV_AMD64_XMM3_1:
+            return to_uint32_1(context.Xmm3);
+        case CV_AMD64_XMM3_2:
+            return to_uint32_2(context.Xmm3);
+        case CV_AMD64_XMM3_3:
+            return to_uint32_3(context.Xmm3);
+        case CV_AMD64_XMM4_0:
+            return to_uint32_0(context.Xmm4);
+        case CV_AMD64_XMM4_1:
+            return to_uint32_1(context.Xmm4);
+        case CV_AMD64_XMM4_2:
+            return to_uint32_2(context.Xmm4);
+        case CV_AMD64_XMM4_3:
+            return to_uint32_3(context.Xmm4);
+        case CV_AMD64_XMM5_0:
+            return to_uint32_0(context.Xmm5);
+        case CV_AMD64_XMM5_1:
+            return to_uint32_1(context.Xmm5);
+        case CV_AMD64_XMM5_2:
+            return to_uint32_2(context.Xmm5);
+        case CV_AMD64_XMM5_3:
+            return to_uint32_3(context.Xmm5);
+        case CV_AMD64_XMM6_0:
+            return to_uint32_0(context.Xmm6);
+        case CV_AMD64_XMM6_1:
+            return to_uint32_1(context.Xmm6);
+        case CV_AMD64_XMM6_2:
+            return to_uint32_2(context.Xmm6);
+        case CV_AMD64_XMM6_3:
+            return to_uint32_3(context.Xmm6);
+        case CV_AMD64_XMM7_0:
+            return to_uint32_0(context.Xmm7);
+        case CV_AMD64_XMM7_1:
+            return to_uint32_1(context.Xmm7);
+        case CV_AMD64_XMM7_2:
+            return to_uint32_2(context.Xmm7);
+        case CV_AMD64_XMM7_3:
+            return to_uint32_3(context.Xmm7);
+
+        // AVX registers 256 bits
+        case CV_AMD64_YMM0:
+            return to_uint128(*xstate_reader.get_ymm_register(0).xmm);
+
+        case CV_AMD64_YMM1:
+            return to_uint128(*xstate_reader.get_ymm_register(1).xmm);
+
+        case CV_AMD64_YMM2:
+            return to_uint128(*xstate_reader.get_ymm_register(2).xmm);
+
+        case CV_AMD64_YMM3:
+            return to_uint128(*xstate_reader.get_ymm_register(3).xmm);
+
+        case CV_AMD64_YMM4:
+            return to_uint128(*xstate_reader.get_ymm_register(4).xmm);
+
+        case CV_AMD64_YMM5:
+            return to_uint128(*xstate_reader.get_ymm_register(5).xmm);
+
+        case CV_AMD64_YMM6:
+            return to_uint128(*xstate_reader.get_ymm_register(6).xmm);
+
+        case CV_AMD64_YMM7:
+            return to_uint128(*xstate_reader.get_ymm_register(7).xmm);
+
+        case CV_AMD64_YMM8:
+            return to_uint128(*xstate_reader.get_ymm_register(8).xmm);
+
+        case CV_AMD64_YMM9:
+            return to_uint128(*xstate_reader.get_ymm_register(9).xmm);
+
+        case CV_AMD64_YMM10:
+            return to_uint128(*xstate_reader.get_ymm_register(10).xmm);
+
+        case CV_AMD64_YMM11:
+            return to_uint128(*xstate_reader.get_ymm_register(11).xmm);
+
+        case CV_AMD64_YMM12:
+            return to_uint128(*xstate_reader.get_ymm_register(12).xmm);
+
+        case CV_AMD64_YMM13:
+            return to_uint128(*xstate_reader.get_ymm_register(13).xmm);
+
+        case CV_AMD64_YMM14:
+            return to_uint128(*xstate_reader.get_ymm_register(14).xmm);
+
+        case CV_AMD64_YMM15:
+            return to_uint128(*xstate_reader.get_ymm_register(15).xmm);
+
+
+        // AVX registers upper 128 bits
+        case CV_AMD64_YMM0H:
+            return to_uint128(*xstate_reader.get_ymm_register(0).ymm);
+            
+        case CV_AMD64_YMM1H:
+            return to_uint128(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_AMD64_YMM2H:
+            return to_uint128(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_AMD64_YMM3H:
+            return to_uint128(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_AMD64_YMM4H:
+            return to_uint128(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_AMD64_YMM5H:
+            return to_uint128(*xstate_reader.get_ymm_register(5).ymm);
+            
+        case CV_AMD64_YMM6H:
+            return to_uint128(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_AMD64_YMM7H:
+            return to_uint128(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_AMD64_YMM8H:
+            return to_uint128(*xstate_reader.get_ymm_register(8).ymm);
+
+        case CV_AMD64_YMM9H:
+            return to_uint128(*xstate_reader.get_ymm_register(9).ymm);
+
+        case CV_AMD64_YMM10H:
+            return to_uint128(*xstate_reader.get_ymm_register(10).ymm);
+
+        case CV_AMD64_YMM11H:
+            return to_uint128(*xstate_reader.get_ymm_register(11).ymm);
+
+        case CV_AMD64_YMM12H:
+            return to_uint128(*xstate_reader.get_ymm_register(12).ymm);
+
+        case CV_AMD64_YMM13H:
+            return to_uint128(*xstate_reader.get_ymm_register(13).ymm);
+
+        case CV_AMD64_YMM14H:
+            return to_uint128(*xstate_reader.get_ymm_register(14).ymm);
+
+        case CV_AMD64_YMM15H:
+            return to_uint128(*xstate_reader.get_ymm_register(15).ymm);
+
+        // ReSharper disable once CommentTypo
+        //Lower/upper 8 bytes of XMM registers.  Unlike CV_AMD64_XMM<regnum><H/L>, these
+        //values represent the bit patterns of the registers as 64-bit integers, not
+        //the representation of these registers as a double.
+        case CV_AMD64_XMM0IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[0]);
+
+        case CV_AMD64_XMM1IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[1]);
+
+        case CV_AMD64_XMM2IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[2]);
+
+        case CV_AMD64_XMM3IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[3]);
+
+        case CV_AMD64_XMM4IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[4]);
+
+        case CV_AMD64_XMM5IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[5]);
+
+        case CV_AMD64_XMM6IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[6]);
+
+        case CV_AMD64_XMM7IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[7]);
+
+        case CV_AMD64_XMM8IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[8]);
+
+        case CV_AMD64_XMM9IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[9]);
+
+        case CV_AMD64_XMM10IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[10]);
+
+        case CV_AMD64_XMM11IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[11]);
+
+        case CV_AMD64_XMM12IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[12]);
+
+        case CV_AMD64_XMM13IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[13]);
+
+        case CV_AMD64_XMM14IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[14]);
+
+        case CV_AMD64_XMM15IL:
+            return to_uint64_low(context.FltSave.XmmRegisters[15]);
+
+
+        case CV_AMD64_XMM0IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[0]);
+
+        case CV_AMD64_XMM1IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[1]);
+
+        case CV_AMD64_XMM2IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[2]);
+
+        case CV_AMD64_XMM3IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[3]);
+
+        case CV_AMD64_XMM4IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[4]);
+
+        case CV_AMD64_XMM5IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[5]);
+
+        case CV_AMD64_XMM6IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[6]);
+
+        case CV_AMD64_XMM7IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[7]);
+
+        case CV_AMD64_XMM8IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[8]);
+
+        case CV_AMD64_XMM9IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[9]);
+
+        case CV_AMD64_XMM10IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[10]);
+
+        case CV_AMD64_XMM11IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[11]);
+
+        case CV_AMD64_XMM12IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[12]);
+
+        case CV_AMD64_XMM13IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[13]);
+
+        case CV_AMD64_XMM14IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[14]);
+
+        case CV_AMD64_XMM15IH:
+            return to_uint64_high(context.FltSave.XmmRegisters[15]);
+
+        // AVX integer registers
+        case CV_AMD64_YMM0I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_AMD64_YMM0I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_AMD64_YMM0I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_AMD64_YMM0I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_AMD64_YMM1I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_AMD64_YMM1I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_AMD64_YMM1I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_AMD64_YMM1I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_AMD64_YMM2I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_AMD64_YMM2I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_AMD64_YMM2I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_AMD64_YMM2I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_AMD64_YMM3I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_AMD64_YMM3I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_AMD64_YMM3I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_AMD64_YMM3I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_AMD64_YMM4I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_AMD64_YMM4I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_AMD64_YMM4I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_AMD64_YMM4I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_AMD64_YMM5I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_AMD64_YMM5I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_AMD64_YMM5I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_AMD64_YMM5I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_AMD64_YMM6I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_AMD64_YMM6I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_AMD64_YMM6I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_AMD64_YMM6I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_AMD64_YMM7I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_AMD64_YMM7I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_AMD64_YMM7I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_AMD64_YMM7I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_AMD64_YMM8I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(8).ymm);
+
+        case CV_AMD64_YMM8I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(8).ymm);
+
+        case CV_AMD64_YMM8I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(8).ymm);
+
+        case CV_AMD64_YMM8I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(8).ymm);
+
+        case CV_AMD64_YMM9I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(9).ymm);
+
+        case CV_AMD64_YMM9I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(9).ymm);
+
+        case CV_AMD64_YMM9I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(9).ymm);
+
+        case CV_AMD64_YMM9I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(9).ymm);
+
+        case CV_AMD64_YMM10I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(10).ymm);
+
+        case CV_AMD64_YMM10I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(10).ymm);
+
+        case CV_AMD64_YMM10I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(10).ymm);
+
+        case CV_AMD64_YMM10I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(10).ymm);
+
+        case CV_AMD64_YMM11I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(11).ymm);
+
+        case CV_AMD64_YMM11I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(11).ymm);
+
+        case CV_AMD64_YMM11I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(11).ymm);
+
+        case CV_AMD64_YMM11I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(11).ymm);
+
+        case CV_AMD64_YMM12I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(12).ymm);
+
+        case CV_AMD64_YMM12I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(12).ymm);
+
+        case CV_AMD64_YMM12I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(12).ymm);
+
+        case CV_AMD64_YMM12I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(12).ymm);
+
+        case CV_AMD64_YMM13I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(13).ymm);
+
+        case CV_AMD64_YMM13I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(13).ymm);
+
+        case CV_AMD64_YMM13I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(13).ymm);
+
+        case CV_AMD64_YMM13I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(13).ymm);
+
+        case CV_AMD64_YMM14I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(14).ymm);
+
+        case CV_AMD64_YMM14I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(14).ymm);
+
+        case CV_AMD64_YMM14I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(14).ymm);
+
+        case CV_AMD64_YMM14I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(14).ymm);
+
+        case CV_AMD64_YMM15I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(15).ymm);
+
+        case CV_AMD64_YMM15I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(15).ymm);
+
+        case CV_AMD64_YMM15I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(15).ymm);
+
+        case CV_AMD64_YMM15I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(15).ymm);
+
+        // AVX floating-point single precise registers
+        case CV_AMD64_YMM0F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_AMD64_YMM0F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_AMD64_YMM0F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_AMD64_YMM0F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_AMD64_YMM0F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_AMD64_YMM0F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_AMD64_YMM0F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_AMD64_YMM0F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_AMD64_YMM1F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_AMD64_YMM1F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_AMD64_YMM1F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_AMD64_YMM1F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_AMD64_YMM1F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_AMD64_YMM1F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_AMD64_YMM1F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_AMD64_YMM1F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_AMD64_YMM2F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_AMD64_YMM2F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_AMD64_YMM2F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_AMD64_YMM2F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_AMD64_YMM2F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_AMD64_YMM2F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_AMD64_YMM2F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_AMD64_YMM2F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_AMD64_YMM3F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_AMD64_YMM3F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_AMD64_YMM3F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_AMD64_YMM3F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_AMD64_YMM3F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_AMD64_YMM3F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_AMD64_YMM3F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_AMD64_YMM3F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_AMD64_YMM4F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_AMD64_YMM4F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_AMD64_YMM4F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_AMD64_YMM4F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_AMD64_YMM4F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_AMD64_YMM4F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_AMD64_YMM4F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_AMD64_YMM4F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_AMD64_YMM5F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_AMD64_YMM5F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_AMD64_YMM5F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_AMD64_YMM5F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_AMD64_YMM5F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_AMD64_YMM5F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_AMD64_YMM5F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_AMD64_YMM5F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_AMD64_YMM6F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_AMD64_YMM6F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_AMD64_YMM6F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_AMD64_YMM6F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_AMD64_YMM6F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_AMD64_YMM6F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_AMD64_YMM6F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_AMD64_YMM6F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_AMD64_YMM7F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_AMD64_YMM7F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_AMD64_YMM7F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_AMD64_YMM7F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_AMD64_YMM7F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_AMD64_YMM7F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_AMD64_YMM7F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_AMD64_YMM7F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_AMD64_YMM8F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(8).ymm);
+        case CV_AMD64_YMM8F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(8).ymm);
+        case CV_AMD64_YMM8F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(8).ymm);
+        case CV_AMD64_YMM8F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(8).ymm);
+        case CV_AMD64_YMM8F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(8).xmm);
+        case CV_AMD64_YMM8F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(8).xmm);
+        case CV_AMD64_YMM8F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(8).xmm);
+        case CV_AMD64_YMM8F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(8).xmm);
+        case CV_AMD64_YMM9F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(9).ymm);
+        case CV_AMD64_YMM9F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(9).ymm);
+        case CV_AMD64_YMM9F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(9).ymm);
+        case CV_AMD64_YMM9F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(9).ymm);
+        case CV_AMD64_YMM9F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(9).xmm);
+        case CV_AMD64_YMM9F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(9).xmm);
+        case CV_AMD64_YMM9F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(9).xmm);
+        case CV_AMD64_YMM9F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(9).xmm);
+        case CV_AMD64_YMM10F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(10).ymm);
+        case CV_AMD64_YMM10F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(10).ymm);
+        case CV_AMD64_YMM10F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(10).ymm);
+        case CV_AMD64_YMM10F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(10).ymm);
+        case CV_AMD64_YMM10F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(10).xmm);
+        case CV_AMD64_YMM10F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(10).xmm);
+        case CV_AMD64_YMM10F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(10).xmm);
+        case CV_AMD64_YMM10F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(10).xmm);
+        case CV_AMD64_YMM11F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(11).ymm);
+        case CV_AMD64_YMM11F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(11).ymm);
+        case CV_AMD64_YMM11F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(11).ymm);
+        case CV_AMD64_YMM11F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(11).ymm);
+        case CV_AMD64_YMM11F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(11).xmm);
+        case CV_AMD64_YMM11F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(11).xmm);
+        case CV_AMD64_YMM11F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(11).xmm);
+        case CV_AMD64_YMM11F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(11).xmm);
+        case CV_AMD64_YMM12F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(12).ymm);
+        case CV_AMD64_YMM12F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(12).ymm);
+        case CV_AMD64_YMM12F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(12).ymm);
+        case CV_AMD64_YMM12F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(12).ymm);
+        case CV_AMD64_YMM12F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(12).xmm);
+        case CV_AMD64_YMM12F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(12).xmm);
+        case CV_AMD64_YMM12F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(12).xmm);
+        case CV_AMD64_YMM12F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(12).xmm);
+        case CV_AMD64_YMM13F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(13).ymm);
+        case CV_AMD64_YMM13F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(13).ymm);
+        case CV_AMD64_YMM13F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(13).ymm);
+        case CV_AMD64_YMM13F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(13).ymm);
+        case CV_AMD64_YMM13F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(13).xmm);
+        case CV_AMD64_YMM13F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(13).xmm);
+        case CV_AMD64_YMM13F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(13).xmm);
+        case CV_AMD64_YMM13F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(13).xmm);
+        case CV_AMD64_YMM14F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(14).ymm);
+        case CV_AMD64_YMM14F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(14).ymm);
+        case CV_AMD64_YMM14F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(14).ymm);
+        case CV_AMD64_YMM14F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(14).ymm);
+        case CV_AMD64_YMM14F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(14).xmm);
+        case CV_AMD64_YMM14F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(14).xmm);
+        case CV_AMD64_YMM14F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(14).xmm);
+        case CV_AMD64_YMM14F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(14).xmm);
+        case CV_AMD64_YMM15F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(15).ymm);
+        case CV_AMD64_YMM15F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(15).ymm);
+        case CV_AMD64_YMM15F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(15).ymm);
+        case CV_AMD64_YMM15F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(15).ymm);
+        case CV_AMD64_YMM15F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(15).xmm);
+        case CV_AMD64_YMM15F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(15).xmm);
+        case CV_AMD64_YMM15F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(15).xmm);
+        case CV_AMD64_YMM15F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(15).xmm);
+
+        // AVX floating-point double precise registers
+        case CV_AMD64_YMM0D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_AMD64_YMM0D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_AMD64_YMM0D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_AMD64_YMM0D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_AMD64_YMM1D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_AMD64_YMM1D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_AMD64_YMM1D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_AMD64_YMM1D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_AMD64_YMM2D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_AMD64_YMM2D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_AMD64_YMM2D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_AMD64_YMM2D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_AMD64_YMM3D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_AMD64_YMM3D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_AMD64_YMM3D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_AMD64_YMM3D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_AMD64_YMM4D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_AMD64_YMM4D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_AMD64_YMM4D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_AMD64_YMM4D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_AMD64_YMM5D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_AMD64_YMM5D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_AMD64_YMM5D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_AMD64_YMM5D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_AMD64_YMM6D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_AMD64_YMM6D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_AMD64_YMM6D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_AMD64_YMM6D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_AMD64_YMM7D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_AMD64_YMM7D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_AMD64_YMM7D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_AMD64_YMM7D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_AMD64_YMM8D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(8).ymm);
+        case CV_AMD64_YMM8D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(8).ymm);
+        case CV_AMD64_YMM8D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(8).xmm);
+        case CV_AMD64_YMM8D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(8).xmm);
+        case CV_AMD64_YMM9D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(9).ymm);
+        case CV_AMD64_YMM9D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(9).ymm);
+        case CV_AMD64_YMM9D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(9).xmm);
+        case CV_AMD64_YMM9D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(9).xmm);
+        case CV_AMD64_YMM10D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(10).ymm);
+        case CV_AMD64_YMM10D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(10).ymm);
+        case CV_AMD64_YMM10D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(10).xmm);
+        case CV_AMD64_YMM10D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(10).xmm);
+        case CV_AMD64_YMM11D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(11).ymm);
+        case CV_AMD64_YMM11D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(11).ymm);
+        case CV_AMD64_YMM11D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(11).xmm);
+        case CV_AMD64_YMM11D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(11).xmm);
+        case CV_AMD64_YMM12D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(12).ymm);
+        case CV_AMD64_YMM12D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(12).ymm);
+        case CV_AMD64_YMM12D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(12).xmm);
+        case CV_AMD64_YMM12D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(12).xmm);
+        case CV_AMD64_YMM13D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(13).ymm);
+        case CV_AMD64_YMM13D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(13).ymm);
+        case CV_AMD64_YMM13D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(13).xmm);
+        case CV_AMD64_YMM13D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(13).xmm);
+        case CV_AMD64_YMM14D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(14).ymm);
+        case CV_AMD64_YMM14D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(14).ymm);
+        case CV_AMD64_YMM14D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(14).xmm);
+        case CV_AMD64_YMM14D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(14).xmm);
+        case CV_AMD64_YMM15D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(15).ymm);
+        case CV_AMD64_YMM15D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(15).ymm);
+        case CV_AMD64_YMM15D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(15).xmm);
+        case CV_AMD64_YMM15D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(15).xmm);
+
         case CV_ALLREG_VFRAME:
             return make_register_value<uint64_t>(address_offset);
 
@@ -937,35 +1849,53 @@ namespace
         }
     }
 
-    dlg_help_utils::dbg_help::registry_info get_registry_value_info(dlg_help_utils::dbg_help::thread_context_type const type, CV_HREG_e const registry, void const* thread_context, uint64_t const address_offset)
+    registry_info get_registry_value_info(thread_context_type const type, CV_HREG_e const registry, void const* thread_context, uint64_t const address_offset)
     {
-        uint64_t value{0};
-        uint64_t value_size{0};
+        reg_value_t value;
 
         switch(type)
         {
-        case dlg_help_utils::dbg_help::thread_context_type::x86:
-            std::tie(value, value_size) = get_x86_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x86 const*>(thread_context), address_offset);
+        case thread_context_type::x86:
+            value = get_x86_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x86 const*>(thread_context), address_offset);
             break;
-        case dlg_help_utils::dbg_help::thread_context_type::wow64:
-            std::tie(value, value_size) = get_wow64_register_value(registry, *static_cast<WOW64_CONTEXT const*>(thread_context), address_offset);
+        case thread_context_type::wow64:
+            value = get_wow64_register_value(registry, *static_cast<WOW64_CONTEXT const*>(thread_context), address_offset);
             break;
-        case dlg_help_utils::dbg_help::thread_context_type::x64:
-            std::tie(value, value_size) = get_x64_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x64 const*>(thread_context), address_offset);
+        case thread_context_type::x64:
+            value = get_x64_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x64 const*>(thread_context), address_offset);
             break;
         }
 
-        return {.register_type= registry, .value= value, .value_size= value_size};
+        return {.register_type= registry, .value= value};
     }
 
-    dlg_help_utils::dbg_help::frame_data_info get_frame_data_info(PSYMBOL_INFOW symbol_info, uint64_t const address)
+    template<typename T>
+    concept Integral = std::is_integral_v<T>;
+
+    uint64_t to_address_offset(reg_value_t const& value)
     {
-        return dlg_help_utils::dbg_help::frame_data_info{.data_offset= static_cast<int>(symbol_info->Address), .data_address= address + symbol_info->Address, .data_size= symbol_info->Size};
+        return std::visit(dlg_help_utils::overload{
+                                // []<Integral T>(T arg) -> uint64_t { return arg; },
+                                [](uint64_t arg) -> uint64_t { return arg; },
+                                [](uint32_t arg) -> uint64_t { return arg; },
+                                [](uint16_t arg) -> uint64_t { return arg; },
+                                [](uint8_t arg) -> uint64_t { return arg; },
+                                []<typename T>(T&&) -> uint64_t 
+                                {
+                                    throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"invalid address offset type [{}]", dlg_help_utils::string_conversation::utf8_to_wstring(typeid(T).name()))};
+                                }, 
+                          },
+                          value);
     }
 
-    bool is_already_found(std::vector<dlg_help_utils::dbg_help::variable> const& variables, PSYMBOL_INFOW symbol_info)
+    frame_data_info get_frame_data_info(PSYMBOL_INFOW symbol_info, uint64_t const address_offset)
     {
-        return std::ranges::any_of(variables, [symbol_info](dlg_help_utils::dbg_help::variable const& variable)
+        return frame_data_info{.data_offset= static_cast<int>(symbol_info->Address), .data_address= address_offset + symbol_info->Address, .data_size= symbol_info->Size};
+    }
+
+    bool is_already_found(std::vector<variable> const& variables, PSYMBOL_INFOW symbol_info)
+    {
+        return std::ranges::any_of(variables, [symbol_info](variable const& variable)
         {
             if(variable.symbol_info.module_base() != symbol_info->ModBase || variable.symbol_info.sym_index() != symbol_info->Index)
             {
@@ -1022,7 +1952,7 @@ namespace
             if (symbol_info->Flags & SYMFLAG_REGREL)
             {
                 variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context, info.frame_address_offset);
-                variable.frame_data = get_frame_data_info(symbol_info, variable.registry_value->value);
+                variable.frame_data = get_frame_data_info(symbol_info, to_address_offset(variable.registry_value->value));
             }
             else if (symbol_info->Flags & SYMFLAG_REGISTER)
             {

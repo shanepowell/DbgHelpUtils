@@ -5,8 +5,10 @@
 #include <ranges>
 
 #pragma warning(push)
-#pragma warning(disable : 4267 4457 4100)
-#include <json_struct/include/json_struct.h>
+//  warning C4244: 'initializing': conversion from 'uint32_t' to 'uint16_t', possible loss of data
+//  warning C4127: conditional expression is constant
+#pragma warning(disable : 4244 4127)
+#include <glaze/glaze.hpp>
 #pragma warning(pop)
 
 #include <fstream>
@@ -59,14 +61,12 @@ namespace
         {"disabled"s, dlg_help_utils::heap::segment_heap_front_padding_options_type::padding_disabled},
         {"enabled"s, dlg_help_utils::heap::segment_heap_front_padding_options_type::padding_enabled},
     };
-
-    struct system_modules_json
-    {
-        std::vector<std::string> systemmodules;
-
-        JS_OBJ(systemmodules);
-    };
 }
+
+struct system_modules_json
+{
+    std::vector<std::string> systemmodules;
+};
 
 lyra::cli dump_file_options::generate_options()
 {
@@ -214,22 +214,11 @@ void dump_file_options::process_raw_options()
 
     if(!system_module_list_file_.empty())
     {
-        std::fstream json_file{system_module_list_file_, std::ios_base::in};
-        if(json_file.bad())
-        {
-            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"failed to open json result set file: {}", dlg_help_utils::string_conversation::acp_to_wstring(system_module_list_file_))};
-        }
-
-        std::stringstream buffer;
-        buffer << json_file.rdbuf();
-        json_file.close();
-        const auto json = std::move(buffer).str();
-
-        JS::ParseContext context(json);
         system_modules_json values;
-        if (context.parseTo(values) != JS::Error::NoError)
+        if(auto ec = glz::read_file_json(values, system_module_list_file_, std::string{});
+            ec)
         {
-            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"failed to parse json system modules file: {0} with {1}", dlg_help_utils::string_conversation::acp_to_wstring(system_module_list_file_), dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()))};
+            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"failed to read json system modules file: {0} with [{1}]: {2}\n", dlg_help_utils::string_conversation::acp_to_wstring(system_module_list_file_), static_cast<uint32_t>(ec.ec), dlg_help_utils::string_conversation::acp_to_wstring(ec.custom_error_message))};
         }
 
         system_module_list_ = dlg_help_utils::heap::system_module_list{convert_to_wstring(values.systemmodules)};

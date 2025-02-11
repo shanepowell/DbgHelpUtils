@@ -61,6 +61,9 @@
     <Filter Include="Heap\ProcessHeaps\AllocationGraph">
       <UniqueIdentifier>{d8f06105-4674-4ad9-8060-15194748ef60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ryu">
+      <UniqueIdentifier>{95e60be2-1c8a-44fa-9c4b-9861e28c3c95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -493,6 +496,12 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="int128.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ryu\generic_128.cpp">
+      <Filter>ryu</Filter>
+    </ClCompile>
+    <ClCompile Include="float80.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1046,8 +1055,14 @@
     <ClInclude Include="int128.h">
       <Filter>Utility</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
+    <ClInclude Include="float80.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ryu\generic_128.h">
+      <Filter>ryu</Filter>
+    </ClInclude>
+    <ClInclude Include="ryu\ryu_generic_128.h">
+      <Filter>ryu</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

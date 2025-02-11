@@ -6,6 +6,9 @@
 #include <array>
 #include <xmmintrin.h>
 
+#include "float80.h"
+#include "int128.h"
+
 namespace dlg_help_utils::m128a_utils
 {
     inline std::array<double, 2> to_doubles(M128A const& value)
@@ -115,5 +118,86 @@ namespace dlg_help_utils::m128a_utils
     {
         auto m128 = _mm_set_ps(v4, v3, v2, v1);
         return reinterpret_cast<M128A const&>(m128);
+    }
+
+    inline std::int128_t to_int128(_M128A const& value)
+    {
+        return static_cast<std::int128_t>(value.High) << 64 | value.Low;
+    }
+
+    inline std::uint128_t to_uint128(_M128A const& value)
+    {
+        return static_cast<std::uint128_t>(value.High) << 64 | value.Low;
+    }
+
+    inline uint64_t to_uint64_low(_M128A const& value)
+    {
+        return value.Low;
+    }
+
+    inline uint64_t to_uint64_high(_M128A const& value)
+    {
+        return value.High;
+    }
+
+    inline uint32_t to_uint32_0(_M128A const& value)
+    {
+        auto const& m128 = reinterpret_cast<__m128 const&>(value);
+        return m128.m128_u32[3];
+    }
+
+    inline uint32_t to_uint32_1(_M128A const& value)
+    {
+        auto const& m128 = reinterpret_cast<__m128 const&>(value);
+        return m128.m128_u32[2];
+    }
+
+    inline uint32_t to_uint32_2(_M128A const& value)
+    {
+        auto const& m128 = reinterpret_cast<__m128 const&>(value);
+        return m128.m128_u32[1];
+    }
+
+    inline uint32_t to_uint32_3(_M128A const& value)
+    {
+        auto const& m128 = reinterpret_cast<__m128 const&>(value);
+        return m128.m128_u32[0];
+    }
+
+    inline float to_float32_0(_M128A const& value)
+    {
+        return to_floats(value)[0];
+    }
+
+    inline float to_float32_1(_M128A const& value)
+    {
+        return to_floats(value)[1];
+    }
+
+    inline float to_float32_2(_M128A const& value)
+    {
+        return to_floats(value)[2];
+    }
+
+    inline float to_float32_3(_M128A const& value)
+    {
+        return to_floats(value)[3];
+    }
+
+    inline double to_float64_0(_M128A const& value)
+    {
+        // ReSharper disable once CppCStyleCast
+        return *(double const *)&value.High;
+    }
+
+    inline double to_float64_1(_M128A const& value)
+    {
+        // ReSharper disable once CppCStyleCast
+        return *(double const*)&value.Low;
+    }
+
+    inline float80_t to_float80(_M128A const& value)
+    {
+        return { { .low= value.Low, .high= static_cast<uint16_t>(value.High & 0xFFFF) }};
     }
 }

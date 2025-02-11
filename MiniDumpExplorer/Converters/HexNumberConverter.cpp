@@ -5,6 +5,7 @@
 
 #include "DbgHelpUtils/int128.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
+#include "DbgHelpUtils/m128a_utils.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/string_compare.h"
 #include "DbgHelpUtils/string_conversation.h"
@@ -69,10 +70,10 @@ namespace winrt::MiniDumpExplorer::implementation
             case NumberDisplayFormatType::Decimal:
                 if (is_uint128)
                 {
-                    return box_value(locale_formatting::to_wstring(std::to_uint128(m128a->Get())));
+                    return box_value(locale_formatting::to_wstring(m128a_utils::to_uint128(m128a->Get())));
                 }
 
-                return box_value(locale_formatting::to_wstring(std::to_int128(m128a->Get())));
+                return box_value(locale_formatting::to_wstring(m128a_utils::to_int128(m128a->Get())));
 
             default:
                 break;

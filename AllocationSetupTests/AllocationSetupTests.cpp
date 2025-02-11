@@ -11,9 +11,12 @@
 #define NOMINMAX 1
 #include <Windows.h>
 
-#pragma warning(push)
-#pragma warning(disable : 4100 4458)
 #include <lyra/lyra.hpp>
+#pragma warning(push)
+//  warning C4244: 'initializing': conversion from 'uint32_t' to 'uint16_t', possible loss of data
+//  warning C4127: conditional expression is constant
+#pragma warning(disable : 4244 4127)
+#include <glaze/glaze.hpp>
 #pragma warning(pop)
 
 #include "ResultSet.h"
@@ -100,7 +103,7 @@ int main(int const argc, char* argv[])
             if (auto const result = cli.parse({ argc, argv });
                 !result)
             {
-                std::cerr << std::format("Error in command line: {}\n", result.errorMessage());
+                std::cerr << std::format("Error in command line: {}\n", result.message());
                 std::cerr << cli << "\n";
                 return EXIT_FAILURE;
             }
@@ -130,7 +133,6 @@ int main(int const argc, char* argv[])
             auto const dump_filename_1 = acp_to_wstring(dump_filename_1_l);
             auto const dump_filename_2 = acp_to_wstring(dump_filename_2_l);
             auto const log_filename = acp_to_wstring(log_filename_l);
-            auto const json_filename = acp_to_wstring(json_filename_l);
 
             auto const& allocation_function_data = allocation_functions.at(allocation_type);
             auto const& allocator = std::get<0>(allocation_function_data);
@@ -156,16 +158,14 @@ int main(int const argc, char* argv[])
                 result = test_functions.at(allocation_test)(*o_log, dump_filename_2, allocator, deallocator, set.second_allocations);
             }
 
-            if(!json_filename.empty())
+            if(!json_filename_l.empty())
             {
-                std::fstream json_file{json_filename, std::ios_base::out | std::ios_base::trunc};
-                if(json_file.bad())
+                if(auto const ec = glz::write_file_json(set, json_filename_l, std::string{});
+                    ec)
                 {
-                    std::wcout << std::format(L"failed to open json result set file: {}\n", json_filename);
+                    std::cout << std::format("failed to write json result set file: [{}]:{}\n", static_cast<uint32_t>(ec.ec), ec.custom_error_message);
                     return EXIT_FAILURE;
                 }
-                json_file << JS::serializeStruct(set);
-                json_file.close();
             }
 
             log->close();

@@ -183,6 +183,7 @@
     <ClCompile Include="file_version_info.cpp" />
     <ClCompile Include="find_thread_stack.cpp" />
     <ClCompile Include="flags_string_utils_resources.cpp" />
+    <ClCompile Include="float80.cpp" />
     <ClCompile Include="function_info_utils_resources.cpp" />
     <ClCompile Include="function_table_stream.cpp" />
     <ClCompile Include="get_last_address.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="register_names_resources.cpp" />
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
     <ClCompile Include="rtl_rb_tree_walker.cpp" />
+    <ClCompile Include="ryu\generic_128.cpp" />
     <ClCompile Include="segment_heap.cpp" />
     <ClCompile Include="segment_heap_options.cpp" />
     <ClCompile Include="segment_heap_utils.cpp" />
@@ -328,6 +330,7 @@
     <ClInclude Include="dump_hex.h" />
     <ClInclude Include="enable_module_loading.h" />
     <ClInclude Include="file_version_info.h" />
+    <ClInclude Include="float80.h" />
     <ClInclude Include="function_info_utils.h" />
     <ClInclude Include="get_label_type_from_labels.h" />
     <ClInclude Include="gflags_utils.h" />
@@ -363,6 +366,8 @@
     <ClInclude Include="m128a_utils.h" />
     <ClInclude Include="mini_dump_memory_walker_create_handle.h" />
     <ClInclude Include="mini_dump_memory_walker_release_handle.h" />
+    <ClInclude Include="ryu\generic_128.h" />
+    <ClInclude Include="ryu\ryu_generic_128.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />
@@ -490,9 +495,6 @@
     <ClInclude Include="windows_setup.h" />
     <ClInclude Include="write_header.h" />
     <ClInclude Include="xstate_reader.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

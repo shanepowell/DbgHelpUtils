@@ -4,15 +4,20 @@
 // Found in "$(VSINSTALLDIR)\DIA SDK\include"
 #include <cvconst.h>
 
+#include <variant>
+
+#include "int128.h"
+#include "mini_dump_memory_stream.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::dbg_help
 {
+    using reg_value_t = std::variant<uint8_t, uint16_t, uint32_t, uint64_t, std::uint128_t, float, double>;
+
     struct registry_info
     {
         CV_HREG_e register_type{};
-        uint64_t value{};
-        uint64_t value_size{};
+        reg_value_t value{};
     };
 
     struct frame_data_info
@@ -28,4 +33,11 @@ namespace dlg_help_utils::dbg_help
         std::optional<registry_info> registry_value{};
         std::optional<frame_data_info> frame_data{};
     };
+
+    inline mini_dump_memory_stream to_stream(reg_value_t const& value)
+    {
+        mini_dump_memory_stream stream;
+        std::visit([&stream](auto&& arg) { stream = {&arg, sizeof(arg)}; }, value);
+        return stream;
+    }
 }

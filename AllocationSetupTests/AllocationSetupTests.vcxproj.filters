@@ -22,13 +22,11 @@
   <ItemGroup>
     <None Include="..\RunHeapDumpTests.ps1" />
     <None Include="..\RunAllBuildHeapDumpTests.ps1" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ResultSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

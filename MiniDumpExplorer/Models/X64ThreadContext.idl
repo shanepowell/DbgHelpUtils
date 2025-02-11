@@ -17,8 +17,8 @@ namespace MiniDumpExplorer
         UInt64 Rip { get; };
         UInt64 Rsp { get; };
         UInt64 Rbp { get; };
-        UInt16 Cs { get; };
-        UInt16 Ss { get; };
+        UInt32 Cs { get; };
+        UInt32 Ss { get; };
         UInt32 EFlags { get; };
         IObservableVector<String> EFlagsList { get; };
 
@@ -85,10 +85,10 @@ namespace MiniDumpExplorer
         UInt8 R15b { get; };
 
         Boolean HasSegments { get; };
-        UInt16 Ds { get; };
-        UInt16 Es { get; };
-        UInt16 Fs { get; };
-        UInt16 Gs { get; };
+        UInt32 Ds { get; };
+        UInt32 Es { get; };
+        UInt32 Fs { get; };
+        UInt32 Gs { get; };
 
         Boolean HasDebugRegisters{ get; };
         UInt64 Dr0{ get; };

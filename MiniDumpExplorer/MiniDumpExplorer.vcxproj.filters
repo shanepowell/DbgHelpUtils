@@ -652,6 +652,9 @@
     <ClCompile Include="Models\XmmRegister.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="Models\Wow64ThreadContext.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

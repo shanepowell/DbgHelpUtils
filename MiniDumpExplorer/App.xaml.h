@@ -121,6 +121,7 @@
 #include "Models\YmmRegister.h"
 #include "Models\ThreadContext.h"
 #include "Models\XmmRegister.h"
+#include "Models\Wow64ThreadContext.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

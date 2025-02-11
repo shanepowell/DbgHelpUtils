@@ -132,7 +132,7 @@ namespace winrt::MiniDumpExplorer::implementation
             }
             else if(variable_.registry_value)
             {
-                Set(walker_store, symbol_type_utils::variable_symbol_at(walker_store->walker_, std::move(os).str(), variable_.symbol_info, variable_.symbol_info, 0, {&variable.registry_value->value, variable.registry_value->value_size}));
+                Set(walker_store, symbol_type_utils::variable_symbol_at(walker_store->walker_, std::move(os).str(), variable_.symbol_info, variable_.symbol_info, 0, dbg_help::to_stream(variable.registry_value->value)));
             }
         }
         else
@@ -196,67 +196,86 @@ namespace winrt::MiniDumpExplorer::implementation
         auto anchor_self = get_strong();
         auto weak_self = get_weak();
 
-        // ReSharper disable once CppTooWideScope
-        apartment_context ui_thread;
-
-        auto& symbolEngineHelper = SymbolEngineHelper::Instance();
-        co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
-
-        std::wstring const currentLine{line_};
-
+        try
         {
-            logger::Log().LogMessage(log_level::debug, std::format(L"start LoadSubLinesChildren for line [{}]", currentLine));
-            mini_dump_memory_walker_create_handle create_handle{ walker_store->walker_ };
-            for (auto line : data.sub_lines())
+            // ReSharper disable once CppTooWideScope
+            apartment_context ui_thread;
+
+            auto& symbolEngineHelper = SymbolEngineHelper::Instance();
+            co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+
+            std::wstring const currentLine{line_};
+
             {
-                // ReSharper disable once CppAssignedValueIsNeverUsed
-                anchor_self = {};
-                if (WindowHelper::IsExiting())
+                logger::Log().LogMessage(log_level::debug, std::format(L"start LoadSubLinesChildren for line [{}]", currentLine));
+                mini_dump_memory_walker_create_handle create_handle{ walker_store->walker_ };
+                for (auto line : data.sub_lines())
                 {
-                    co_return;
-                }
-
-                MiniDumpExplorer::ThreadStackEntry childEntry;
-                childEntry.as<ThreadStackEntry>()->Set(walker_store, std::move(line));
-
-                if (WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
-
-                mini_dump_memory_walker_release_handle handle{ walker_store->walker_ };
-                {
-                    logger::Log().LogMessage(log_level::debug, std::format(L"LoadSubLinesChildren start UI update for line [{}]", currentLine));
-                    co_await ui_thread;
-
-                    anchor_self = weak_self.get();
-                    if (anchor_self && !WindowHelper::IsExiting())
+                    // ReSharper disable once CppAssignedValueIsNeverUsed
+                    anchor_self = {};
+                    if (WindowHelper::IsExiting())
                     {
-                        children_.Append(childEntry);
-                    }
-                    else
-                    {
-                        // it's been removed while loading the items
-                        // need to switch QueueController thread to avoid symbol_engine callback fault
-                        co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
                         co_return;
                     }
 
-                    co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
-                    logger::Log().LogMessage(log_level::debug, std::format(L"LoadSubLinesChildren end UI update for line [{}]", currentLine));
+                    MiniDumpExplorer::ThreadStackEntry childEntry;
+                    childEntry.as<ThreadStackEntry>()->Set(walker_store, std::move(line));
+
+                    if (WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    mini_dump_memory_walker_release_handle handle{ walker_store->walker_ };
+                    {
+                        logger::Log().LogMessage(log_level::debug, std::format(L"LoadSubLinesChildren start UI update for line [{}]", currentLine));
+                        co_await ui_thread;
+
+                        anchor_self = weak_self.get();
+                        if (anchor_self && !WindowHelper::IsExiting())
+                        {
+                            children_.Append(childEntry);
+                        }
+                        else
+                        {
+                            // it's been removed while loading the items
+                            // need to switch QueueController thread to avoid symbol_engine callback fault
+                            co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+                            co_return;
+                        }
+
+                        co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+                        logger::Log().LogMessage(log_level::debug, std::format(L"LoadSubLinesChildren end UI update for line [{}]", currentLine));
+                    }
                 }
             }
+            logger::Log().LogMessage(log_level::debug, std::format(L"end LoadSubLinesChildren for line [{}]", currentLine));
+
+            co_await ui_thread;
+
+            if(WindowHelper::IsExiting())
+            {
+                co_return;
+            }
+
+            children_.RemoveAt(0);
         }
-        logger::Log().LogMessage(log_level::debug, std::format(L"end LoadSubLinesChildren for line [{}]", currentLine));
-
-        co_await ui_thread;
-
-        if(WindowHelper::IsExiting())
+        catch (exceptions::wide_runtime_error const& e)
         {
-            co_return;
+            logger::Log().LogMessage(log_level::error, std::format(L"LoadSubLinesChildren failed: {}\n", e.message()));
         }
-
-        children_.RemoveAt(0);
+        catch (std::runtime_error const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadSubLinesChildren failed: {}\n", e.what()));
+        }
+        catch (std::exception const& e)
+        {
+            logger::Log().LogMessage(log_level::error, std::format("LoadSubLinesChildren failed: {}\n", e.what()));
+        }
+        catch (...)
+        {
+            logger::Log().LogMessage(log_level::error, L"LoadSubLinesChildren failed");
+        }
     }
 
     param::hstring ThreadStackEntry::GetVariableTypeTitle(variable_type const type)

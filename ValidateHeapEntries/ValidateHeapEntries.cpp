@@ -6,14 +6,16 @@
 #include <format>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 
 #define NOMINMAX 1
 #include <Windows.h>
 
-#pragma warning(push)
-#pragma warning(disable : 4100 4458)
 #include <lyra/lyra.hpp>
+#pragma warning(push)
+//  warning C4244: 'initializing': conversion from 'uint32_t' to 'uint16_t', possible loss of data
+//  warning C4127: conditional expression is constant
+#pragma warning(disable : 4244 4127)
+#include <glaze/glaze.hpp>
 #pragma warning(pop)
 
 #include "ResultSet.h"
@@ -708,7 +710,7 @@ int main(int const argc, char* argv[])
             if (auto const result = cli.parse({ argc, argv });
                 !result)
             {
-                std::cerr << std::format("Error in command line: {}\n", result.errorMessage());
+                std::cerr << std::format("Error in command line: {}\n", result.message());
                 std::cerr << cli << '\n';
                 return EXIT_FAILURE;
             }
@@ -723,7 +725,6 @@ int main(int const argc, char* argv[])
             auto const dump_filename_1 = dlg_help_utils::string_conversation::acp_to_wstring(dump_filename_1_l);
             auto const dump_filename_2 = dlg_help_utils::string_conversation::acp_to_wstring(dump_filename_2_l);
             auto const log_filename = dlg_help_utils::string_conversation::acp_to_wstring(log_filename_l);
-            auto const json_filename = dlg_help_utils::string_conversation::acp_to_wstring(json_filename_l);
 
             if(dump_filename_1.empty())
             {
@@ -746,26 +747,14 @@ int main(int const argc, char* argv[])
                 o_log = log.get();
             }
 
-            std::fstream json_file{json_filename, std::ios_base::in};
-            if(json_file.bad())
-            {
-                *o_log << std::format(L"failed to open json result set file: {}\n", json_filename);
-                return EXIT_FAILURE;
-            }
-
-            std::stringstream buffer;
-            buffer << json_file.rdbuf();
-            json_file.close();
-            auto json = std::move(buffer).str();
-
-            JS::ParseContext context(json);
             ResultSet set;
-            if (context.parseTo(set) != JS::Error::NoError)
+            if(auto ec = glz::read_file_json(set, json_filename_l, std::string{});
+                ec)
             {
-                *o_log << std::format(L"failed to parse json result set file: {0} with {1}\n", json_filename, dlg_help_utils::string_conversation::acp_to_wstring(context.makeErrorString()));
+                *o_log << std::format(L"failed to read json result set file: [{}]:{}\n", static_cast<uint32_t>(ec.ec), dlg_help_utils::string_conversation::acp_to_wstring(ec.custom_error_message));
                 return EXIT_FAILURE;
             }
-
+            
             auto successful = validate_dump_file(stacktrace, skip_fake_offset_check, no_output, dump_filename_1, {}, o_log, set.first_allocations);
             if(successful && !dump_filename_2.empty())
             {

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <format>
 
+#include "float80.h"
 #include "units.h"
 #include "windows_setup.h"
 #include "write_header.h"
@@ -67,13 +68,17 @@ namespace dlg_help_utils::stream_hex_dump
 
         inline std::wstring to_hex(M128A const& value, std::streamsize const width, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
         {
-            using namespace std::string_view_literals;
             if (value.High)
             {
                 return std::format(L"{0}{1:0>16x}", to_hex(value.High, width > 16 ? (width - 16) : 0, fill_char, write_header), value.Low);
             }
 
             return to_hex(value.Low, width, fill_char, write_header);
+        }
+
+        inline std::wstring to_hex(float80_t const& value, [[maybe_unused]] std::streamsize const width, [[maybe_unused]] wchar_t const fill_char = L'0', [[maybe_unused]] write_header_t const write_header = write_header_t{true})
+        {
+            return std::format(L"{0}:{1:0>4x}:{2:0>16x}", value.sign, value.exponent, value.significand);
         }
     }
 

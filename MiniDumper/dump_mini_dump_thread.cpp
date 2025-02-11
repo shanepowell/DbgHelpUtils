@@ -5,6 +5,7 @@
 #include "DbgHelpUtils/context_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
+#include "DbgHelpUtils/m128a_utils.h"
 #include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
@@ -35,6 +36,7 @@ namespace
     {
         return vector_to_hash_set<uint32_t>(options.filter_values(L"thread_id"s));
     }
+
 }
 
 void dump_mini_dump_thread_context(std::wostream& log, stream_thread_context const& thread_context, dump_file_options const& options)
@@ -140,7 +142,8 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
         log << std::format(L"      FloatRegisters:\n");
         for (size_t index = 0; index < std::size(context.Legacy); ++index)
         {
-            log << std::format(L"        st{0}: {1}\n", locale_formatting::to_wstring(index), to_hex_full(context.Legacy[index]));
+            auto value = m128a_utils::to_float80(context.Legacy[index]);
+            log << std::format(L"        st{0}: {1:>55} ({2})\n", locale_formatting::to_wstring(index), dlg_help_utils::to_wstring(value), to_hex(value));
         }
 
         log << L"    XMM:\n";
@@ -242,8 +245,14 @@ void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context
         log << std::format(L"      ErrorSelector: {}\n", to_hex(context.FloatSave.ErrorSelector));
         log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
         log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
-        log << L"      RegisterArea:\n";
-        hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+        log << std::format(L"      FloatRegisters:\n");
+
+        auto const* float_registers = reinterpret_cast<float80_t const*>(context.FloatSave.RegisterArea);
+        for (size_t index = 0; index < 8; ++index)
+        {
+            auto value = float_registers[index];
+            log << std::format(L"        st{0}: {1:>55} ({2})\n", locale_formatting::to_wstring(index), dlg_help_utils::to_wstring(value), to_hex(value));
+        }
         log << L'\n';
     }
 
@@ -310,8 +319,14 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
         log << std::format(L"      DataOffset: {}\n", to_hex(context.FloatSave.DataOffset));
         log << std::format(L"      DataSelector: {}\n", to_hex(context.FloatSave.DataSelector));
         log << std::format(L"      Cr0NpxState: {}\n", to_hex(context.FloatSave.Cr0NpxState));
-        log << L"      RegisterArea:\n";
-        hex_dump::hex_dump(log, context.FloatSave.RegisterArea, sizeof(context.FloatSave.RegisterArea), 8);
+        log << std::format(L"      FloatRegisters:\n");
+
+        auto const* float_registers = reinterpret_cast<float80_t const*>(context.FloatSave.RegisterArea);
+        for (size_t index = 0; index < 8; ++index)
+        {
+            auto value = float_registers[index];
+            log << std::format(L"        st{0}: {1:>55} ({2})\n", locale_formatting::to_wstring(index), dlg_help_utils::to_wstring(value), to_hex(value));
+        }
         log << L'\n';
     }
 
