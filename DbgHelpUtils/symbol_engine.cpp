@@ -1080,7 +1080,12 @@ namespace dlg_help_utils::dbg_help
         if (pdb.is_valid())
         {
             auto const debug_module_info_size = sizeof(IMAGE_DEBUG_DIRECTORY) + cv_record_size;
-            auto const debug_module_info = std::make_unique<uint8_t[]>(debug_module_info_size);
+
+            // Most recent DbgHelp.dll now requires sizeof(IMAGE_DEBUG_DIRECTORY) + cv_record_size to be 8bytes-aligned
+            auto const mandatoryAlignment = 8;
+            auto const debug_module_info_size_aligned = (debug_module_info_size + mandatoryAlignment) & (~uint64_t(mandatoryAlignment - 1));
+
+            auto const debug_module_info = std::make_unique<uint8_t[]>(debug_module_info_size_aligned);
             auto* info = reinterpret_cast<IMAGE_DEBUG_DIRECTORY*>(debug_module_info.get());
 
             info->TimeDateStamp = module_time_stamp;
@@ -1090,6 +1095,7 @@ namespace dlg_help_utils::dbg_help
             info->Type = IMAGE_DEBUG_TYPE_CODEVIEW;
             info->AddressOfRawData = 0;
             info->PointerToRawData = sizeof(IMAGE_DEBUG_DIRECTORY);
+            info->SizeOfData = cv_record_size;
 
             memcpy(debug_module_info.get() + info->PointerToRawData, cv_record, cv_record_size);
 
@@ -1097,7 +1103,7 @@ namespace dlg_help_utils::dbg_help
             module_load_info.ssize = sizeof(module_load_info);
             module_load_info.ssig = DBHHEADER_DEBUGDIRS;
             module_load_info.data = debug_module_info.get();
-            module_load_info.size = static_cast<DWORD>(debug_module_info_size);
+            module_load_info.size = static_cast<DWORD>(debug_module_info_size_aligned);
             module_load_info.flags = 0;
 
             if (callback().symbol_load_debug())
