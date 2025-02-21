@@ -608,67 +608,158 @@ namespace
 
     reg_value_t get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context, uint64_t const address_offset)
     {
+        auto const* float_registers = reinterpret_cast<dlg_help_utils::float80_t const*>(context.FloatSave.RegisterArea);
+
         switch(register_type) // NOLINT
         {
-        case CV_AMD64_AL:
+        case CV_REG_AL:
             return make_register_value<uint8_t>(context.Eax);
 
-        case CV_AMD64_BL:
+        case CV_REG_BL:
             return make_register_value<uint8_t>(context.Ebx);
 
-        case CV_AMD64_CL:
+        case CV_REG_CL:
             return make_register_value<uint8_t>(context.Ecx);
 
-        case CV_AMD64_DL:
+        case CV_REG_DL:
             return make_register_value<uint8_t>(context.Edx);
 
-        case CV_AMD64_AX:
+        case CV_REG_AX:
             return make_register_value<uint16_t>(context.Eax);
 
-        case CV_AMD64_BX:
+        case CV_REG_BX:
             return make_register_value<uint16_t>(context.Ebx);
 
-        case CV_AMD64_CX:
+        case CV_REG_CX:
             return make_register_value<uint16_t>(context.Ecx);
 
-        case CV_AMD64_DX:
+        case CV_REG_DX:
             return make_register_value<uint16_t>(context.Edx);
 
-        case CV_AMD64_SP:
+        case CV_REG_SP:
             return make_register_value<uint16_t>(context.Esp);
 
-        case CV_AMD64_BP:
+        case CV_REG_BP:
             return make_register_value<uint16_t>(context.Ebp);
 
-        case CV_AMD64_SI:
+        case CV_REG_SI:
             return make_register_value<uint16_t>(context.Esi);
 
-        case CV_AMD64_DI:
+        case CV_REG_DI:
             return make_register_value<uint16_t>(context.Edi);
 
-        case CV_AMD64_EAX:
+        case CV_REG_EAX:
             return make_register_value<uint32_t>(context.Eax);
 
-        case CV_AMD64_EBX:
+        case CV_REG_EBX:
             return make_register_value<uint32_t>(context.Ebx);
 
-        case CV_AMD64_ECX:
+        case CV_REG_ECX:
             return make_register_value<uint32_t>(context.Ecx);
 
-        case CV_AMD64_EDX:
+        case CV_REG_EDX:
             return make_register_value<uint32_t>(context.Edx);
 
-        case CV_AMD64_ESP:
+        case CV_REG_ESP:
             return make_register_value<uint32_t>(context.Esp);
 
-        case CV_AMD64_EBP:
+        case CV_REG_EBP:
             return make_register_value<uint32_t>(context.Ebp);
 
-        case CV_AMD64_ESI:
+        case CV_REG_ESI:
             return make_register_value<uint32_t>(context.Esi);
 
-        case CV_AMD64_EDI:
+        case CV_REG_EDI:
             return make_register_value<uint32_t>(context.Edi);
+
+        // Debug registers
+        case CV_REG_DR0:
+            return make_register_value<uint64_t>(context.Dr0);
+
+        case CV_REG_DR1:
+            return make_register_value<uint64_t>(context.Dr1);
+
+        case CV_REG_DR2:
+            return make_register_value<uint64_t>(context.Dr2);
+
+        case CV_REG_DR3:
+            return make_register_value<uint64_t>(context.Dr3);
+
+        case CV_REG_DR6:
+            return make_register_value<uint64_t>(context.Dr6);
+
+        case CV_REG_DR7:
+            return make_register_value<uint64_t>(context.Dr7);
+
+
+        case CV_REG_ST0:
+            return float_registers[0];
+
+        case CV_REG_ST1:
+            return float_registers[1];
+
+        case CV_REG_ST2:
+            return float_registers[2];
+
+        case CV_REG_ST3:
+            return float_registers[3];
+
+        case CV_REG_ST4:
+            return float_registers[4];
+
+        case CV_REG_ST5:
+            return float_registers[5];
+
+        case CV_REG_ST6:
+            return float_registers[6];
+
+        case CV_REG_ST7:
+            return float_registers[7];
+
+        case CV_REG_CTRL:
+            return static_cast<uint32_t>(context.FloatSave.ControlWord);
+
+        case CV_REG_STAT:
+            return static_cast<uint32_t>(context.FloatSave.StatusWord);
+
+        case CV_REG_TAG:
+            return static_cast<uint32_t>(context.FloatSave.TagWord);
+
+        case CV_REG_FPIP:
+            return static_cast<uint32_t>(context.FloatSave.ErrorOffset);
+
+        case CV_REG_FPCS:
+            return static_cast<uint32_t>(context.FloatSave.ErrorSelector);
+
+        case CV_REG_FPDO:
+            return static_cast<uint32_t>(context.FloatSave.DataOffset);
+
+        case CV_REG_FPDS:
+            return static_cast<uint32_t>(context.FloatSave.DataSelector);
+
+        case CV_REG_MM0:
+            return float_registers[0].low;
+
+        case CV_REG_MM1:
+            return float_registers[1].low;
+
+        case CV_REG_MM2:
+            return float_registers[2].low;
+
+        case CV_REG_MM3:
+            return float_registers[3].low;
+
+        case CV_REG_MM4:
+            return float_registers[4].low;
+
+        case CV_REG_MM5:
+            return float_registers[5].low;
+
+        case CV_REG_MM6:
+            return float_registers[6].low;
+
+        case CV_REG_MM7:
+            return float_registers[7].low;
 
         case CV_ALLREG_VFRAME:
             return make_register_value<uint32_t>(address_offset);
@@ -680,67 +771,521 @@ namespace
 
     reg_value_t get_wow64_register_value(CV_HREG_e register_type, WOW64_CONTEXT const& context, uint64_t const address_offset)
     {
+        auto const* float_registers = reinterpret_cast<dlg_help_utils::float80_t const*>(context.FloatSave.RegisterArea);
+        dlg_help_utils::xstate_reader xstate_reader{ &context };
+
         switch(register_type) // NOLINT
         {
-        case CV_AMD64_AL:
+        case CV_REG_AL:
             return make_register_value<uint8_t>(context.Eax);
 
-        case CV_AMD64_BL:
+        case CV_REG_BL:
             return make_register_value<uint8_t>(context.Ebx);
 
-        case CV_AMD64_CL:
+        case CV_REG_CL:
             return make_register_value<uint8_t>(context.Ecx);
 
-        case CV_AMD64_DL:
+        case CV_REG_DL:
             return make_register_value<uint8_t>(context.Edx);
 
-        case CV_AMD64_AX:
+        case CV_REG_AX:
             return make_register_value<uint16_t>(context.Eax);
 
-        case CV_AMD64_BX:
+        case CV_REG_BX:
             return make_register_value<uint16_t>(context.Ebx);
 
-        case CV_AMD64_CX:
+        case CV_REG_CX:
             return make_register_value<uint16_t>(context.Ecx);
 
-        case CV_AMD64_DX:
+        case CV_REG_DX:
             return make_register_value<uint16_t>(context.Edx);
 
-        case CV_AMD64_SP:
+        case CV_REG_SP:
             return make_register_value<uint16_t>(context.Esp);
 
-        case CV_AMD64_BP:
+        case CV_REG_BP:
             return make_register_value<uint16_t>(context.Ebp);
 
-        case CV_AMD64_SI:
+        case CV_REG_SI:
             return make_register_value<uint16_t>(context.Esi);
 
-        case CV_AMD64_DI:
+        case CV_REG_DI:
             return make_register_value<uint16_t>(context.Edi);
 
-        case CV_AMD64_EAX:
+        case CV_REG_EAX:
             return make_register_value<uint32_t>(context.Eax);
 
-        case CV_AMD64_EBX:
+        case CV_REG_EBX:
             return make_register_value<uint32_t>(context.Ebx);
 
-        case CV_AMD64_ECX:
+        case CV_REG_ECX:
             return make_register_value<uint32_t>(context.Ecx);
 
-        case CV_AMD64_EDX:
+        case CV_REG_EDX:
             return make_register_value<uint32_t>(context.Edx);
 
-        case CV_AMD64_ESP:
+        case CV_REG_ESP:
             return make_register_value<uint32_t>(context.Esp);
 
-        case CV_AMD64_EBP:
+        case CV_REG_EBP:
             return make_register_value<uint32_t>(context.Ebp);
 
-        case CV_AMD64_ESI:
+        case CV_REG_ESI:
             return make_register_value<uint32_t>(context.Esi);
 
-        case CV_AMD64_EDI:
+        case CV_REG_EDI:
             return make_register_value<uint32_t>(context.Edi);
+
+        // Debug registers
+        case CV_REG_DR0:
+            return make_register_value<uint64_t>(context.Dr0);
+
+        case CV_REG_DR1:
+            return make_register_value<uint64_t>(context.Dr1);
+
+        case CV_REG_DR2:
+            return make_register_value<uint64_t>(context.Dr2);
+
+        case CV_REG_DR3:
+            return make_register_value<uint64_t>(context.Dr3);
+
+        case CV_REG_DR6:
+            return make_register_value<uint64_t>(context.Dr6);
+
+        case CV_REG_DR7:
+            return make_register_value<uint64_t>(context.Dr7);
+
+
+        case CV_REG_ST0:
+            return float_registers[0];
+
+        case CV_REG_ST1:
+            return float_registers[1];
+
+        case CV_REG_ST2:
+            return float_registers[2];
+
+        case CV_REG_ST3:
+            return float_registers[3];
+
+        case CV_REG_ST4:
+            return float_registers[4];
+
+        case CV_REG_ST5:
+            return float_registers[5];
+
+        case CV_REG_ST6:
+            return float_registers[6];
+
+        case CV_REG_ST7:
+            return float_registers[7];
+
+        case CV_REG_CTRL:
+            return static_cast<uint32_t>(context.FloatSave.ControlWord);
+
+        case CV_REG_STAT:
+            return static_cast<uint32_t>(context.FloatSave.StatusWord);
+
+        case CV_REG_TAG:
+            return static_cast<uint32_t>(context.FloatSave.TagWord);
+
+        case CV_REG_FPIP:
+            return static_cast<uint32_t>(context.FloatSave.ErrorOffset);
+
+        case CV_REG_FPCS:
+            return static_cast<uint32_t>(context.FloatSave.ErrorSelector);
+
+        case CV_REG_FPDO:
+            return static_cast<uint32_t>(context.FloatSave.DataOffset);
+
+        case CV_REG_FPDS:
+            return static_cast<uint32_t>(context.FloatSave.DataSelector);
+
+        case CV_REG_MM0:
+            return float_registers[0].low;
+
+        case CV_REG_MM1:
+            return float_registers[1].low;
+
+        case CV_REG_MM2:
+            return float_registers[2].low;
+
+        case CV_REG_MM3:
+            return float_registers[3].low;
+
+        case CV_REG_MM4:
+            return float_registers[4].low;
+
+        case CV_REG_MM5:
+            return float_registers[5].low;
+
+        case CV_REG_MM6:
+            return float_registers[6].low;
+
+        case CV_REG_MM7:
+            return float_registers[7].low;
+
+            // KATMAI registers
+        case CV_REG_XMM0:
+            return to_uint128(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_XMM1:
+            return to_uint128(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_XMM2:
+            return to_uint128(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_XMM3:
+            return to_uint128(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_XMM4:
+            return to_uint128(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_XMM5:
+            return to_uint128(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_XMM6:
+            return to_uint128(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_XMM7:
+            return to_uint128(*xstate_reader.get_ymm_register(7).xmm);
+
+        // AVX registers 256 bits
+        case CV_REG_YMM0:
+            return to_uint128(*xstate_reader.get_ymm_register(0).xmm);
+
+        case CV_REG_YMM1:
+            return to_uint128(*xstate_reader.get_ymm_register(1).xmm);
+
+        case CV_REG_YMM2:
+            return to_uint128(*xstate_reader.get_ymm_register(2).xmm);
+
+        case CV_REG_YMM3:
+            return to_uint128(*xstate_reader.get_ymm_register(3).xmm);
+
+        case CV_REG_YMM4:
+            return to_uint128(*xstate_reader.get_ymm_register(4).xmm);
+
+        case CV_REG_YMM5:
+            return to_uint128(*xstate_reader.get_ymm_register(5).xmm);
+
+        case CV_REG_YMM6:
+            return to_uint128(*xstate_reader.get_ymm_register(6).xmm);
+
+        case CV_REG_YMM7:
+            return to_uint128(*xstate_reader.get_ymm_register(7).xmm);
+
+
+        // AVX registers upper 128 bits
+        case CV_REG_YMM0H:
+            return to_uint128(*xstate_reader.get_ymm_register(0).ymm);
+            
+        case CV_REG_YMM1H:
+            return to_uint128(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_REG_YMM2H:
+            return to_uint128(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_REG_YMM3H:
+            return to_uint128(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_REG_YMM4H:
+            return to_uint128(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_REG_YMM5H:
+            return to_uint128(*xstate_reader.get_ymm_register(5).ymm);
+            
+        case CV_REG_YMM6H:
+            return to_uint128(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_REG_YMM7H:
+            return to_uint128(*xstate_reader.get_ymm_register(7).ymm);
+
+        // AVX integer registers
+        case CV_REG_YMM0I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_REG_YMM0I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_REG_YMM0I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_REG_YMM0I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(0).ymm);
+
+        case CV_REG_YMM1I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_REG_YMM1I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_REG_YMM1I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_REG_YMM1I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(1).ymm);
+
+        case CV_REG_YMM2I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_REG_YMM2I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_REG_YMM2I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_REG_YMM2I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(2).ymm);
+
+        case CV_REG_YMM3I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_REG_YMM3I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_REG_YMM3I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_REG_YMM3I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(3).ymm);
+
+        case CV_REG_YMM4I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_REG_YMM4I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_REG_YMM4I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_REG_YMM4I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(4).ymm);
+
+        case CV_REG_YMM5I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_REG_YMM5I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_REG_YMM5I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_REG_YMM5I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(5).ymm);
+
+        case CV_REG_YMM6I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_REG_YMM6I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_REG_YMM6I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_REG_YMM6I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(6).ymm);
+
+        case CV_REG_YMM7I0:
+            return to_uint32_0(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_REG_YMM7I1:
+            return to_uint32_1(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_REG_YMM7I2:
+            return to_uint32_2(*xstate_reader.get_ymm_register(7).ymm);
+
+        case CV_REG_YMM7I3:
+            return to_uint32_3(*xstate_reader.get_ymm_register(7).ymm);
+
+        // AVX floating-point single precise registers
+        case CV_REG_YMM0F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_REG_YMM0F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_REG_YMM0F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_REG_YMM0F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_REG_YMM0F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_YMM0F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_YMM0F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_YMM0F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_YMM1F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_REG_YMM1F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_REG_YMM1F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_REG_YMM1F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_REG_YMM1F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_YMM1F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_YMM1F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_YMM1F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_YMM2F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_REG_YMM2F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_REG_YMM2F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_REG_YMM2F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_REG_YMM2F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_YMM2F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_YMM2F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_YMM2F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_YMM3F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_REG_YMM3F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_REG_YMM3F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_REG_YMM3F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_REG_YMM3F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_YMM3F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_YMM3F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_YMM3F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_YMM4F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_REG_YMM4F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_REG_YMM4F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_REG_YMM4F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_REG_YMM4F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_YMM4F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_YMM4F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_YMM4F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_YMM5F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_REG_YMM5F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_REG_YMM5F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_REG_YMM5F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_REG_YMM5F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_YMM5F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_YMM5F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_YMM5F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_YMM6F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_REG_YMM6F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_REG_YMM6F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_REG_YMM6F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_REG_YMM6F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_YMM6F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_YMM6F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_YMM6F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_YMM7F0:
+            return to_float32_0(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_REG_YMM7F1:
+            return to_float32_1(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_REG_YMM7F2:
+            return to_float32_2(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_REG_YMM7F3:
+            return to_float32_3(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_REG_YMM7F4:
+            return to_float32_0(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_REG_YMM7F5:
+            return to_float32_1(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_REG_YMM7F6:
+            return to_float32_2(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_REG_YMM7F7:
+            return to_float32_3(*xstate_reader.get_ymm_register(7).xmm);
+
+        // AVX floating-point double precise registers
+        case CV_REG_YMM0D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_REG_YMM0D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(0).ymm);
+        case CV_REG_YMM0D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_YMM0D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(0).xmm);
+        case CV_REG_YMM1D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_REG_YMM1D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(1).ymm);
+        case CV_REG_YMM1D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_YMM1D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(1).xmm);
+        case CV_REG_YMM2D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_REG_YMM2D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(2).ymm);
+        case CV_REG_YMM2D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_YMM2D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(2).xmm);
+        case CV_REG_YMM3D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_REG_YMM3D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(3).ymm);
+        case CV_REG_YMM3D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_YMM3D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(3).xmm);
+        case CV_REG_YMM4D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_REG_YMM4D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(4).ymm);
+        case CV_REG_YMM4D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_YMM4D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(4).xmm);
+        case CV_REG_YMM5D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_REG_YMM5D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(5).ymm);
+        case CV_REG_YMM5D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_YMM5D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(5).xmm);
+        case CV_REG_YMM6D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_REG_YMM6D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(6).ymm);
+        case CV_REG_YMM6D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_YMM6D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(6).xmm);
+        case CV_REG_YMM7D0:
+            return to_float64_0(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_REG_YMM7D1:
+            return to_float64_1(*xstate_reader.get_ymm_register(7).ymm);
+        case CV_REG_YMM7D2:
+            return to_float64_0(*xstate_reader.get_ymm_register(7).xmm);
+        case CV_REG_YMM7D3:
+            return to_float64_1(*xstate_reader.get_ymm_register(7).xmm);
 
         case CV_ALLREG_VFRAME:
             return make_register_value<uint32_t>(address_offset);
@@ -948,33 +1493,94 @@ namespace
         case CV_AMD64_SPL:
             return make_register_value<uint8_t>(context.Rsp);
 
-    //CV_AMD64_ST0      =  128,
-    //CV_AMD64_ST1      =  129,
-    //CV_AMD64_ST2      =  130,
-    //CV_AMD64_ST3      =  131,
-    //CV_AMD64_ST4      =  132,
-    //CV_AMD64_ST5      =  133,
-    //CV_AMD64_ST6      =  134,
-    //CV_AMD64_ST7      =  135,
-    //CV_AMD64_CTRL     =  136,
-    //CV_AMD64_STAT     =  137,
-    //CV_AMD64_TAG      =  138,
-    //CV_AMD64_FPIP     =  139,
-    //CV_AMD64_FPCS     =  140,
-    //CV_AMD64_FPDO     =  141,
-    //CV_AMD64_FPDS     =  142,
-    //CV_AMD64_ISEM     =  143,
-    //CV_AMD64_FPEIP    =  144,
-    //CV_AMD64_FPEDO    =  145,
+        // Debug registers
+        case CV_AMD64_DR0:
+            return make_register_value<uint64_t>(context.Dr0);
 
-    //CV_AMD64_MM0      =  146,
-    //CV_AMD64_MM1      =  147,
-    //CV_AMD64_MM2      =  148,
-    //CV_AMD64_MM3      =  149,
-    //CV_AMD64_MM4      =  150,
-    //CV_AMD64_MM5      =  151,
-    //CV_AMD64_MM6      =  152,
-    //CV_AMD64_MM7      =  153,
+        case CV_AMD64_DR1:
+            return make_register_value<uint64_t>(context.Dr1);
+
+        case CV_AMD64_DR2:
+            return make_register_value<uint64_t>(context.Dr2);
+
+        case CV_AMD64_DR3:
+            return make_register_value<uint64_t>(context.Dr3);
+
+        case CV_AMD64_DR6:
+            return make_register_value<uint64_t>(context.Dr6);
+
+        case CV_AMD64_DR7:
+            return make_register_value<uint64_t>(context.Dr7);
+
+
+        case CV_AMD64_ST0:
+            return to_float80(context.Legacy[0]);
+
+        case CV_AMD64_ST1:
+            return to_float80(context.Legacy[1]);
+
+        case CV_AMD64_ST2:
+            return to_float80(context.Legacy[2]);
+
+        case CV_AMD64_ST3:
+            return to_float80(context.Legacy[3]);
+
+        case CV_AMD64_ST4:
+            return to_float80(context.Legacy[4]);
+
+        case CV_AMD64_ST5:
+            return to_float80(context.Legacy[5]);
+
+        case CV_AMD64_ST6:
+            return to_float80(context.Legacy[6]);
+
+        case CV_AMD64_ST7:
+            return to_float80(context.Legacy[7]);
+
+        case CV_AMD64_CTRL:
+            return context.FltSave.ControlWord;
+
+        case CV_AMD64_STAT:
+            return context.FltSave.StatusWord;
+
+        case CV_AMD64_TAG:
+            return context.FltSave.TagWord;
+
+        case CV_AMD64_FPIP:
+            return static_cast<uint32_t>(context.FltSave.ErrorOffset);
+
+        case CV_AMD64_FPCS:
+            return context.FltSave.ErrorSelector;
+
+        case CV_AMD64_FPDO:
+            return static_cast<uint32_t>(context.FltSave.DataOffset);
+
+        case CV_AMD64_FPDS:
+            return context.FltSave.DataSelector;
+
+        case CV_AMD64_MM0:
+            return to_uint64_low(context.Legacy[0]);
+
+        case CV_AMD64_MM1:
+            return to_uint64_low(context.Legacy[1]);
+
+        case CV_AMD64_MM2:
+            return to_uint64_low(context.Legacy[2]);
+
+        case CV_AMD64_MM3:
+            return to_uint64_low(context.Legacy[3]);
+
+        case CV_AMD64_MM4:
+            return to_uint64_low(context.Legacy[4]);
+
+        case CV_AMD64_MM5:
+            return to_uint64_low(context.Legacy[5]);
+
+        case CV_AMD64_MM6:
+            return to_uint64_low(context.Legacy[6]);
+
+        case CV_AMD64_MM7:
+            return to_uint64_low(context.Legacy[7]);
 
             // KATMAI registers
         case CV_AMD64_XMM0:
@@ -1868,9 +2474,6 @@ namespace
 
         return {.register_type= registry, .value= value};
     }
-
-    template<typename T>
-    concept Integral = std::is_integral_v<T>;
 
     uint64_t to_address_offset(reg_value_t const& value)
     {

@@ -6,13 +6,14 @@
 
 #include <variant>
 
+#include "float80.h"
 #include "int128.h"
 #include "mini_dump_memory_stream.h"
 #include "symbol_type_info.h"
 
 namespace dlg_help_utils::dbg_help
 {
-    using reg_value_t = std::variant<uint8_t, uint16_t, uint32_t, uint64_t, std::uint128_t, float, double>;
+    using reg_value_t = std::variant<uint8_t, uint16_t, uint32_t, uint64_t, std::uint128_t, float, double, float80_t>;
 
     struct registry_info
     {

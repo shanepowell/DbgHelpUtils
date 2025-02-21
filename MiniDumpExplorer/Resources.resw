@@ -2196,6 +2196,1137 @@
   <data name="CV_AMD64_R15" xml:space="preserve">
     <value>R15</value>
   </data>
+  <data name="CV_AMD64_XMM0" xml:space="preserve">
+    <value>XMM0</value>
+  </data>
+  <data name="CV_AMD64_XMM1" xml:space="preserve">
+    <value>XMM1</value>
+  </data>
+  <data name="CV_AMD64_XMM2" xml:space="preserve">
+    <value>XMM2</value>
+  </data>
+  <data name="CV_AMD64_XMM3" xml:space="preserve">
+    <value>XMM3</value>
+  </data>
+  <data name="CV_AMD64_XMM4" xml:space="preserve">
+    <value>XMM4</value>
+  </data>
+  <data name="CV_AMD64_XMM5" xml:space="preserve">
+    <value>XMM5</value>
+  </data>
+  <data name="CV_AMD64_XMM6" xml:space="preserve">
+    <value>XMM6</value>
+  </data>
+  <data name="CV_AMD64_XMM7" xml:space="preserve">
+    <value>XMM7</value>
+  </data>
+  <data name="CV_AMD64_XMM0_0" xml:space="preserve">
+    <value>XMM0 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM0_1" xml:space="preserve">
+    <value>XMM0 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM0_2" xml:space="preserve">
+    <value>XMM0 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM0_3" xml:space="preserve">
+    <value>XMM0 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM1_0" xml:space="preserve">
+    <value>XMM1 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM1_1" xml:space="preserve">
+    <value>XMM1 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM1_2" xml:space="preserve">
+    <value>XMM1 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM1_3" xml:space="preserve">
+    <value>XMM1 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM2_0" xml:space="preserve">
+    <value>XMM2 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM2_1" xml:space="preserve">
+    <value>XMM2 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM2_2" xml:space="preserve">
+    <value>XMM2 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM2_3" xml:space="preserve">
+    <value>XMM2 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM3_0" xml:space="preserve">
+    <value>XMM3 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM3_1" xml:space="preserve">
+    <value>XMM3 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM3_2" xml:space="preserve">
+    <value>XMM3 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM3_3" xml:space="preserve">
+    <value>XMM3 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM4_0" xml:space="preserve">
+    <value>XMM4 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM4_1" xml:space="preserve">
+    <value>XMM4 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM4_2" xml:space="preserve">
+    <value>XMM4 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM4_3" xml:space="preserve">
+    <value>XMM4 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM5_0" xml:space="preserve">
+    <value>XMM5 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM5_1" xml:space="preserve">
+    <value>XMM5 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM5_2" xml:space="preserve">
+    <value>XMM5 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM5_3" xml:space="preserve">
+    <value>XMM5 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM6_0" xml:space="preserve">
+    <value>XMM6 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM6_1" xml:space="preserve">
+    <value>XMM6 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM6_2" xml:space="preserve">
+    <value>XMM6 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM6_3" xml:space="preserve">
+    <value>XMM6 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM7_0" xml:space="preserve">
+    <value>XMM7 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM7_1" xml:space="preserve">
+    <value>XMM7 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM7_2" xml:space="preserve">
+    <value>XMM7 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM7_3" xml:space="preserve">
+    <value>XMM7 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0" xml:space="preserve">
+    <value>YMM0</value>
+  </data>
+  <data name="CV_AMD64_YMM1" xml:space="preserve">
+    <value>YMM1</value>
+  </data>
+  <data name="CV_AMD64_YMM2" xml:space="preserve">
+    <value>YMM2</value>
+  </data>
+  <data name="CV_AMD64_YMM3" xml:space="preserve">
+    <value>YMM3</value>
+  </data>
+  <data name="CV_AMD64_YMM4" xml:space="preserve">
+    <value>YMM4</value>
+  </data>
+  <data name="CV_AMD64_YMM5" xml:space="preserve">
+    <value>YMM5</value>
+  </data>
+  <data name="CV_AMD64_YMM6" xml:space="preserve">
+    <value>YMM6</value>
+  </data>
+  <data name="CV_AMD64_YMM7" xml:space="preserve">
+    <value>YMM7</value>
+  </data>
+  <data name="CV_AMD64_YMM8" xml:space="preserve">
+    <value>YMM8</value>
+  </data>
+  <data name="CV_AMD64_YMM9" xml:space="preserve">
+    <value>YMM9</value>
+  </data>
+  <data name="CV_AMD64_YMM10" xml:space="preserve">
+    <value>YMM10</value>
+  </data>
+  <data name="CV_AMD64_YMM11" xml:space="preserve">
+    <value>YMM11</value>
+  </data>
+  <data name="CV_AMD64_YMM12" xml:space="preserve">
+    <value>YMM12</value>
+  </data>
+  <data name="CV_AMD64_YMM13" xml:space="preserve">
+    <value>YMM13</value>
+  </data>
+  <data name="CV_AMD64_YMM14" xml:space="preserve">
+    <value>YMM14</value>
+  </data>
+  <data name="CV_AMD64_YMM15" xml:space="preserve">
+    <value>YMM15</value>
+  </data>
+  <data name="CV_AMD64_YMM0H" xml:space="preserve">
+    <value>YMM0 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1H" xml:space="preserve">
+    <value>YMM1 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2H" xml:space="preserve">
+    <value>YMM2 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3H" xml:space="preserve">
+    <value>YMM3 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4H" xml:space="preserve">
+    <value>YMM4 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5H" xml:space="preserve">
+    <value>YMM5 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6H" xml:space="preserve">
+    <value>YMM6 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7H" xml:space="preserve">
+    <value>YMM7 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8H" xml:space="preserve">
+    <value>YMM8 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9H" xml:space="preserve">
+    <value>YMM9 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10H" xml:space="preserve">
+    <value>YMM10 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11H" xml:space="preserve">
+    <value>YMM11 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12H" xml:space="preserve">
+    <value>YMM12 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13H" xml:space="preserve">
+    <value>YMM13 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14H" xml:space="preserve">
+    <value>YMM14 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15H" xml:space="preserve">
+    <value>YMM15 H (uint128_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM0IL" xml:space="preserve">
+    <value>XMM0 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM1IL" xml:space="preserve">
+    <value>XMM1 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM2IL" xml:space="preserve">
+    <value>XMM2 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM3IL" xml:space="preserve">
+    <value>XMM3 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM4IL" xml:space="preserve">
+    <value>XMM4 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM5IL" xml:space="preserve">
+    <value>XMM5 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM6IL" xml:space="preserve">
+    <value>XMM6 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM7IL" xml:space="preserve">
+    <value>XMM7 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM8IL" xml:space="preserve">
+    <value>XMM8 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM9IL" xml:space="preserve">
+    <value>XMM9 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM10IL" xml:space="preserve">
+    <value>XMM10 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM11IL" xml:space="preserve">
+    <value>XMM11 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM12IL" xml:space="preserve">
+    <value>XMM12 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM13IL" xml:space="preserve">
+    <value>XMM13 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM14IL" xml:space="preserve">
+    <value>XMM14 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM15IL" xml:space="preserve">
+    <value>XMM15 L (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM0IH" xml:space="preserve">
+    <value>XMM0 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM1IH" xml:space="preserve">
+    <value>XMM1 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM2IH" xml:space="preserve">
+    <value>XMM2 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM3IH" xml:space="preserve">
+    <value>XMM3 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM4IH" xml:space="preserve">
+    <value>XMM4 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM5IH" xml:space="preserve">
+    <value>XMM5 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM6IH" xml:space="preserve">
+    <value>XMM6 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM7IH" xml:space="preserve">
+    <value>XMM7 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM8IH" xml:space="preserve">
+    <value>XMM8 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM9IH" xml:space="preserve">
+    <value>XMM9 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM10IH" xml:space="preserve">
+    <value>XMM10 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM11IH" xml:space="preserve">
+    <value>XMM11 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM12IH" xml:space="preserve">
+    <value>XMM12 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM13IH" xml:space="preserve">
+    <value>XMM13 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM14IH" xml:space="preserve">
+    <value>XMM14 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_XMM15IH" xml:space="preserve">
+    <value>XMM15 H (uint64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0I0" xml:space="preserve">
+    <value>YMM0 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0I1" xml:space="preserve">
+    <value>YMM0 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0I2" xml:space="preserve">
+    <value>YMM0 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0I3" xml:space="preserve">
+    <value>YMM0 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1I0" xml:space="preserve">
+    <value>YMM1 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1I1" xml:space="preserve">
+    <value>YMM1 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1I2" xml:space="preserve">
+    <value>YMM1 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1I3" xml:space="preserve">
+    <value>YMM1 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2I0" xml:space="preserve">
+    <value>YMM2 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2I1" xml:space="preserve">
+    <value>YMM2 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2I2" xml:space="preserve">
+    <value>YMM2 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2I3" xml:space="preserve">
+    <value>YMM2 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3I0" xml:space="preserve">
+    <value>YMM3 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3I1" xml:space="preserve">
+    <value>YMM3 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3I2" xml:space="preserve">
+    <value>YMM3 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3I3" xml:space="preserve">
+    <value>YMM3 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4I0" xml:space="preserve">
+    <value>YMM4 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4I1" xml:space="preserve">
+    <value>YMM4 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4I2" xml:space="preserve">
+    <value>YMM4 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4I3" xml:space="preserve">
+    <value>YMM4 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6I0" xml:space="preserve">
+    <value>YMM5 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6I1" xml:space="preserve">
+    <value>YMM5 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6I2" xml:space="preserve">
+    <value>YMM5 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6I3" xml:space="preserve">
+    <value>YMM5 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7I0" xml:space="preserve">
+    <value>YMM8 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7I1" xml:space="preserve">
+    <value>YMM8 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7I2" xml:space="preserve">
+    <value>YMM8 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7I3" xml:space="preserve">
+    <value>YMM8 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9I0" xml:space="preserve">
+    <value>YMM9 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9I1" xml:space="preserve">
+    <value>YMM9 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9I2" xml:space="preserve">
+    <value>YMM9 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9I3" xml:space="preserve">
+    <value>YMM9 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10I0" xml:space="preserve">
+    <value>YMM10 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10I1" xml:space="preserve">
+    <value>YMM10 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10I2" xml:space="preserve">
+    <value>YMM10 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10I3" xml:space="preserve">
+    <value>YMM10 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11I0" xml:space="preserve">
+    <value>YMM11 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11I1" xml:space="preserve">
+    <value>YMM11 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11I2" xml:space="preserve">
+    <value>YMM11 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11I3" xml:space="preserve">
+    <value>YMM11 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12I0" xml:space="preserve">
+    <value>YMM12 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12I1" xml:space="preserve">
+    <value>YMM12 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12I2" xml:space="preserve">
+    <value>YMM12 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12I3" xml:space="preserve">
+    <value>YMM12 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14I0" xml:space="preserve">
+    <value>YMM14 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14I1" xml:space="preserve">
+    <value>YMM14 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14I2" xml:space="preserve">
+    <value>YMM14 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14I3" xml:space="preserve">
+    <value>YMM14 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15I0" xml:space="preserve">
+    <value>YMM15 0 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15I1" xml:space="preserve">
+    <value>YMM15 1 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15I2" xml:space="preserve">
+    <value>YMM15 2 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15I3" xml:space="preserve">
+    <value>YMM15 3 (uint32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F0" xml:space="preserve">
+    <value>YMM0 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F1" xml:space="preserve">
+    <value>YMM0 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F2" xml:space="preserve">
+    <value>YMM0 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F3" xml:space="preserve">
+    <value>YMM0 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F4" xml:space="preserve">
+    <value>YMM0 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F5" xml:space="preserve">
+    <value>YMM0 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F6" xml:space="preserve">
+    <value>YMM0 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0F7" xml:space="preserve">
+    <value>YMM0 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F0" xml:space="preserve">
+    <value>YMM1 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F1" xml:space="preserve">
+    <value>YMM1 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F2" xml:space="preserve">
+    <value>YMM1 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F3" xml:space="preserve">
+    <value>YMM1 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F4" xml:space="preserve">
+    <value>YMM1 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F5" xml:space="preserve">
+    <value>YMM1 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F6" xml:space="preserve">
+    <value>YMM1 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1F7" xml:space="preserve">
+    <value>YMM1 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F0" xml:space="preserve">
+    <value>YMM2 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F1" xml:space="preserve">
+    <value>YMM2 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F2" xml:space="preserve">
+    <value>YMM2 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F3" xml:space="preserve">
+    <value>YMM2 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F4" xml:space="preserve">
+    <value>YMM2 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F5" xml:space="preserve">
+    <value>YMM2 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F6" xml:space="preserve">
+    <value>YMM2 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2F7" xml:space="preserve">
+    <value>YMM2 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F0" xml:space="preserve">
+    <value>YMM3 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F1" xml:space="preserve">
+    <value>YMM3 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F2" xml:space="preserve">
+    <value>YMM3 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F3" xml:space="preserve">
+    <value>YMM3 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F4" xml:space="preserve">
+    <value>YMM3 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F5" xml:space="preserve">
+    <value>YMM3 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F6" xml:space="preserve">
+    <value>YMM3 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3F7" xml:space="preserve">
+    <value>YMM3 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F0" xml:space="preserve">
+    <value>YMM4 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F1" xml:space="preserve">
+    <value>YMM4 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F2" xml:space="preserve">
+    <value>YMM4 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F3" xml:space="preserve">
+    <value>YMM4 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F4" xml:space="preserve">
+    <value>YMM4 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F5" xml:space="preserve">
+    <value>YMM4 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F6" xml:space="preserve">
+    <value>YMM4 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4F7" xml:space="preserve">
+    <value>YMM4 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F0" xml:space="preserve">
+    <value>YMM5 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F1" xml:space="preserve">
+    <value>YMM5 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F2" xml:space="preserve">
+    <value>YMM5 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F3" xml:space="preserve">
+    <value>YMM5 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F4" xml:space="preserve">
+    <value>YMM5 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F5" xml:space="preserve">
+    <value>YMM5 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F6" xml:space="preserve">
+    <value>YMM5 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5F7" xml:space="preserve">
+    <value>YMM5 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F0" xml:space="preserve">
+    <value>YMM6 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F1" xml:space="preserve">
+    <value>YMM6 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F2" xml:space="preserve">
+    <value>YMM6 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F3" xml:space="preserve">
+    <value>YMM6 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F4" xml:space="preserve">
+    <value>YMM6 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F5" xml:space="preserve">
+    <value>YMM6 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F6" xml:space="preserve">
+    <value>YMM6 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6F7" xml:space="preserve">
+    <value>YMM6 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F0" xml:space="preserve">
+    <value>YMM7 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F1" xml:space="preserve">
+    <value>YMM7 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F2" xml:space="preserve">
+    <value>YMM7 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F3" xml:space="preserve">
+    <value>YMM7 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F4" xml:space="preserve">
+    <value>YMM7 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F5" xml:space="preserve">
+    <value>YMM7 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F6" xml:space="preserve">
+    <value>YMM7 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7F7" xml:space="preserve">
+    <value>YMM7 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F0" xml:space="preserve">
+    <value>YMM8 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F1" xml:space="preserve">
+    <value>YMM8 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F2" xml:space="preserve">
+    <value>YMM8 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F3" xml:space="preserve">
+    <value>YMM8 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F4" xml:space="preserve">
+    <value>YMM8 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F5" xml:space="preserve">
+    <value>YMM8 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F6" xml:space="preserve">
+    <value>YMM8 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8F7" xml:space="preserve">
+    <value>YMM8 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F0" xml:space="preserve">
+    <value>YMM9 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F1" xml:space="preserve">
+    <value>YMM9 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F2" xml:space="preserve">
+    <value>YMM9 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F3" xml:space="preserve">
+    <value>YMM9 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F4" xml:space="preserve">
+    <value>YMM9 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F5" xml:space="preserve">
+    <value>YMM9 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F6" xml:space="preserve">
+    <value>YMM9 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9F7" xml:space="preserve">
+    <value>YMM9 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F0" xml:space="preserve">
+    <value>YMM10 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F1" xml:space="preserve">
+    <value>YMM10 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F2" xml:space="preserve">
+    <value>YMM10 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F3" xml:space="preserve">
+    <value>YMM10 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F4" xml:space="preserve">
+    <value>YMM10 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F5" xml:space="preserve">
+    <value>YMM10 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F6" xml:space="preserve">
+    <value>YMM10 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10F7" xml:space="preserve">
+    <value>YMM10 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F0" xml:space="preserve">
+    <value>YMM11 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F1" xml:space="preserve">
+    <value>YMM11 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F2" xml:space="preserve">
+    <value>YMM11 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F3" xml:space="preserve">
+    <value>YMM11 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F4" xml:space="preserve">
+    <value>YMM11 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F5" xml:space="preserve">
+    <value>YMM11 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F6" xml:space="preserve">
+    <value>YMM11 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11F7" xml:space="preserve">
+    <value>YMM11 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F0" xml:space="preserve">
+    <value>YMM12 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F1" xml:space="preserve">
+    <value>YMM12 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F2" xml:space="preserve">
+    <value>YMM12 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F3" xml:space="preserve">
+    <value>YMM12 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F4" xml:space="preserve">
+    <value>YMM12 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F5" xml:space="preserve">
+    <value>YMM12 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F6" xml:space="preserve">
+    <value>YMM12 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12F7" xml:space="preserve">
+    <value>YMM12 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F0" xml:space="preserve">
+    <value>YMM13 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F1" xml:space="preserve">
+    <value>YMM13 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F2" xml:space="preserve">
+    <value>YMM13 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F3" xml:space="preserve">
+    <value>YMM13 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F4" xml:space="preserve">
+    <value>YMM13 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F5" xml:space="preserve">
+    <value>YMM13 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F6" xml:space="preserve">
+    <value>YMM13 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13F7" xml:space="preserve">
+    <value>YMM13 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F0" xml:space="preserve">
+    <value>YMM14 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F1" xml:space="preserve">
+    <value>YMM14 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F2" xml:space="preserve">
+    <value>YMM14 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F3" xml:space="preserve">
+    <value>YMM14 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F4" xml:space="preserve">
+    <value>YMM14 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F5" xml:space="preserve">
+    <value>YMM14 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F6" xml:space="preserve">
+    <value>YMM14 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14F7" xml:space="preserve">
+    <value>YMM14 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F0" xml:space="preserve">
+    <value>YMM15 0 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F1" xml:space="preserve">
+    <value>YMM15 1 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F2" xml:space="preserve">
+    <value>YMM15 2 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F3" xml:space="preserve">
+    <value>YMM15 3 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F4" xml:space="preserve">
+    <value>YMM15 4 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F5" xml:space="preserve">
+    <value>YMM15 5 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F6" xml:space="preserve">
+    <value>YMM15 6 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15F7" xml:space="preserve">
+    <value>YMM15 7 (float32_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0D0" xml:space="preserve">
+    <value>YMM0 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0D1" xml:space="preserve">
+    <value>YMM0 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0D2" xml:space="preserve">
+    <value>YMM0 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM0D3" xml:space="preserve">
+    <value>YMM0 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1D0" xml:space="preserve">
+    <value>YMM1 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1D1" xml:space="preserve">
+    <value>YMM1 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1D2" xml:space="preserve">
+    <value>YMM1 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM1D3" xml:space="preserve">
+    <value>YMM1 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2D0" xml:space="preserve">
+    <value>YMM2 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2D1" xml:space="preserve">
+    <value>YMM2 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2D2" xml:space="preserve">
+    <value>YMM2 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM2D3" xml:space="preserve">
+    <value>YMM2 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3D0" xml:space="preserve">
+    <value>YMM3 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3D1" xml:space="preserve">
+    <value>YMM3 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3D2" xml:space="preserve">
+    <value>YMM3 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM3D3" xml:space="preserve">
+    <value>YMM3 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4D0" xml:space="preserve">
+    <value>YMM4 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4D1" xml:space="preserve">
+    <value>YMM4 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4D2" xml:space="preserve">
+    <value>YMM4 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM4D3" xml:space="preserve">
+    <value>YMM4 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5D0" xml:space="preserve">
+    <value>YMM5 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5D1" xml:space="preserve">
+    <value>YMM5 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5D2" xml:space="preserve">
+    <value>YMM5 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM5D3" xml:space="preserve">
+    <value>YMM5 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6D0" xml:space="preserve">
+    <value>YMM6 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6D1" xml:space="preserve">
+    <value>YMM6 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6D2" xml:space="preserve">
+    <value>YMM6 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM6D3" xml:space="preserve">
+    <value>YMM6 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7D0" xml:space="preserve">
+    <value>YMM7 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7D1" xml:space="preserve">
+    <value>YMM7 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7D2" xml:space="preserve">
+    <value>YMM7 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM7D3" xml:space="preserve">
+    <value>YMM7 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8D0" xml:space="preserve">
+    <value>YMM8 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8D1" xml:space="preserve">
+    <value>YMM8 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8D2" xml:space="preserve">
+    <value>YMM8 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM8D3" xml:space="preserve">
+    <value>YMM8 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9D0" xml:space="preserve">
+    <value>YMM9 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9D1" xml:space="preserve">
+    <value>YMM9 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9D2" xml:space="preserve">
+    <value>YMM9 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM9D3" xml:space="preserve">
+    <value>YMM9 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10D0" xml:space="preserve">
+    <value>YMM10 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10D1" xml:space="preserve">
+    <value>YMM10 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10D2" xml:space="preserve">
+    <value>YMM10 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM10D3" xml:space="preserve">
+    <value>YMM10 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11D0" xml:space="preserve">
+    <value>YMM11 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11D1" xml:space="preserve">
+    <value>YMM11 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11D2" xml:space="preserve">
+    <value>YMM11 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM11D3" xml:space="preserve">
+    <value>YMM11 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12D0" xml:space="preserve">
+    <value>YMM12 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12D1" xml:space="preserve">
+    <value>YMM12 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12D2" xml:space="preserve">
+    <value>YMM12 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM12D3" xml:space="preserve">
+    <value>YMM12 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13D0" xml:space="preserve">
+    <value>YMM13 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13D1" xml:space="preserve">
+    <value>YMM13 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13D2" xml:space="preserve">
+    <value>YMM13 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM13D3" xml:space="preserve">
+    <value>YMM13 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14D0" xml:space="preserve">
+    <value>YMM14 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14D1" xml:space="preserve">
+    <value>YMM14 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14D2" xml:space="preserve">
+    <value>YMM14 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM14D3" xml:space="preserve">
+    <value>YMM14 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15D0" xml:space="preserve">
+    <value>YMM15 0 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15D1" xml:space="preserve">
+    <value>YMM15 1 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15D2" xml:space="preserve">
+    <value>YMM15 2 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_YMM15D3" xml:space="preserve">
+    <value>YMM15 3 (float64_t)</value>
+  </data>
+  <data name="CV_AMD64_DR0" xml:space="preserve">
+    <value>DR0</value>
+  </data>
+  <data name="CV_AMD64_DR1" xml:space="preserve">
+    <value>DR1</value>
+  </data>
+  <data name="CV_AMD64_DR2" xml:space="preserve">
+    <value>DR2</value>
+  </data>
+  <data name="CV_AMD64_DR3" xml:space="preserve">
+    <value>DR3</value>
+  </data>
+  <data name="CV_AMD64_DR6" xml:space="preserve">
+    <value>DR6</value>
+  </data>
+  <data name="CV_AMD64_DR7" xml:space="preserve">
+    <value>DR7</value>
+  </data>
+  <data name="CV_AMD64_ST0" xml:space="preserve">
+    <value>ST0</value>
+  </data>
+  <data name="CV_AMD64_ST1" xml:space="preserve">
+    <value>ST1</value>
+  </data>
+  <data name="CV_AMD64_ST2" xml:space="preserve">
+    <value>ST2</value>
+  </data>
+  <data name="CV_AMD64_ST3" xml:space="preserve">
+    <value>ST3</value>
+  </data>
+  <data name="CV_AMD64_ST4" xml:space="preserve">
+    <value>ST4</value>
+  </data>
+  <data name="CV_AMD64_ST5" xml:space="preserve">
+    <value>ST5</value>
+  </data>
+  <data name="CV_AMD64_ST6" xml:space="preserve">
+    <value>ST6</value>
+  </data>
+  <data name="CV_AMD64_ST7" xml:space="preserve">
+    <value>ST7</value>
+  </data>
+  <data name="CV_AMD64_CTRL" xml:space="preserve">
+    <value>FPCTRL</value>
+  </data>
+  <data name="CV_AMD64_STAT" xml:space="preserve">
+    <value>FPSTAT</value>
+  </data>
+  <data name="CV_AMD64_TAG" xml:space="preserve">
+    <value>FPTAG</value>
+  </data>
+  <data name="CV_AMD64_FPIP" xml:space="preserve">
+    <value>FPIP</value>
+  </data>
+  <data name="CV_AMD64_FPCS" xml:space="preserve">
+    <value>FPCS</value>
+  </data>
+  <data name="CV_AMD64_FPDO" xml:space="preserve">
+    <value>FPDO</value>
+  </data>
+  <data name="CV_AMD64_FPDS" xml:space="preserve">
+    <value>FPDS</value>
+  </data>
+  <data name="CV_AMD64_MM0" xml:space="preserve">
+    <value>MM0</value>
+  </data>
+  <data name="CV_AMD64_MM1" xml:space="preserve">
+    <value>MM1</value>
+  </data>
+  <data name="CV_AMD64_MM2" xml:space="preserve">
+    <value>MM2</value>
+  </data>
+  <data name="CV_AMD64_MM3" xml:space="preserve">
+    <value>MM3</value>
+  </data>
+  <data name="CV_AMD64_MM4" xml:space="preserve">
+    <value>MM4</value>
+  </data>
+  <data name="CV_AMD64_MM5" xml:space="preserve">
+    <value>MM5</value>
+  </data>
+  <data name="CV_AMD64_MM6" xml:space="preserve">
+    <value>MM6</value>
+  </data>
+  <data name="CV_AMD64_MM7" xml:space="preserve">
+    <value>MM7</value>
+  </data>
   <data name="StreamStackDumpInline" xml:space="preserve">
     <value>Inline</value>
   </data>
