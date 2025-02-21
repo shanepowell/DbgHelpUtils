@@ -2,7 +2,9 @@
 #include "ThreadEntryPage.xaml.h"
 
 #include "DbgHelpUtils/thread_list_stream.h"
+#include "Helpers/UIHelper.h"
 #include "Models/ThreadListStreamEntry.h"
+#include "Models/ThreadStackEntry.h"
 
 #if __has_include("ThreadEntryPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -15,6 +17,36 @@ using namespace Microsoft::UI::Xaml;
 namespace winrt::MiniDumpExplorer::implementation
 {
     ThreadEntryPage::ThreadEntryPage() = default;
+
+    void ThreadEntryPage::InitializeComponent()
+    {
+        ThreadEntryPageT::InitializeComponent();
+        SetupFlyoutMenus();
+    }
+
+    void ThreadEntryPage::OnTreeViewItemExpanding([[maybe_unused]] Controls::TreeView const& sender, Controls::TreeViewExpandingEventArgs const& args)
+    {
+        if (auto const item = args.Item().as<ThreadStackEntry>();
+            item && !item->AreChildrenLoaded())
+        {
+            item->LoadChildren();
+        }
+    }
+
+    void ThreadEntryPage::SetupFlyoutMenus()
+    {
+        UIHelper::CreateStandardHexNumberMenu(
+            threadId(),
+            threadPriority(),
+            threadTEB(),
+            stackStartOfMemoryRange(),
+            stackEndOfMemoryRange()
+        );
+
+        UIHelper::CreateStandardSizeNumberMenu(
+            stackDataSize()
+        );
+    }
 
     void ThreadEntryPage::MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters)
     {
@@ -35,6 +67,8 @@ namespace winrt::MiniDumpExplorer::implementation
             return;
         }
 
-        thread_.as<ThreadListStreamEntry>()->Set(parameters.StreamSubIndex(), thread_list.get_thread(parameters.StreamSubIndex()));
+        auto thread = thread_.as<ThreadListStreamEntry>();
+        thread->Set(parameters.StreamSubIndex(), thread_list.get_thread(parameters.StreamSubIndex()));
+        thread->LoadStack(miniDump);
     }
 }

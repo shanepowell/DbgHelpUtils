@@ -336,4 +336,9 @@ namespace dlg_help_utils::symbol_type_utils::resources
     {
         return L"memory address range in dump file"s;
     }
+
+    std::wstring get_fields_string()
+    {
+        return L"fields"s;
+    }
 }

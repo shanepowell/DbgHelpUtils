@@ -355,7 +355,9 @@
     <ClInclude Include="heap_subsegment.h" />
     <ClInclude Include="lfh_subsegment_location_utils.h" />
     <ClInclude Include="list_entry_walker.h" />
-    <ClInclude Include="local_variable.h" />
+    <ClInclude Include="mini_dump_memory_walker_create_handle.h" />
+    <ClInclude Include="mini_dump_memory_walker_release_handle.h" />
+    <ClInclude Include="variable.h" />
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />
     <ClInclude Include="nt_heap.h" />

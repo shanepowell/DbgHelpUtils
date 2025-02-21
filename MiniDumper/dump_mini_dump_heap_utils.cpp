@@ -47,7 +47,7 @@ namespace detail
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
         {
             log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-            hex_dump_stack(log, peb.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{peb.is_x86_target()}, indent + 4);
+            dump_stack_to_stream(log, peb.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{peb.is_x86_target()}, indent + 4);
             log << L'\n';
         }
 

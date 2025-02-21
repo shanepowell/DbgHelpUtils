@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <unordered_set>
+#include <functional>
 
 #include "call_convention.h"
 #include "data_kind.h"
@@ -45,12 +46,25 @@ namespace dlg_help_utils::symbol_type_utils
         , size_t indent = 0
         , size_t visited_depth = 0);
 
-    enum class dump_variable_symbol_options
+    enum class dump_variable_symbol_options : uint8_t
     {
         NoHeader,
         ForceHeader,
         AutoHeader
     };
+
+    struct dump_variable_symbol_data
+    {
+        std::wstring line;
+        std::function<std::experimental::generator<dump_variable_symbol_data>()> sub_lines;
+    };
+
+    std::experimental::generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        , dbg_help::symbol_type_info const& type
+        , dbg_help::symbol_type_info const& display_type
+        , uint64_t variable_address
+        , mini_dump_memory_stream const& variable_stream
+        , size_t visited_depth = 0);
 
     void dump_variable_symbol_at(std::wostream& os
         , stream_stack_dump::mini_dump_memory_walker const& walker
@@ -124,5 +138,6 @@ namespace dlg_help_utils::symbol_type_utils
         std::wstring get_symbol_title();
         std::wstring get_is_zero_length_string();
         std::wstring get_memory_address_in_range_string();
+        std::wstring get_fields_string();
     }
 }

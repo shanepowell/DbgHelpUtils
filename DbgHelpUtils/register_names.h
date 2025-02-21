@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 // ReSharper disable once CppUnusedIncludeDirective
-#include <string_view>
+#include <string>
 
 // ReSharper disable once CommentTypo
 // Found in "$(VSINSTALLDIR)\DIA SDK\include"

@@ -56,14 +56,14 @@ void symbol_engine_ui::download_complete()
     module_.clear();
 }
 
-std::wostream& symbol_engine_ui::log_stream() const
+dlg_help_utils::dbg_help::log_handle symbol_engine_ui::log_stream() const
 {
     if(options_.verbose_output())
     {
-        return std::wcerr;
+        return {std::wcerr, {}};
     }
 
-    return null_stream_;
+    return {null_stream_, {}};
 }
 
 bool symbol_engine_ui::symbol_load_debug() const

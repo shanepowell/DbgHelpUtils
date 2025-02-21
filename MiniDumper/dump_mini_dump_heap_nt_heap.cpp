@@ -332,7 +332,7 @@ namespace detail
                 if(options.display_symbols() && entry.is_busy() && !entry.allocation_stack_trace().empty())
                 {
                     log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                    hex_dump_stack(log, entry.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.peb().is_x86_target()}, indent + 2);
+                    dump_stack_to_stream(log, entry.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.peb().is_x86_target()}, indent + 2);
                     log << L'\n';
                 }
 

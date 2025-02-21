@@ -197,6 +197,16 @@ std::vector<std::wstring> AppPropertiesHelper::GetStringVectorProperty(std::wstr
     return result;
 }
 
+void AppPropertiesHelper::SetBoolProperty(std::wstring const& propertyName, bool const value)
+{
+    SetIntProperty(propertyName, value ? 1 : 0);
+}
+
+bool AppPropertiesHelper::GetBoolProperty(std::wstring const& propertyName, bool const defaultValue)
+{
+    return GetIntProperty(propertyName, defaultValue ? 1 : 0) != 0;
+}
+
 void AppPropertiesHelper::Initialize(std::wstring const& appName)
 {
     _appRegistryPath = std::format(L"Software\\{}", appName);

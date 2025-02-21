@@ -106,14 +106,14 @@ void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_en
         if(auto const& common_allocation_callsite = bucket.common_allocation_callsite();
             common_allocation_callsite.has_value())
         {
-            log << std::format(L" {0}", hex_dump_stack_frame(common_allocation_callsite.value(), is_x86_target));
+            log << std::format(L" {0}", dump_stack_frame(common_allocation_callsite.value(), is_x86_target));
         }
         log << L'\n';
 
         if(options.display_symbols() && !bucket.allocation_stack_trace().empty())
         {
             log << L"  Allocation Stack Trace:\n";
-            hex_dump_stack(log, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
+            dump_stack_to_stream(log, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
             log << L'\n';
         }
 

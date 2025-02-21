@@ -28,7 +28,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Thread ID" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock x:Name="threadId" Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />

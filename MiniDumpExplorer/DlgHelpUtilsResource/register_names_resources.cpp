@@ -16,7 +16,7 @@ namespace dlg_help_utils::register_names
             winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
             static std::unordered_map<CV_HREG_e, std::wstring> const register_names =
             {
-                {CV_AMD64_AL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/{CV_AMD64_AL").ValueAsString()}},
+                {CV_AMD64_AL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/CV_AMD64_AL").ValueAsString()}},
                 {CV_AMD64_BL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/CV_AMD64_BL").ValueAsString()}},
                 {CV_AMD64_CL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/CV_AMD64_CL").ValueAsString()}},
                 {CV_AMD64_DL, std::wstring{rm.MainResourceMap().GetValue(L"Resources/CV_AMD64_DL").ValueAsString()}},

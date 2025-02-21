@@ -902,7 +902,7 @@
     <ClInclude Include="global_symbol.h">
       <Filter>Process</Filter>
     </ClInclude>
-    <ClInclude Include="local_variable.h">
+    <ClInclude Include="variable.h">
       <Filter>DbgHelp</Filter>
     </ClInclude>
     <ClInclude Include="register_names.h">
@@ -1017,6 +1017,12 @@
       <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="function_info_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_memory_walker_release_handle.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_memory_walker_create_handle.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>

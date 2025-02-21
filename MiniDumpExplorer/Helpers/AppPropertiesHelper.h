@@ -23,6 +23,8 @@ public:
     static unsigned int GetUnsignedIntProperty(std::wstring const& propertyName, unsigned int defaultValue);
     static void SetStringVectorProperty(std::wstring const& propertyName, std::vector<std::wstring> const& value);
     static std::vector<std::wstring> GetStringVectorProperty(std::wstring const& propertyName, std::vector<std::wstring> const& defaultValue = {});
+    static void SetBoolProperty(std::wstring const& propertyName, bool value);
+    static bool GetBoolProperty(std::wstring const& propertyName, bool defaultValue);
 
     static void Initialize(std::wstring const& appName);
 

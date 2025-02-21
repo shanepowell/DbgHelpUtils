@@ -12,7 +12,6 @@
 #include <format>
 
 #include "DbgHelpUtils/file_version_info.h"
-#include "DbgHelpUtils/system_time_utils.h"
 #include "DbgHelpUtils/time_utils.h"
 
 using namespace dlg_help_utils;
@@ -34,7 +33,10 @@ namespace
 
 logger::logger(key)
 {
-    MessageFilter([this](log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::system_clock::time_point const& now_day) { do_run_log_command(command, level, std::move(log_line), current_level, now_day); });  // NOLINT(performance-unnecessary-value-param)
+    MessageFilter([this](log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)
+    {
+        do_run_log_command(command, level, std::move(log_line), current_level, now_day);
+    });  // NOLINT(performance-unnecessary-value-param)
     open_log_file(GlobalOptions::Options().LogLevel());
 }
 
@@ -127,7 +129,7 @@ void logger::HandleUnknownException(std::source_location const& location) const
     }
 }
 
-void logger::open_log_file(log_level const level, std::chrono::system_clock::time_point const& now)
+void logger::open_log_file(log_level const level, std::chrono::local_time<std::chrono::seconds> const& now)
 {
     log_file_timestamp_ = now;
     while(!log_file_)
@@ -150,7 +152,10 @@ void logger::open_log_file(log_level const level, std::chrono::system_clock::tim
 
 void logger::log_header()
 {
-    std::function<void (log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> filter = [this](log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::system_clock::time_point const& now_day) { do_run_log_command(command, level, std::move(log_line), current_level, now_day); };
+    std::function<void (log_command, log_level, std::string, log_level, std::chrono::local_time<std::chrono::seconds> const&)> filter = [this](log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)
+    {
+        do_run_log_command(command, level, std::move(log_line), current_level, now_day);
+    };
     run_log_command(log_command::log_message, log_level::system, "##########################LOG FILE START##########################", filter);
 
     auto const& path = system_info_utils::get_running_application_path();
@@ -203,7 +208,7 @@ void logger::do_close()
     log_file_.reset();
 }
 
-handles::windows_handle logger::open_log_file(log_level const level, std::chrono::system_clock::time_point const& now, int const log_instance)
+handles::windows_handle logger::open_log_file(log_level const level, std::chrono::local_time<std::chrono::seconds> const& now, int const log_instance)
 {
     if(level == log_level::none)
     {
@@ -230,7 +235,7 @@ handles::windows_handle logger::open_log_file(log_level const level, std::chrono
     return file_handle;
 }
 
-void logger::run_log_command(log_command const command, log_level const level, std::string_view const& message, std::function<void(log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> const& filter)
+void logger::run_log_command(log_command const command, log_level const level, std::string_view const& message, std::function<void(log_command, log_level, std::string, log_level, std::chrono::local_time<std::chrono::seconds> const&)> const& filter)
 {
     auto const current_level = GlobalOptions::Options().LogLevel();
     if((level != log_level::system && level > current_level) || current_level == log_level::none)
@@ -238,16 +243,15 @@ void logger::run_log_command(log_command const command, log_level const level, s
         return;
     }
 
-    auto const now = std::chrono::system_clock::now();
+    auto const now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
     auto const now_day = std::chrono::floor<std::chrono::days>(now);
-    auto const time = std::chrono::current_zone()->to_local(now);
-    auto log_line = std::format("[{0:%T}][{1}][T:{2}] {3}\n", time, log_level_strings_[static_cast<int>(level) + 1], GetCurrentThreadId(), message);
+    auto log_line = std::format("[{0:%T}][{1}][T:{2}] {3}\n", now, log_level_strings_[static_cast<int>(level) + 1], GetCurrentThreadId(), message);
 
     filter(command, level, std::move(log_line), current_level, now_day);
 }
 
 // ReSharper disable once CppPassValueParameterByConstReference
-void logger::do_run_log_command(log_command const command, [[maybe_unused]] log_level const level, std::string const log_line, log_level const current_level, std::chrono::system_clock::time_point const& now_day)  // NOLINT(performance-unnecessary-value-param)
+void logger::do_run_log_command(log_command const command, [[maybe_unused]] log_level const level, std::string const log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)  // NOLINT(performance-unnecessary-value-param)
 {
     switch(command)
     {
@@ -260,7 +264,7 @@ void logger::do_run_log_command(log_command const command, [[maybe_unused]] log_
     }
 }
 
-void logger::write_log_message(std::string const& log_line, log_level const current_level, std::chrono::system_clock::time_point const& now_day)
+void logger::write_log_message(std::string const& log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)
 {
     if(log_file_ && close_log_file(now_day))
     {
@@ -282,12 +286,12 @@ void logger::write_log_message(std::string const& log_line, log_level const curr
     }
 }
 
-bool logger::close_log_file(std::chrono::system_clock::time_point const& now) const
+bool logger::close_log_file(std::chrono::local_time<std::chrono::seconds> const& now) const
 {
     return log_file_ && log_file_timestamp_ != now;
 }
 
-std::wstring logger::get_log_file_name(std::chrono::system_clock::time_point const& now, int const log_instance)
+std::wstring logger::get_log_file_name(std::chrono::local_time<std::chrono::seconds> const& now, int const log_instance)
 {
     auto const base_log_directory = system_info_utils::get_temp_directory() / L"MiniDumpExplorer"sv;
     if(!CreateDirectoryW(base_log_directory.c_str(), nullptr))

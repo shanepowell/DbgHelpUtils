@@ -23,7 +23,7 @@ namespace dlg_help_utils::stream_stack_dump
     namespace
     {
         template <typename T>
-        void generate_hex_dump_address(std::wostream& os, T const stack_address, T address, std::optional<dbg_help::symbol_address_info> const& info, size_t const hex_length = sizeof(T) * 2)
+        void generate_dump_address_to_stream(std::wostream& os, T const stack_address, T address, std::optional<dbg_help::symbol_address_info> const& info, size_t const hex_length = sizeof(T) * 2)
         {
             if (info && info->in_line)
             {
@@ -71,7 +71,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         template <typename T>
-        void generate_hex_dump_stack_raw(std::wostream& os
+        void generate_dump_stack_to_stream_raw(std::wostream& os
             , dbg_help::symbol_engine& symbol_engine
             , uint64_t const stack_start_address
             , T const* stack
@@ -86,12 +86,37 @@ namespace dlg_help_utils::stream_stack_dump
             for (size_t index = 0; index < stack_size; ++index)
             {
                 os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
-                generate_hex_dump_address(os
+                generate_dump_address_to_stream(os
                     , stack_start_address == 0 ? 0 : stack_start_address + (index * sizeof(T))
                     , stack[index]
                     , mini_dump_memory_walker::find_symbol_info(stack[index], module_list, unloaded_module_list, symbol_engine)
                     , hex_length);
                 os << L'\n';
+            }
+        }
+
+        template <typename T>
+        std::experimental::generator<std::wstring> generate_dump_stack_raw(dbg_help::symbol_engine& symbol_engine
+            , uint64_t const stack_start_address
+            , T const* stack
+            , size_t const stack_size
+            , size_t const indent
+            , module_list_stream const& module_list
+            , unloaded_module_list_stream const& unloaded_module_list
+            , size_t const hex_length)
+        {
+            const std::wstring indent_str(indent, L' ');
+
+            for (size_t index = 0; index < stack_size; ++index)
+            {
+                std::wostringstream os;
+                os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
+                generate_dump_address_to_stream(os
+                    , stack_start_address == 0 ? 0 : stack_start_address + (index * sizeof(T))
+                    , stack[index]
+                    , mini_dump_memory_walker::find_symbol_info(stack[index], module_list, unloaded_module_list, symbol_engine)
+                    , hex_length);
+                co_yield std::move(os).str();
             }
         }
 
@@ -106,58 +131,60 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         template <typename T>
-        void generate_hex_dump_local_variable(std::wostream& os, mini_dump_memory_walker const& walker, dbg_help::local_variable const& local_variable, size_t const hex_length = sizeof(T) * 2)
+        void generate_dump_local_variable_to_stream(std::wostream& os, mini_dump_memory_walker const& walker, dbg_help::variable const& variable, size_t const hex_length = sizeof(T) * 2)
         {
-            auto const name = symbol_type_utils::get_symbol_type_friendly_name(local_variable.symbol_info);
-            os << std::format(L"\n          {0}", name);
-            if(local_variable.registry_value.has_value() || local_variable.frame_data.has_value())
+            auto const name = symbol_type_utils::get_symbol_type_friendly_name(variable.symbol_info);
+            os << std::format(L"          {0}\n", name);
+            if(variable.registry_value.has_value() || variable.frame_data.has_value())
             {
-                os << (local_variable.registry_value 
-                        ? (local_variable.frame_data 
-                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(local_variable.registry_value->register_type), local_variable.frame_data->data_offset, stream_hex_dump::to_hex(local_variable.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
-                            : std::format(L" [{}]", register_names::get_register_name(local_variable.registry_value->register_type))
+                os << (variable.registry_value 
+                        ? (variable.frame_data 
+                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(variable.registry_value->register_type), variable.frame_data->data_offset, stream_hex_dump::to_hex(variable.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
+                            : std::format(L" [{}]", register_names::get_register_name(variable.registry_value->register_type))
                           )
-                        : std::format(L" ({})", stream_hex_dump::to_hex(local_variable.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
+                        : std::format(L" ({})", stream_hex_dump::to_hex(variable.frame_data->data_address, static_cast<std::streamsize>(hex_length)))
                       );
 
-                if(local_variable.frame_data)
+                if(variable.frame_data)
                 {
-                    auto const stream = walker.get_process_memory_stream(local_variable.frame_data->data_address, local_variable.frame_data->data_size);
+                    auto const stream = walker.get_process_memory_stream(variable.frame_data->data_address, variable.frame_data->data_size);
                     if(stream.eof())
                     {
-                        os << std::format(L"\n{}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(local_variable.frame_data->data_address), resources::get_failed_to_find_address_postfix());
+                        os << std::format(L"{}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(variable.frame_data->data_address), resources::get_failed_to_find_address_postfix());
                         return;
                     }
-                    dump_variable_symbol_at(os, walker, local_variable.symbol_info, local_variable.symbol_info, local_variable.frame_data->data_address, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
+                    dump_variable_symbol_at(os, walker, variable.symbol_info, variable.symbol_info, variable.frame_data->data_address, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
                 }
-                else if(local_variable.registry_value)
+                else if(variable.registry_value)
                 {
-                    mini_dump_memory_stream const stream{&local_variable.registry_value->value, local_variable.registry_value->value_size};
-                    dump_variable_symbol_at(os, walker, local_variable.symbol_info, local_variable.symbol_info, 0, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
+                    mini_dump_memory_stream const stream{&variable.registry_value->value, variable.registry_value->value_size};
+                    dump_variable_symbol_at(os, walker, variable.symbol_info, variable.symbol_info, 0, stream, 12, 0, symbol_type_utils::dump_variable_symbol_options::NoHeader);
                 }
             }
             else
             {
                 os << L": " << resources::get_unknown_variable_type();
             }
+
+            os << L'\n';
         }
 
         template <typename T>
-        void generate_hex_dump_local_variables(std::wostream& os, std::wstring_view const title, mini_dump_memory_walker const& walker, std::vector<dbg_help::local_variable> const& local_variables)
+        void generate_dump_variables_to_stream(std::wostream& os, std::wstring_view const title, mini_dump_memory_walker const& walker, std::vector<dbg_help::variable> const& variables)
         {
-            if(!local_variables.empty())
+            if(!variables.empty())
             {
-                os << std::format(L"\n{}:", title);
-                for (auto const& local_variable : local_variables)
+                os << std::format(L"{}:\n", title);
+                for (auto const& local_variable : variables)
                 {
-                    generate_hex_dump_local_variable<T>(os, walker, local_variable);
+                    generate_dump_local_variable_to_stream<T>(os, walker, local_variable);
                 }
             }
         }
     }
 
 
-    void hex_dump_stack(std::wostream& os
+    void dump_stack_to_stream(std::wostream& os
         , mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
         , uint64_t const stack_start_address
@@ -165,7 +192,7 @@ namespace dlg_help_utils::stream_stack_dump
         , const size_t stack_size
         , stream_thread_context const& thread_context
         , const size_t indent
-        , dump_stack_options::options const options)
+        , dump_stack_options const options)
     {
         const std::wstring indent_str(indent, L' ');
 
@@ -189,50 +216,49 @@ namespace dlg_help_utils::stream_stack_dump
                 symbol_engine
             };
 
-        auto const display_parameters = (options & dump_stack_options::DisplayStackParameters) == dump_stack_options::DisplayStackParameters;
-        auto const display_variables = (options & dump_stack_options::DisplayStackVariables) == dump_stack_options::DisplayStackVariables;
+        auto const display_parameters = static_cast<dump_stack_options>(static_cast<uint8_t>(options) & static_cast<uint8_t>(dump_stack_options::DisplayStackParameters)) == dump_stack_options::DisplayStackParameters;
+        auto const display_variables = static_cast<dump_stack_options>(static_cast<uint8_t>(options) & static_cast<uint8_t>(dump_stack_options::DisplayStackVariables)) == dump_stack_options::DisplayStackVariables;
 
         for (size_t index = 0; auto const& entry : symbol_engine.stack_walk(thread_context))
         {
             os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
 
+            auto dump_variables = false;
             if (thread_context.x86_thread_context_available() || thread_context.wow64_thread_context_available())
             {
-                generate_hex_dump_address(os, static_cast<uint32_t>(entry.stack), static_cast<uint32_t>(entry.address), entry);
-                if(display_parameters)
-                {
-                    generate_hex_dump_local_variables<uint32_t>(os, resources::get_parameters_title(), walker, entry.parameters);
-                }
-                if(display_variables)
-                {
-                    generate_hex_dump_local_variables<uint32_t>(os, resources::get_local_variables_title(), walker, entry.local_variables);
-                }
+                generate_dump_address_to_stream(os, static_cast<uint32_t>(entry.stack), static_cast<uint32_t>(entry.address), entry);
+                dump_variables = true;
             }
             else if (thread_context.x64_thread_context_available())
             {
-                generate_hex_dump_address(os, entry.stack, entry.address, entry);
-                if(display_parameters)
-                {
-                    generate_hex_dump_local_variables<uint64_t>(os, resources::get_parameters_title(), walker, entry.parameters);
-                }
-                if(display_variables)
-                {
-                    generate_hex_dump_local_variables<uint64_t>(os, resources::get_local_variables_title(), walker, entry.local_variables);
-                }
+                generate_dump_address_to_stream(os, entry.stack, entry.address, entry);
+                dump_variables = true;
             }
 
             os << L'\n';
+
+            if(dump_variables)
+            {
+                if(display_parameters)
+                {
+                    generate_dump_variables_to_stream<uint32_t>(os, resources::get_parameters_title(), walker, entry.parameters);
+                }
+                if(display_variables)
+                {
+                    generate_dump_variables_to_stream<uint32_t>(os, resources::get_local_variables_title(), walker, entry.local_variables);
+                }
+            }
             ++index;
         }
     }
 
-    void hex_dump_stack(std::wostream& os
+    void dump_stack_to_stream(std::wostream& os
         , mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack
         , is_x86_target_t const is_x86_target
         , size_t const indent)
     {
-        generate_hex_dump_stack_raw(os
+        generate_dump_stack_to_stream_raw(os
             , walker.symbol_engine()
             , 0
             , stack.data()
@@ -243,7 +269,7 @@ namespace dlg_help_utils::stream_stack_dump
             , get_hex_length(is_x86_target));
     }
 
-    void hex_dump_stack_raw(std::wostream& os
+    void dump_stack_to_stream_raw(std::wostream& os
         , mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
         , uint64_t const stack_start_address
@@ -254,7 +280,7 @@ namespace dlg_help_utils::stream_stack_dump
     {
         module_list_stream const module_list{mini_dump};
         unloaded_module_list_stream const unloaded_module_list{mini_dump};
-        generate_hex_dump_stack_raw(os
+        generate_dump_stack_to_stream_raw(os
             , symbol_engine
             , stack_start_address
             , stack
@@ -265,7 +291,7 @@ namespace dlg_help_utils::stream_stack_dump
             , get_hex_length(is_x86_target));
     }
 
-    void hex_dump_address(std::wostream& os
+    void dump_address_to_stream(std::wostream& os
         , mini_dump const& mini_dump
         , module_list_stream const& module_list
         , unloaded_module_list_stream const& unloaded_module_list
@@ -278,7 +304,7 @@ namespace dlg_help_utils::stream_stack_dump
 
         if (system_info_stream const system_info{mini_dump}; system_info.is_x86())
         {
-            generate_hex_dump_address(os
+            generate_dump_address_to_stream(os
                 , static_cast<uint32_t>(0)
                 , static_cast<uint32_t>(address)
                 , mini_dump_memory_walker::find_symbol_info(address
@@ -288,7 +314,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
         else if (system_info.is_x64())
         {
-            generate_hex_dump_address(os, static_cast<uint64_t>(0)
+            generate_dump_address_to_stream(os, static_cast<uint64_t>(0)
                 , address
                 , mini_dump_memory_walker::find_symbol_info(address
                     , module_list
@@ -299,16 +325,77 @@ namespace dlg_help_utils::stream_stack_dump
         os << L'\n';
     }
 
-    std::wstring hex_dump_stack_frame(dbg_help::symbol_address_info const& info, is_x86_target_t const is_x86_address)
+    std::experimental::generator<stack_function_call_entry> dump_stack([[maybe_unused]] mini_dump_memory_walker& walker 
+        , dbg_help::symbol_engine& symbol_engine
+        , stream_thread_context const& thread_context
+        , const size_t indent)
+    {
+        const std::wstring indent_str(indent, L' ');
+
+        for (size_t index = 0; auto entry : symbol_engine.stack_walk(thread_context))
+        {
+            std::wostringstream os;
+            os << indent_str << stream_hex_dump::to_hex(index, 2, L'0', write_header_t{false}) << L' ';
+
+            if (thread_context.x86_thread_context_available() || thread_context.wow64_thread_context_available())
+            {
+                generate_dump_address_to_stream(os, static_cast<uint32_t>(entry.stack), static_cast<uint32_t>(entry.address), entry);
+            }
+            else if (thread_context.x64_thread_context_available())
+            {
+                generate_dump_address_to_stream(os, entry.stack, entry.address, entry);
+            }
+
+            co_yield stack_function_call_entry{index, std::move(entry), std::move(os).str()};
+            ++index;
+        }
+    }
+
+    std::experimental::generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
+        , std::vector<uint64_t> const& stack
+        , is_x86_target_t const is_x86_target
+        , size_t const indent)
+    {
+        return generate_dump_stack_raw(walker.symbol_engine()
+            , 0
+            , stack.data()
+            , stack.size()
+            , indent
+            , walker.module_list()
+            , walker.unloaded_module_list()
+            , get_hex_length(is_x86_target));
+    }
+
+    std::experimental::generator<std::wstring> dump_stack_raw(mini_dump const& mini_dump
+        , dbg_help::symbol_engine& symbol_engine
+        , uint64_t const stack_start_address
+        , uint64_t const* stack
+        , size_t const stack_size
+        , is_x86_target_t const is_x86_target
+        , size_t const indent)
+    {
+        module_list_stream const module_list{mini_dump};
+        unloaded_module_list_stream const unloaded_module_list{mini_dump};
+        return generate_dump_stack_raw(symbol_engine
+            , stack_start_address
+            , stack
+            , stack_size
+            , indent
+            , module_list
+            , unloaded_module_list
+            , get_hex_length(is_x86_target));
+    }
+
+    std::wstring dump_stack_frame(dbg_help::symbol_address_info const& info, is_x86_target_t const is_x86_address)
     {
         std::wstringstream ss;
         if(is_x86_address)
         {
-            generate_hex_dump_address(ss, static_cast<uint32_t>(info.stack), static_cast<uint32_t>(info.address), info);
+            generate_dump_address_to_stream(ss, static_cast<uint32_t>(info.stack), static_cast<uint32_t>(info.address), info);
         }
         else
         {
-            generate_hex_dump_address(ss, info.stack, info.address, info);
+            generate_dump_address_to_stream(ss, info.stack, info.address, info);
         }
 
         return std::move(ss).str();

@@ -70,6 +70,7 @@ namespace dlg_help_utils::register_names
             {CV_AMD64_R13, L"R13"s},
             {CV_AMD64_R14, L"R14"s},
             {CV_AMD64_R15, L"R15"s},
+            {CV_ALLREG_VFRAME, L"Stack Variable"s},
         };
     }
 

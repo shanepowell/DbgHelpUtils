@@ -101,6 +101,12 @@ public:
     DurationFormatType DurationFormat() const { return durationFormat_; }
     void DurationFormat(DurationFormatType value);
 
+    bool SymbolLoadDebug() const { return symbolLoadDebug_; }
+    void SymbolLoadDebug(bool value);
+
+    bool SymbolLoadDebugMemory() const { return symbolLoadDebugMemory_; }
+    void SymbolLoadDebugMemory(bool value);
+
     void OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback);
     void OnSizeNumberDisplayFormatChanged(std::function<bool(SizeNumberDisplayFormatType, dlg_help_utils::size_units::print, SizeDisplayNumberBaseType)> callback);
     void OnTimeStampFormatChanged(std::function<bool(TimeStampLocaleType, LCID, DWORD, std::wstring const&, DWORD, std::wstring const&)> callback);
@@ -178,6 +184,8 @@ private:
     std::wstring time_format_;
     DurationFormatType durationFormat_;
     std::vector<std::wstring> recentFiles_;
+    bool symbolLoadDebug_;
+    bool symbolLoadDebugMemory_;
     std::mutex numberDisplayFormatCallbacksMutex_;
     std::vector<std::function<bool(NumberDisplayFormatType)>> numberDisplayFormatCallbacks_;
     std::mutex sizeNumberDisplayFormatCallbacksMutex_;

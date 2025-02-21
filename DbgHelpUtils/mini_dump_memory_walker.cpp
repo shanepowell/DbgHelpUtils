@@ -41,8 +41,8 @@ namespace dlg_help_utils::stream_stack_dump
         , unloaded_module_list_{ unloaded_module_list }
         , pe_file_memory_mappings_{ pe_file_memory_mappings }
         , symbol_engine_{ symbol_engine }
-        , callback_{ symbol_engine.callback() }
-        , handle_{ dbg_help::symbol_engine::set_callback(*this) }
+        , callback_{ symbol_engine.load_callback() }
+        , handle_{ dbg_help::symbol_engine::set_walk_callback(*this) }
     {
     }
 
@@ -57,7 +57,7 @@ namespace dlg_help_utils::stream_stack_dump
         {
             if (callback_.symbol_load_debug())
             {
-                callback_.log_stream() << std::format(L"read_process_memory {0} - {1} : invalid address range\n", stream_hex_dump::to_hex(base_address), locale_formatting::to_wstring(size));
+                callback_.log_stream().log() << std::format(L"read_process_memory {0} - {1} : invalid address range\n", stream_hex_dump::to_hex(base_address), locale_formatting::to_wstring(size));
             }
             return false;
         }
@@ -70,26 +70,30 @@ namespace dlg_help_utils::stream_stack_dump
 
         if (callback_.symbol_load_debug())
         {
-            callback_.log_stream() << std::format(L"read_process_memory {0} - {1} : {2}", stream_hex_dump::to_hex(base_address), locale_formatting::to_wstring(size), result);
-            if (result)
             {
-                callback_.log_stream() << std::format(L" : bytes read: {}", locale_formatting::to_wstring(*number_of_bytes_read));
-                if (*number_of_bytes_read > size)
+                auto handle = callback_.log_stream();
+                handle.log() << std::format(L"read_process_memory {0} - {1} : {2}", stream_hex_dump::to_hex(base_address), locale_formatting::to_wstring(size), result);
+                if (result)
                 {
-                    callback_.log_stream() << L" - error invalid result";
+                    handle.log() << std::format(L" : bytes read: {}", locale_formatting::to_wstring(*number_of_bytes_read));
+                    if (*number_of_bytes_read > size)
+                    {
+                        handle.log() << L" - error invalid result";
+                    }
+                    if (*number_of_bytes_read < size)
+                    {
+                        handle.log() << L" - short read";
+                    }
                 }
-                if (*number_of_bytes_read < size)
-                {
-                    callback_.log_stream() << L" - short read";
-                }
+                handle.log() << L'\n';
             }
-            callback_.log_stream() << L'\n';
 
             if (result)
             {
                 if (callback_.symbol_load_debug_memory())
                 {
-                    hex_dump::hex_dump(callback_.log_stream(), buffer, *number_of_bytes_read, 5, write_header_t{true}, 16, base_address);
+                    auto handle = callback_.log_stream();
+                    hex_dump::hex_dump(handle.log(), buffer, *number_of_bytes_read, 5, write_header_t{true}, 16, base_address);
                 }
             }
         }
@@ -101,7 +105,7 @@ namespace dlg_help_utils::stream_stack_dump
     {
         if (callback_.symbol_load_debug())
         {
-            callback_.log_stream() << std::format(L"function_table_access {}\n", stream_hex_dump::to_hex(base_address));
+            callback_.log_stream().log() << std::format(L"function_table_access {}\n", stream_hex_dump::to_hex(base_address));
         }
         return get_mini_dump_function_table(base_address);
     }
@@ -110,7 +114,7 @@ namespace dlg_help_utils::stream_stack_dump
     {
         if (callback_.symbol_load_debug())
         {
-            callback_.log_stream() << std::format(L"get_module_base_routine {}\n", stream_hex_dump::to_hex(address));
+            callback_.log_stream().log() << std::format(L"get_module_base_routine {}\n", stream_hex_dump::to_hex(address));
         }
         if (auto const base_address = get_loaded_module_base_routine(address); base_address != 0) return base_address;
         return get_unloaded_module_base_routine(address);
@@ -134,6 +138,16 @@ namespace dlg_help_utils::stream_stack_dump
             , size
             , enable_module_loading
         };
+    }
+
+    void mini_dump_memory_walker::release_handle()
+    {
+        handle_.release();
+    }
+
+    void mini_dump_memory_walker::create_handle()
+    {
+        handle_ = dbg_help::symbol_engine::set_walk_callback(*this);
     }
 
     void const* mini_dump_memory_walker::get_process_memory_range(DWORD64 const base_address, DWORD64& size, enable_module_loading_t const enable_module_loading) const
@@ -520,7 +534,7 @@ namespace dlg_help_utils::stream_stack_dump
 
         if (callback_.symbol_load_debug())
         {
-            callback_.log_stream() << std::format(L"get_module_base_routine {0} is in {1} : {2}\n", stream_hex_dump::to_hex(address), module->name(), stream_hex_dump::to_hex((*module)->BaseOfImage));
+            callback_.log_stream().log() << std::format(L"get_module_base_routine {0} is in {1} : {2}\n", stream_hex_dump::to_hex(address), module->name(), stream_hex_dump::to_hex((*module)->BaseOfImage));
         }
         return (*module)->BaseOfImage;
     }
@@ -536,7 +550,7 @@ namespace dlg_help_utils::stream_stack_dump
 
         if (callback_.symbol_load_debug())
         {
-            callback_.log_stream() << std::format(L"get_module_base_routine {0} is in {1} : {2}\n", stream_hex_dump::to_hex(address), module->name(), stream_hex_dump::to_hex((*module)->BaseOfImage));
+            callback_.log_stream().log() << std::format(L"get_module_base_routine {0} is in {1} : {2}\n", stream_hex_dump::to_hex(address), module->name(), stream_hex_dump::to_hex((*module)->BaseOfImage));
         }
         return (*module)->BaseOfImage;
     }

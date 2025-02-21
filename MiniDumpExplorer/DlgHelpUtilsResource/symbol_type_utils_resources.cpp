@@ -372,4 +372,9 @@ namespace dlg_help_utils::symbol_type_utils::resources
     {
         return Utility::GetResourceValue(L"Resources/SymbolMemoryAddressInRange");
     }
+
+    std::wstring get_fields_string()
+    {
+        return Utility::GetResourceValue(L"Resources/SymbolFields");
+    }
 }

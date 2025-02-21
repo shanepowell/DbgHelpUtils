@@ -613,6 +613,16 @@
     <ClCompile Include="ViewModels\SubPageNavigationEntries.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
+    <ClCompile Include="Models\MiniDumpMemoryDescriptor.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\ThreadStackEntry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\SymbolEngineHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\mini_dump_walker_store.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -766,6 +776,10 @@
     <ClInclude Include="ViewModels\SubPageNavigationEntries.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
+    <ClInclude Include="Helpers\SymbolEngineHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\mini_dump_walker_store.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

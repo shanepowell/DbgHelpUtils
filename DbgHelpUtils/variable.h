@@ -22,7 +22,7 @@ namespace dlg_help_utils::dbg_help
         uint32_t data_size{};
     };
 
-    struct local_variable
+    struct variable
     {
         symbol_type_info symbol_info;
         std::optional<registry_info> registry_value{};

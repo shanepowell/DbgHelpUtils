@@ -225,6 +225,26 @@ namespace winrt::MiniDumpExplorer::implementation
         return now;
     }
 
+    bool SettingsPage::SymbolLoadDebug()
+    {
+        return GlobalOptions::Options().SymbolLoadDebug();
+    }
+
+    void SettingsPage::SymbolLoadDebug(bool const value)
+    {
+        GlobalOptions::Options().SymbolLoadDebug(value);
+    }
+
+    bool SettingsPage::SymbolLoadMemoryDebug()
+    {
+        return GlobalOptions::Options().SymbolLoadDebugMemory();
+    }
+
+    void SettingsPage::SymbolLoadMemoryDebug(bool const value)
+    {
+        GlobalOptions::Options().SymbolLoadDebugMemory(value);
+    }
+
     uint64_t SettingsPage::ExampleDuration()
     {
         return 1234567890123456789ULL;

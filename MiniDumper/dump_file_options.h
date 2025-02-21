@@ -67,7 +67,7 @@ public:
     [[nodiscard]] bool display_heap_graph() const { return display_heap_graph_; }
     [[nodiscard]] bool display_loaded_modules() const { return display_loaded_modules_; }
     [[nodiscard]] size_t display_heap_graph_to_reference_limit() const { return display_heap_graph_to_reference_limit_; }
-    [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options::options display_stack_options() const;
+    [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options display_stack_options() const;
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
     [[nodiscard]] std::vector<std::wstring> const& symbol_names() const { return symbol_names_; }

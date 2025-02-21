@@ -12,7 +12,7 @@ public:
     void start_download(std::wstring_view const& module_name) override;
     void download_percent(unsigned percent) override;
     void download_complete() override;
-    [[nodiscard]] std::wostream& log_stream() const override;
+    [[nodiscard]] dlg_help_utils::dbg_help::log_handle log_stream() const override;
     [[nodiscard]] bool symbol_load_debug() const override;
     [[nodiscard]] bool symbol_load_debug_memory() const override;
 

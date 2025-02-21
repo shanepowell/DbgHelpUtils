@@ -67,6 +67,9 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] memory_list_stream const& memory_list() const { return memory_list_; }
         [[nodiscard]] memory64_list_stream const& memory64_list() const { return memory64_list_; }
 
+        void release_handle();
+        void create_handle();
+
     private:
         [[nodiscard]] void const* get_process_memory_range(DWORD64 base_address, DWORD64& size, enable_module_loading_t enable_module_loading) const;
 

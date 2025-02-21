@@ -41,7 +41,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] virtual bool loading_module() const = 0;
         virtual void set_downloading_module(std::wstring module_name) = 0;
         [[nodiscard]] virtual std::wstring_view downloading_module() const = 0;
-        [[nodiscard]] virtual i_symbol_load_callback& callback() const = 0;
+        [[nodiscard]] virtual i_symbol_load_callback& load_callback() const = 0;
     };
 
     class symbol_engine;
@@ -56,7 +56,16 @@ namespace dlg_help_utils::dbg_help
     public:
         ~callback_handle()
         {
-            on_complete_();
+            release();
+        }
+
+        void release()
+        {
+            if(on_complete_)
+            {
+                on_complete_();
+            }
+            on_complete_ = {};
         }
 
         callback_handle(callback_handle const&) = delete;
@@ -127,8 +136,8 @@ namespace dlg_help_utils::dbg_help
         };
 
         [[nodiscard]] std::vector<symbol_type_info> symbol_walk(std::wstring const& find_mask = {}, std::optional<ULONG64> module_base = std::nullopt, symbol_walk_options option = symbol_walk_options::default_symbols);
-        void local_variables_walk(std::vector<local_variable>& locals
-            , std::vector<local_variable>& parameters
+        void local_variables_walk(std::vector<variable>& locals
+            , std::vector<variable>& parameters
             , thread_context_type type
             , uint64_t frame_address_offset
             , void const* thread_context
@@ -137,7 +146,7 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] std::experimental::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context) const;
 
-        [[nodiscard]] i_symbol_load_callback& callback() const override { return *callback_; }
+        [[nodiscard]] i_symbol_load_callback& load_callback() const override { return *load_callback_; }
 
         [[nodiscard]] HANDLE process() const { return process_; }
         [[nodiscard]] HANDLE thread() const { return thread_; }
@@ -147,7 +156,7 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] static std::tuple<std::wstring, std::wstring> parse_type_info(std::wstring const& type_name);
 
-        static callback_handle set_callback(i_stack_walk_callback& callback);
+        static callback_handle set_walk_callback(i_stack_walk_callback& callback);
 
     private:
         [[nodiscard]] DWORD loading_module_check_sum() const override { return loading_module_check_sum_; }
@@ -191,7 +200,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] static HANDLE create_fake_id();
 
     private:
-        i_symbol_load_callback* callback_;
+        i_symbol_load_callback* load_callback_;
         std::unique_ptr<SYMBOL_INFOW> symbol_;
         IMAGEHLP_LINEW64 line_{};
         std::map<std::wstring, module_info> modules_{};

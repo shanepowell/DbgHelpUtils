@@ -45,7 +45,7 @@ void dump_mini_dump_exception_stream_data(std::wostream& log, mini_dump const& m
         if (auto const stack_info = find_thread_stack(mini_dump, exception.ThreadId))
         {
             log << L"  Stack:\n";
-            stream_stack_dump::hex_dump_stack(log, mini_dump, symbol_engine, stack_info->stack_start_address,
+            stream_stack_dump::dump_stack_to_stream(log, mini_dump, symbol_engine, stack_info->stack_start_address,
                                               stack_info->stack, stack_info->stack_size,
                                               exception_stream.thread_context(), 5, options.display_stack_options());
         }

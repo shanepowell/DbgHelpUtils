@@ -17,5 +17,8 @@ namespace MiniDumpExplorer
         UInt64 ExampleSize { get; };
         UInt64 ExampleDuration { get; };
         UInt64 ExampleDate { get; };
+
+        Boolean SymbolLoadDebug;
+        Boolean SymbolLoadMemoryDebug;
     }
 }

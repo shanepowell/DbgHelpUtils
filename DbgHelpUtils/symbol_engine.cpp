@@ -18,7 +18,7 @@
 #include "guid_utils.h"
 #include "hex_dump.h"
 #include "locale_number_formatting.h"
-#include "local_variable.h"
+#include "variable.h"
 #include "module_match.h"
 #include "pe_file.h"
 #include "stream_hex_dump.h"
@@ -239,7 +239,7 @@ namespace
         {
             auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data);
             auto const* data = reinterpret_cast<uint8_t const*>(callback_data);
-            dlg_help_utils::hex_dump::hex_dump(callback.log_stream(), data, size_of_struct, 5);
+            dlg_help_utils::hex_dump::hex_dump(callback.log_stream().log(), data, size_of_struct, 5);
         }
     }
 
@@ -249,7 +249,7 @@ namespace
         , __in_opt ULONG64 const user_context)
     {
         auto& symbol_engine = *reinterpret_cast<dlg_help_utils::dbg_help::i_symbol_callback*>(user_context);
-        auto& callback = symbol_engine.callback();
+        auto& callback = symbol_engine.load_callback();
         // ReSharper disable once CommentTypo
         // If SYMOPT_DEBUG is set, then the symbol handler will pass
         // verbose information on its attempt to load symbols.
@@ -257,7 +257,7 @@ namespace
 
         if (callback.symbol_load_debug())
         {
-            callback.log_stream() << std::format(L"DlgHelp: action_code: {0} ({1} callback_data:({2})\n", action_code_to_string(action_code), to_hex(action_code), to_hex(callback_data));
+            callback.log_stream().log() << std::format(L"DlgHelp: action_code: {0} ({1} callback_data:({2})\n", action_code_to_string(action_code), to_hex(action_code), to_hex(callback_data));
         }
 
         if (callback_data == 0) return FALSE;
@@ -268,7 +268,7 @@ namespace
             if (callback.symbol_load_debug() && callback_data != 0)
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_EVENTW const*>(callback_data);
-                callback.log_stream() << std::format(L"DlgHelp: {0}:[{1}]:({2})[{3}] {4}\n", action_code_to_string(action_code), severity_to_string(evt->severity), to_hex(evt->code), evt->desc, to_hex(evt->object));
+                callback.log_stream().log() << std::format(L"DlgHelp: {0}:[{1}]:({2})[{3}] {4}\n", action_code_to_string(action_code), severity_to_string(evt->severity), to_hex(evt->code), evt->desc, to_hex(evt->object));
             }
             return TRUE;
 
@@ -280,7 +280,7 @@ namespace
                 if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64))
                 {
                     auto const* evt = reinterpret_cast<IMAGEHLP_DEFERRED_SYMBOL_LOADW64 const*>(callback_data);
-                    callback.log_stream() << 
+                    callback.log_stream().log() << 
                         std::format(L"DlgHelp: {0}[default]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp[{3}]:FileName[{4}]:Reparse[{5}]:hFile[{6}]:Flags[{7}]\n"
                             , action_code_to_string(action_code)
                             , to_hex(evt->BaseOfImage)
@@ -294,7 +294,7 @@ namespace
                 else if (size_of_struct == sizeof(symbol_load_w64))
                 {
                     auto const* evt = reinterpret_cast<symbol_load_w64 const*>(callback_data);
-                    callback.log_stream() << 
+                    callback.log_stream().log() << 
                         std::format(L"DlgHelp: {0}[symbol_load_w64]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp[{3}]:Unknown[{4}]:FileName[{5}]:Reparse[{6}]:hFile[{7}]:Flags[{8}]\n"
                             , action_code_to_string(action_code)
                             , to_hex(evt->base_of_image)
@@ -308,7 +308,7 @@ namespace
                 }
                 else
                 {
-                    callback.log_stream() << 
+                    callback.log_stream().log() << 
                         std::format(L"DlgHelp: {0}: unknown event data size: {1} != {2}|{3}\n"
                             , action_code_to_string(action_code)
                             , locale_formatting::to_wstring(size_of_struct)
@@ -349,7 +349,7 @@ namespace
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_READ_MEMORY const*>(callback_data);
                 // ReSharper disable once StringLiteralTypo
-                callback.log_stream() << std::format(L"DlgHelp: {0}:address[{1}]:bytes:[{2}]\n", action_code_to_string(action_code), to_hex(evt->addr), to_hex(evt->bytes));
+                callback.log_stream().log() << std::format(L"DlgHelp: {0}:address[{1}]:bytes:[{2}]\n", action_code_to_string(action_code), to_hex(evt->addr), to_hex(evt->bytes));
             }
 
             if (g_callback != nullptr && callback_data != 0)
@@ -369,15 +369,16 @@ namespace
                 if (auto const * evt = reinterpret_cast<IMAGEHLP_DUPLICATE_SYMBOL64 const*>(callback_data); evt->SizeOfStruct == sizeof(IMAGEHLP_DUPLICATE_SYMBOL64))
                 {
                     // ReSharper disable once StringLiteralTypo
-                    callback.log_stream() << std::format(L"DlgHelp: {0}:NumberOfDups[{1}]:SelectedSymbol[{2}]\n", action_code_to_string(action_code), locale_formatting::to_wstring(evt->NumberOfDups), locale_formatting::to_wstring(evt->SelectedSymbol));
-                    callback.log_stream() << std::format(L"    Symbol: Address: [{}]\n", to_hex(evt->Symbol->Address));
-                    callback.log_stream() << std::format(L"            Size: [{}]\n", locale_formatting::to_wstring(evt->Symbol->Size));
-                    callback.log_stream() << std::format(L"            Flags: [{}]\n", to_hex(evt->Symbol->Flags));
-                    callback.log_stream() << std::format(L"            Name: [{}]\n", dlg_help_utils::string_conversation::acp_to_wstring(evt->Symbol->Name));
+                    auto handle = callback.log_stream();
+                    handle.log() << std::format(L"DlgHelp: {0}:NumberOfDups[{1}]:SelectedSymbol[{2}]\n", action_code_to_string(action_code), locale_formatting::to_wstring(evt->NumberOfDups), locale_formatting::to_wstring(evt->SelectedSymbol));
+                    handle.log() << std::format(L"    Symbol: Address: [{}]\n", to_hex(evt->Symbol->Address));
+                    handle.log() << std::format(L"            Size: [{}]\n", locale_formatting::to_wstring(evt->Symbol->Size));
+                    handle.log() << std::format(L"            Flags: [{}]\n", to_hex(evt->Symbol->Flags));
+                    handle.log() << std::format(L"            Name: [{}]\n", dlg_help_utils::string_conversation::acp_to_wstring(evt->Symbol->Name));
                 }
                 else
                 {
-                    callback.log_stream() << std::format(L"DlgHelp: {0}: unknown event data size : {1} != {2}\n", action_code_to_string(action_code), locale_formatting::to_wstring(evt->SizeOfStruct), locale_formatting::to_wstring(sizeof(IMAGEHLP_DUPLICATE_SYMBOL64)));
+                    callback.log_stream().log() << std::format(L"DlgHelp: {0}: unknown event data size : {1} != {2}\n", action_code_to_string(action_code), locale_formatting::to_wstring(evt->SizeOfStruct), locale_formatting::to_wstring(sizeof(IMAGEHLP_DUPLICATE_SYMBOL64)));
                 }
             }
             dump_sizeof_struct_data(callback_data, callback);
@@ -390,10 +391,11 @@ namespace
 
                 if (callback.symbol_load_debug())
                 {
-                    callback.log_stream() << std::format(L"DlgHelp: {0}:{1}", action_code_to_string(action_code), xml);
+                    auto handle = callback.log_stream();
+                    handle.log() << std::format(L"DlgHelp: {0}:{1}", action_code_to_string(action_code), xml);
                     if (xml.find_first_of(L'\n') == std::wstring_view::npos)
                     {
-                        callback.log_stream() << L'\n';
+                        handle.log() << L'\n';
                     }
                 }
 
@@ -432,7 +434,7 @@ namespace
             if (callback.symbol_load_debug() && callback_data != 0)
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_EVENTW const*>(callback_data);
-                callback.log_stream() << std::format(L"DlgHelp: {0}:[{1}]:({2})[{3}] {4}\n", action_code_to_string(action_code), severity_to_string(evt->severity), to_hex(evt->code), evt->desc, to_hex(evt->object));
+                callback.log_stream().log() << std::format(L"DlgHelp: {0}:[{1}]:({2})[{3}] {4}\n", action_code_to_string(action_code), severity_to_string(evt->severity), to_hex(evt->code), evt->desc, to_hex(evt->object));
             }
             return TRUE;
 
@@ -440,10 +442,11 @@ namespace
             if (callback.symbol_load_debug() && callback_data != 0)
             {
                 std::wstring_view const xml{reinterpret_cast<wchar_t const*>(callback_data)};
-                callback.log_stream() << std::format(L"DlgHelp: {0}:{1}", action_code_to_string(action_code), xml);
+                auto handle = callback.log_stream();
+                handle.log() << std::format(L"DlgHelp: {0}:{1}", action_code_to_string(action_code), xml);
                 if (xml.find_first_of(L'\n') == std::wstring_view::npos)
                 {
-                    callback.log_stream() << L'\n';
+                    handle.log() << L'\n';
                 }
             }
             return TRUE;
@@ -454,11 +457,11 @@ namespace
                 if (auto const size_of_struct = *reinterpret_cast<DWORD const*>(callback_data); size_of_struct == sizeof(symbol_load))
                 {
                     auto const* evt = reinterpret_cast<symbol_load const*>(callback_data);
-                    callback.log_stream() << std::format(L"DlgHelp: {0}[symbol_load]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]\n", action_code_to_string(action_code), to_hex(evt->base_of_image), to_hex(evt->check_sum), to_hex(evt->time_date_stamp), to_hex(evt->unknown1));
+                    callback.log_stream().log() << std::format(L"DlgHelp: {0}[symbol_load]:BaseOfImage[{1}]:CheckSum[{2}]:TimeDateStamp:[{3}]:Unknown:[{4}]\n", action_code_to_string(action_code), to_hex(evt->base_of_image), to_hex(evt->check_sum), to_hex(evt->time_date_stamp), to_hex(evt->unknown1));
                 }
                 else
                 {
-                    callback.log_stream() << std::format(L"DlgHelp: {0}: unknown event data size: {1} != {2}\n", action_code_to_string(action_code), locale_formatting::to_wstring(size_of_struct), locale_formatting::to_wstring(sizeof(symbol_load)));
+                    callback.log_stream().log() << std::format(L"DlgHelp: {0}: unknown event data size: {1} != {2}\n", action_code_to_string(action_code), locale_formatting::to_wstring(size_of_struct), locale_formatting::to_wstring(sizeof(symbol_load)));
                 }
             }
             dump_sizeof_struct_data(callback_data, callback);
@@ -468,7 +471,7 @@ namespace
             if (callback_data != 0 && callback.symbol_load_debug_memory())
             {
                 auto const* data = reinterpret_cast<uint8_t const*>(callback_data);
-                dlg_help_utils::hex_dump::hex_dump(callback.log_stream(), data, 10, 5);
+                dlg_help_utils::hex_dump::hex_dump(callback.log_stream().log(), data, 10, 5);
             }
             break;
         }
@@ -505,9 +508,9 @@ namespace
             }
         }
 
-        if (auto const & callback = symbol_engine.callback(); callback.symbol_load_debug())
+        if (auto const & callback = symbol_engine.load_callback(); callback.symbol_load_debug())
         {
-            callback.log_stream() << std::format(L"DlgHelp: FindFile: {} checksum check failure\n", filename);
+            callback.log_stream().log() << std::format(L"DlgHelp: FindFile: {} checksum check failure\n", filename);
         }
 
         return TRUE;
@@ -554,9 +557,10 @@ namespace
             , dlg_help_utils::dbg_help::thread_context_type type
             , uint64_t const frame_address_offset
             , void const* thread_context
-            , std::vector<dlg_help_utils::dbg_help::local_variable> &locals
-            , std::vector<dlg_help_utils::dbg_help::local_variable> &parameters
-            , dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache)
+            , std::vector<dlg_help_utils::dbg_help::variable> &locals
+            , std::vector<dlg_help_utils::dbg_help::variable> &parameters
+            , dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache
+            , std::optional<std::exception>& failure)
         : process{process}
         , type{type}
         , frame_address_offset{frame_address_offset}
@@ -564,6 +568,7 @@ namespace
         , locals{locals}
         , parameters{parameters}
         , symbol_cache{symbol_cache}
+        , failure{failure}
         {
         }
 
@@ -571,9 +576,10 @@ namespace
         dlg_help_utils::dbg_help::thread_context_type type;
         uint64_t frame_address_offset;
         void const* thread_context;
-        std::vector<dlg_help_utils::dbg_help::local_variable> &locals;
-        std::vector<dlg_help_utils::dbg_help::local_variable> &parameters;
+        std::vector<dlg_help_utils::dbg_help::variable> &locals;
+        std::vector<dlg_help_utils::dbg_help::variable> &parameters;
         dlg_help_utils::dbg_help::symbol_type_info_cache& symbol_cache;
+        std::optional<std::exception>& failure;
     };
 
     template<typename T>
@@ -594,7 +600,7 @@ namespace
         return std::make_pair<uint64_t,uint64_t>(raw_value & size_masks[sizeof(T)], sizeof(T));
     }
 
-    std::pair<uint64_t,uint64_t> get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context)
+    std::pair<uint64_t,uint64_t> get_x86_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x86 const& context, uint64_t const address_offset)
     {
         switch(register_type) // NOLINT
         {
@@ -657,13 +663,16 @@ namespace
 
         case CV_AMD64_EDI:
             return make_register_value<uint32_t>(context.Edi);
+
+        case CV_ALLREG_VFRAME:
+            return make_register_value<uint32_t>(address_offset);
 
         default:
             throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Register [{}] unknown or unsupported in x86 context", static_cast<uint32_t>(register_type))};
         }
     }
 
-    std::pair<uint64_t,uint64_t> get_wow64_register_value(CV_HREG_e register_type, WOW64_CONTEXT const& context)
+    std::pair<uint64_t,uint64_t> get_wow64_register_value(CV_HREG_e register_type, WOW64_CONTEXT const& context, uint64_t const address_offset)
     {
         switch(register_type) // NOLINT
         {
@@ -727,12 +736,15 @@ namespace
         case CV_AMD64_EDI:
             return make_register_value<uint32_t>(context.Edi);
 
+        case CV_ALLREG_VFRAME:
+            return make_register_value<uint32_t>(address_offset);
+
         default:
             throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Register [{}] unknown or unsupported in WOW64 (x86) context", static_cast<uint32_t>(register_type))};
         }
     }
 
-    std::pair<uint64_t,uint64_t> get_x64_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x64 const& context)
+    std::pair<uint64_t,uint64_t> get_x64_register_value(CV_HREG_e register_type, dlg_help_utils::stream_thread_context::context_x64 const& context, uint64_t const address_offset)
     {
         switch(register_type) // NOLINT
         {
@@ -916,12 +928,15 @@ namespace
         case CV_AMD64_R15:
             return make_register_value<uint64_t>(context.R15);
 
+        case CV_ALLREG_VFRAME:
+            return make_register_value<uint64_t>(address_offset);
+
         default:
             throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"Register [{}] unknown or unsupported in x64 context", static_cast<uint32_t>(register_type))};
         }
     }
 
-    dlg_help_utils::dbg_help::registry_info get_registry_value_info(dlg_help_utils::dbg_help::thread_context_type const type, CV_HREG_e const registry, void const* thread_context)
+    dlg_help_utils::dbg_help::registry_info get_registry_value_info(dlg_help_utils::dbg_help::thread_context_type const type, CV_HREG_e const registry, void const* thread_context, uint64_t const address_offset)
     {
         uint64_t value{0};
         uint64_t value_size{0};
@@ -929,13 +944,13 @@ namespace
         switch(type)
         {
         case dlg_help_utils::dbg_help::thread_context_type::x86:
-            std::tie(value, value_size) = get_x86_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x86 const*>(thread_context));
+            std::tie(value, value_size) = get_x86_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x86 const*>(thread_context), address_offset);
             break;
         case dlg_help_utils::dbg_help::thread_context_type::wow64:
-            std::tie(value, value_size) = get_wow64_register_value(registry, *static_cast<WOW64_CONTEXT const*>(thread_context));
+            std::tie(value, value_size) = get_wow64_register_value(registry, *static_cast<WOW64_CONTEXT const*>(thread_context), address_offset);
             break;
         case dlg_help_utils::dbg_help::thread_context_type::x64:
-            std::tie(value, value_size) = get_x64_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x64 const*>(thread_context));
+            std::tie(value, value_size) = get_x64_register_value(registry, *static_cast<dlg_help_utils::stream_thread_context::context_x64 const*>(thread_context), address_offset);
             break;
         }
 
@@ -947,9 +962,9 @@ namespace
         return dlg_help_utils::dbg_help::frame_data_info{static_cast<int>(symbol_info->Address), address + symbol_info->Address, symbol_info->Size};
     }
 
-    bool is_already_found(std::vector<dlg_help_utils::dbg_help::local_variable> const& variables, PSYMBOL_INFOW symbol_info)
+    bool is_already_found(std::vector<dlg_help_utils::dbg_help::variable> const& variables, PSYMBOL_INFOW symbol_info)
     {
-        return std::ranges::any_of(variables, [symbol_info](dlg_help_utils::dbg_help::local_variable const& variable)
+        return std::ranges::any_of(variables, [symbol_info](dlg_help_utils::dbg_help::variable const& variable)
         {
             if(variable.symbol_info.module_base() != symbol_info->ModBase || variable.symbol_info.sym_index() != symbol_info->Index)
             {
@@ -992,30 +1007,38 @@ namespace
 
         local_variable_info const& info{*static_cast<local_variable_info*>(user_context)};
 
-        // check for duplicates...
-        if(is_already_found(is_parameter ? info.parameters : info.locals, symbol_info))
+        try
         {
+            // check for duplicates...
+            if(is_already_found(is_parameter ? info.parameters : info.locals, symbol_info))
+            {
+                return TRUE;
+            }
+
+            auto& variable = is_parameter ? info.parameters.emplace_back(info.symbol_cache.get_or_create_symbol_type_info(info.process, symbol_info->ModBase, symbol_info->Index))
+                                          : info.locals.emplace_back(info.symbol_cache.get_or_create_symbol_type_info(info.process, symbol_info->ModBase, symbol_info->Index));
+
+            if (symbol_info->Flags & SYMFLAG_REGREL)
+            {
+                variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context, info.frame_address_offset);
+                variable.frame_data = get_frame_data_info(symbol_info, variable.registry_value->value);
+            }
+            else if (symbol_info->Flags & SYMFLAG_REGISTER)
+            {
+                variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context, info.frame_address_offset);
+            }
+            else if (symbol_info->Flags & SYMFLAG_FRAMEREL)
+            {
+                variable.frame_data = get_frame_data_info(symbol_info, info.frame_address_offset);
+            }
+
             return TRUE;
         }
-
-        auto& variable = is_parameter ? info.parameters.emplace_back(info.symbol_cache.get_or_create_symbol_type_info(info.process, symbol_info->ModBase, symbol_info->Index))
-                                      : info.locals.emplace_back(info.symbol_cache.get_or_create_symbol_type_info(info.process, symbol_info->ModBase, symbol_info->Index));
-
-        if (symbol_info->Flags & SYMFLAG_REGREL)
+        catch(std::exception const& e)
         {
-            variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context);
-            variable.frame_data = get_frame_data_info(symbol_info, variable.registry_value->value);
+            info.failure = e;
+            throw;
         }
-        else if (symbol_info->Flags & SYMFLAG_REGISTER)
-        {
-            variable.registry_value = get_registry_value_info(info.type, static_cast<CV_HREG_e>(symbol_info->Register), info.thread_context);
-        }
-        else if (symbol_info->Flags & SYMFLAG_FRAMEREL)
-        {
-            variable.frame_data = get_frame_data_info(symbol_info, info.frame_address_offset);
-        }
-
-        return TRUE;
     }
     // ReSharper restore CppParameterMayBeConst
 }
@@ -1023,7 +1046,7 @@ namespace
 namespace dlg_help_utils::dbg_help
 {
     symbol_engine::symbol_engine(i_symbol_load_callback& callback)
-        : callback_{&callback}
+        : load_callback_{&callback}
         , symbol_(static_cast<SYMBOL_INFOW*>(malloc(max_buffer_size)))
     {
         memset(symbol_.get(), 0, max_buffer_size);
@@ -1106,14 +1129,15 @@ namespace dlg_help_utils::dbg_help
             module_load_info.size = static_cast<DWORD>(debug_module_info_size_aligned);
             module_load_info.flags = 0;
 
-            if (callback().symbol_load_debug())
+            if (load_callback().symbol_load_debug())
             {
-                callback().log_stream() << L" loading: DBHHEADER_DEBUGDIRS\n";
-                callback().log_stream() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) << L'\n';
-                callback().log_stream() << L" loading: PdbAge:" << pdb.get_age() << L'\n';
-                callback().log_stream() << L" loading: module_size:" << to_hex(module_size) << L'\n';
-                callback().log_stream() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
-                callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
+                auto log_handle = load_callback().log_stream();
+                log_handle.log() << L" loading: DBHHEADER_DEBUGDIRS\n";
+                log_handle.log() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) << L'\n';
+                log_handle.log() << L" loading: PdbAge:" << pdb.get_age() << L'\n';
+                log_handle.log() << L" loading: module_size:" << to_hex(module_size) << L'\n';
+                log_handle.log() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
+                log_handle.log() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
             handle = load_module(module, module_base, module_size, &module_load_info, throw_on_error);
@@ -1131,14 +1155,15 @@ namespace dlg_help_utils::dbg_help
             module_load_info.size = sizeof(data);
             module_load_info.flags = 0;
 
-            if (callback().symbol_load_debug())
+            if (load_callback().symbol_load_debug())
             {
-                callback().log_stream() << L" loading: DBHHEADER_PDBGUID\n";
-                callback().log_stream() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) << L'\n';
-                callback().log_stream() << L" loading: PdbAge:" << pdb.get_age() << L'\n';
-                callback().log_stream() << L" loading: module_size:" << to_hex(module_size) << L'\n';
-                callback().log_stream() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
-                callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
+                auto log_handle = load_callback().log_stream();
+                log_handle.log() << L" loading: DBHHEADER_PDBGUID\n";
+                log_handle.log() << L" loading: PdbSig70:" << guid_utils::to_string(pdb.get_signature()) << L'\n';
+                log_handle.log() << L" loading: PdbAge:" << pdb.get_age() << L'\n';
+                log_handle.log() << L" loading: module_size:" << to_hex(module_size) << L'\n';
+                log_handle.log() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
+                log_handle.log() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
             handle = load_module(module, module_base, module_size, &module_load_info, throw_on_error);
@@ -1180,12 +1205,13 @@ namespace dlg_help_utils::dbg_help
             module_load_info.size = static_cast<DWORD>(debug_module_info_size);
             module_load_info.flags = 0;
 
-            if (callback().symbol_load_debug())
+            if (load_callback().symbol_load_debug())
             {
-                callback().log_stream() << L" loading: DBHHEADER_CVMISC\n";
-                callback().log_stream() << L" loading: module_size:" << to_hex(module_size) << L'\n';
-                callback().log_stream() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
-                callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
+                auto log_handle = load_callback().log_stream();
+                log_handle.log() << L" loading: DBHHEADER_CVMISC\n";
+                log_handle.log() << L" loading: module_size:" << to_hex(module_size) << L'\n';
+                log_handle.log() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
+                log_handle.log() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
             handle = load_module(module, module_base, module_size, &module_load_info, throw_on_error);
@@ -1193,12 +1219,13 @@ namespace dlg_help_utils::dbg_help
 
         if (handle == 0)
         {
-            if (callback().symbol_load_debug())
+            if (load_callback().symbol_load_debug())
             {
-                callback().log_stream() << L" loading: default options\n";
-                callback().log_stream() << L" loading: module_size:" << to_hex(module_size) << L'\n';
-                callback().log_stream() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
-                callback().log_stream() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
+                auto log_handle = load_callback().log_stream();
+                log_handle.log() << L" loading: default options\n";
+                log_handle.log() << L" loading: module_size:" << to_hex(module_size) << L'\n';
+                log_handle.log() << L" loading: check_sum:" << to_hex(module_check_sum) << L'\n';
+                log_handle.log() << L" loading: module_time_stamp:" << to_hex(module_time_stamp) << L'\n';
             }
 
             handle = load_module(module, module_base, module_size, nullptr, throw_on_error);
@@ -1533,19 +1560,25 @@ namespace dlg_help_utils::dbg_help
         return symbols;
     }
 
-    void symbol_engine::local_variables_walk(std::vector<local_variable>& locals
-        , std::vector<local_variable>& parameters
+    void symbol_engine::local_variables_walk(std::vector<variable>& locals
+        , std::vector<variable>& parameters
         , thread_context_type const type
         , uint64_t const frame_address_offset
         , void const* thread_context
         , std::wstring const& find_mask
         , symbol_walk_options const option)
     {
-        local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters, symbol_cache_};
+        std::optional<std::exception> failure;
+        local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters, symbol_cache_, failure};
         if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
         {
             if(auto const ec = GetLastError(); ec != ERROR_INVALID_PARAMETER && ec != ERROR_NOT_SUPPORTED)
             {
+                if(failure.has_value())
+                {
+                    throw exceptions::wide_runtime_error{L"SymEnumSymbolsExW", failure.value()};
+                }
+
                 windows_error::throw_windows_api_error(L"SymEnumSymbolsExW"sv, find_mask, ec);
             }
         }
@@ -1655,24 +1688,25 @@ namespace dlg_help_utils::dbg_help
         , DWORD64 const module_base
         , std::wstring const& module_image_path) const
     {
-        if (handle != 0 && callback().symbol_load_debug())
+        if (handle != 0 && load_callback().symbol_load_debug())
         {
+            auto log_handle = load_callback().log_stream();
             // ReSharper disable once CppUseStructuredBinding
             const auto info = get_module_information(module_base);
-            callback().log_stream() << L"Loaded:\n";
-            callback().log_stream() << L" SymType:" << info.SymType << L'\n';
-            callback().log_stream() << L" ModuleName:" << info.ModuleName << L'\n';
-            callback().log_stream() << L" ImageName:" << info.ImageName << L'\n';
-            callback().log_stream() << L" ModuleImagePath:" << module_image_path << L'\n';
-            callback().log_stream() << L" LoadedImageName:" << info.LoadedImageName << L'\n';
-            callback().log_stream() << L" LoadedPdbName:" << info.LoadedPdbName << L'\n';
-            callback().log_stream() << L" CheckSum:" << to_hex(info.CheckSum) << L'\n';
-            callback().log_stream() << L" ImageSize:" << to_hex(info.ImageSize) << L'\n';
-            callback().log_stream() << L" MachineType:" << to_hex(info.MachineType) << L'\n';
-            callback().log_stream() << L" PdbSig70:" << guid_utils::to_string(info.PdbSig70) << L'\n';
-            callback().log_stream() << L" PdbAge:" << info.PdbAge << L'\n';
-            callback().log_stream() << L" PdbUnmatched:" << info.PdbUnmatched << L'\n';
-            callback().log_stream() << L" DbgUnmatched:" << info.DbgUnmatched << L'\n';
+            log_handle.log() << L"Loaded:\n";
+            log_handle.log() << L" SymType:" << info.SymType << L'\n';
+            log_handle.log() << L" ModuleName:" << info.ModuleName << L'\n';
+            log_handle.log() << L" ImageName:" << info.ImageName << L'\n';
+            log_handle.log() << L" ModuleImagePath:" << module_image_path << L'\n';
+            log_handle.log() << L" LoadedImageName:" << info.LoadedImageName << L'\n';
+            log_handle.log() << L" LoadedPdbName:" << info.LoadedPdbName << L'\n';
+            log_handle.log() << L" CheckSum:" << to_hex(info.CheckSum) << L'\n';
+            log_handle.log() << L" ImageSize:" << to_hex(info.ImageSize) << L'\n';
+            log_handle.log() << L" MachineType:" << to_hex(info.MachineType) << L'\n';
+            log_handle.log() << L" PdbSig70:" << guid_utils::to_string(info.PdbSig70) << L'\n';
+            log_handle.log() << L" PdbAge:" << info.PdbAge << L'\n';
+            log_handle.log() << L" PdbUnmatched:" << info.PdbUnmatched << L'\n';
+            log_handle.log() << L" DbgUnmatched:" << info.DbgUnmatched << L'\n';
         }
     }
 
@@ -1695,10 +1729,10 @@ namespace dlg_help_utils::dbg_help
                 return buffer.data();
             }
 
-            if (callback().symbol_load_debug())
+            if (load_callback().symbol_load_debug())
             {
                 auto const ec = GetLastError();
-                callback().log_stream() << std::format(L"Failed to find module image path for [{0}] - SymFindFileInPathW: {1} - {2}\n", module_name, ec, windows_error::get_windows_error_string(ec));
+                load_callback().log_stream().log() << std::format(L"Failed to find module image path for [{0}] - SymFindFileInPathW: {1} - {2}\n", module_name, ec, windows_error::get_windows_error_string(ec));
             }
         }
 
@@ -1789,10 +1823,22 @@ namespace dlg_help_utils::dbg_help
         return std::make_tuple(type_name.substr(0, pos), type_name.substr(pos+1));
     }
 
-    callback_handle symbol_engine::set_callback(i_stack_walk_callback& callback)
+    callback_handle symbol_engine::set_walk_callback(i_stack_walk_callback& callback)
     {
+        if(g_callback != nullptr)
+        {
+            throw exceptions::wide_runtime_error{ L"Only one i_stack_walk_callback can be set at a time" };
+        }
+
         g_callback = &callback;
-        return callback_handle{[]() { g_callback = nullptr; }};
+        return callback_handle{[]()
+        {
+            if (g_callback == nullptr)
+            {
+                throw exceptions::wide_runtime_error{ L"i_stack_walk_callback already cleared" };
+            }
+            g_callback = nullptr;
+        }};
     }
 
     DWORD symbol_engine::setup_enum_symbol_options(symbol_walk_options const option)

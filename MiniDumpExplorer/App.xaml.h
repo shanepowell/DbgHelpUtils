@@ -114,6 +114,8 @@
 #include "Models\MiniDumpSystemFileCacheInformation.h"
 #include "Models\MiniDumpSystemBasicPerformanceInformation.h"
 #include "Models\MinidumpSystemPerformanceInformation.h"
+#include "Models\MiniDumpMemoryDescriptor.h"
+#include "Models\ThreadStackEntry.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

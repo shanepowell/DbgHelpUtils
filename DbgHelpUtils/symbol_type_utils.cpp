@@ -24,7 +24,17 @@ namespace dlg_help_utils::symbol_type_utils
 {
     namespace
     {
-        auto constexpr all_bits = std::numeric_limits<uint64_t>::max(); 
+        auto constexpr all_bits = std::numeric_limits<uint64_t>::max();
+
+        std::experimental::generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , [[maybe_unused]] symbol_type_info const& display_type
+            , [[maybe_unused]] uint64_t variable_address
+            , mini_dump_memory_stream& variable_stream
+            , size_t visited_depth);
+        bool any_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , mini_dump_memory_stream& variable_stream);
 
         struct symbol_walker_work
         {
@@ -120,6 +130,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         using is_pointer_t = tagged_bool<struct is_pointer_type>;
+
         template<typename T>
         void dump_number_variable(std::wostream& os
             , [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker
@@ -150,13 +161,13 @@ namespace dlg_help_utils::symbol_type_utils
                 T value;
                 if(variable_stream.read(&value, sizeof(T)) == sizeof(T))
                 {
-                    value &= static_cast<T>(bit_mask);
                     if constexpr (std::is_floating_point_v<T>)
                     {
                         os << std::format(L": {0}", locale_formatting::to_wstring(value));
                     }
                     else
                     {
+                        value &= static_cast<T>(bit_mask);
                         os << std::format(L": {0} ({1})", locale_formatting::to_wstring(value), stream_hex_dump::to_hex(value));
                     }
                 }
@@ -167,7 +178,123 @@ namespace dlg_help_utils::symbol_type_utils
             }
         }
 
-        void dump_enum_variable_symbol_at(std::wostream& os
+        template<typename T>
+        void single_line_dump_number_variable(std::wostream& os
+            , [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , uint64_t const bit_mask
+            , is_pointer_t const is_pointer
+            , size_t max_size
+            , dump_hex_t const dump_hex)
+        {
+            if(is_pointer)
+            {
+                if(max_size == 0)
+                {
+                    max_size = walker.find_memory_range(variable_address, sizeof(T), 1);
+                }
+
+                if(max_size == 1)
+                {
+                    print_utils::print_stream_array_inline<T>(os, variable_stream, static_cast<size_t>(max_size), dump_hex);
+                }
+            }
+            else 
+            {
+                T value;
+                if(variable_stream.read(&value, sizeof(T)) == sizeof(T))
+                {
+                    if constexpr (std::is_floating_point_v<T>)
+                    {
+                        os << std::format(L": {0}", locale_formatting::to_wstring(value));
+                    }
+                    else
+                    {
+                        value &= static_cast<T>(bit_mask);
+                        os << std::format(L": {0} ({1})", locale_formatting::to_wstring(value), stream_hex_dump::to_hex(value));
+                    }
+                }
+                else
+                {
+                    os << std::format(L": {}", resources::get_variable_unknown());
+                }
+            }
+        }
+
+        bool any_number_variable(stream_stack_dump::mini_dump_memory_walker const& walker
+            , uint64_t const variable_address
+            , is_pointer_t const is_pointer
+            , size_t const element_size
+            , size_t max_size)
+        {
+            if (is_pointer)
+            {
+                if (max_size == 0)
+                {
+                    max_size = walker.find_memory_range(variable_address, element_size, 1);
+                }
+
+                if (max_size > 1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        template<typename T>
+        std::experimental::generator<dump_variable_symbol_data>  number_variable(stream_stack_dump::mini_dump_memory_walker const& walker
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , [[maybe_unused]] uint64_t const bit_mask
+            , is_pointer_t const is_pointer
+            , size_t max_size
+            , dump_hex_t const dump_hex)
+        {
+            if(is_pointer)
+            {
+                if(max_size == 0)
+                {
+                    max_size = walker.find_memory_range(variable_address, sizeof(T), 1);
+                }
+
+                if(max_size > 1)
+                {
+                    for(uint64_t i = 0; i < max_size; ++i)
+                    {
+                        T value;
+                        if(variable_stream.read(&value, sizeof(T)) != sizeof(T))
+                        {
+                            break;
+                        }
+
+                        std::wostringstream ss;
+                        if constexpr (std::is_floating_point_v<T>)
+                        {
+                            ss << std::to_wstring(value);
+                        }
+                        else
+                        {
+                            if(dump_hex)
+                            {
+                                ss << stream_hex_dump::to_hex_full(value, write_header_t{true});
+                            }
+                            else
+                            {
+                                ss << std::to_wstring(value);
+                            }
+                        }
+
+                        co_yield dump_variable_symbol_data{std::move(ss).str(), {}};
+                    }
+                }
+            }
+        }
+
+
+        void single_line_dump_enum_variable_symbol_at(std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , uint64_t const variable_address
@@ -178,59 +305,25 @@ namespace dlg_help_utils::symbol_type_utils
                 switch(length.value())
                 {
                 case 1:
-                    dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    single_line_dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false});
                     break;
 
                 case 2:
-                    dump_number_variable<uint16_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    single_line_dump_number_variable<uint16_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false});
                     break;
 
                 case 4:
-                    dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    single_line_dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false});
                     break;
 
                 case 8:
-                    dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false}, 0);
+                    single_line_dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, all_bits, is_pointer_t{false}, 1, dump_hex_t{false});
                     break;
 
                 default:
                     os << std::format(L": ({})\n", length.value());
-                    print_utils::print_stream_array_lines<uint8_t>(os, variable_stream, length.value(), 10, 3, 4, dump_hex_t{true});
                     break;
                 }
-            }
-        }
-
-        template<typename T>
-        void dump_float_variable(std::wostream& os
-            , [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker
-            , uint64_t const variable_address
-            , mini_dump_memory_stream& variable_stream
-            , is_pointer_t const is_pointer
-            , size_t const max_size
-            , size_t const indent)
-        {
-            if(is_pointer)
-            {
-                if(max_size <= 2)
-                {
-                    os << L": [";
-                    dump_array_inline<T>(os, walker, variable_address, variable_stream, max_size);
-                    os << L"]";
-                }
-                else
-                {
-                    os << L":\n";
-                    print_utils::print_stream_array_lines<T>(os, variable_stream, max_size, 2, 24, indent);
-                }
-            }
-            else if(T value; variable_stream.read(&value, sizeof(T)) == sizeof(T))
-            {
-                os << std::format(L": {}", value);
-            }
-            else
-            {
-                os << std::format(L": {}", resources::get_variable_unknown());
             }
         }
 
@@ -359,11 +452,11 @@ namespace dlg_help_utils::symbol_type_utils
                         switch(length.value())
                         {
                         case 4:
-                            dump_float_variable<float>(os, walker, variable_address, variable_stream, is_pointer, max_size, indent);
+                            dump_number_variable<float>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}, indent);
                             break;
 
                         case 8:
-                            dump_float_variable<double>(os, walker, variable_address, variable_stream, is_pointer, max_size, indent);
+                            dump_number_variable<double>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}, indent);
                             break;
 
                         default:
@@ -428,6 +521,386 @@ namespace dlg_help_utils::symbol_type_utils
             }
         }
 
+        void single_line_dump_base_type_variable_symbol_at(std::wostream& os
+            , [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , uint64_t const bit_mask
+            , is_pointer_t const is_pointer
+            , size_t const max_size)
+        {
+            if(auto const base_type_data = type.base_type(); base_type_data.has_value())
+            {
+                switch(base_type_data.value())
+                {
+                case basic_type::Char:
+                    dump_char_variable<char>(os, walker, variable_address, variable_stream, is_pointer, max_size);
+                    break;
+
+                case basic_type::WChar:
+                    dump_char_variable<wchar_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
+                    break;
+
+                case basic_type::Int:
+                case basic_type::Long:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 1:
+                            single_line_dump_number_variable<int8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 2:
+                            single_line_dump_number_variable<int16_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 4:
+                            single_line_dump_number_variable<int32_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 8:
+                            single_line_dump_number_variable<int64_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::UInt:
+                case basic_type::ULong:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 1:
+                            single_line_dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 2:
+                            single_line_dump_number_variable<uint16_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 4:
+                            single_line_dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 8:
+                            single_line_dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::Float:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 4:
+                            single_line_dump_number_variable<float>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        case 8:
+                            single_line_dump_number_variable<double>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::BCD:
+                    os << std::format(L": {}", resources::get_bcd_value_unsupported());
+                    break;
+
+                case basic_type::Bool:
+                    single_line_dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                    break;
+
+                case basic_type::Currency:
+                    os << std::format(L": {}", resources::get_currency_value_unsupported());
+                    break;
+
+                case basic_type::Date:
+                    os << std::format(L": {}", resources::get_date_value_unsupported());
+                    break;
+
+                case basic_type::Variant:
+                    os << std::format(L": {}", resources::get_variant_value_unsupported());
+                    break;
+
+                case basic_type::Complex:
+                    os << std::format(L": {}", resources::get_complex_value_unsupported());
+                    break;
+
+                case basic_type::Bit:
+                    single_line_dump_number_variable<uint8_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                    break;
+
+                case basic_type::BSTR:
+                    os << std::format(L": {}", resources::get_bstr_value_unsupported());
+                    break;
+
+                case basic_type::HResult:
+                    single_line_dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false});
+                    break;
+
+                case basic_type::Char16:
+                    dump_char_variable<char16_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
+                    break;
+
+                case basic_type::Char32:
+                    dump_char_variable<char32_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
+                    break;
+
+                case basic_type::Char8:
+                    dump_char_variable<char8_t>(os, walker, variable_address, variable_stream, is_pointer, max_size);
+                    break;
+
+                case basic_type::NoType:
+                case basic_type::Void:
+                default:  // NOLINT(clang-diagnostic-covered-switch-default)
+                    break;
+                }
+            }
+        }
+
+        bool any_base_type_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , is_pointer_t const is_pointer
+            , size_t const max_size)
+        {
+            if(auto const base_type_data = type.base_type(); base_type_data.has_value())
+            {
+                switch(base_type_data.value())
+                {
+                case basic_type::Char:
+                case basic_type::WChar:
+                    break;
+
+                case basic_type::Int:
+                case basic_type::Long:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 1:
+                        case 2:
+                        case 4:
+                        case 8:
+                            return any_number_variable(walker, variable_address, is_pointer, length.value(), max_size);
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::UInt:
+                case basic_type::ULong:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 1:
+                        case 2:
+                        case 4:
+                        case 8:
+                            return any_number_variable(walker, variable_address, is_pointer, length.value(), max_size);
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::Float:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 4:
+                        case 8:
+                            return any_number_variable(walker, variable_address, is_pointer, length.value(), max_size);
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::BCD:
+                case basic_type::Bool:
+                case basic_type::Currency:
+                case basic_type::Date:
+                case basic_type::Variant:
+                case basic_type::Complex:
+                case basic_type::Bit:
+                case basic_type::BSTR:
+                case basic_type::HResult:
+                case basic_type::Char16:
+                case basic_type::Char32:
+                case basic_type::Char8:
+                case basic_type::NoType:
+                case basic_type::Void:
+                default:  // NOLINT(clang-diagnostic-covered-switch-default)
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        std::experimental::generator<dump_variable_symbol_data> base_type_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , uint64_t const bit_mask
+            , is_pointer_t const is_pointer
+            , size_t const max_size)
+        {
+            if(auto const base_type_data = type.base_type(); base_type_data.has_value())
+            {
+                switch(base_type_data.value())
+                {
+                case basic_type::Char:
+                case basic_type::WChar:
+                    break;
+
+                case basic_type::Int:
+                case basic_type::Long:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 1:
+                            for (auto data : number_variable<int8_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 2:
+                            for (auto data : number_variable<int16_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 4:
+                            for (auto data : number_variable<int32_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 8:
+                            for (auto data : number_variable<int64_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::UInt:
+                case basic_type::ULong:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 1:
+                            for (auto data : number_variable<uint8_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 2:
+                            for (auto data : number_variable<uint16_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 4:
+                            for (auto data : number_variable<uint32_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 8:
+                            for (auto data : number_variable<uint64_t>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::Float:
+                    if(auto const length = type.length(); length.has_value())
+                    {
+                        switch(length.value())
+                        {
+                        case 4:
+                            for (auto data : number_variable<float>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case 8:
+                            for (auto data : number_variable<double>(walker, variable_address, variable_stream, bit_mask, is_pointer, max_size, dump_hex_t{false}))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                case basic_type::BCD:
+                case basic_type::Bool:
+                case basic_type::Currency:
+                case basic_type::Date:
+                case basic_type::Variant:
+                case basic_type::Complex:
+                case basic_type::Bit:
+                case basic_type::BSTR:
+                case basic_type::HResult:
+                case basic_type::Char16:
+                case basic_type::Char32:
+                case basic_type::Char8:
+                case basic_type::NoType:
+                case basic_type::Void:
+                default:  // NOLINT(clang-diagnostic-covered-switch-default)
+                    break;
+                }
+            }
+        }
+
         void dump_udt_array(std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
@@ -448,6 +921,48 @@ namespace dlg_help_utils::symbol_type_utils
                     dump_variable_symbol_at(os, walker, type, type, variable_address, copy_stream, indent, visited_depth + 1);
                     variable_address += length_data.value();
 
+                    variable_stream.skip(length);
+                }
+            }
+        }
+
+        bool any_udt_array(symbol_type_info const& type, size_t const max_size)
+        {
+            auto const length_data = type.length();
+            return length_data.value_or(0) > 0 && max_size > 0;
+        }
+
+        std::experimental::generator<dump_variable_symbol_data> udt_array(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t variable_address
+            , mini_dump_memory_stream& variable_stream
+            , size_t const max_size
+            , size_t const visited_depth)
+        {
+            if(auto const length_data = type.length(); length_data.value_or(0) > 0)
+            {
+                auto const length = static_cast<size_t>(length_data.value());
+                for(size_t index = 0; index < max_size; ++index)
+                {
+                    if(mini_dump_memory_stream copy_variable_stream = variable_stream;
+                        any_variable_symbol_at(walker, type, copy_variable_stream))
+                    {
+                        co_yield dump_variable_symbol_data{std::format(L"[{}]", locale_formatting::to_wstring(index)),
+                            [&walker,
+                            &type,
+                            variable_address,
+                            variable_stream,
+                            visited_depth]() mutable
+                            {
+                                return variable_symbol_at(walker, type, type, variable_address, variable_stream, visited_depth + 1);
+                            }
+                        };
+                    }
+                    else
+                    {
+                        co_yield dump_variable_symbol_data{ std::format(L"[{}]", locale_formatting::to_wstring(index)), {} };
+                    }
+                    variable_address += length_data.value();
                     variable_stream.skip(length);
                 }
             }
@@ -515,6 +1030,156 @@ namespace dlg_help_utils::symbol_type_utils
             }
         }
 
+        template<typename T>
+        bool any_pointer_memory_value(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, T const& pointer_value)
+        {
+            if(auto const pointer_type = type.type(); pointer_type.has_value())
+            {
+                if(auto const length = pointer_type.value().length(); length.has_value() && length.value() > 0)
+                {
+                    // lookup memory for pointer_value to see if it's in the memory list...
+                    if(auto variable_stream = walker.get_process_memory_stream(pointer_value, length.value()); !variable_stream.eof())
+                    {
+                        if(auto const data_type_tag = pointer_type.value().sym_tag(); data_type_tag.has_value())
+                        {
+                            switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                            {
+                                case sym_tag_enum::UDT:
+                                    return any_variable_symbol_at(walker, pointer_type.value(), variable_stream);
+
+                                case sym_tag_enum::BaseType:
+                                    return any_base_type_variable_symbol_at(walker, pointer_type.value(), pointer_value, is_pointer_t{ true }, 0);
+
+                                case sym_tag_enum::PointerType:
+                                    switch(length.value())
+                                    {
+                                    case 4:
+                                    case 8:
+                                        return any_number_variable(walker, pointer_value, is_pointer_t{ true }, length.value(), 0);
+
+                                    default:
+                                        break;
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        template<typename T>
+        std::experimental::generator<dump_variable_symbol_data> pointer_memory_value(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, T const& pointer_value, size_t const visited_depth)
+        {
+            if(auto const pointer_type = type.type(); pointer_type.has_value())
+            {
+                if(auto const length = pointer_type.value().length(); length.has_value() && length.value() > 0)
+                {
+                    // lookup memory for pointer_value to see if it's in the memory list...
+                    if(auto variable_stream = walker.get_process_memory_stream(pointer_value, length.value()); !variable_stream.eof())
+                    {
+                        if(auto const data_type_tag = pointer_type.value().sym_tag(); data_type_tag.has_value())
+                        {
+                            switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                            {
+                                case sym_tag_enum::UDT:
+                                    for(auto data : variable_symbol_at(walker, pointer_type.value(), pointer_type.value(), pointer_value, variable_stream, visited_depth + 1))  // NOLINT(performance-for-range-copy)
+                                    {
+                                        co_yield std::move(data);
+                                    }
+                                    break;
+
+                                case sym_tag_enum::BaseType:
+                                    for (auto data : base_type_variable_symbol_at(walker, pointer_type.value(), pointer_value, variable_stream, all_bits, is_pointer_t{ true }, 0))  // NOLINT(performance-for-range-copy)
+                                    {
+                                        co_yield std::move(data);
+                                    }
+                                    break;
+
+                                case sym_tag_enum::PointerType:
+                                    switch(length.value())
+                                    {
+                                    case 4:
+                                        for (auto data : number_variable<uint32_t>(walker, pointer_value, variable_stream, 0, is_pointer_t{true}, 0, dump_hex_t{true}))  // NOLINT(performance-for-range-copy)
+                                        {
+                                            co_yield std::move(data);
+                                        }
+                                        break;
+
+                                    case 8:
+                                        for (auto data : number_variable<uint64_t>(walker, pointer_value, variable_stream, 0, is_pointer_t{true}, 0, dump_hex_t{true}))  // NOLINT(performance-for-range-copy)
+                                        {
+                                            co_yield std::move(data);
+                                        }
+                                        break;
+
+                                    default:
+                                        break;
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        template<typename T>
+        void single_line_dump_pointer_memory_value(std::wostream& os, stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, T const& pointer_value)
+        {
+            os << std::format(L": {}", stream_hex_dump::to_hex_full(pointer_value));
+            if(auto const pointer_type = type.type(); pointer_type.has_value())
+            {
+                if(auto const length = pointer_type.value().length(); length.has_value() && length.value() > 0)
+                {
+                    // lookup memory for pointer_value to see if it's in the memory list...
+                    if(auto variable_stream = walker.get_process_memory_stream(pointer_value, length.value()); !variable_stream.eof())
+                    {
+                        if(auto const data_type_tag = pointer_type.value().sym_tag(); data_type_tag.has_value())
+                        {
+                            switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                            {
+                                case sym_tag_enum::UDT:
+                                    break;
+
+                                case sym_tag_enum::BaseType:
+                                    single_line_dump_base_type_variable_symbol_at(os, walker, pointer_type.value(), pointer_value, variable_stream, all_bits, is_pointer_t{true}, 0);
+                                    break;
+
+                                case sym_tag_enum::PointerType:
+                                    switch(length.value())
+                                    {
+                                    case 4:
+                                        single_line_dump_number_variable<uint32_t>(os, walker, pointer_value, variable_stream, 0, is_pointer_t{true}, 0, dump_hex_t{true});
+                                        break;
+
+                                    case 8:
+                                        single_line_dump_number_variable<uint64_t>(os, walker, pointer_value, variable_stream, 0, is_pointer_t{true}, 0, dump_hex_t{true});
+                                        break;
+
+                                    default:
+                                        break;
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         void dump_pointer_variable_symbol_at(std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
@@ -548,6 +1213,102 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
 
+        bool any_pointer_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , mini_dump_memory_stream& variable_stream)
+        {
+            if(auto const length = type.length(); length.has_value())
+            {
+                switch(length.value())
+                {
+                case 4:
+                    if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        return any_pointer_memory_value(walker, type, value);
+                    }
+                    break;
+
+                case 8:
+                    if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        return any_pointer_memory_value(walker, type, value);
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        std::experimental::generator<dump_variable_symbol_data> pointer_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , [[maybe_unused]] uint64_t variable_address
+            , mini_dump_memory_stream& variable_stream
+            , size_t const visited_depth)
+        {
+            if(auto const length = type.length(); length.has_value())
+            {
+                switch(length.value())
+                {
+                case 4:
+                    if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        for(auto data : pointer_memory_value(walker, type, value, visited_depth))  // NOLINT(performance-for-range-copy)
+                        {
+                            co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                        }
+                    }
+                    break;
+
+                case 8:
+                    if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        for(auto data : pointer_memory_value(walker, type, value, visited_depth))  // NOLINT(performance-for-range-copy)
+                        {
+                            co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
+        void single_line_dump_pointer_variable_symbol_at(std::wostream& os
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , [[maybe_unused]] uint64_t variable_address
+            , mini_dump_memory_stream& variable_stream)
+        {
+            if(auto const length = type.length(); length.has_value())
+            {
+                switch(length.value())
+                {
+                case 4:
+                    if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        single_line_dump_pointer_memory_value(os, walker, type, value);
+                    }
+                    break;
+
+                case 8:
+                    if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        single_line_dump_pointer_memory_value(os, walker, type, value);
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
         bool dump_array_variable_symbol_at(std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
@@ -573,20 +1334,10 @@ namespace dlg_help_utils::symbol_type_utils
                                 {
                                 case 4:
                                     dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, 0, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)), dump_hex_t{true}, indent);
-                                    /*
-                                    os << L": [";
-                                    dump_array_inline(os, walker, variable_address, static_cast<uint32_t const*>(variable_memory), static_cast<size_t>(type.array_count().value_or(0)), true);
-                                    os << L"]";
-                                    */
                                     break;
 
                                 case 8:
                                     dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, 0, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)), dump_hex_t{true}, indent);
-                                    /*
-                                    os << L": [";
-                                    dump_array_inline(os, walker, variable_address, static_cast<uint64_t const*>(variable_memory), static_cast<size_t>(type.array_count().value_or(0)), true);
-                                    os << L"]";
-                                    */
                                     break;
 
                                 default:
@@ -608,6 +1359,149 @@ namespace dlg_help_utils::symbol_type_utils
             return false;
         }
 
+        void single_line_dump_array_variable_symbol_at(std::wostream& os
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , [[maybe_unused]] mini_dump_memory_stream& variable_stream)
+        {
+            if(auto const data_type = type.type(); data_type.has_value())
+            {
+                if(auto const data_type_tag = data_type.value().sym_tag(); data_type.has_value())
+                {
+                    switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                    {
+                        case sym_tag_enum::BaseType:
+                            single_line_dump_base_type_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream, all_bits, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)));
+                            break;
+
+                        case sym_tag_enum::PointerType:
+                            if(auto const length = data_type.value().length(); length.has_value())
+                            {
+                                switch(length.value())
+                                {
+                                case 4:
+                                    single_line_dump_number_variable<uint32_t>(os, walker, variable_address, variable_stream, 0, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)), dump_hex_t{true});
+                                    break;
+
+                                case 8:
+                                    single_line_dump_number_variable<uint64_t>(os, walker, variable_address, variable_stream, 0, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)), dump_hex_t{true});
+                                    break;
+
+                                default:
+                                    break;
+                                }
+                            }
+                            break;
+
+                        case sym_tag_enum::UDT:  // NOLINT(bugprone-branch-clone)
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        bool any_array_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address)
+        {
+            if(auto const data_type = type.type(); data_type.has_value())
+            {
+                if(auto const data_type_tag = data_type.value().sym_tag(); data_type.has_value())
+                {
+                    switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                    {
+                        case sym_tag_enum::BaseType:
+                            return any_base_type_variable_symbol_at(walker, data_type.value(), variable_address, is_pointer_t{ true }, static_cast<size_t>(type.array_count().value_or(0)));
+
+                        case sym_tag_enum::PointerType:
+                            if(auto const length = data_type.value().length(); length.has_value())
+                            {
+                                switch(length.value())
+                                {
+                                case 4:
+                                case 8:
+                                    return any_number_variable(walker, variable_address, is_pointer_t{true}, length.value(), static_cast<size_t>(type.array_count().value_or(0)));
+
+                                default:
+                                    break;
+                                }
+                            }
+                            break;
+
+                    case sym_tag_enum::UDT:
+                            return any_udt_array(data_type.value(), static_cast<size_t>(type.array_count().value_or(0)));
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        std::experimental::generator<dump_variable_symbol_data> array_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , [[maybe_unused]] mini_dump_memory_stream& variable_stream
+            , size_t const visited_depth)
+        {
+            if(auto const data_type = type.type(); data_type.has_value())
+            {
+                if(auto const data_type_tag = data_type.value().sym_tag(); data_type.has_value())
+                {
+                    switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                    {
+                        case sym_tag_enum::BaseType:
+                            for (auto data : base_type_variable_symbol_at(walker, data_type.value(), variable_address, variable_stream, all_bits, is_pointer_t{ true }, static_cast<size_t>(type.array_count().value_or(0))))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        case sym_tag_enum::PointerType:
+                            if(auto const length = data_type.value().length(); length.has_value())
+                            {
+                                switch(length.value())
+                                {
+                                case 4:
+                                    for (auto data : number_variable<uint32_t>(walker, variable_address, variable_stream, 0, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)), dump_hex_t{true}))  // NOLINT(performance-for-range-copy)
+                                    {
+                                        co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                                    }
+                                    break;
+
+                                case 8:
+                                    for (auto data : number_variable<uint64_t>(walker, variable_address, variable_stream, 0, is_pointer_t{true}, static_cast<size_t>(type.array_count().value_or(0)), dump_hex_t{true}))  // NOLINT(performance-for-range-copy)
+                                    {
+                                        co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                                }
+                            }
+                            break;
+
+                    case sym_tag_enum::UDT:
+                            for (auto data : udt_array(walker, data_type.value(), variable_address, variable_stream, static_cast<size_t>(type.array_count().value_or(0)), visited_depth))  // NOLINT(performance-for-range-copy)
+                            {
+                                co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
         void dump_bitmask(std::wostream& os, symbol_type_info const& type, unsigned long long& bit_mask)
         {
             if(auto const bit_position_data = type.bit_position(); bit_position_data.has_value())
@@ -626,6 +1520,198 @@ namespace dlg_help_utils::symbol_type_utils
             }
         }
 
+
+        bool any_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , mini_dump_memory_stream& variable_stream)
+        {
+            if(auto const length = type.length(); length.has_value())
+            {
+                switch(length.value())
+                {
+                case 4:
+                    if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        return any_pointer_memory_value(walker, type, value);
+                    }
+                    break;
+
+                case 8:
+                    if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        return any_pointer_memory_value(walker, type, value);
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        std::experimental::generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , [[maybe_unused]] symbol_type_info const& display_type
+            , [[maybe_unused]] uint64_t variable_address
+            , mini_dump_memory_stream& variable_stream
+            , size_t const visited_depth)
+        {
+            if(auto const length = type.length(); length.has_value())
+            {
+                switch(length.value())
+                {
+                case 4:
+                    if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        for(auto data : pointer_memory_value(walker, type, value, visited_depth))  // NOLINT(performance-for-range-copy)
+                        {
+                            co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                        }
+                    }
+                    break;
+
+                case 8:
+                    if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                    {
+                        for(auto data : pointer_memory_value(walker, type, value, visited_depth))  // NOLINT(performance-for-range-copy)
+                        {
+                            co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
+        void single_line_dump_data_at(std::wostream& os
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , std::optional<symbol_type_info> const& data_type
+            , std::optional<sym_tag_enum> const data_type_tag
+            , unsigned long long bit_mask)
+        {
+            dump_bitmask(os, type, bit_mask);
+
+            // data member, type the data member type and print based on that type
+            if(data_type.has_value())
+            {
+                switch(auto const tag = data_type_tag.value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
+                {
+                case sym_tag_enum::UDT:
+                    break;
+
+                case sym_tag_enum::Enum:
+                    single_line_dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream);
+                    break;
+
+                case sym_tag_enum::PointerType:
+                    single_line_dump_pointer_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream);
+                    break;
+
+                case sym_tag_enum::ArrayType:
+                    break;
+
+                case sym_tag_enum::BaseType:
+                    single_line_dump_base_type_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream, bit_mask, is_pointer_t{false}, 0);
+                    break;
+
+                default:
+                    dump_unsupported_variable_symbol_at(os, data_type.value(), tag, variable_address, variable_stream);
+                    break;
+                }
+            }
+        }
+
+        bool any_data_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , std::optional<symbol_type_info> const& data_type
+            , std::optional<sym_tag_enum> const data_type_tag)
+        {
+            // data member, type the data member type and print based on that type
+            if (data_type.has_value())
+            {
+                switch (auto const tag = data_type_tag.value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
+                {
+                case sym_tag_enum::UDT:
+                    return any_variable_symbol_at(walker, data_type.value(), variable_stream);
+                
+                case sym_tag_enum::Enum:
+                    break;
+
+                case sym_tag_enum::PointerType:
+                    return any_pointer_variable_symbol_at(walker, data_type.value(), variable_stream);
+
+                case sym_tag_enum::ArrayType:
+                    return any_array_variable_symbol_at(walker, data_type.value(), variable_address);
+
+                case sym_tag_enum::BaseType:
+                    return any_base_type_variable_symbol_at(walker, data_type.value(), variable_address, is_pointer_t{false}, 0);
+
+                default:
+                    break;
+                }
+            }
+            return false;
+        }
+
+        std::experimental::generator<dump_variable_symbol_data> data_at(stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , mini_dump_memory_stream& variable_stream
+            , std::optional<symbol_type_info> const& data_type
+            , std::optional<sym_tag_enum> const data_type_tag
+            , unsigned long long const bit_mask
+            , size_t const visited_depth)
+        {
+            // data member, type the data member type and print based on that type
+            if(data_type.has_value())
+            {
+                switch(auto const tag = data_type_tag.value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
+                {
+                case sym_tag_enum::UDT:
+                    for (auto data : variable_symbol_at(walker, data_type.value(), type, variable_address, variable_stream, visited_depth + 1))  // NOLINT(performance-for-range-copy)
+                    {
+                        co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                    }
+                    break;
+
+                case sym_tag_enum::Enum:
+                    break;
+
+                case sym_tag_enum::PointerType:
+                    for(auto data : pointer_variable_symbol_at(walker, data_type.value(), variable_address, variable_stream, visited_depth))  // NOLINT(performance-for-range-copy)
+                    {
+                        co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                    }
+                    break;
+
+                case sym_tag_enum::ArrayType:
+                    for(auto data : array_variable_symbol_at(walker, data_type.value(), variable_address, variable_stream, visited_depth))  // NOLINT(performance-for-range-copy)
+                    {
+                        co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                    }
+                    break;
+
+                case sym_tag_enum::BaseType:
+                    for(auto data : base_type_variable_symbol_at(walker, data_type.value(), variable_address, variable_stream, bit_mask, is_pointer_t{false}, 0))  // NOLINT(performance-for-range-copy)
+                    {
+                        co_yield std::move(data);  // NOLINT(performance-move-const-arg)
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
         void dump_data_at(std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
@@ -656,7 +1742,7 @@ namespace dlg_help_utils::symbol_type_utils
                     break;
 
                 case sym_tag_enum::Enum:
-                    dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream);
+                    single_line_dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, variable_stream);
                     break;
 
                 case sym_tag_enum::PointerType:
@@ -694,6 +1780,19 @@ namespace dlg_help_utils::symbol_type_utils
 
             mini_dump_memory_stream copy_stream{variable_stream};
             dump_pointer_variable_symbol_at(os, walker, type, variable_address, copy_stream, indent, visited_depth);
+        }
+
+        void single_line_dump_pointer_type_at(std::wostream& os
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_info const& type
+            , uint64_t const variable_address
+            , mini_dump_memory_stream const& variable_stream
+            , unsigned long long bit_mask)
+        {
+            dump_bitmask(os, type, bit_mask);
+
+            mini_dump_memory_stream copy_stream{variable_stream};
+            single_line_dump_pointer_variable_symbol_at(os, walker, type, variable_address, copy_stream);
         }
 
         bool can_dump_tag(sym_tag_enum const tag)
@@ -1172,6 +2271,177 @@ namespace dlg_help_utils::symbol_type_utils
         dump_variable_symbol_at(os, walker, symbol_info, symbol_info, variable_address, stream, indent, visited_depth);
     }
 
+    std::experimental::generator<dump_variable_symbol_data> children_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, mini_dump_memory_stream const& variable_stream, uint64_t const variable_address, size_t const visited_depth)
+    {
+        for (auto const& child : type.children())
+        {
+            if(auto const offset_data = child.offset(); offset_data.has_value())
+            {
+                if(auto const tag = child.sym_tag().value_or(sym_tag_enum::Null); can_dump_tag(tag))
+                {
+                    mini_dump_memory_stream copy_stream{variable_stream};
+                    copy_stream.skip(offset_data.value());
+                    for (auto field : variable_symbol_at(walker, child, child, variable_address + offset_data.value(), copy_stream, visited_depth))  // NOLINT(performance-for-range-copy)
+                    {
+                        co_yield field;
+                    }
+                }
+            }
+        }
+    }
+
+    std::experimental::generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+                                                                               , symbol_type_info const& type
+                                                                               , symbol_type_info const& display_type
+                                                                               , uint64_t const variable_address
+                                                                               , mini_dump_memory_stream const& variable_stream
+                                                                               , size_t const visited_depth)
+    {
+        auto const data_type = type.type();
+        auto const data_type_tag = data_type.has_value() ? data_type.value().sym_tag() : std::nullopt;
+
+        std::wstringstream os;
+        os << std::format(L"{0}{1} {2}", visited_depth == 0 ? L' ' : L'+', stream_hex_dump::to_hex_full(variable_address), get_symbol_type_friendly_name(display_type));
+
+        mini_dump_memory_stream copy_variable_stream{variable_stream};
+        switch(auto const tag = type.sym_tag().value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
+        {
+        case sym_tag_enum::Data:
+            single_line_dump_data_at(os, walker, type, variable_address, copy_variable_stream, data_type, data_type_tag, all_bits);
+            copy_variable_stream = variable_stream;
+            if(any_data_at(walker, variable_address, copy_variable_stream, data_type, data_type_tag))
+            {
+                co_yield dump_variable_symbol_data{std::move(os).str(),
+                    [&walker,
+                    &type,
+                    variable_address,
+                    data_type,
+                    data_type_tag,
+                    copy_variable_stream = variable_stream,
+                    visited_depth]() mutable
+                    {
+                        return data_at(walker, type, variable_address, copy_variable_stream, data_type, data_type_tag, all_bits, visited_depth);
+                    }
+                };
+            }
+            else
+            {
+                co_yield dump_variable_symbol_data{std::move(os).str(), {}};
+            }
+            break;
+
+        case sym_tag_enum::Enum:
+            if(data_type.has_value())
+            {
+                single_line_dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_variable_stream);
+            }
+            break;
+
+        case sym_tag_enum::ArrayType:
+            single_line_dump_array_variable_symbol_at(os, walker, type, variable_address, copy_variable_stream);
+            if(any_array_variable_symbol_at(walker, type, variable_address))
+            {
+                co_yield dump_variable_symbol_data{std::move(os).str(),
+                    [&walker,
+                    &type,
+                    variable_address,
+                    copy_variable_stream = variable_stream,
+                    visited_depth]() mutable
+                    {
+                        return array_variable_symbol_at(walker, type, variable_address, copy_variable_stream, visited_depth);
+                    }
+                };
+            }
+            else
+            {
+                co_yield dump_variable_symbol_data{std::move(os).str(), {}};
+            }
+            break;
+
+        case sym_tag_enum::BaseType:
+            single_line_dump_base_type_variable_symbol_at(os, walker, type, variable_address, copy_variable_stream, all_bits, is_pointer_t{false}, 0);
+            break;
+
+        case sym_tag_enum::PointerType:
+            single_line_dump_pointer_type_at(os, walker, type, variable_address, copy_variable_stream, all_bits);
+            if (any_pointer_memory_value(walker, type, variable_address))
+            {
+                co_yield dump_variable_symbol_data{ std::move(os).str(),
+                    [&walker,
+                    &type,
+                    variable_address,
+                    copy_variable_stream = variable_stream,
+                    visited_depth]() mutable
+                    {
+                        return pointer_variable_symbol_at(walker, type, variable_address, copy_variable_stream, visited_depth);
+                    }
+                };
+            }
+            else
+            {
+                co_yield dump_variable_symbol_data{ std::move(os).str(), {} };
+            }
+            break;
+
+        case sym_tag_enum::UDT:
+            if(data_type.has_value())
+            {
+                if(any_variable_symbol_at(walker, type, copy_variable_stream))
+                {
+                    co_yield dump_variable_symbol_data{std::move(os).str(),
+                        [&walker,
+                        &type,
+                        variable_address,
+                        data_type,
+                        copy_variable_stream = variable_stream,
+                        visited_depth]() mutable
+                        {
+                            return variable_symbol_at(walker, type, data_type.value(), variable_address, copy_variable_stream, visited_depth + 1);
+                        }
+                    };
+                }
+                else
+                {
+                    co_yield dump_variable_symbol_data{ std::move(os).str(), {} };
+                }
+            }
+            break;
+
+        default:
+            dump_unsupported_variable_symbol_at(os, data_type.value_or(type), tag, variable_address, copy_variable_stream);
+            co_yield dump_variable_symbol_data{std::move(os).str(), {}};
+            break;
+        }
+
+        auto anyFields = false;
+        for (auto const& child : type.children())
+        {
+            if(auto const offset_data = child.offset(); offset_data.has_value())
+            {
+                if(auto const tag = child.sym_tag().value_or(sym_tag_enum::Null); can_dump_tag(tag))
+                {
+                    anyFields = true;
+                    break;
+                }
+            }
+        }
+
+        if(anyFields)
+        {
+            co_yield dump_variable_symbol_data{
+                resources::get_fields_string(),
+                [&walker,
+                &type,
+                &variable_stream,
+                variable_address,
+                visited_depth]() mutable 
+                {
+                    return children_variable_symbol_at(walker, type, variable_stream, variable_address, visited_depth);
+                }
+            };
+        }
+    }
+
     void dump_variable_symbol_at(std::wostream& os
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_type_info const& type
@@ -1206,7 +2476,7 @@ namespace dlg_help_utils::symbol_type_utils
         case sym_tag_enum::Enum:
             if(data_type.has_value())
             {
-                dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_variable_stream);
+                single_line_dump_enum_variable_symbol_at(os, walker, data_type.value(), variable_address, copy_variable_stream);
             }
             break;
 

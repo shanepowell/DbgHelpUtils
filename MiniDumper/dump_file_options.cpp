@@ -292,22 +292,22 @@ uint64_t dump_file_options::hex_dump_memory_size(uint64_t const size) const
     return size;
 }
 
-dlg_help_utils::stream_stack_dump::dump_stack_options::options dump_file_options::display_stack_options() const
+dlg_help_utils::stream_stack_dump::dump_stack_options dump_file_options::display_stack_options() const
 {
     using namespace dlg_help_utils::stream_stack_dump;
-    uint32_t options{0};
+    uint8_t options{0};
 
     if(display_stack_parameters_)
     {
-        options |= dump_stack_options::DisplayStackParameters;
+        options |= static_cast<uint8_t>(dump_stack_options::DisplayStackParameters);
     }
 
     if(display_stack_variables_)
     {
-        options |= dump_stack_options::DisplayStackVariables;
+        options |= static_cast<uint8_t>(dump_stack_options::DisplayStackVariables);
     }
 
-    return static_cast<dump_stack_options::options>(options);
+    return static_cast<dump_stack_options>(options);
 }
 
 std::vector<std::wstring> const& dump_file_options::filter_values(std::wstring const& option) const

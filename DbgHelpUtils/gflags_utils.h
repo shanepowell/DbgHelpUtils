@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
-// ReSharper disable once CppUnusedIncludeDirective
-#include <string_view>
+#include <string>
 #include <vector>
 
 namespace dlg_help_utils::gflags_utils

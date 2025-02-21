@@ -23,6 +23,8 @@ namespace
     const std::wstring ApplicationThemeProperty = L"ApplicationTheme"s;
     const std::wstring LogLevelProperty = L"LogLevel"s;
     const std::wstring RecentFilesProperty = L"RecentFiles"s;
+    const std::wstring SymbolLoadDebugProperty = L"SymbolLoadDebug"s;
+    const std::wstring SymbolLoadDebugMemoryProperty = L"SymbolLoadDebugMemory"s;
 }
 
 GlobalOptions::GlobalOptions(key)
@@ -40,6 +42,8 @@ GlobalOptions::GlobalOptions(key)
     , time_format_{AppPropertiesHelper::GetStringProperty(TimeFormatProperty)}
     , durationFormat_{AppPropertiesHelper::GetEnumProperty(DurationFormatProperty, DurationFormatType::TimeSpan)}
     , recentFiles_{AppPropertiesHelper::GetStringVectorProperty(RecentFilesProperty)}
+    , symbolLoadDebug_{AppPropertiesHelper::GetBoolProperty(SymbolLoadDebugProperty, true)}
+    , symbolLoadDebugMemory_{AppPropertiesHelper::GetBoolProperty(SymbolLoadDebugMemoryProperty, false)}
 {
 }
 
@@ -123,6 +127,28 @@ void GlobalOptions::SizeBase(SizeDisplayNumberBaseType const value)
 void GlobalOptions::DurationFormat(DurationFormatType const value)
 {
     ApplyValue(value, durationFormat_, DurationFormatProperty, durationFormatCallbacks_, durationFormatCallbacksMutex_, [this](auto const& callback, auto const value) { return callback(value); });
+}
+
+void GlobalOptions::SymbolLoadDebug(bool const value)
+{
+    if (symbolLoadDebug_ == value)
+    {
+        return;
+    }
+
+    symbolLoadDebug_ = value;
+    AppPropertiesHelper::SetBoolProperty(SymbolLoadDebugProperty, value);
+}
+
+void GlobalOptions::SymbolLoadDebugMemory(bool const value)
+{
+    if (symbolLoadDebugMemory_ == value)
+    {
+        return;
+    }
+
+    symbolLoadDebugMemory_ = value;
+    AppPropertiesHelper::SetBoolProperty(SymbolLoadDebugMemoryProperty, value);
 }
 
 void GlobalOptions::OnNumberDisplayFormatChanged(std::function<bool(NumberDisplayFormatType)> callback)

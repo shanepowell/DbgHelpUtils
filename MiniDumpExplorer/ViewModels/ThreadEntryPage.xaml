@@ -8,6 +8,24 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <DataTemplate x:Key="StackEntryViewTemplate" x:DataType="local:ThreadStackEntry">
+            <TreeViewItem ItemsSource="{x:Bind Children}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{x:Bind Line,Mode=OneWay}"
+                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                </Grid>
+            </TreeViewItem>
+        </DataTemplate>
+    </Page.Resources>
+
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv"  Margin="12,5,5,5">
         <Grid MinWidth="{Binding ElementName=sv, Path=ViewportWidth}" MinHeight="{Binding ElementName=sv, Path=ViewportHeight}" ColumnSpacing="5" RowSpacing="5">
             <Grid.ColumnDefinitions>
@@ -27,12 +45,15 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>   <!-- 10 -->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Thread.Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Thread.Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Thread Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Thread Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="15" FontWeight="Bold" />
 
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Thread Id" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock x:Name="threadId" Grid.Row="3" Grid.Column="1" Text="{x:Bind Thread.Id,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
@@ -47,10 +68,29 @@
             <TextBlock Grid.Row="6" Grid.Column="1" Text="{x:Bind Thread.PriorityClassType,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
             <TextBlock Grid.Row="7" Grid.Column="0" Text="Suspend Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="threadSuspendCount" Grid.Row="7" Grid.Column="1" Text="{x:Bind Thread.SuspendCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="{x:Bind Thread.SuspendCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
             <TextBlock Grid.Row="8" Grid.Column="0" Text="TEB" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock x:Name="threadTEB" Grid.Row="8" Grid.Column="1" Text="{x:Bind Thread.TEB,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+
+            <TextBlock Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Text="Stack" FontSize="14" FontWeight="Bold" Margin="0,10,0,0" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Start" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="stackStartOfMemoryRange" Grid.Row="10" Grid.Column="1" Text="{x:Bind Thread.Stack.StartOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="End" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="stackEndOfMemoryRange" Grid.Row="11" Grid.Column="1" Text="{x:Bind Thread.Stack.EndOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <TextBlock x:Name="stackDataSize" Grid.Row="12" Grid.Column="1" Text="{x:Bind Thread.Stack.DataSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="13" Grid.Column="0" Text="Call Stack" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+            <TreeView 
+                x:Name="stackEntries"
+                Grid.Row="13"
+                Grid.Column="1"
+                SelectionMode="Single"
+                ItemsSource="{x:Bind Thread.StackEntries,Mode=OneWay}"
+                ItemTemplate="{StaticResource StackEntryViewTemplate}"
+                Expanding="OnTreeViewItemExpanding"
+                Margin="0,5,0,0"
+                />
         </Grid>
     </ScrollViewer>
 </Page>

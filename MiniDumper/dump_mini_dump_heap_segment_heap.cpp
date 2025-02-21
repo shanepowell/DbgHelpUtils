@@ -76,7 +76,7 @@ namespace detail
             if(options.display_symbols() && !entry.allocation_stack_trace().empty())
             {
                 log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
+                dump_stack_to_stream(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
                 log << L'\n';
             }
 
@@ -143,7 +143,7 @@ namespace detail
             if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
             {
                 log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
+                dump_stack_to_stream(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
                 log << L'\n';
             }
 
@@ -381,7 +381,7 @@ namespace detail
                 if(options.display_symbols() && entry.allocated() && !entry.allocation_stack_trace().empty())
                 {
                 log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
+                dump_stack_to_stream(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
                     log << L'\n';
                 }
 
@@ -486,7 +486,7 @@ namespace detail
             if(options.display_symbols() && !entry.allocation_stack_trace().empty())
             {
                 log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                hex_dump_stack(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
+                dump_stack_to_stream(log, entry.heap().walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.heap().peb().is_x86_target()}, indent + 4);
                 log << L'\n';
             }
 

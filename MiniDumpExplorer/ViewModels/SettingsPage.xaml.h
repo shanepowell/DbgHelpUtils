@@ -25,6 +25,11 @@ namespace winrt::MiniDumpExplorer::implementation
         static uint64_t ExampleDuration();
         static uint64_t ExampleDate();
 
+        static bool SymbolLoadDebug();
+        static void SymbolLoadDebug(bool value);
+        static bool SymbolLoadMemoryDebug();
+        static void SymbolLoadMemoryDebug(bool value);
+
         void ThemeModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LogLevelModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void NumberFormatModeSelectionChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);

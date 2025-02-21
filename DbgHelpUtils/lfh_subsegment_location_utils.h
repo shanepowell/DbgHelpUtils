@@ -1,6 +1,5 @@
 ﻿#pragma once
-// ReSharper disable once CppUnusedIncludeDirective
-#include <string_view>
+#include <string>
 
 namespace dlg_help_utils::lfh_subsegment_location_utils
 {

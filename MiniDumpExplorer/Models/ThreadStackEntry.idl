@@ -1,0 +1,19 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ThreadStackEntry : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadStackEntry();
+
+        UInt64 Index { get; };
+        String Line { get; };
+        Boolean IsInLine { get; };
+        Boolean IsStackFrame { get; };
+        Boolean IsParameter { get; };
+        Boolean IsLocalVariable { get; };
+        IObservableVector<ThreadStackEntry> Children { get; };
+        Boolean AreChildrenLoaded { get; };
+        Boolean LoadingChildren { get; };
+    }
+}

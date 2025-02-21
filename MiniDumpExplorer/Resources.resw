@@ -2649,6 +2649,9 @@
   <data name="SymbolMemoryAddressInRange" xml:space="preserve">
     <value>memory address range in dump file</value>
   </data>
+  <data name="SymbolFields" xml:space="preserve">
+    <value>fields</value>
+  </data>
   <data name="workstation" xml:space="preserve">
     <value>workstation</value>
   </data>
@@ -3518,5 +3521,14 @@
   </data>
   <data name="PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE" xml:space="preserve">
     <value>PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE</value>
+  </data>
+  <data name="ThreadStackEntryLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="ThreadStackEntryParameters" xml:space="preserve">
+    <value>Parameters</value>
+  </data>
+  <data name="ThreadStackEntryLocalVariables" xml:space="preserve">
+    <value>Local Variables</value>
   </data>
 </root>

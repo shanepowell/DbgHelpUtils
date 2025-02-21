@@ -41,8 +41,8 @@ namespace
         log_level const level,
         std::string log_line,  // NOLINT(performance-unnecessary-value-param)
         log_level const current_level,
-        std::chrono::system_clock::time_point const now_day,
-        std::function<void(logger::log_command, log_level, std::string, log_level, std::chrono::system_clock::time_point const&)> const& filter)
+        std::chrono::local_time<std::chrono::seconds> const now_day,
+        std::function<void(logger::log_command, log_level, std::string, log_level, std::chrono::local_time<std::chrono::seconds> const&)> const& filter)
     {
         try
         {
@@ -111,7 +111,7 @@ void App::OnLaunched([[maybe_unused]]LaunchActivatedEventArgs const& e)
     AppPropertiesHelper::Initialize(L"MiniDumpExplorer"s);
     logger::Log().MessageFilter(
         [weakPtr = get_weak(), filter = logger::Log().MessageFilter()]
-        (logger::log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::system_clock::time_point const& now_day)  // NOLINT(performance-unnecessary-value-param)
+        (logger::log_command const command, log_level const level, std::string log_line, log_level const current_level, std::chrono::local_time<std::chrono::seconds> const& now_day)  // NOLINT(performance-unnecessary-value-param)
         {
             if(auto const self = weakPtr.get())
             {

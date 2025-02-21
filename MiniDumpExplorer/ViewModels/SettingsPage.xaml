@@ -90,6 +90,14 @@
                         <ComboBoxItem Content="Debug" />
                     </ComboBox>
                 </local:SettingsCard>
+                <local:SettingsCard Description="Debug symbol loading logging."
+                                    Header="Symbol Load Debug">
+                    <ToggleSwitch IsOn="{x:Bind SymbolLoadDebug, Mode=TwoWay}"/>
+                </local:SettingsCard>
+                <local:SettingsCard Description="Debug symbol memory loading logging."
+                                    Header="Symbol Load Memory Debug">
+                    <ToggleSwitch IsOn="{x:Bind SymbolLoadMemoryDebug, Mode=TwoWay}"/>
+                </local:SettingsCard>
                 <local:SettingsExpander Description="Unit Display Properties" Header="Unit size format">
                     <local:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="Segoe UI Symbol" Glyph="&#663;" />
