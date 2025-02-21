@@ -1,6 +1,6 @@
 Param
 (
-    [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
+    [ValidateSet("vs2022")][string]$Compiler = "vs2022",
     [string] $ResultFile = "failed\Report.log",
     [switch] $GenerateHeapLogs,
     [switch] $LastReport,

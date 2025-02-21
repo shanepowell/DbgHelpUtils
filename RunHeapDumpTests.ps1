@@ -12,7 +12,7 @@
 Param
 (
     [string] $DumpFolder,
-    [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
+    [ValidateSet("vs2022")][string]$Compiler = "vs2022",
     [string] $ResultFile = "Report.log",
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
@@ -401,7 +401,6 @@ else
 }
 
 $compilers = @{
-    "vs2019" = "v142";
     "vs2022" = "v143";
 }
 $CompilerDir = $compilers[$Compiler]

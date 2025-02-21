@@ -1,6 +1,6 @@
 Param
 (
-    [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
+    [ValidateSet("vs2022")][string]$Compiler = "vs2022",
     [string] $ResultFile,
     [switch] $CheckOnly,
     [switch] $GenerateHeapLogs,
@@ -29,7 +29,6 @@ if (!$CheckOnly -and (Test-Admin) -eq $false)
 if(!$ResultFile)
 {
     $compilerResultsFile = @{
-        "vs2019" = "ReportVs2019.log";
         "vs2022" = "ReportVs2022.log";
     }
     $ResultFile = $compilerResultsFile[$Compiler]
