@@ -1082,10 +1082,10 @@ namespace dlg_help_utils::dbg_help
             auto const debug_module_info_size = sizeof(IMAGE_DEBUG_DIRECTORY) + cv_record_size;
 
             // Most recent DbgHelp.dll now requires sizeof(IMAGE_DEBUG_DIRECTORY) + cv_record_size to be 8bytes-aligned
-            auto const mandatoryAlignment = 8;
-            auto const debug_module_info_size_aligned = (debug_module_info_size + mandatoryAlignment) & (~uint64_t(mandatoryAlignment - 1));
+            constexpr auto mandatoryAlignment = 8;
+            auto const debug_module_info_size_aligned = (debug_module_info_size + mandatoryAlignment) & (~static_cast<uint64_t>(mandatoryAlignment - 1));
 
-            auto const debug_module_info = std::make_unique<uint8_t[]>(debug_module_info_size_aligned);
+            auto const debug_module_info = std::make_unique<uint8_t[]>(static_cast<size_t>(debug_module_info_size_aligned));
             auto* info = reinterpret_cast<IMAGE_DEBUG_DIRECTORY*>(debug_module_info.get());
 
             info->TimeDateStamp = module_time_stamp;

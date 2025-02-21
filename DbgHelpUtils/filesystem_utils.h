@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <functional>
-// ReSharper disable once CppUnusedIncludeDirective
+#include <string>
 #include <string_view>
 #include <vector>
 #include <experimental/generator>
