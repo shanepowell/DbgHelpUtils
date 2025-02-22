@@ -181,7 +181,7 @@ namespace Utility
             }
 
             ++index;
-            while (index < values_.size() && values_[index].UpperBound() <= upperBound)
+            while (static_cast<typename decltype(values_)::size_type>(index) < values_.size() && values_[index].UpperBound() <= upperBound)
             {
                 if (values_[index].ContainsValue(value))
                 {
@@ -272,7 +272,7 @@ namespace Utility
                 ++rangeIndex;
             }
 
-            while (rangeIndex < values_.size())
+            while (static_cast<typename decltype(values_)::size_type>(rangeIndex) < values_.size())
             {
                 for (int32_t i = values_[rangeIndex].LowerBound(); i <= values_[rangeIndex].UpperBound(); ++i)
                 {
@@ -451,12 +451,14 @@ namespace Utility
                 lowerRangeIndex = 0;
             }
 
-            while ((lowerRangeIndex < values_.size()) && (values_[lowerRangeIndex].UpperBound() < startIndex))
+            while ((static_cast<typename decltype(values_)::size_type>(lowerRangeIndex) < values_.size()) && 
+                (static_cast<decltype(startIndex)>(values_[lowerRangeIndex].UpperBound()) < startIndex))
             {
                 ++lowerRangeIndex;
             }
 
-            if (lowerRangeIndex >= values_.size() || values_[lowerRangeIndex].LowerBound() > startIndex + count - 1)
+            if (static_cast<typename decltype(values_)::size_type>(lowerRangeIndex) >= values_.size() || 
+                static_cast<decltype(startIndex)>(values_[lowerRangeIndex].LowerBound()) > startIndex + count - 1)
             {
                 // If all the values are above our below our values, we have nothing to remove
                 return;
@@ -475,13 +477,15 @@ namespace Utility
                 ++lowerRangeIndex;
             }
 
-            while ((lowerRangeIndex < values_.size()) && (values_[lowerRangeIndex].UpperBound() < startIndex + count))
+            while ((static_cast<typename decltype(values_)::size_type>(lowerRangeIndex) < values_.size()) && 
+                (static_cast<decltype(startIndex)>(values_[lowerRangeIndex].UpperBound()) < startIndex + count))
             {
                 values_.erase(values_.begin() + lowerRangeIndex);
             }
 
-            if ((lowerRangeIndex < values_.size()) && (values_[lowerRangeIndex].UpperBound() >= startIndex + count) &&
-                (values_[lowerRangeIndex].LowerBound() < startIndex + count))
+            if ((static_cast<typename decltype(values_)::size_type>(lowerRangeIndex) < values_.size()) && 
+                (static_cast<decltype(startIndex)>(values_[lowerRangeIndex].UpperBound()) >= startIndex + count) &&
+                (static_cast<decltype(startIndex)>(values_[lowerRangeIndex].LowerBound()) < startIndex + count))
             {
                 // Chop off the start of the remaining Range if it contains values that we're removing
                 values_[lowerRangeIndex].LowerBound(startIndex + count);

@@ -186,7 +186,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 if(max_size == 0)
                 {
-                    max_size = walker.find_memory_range(variable_address, sizeof(T), 1);
+                    max_size = static_cast<size_t>(walker.find_memory_range(variable_address, sizeof(T), 1));
                 }
 
                 if(max_size == 1)
@@ -226,7 +226,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 if (max_size == 0)
                 {
-                    max_size = walker.find_memory_range(variable_address, element_size, 1);
+                    max_size = static_cast<size_t>(walker.find_memory_range(variable_address, element_size, 1));
                 }
 
                 if (max_size > 1)
@@ -251,7 +251,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 if(max_size == 0)
                 {
-                    max_size = walker.find_memory_range(variable_address, sizeof(T), 1);
+                    max_size = static_cast<size_t>(walker.find_memory_range(variable_address, sizeof(T), 1));
                 }
 
                 if(max_size > 1)
@@ -691,7 +691,7 @@ namespace dlg_help_utils::symbol_type_utils
                         case 2:
                         case 4:
                         case 8:
-                            return any_number_variable(walker, variable_address, is_pointer, length.value(), max_size);
+                            return any_number_variable(walker, variable_address, is_pointer, static_cast<size_t>(length.value()), max_size);
 
                         default:
                             break;
@@ -709,7 +709,7 @@ namespace dlg_help_utils::symbol_type_utils
                         case 2:
                         case 4:
                         case 8:
-                            return any_number_variable(walker, variable_address, is_pointer, length.value(), max_size);
+                            return any_number_variable(walker, variable_address, is_pointer, static_cast<size_t>(length.value()), max_size);
 
                         default:
                             break;
@@ -724,7 +724,7 @@ namespace dlg_help_utils::symbol_type_utils
                         {
                         case 4:
                         case 8:
-                            return any_number_variable(walker, variable_address, is_pointer, length.value(), max_size);
+                            return any_number_variable(walker, variable_address, is_pointer, static_cast<size_t>(length.value()), max_size);
 
                         default:
                             break;
@@ -1040,7 +1040,7 @@ namespace dlg_help_utils::symbol_type_utils
                                     {
                                     case 4:
                                     case 8:
-                                        return any_number_variable(walker, pointer_value, is_pointer_t{ true }, length.value(), 0);
+                                        return any_number_variable(walker, pointer_value, is_pointer_t{ true }, static_cast<size_t>(length.value()), 0);
 
                                     default:
                                         break;
@@ -1406,7 +1406,7 @@ namespace dlg_help_utils::symbol_type_utils
                                 {
                                 case 4:
                                 case 8:
-                                    return any_number_variable(walker, variable_address, is_pointer_t{true}, length.value(), static_cast<size_t>(type.array_count().value_or(0)));
+                                    return any_number_variable(walker, variable_address, is_pointer_t{true}, static_cast<size_t>(length.value()), static_cast<size_t>(type.array_count().value_or(0)));
 
                                 default:
                                     break;

@@ -59,7 +59,7 @@ namespace TypeHelper
                         co_yield propertyPath.substr(startIndex, index - startIndex);
                         startIndex = index;
                     }
-                    else if (index == propertyPath.size() - 1)
+                    else if (static_cast<std::wstring_view::size_type>(index) == propertyPath.size() - 1)
                     {
                         co_yield propertyPath.substr(startIndex);
                     }
@@ -110,7 +110,7 @@ namespace TypeHelper
             co_return;
         }
 
-        for (auto id : winrt::get_interfaces(object))
+        for (auto const& id : winrt::get_interfaces(object))
         {
             for(auto const& property : GetDependencyProperties(id))
             {
@@ -127,7 +127,7 @@ namespace TypeHelper
         }
 
         auto const key = dlg_help_utils::string_utils::to_lower(name);
-        for (auto id : winrt::get_interfaces(object))
+        for (auto const& id : winrt::get_interfaces(object))
         {
             if(auto property = GetDependencyPropertyWithKey(id, key);
                 property)
