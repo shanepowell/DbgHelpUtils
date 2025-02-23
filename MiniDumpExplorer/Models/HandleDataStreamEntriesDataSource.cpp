@@ -7,6 +7,7 @@
 #include "Helpers/WindowHelper.h"
 #include "Models/HandleDataStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
+#include "Utility/run.h"
 
 #if __has_include("HandleDataStreamEntriesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -135,67 +136,52 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    fire_and_forget HandleDataStreamEntriesDataSource::LoadMiniDumpHandleDataStream(dlg_help_utils::handle_data_stream const handle_data)
+    fire_and_forget HandleDataStreamEntriesDataSource::LoadMiniDumpHandleDataStream(dlg_help_utils::handle_data_stream handle_data)
     {
-        try
-        {
-            // ReSharper disable once CppTooWideScope
-            apartment_context ui_thread;
-
-            entries_.Clear();
-
-            auto weak_self = get_weak();
-            co_await resume_background();
-
-            for (size_t index = 0; auto const& [handle_type, handle_total] : handle_data.handle_type_totals())
+        auto index = handle_data.index();
+        co_await Utility::run(__FUNCTION__, [this, handle_data = std::move(handle_data)]() -> Windows::Foundation::IAsyncAction
             {
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
+                // ReSharper disable once CppTooWideScope
+                apartment_context ui_thread;
 
-                MiniDumpExplorer::HandleDataStreamEntry entry;
-                entry.as<HandleDataStreamEntry>()->Set(static_cast<uint32_t>(index), handle_data, handle_type, handle_total);
+                entries_.Clear();
 
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
-
-                co_await ui_thread;
-
-                if(auto const self = weak_self.get();
-                    self && !WindowHelper::IsExiting())
-                {
-                    entries_.Append(entry);
-                }
-                else
-                {
-                    // it's been removed while loading the items
-                    co_return;
-                }
-
+                auto weak_self = get_weak();
                 co_await resume_background();
 
-                ++index;
-            }
-        }
-        catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format(L"LoadMiniDumpHandleDataStream failed for stream [{0}]: {1}\n", handle_data.index(), e.message()));
-        }
-        catch (std::runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpHandleDataStream failed for stream [{0}]: {1}\n", handle_data.index(), e.what()));
-        }
-        catch (std::exception const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpHandleDataStream failed for stream [{0}]: {1}\n", handle_data.index(), e.what()));
-        }
-        catch (...)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpHandleDataStream failed for stream [{}]", handle_data.index()));
-        }
+                for (size_t index = 0; auto const& [handle_type, handle_total] : handle_data.handle_type_totals())
+                {
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    MiniDumpExplorer::HandleDataStreamEntry entry;
+                    entry.as<HandleDataStreamEntry>()->Set(static_cast<uint32_t>(index), handle_data, handle_type, handle_total);
+
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    co_await ui_thread;
+
+                    if(auto const self = weak_self.get();
+                        self && !WindowHelper::IsExiting())
+                    {
+                        entries_.Append(entry);
+                    }
+                    else
+                    {
+                        // it's been removed while loading the items
+                        co_return;
+                    }
+
+                    co_await resume_background();
+
+                    ++index;
+                }
+            }, [index] { return Utility::for_stream_index(index); });
     }
 
     // ReSharper disable once CppMemberFunctionMayBeConst

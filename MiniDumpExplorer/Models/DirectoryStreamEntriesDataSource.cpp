@@ -6,6 +6,7 @@
 #include "Helpers/WindowHelper.h"
 #include "Models/DirectoryStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
+#include "Utility/run.h"
 
 #if __has_include("DirectoryStreamEntriesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -140,74 +141,57 @@ namespace winrt::MiniDumpExplorer::implementation
 
     fire_and_forget DirectoryStreamEntriesDataSource::LoadMiniDumpStreams(dlg_help_utils::mini_dump const& mini_dump)
     {
-        try
-        {
-            // ReSharper disable once CppTooWideScope
-            apartment_context ui_thread;
-
-            entries_.Clear();
-
-            auto weak_self = get_weak();
-            co_await resume_background();
-
-            auto const* header = mini_dump.header();
-            auto const* directory = mini_dump.directory();
-
-            if(directory == nullptr)
+        co_await Utility::run(__FUNCTION__, [this, &mini_dump]()->Windows::Foundation::IAsyncAction
             {
-                co_return;
-            }
+                // ReSharper disable once CppTooWideScope
+                apartment_context ui_thread;
 
-            for (size_t index = 0; index < header->NumberOfStreams; ++index)
-            {
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
+                entries_.Clear();
 
-                auto const& stream_entry = directory[index];
-                MiniDumpExplorer::DirectoryStreamEntry entry;
-                entry.as<DirectoryStreamEntry>()->Set(static_cast<uint32_t>(index), &stream_entry);
-
-
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
-
-                co_await ui_thread;
-
-                if(auto const self = weak_self.get();  // NOLINT(bugprone-branch-clone)
-                    self && !WindowHelper::IsExiting())
-                {
-                    entries_.Append(entry);
-                }
-                else
-                {
-                    // it's been removed while loading the items
-                    co_return;
-                }
-
+                auto weak_self = get_weak();
                 co_await resume_background();
 
-            }
-        }
-        catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format(L"LoadMiniDumpStreams failed: {}\n", e.message()));
-        }
-        catch (std::runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpStreams failed: {}\n", e.what()));
-        }
-        catch (std::exception const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpStreams failed: {}\n", e.what()));
-        }
-        catch (...)
-        {
-            logger::Log().LogMessage(log_level::error, L"LoadMiniDumpStreams failed");
-        }
+                auto const* header = mini_dump.header();
+                auto const* directory = mini_dump.directory();
+
+                if(directory == nullptr)
+                {
+                    co_return;
+                }
+
+                for (size_t index = 0; index < header->NumberOfStreams; ++index)
+                {
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    auto const& stream_entry = directory[index];
+                    MiniDumpExplorer::DirectoryStreamEntry entry;
+                    entry.as<DirectoryStreamEntry>()->Set(static_cast<uint32_t>(index), &stream_entry);
+
+
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    co_await ui_thread;
+
+                    if(auto const self = weak_self.get();  // NOLINT(bugprone-branch-clone)
+                        self && !WindowHelper::IsExiting())
+                    {
+                        entries_.Append(entry);
+                    }
+                    else
+                    {
+                        // it's been removed while loading the items
+                        co_return;
+                    }
+
+                    co_await resume_background();
+                }
+            }, [] { return std::string{}; });
     }
 
     // ReSharper disable once CppMemberFunctionMayBeConst

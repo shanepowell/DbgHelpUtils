@@ -587,6 +587,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Utility\mini_dump_walker_store.h" />
+    <ClInclude Include="Utility\run.h" />
     <ClInclude Include="ViewModels\M128AView.xaml.h">
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>

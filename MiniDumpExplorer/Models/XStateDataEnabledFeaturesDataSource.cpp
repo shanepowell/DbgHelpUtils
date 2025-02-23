@@ -11,6 +11,7 @@
 #include "DbgHelpUtils/windows_setup.h"
 #include <DbgHelp.h>
 
+#include "Utility/run.h"
 #include "DbgHelpUtils/misc_info_stream.h"
 
 #if __has_include("XStateDataEnabledFeaturesDataSource.g.cpp")
@@ -141,76 +142,61 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    fire_and_forget XStateDataEnabledFeaturesDataSource::SetXStateData(dlg_help_utils::misc_info_stream const misc_info_stream)
+    fire_and_forget XStateDataEnabledFeaturesDataSource::SetXStateData(dlg_help_utils::misc_info_stream misc_info_stream)
     {
-        try
-        {
-            auto const& xStateData = misc_info_stream.misc_info_5().XStateData;
-
-            // ReSharper disable once CppTooWideScope
-            apartment_context ui_thread;
-
-            entries_.Clear();
-
-            auto weak_self = get_weak();
-            co_await resume_background();
-
-            for(uint32_t feature = 0; feature< MAXIMUM_XSTATE_FEATURES; ++feature)
+        auto index = misc_info_stream.index();
+        co_await Utility::run(__FUNCTION__, [this, misc_info_stream = std::move(misc_info_stream)]()->Windows::Foundation::IAsyncAction
             {
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
+                auto const& xStateData = misc_info_stream.misc_info_5().XStateData;
 
-                if (auto const mask = 1ui64 << feature; (xStateData.EnabledFeatures & mask) == mask)
-                {
-                    MiniDumpExplorer::XStateDataEnabledFeature entry{};
-                    entry.as<XStateDataEnabledFeature>()->Set(feature, xStateData.Features[feature]);
+                // ReSharper disable once CppTooWideScope
+                apartment_context ui_thread;
 
+                entries_.Clear();
+
+                auto weak_self = get_weak();
+                co_await resume_background();
+
+                for(uint32_t feature = 0; feature< MAXIMUM_XSTATE_FEATURES; ++feature)
+                {
                     if(WindowHelper::IsExiting())
                     {
                         co_return;
                     }
 
-                    co_await ui_thread;
-
-                    if(WindowHelper::IsExiting())
+                    if (auto const mask = 1ui64 << feature; (xStateData.EnabledFeatures & mask) == mask)
                     {
-                        co_return;
-                    }
+                        MiniDumpExplorer::XStateDataEnabledFeature entry{};
+                        entry.as<XStateDataEnabledFeature>()->Set(feature, xStateData.Features[feature]);
 
-                    if(auto const self = weak_self.get();  // NOLINT(bugprone-branch-clone)
-                        self && !WindowHelper::IsExiting())
-                    {
-                        entries_.Append(entry);
-                    }
-                    else
-                    {
-                        // it's been removed while loading the items
-                        co_return;
-                    }
+                        if(WindowHelper::IsExiting())
+                        {
+                            co_return;
+                        }
 
-                    co_await resume_background();
+                        co_await ui_thread;
 
+                        if(WindowHelper::IsExiting())
+                        {
+                            co_return;
+                        }
+
+                        if(auto const self = weak_self.get();  // NOLINT(bugprone-branch-clone)
+                            self && !WindowHelper::IsExiting())
+                        {
+                            entries_.Append(entry);
+                        }
+                        else
+                        {
+                            // it's been removed while loading the items
+                            co_return;
+                        }
+
+                        co_await resume_background();
+
+                    }
                 }
-            }
-        }
-        catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format(L"SetXStateData failed for stream [{0}]: {1}\n", misc_info_stream.index(), e.message()));
-        }
-        catch (std::runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("SetXStateData failed for stream [{0}]: {1}\n", misc_info_stream.index(), e.what()));
-        }
-        catch (std::exception const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("SetXStateData failed for stream [{0}]: {1}\n", misc_info_stream.index(), e.what()));
-        }
-        catch (...)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("SetXStateData failed for stream [{}]", misc_info_stream.index()));
-        }
+            }, [index] { return Utility::for_stream_index(index); });
     }
 
     // ReSharper disable once CppMemberFunctionMayBeConst

@@ -1,34 +1,36 @@
 Param
 (
-    [ValidateSet("vs2019", "vs2022")][string]$Compiler = "vs2022",
-    [switch]$GenerateBuildFileOnly,
+    [switch]$Rebuild,
     [switch]$Clean
 )
 
-$compilers = @{
-    "vs2019" = "Visual Studio 16 2019";
-    "vs2022" = "Visual Studio 17 2022";
- }
-
 if($Clean)
 {
+    MSBuild DbgHelpUtils.sln -t:Clean -p:Configuration=Release -p:Platform=x64
+    MSBuild DbgHelpUtils.sln -t:Clean -p:Configuration=Release -p:Platform=x86
+    MSBuild DbgHelpUtils.sln -t:Clean -p:Configuration=Debug -p:Platform=x64
+    MSBuild DbgHelpUtils.sln -t:Clean -p:Configuration=Debug -p:Platform=x86
+
     Remove-Item -Force -Recurse -ErrorAction SilentlyContinue x86
     Remove-Item -Force -Recurse -ErrorAction SilentlyContinue x64
-    Remove-Item -Force -Recurse -ErrorAction SilentlyContinue build
 }
 
-Write-Host Generate build files
-cmake -S . -B build/$($Compiler)x64 -G $compilers[$Compiler] -A x64
-cmake -S . -B build/$($Compiler)x86 -G $compilers[$Compiler] -A win32
-
-if(!$GenerateBuildFileOnly)
+if($Rebuild)
 {
-    Write-Host Build all targets
-    cmake --build .\build\$($Compiler)x64 --config Debug
-    cmake --build .\build\$($Compiler)x64 --config Release
-
-    cmake --build .\build\$($Compiler)x86 --config Debug
-    cmake --build .\build\$($Compiler)x86 --config Release
+    $target = "Rebuild"
 }
+else
+{
+    $target = "Build"
+}
+
+MSBuild DbgHelpUtils.sln -t:$target -p:Configuration=Release -p:Platform=x64 -m
+if ($LASTEXITCODE -ne 0) { throw "Failed to build Release x64" }
+MSBuild DbgHelpUtils.sln -t:$target -p:Configuration=Release -p:Platform=x86 -m
+if ($LASTEXITCODE -ne 0) { throw "Failed to build Release x86" }
+MSBuild DbgHelpUtils.sln -t:$target -p:Configuration=Debug -p:Platform=x64 -m
+if ($LASTEXITCODE -ne 0) { throw "Failed to build Debug x64" }
+MSBuild DbgHelpUtils.sln -t:$target -p:Configuration=Debug -p:Platform=x86 -m
+if ($LASTEXITCODE -ne 0) { throw "Failed to build Debug x86" }
 
 Write-Host All done

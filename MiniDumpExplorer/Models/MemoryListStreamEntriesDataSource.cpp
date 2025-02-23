@@ -7,6 +7,7 @@
 #include "Helpers/WindowHelper.h"
 #include "Models/MemoryListStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
+#include "Utility/run.h"
 
 #if __has_include("MemoryListStreamEntriesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -140,8 +141,15 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    fire_and_forget MemoryListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory_list_stream const memory_list)
+    fire_and_forget MemoryListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory_list_stream memory_list)
     {
+// ReSharper disable once IdentifierTypo
+// #define C4789_REPRO
+#if defined(C4789_REPRO)
+        // the following code generates the following error when compiled in x64 Release:
+        // ReSharper disable CommentTypo
+        // C:\Program Files\Microsoft Visual Studio\2022\Preview\VC\Tools\MSVC\14.44.34823\include\__msvc_ranges_tuple_formatter.hpp(625): error C4789: in function 'struct winrt::fire_and_forget __cdecl winrt::MiniDumpExplorer::implementation::MemoryListStreamEntriesDataSource::LoadMiniDumpMemoryStream$_ResumeCoro$1(class dlg_help_utils::memory_list_stream) __ptr64' buffer '' of size 16 bytes will be overrun; 8 bytes will be written starting at offset 16
+        // ReSharper restore CommentTypo
         try
         {
             // ReSharper disable once CppTooWideScope
@@ -187,20 +195,66 @@ namespace winrt::MiniDumpExplorer::implementation
         }
         catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
         {
-            logger::Log().LogMessage(log_level::error, std::format(L"LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.message()));
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream (wre) failed for stream index: {0}: {1}\n", memory_list.index(), dlg_help_utils::string_conversation::wstring_to_utf8(e.message())));
         }
         catch (std::runtime_error const& e)
         {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.what()));
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream (re) failed for stream index: {0}: {1}\n", memory_list.index(), e.what()));
         }
         catch (std::exception const& e)
         {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.what()));
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream (e) failed for stream index: {0}: {1}\n", memory_list.index(), e.what()));
         }
         catch (...)
         {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{}]", memory_list.index()));
+            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream (u) failed for stream index: {0}\n", memory_list.index()));
         }
+#else
+        auto index = memory_list.index();
+        co_await Utility::run(__FUNCTION__, [this, memory_list = std::move(memory_list)]()->Windows::Foundation::IAsyncAction
+            {
+                // ReSharper disable once CppTooWideScope
+                apartment_context ui_thread;
+
+                entries_.Clear();
+
+                auto weak_self = get_weak();
+                co_await resume_background();
+
+                for (size_t index = 0; auto const* memory_range : memory_list.list())
+                {
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    MiniDumpExplorer::MemoryListStreamEntry entry;
+                    entry.as<MemoryListStreamEntry>()->Set(static_cast<uint32_t>(index), memory_range);
+
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    co_await ui_thread;
+
+                    if(auto const self = weak_self.get();
+                        self && !WindowHelper::IsExiting())
+                    {
+                        entries_.Append(entry);
+                    }
+                    else
+                    {
+                        // it's been removed while loading the items
+                        co_return;
+                    }
+
+                    co_await resume_background();
+
+                    ++index;
+                }
+            }, [index] { return Utility::for_stream_index(index); });
+#endif
     }
 
     // ReSharper disable once CppMemberFunctionMayBeConst

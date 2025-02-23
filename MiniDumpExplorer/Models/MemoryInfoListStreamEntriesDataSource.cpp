@@ -7,6 +7,7 @@
 #include "Helpers/WindowHelper.h"
 #include "Models/MemoryInfoListStreamEntry.h"
 #include "Utility/DataGridColumnSorter.h"
+#include "Utility/run.h"
 
 #if __has_include("MemoryInfoListStreamEntriesDataSource.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -140,68 +141,54 @@ namespace winrt::MiniDumpExplorer::implementation
         ColumnSort(entries_, ColumnSorters, dataGrid, args);
     }
 
-    fire_and_forget MemoryInfoListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory_info_list_stream const memory_list)
+    fire_and_forget MemoryInfoListStreamEntriesDataSource::LoadMiniDumpMemoryStream(dlg_help_utils::memory_info_list_stream memory_list)
     {
-        try
-        {
-            // ReSharper disable once CppTooWideScope
-            apartment_context ui_thread;
-
-            entries_.Clear();
-
-            auto weak_self = get_weak();
-            co_await resume_background();
-
-            for (size_t index = 0; auto const memory_range : memory_list.list())
+        auto index = memory_list.index();
+        co_await Utility::run(__FUNCTION__, [this, memory_list = std::move(memory_list)]() -> Windows::Foundation::IAsyncAction
             {
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
+                // ReSharper disable once CppTooWideScope
+                apartment_context ui_thread;
 
-                MiniDumpExplorer::MemoryInfoListStreamEntry entry;
-                entry.as<MemoryInfoListStreamEntry>()->Set(static_cast<uint32_t>(index), memory_range);
+                entries_.Clear();
 
-                if(WindowHelper::IsExiting())
-                {
-                    co_return;
-                }
-
-                co_await ui_thread;
-
-                if(auto const self = weak_self.get();
-                    self && !WindowHelper::IsExiting())
-                {
-                    entries_.Append(entry);
-                }
-                else
-                {
-                    // it's been removed while loading the items
-                    co_return;
-                }
-
+                auto weak_self = get_weak();
                 co_await resume_background();
 
-                ++index;
-            }
-        }
-        catch (dlg_help_utils::exceptions::wide_runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format(L"LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.message()));
-        }
-        catch (std::runtime_error const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream for stream [{0}]: {1}\n", memory_list.index(), e.what()));
-        }
-        catch (std::exception const& e)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{0}]: {1}\n", memory_list.index(), e.what()));
-        }
-        catch (...)
-        {
-            logger::Log().LogMessage(log_level::error, std::format("LoadMiniDumpMemoryStream failed for stream [{}]", memory_list.index()));
-        }
+                for (size_t index = 0; auto const memory_range : memory_list.list())
+                {
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    MiniDumpExplorer::MemoryInfoListStreamEntry entry;
+                    entry.as<MemoryInfoListStreamEntry>()->Set(static_cast<uint32_t>(index), memory_range);
+
+                    if(WindowHelper::IsExiting())
+                    {
+                        co_return;
+                    }
+
+                    co_await ui_thread;
+
+                    if(auto const self = weak_self.get();
+                        self && !WindowHelper::IsExiting())
+                    {
+                        entries_.Append(entry);
+                    }
+                    else
+                    {
+                        // it's been removed while loading the items
+                        co_return;
+                    }
+
+                    co_await resume_background();
+
+                    ++index;
+                }
+            }, [index] { return Utility::for_stream_index(index); });
     }
+
 
     // ReSharper disable once CppMemberFunctionMayBeConst
     void MemoryInfoListStreamEntriesDataSource::SetupDataProperties()
