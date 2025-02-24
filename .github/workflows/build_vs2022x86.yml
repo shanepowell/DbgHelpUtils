@@ -1,7 +1,14 @@
 name: "Visual Studio 2022 x86   "
 
 env:
-    VCPKG_DEFAULT_TRIPLET: ${{ 'x86-windows' }}
+  # Path to the solution file relative to the root of the project.
+  PROJECT_FILE_PATH: DbgHelpUtils.sln
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_PLATFORM: x86
+  BUILD_CONFIGURATION: Release
 
 on: [push, pull_request]
 
@@ -15,27 +22,16 @@ jobs:
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-
-    - name: Setup AllocationSetupTests vcpkg
-      uses: lukka/run-vcpkg@v11
-      id: runAllocationSetupTestsvcpkg
+  
+    - uses: nuget/setup-nuget@v2
       with:
-        vcpkgJsonGlob: '**/AllocationSetupTests/vcpkg.json'
-        runVcpkgInstall: true
+        nuget-version: 'latest'
 
-    - name: Setup MiniDumper vcpkg
-      uses: lukka/run-vcpkg@v11
-      id: runMiniDumpervcpkg
-      with:
-        vcpkgJsonGlob: '**/MiniDumper/vcpkg.json'
-        runVcpkgInstall: true
+    - name: Restore nuget packages
+      run: nuget restore ${{env.PROJECT_FILE_PATH}}
 
-    - name: Setup ValidateHeapEntries vcpkg
-      uses: lukka/run-vcpkg@v11
-      id: runValidateHeapEntriesvcpkg
-      with:
-        vcpkgJsonGlob: '**/ValidateHeapEntries/vcpkg.json'
-        runVcpkgInstall: true
+    - name: Restore vcpkg packages
+      run: vcpkg integrate install
 
-    - name: Build app for release
-      run: msbuild DbgHelpUtils.sln -t:rebuild -p:Configuration=Release -p:Platform=x86 -m
+    - name: Build
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.PROJECT_FILE_PATH}}
