@@ -21,19 +21,27 @@ jobs:
       id: runAllocationSetupTestsvcpkg
       with:
         vcpkgJsonGlob: '**/AllocationSetupTests/vcpkg.json'
+        runVcpkgInstall: true
 
     - name: Setup MiniDumper vcpkg
       uses: lukka/run-vcpkg@v11
       id: runMiniDumpervcpkg
       with:
         vcpkgJsonGlob: '**/MiniDumper/vcpkg.json'
+        runVcpkgInstall: true
 
     - name: Setup ValidateHeapEntries vcpkg
       uses: lukka/run-vcpkg@v11
       id: runValidateHeapEntriesvcpkg
       with:
         vcpkgJsonGlob: '**/ValidateHeapEntries/vcpkg.json'
+        runVcpkgInstall: true
+
+    - uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: 'latest'
+
+    - run: nuget restore DbgHelpUtils.sln
 
     - name: Build app for release
       run: msbuild DbgHelpUtils.sln -t:rebuild -p:Configuration=Release -p:Platform=x64 -m
-  
