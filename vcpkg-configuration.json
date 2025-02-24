@@ -2,6 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
   "default-registry": {
     "kind": "builtin",
-    "baseline": "bec4296bf5289dc9ce83b4f5095943e44162f9c2"
+    "baseline": "11be7f536538ace43f867c8efb3d624c43b6af54"
   }
 }
