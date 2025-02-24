@@ -51,5 +51,4 @@ vcpkg_installed
 /report.log
 /ReportVs2019.log
 /ReportVs2022.log
-/build
 /MiniDumpExplorer/Generated Files
