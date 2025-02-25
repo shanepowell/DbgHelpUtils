@@ -1,7 +1,10 @@
 # **DbgHelp Utilities Library**
+### main branch
 [![Windows VS 2022 x64](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x64.yml/badge.svg)](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x64.yml)
 [![Windows VS 2022 x86](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x86.yml/badge.svg)](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x86.yml)
 [![CodeQL](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/codeql-analysis.yml)
+
+### develop branch
 [![Windows VS 2022 x64 - develop](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x64.yml/badge.svg?branch=develop)](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x64.yml?branch=develop)
 [![Windows VS 2022 x86 - develop](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x86.yml/badge.svg?branch=develop)](https://github.com/shanepowell/DbgHelpUtils/actions/workflows/build_vs2022x86.yml?branch=develop)
 
