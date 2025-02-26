@@ -3010,7 +3010,7 @@ namespace dlg_help_utils::dbg_help
         return std::move(info);
     }
 
-    std::experimental::generator<std::wstring> symbol_engine::loaded_modules() const
+    std::generator<std::wstring> symbol_engine::loaded_modules() const
     {
         for (const auto& module_name : modules_ | std::views::keys)
         {
@@ -3143,7 +3143,7 @@ namespace dlg_help_utils::dbg_help
         }
     }
 
-    std::experimental::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context) const
+    std::generator<symbol_address_info> symbol_engine::stack_walk(stream_thread_context const& thread_context) const
     {
         thread_context_type type;
         DWORD machine_type;

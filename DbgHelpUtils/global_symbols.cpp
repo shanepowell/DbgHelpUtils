@@ -12,7 +12,7 @@ namespace dlg_help_utils::process
     {
     }
 
-    std::experimental::generator<global_symbol> global_symbols::all_symbols() const
+    std::generator<global_symbol> global_symbols::all_symbols() const
     {
         for (auto const& symbol : symbols_)
         {

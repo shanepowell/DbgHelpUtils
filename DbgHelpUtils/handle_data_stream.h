@@ -4,7 +4,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <map>
-#include <experimental/generator>
+#include <generator>
 #include <limits>
 
 #include "stream_handle.h"
@@ -30,7 +30,7 @@ namespace dlg_help_utils
             return handle_type_totals_;
         }
 
-        [[nodiscard]] std::experimental::generator<stream_handle> list() const;
+        [[nodiscard]] std::generator<stream_handle> list() const;
 
     private:
         mini_dump const* dump_{nullptr};

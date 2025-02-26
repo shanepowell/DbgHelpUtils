@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <experimental/generator>
+#include <generator>
 #include <numeric>
 #include <vector>
 
@@ -253,7 +253,7 @@ namespace Utility
             return count;
         }
 
-        [[nodiscard]] std::experimental::generator<int32_t> GetIndexes() const
+        [[nodiscard]] std::generator<int32_t> GetIndexes() const
         {
             for (auto const& range : values_)
             {
@@ -264,7 +264,7 @@ namespace Utility
             }
         }
 
-        [[nodiscard]] std::experimental::generator<int32_t> GetIndexes(int32_t const startIndex) const
+        [[nodiscard]] std::generator<int32_t> GetIndexes(int32_t const startIndex) const
         {
             auto rangeIndex = FindRangeIndex(startIndex);
             if (rangeIndex == InvalidIndex)

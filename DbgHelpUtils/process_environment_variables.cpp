@@ -17,7 +17,7 @@ namespace dlg_help_utils::process
     {
     }
 
-    std::experimental::generator<std::wstring> process_environment_variables::environment() const
+    std::generator<std::wstring> process_environment_variables::environment() const
     {
         const auto environment_address = find_field_pointer_type_and_value_in_type(walker(), cache_data_->rtl_user_process_parameters_structure_environment_field_data, process_parameters_address());
         if(!environment_address.has_value() || environment_address.value().value == 0)

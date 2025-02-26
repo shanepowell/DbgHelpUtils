@@ -60,13 +60,13 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t heap_key() const { return heap_key_; }
         [[nodiscard]] uint32_t lfh_heap_key() const { return lfh_heap_key_; }
 
-        [[nodiscard]] std::experimental::generator<heap_segment_context> segment_contexts() const;
+        [[nodiscard]] std::generator<heap_segment_context> segment_contexts() const;
         [[nodiscard]] heap_vs_context vs_context() const;
         [[nodiscard]] heap_lfh_context lfh_context() const;
 
         [[nodiscard]] std::optional<dph_heap> debug_page_heap() const;
 
-        [[nodiscard]] std::experimental::generator<large_alloc_entry> large_entries() const;
+        [[nodiscard]] std::generator<large_alloc_entry> large_entries() const;
 
         [[nodiscard]] uint64_t unit_shift_amount() const { return unit_shift_amount_; }
 

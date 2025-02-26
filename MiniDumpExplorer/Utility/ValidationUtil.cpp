@@ -59,7 +59,7 @@ namespace ValidationUtil
         return bindingData;
     }
 
-    std::experimental::generator<DependencyProperty> GetDependencyProperties(FrameworkElement const& element, bool const useBlockList)  // NOLINT(misc-use-internal-linkage)
+    std::generator<DependencyProperty> GetDependencyProperties(FrameworkElement const& element, bool const useBlockList)  // NOLINT(misc-use-internal-linkage)
     {
         if(useBlockList &&
             (element.try_as<Controls::Panel>() || 
@@ -71,9 +71,12 @@ namespace ValidationUtil
                 element.try_as<Shapes::Shape>() ||
                 element.try_as<Controls::ContentPresenter>()))
         {
-            return {};
+            co_return;
         }
 
-        return TypeHelper::GetDependencyProperties(element);
+        for (auto property : TypeHelper::GetDependencyProperties(element))
+        {
+            co_yield property;
+        }
     }
 }

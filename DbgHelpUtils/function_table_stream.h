@@ -2,7 +2,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <experimental/generator>
+#include <generator>
 #include <limits>
 
 #include "stream_function_descriptor.h"
@@ -25,7 +25,7 @@ namespace dlg_help_utils
         MINIDUMP_FUNCTION_TABLE_STREAM const* operator->() const { return function_table_list_; }
         [[nodiscard]] ULONG32 size() const { return function_table_list_->NumberOfDescriptors; }
 
-        [[nodiscard]] std::experimental::generator<stream_function_descriptor> list() const;
+        [[nodiscard]] std::generator<stream_function_descriptor> list() const;
 
     private:
         bool found_{false};

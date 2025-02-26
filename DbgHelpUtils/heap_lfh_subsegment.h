@@ -41,7 +41,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint8_t commit_unit_shift() const;
         [[nodiscard]] uint8_t commit_unit_count() const;
 
-        [[nodiscard]] std::experimental::generator<heap_lfh_entry> entries() const;
+        [[nodiscard]] std::generator<heap_lfh_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_subsegment_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_subsegment_symbol_type; }

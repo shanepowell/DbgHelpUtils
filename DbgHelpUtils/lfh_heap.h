@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
-#include <experimental/generator>
+#include <generator>
 
 #include "nt_heap.h"
 #include "symbol_type_info.h"
@@ -31,7 +31,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t address() const { return lfh_heap_address_; }
 
         [[nodiscard]] std::optional<uint64_t> const& lfh_key() const { return cache_data_->lfh_key; }
-        [[nodiscard]] std::experimental::generator<lfh_segment> lfh_segments() const;
+        [[nodiscard]] std::generator<lfh_segment> lfh_segments() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->lfh_heap_symbol_type; }

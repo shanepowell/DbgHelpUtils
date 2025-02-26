@@ -711,7 +711,7 @@ namespace dlg_help_utils::stream_stack_dump
         return false;
     }
 
-    std::experimental::generator<memory_range> mini_dump_memory_walker::memory_ranges() const
+    std::generator<memory_range> mini_dump_memory_walker::memory_ranges() const
     {
         if(memory_list_.found())
         {

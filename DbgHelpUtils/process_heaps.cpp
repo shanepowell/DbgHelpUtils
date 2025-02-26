@@ -85,7 +85,7 @@ namespace dlg_help_utils::heap
         clear_cache();
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::entries() const
+    std::generator<process_heap_entry> process_heaps::entries() const
     {
         if(entry_filters_cache_.empty())
         {
@@ -112,7 +112,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::free_entries() const
+    std::generator<process_heap_entry> process_heaps::free_entries() const
     {
         if(free_entry_filters_cache_.empty())
         {
@@ -442,7 +442,7 @@ namespace dlg_help_utils::heap
         return all_entries;
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::all_free_entries() const
+    std::generator<process_heap_entry> process_heaps::all_free_entries() const
     {
         crt_heap const crt_heap{ cache(), peb() };
         std::vector<crt_entry> crt_entries;
@@ -636,7 +636,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::filter_entries() const
+    std::generator<process_heap_entry> process_heaps::filter_entries() const
     {
         if(base_diff_filter_ != nullptr)
         {
@@ -647,7 +647,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::experimental::generator<process_heap_entry> process_heaps::filter_free_entries() const
+    std::generator<process_heap_entry> process_heaps::filter_free_entries() const
     {
         if(base_diff_filter_ != nullptr)
         {

@@ -42,7 +42,7 @@ namespace TypeHelper
         // Returns a list of substrings where each one represents a single property within a nested
         // property path which may include indexers.  For example, the string "abc.d[efg][h].ijk"
         // would return the substrings: "abc", "d", "[efg]", "[h]", and "ijk".
-        std::experimental::generator<std::wstring_view> SplitPropertyPath(std::wstring_view const& propertyPath)
+        std::generator<std::wstring_view> SplitPropertyPath(std::wstring_view const& propertyPath)
         {
             if (!propertyPath.empty())
             {
@@ -91,7 +91,7 @@ namespace TypeHelper
         return pathString.substr(lastPos + 1);
     }
 
-    std::experimental::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::guid const& id)  // NOLINT(misc-use-internal-linkage)
+    std::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::guid const& id)  // NOLINT(misc-use-internal-linkage)
     {
         if(auto const it = InterfaceIdToDependencyProperties.find(id);
             it != InterfaceIdToDependencyProperties.end())
@@ -103,7 +103,7 @@ namespace TypeHelper
         }
     }
 
-    std::experimental::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Windows::Foundation::IInspectable const& object)  // NOLINT(misc-use-internal-linkage)
+    std::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Windows::Foundation::IInspectable const& object)  // NOLINT(misc-use-internal-linkage)
     {
         if(!object)
         {

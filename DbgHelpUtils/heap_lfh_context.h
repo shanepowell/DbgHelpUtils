@@ -38,7 +38,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool with_old_page_crossing_blocks() const;
         [[nodiscard]] bool disable_randomization() const;
 
-        [[nodiscard]] std::experimental::generator<heap_lfh_bucket> active_buckets() const;
+        [[nodiscard]] std::generator<heap_lfh_bucket> active_buckets() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_context_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_context_symbol_type; }

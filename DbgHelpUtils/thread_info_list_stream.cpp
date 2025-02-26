@@ -30,7 +30,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::experimental::generator<stream_thread_info> thread_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    std::generator<stream_thread_info> thread_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         thread_names_list_stream const names_list{*dump_};
         for (size_t index = 0; index < thread_info_list_->NumberOfEntries; ++index)

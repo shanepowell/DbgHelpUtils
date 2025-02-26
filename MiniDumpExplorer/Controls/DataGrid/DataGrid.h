@@ -2,7 +2,7 @@
 
 #include "DataGrid.g.h"
 
-#include <experimental/generator>
+#include <generator>
 #include <functional>
 
 #include "DataGridCellCoordinates.h"
@@ -13,9 +13,9 @@
 #include "DataGridRowGroupInfo.h"
 #include "DataGridSelectedItemsCollection.h"
 #include "DataGridSelectionAction.h"
-#include "Utility\IndexToValueTable.h"
-#include "Utility\ValidationResult.h"
-#include "Utility\WeakEventListener.h"
+#include "Utility/IndexToValueTable.h"
+#include "Utility/ValidationResult.h"
+#include "Utility/WeakEventListener.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {
@@ -325,7 +325,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         bool CancelEdit(DataGridEditingUnit editingUnit, bool raiseEvents);
         void CoerceSelectedItem();
-        std::experimental::generator<Windows::Foundation::IInspectable> GetSelectionInclusive(int32_t startRowIndex, int32_t endRowIndex) const;
+        std::generator<Windows::Foundation::IInspectable> GetSelectionInclusive(int32_t startRowIndex, int32_t endRowIndex) const;
         void InitializeElements(bool recycleRows);
         Windows::Foundation::IInspectable ItemFromSlot(int32_t slot, int32_t& rowIndex);
         void LoadMoreDataFromIncrementalItemsSource();
@@ -447,7 +447,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void OnRemovedColumn_PreNotification(MiniDumpExplorer::DataGridColumn const& removedColumn);
         DataGridInternal::DataGridCellCoordinates OnRemovingColumn(MiniDumpExplorer::DataGridColumn const& dataGridColumn);
         void RefreshColumnElements(MiniDumpExplorer::DataGridColumn const& dataGridColumn, std::wstring_view const& propertyName);
-        std::experimental::generator<MiniDumpExplorer::DataGridRow> GetAllRows() const;
+        std::generator<MiniDumpExplorer::DataGridRow> GetAllRows() const;
         void OnRowDoubleClicked(MiniDumpExplorer::DataGridRow const& row, Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e);
 
     protected:
@@ -681,7 +681,7 @@ namespace winrt::MiniDumpExplorer::implementation
         void CollectionViewGroupItems_VectorChanged(Windows::Foundation::Collections::IObservableVector<Windows::Foundation::IInspectable> const& groupItems, Windows::Foundation::Collections::IVectorChangedEventArgs const& e);
         void EnsureAncestorsExpanderButtonChecked(DataGridInternal::DataGridRowGroupInfo const& parentGroupInfo);
         void EnsureRowDetailsVisibility(MiniDumpExplorer::DataGridRow const& row, bool raiseNotification) const;
-        std::experimental::generator<MiniDumpExplorer::DataGridRowGroupHeader> GetAllRowGroupHeaders() const;
+        std::generator<MiniDumpExplorer::DataGridRowGroupHeader> GetAllRowGroupHeaders() const;
         int32_t GetDetailsCountInclusive(int32_t lowerBound, int32_t upperBound) const;
         void EnsureRowGroupSpacerColumn();
         void EnsureRowGroupSpacerColumnWidth(uint32_t groupLevelCount);

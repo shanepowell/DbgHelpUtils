@@ -18,7 +18,7 @@ namespace dlg_help_utils::ntdll_utilities
     {
     }
 
-    std::experimental::generator<uint64_t> list_entry_walker::entries() const
+    std::generator<uint64_t> list_entry_walker::entries() const
     {
         auto const& flink_field = common_symbol_names::list_entry_flink_field_symbol_name;
         auto flink = get_field_pointer_raw(walker(), start_address_, cache_data_->flink_field_data, symbol_name, flink_field);

@@ -41,7 +41,7 @@ namespace dlg_help_utils::heap
         return get_machine_size_field_value(*this, cache_data_->heap_vs_context_free_committed_units_field_data, common_symbol_names::heap_vs_context_free_committed_units_field_symbol_name);
     }
 
-    std::experimental::generator<heap_vs_subsegment> heap_vs_context::subsegments() const
+    std::generator<heap_vs_subsegment> heap_vs_context::subsegments() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), 
             stream_utils::get_field_address(*this, cache_data_->heap_vs_context_subsegment_list_field_data, common_symbol_names::heap_vs_context_subsegment_list_field_symbol_name),
@@ -54,7 +54,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::experimental::generator<heap_vs_entry> heap_vs_context::free_entries() const
+    std::generator<heap_vs_entry> heap_vs_context::free_entries() const
     {
         for(ntdll_utilities::rtl_rb_tree_walker const rb_tree_walker{heap().cache(), walker()
             , heap_vs_context_address() + stream_utils::get_field_offset(cache_data_->heap_vs_context_free_chunk_tree_field_data, symbol_name, common_symbol_names::heap_vs_context_free_chunk_tree_field_symbol_name)

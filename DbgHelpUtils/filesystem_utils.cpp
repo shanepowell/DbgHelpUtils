@@ -54,7 +54,7 @@ namespace dlg_help_utils::filesystem_utils
         return value_index == value.size();
     }
 
-    std::experimental::generator<std::wstring> enumerate_files(std::vector<std::wstring> const& paths, std::function<bool(std::wstring)> const& on_error)
+    std::generator<std::wstring> enumerate_files(std::vector<std::wstring> const& paths, std::function<bool(std::wstring)> const& on_error)
     {
         for (auto const& raw_path : paths)
         {

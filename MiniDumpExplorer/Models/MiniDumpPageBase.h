@@ -2,7 +2,7 @@
 
 #include "MiniDumpPage.xaml.h"
 
-#include "Utility\logger.h"
+#include "Utility/logger.h"
 
 namespace winrt::MiniDumpExplorer::implementation
 {

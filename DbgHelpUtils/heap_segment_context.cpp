@@ -65,7 +65,7 @@ namespace dlg_help_utils::heap
         return heap().stack_trace();
     }
 
-    std::experimental::generator<heap_page_segment> heap_segment_context::pages() const
+    std::generator<heap_page_segment> heap_segment_context::pages() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_->segment_heap_seg_context_segment_list_head_field_data, common_symbol_names::segment_heap_seg_context_segment_list_head_field_symbol_name), heap_page_segment::symbol_name, common_symbol_names::heap_page_segment_list_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
@@ -74,7 +74,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::experimental::generator<page_range_descriptor> heap_segment_context::free_page_ranges() const
+    std::generator<page_range_descriptor> heap_segment_context::free_page_ranges() const
     {
         auto const heap_page_range_descriptor_length = stream_utils::get_type_length(stream_utils::get_type(walker(), page_range_descriptor::symbol_name), page_range_descriptor::symbol_name);
         auto const segment_address_mask = segment_mask();

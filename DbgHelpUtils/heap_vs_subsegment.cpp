@@ -53,7 +53,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_bit_field_value<uint16_t>(*this, cache_data_->heap_vs_subsegment_full_commit_field_data, common_symbol_names::heap_vs_subsegment_full_commit_field_symbol_name) == 0x01;
     }
 
-    std::experimental::generator<heap_vs_entry> heap_vs_subsegment::entries() const
+    std::generator<heap_vs_entry> heap_vs_subsegment::entries() const
     {
         uint16_t previous_size = 0;
         auto chunk_header_address = heap_vs_subsegment_address() + cache_data_->heap_vs_subsegment_length + get_subsegment_offset();
@@ -73,10 +73,10 @@ namespace dlg_help_utils::heap
 
             heap_vs_entry entry{heap(), chunk_header_address, std::move(buffer), previous_size};
 
-            co_yield entry;
-
             chunk_header_address += entry.size().count();
             previous_size = entry.raw_size();
+
+            co_yield std::move(entry);
         }
     }
 

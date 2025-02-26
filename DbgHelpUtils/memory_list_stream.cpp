@@ -53,7 +53,7 @@ namespace dlg_help_utils
         return nullptr;
     }
 
-    std::experimental::generator<memory_range> memory_list_stream::memory_ranges() const
+    std::generator<memory_range> memory_list_stream::memory_ranges() const
     {
         for (auto const* range : memory_address_ranges_)
         {

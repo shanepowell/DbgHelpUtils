@@ -159,7 +159,7 @@ namespace DataGridInternal
         return impl_->selectedSlotsTable_.IndexCount();
     }
 
-    std::experimental::generator<winrt::Windows::Foundation::IInspectable> DataGridSelectedItemsCollection::Items() const
+    std::generator<winrt::Windows::Foundation::IInspectable> DataGridSelectedItemsCollection::Items() const
     {
         for(auto const slot : impl_->selectedSlotsTable_.GetIndexes())
         {
@@ -237,12 +237,12 @@ namespace DataGridInternal
         return impl_->selectedSlotsTable_.GetIndexCount(lowerBound, upperBound, true);
     }
 
-    std::experimental::generator<int32_t> DataGridSelectedItemsCollection::GetIndexes() const
+    std::generator<int32_t> DataGridSelectedItemsCollection::GetIndexes() const
     {
         return impl_->selectedSlotsTable_.GetIndexes();
     }
 
-    std::experimental::generator<int32_t> DataGridSelectedItemsCollection::GetSlots(int32_t const startSlot) const
+    std::generator<int32_t> DataGridSelectedItemsCollection::GetSlots(int32_t const startSlot) const
     {
         return impl_->selectedSlotsTable_.GetIndexes(startSlot);
     }

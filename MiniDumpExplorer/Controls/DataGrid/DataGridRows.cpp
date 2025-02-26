@@ -831,12 +831,12 @@ namespace winrt::MiniDumpExplorer::implementation
         slotCount_ = 0;
         visibleSlotCount_ = 0;
         auto nextGroupSlot = InvalidIndex;
-        std::experimental::generator<int32_t>::iterator groupSlotsIt, groupSlotsItEnd;
+        auto groupSlots = RowGroupHeadersTable().GetIndexes();
+        auto groupSlotsIt = groupSlots.begin();
+        auto groupSlotsItEnd = groupSlots.end();
+
         if (RowGroupHeadersTable().RangeCount() > 0)
         {
-            auto groupSlots = RowGroupHeadersTable().GetIndexes();
-            groupSlotsIt = groupSlots.begin();
-            groupSlotsItEnd = groupSlots.end();
             if (groupSlotsIt != groupSlotsItEnd)
             {
                 nextGroupSlot = *groupSlotsIt;
@@ -1247,7 +1247,7 @@ namespace winrt::MiniDumpExplorer::implementation
             raiseNotification);
     }
 
-    std::experimental::generator<MiniDumpExplorer::DataGridRow> DataGrid::GetAllRows() const
+    std::generator<MiniDumpExplorer::DataGridRow> DataGrid::GetAllRows() const
     {
         if (rowsPresenter_)
         {
@@ -1267,7 +1267,7 @@ namespace winrt::MiniDumpExplorer::implementation
         OnRowDoubleTapped({row, nullptr});
     }
 
-    std::experimental::generator<MiniDumpExplorer::DataGridRowGroupHeader> DataGrid::GetAllRowGroupHeaders() const
+    std::generator<MiniDumpExplorer::DataGridRowGroupHeader> DataGrid::GetAllRowGroupHeaders() const
     {
         if (rowsPresenter_)
         {

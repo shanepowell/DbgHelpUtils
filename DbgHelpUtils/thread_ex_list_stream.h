@@ -5,7 +5,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <optional>
-#include <experimental/generator>
+#include <generator>
 #include <limits>
 
 #include "stream_thread_ex.h"
@@ -24,7 +24,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] MINIDUMP_THREAD_EX_LIST const& thread_list() const { return *thread_list_; }
 
-        [[nodiscard]] std::experimental::generator<stream_thread_ex> list() const;
+        [[nodiscard]] std::generator<stream_thread_ex> list() const;
 
         [[nodiscard]] std::optional<stream_thread_ex> find_thread(ULONG32 thread_id,
                                                                   thread_names_list_stream const& names_list) const;

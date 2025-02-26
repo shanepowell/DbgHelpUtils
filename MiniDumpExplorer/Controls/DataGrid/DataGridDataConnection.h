@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include <winrt\MiniDumpExplorer.h>
+#include <winrt/MiniDumpExplorer.h>
 
 #include "DataGridSelectionAction.h"
-#include "Utility\WeakEventListener.h"
+#include "Utility/WeakEventListener.h"
 
 namespace winrt::MiniDumpExplorer
 {
