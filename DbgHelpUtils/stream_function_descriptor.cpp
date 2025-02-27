@@ -19,7 +19,7 @@ namespace dlg_help_utils
         function_entry_table_ = data + size_of_native_descriptor;
     }
 
-    std::generator<stream_function_entry> stream_function_descriptor::list() const  // NOLINT(bugprone-reserved-identifier)
+    dlg_help_utils::generator<stream_function_entry> stream_function_descriptor::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         for (size_t index = 0; index < header_->EntryCount; ++index)
         {

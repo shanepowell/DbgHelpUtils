@@ -1933,7 +1933,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
     }
 
-    std::generator<Windows::Foundation::IInspectable> DataGrid::GetSelectionInclusive(int32_t const startRowIndex, int32_t const endRowIndex) const
+    dlg_help_utils::generator<Windows::Foundation::IInspectable> DataGrid::GetSelectionInclusive(int32_t const startRowIndex, int32_t const endRowIndex) const
     {
         auto const endSlot = SlotFromRowIndex(endRowIndex);
         for (auto const slot : selectedItems_.GetSlots(SlotFromRowIndex(startRowIndex)))

@@ -30,7 +30,7 @@ namespace dlg_help_utils::heap
         return peb().walker();
     }
 
-    std::generator<crt_entry> crt_heap::entries() const
+    dlg_help_utils::generator<crt_entry> crt_heap::entries() const
     {
         if(!is_using_crt_heap())
         {
@@ -72,7 +72,7 @@ namespace dlg_help_utils::heap
         return value.value();
     }
 
-    std::generator<crt_entry> crt_heap::all_entries() const
+    dlg_help_utils::generator<crt_entry> crt_heap::all_entries() const
     {
         if(!is_using_crt_heap())
         {
@@ -87,7 +87,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::generator<crt_entry> crt_heap::filter_entries() const
+    dlg_help_utils::generator<crt_entry> crt_heap::filter_entries() const
     {
         if(base_diff_filter_ != nullptr)
         {

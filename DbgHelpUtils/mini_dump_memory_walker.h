@@ -2,7 +2,7 @@
 // ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
 #include <cstdint>
 #include <optional>
-#include <generator>
+#include "generator.h"
 
 #include "i_stack_walk_callback.h"
 #include "mini_dump_memory_stream.h"
@@ -59,7 +59,7 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] std::vector<dbg_help::symbol_type_info> symbol_walk(std::wstring const& find_mask) const;
 
         [[nodiscard]] bool load_module_from_address(DWORD64 base_address) const;
-        [[nodiscard]] std::generator<memory_range> memory_ranges() const;
+        [[nodiscard]] dlg_help_utils::generator<memory_range> memory_ranges() const;
 
         [[nodiscard]] dbg_help::symbol_engine& symbol_engine() const { return symbol_engine_; }
         [[nodiscard]] module_list_stream const& module_list() const { return module_list_; }

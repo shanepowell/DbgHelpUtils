@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <generator>
+#include "generator.h"
 
 namespace winrt::MiniDumpExplorer
 {
@@ -51,7 +51,7 @@ namespace DataGridInternal
         void FullyRecycleElements();
         winrt::Microsoft::UI::Xaml::UIElement GetDisplayedElement(int32_t slot) const;
         winrt::MiniDumpExplorer::DataGridRow GetDisplayedRow(int32_t rowIndex) const;
-        std::generator<winrt::Microsoft::UI::Xaml::UIElement> GetScrollingElements(bool onlyRows = false) const;
+        dlg_help_utils::generator<winrt::Microsoft::UI::Xaml::UIElement> GetScrollingElements(bool onlyRows = false) const;
         winrt::MiniDumpExplorer::DataGridRowGroupHeader GetUsedGroupHeader();
         winrt::MiniDumpExplorer::DataGridRow GetUsedRow();
         void LoadScrollingSlot(int32_t slot, winrt::Microsoft::UI::Xaml::UIElement const& element, bool updateSlotInformation);

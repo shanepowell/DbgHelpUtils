@@ -31,7 +31,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::generator<stream_token_info> token_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    dlg_help_utils::generator<stream_token_info> token_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         auto const* entry = list_;
         for (size_t index = 0; index < token_info_list_->TokenListEntries; ++index)

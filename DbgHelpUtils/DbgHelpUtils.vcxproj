@@ -332,6 +332,7 @@
     <ClInclude Include="file_version_info.h" />
     <ClInclude Include="float80.h" />
     <ClInclude Include="function_info_utils.h" />
+    <ClInclude Include="generator.h" />
     <ClInclude Include="get_label_type_from_labels.h" />
     <ClInclude Include="gflags_utils.h" />
     <ClInclude Include="global_symbol.h" />

@@ -48,7 +48,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::generator<stream_function_descriptor> function_table_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    dlg_help_utils::generator<stream_function_descriptor> function_table_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         auto const* entry = list_;
         for (size_t index = 0; index < function_table_list_->NumberOfDescriptors; ++index)

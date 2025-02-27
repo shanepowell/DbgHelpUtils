@@ -1247,7 +1247,7 @@ namespace winrt::MiniDumpExplorer::implementation
             raiseNotification);
     }
 
-    std::generator<MiniDumpExplorer::DataGridRow> DataGrid::GetAllRows() const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridRow> DataGrid::GetAllRows() const
     {
         if (rowsPresenter_)
         {
@@ -1267,7 +1267,7 @@ namespace winrt::MiniDumpExplorer::implementation
         OnRowDoubleTapped({row, nullptr});
     }
 
-    std::generator<MiniDumpExplorer::DataGridRowGroupHeader> DataGrid::GetAllRowGroupHeaders() const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridRowGroupHeader> DataGrid::GetAllRowGroupHeaders() const
     {
         if (rowsPresenter_)
         {

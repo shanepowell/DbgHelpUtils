@@ -6,7 +6,7 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include <string_view>
-#include <generator>
+#include "generator.h"
 
 #include "stream_handle_object_information.h"
 
@@ -35,7 +35,7 @@ namespace dlg_help_utils
         [[nodiscard]] std::wstring_view const& type_name() const { return type_name_; }
         [[nodiscard]] std::wstring_view const& object_name() const { return object_name_; }
 
-        [[nodiscard]] std::generator<stream_handle_object_information> list() const;
+        [[nodiscard]] dlg_help_utils::generator<stream_handle_object_information> list() const;
 
     private:
         mini_dump const* dump_{nullptr};

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
-#include <generator>
+#include "generator.h"
 
 #include "size_units.h"
 #include "stream_utils.h"
@@ -57,10 +57,10 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_encoded() const { return encoding_ != nullptr; }
         [[nodiscard]] uint32_t granularity() const { return cache_data_->granularity; }
 
-        [[nodiscard]] std::generator<heap_segment> segments() const;
-        [[nodiscard]] std::generator<heap_ucr_descriptor> uncommitted_ranges() const;
-        [[nodiscard]] std::generator<heap_virtual_block> heap_virtual_blocks() const;
-        [[nodiscard]] std::generator<heap_entry> free_entries() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_segment> segments() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_ucr_descriptor> uncommitted_ranges() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_virtual_block> heap_virtual_blocks() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_entry> free_entries() const;
         [[nodiscard]] std::optional<dph_heap> debug_page_heap() const;
         [[nodiscard]] bool debug_page_heap_available() const;
 

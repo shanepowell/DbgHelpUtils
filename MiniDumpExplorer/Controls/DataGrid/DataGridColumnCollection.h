@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <generator>
+#include "generator.h"
 #include <functional>
 
 namespace winrt::MiniDumpExplorer
@@ -62,10 +62,10 @@ namespace DataGridInternal
         winrt::MiniDumpExplorer::DataGridColumn GetColumnAtDisplayIndex(int32_t displayIndex) const;
         int32_t GetColumnCount(bool isVisible, bool isFrozen, int32_t fromColumnIndex, int32_t toColumnIndex) const;
 
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumns();
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumns(std::function<bool (winrt::MiniDumpExplorer::DataGridColumn const&)> filter) const;
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumns(bool reverse, std::function<bool (winrt::MiniDumpExplorer::DataGridColumn const&)> filter) const;
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumnsReverse(std::function<bool (winrt::MiniDumpExplorer::DataGridColumn const&)> filter) const;
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumns();
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumns(std::function<bool (winrt::MiniDumpExplorer::DataGridColumn const&)> filter) const;
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumns(bool reverse, std::function<bool (winrt::MiniDumpExplorer::DataGridColumn const&)> filter) const;
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetDisplayedColumnsReverse(std::function<bool (winrt::MiniDumpExplorer::DataGridColumn const&)> filter) const;
 
         winrt::MiniDumpExplorer::DataGridColumn GetFirstColumn(std::optional<bool> isVisible, std::optional<bool> isFrozen, std::optional<bool> isReadOnly) const;
         winrt::MiniDumpExplorer::DataGridColumn GetLastColumn(std::optional<bool> isVisible, std::optional<bool> isFrozen, std::optional<bool> isReadOnly) const;
@@ -88,9 +88,9 @@ namespace DataGridInternal
 
         int32_t GetVisibleColumnCount(int32_t fromColumnIndex, int32_t toColumnIndex) const;
 
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetVisibleColumns() const;
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetVisibleFrozenColumns() const;
-        std::generator<winrt::MiniDumpExplorer::DataGridColumn> GetVisibleScrollingColumns() const;
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetVisibleColumns() const;
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetVisibleFrozenColumns() const;
+        dlg_help_utils::generator<winrt::MiniDumpExplorer::DataGridColumn> GetVisibleScrollingColumns() const;
 
         double GetVisibleFrozenEdgedColumnsWidth() const;
 

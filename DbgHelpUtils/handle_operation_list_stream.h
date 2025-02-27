@@ -3,7 +3,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <avrfsdk.h>
-#include <generator>
+#include "generator.h"
 #include <limits>
 
 namespace dlg_help_utils
@@ -21,7 +21,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] ULONG32 size() const { return handle_operation_list_->NumberOfEntries; }
 
-        [[nodiscard]] std::generator<AVRF_HANDLE_OPERATION const*> list() const;
+        [[nodiscard]] dlg_help_utils::generator<AVRF_HANDLE_OPERATION const*> list() const;
 
     private:
         bool found_{false};

@@ -4,7 +4,7 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <vector>
-#include <generator>
+#include "generator.h"
 #include <limits>
 
 namespace dlg_help_utils
@@ -33,7 +33,7 @@ namespace dlg_help_utils
 
         [[nodiscard]] void const* find_address_range(uint64_t address, uint64_t length) const;
         [[nodiscard]] void const* find_any_address_range(uint64_t address, uint64_t& length) const;
-        [[nodiscard]] std::generator<memory_range> memory_ranges() const;
+        [[nodiscard]] dlg_help_utils::generator<memory_range> memory_ranges() const;
 
     private:
         [[nodiscard]] std::vector<memory64_entry>::const_iterator memory_address_ranges_upper_bound(uint64_t address) const;

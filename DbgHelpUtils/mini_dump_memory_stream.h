@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 #include <functional>
-#include <generator>
+#include "generator.h"
 
 #include "enable_module_loading.h"
 #include "tagged_bool.h"
@@ -24,7 +24,7 @@ namespace dlg_help_utils
         [[nodiscard]] uint64_t current_address() const { return current_address_; }
         [[nodiscard]] uint64_t length() const { return end_address_ - current_address_; }
 
-        [[nodiscard]] std::generator<std::pair<void const*,size_t>> ranges();
+        [[nodiscard]] dlg_help_utils::generator<std::pair<void const*,size_t>> ranges();
 
         [[nodiscard]] void const* start_memory_raw() const { return memory_; }
         [[nodiscard]] void const* end_memory_raw() const { return end_memory_; }

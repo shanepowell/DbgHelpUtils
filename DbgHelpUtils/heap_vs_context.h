@@ -34,8 +34,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t total_committed_units() const;
         [[nodiscard]] uint64_t free_committed_units() const;
 
-        [[nodiscard]] std::generator<heap_vs_subsegment> subsegments() const;
-        [[nodiscard]] std::generator<heap_vs_entry> free_entries() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_vs_subsegment> subsegments() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_vs_entry> free_entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_vs_context_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_vs_context_symbol_type; }

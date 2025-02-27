@@ -16,7 +16,7 @@ on: [push, pull_request]
 jobs:
   build:
     name: "Windows Visual Studio Build"
-    runs-on: windows-2022
+    runs-on: windows-2025
 
     steps:
     - uses: actions/checkout@v4

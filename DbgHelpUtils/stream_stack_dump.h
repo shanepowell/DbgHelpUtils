@@ -38,15 +38,15 @@ namespace dlg_help_utils::stream_stack_dump
         std::wstring line;
     };
 
-    std::generator<stack_function_call_entry> dump_stack(mini_dump_memory_walker& walker
+    dlg_help_utils::generator<stack_function_call_entry> dump_stack(mini_dump_memory_walker& walker
         , dbg_help::symbol_engine& symbol_engine
         , stream_thread_context const& thread_context
         , size_t indent);
-    std::generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
+    dlg_help_utils::generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack
         , is_x86_target_t is_x86_target
         , size_t indent);
-    std::generator<std::wstring> dump_stack_raw(mini_dump const& mini_dump
+    dlg_help_utils::generator<std::wstring> dump_stack_raw(mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
         , uint64_t stack_start_address
         , uint64_t const* stack

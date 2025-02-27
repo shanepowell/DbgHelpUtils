@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <generator>
+#include "generator.h"
 
 #include "BindingInfo.h"
 
@@ -12,7 +12,7 @@ namespace ValidationUtil
         , bool twoWayOnly
         , bool useBlockList);
 
-    std::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Microsoft::UI::Xaml::FrameworkElement const& element, bool useBlockList);
+    dlg_help_utils::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Microsoft::UI::Xaml::FrameworkElement const& element, bool useBlockList);
 
     template<typename T, typename ...Args>
     bool IsExcludedType(winrt::Microsoft::UI::Xaml::FrameworkElement const& element)

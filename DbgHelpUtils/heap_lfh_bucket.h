@@ -45,7 +45,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint8_t shift() const;
         [[nodiscard]] std::vector<uint8_t> processor_affinity_mapping() const;
 
-        [[nodiscard]] std::generator<heap_lfh_affinity_slot> affinity_slots() const;
+        [[nodiscard]] dlg_help_utils::generator<heap_lfh_affinity_slot> affinity_slots() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_bucket_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_bucket_symbol_type; }

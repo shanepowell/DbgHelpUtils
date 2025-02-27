@@ -1064,5 +1064,8 @@
     <ClInclude Include="ryu\ryu_generic_128.h">
       <Filter>ryu</Filter>
     </ClInclude>
+    <ClInclude Include="generator.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

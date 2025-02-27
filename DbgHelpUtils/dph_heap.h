@@ -48,11 +48,11 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint32_t free_allocations() const;
         [[nodiscard]] size_units::base_16::bytes free_allocations_committed() const;
 
-        [[nodiscard]] static std::generator<dph_heap> dph_heaps(cache_manager& cache, process::process_environment_block const& peb);
+        [[nodiscard]] static dlg_help_utils::generator<dph_heap> dph_heaps(cache_manager& cache, process::process_environment_block const& peb);
 
-        [[nodiscard]] std::generator<dph_entry> busy_entries() const;
-        [[nodiscard]] std::generator<dph_entry> free_entries() const;
-        [[nodiscard]] std::generator<dph_entry> virtual_ranges() const;
+        [[nodiscard]] dlg_help_utils::generator<dph_entry> busy_entries() const;
+        [[nodiscard]] dlg_help_utils::generator<dph_entry> free_entries() const;
+        [[nodiscard]] dlg_help_utils::generator<dph_entry> virtual_ranges() const;
 
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const { return stack_trace_; }
 
@@ -82,7 +82,7 @@ namespace dlg_help_utils::heap
             dbg_help::symbol_type_and_field_offset dph_heap_root_busy_nodes_table_field_data;
         };
 
-        [[nodiscard]] std::generator<dph_entry> walk_list(uint64_t head, uint64_t tail, dph_entry::is_virtual_allocation is_virtual_allocation) const;
+        [[nodiscard]] dlg_help_utils::generator<dph_entry> walk_list(uint64_t head, uint64_t tail, dph_entry::is_virtual_allocation is_virtual_allocation) const;
         [[nodiscard]] cache_data const& setup_globals() const;
 
     private:

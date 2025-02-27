@@ -22,7 +22,7 @@ namespace dlg_help_utils
         found_ = true;
     }
 
-    std::generator<stream_thread> thread_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    dlg_help_utils::generator<stream_thread> thread_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         thread_names_list_stream const names_list{*dump_};
         memory_list_stream const memory_list{*dump_};

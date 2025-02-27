@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <generator>
+#include "generator.h"
 
 #include "windows_setup.h"
 #include "stream_thread_context.h"
@@ -23,7 +23,7 @@ namespace dlg_help_utils
             PM128A xmm;
             PM128A ymm;
         };
-        [[nodiscard]] std::generator<ymm_register> ymm_registers() const;
+        [[nodiscard]] dlg_help_utils::generator<ymm_register> ymm_registers() const;
         [[nodiscard]] ymm_register get_ymm_register(uint32_t index) const;
 
     private:

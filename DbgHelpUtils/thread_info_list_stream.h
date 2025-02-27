@@ -3,7 +3,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <generator>
+#include "generator.h"
 #include <limits>
 
 #include "stream_thread_info.h"
@@ -23,7 +23,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] ULONG64 size() const { return thread_info_list_->NumberOfEntries; }
 
-        [[nodiscard]] std::generator<stream_thread_info> list() const;
+        [[nodiscard]] dlg_help_utils::generator<stream_thread_info> list() const;
 
     private:
         mini_dump const* dump_{nullptr};

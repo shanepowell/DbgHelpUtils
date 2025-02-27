@@ -52,7 +52,7 @@ namespace dlg_help_utils
         return nullptr;
     }
 
-    std::generator<memory_range> memory64_list_stream::memory_ranges() const
+    dlg_help_utils::generator<memory_range> memory64_list_stream::memory_ranges() const
     {
         for (auto const& range : memory_address_ranges_)
         {

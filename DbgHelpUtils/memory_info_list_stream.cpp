@@ -28,7 +28,7 @@ namespace dlg_help_utils
         }
     }
 
-    std::generator<MINIDUMP_MEMORY_INFO const*> memory_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    dlg_help_utils::generator<MINIDUMP_MEMORY_INFO const*> memory_info_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         for (size_t index = 0; index < memory_info_list_->NumberOfEntries; ++index)
         {

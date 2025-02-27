@@ -69,7 +69,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_segment_segment_allocator_back_trace_index_field_data, common_symbol_names::heap_segment_segment_allocator_back_trace_index_field_symbol_name);
     }
 
-    std::generator<heap_entry> heap_segment::entries() const
+    dlg_help_utils::generator<heap_entry> heap_segment::entries() const
     {
         auto const last_entry_address = last_entry();
         auto entry_address = heap_segment_address();
@@ -121,7 +121,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::generator<heap_ucr_descriptor> heap_segment::uncommitted_ranges() const
+    dlg_help_utils::generator<heap_ucr_descriptor> heap_segment::uncommitted_ranges() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_segment_ucr_segment_list_field_data, common_symbol_names::heap_segment_ucr_segment_list_field_symbol_name), heap_ucr_descriptor::symbol_name, common_symbol_names::heap_ucr_descriptor_segment_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())

@@ -155,7 +155,7 @@ namespace DataGridInternal
         return GetDisplayedElement(owner_->SlotFromRowIndex(rowIndex)).try_as<DataGridRow>();
     }
 
-    std::generator<UIElement> DataGridDisplayData::GetScrollingElements(bool const onlyRows) const
+    dlg_help_utils::generator<UIElement> DataGridDisplayData::GetScrollingElements(bool const onlyRows) const
     {
         for (size_t i = 0; i < scrollingElements_.size(); i++)
         {

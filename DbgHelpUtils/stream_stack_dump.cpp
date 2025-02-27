@@ -96,7 +96,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
 
         template <typename T>
-        std::generator<std::wstring> generate_dump_stack_raw(dbg_help::symbol_engine& symbol_engine
+        dlg_help_utils::generator<std::wstring> generate_dump_stack_raw(dbg_help::symbol_engine& symbol_engine
             , uint64_t const stack_start_address
             , T const* stack
             , size_t const stack_size
@@ -325,7 +325,7 @@ namespace dlg_help_utils::stream_stack_dump
         os << L'\n';
     }
 
-    std::generator<stack_function_call_entry> dump_stack([[maybe_unused]] mini_dump_memory_walker& walker 
+    dlg_help_utils::generator<stack_function_call_entry> dump_stack([[maybe_unused]] mini_dump_memory_walker& walker 
         , dbg_help::symbol_engine& symbol_engine
         , stream_thread_context const& thread_context
         , const size_t indent)
@@ -351,7 +351,7 @@ namespace dlg_help_utils::stream_stack_dump
         }
     }
 
-    std::generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
+    dlg_help_utils::generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack
         , is_x86_target_t const is_x86_target
         , size_t const indent)
@@ -366,7 +366,7 @@ namespace dlg_help_utils::stream_stack_dump
             , get_hex_length(is_x86_target));
     }
 
-    std::generator<std::wstring> dump_stack_raw(mini_dump const& mini_dump
+    dlg_help_utils::generator<std::wstring> dump_stack_raw(mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
         , uint64_t const stack_start_address
         , uint64_t const* stack

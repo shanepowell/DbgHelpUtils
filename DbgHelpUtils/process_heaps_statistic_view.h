@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <map>
 #include <string>
-#include <generator>
+#include "generator.h"
 
 #include "size_units.h"
 
@@ -68,7 +68,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] sort_order_type sort_order() const;
         void sort_order(sort_order_type value);
 
-        [[nodiscard]] std::generator<process_heaps_statistic_bucket_view> buckets() const;
+        [[nodiscard]] dlg_help_utils::generator<process_heaps_statistic_bucket_view> buckets() const;
 
         [[nodiscard]] size_units::base_16::bytes allocated_average() const;
         [[nodiscard]] size_units::base_16::bytes allocated_total() const;

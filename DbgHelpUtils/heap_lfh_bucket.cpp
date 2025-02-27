@@ -114,7 +114,7 @@ namespace dlg_help_utils::heap
         return rv;
     }
 
-    std::generator<heap_lfh_affinity_slot> heap_lfh_bucket::affinity_slots() const
+    dlg_help_utils::generator<heap_lfh_affinity_slot> heap_lfh_bucket::affinity_slots() const
     {
         validate_enabled();
         auto const max_slots{slot_count()};

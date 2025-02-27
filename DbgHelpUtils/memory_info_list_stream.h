@@ -2,7 +2,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <generator>
+#include "generator.h"
 #include <limits>
 
 namespace dlg_help_utils
@@ -20,7 +20,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] ULONG64 size() const { return memory_info_list_->NumberOfEntries; }
 
-        [[nodiscard]] std::generator<MINIDUMP_MEMORY_INFO const*> list() const;
+        [[nodiscard]] dlg_help_utils::generator<MINIDUMP_MEMORY_INFO const*> list() const;
 
     private:
         bool found_{false};

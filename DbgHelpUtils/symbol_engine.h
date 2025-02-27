@@ -9,7 +9,7 @@
 #include <optional>
 #include <set>
 #include <string>
-#include <generator>
+#include "generator.h"
 
 #include "i_stack_walk_callback.h"
 #include "i_symbol_load_callback.h"
@@ -123,7 +123,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(DWORD64 address);
         [[nodiscard]] std::optional<symbol_address_info> address_to_info(thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context);
 
-        [[nodiscard]] std::generator<std::wstring> loaded_modules() const;
+        [[nodiscard]] dlg_help_utils::generator<std::wstring> loaded_modules() const;
 
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& type_name, throw_on_error_t throw_on_error = throw_on_error_t{false});
         [[nodiscard]] std::optional<symbol_type_info> get_type_info(std::wstring const& module_name, std::wstring const& type_name, throw_on_error_t throw_on_error = throw_on_error_t{false});
@@ -146,7 +146,7 @@ namespace dlg_help_utils::dbg_help
             , std::wstring const& find_mask = {}
             , symbol_walk_options option = symbol_walk_options::default_symbols);
 
-        [[nodiscard]] std::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context) const;
+        [[nodiscard]] dlg_help_utils::generator<symbol_address_info> stack_walk(stream_thread_context const& thread_context) const;
 
         [[nodiscard]] i_symbol_load_callback& load_callback() const override { return *load_callback_; }
 

@@ -52,7 +52,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_lfh_context_config_disable_randomization_field_data, common_symbol_names::heap_lfh_context_config_disable_randomization_field_symbol_name) != 0x0;
     }
 
-    std::generator<heap_lfh_bucket> heap_lfh_context::active_buckets() const
+    dlg_help_utils::generator<heap_lfh_bucket> heap_lfh_context::active_buckets() const
     {
         if(auto const array_count = cache_data_->heap_lfh_context_buckets_field_symbol_type.array_count(); array_count.has_value())
         {

@@ -226,7 +226,7 @@ namespace dlg_help_utils::heap
         return large_reserved() - large_committed();
     }
 
-    std::generator<heap_segment_context> segment_heap::segment_contexts() const
+    dlg_help_utils::generator<heap_segment_context> segment_heap::segment_contexts() const
     {
         if(auto const array_count = cache_data_->heap_seg_context_array_field_symbol_type.array_count(); array_count.has_value())
         {
@@ -266,7 +266,7 @@ namespace dlg_help_utils::heap
         return std::nullopt;
     }
 
-    std::generator<large_alloc_entry> segment_heap::large_entries() const
+    dlg_help_utils::generator<large_alloc_entry> segment_heap::large_entries() const
     {
         for(ntdll_utilities::rtl_rb_tree_walker const rb_tree_walker{cache(), walker()
             , segment_heap_address() + stream_utils::get_field_offset(cache_data_->segment_heap_large_alloc_metadata_field_data, symbol_name, common_symbol_names::segment_heap_large_alloc_metadata_field_symbol_name)

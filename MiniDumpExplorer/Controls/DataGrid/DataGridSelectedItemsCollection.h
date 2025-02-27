@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <generator>
+#include "generator.h"
 #include <vector>
 
 
@@ -40,7 +40,7 @@ namespace DataGridInternal
         void RemoveAt(int32_t index) const;
         [[nodiscard]] int32_t Count() const;
 
-        [[nodiscard]] std::generator<winrt::Windows::Foundation::IInspectable> Items() const;
+        [[nodiscard]] dlg_help_utils::generator<winrt::Windows::Foundation::IInspectable> Items() const;
 
         [[nodiscard]] winrt::MiniDumpExplorer::DataGrid OwningGrid() const;
         [[nodiscard]] std::vector<winrt::Windows::Foundation::IInspectable> const& SelectedItemsCache() const;
@@ -51,8 +51,8 @@ namespace DataGridInternal
         void Delete(int32_t slot, winrt::Windows::Foundation::IInspectable const& item);
         void DeleteSlot(int32_t slot);
         [[nodiscard]] int32_t GetIndexCount(int32_t lowerBound, int32_t upperBound) const;
-        [[nodiscard]] std::generator<int32_t> GetIndexes() const;
-        [[nodiscard]] std::generator<int32_t> GetSlots(int32_t startSlot) const;
+        [[nodiscard]] dlg_help_utils::generator<int32_t> GetIndexes() const;
+        [[nodiscard]] dlg_help_utils::generator<int32_t> GetSlots(int32_t startSlot) const;
 
         winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs GetSelectionChangedEventArgs();
         void InsertIndex(int32_t slot);

@@ -59,7 +59,7 @@ namespace ValidationUtil
         return bindingData;
     }
 
-    std::generator<DependencyProperty> GetDependencyProperties(FrameworkElement const& element, bool const useBlockList)  // NOLINT(misc-use-internal-linkage)
+    dlg_help_utils::generator<DependencyProperty> GetDependencyProperties(FrameworkElement const& element, bool const useBlockList)  // NOLINT(misc-use-internal-linkage)
     {
         if(useBlockList &&
             (element.try_as<Controls::Panel>() || 

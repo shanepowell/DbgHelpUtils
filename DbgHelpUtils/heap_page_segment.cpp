@@ -50,7 +50,7 @@ namespace dlg_help_utils::heap
         return false;
     }
 
-    std::generator<page_range_descriptor> heap_page_segment::all_entries() const
+    dlg_help_utils::generator<page_range_descriptor> heap_page_segment::all_entries() const
     {
         if(auto const array_count = cache_data_->desc_array_array_field_symbol_type.array_count(); array_count.has_value())
         {
@@ -62,7 +62,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::generator<page_range_descriptor> heap_page_segment::entries() const
+    dlg_help_utils::generator<page_range_descriptor> heap_page_segment::entries() const
     {
         if(auto const array_count = cache_data_->desc_array_array_field_symbol_type.array_count(); array_count.has_value())
         {

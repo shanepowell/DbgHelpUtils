@@ -72,7 +72,7 @@ namespace dlg_help_utils
         return (featureMask & XSTATE_MASK_AVX) == XSTATE_MASK_AVX;
     }
 
-    std::generator<xstate_reader::ymm_register> xstate_reader::ymm_registers() const
+    dlg_help_utils::generator<xstate_reader::ymm_register> xstate_reader::ymm_registers() const
     {
         if (!is_supported())
         {

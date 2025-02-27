@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 #include <vector>
-#include <generator>
+#include "generator.h"
 
 #include "stream_utils.h"
 #include "symbol_type_info.h"
@@ -39,7 +39,7 @@ namespace dlg_help_utils::heap
 
         [[nodiscard]] bool is_using_crt_heap() const { return crt_first_block_ != 0; }
 
-        [[nodiscard]] std::generator<crt_entry> entries() const;
+        [[nodiscard]] dlg_help_utils::generator<crt_entry> entries() const;
 
         [[nodiscard]] uint64_t address() const { return crt_first_block_; }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->block_symbol_symbol_type; }
@@ -47,8 +47,8 @@ namespace dlg_help_utils::heap
     private:
         [[nodiscard]] uint64_t get_crt_first_block() const;
 
-        [[nodiscard]] std::generator<crt_entry> all_entries() const;
-        [[nodiscard]] std::generator<crt_entry> filter_entries() const;
+        [[nodiscard]] dlg_help_utils::generator<crt_entry> all_entries() const;
+        [[nodiscard]] dlg_help_utils::generator<crt_entry> filter_entries() const;
 
         [[nodiscard]] static bool is_filtered(std::vector<crt_entry> const& filters, crt_entry const& entry);
 

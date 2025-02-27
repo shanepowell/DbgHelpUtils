@@ -2,7 +2,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include <generator>
+#include "generator.h"
 #include <limits>
 
 #include "stream_token_info.h"
@@ -22,7 +22,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] ULONG64 size() const { return token_info_list_->TokenListEntries; }
 
-        [[nodiscard]] std::generator<stream_token_info> list() const;
+        [[nodiscard]] dlg_help_utils::generator<stream_token_info> list() const;
 
     private:
         bool found_{false};

@@ -3,10 +3,10 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include <generator>
+#include "generator.h"
 
 namespace dlg_help_utils::filesystem_utils
 {
     [[nodiscard]] bool wildcard_match(std::wstring_view value, std::wstring_view match);
-    [[nodiscard]] std::generator<std::wstring> enumerate_files(std::vector<std::wstring> const& paths, std::function<bool(std::wstring)> const& on_error);
+    [[nodiscard]] dlg_help_utils::generator<std::wstring> enumerate_files(std::vector<std::wstring> const& paths, std::function<bool(std::wstring)> const& on_error);
 }

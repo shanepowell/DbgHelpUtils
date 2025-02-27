@@ -93,7 +93,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_front_end_heap_type_field_data, common_symbol_names::heap_front_end_heap_type_field_symbol_name);
     }
 
-    std::generator<heap_segment> nt_heap::segments() const
+    dlg_help_utils::generator<heap_segment> nt_heap::segments() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_segment_list_field_data, common_symbol_names::heap_segment_list_field_symbol_name), heap_segment::symbol_name, common_symbol_names::heap_segment_list_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
@@ -102,7 +102,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::generator<heap_ucr_descriptor> nt_heap::uncommitted_ranges() const
+    dlg_help_utils::generator<heap_ucr_descriptor> nt_heap::uncommitted_ranges() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_ucr_list_field_data, common_symbol_names::heap_ucr_list_field_symbol_name), heap_ucr_descriptor::symbol_name, common_symbol_names::heap_ucr_descriptor_list_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
@@ -111,7 +111,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::generator<heap_virtual_block> nt_heap::heap_virtual_blocks() const
+    dlg_help_utils::generator<heap_virtual_block> nt_heap::heap_virtual_blocks() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_virtual_allocated_blocks_field_data, common_symbol_names::heap_virtual_allocated_blocks_field_symbol_name), heap_virtual_block::symbol_name, common_symbol_names::heap_virtual_alloc_entry_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())
@@ -120,7 +120,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    std::generator<heap_entry> nt_heap::free_entries() const
+    dlg_help_utils::generator<heap_entry> nt_heap::free_entries() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_free_lists_field_data, common_symbol_names::heap_free_lists_field_symbol_name), common_symbol_names::heap_free_entry_structure_symbol_name, common_symbol_names::heap_free_entry_free_list_field_symbol_name}; 
             auto const entry_address : list_walker.entries())

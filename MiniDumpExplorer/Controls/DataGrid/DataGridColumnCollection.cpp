@@ -236,7 +236,7 @@ namespace DataGridInternal
         return columnCount;
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumns()
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumns()
     {
         assert(ItemsInternal().size() == DisplayIndexMap().size());
         for (auto const columnIndex : DisplayIndexMap())
@@ -245,7 +245,7 @@ namespace DataGridInternal
         }
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumns(std::function<bool(MiniDumpExplorer::DataGridColumn const&)> const filter) const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumns(std::function<bool(MiniDumpExplorer::DataGridColumn const&)> const filter) const
     {
         assert(ItemsInternal().size() == DisplayIndexMap().size());
         for (auto const columnIndex : DisplayIndexMap())
@@ -258,12 +258,12 @@ namespace DataGridInternal
         }
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumns(bool const reverse, std::function<bool(MiniDumpExplorer::DataGridColumn const&)> filter) const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumns(bool const reverse, std::function<bool(MiniDumpExplorer::DataGridColumn const&)> filter) const
     {
         return reverse ? GetDisplayedColumnsReverse(std::move(filter)) : GetDisplayedColumns(std::move(filter));
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumnsReverse(std::function<bool(MiniDumpExplorer::DataGridColumn const&)> const filter) const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetDisplayedColumnsReverse(std::function<bool(MiniDumpExplorer::DataGridColumn const&)> const filter) const
     {
         assert(ItemsInternal().size() == DisplayIndexMap().size());
         for (auto displayIndex = DisplayIndexMap().size(); displayIndex > 0; displayIndex--)
@@ -416,17 +416,17 @@ namespace DataGridInternal
         return columnCount;
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetVisibleColumns() const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetVisibleColumns() const
     {
         return GetDisplayedColumns([](auto const& column) { return column.template as<DataGridColumn>()->IsVisible(); });
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetVisibleFrozenColumns() const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetVisibleFrozenColumns() const
     {
         return GetDisplayedColumns([](auto const& column) { return column.IsFrozen() && column.template as<DataGridColumn>()->IsVisible(); });
     }
 
-    std::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetVisibleScrollingColumns() const
+    dlg_help_utils::generator<MiniDumpExplorer::DataGridColumn> DataGridColumnCollection::GetVisibleScrollingColumns() const
     {
         return GetDisplayedColumns([](auto const& column) { return !column.IsFrozen() && column.template as<DataGridColumn>()->IsVisible(); });
     }

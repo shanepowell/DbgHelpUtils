@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <generator>
+#include "generator.h"
 
 namespace TypeHelper
 {
@@ -10,16 +10,16 @@ namespace TypeHelper
 
     std::wstring GetBindingPropertyName(winrt::Microsoft::UI::Xaml::Data::Binding const& binding);
 
-    std::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::guid const& id);
+    dlg_help_utils::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::guid const& id);
 
     template<typename T>
-    std::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties()
+    dlg_help_utils::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties()
     {
         return GetDependencyProperties(winrt::guid_of<T>());
     }
 
 
-    std::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Windows::Foundation::IInspectable const& object);
+    dlg_help_utils::generator<winrt::Microsoft::UI::Xaml::DependencyProperty> GetDependencyProperties(winrt::Windows::Foundation::IInspectable const& object);
 
     winrt::Microsoft::UI::Xaml::DependencyProperty GetDependencyProperty(winrt::Windows::Foundation::IInspectable const& object, std::wstring_view const& name);
     winrt::Microsoft::UI::Xaml::DependencyProperty GetDependencyProperty(winrt::guid const& id, std::wstring_view const& name);
