@@ -122,6 +122,97 @@ namespace
         {{.mask= 0x4000'0000, .value= 0x4000'0000}, L"AES key schedule loaded flag"s},
         {{.mask= 0x8000'0000, .value= 0x8000'0000}, L"alternate instruction set enabled"s},
     };
+
+    // http://www.bitsavers.org/components/intel/80386/231917-001_80387_Programmers_Reference_Manual_1987.pdf
+    std::map<dlg_help_utils::flags_string_utils::option_mask<uint16_t>, std::wstring> const npx_status_word_masks =
+    {
+        {{.mask= 0x0001, .value= static_cast<unsigned short>(0x0001)}, L"invalid operation (IE)"s},
+        {{.mask= 0x0002, .value= static_cast<unsigned short>(0x0002)}, L"denormalized operand (DE)"s},
+        {{.mask= 0x0004, .value= static_cast<unsigned short>(0x0004)}, L"zero divide (ZE)"s},
+        {{.mask= 0x0008, .value= static_cast<unsigned short>(0x0008)}, L"overflow (OE)"s},
+        {{.mask= 0x0010, .value= static_cast<unsigned short>(0x0010)}, L"underflow (UE)"s},
+        {{.mask= 0x0020, .value= static_cast<unsigned short>(0x0020)}, L"precision (PE)"s},
+        {{.mask= 0x0040, .value= static_cast<unsigned short>(0x0040)}, L"stack fault (SF)"s},
+        {{.mask= 0x0080, .value= static_cast<unsigned short>(0x0080)}, L"error summary status (ES)"s},
+        {{.mask= 0x0240, .value= static_cast<unsigned short>(0x0040)}, L"stack underflow"s},
+        {{.mask= 0x0240, .value= static_cast<unsigned short>(0x0240)}, L"stack overflow"s},
+        {{.mask= 0x0100, .value= static_cast<unsigned short>(0x0000)}, L"c0 - 0 (CF)"s},
+        {{.mask= 0x0100, .value= static_cast<unsigned short>(0x0100)}, L"c0 - 1 (CF)"s},
+        {{.mask= 0x0200, .value= static_cast<unsigned short>(0x0000)}, L"c1 - 0 (chopped)"s},
+        {{.mask= 0x0200, .value= static_cast<unsigned short>(0x0200)}, L"c1 - 1 (rounded up)"s},
+        {{.mask= 0x0400, .value= static_cast<unsigned short>(0x0000)}, L"c2 - 0 (PF - complete)"s},
+        {{.mask= 0x0400, .value= static_cast<unsigned short>(0x0400)}, L"c2 - 1 (PF - incomplete)"s},
+        {{.mask= 0x4000, .value= static_cast<unsigned short>(0x0000)}, L"c3 - 0 (ZF)"s},
+        {{.mask= 0x4000, .value= static_cast<unsigned short>(0x4000)}, L"c3 - 1 (ZF)"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(0 << 11)}, L"ST0 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(1 << 11)}, L"ST1 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(2 << 11)}, L"ST2 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(3 << 11)}, L"ST3 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(4 << 11)}, L"ST4 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(5 << 11)}, L"ST5 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(6 << 11)}, L"ST6 is top of stack"s},
+        {{.mask= 0x3800, .value= static_cast<unsigned short>(7 << 11)}, L"ST7 is top of stack"s},
+        {{.mask= 0x8000, .value= static_cast<unsigned short>(0x8000)}, L"busy"s},
+    };
+
+    // http://www.bitsavers.org/components/intel/80386/231917-001_80387_Programmers_Reference_Manual_1987.pdf
+    std::map<dlg_help_utils::flags_string_utils::option_mask<uint16_t>, std::wstring> const npx_control_word_masks =
+    {
+        {{.mask= 0x0001, .value= static_cast<unsigned short>(0x0001)}, L"invalid operation (IM)"s},
+        {{.mask= 0x0002, .value= static_cast<unsigned short>(0x0002)}, L"denormalized operand (DM)"s},
+        {{.mask= 0x0004, .value= static_cast<unsigned short>(0x0004)}, L"zero divide (ZM)"s},
+        {{.mask= 0x0008, .value= static_cast<unsigned short>(0x0008)}, L"overflow (OM)"s},
+        {{.mask= 0x0010, .value= static_cast<unsigned short>(0x0010)}, L"underflow (UM)"s},
+        {{.mask= 0x0020, .value= static_cast<unsigned short>(0x0020)}, L"precision (PM)"s},
+        {{.mask= 0x00C0, .value= std::nullopt}, L"reserved"s},
+        {{.mask= 0x0300, .value= static_cast<unsigned short>(0x0000)}, L"24 bits (single precision)"s},
+        {{.mask= 0x0300, .value= static_cast<unsigned short>(0x0100)}, L"reserved (precision)"s},
+        {{.mask= 0x0300, .value= static_cast<unsigned short>(0x0200)}, L"53 bits (double precision)"s},
+        {{.mask= 0x0300, .value= static_cast<unsigned short>(0x0300)}, L"64 bits (extended precision)"s},
+        {{.mask= 0x0C00, .value= static_cast<unsigned short>(0x0000)}, L"round to nearest or even"s},
+        {{.mask= 0x0C00, .value= static_cast<unsigned short>(0x0400)}, L"round down (toward -inf)"s},
+        {{.mask= 0x0C00, .value= static_cast<unsigned short>(0x0800)}, L"round up (toward +inf)"s},
+        {{.mask= 0x0C00, .value= static_cast<unsigned short>(0x0C00)}, L"chop (truncate toward zero)"s},
+        {{.mask= 0x1000, .value= std::nullopt}, L"infinity control"s},
+        {{.mask= 0xE000, .value= std::nullopt}, L"infinity control"s},
+    };
+
+    // http://www.bitsavers.org/components/intel/80386/231917-001_80387_Programmers_Reference_Manual_1987.pdf
+    std::map<dlg_help_utils::flags_string_utils::option_mask<uint16_t>, std::wstring> const npx_tag_word_masks =
+    {
+        {{.mask= 0x0003 << 0, .value= static_cast<unsigned short>(0x0000 <<  0)}, L"ST0 valid"s},
+        {{.mask= 0x0003 << 0, .value= static_cast<unsigned short>(0x0001 <<  0)}, L"ST0 zero"s},
+        {{.mask= 0x0003 << 0, .value= static_cast<unsigned short>(0x0002 <<  0)}, L"ST0 invalid or infinity"s},
+        {{.mask= 0x0003 << 0, .value= static_cast<unsigned short>(0x0003 <<  0)}, L"ST0 empty"s},
+        {{.mask= 0x0003 << 1, .value= static_cast<unsigned short>(0x0000 <<  1)}, L"ST1 valid"s},
+        {{.mask= 0x0003 << 1, .value= static_cast<unsigned short>(0x0001 <<  1)}, L"ST1 zero"s},
+        {{.mask= 0x0003 << 1, .value= static_cast<unsigned short>(0x0002 <<  1)}, L"ST1 invalid or infinity"s},
+        {{.mask= 0x0003 << 1, .value= static_cast<unsigned short>(0x0003 <<  1)}, L"ST1 empty"s},
+        {{.mask= 0x0003 << 2, .value= static_cast<unsigned short>(0x0000 <<  2)}, L"ST2 valid"s},
+        {{.mask= 0x0003 << 2, .value= static_cast<unsigned short>(0x0001 <<  2)}, L"ST2 zero"s},
+        {{.mask= 0x0003 << 2, .value= static_cast<unsigned short>(0x0002 <<  2)}, L"ST2 invalid or infinity"s},
+        {{.mask= 0x0003 << 2, .value= static_cast<unsigned short>(0x0003 <<  2)}, L"ST2 empty"s},
+        {{.mask= 0x0003 << 3, .value= static_cast<unsigned short>(0x0000 <<  3)}, L"ST3 valid"s},
+        {{.mask= 0x0003 << 3, .value= static_cast<unsigned short>(0x0001 <<  3)}, L"ST3 zero"s},
+        {{.mask= 0x0003 << 3, .value= static_cast<unsigned short>(0x0002 <<  3)}, L"ST3 invalid or infinity"s},
+        {{.mask= 0x0003 << 3, .value= static_cast<unsigned short>(0x0003 <<  3)}, L"ST3 empty"s},
+        {{.mask= 0x0003 << 4, .value= static_cast<unsigned short>(0x0000 <<  4)}, L"ST4 valid"s},
+        {{.mask= 0x0003 << 4, .value= static_cast<unsigned short>(0x0001 <<  4)}, L"ST4 zero"s},
+        {{.mask= 0x0003 << 4, .value= static_cast<unsigned short>(0x0002 <<  4)}, L"ST4 invalid or infinity"s},
+        {{.mask= 0x0003 << 4, .value= static_cast<unsigned short>(0x0003 <<  4)}, L"ST4 empty"s},
+        {{.mask= 0x0003 << 5, .value= static_cast<unsigned short>(0x0000 <<  5)}, L"ST5 valid"s},
+        {{.mask= 0x0003 << 5, .value= static_cast<unsigned short>(0x0001 <<  5)}, L"ST5 zero"s},
+        {{.mask= 0x0003 << 5, .value= static_cast<unsigned short>(0x0002 <<  5)}, L"ST5 invalid or infinity"s},
+        {{.mask= 0x0003 << 5, .value= static_cast<unsigned short>(0x0003 <<  5)}, L"ST5 empty"s},
+        {{.mask= 0x0003 << 6, .value= static_cast<unsigned short>(0x0000 <<  6)}, L"ST6 valid"s},
+        {{.mask= 0x0003 << 6, .value= static_cast<unsigned short>(0x0001 <<  6)}, L"ST6 zero"s},
+        {{.mask= 0x0003 << 6, .value= static_cast<unsigned short>(0x0002 <<  6)}, L"ST6 invalid or infinity"s},
+        {{.mask= 0x0003 << 6, .value= static_cast<unsigned short>(0x0003 <<  6)}, L"ST6 empty"s},
+        {{.mask= 0x0003 << 7, .value= static_cast<unsigned short>(0x0000 <<  7)}, L"ST7 valid"s},
+        {{.mask= 0x0003 << 7, .value= static_cast<unsigned short>(0x0001 <<  7)}, L"ST7 zero"s},
+        {{.mask= 0x0003 << 7, .value= static_cast<unsigned short>(0x0002 <<  7)}, L"ST7 invalid or infinity"s},
+        {{.mask= 0x0003 << 7, .value= static_cast<unsigned short>(0x0003 <<  7)}, L"ST7 empty"s},
+    };
 }
 
 
@@ -152,6 +243,21 @@ namespace dlg_help_utils::context_utils::resources
         return generate_flags_string(flags, flags_register_masks, flags_string_utils::mask_used_flags_t{false});
     }
 
+    std::wstring get_npx_status_word_to_string(uint16_t const status_word)
+    {
+        return generate_flags_string(status_word, npx_status_word_masks, flags_string_utils::mask_used_flags_t{false});
+    }
+
+    std::wstring get_npx_control_word_to_string(uint16_t const control_word)
+    {
+        return generate_flags_string(control_word, npx_control_word_masks, flags_string_utils::mask_used_flags_t{false});
+    }
+
+    std::wstring get_npx_tag_word_to_string(uint16_t const tag_word)
+    {
+        return generate_flags_string(tag_word, npx_tag_word_masks, flags_string_utils::mask_used_flags_t{false});
+    }
+
     std::vector<std::wstring> get_x86_thread_context_flags(uint32_t const context_flags)
     {
         return generate_flags_strings(context_flags, x86_thread_context_flag_masks, flags_string_utils::mask_used_flags_t{false});
@@ -175,5 +281,20 @@ namespace dlg_help_utils::context_utils::resources
     std::vector<std::wstring> get_flags_register(uint64_t const flags)
     {
         return generate_flags_strings(flags, flags_register_masks, flags_string_utils::mask_used_flags_t{false});
+    }
+
+    std::vector<std::wstring> get_npx_status_word(uint16_t const status_word)
+    {
+        return generate_flags_strings(status_word, npx_status_word_masks, flags_string_utils::mask_used_flags_t{false});
+    }
+
+    std::vector<std::wstring> get_npx_control_word(uint16_t const control_word)
+    {
+        return generate_flags_strings(control_word, npx_control_word_masks, flags_string_utils::mask_used_flags_t{false});
+    }
+
+    std::vector<std::wstring> get_npx_tag_word(uint16_t const tag_word)
+    {
+        return generate_flags_strings(tag_word, npx_control_word_masks, flags_string_utils::mask_used_flags_t{false});
     }
 }

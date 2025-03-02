@@ -1055,6 +1055,7 @@
     <ClCompile Include="Converters\TimeStampNumberConverter.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\context_utils_resources.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp" />
     <ClCompile Include="Helpers\SymbolEngineHelper.cpp" />

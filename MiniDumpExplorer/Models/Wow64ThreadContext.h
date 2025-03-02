@@ -68,8 +68,11 @@ namespace winrt::MiniDumpExplorer::implementation
 
         bool HasFloatingPoint() const { return (context_.ContextFlags & WOW64_CONTEXT_FLOATING_POINT) == WOW64_CONTEXT_FLOATING_POINT; }
         uint32_t ControlWord() const { return context_.FloatSave.ControlWord; }
+        Windows::Foundation::Collections::IObservableVector<hstring> ControlWordList() const { return controlWordList_; }
         uint32_t StatusWord() const { return context_.FloatSave.StatusWord; }
+        Windows::Foundation::Collections::IObservableVector<hstring> StatusWordList() const { return statusWordList_; }
         uint32_t TagWord() const { return context_.FloatSave.TagWord; }
+        Windows::Foundation::Collections::IObservableVector<hstring> TagWordList() const { return tagWordList_; }
         uint32_t ErrorOffset() const { return context_.FloatSave.ErrorOffset; }
         uint32_t ErrorSelector() const { return context_.FloatSave.ErrorSelector; }
         uint32_t DataOffset() const { return context_.FloatSave.DataOffset; }
@@ -91,6 +94,9 @@ namespace winrt::MiniDumpExplorer::implementation
         WOW64_CONTEXT context_{};
         Windows::Foundation::Collections::IObservableVector<hstring> contextFlagsList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> eFlagsList_{single_threaded_observable_vector<hstring>()};
+        Windows::Foundation::Collections::IObservableVector<hstring> controlWordList_{single_threaded_observable_vector<hstring>()};
+        Windows::Foundation::Collections::IObservableVector<hstring> statusWordList_{single_threaded_observable_vector<hstring>()};
+        Windows::Foundation::Collections::IObservableVector<hstring> tagWordList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> floatRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> xmmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::YmmRegister> ymmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::YmmRegister>()};

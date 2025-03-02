@@ -267,7 +267,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/> <!-- 8 -->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 9 -->
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Floating Point Registers" FontSize="15" FontWeight="Bold" />
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Control" />
@@ -277,23 +278,27 @@
             <TextBlock Grid.Row="1" Grid.Column="4" Text="Tag" />
             <TextBlock x:Name="tagWord"  Grid.Row="1" Grid.Column="5" Text="{x:Bind ThreadContext.TagWord,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Error OpCode" />
-            <TextBlock x:Name="errorOpcode"  Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadContext.ErrorOpcode,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="2" Grid.Column="2" Text="Error Offset" />
-            <TextBlock x:Name="errorOffset"  Grid.Row="2" Grid.Column="3" Text="{x:Bind ThreadContext.ErrorOffset,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="2" Grid.Column="4" Text="Error Selector" />
-            <TextBlock x:Name="errorSelector"  Grid.Row="2" Grid.Column="5" Text="{x:Bind ThreadContext.ErrorSelector,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{x:Bind ThreadContext.ControlWordList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <ListBox Grid.Row="2" Grid.Column="3" ItemsSource="{x:Bind ThreadContext.StatusWordList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <ListBox Grid.Row="2" Grid.Column="5" ItemsSource="{x:Bind ThreadContext.TagWordList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Data Offset" />
-            <TextBlock x:Name="dataOffset"  Grid.Row="3" Grid.Column="1" Text="{x:Bind ThreadContext.DataOffset,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <TextBlock Grid.Row="3" Grid.Column="2" Text="Data Selector" />
-            <TextBlock x:Name="dataSelector"  Grid.Row="3" Grid.Column="3" Text="{x:Bind ThreadContext.DataSelector,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Error OpCode" />
+            <TextBlock x:Name="errorOpcode"  Grid.Row="3" Grid.Column="1" Text="{x:Bind ThreadContext.ErrorOpcode,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="Error Offset" />
+            <TextBlock x:Name="errorOffset"  Grid.Row="3" Grid.Column="3" Text="{x:Bind ThreadContext.ErrorOffset,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="3" Grid.Column="4" Text="Error Selector" />
+            <TextBlock x:Name="errorSelector"  Grid.Row="3" Grid.Column="5" Text="{x:Bind ThreadContext.ErrorSelector,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="MX CSR" />
-            <TextBlock x:Name="mxCsr"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="5" Text="{x:Bind ThreadContext.MxCsr,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-            <ListBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" ItemsSource="{x:Bind ThreadContext.MxCsrList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Data Offset" />
+            <TextBlock x:Name="dataOffset"  Grid.Row="4" Grid.Column="1" Text="{x:Bind ThreadContext.DataOffset,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="Data Selector" />
+            <TextBlock x:Name="dataSelector"  Grid.Row="4" Grid.Column="3" Text="{x:Bind ThreadContext.DataSelector,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
-            <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="6" ItemsSource="{x:Bind ThreadContext.FloatRegisters}" SelectionMode="None">
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="MX CSR" />
+            <TextBlock x:Name="mxCsr"  Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" Text="{x:Bind ThreadContext.MxCsr,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <ListBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="5" ItemsSource="{x:Bind ThreadContext.MxCsrList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+            <ListView Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="6" ItemsSource="{x:Bind ThreadContext.FloatRegisters}" SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:XmmRegister">
                         <Grid ColumnSpacing="5" RowSpacing="5" >
@@ -311,8 +316,8 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="5" Text="SSE" FontSize="15" FontWeight="Bold" />
-            <ListView Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="6" ItemsSource="{x:Bind ThreadContext.XmmRegisters}" SelectionMode="None">
+            <TextBlock Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5" Text="SSE" FontSize="15" FontWeight="Bold" />
+            <ListView Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="6" ItemsSource="{x:Bind ThreadContext.XmmRegisters}" SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:XmmRegister">
                         <Grid ColumnSpacing="5" RowSpacing="5" >

@@ -6,8 +6,6 @@
 #include "XmmRegister.h"
 #include "YmmRegister.h"
 
-#include <format>
-
 #if __has_include("Wow64ThreadContext.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
 #include "Wow64ThreadContext.g.cpp" // NOLINT(bugprone-suspicious-include)
@@ -97,27 +95,20 @@ namespace winrt::MiniDumpExplorer::implementation
             eFlagsList_.Append(flag);
         }
 
-        //for (size_t index = 0; index < std::size(context.Legacy); ++index)
-        //{
-        //    floatRegisters_.Append(CreateM128A(std::format(L"ST{}", index), context.Legacy[index]));
-        //}
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_npx_status_word(static_cast<uint16_t>(context_.FloatSave.StatusWord)))
+        {
+            statusWordList_.Append(flag);
+        }
 
-        //xmmRegisters_.Append(CreateM128A(L"XMM0"s, context.Xmm0));
-        //xmmRegisters_.Append(CreateM128A(L"XMM1"s, context.Xmm1));
-        //xmmRegisters_.Append(CreateM128A(L"XMM2"s, context.Xmm2));
-        //xmmRegisters_.Append(CreateM128A(L"XMM3"s, context.Xmm3));
-        //xmmRegisters_.Append(CreateM128A(L"XMM4"s, context.Xmm4));
-        //xmmRegisters_.Append(CreateM128A(L"XMM5"s, context.Xmm5));
-        //xmmRegisters_.Append(CreateM128A(L"XMM6"s, context.Xmm6));
-        //xmmRegisters_.Append(CreateM128A(L"XMM7"s, context.Xmm7));
-        //xmmRegisters_.Append(CreateM128A(L"XMM8"s, context.Xmm8));
-        //xmmRegisters_.Append(CreateM128A(L"XMM9"s, context.Xmm9));
-        //xmmRegisters_.Append(CreateM128A(L"XMM10"s, context.Xmm10));
-        //xmmRegisters_.Append(CreateM128A(L"XMM11"s, context.Xmm11));
-        //xmmRegisters_.Append(CreateM128A(L"XMM12"s, context.Xmm12));
-        //xmmRegisters_.Append(CreateM128A(L"XMM13"s, context.Xmm13));
-        //xmmRegisters_.Append(CreateM128A(L"XMM14"s, context.Xmm14));
-        //xmmRegisters_.Append(CreateM128A(L"XMM15"s, context.Xmm15));
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_npx_control_word(static_cast<uint16_t>(context_.FloatSave.ControlWord)))
+        {
+            controlWordList_.Append(flag);
+        }
+
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_npx_tag_word(static_cast<uint16_t>(context_.FloatSave.TagWord)))
+        {
+            tagWordList_.Append(flag);
+        }
 
         xstate_reader_ = dlg_help_utils::xstate_reader{ &context };
 

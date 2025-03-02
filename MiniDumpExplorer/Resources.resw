@@ -4707,4 +4707,490 @@
   <data name="FloatingPointOptionScientific" xml:space="preserve">
     <value>Scientific Format</value>
   </data>
+  <data name="X86_CONTEXT_i386" xml:space="preserve">
+    <value>i386/i486 context</value>
+  </data>
+  <data name="X86_CONTEXT_CONTROL" xml:space="preserve">
+    <value>control segments</value>
+  </data>
+  <data name="X86_CONTEXT_INTEGER" xml:space="preserve">
+    <value>integer registers</value>
+  </data>
+  <data name="X86_CONTEXT_SEGMENTS" xml:space="preserve">
+    <value>segments</value>
+  </data>
+  <data name="X86_CONTEXT_FLOATING_POINT" xml:space="preserve">
+    <value>floating point registers</value>
+  </data>
+  <data name="X86_CONTEXT_DEBUG_REGISTERS" xml:space="preserve">
+    <value>debug registers</value>
+  </data>
+  <data name="X86_CONTEXT_EXTENDED_REGISTERS" xml:space="preserve">
+    <value>extended registers</value>
+  </data>
+  <data name="X86_CONTEXT_FULL" xml:space="preserve">
+    <value>full context</value>
+  </data>
+  <data name="X86_CONTEXT_ALL" xml:space="preserve">
+    <value>all context</value>
+  </data>
+  <data name="X86_CONTEXT_XSTATE" xml:space="preserve">
+    <value>xstate</value>
+  </data>
+  <data name="X86_CONTEXT_EXCEPTION_ACTIVE" xml:space="preserve">
+    <value>exception active</value>
+  </data>
+  <data name="X86_CONTEXT_SERVICE_ACTIVE" xml:space="preserve">
+    <value>service active</value>
+  </data>
+  <data name="X86_CONTEXT_EXCEPTION_REQUEST" xml:space="preserve">
+    <value>exception request</value>
+  </data>
+  <data name="X86_CONTEXT_EXCEPTION_REPORTING" xml:space="preserve">
+    <value>exception reporting</value>
+  </data>
+  <data name="X64_CONTEXT_AMD64" xml:space="preserve">
+    <value>amd64 context</value>
+  </data>
+  <data name="X64_CONTEXT_CONTROL" xml:space="preserve">
+    <value>control segments</value>
+  </data>
+  <data name="X64_CONTEXT_INTEGER" xml:space="preserve">
+    <value>integer registers</value>
+  </data>
+  <data name="X64_CONTEXT_SEGMENTS" xml:space="preserve">
+    <value>segments</value>
+  </data>
+  <data name="X64_CONTEXT_FLOATING_POINT" xml:space="preserve">
+    <value>floating point registers</value>
+  </data>
+  <data name="X64_CONTEXT_DEBUG_REGISTERS" xml:space="preserve">
+    <value>debug registers</value>
+  </data>
+  <data name="X64_CONTEXT_FULL" xml:space="preserve">
+    <value>full context</value>
+  </data>
+  <data name="X64_CONTEXT_ALL" xml:space="preserve">
+    <value>all context</value>
+  </data>
+  <data name="X64_CONTEXT_XSTATE" xml:space="preserve">
+    <value>xstate</value>
+  </data>
+  <data name="X64_CONTEXT_KERNEL_CET" xml:space="preserve">
+    <value>kernel cet</value>
+  </data>
+  <data name="X64_CONTEXT_EXCEPTION_ACTIVE" xml:space="preserve">
+    <value>exception active</value>
+  </data>
+  <data name="X64_CONTEXT_SERVICE_ACTIVE" xml:space="preserve">
+    <value>service active</value>
+  </data>
+  <data name="X64_CONTEXT_EXCEPTION_REQUEST" xml:space="preserve">
+    <value>exception request</value>
+  </data>
+  <data name="X64_CONTEXT_EXCEPTION_REPORTING" xml:space="preserve">
+    <value>exception reporting</value>
+  </data>
+  <data name="WOW64_CONTEXT_i386" xml:space="preserve">
+    <value>i386/i486 context</value>
+  </data>
+  <data name="WOW64_CONTEXT_CONTROL" xml:space="preserve">
+    <value>control segments</value>
+  </data>
+  <data name="WOW64_CONTEXT_INTEGER" xml:space="preserve">
+    <value>integer registers</value>
+  </data>
+  <data name="WOW64_CONTEXT_SEGMENTS" xml:space="preserve">
+    <value>segments</value>
+  </data>
+  <data name="WOW64_CONTEXT_FLOATING_POINT" xml:space="preserve">
+    <value>floating point registers</value>
+  </data>
+  <data name="WOW64_CONTEXT_DEBUG_REGISTERS" xml:space="preserve">
+    <value>debug registers</value>
+  </data>
+  <data name="WOW64_CONTEXT_EXTENDED_REGISTERS" xml:space="preserve">
+    <value>extended registers</value>
+  </data>
+  <data name="WOW64_CONTEXT_FULL" xml:space="preserve">
+    <value>full context</value>
+  </data>
+  <data name="WOW64_CONTEXT_ALL" xml:space="preserve">
+    <value>all context</value>
+  </data>
+  <data name="WOW64_CONTEXT_XSTATE" xml:space="preserve">
+    <value>xstate</value>
+  </data>
+  <data name="WOW64_CONTEXT_EXCEPTION_ACTIVE" xml:space="preserve">
+    <value>exception active</value>
+  </data>
+  <data name="WOW64_CONTEXT_SERVICE_ACTIVE" xml:space="preserve">
+    <value>service active</value>
+  </data>
+  <data name="WOW64_CONTEXT_EXCEPTION_REQUEST" xml:space="preserve">
+    <value>exception request</value>
+  </data>
+  <data name="WOW64_CONTEXT_EXCEPTION_REPORTING" xml:space="preserve">
+    <value>exception reporting</value>
+  </data>
+  <data name="MX_CSR_FZ" xml:space="preserve">
+    <value>flush to zero (FZ)</value>
+  </data>
+  <data name="MX_CSR_RC_RN" xml:space="preserve">
+    <value>to nearest rounding mode (RC=RN)</value>
+  </data>
+  <data name="MX_CSR_RC_RP" xml:space="preserve">
+    <value>toward negative infinity rounding mode (RC=R-)</value>
+  </data>
+  <data name="MX_CSR_RC_RM" xml:space="preserve">
+    <value>toward positive infinity rounding mode (RC=R+)</value>
+  </data>
+  <data name="MX_CSR_RC_RZ" xml:space="preserve">
+    <value>toward zero rounding mode (RC=RZ)</value>
+  </data>
+  <data name="MX_CSR_EM_PM" xml:space="preserve">
+    <value>precision mask (EM=PM)</value>
+  </data>
+  <data name="MX_CSR_EM_UM" xml:space="preserve">
+    <value>underflow mask (EM=UM)</value>
+  </data>
+  <data name="MX_CSR_EM_OM" xml:space="preserve">
+    <value>overflow mask (EM=OM)</value>
+  </data>
+  <data name="MX_CSR_EM_ZM" xml:space="preserve">
+    <value>divide-by-zero mask (EM=ZM)</value>
+  </data>
+  <data name="MX_CSR_EM_DM" xml:space="preserve">
+    <value>denormal mask (EM=DM)</value>
+  </data>
+  <data name="MX_CSR_EM_IM" xml:space="preserve">
+    <value>invalid operation mask (EM=IM)</value>
+  </data>
+  <data name="MX_CSR_DAZ" xml:space="preserve">
+    <value>denormals are zeros (DAZ)</value>
+  </data>
+  <data name="MX_CSR_EF_PE" xml:space="preserve">
+    <value>precision flag (EF=PE)</value>
+  </data>
+  <data name="MX_CSR_EF_UE" xml:space="preserve">
+    <value>underflow flag (EF=UE)</value>
+  </data>
+  <data name="MX_CSR_EF_OE" xml:space="preserve">
+    <value>overflow flag (EF=OE)</value>
+  </data>
+  <data name="MX_CSR_EF_ZE" xml:space="preserve">
+    <value>divide-by-zero flag (EF=ZE)</value>
+  </data>
+  <data name="MX_CSR_EF_DE" xml:space="preserve">
+    <value>denormal flag (EF=DE)</value>
+  </data>
+  <data name="MX_CSR_EF_IE" xml:space="preserve">
+    <value>invalid operation flag (EF=IE)</value>
+  </data>
+  <data name="EFLAGS_CF_CY" xml:space="preserve">
+    <value>carry flag (CF) - carry (CY)</value>
+  </data>
+  <data name="EFLAGS_CF_NC" xml:space="preserve">
+    <value>carry flag (CF) - no cary (NC)</value>
+  </data>
+  <data name="EFLAGS_Reserved" xml:space="preserve">
+    <value>Reserved</value>
+  </data>
+  <data name="EFLAGS_PF_PE" xml:space="preserve">
+    <value>parity flag (PF) - parity even (PE)</value>
+  </data>
+  <data name="EFLAGS_PF_PO" xml:space="preserve">
+    <value>parity flag (PF) - parity odd (PO)</value>
+  </data>
+  <data name="EFLAGS_AF_AC" xml:space="preserve">
+    <value>auxiliary carry flag (AF) - auxiliary carry (AC)</value>
+  </data>
+  <data name="EFLAGS_AF_NA" xml:space="preserve">
+    <value>auxiliary carry flag (AF) - no auxiliary carry (NA)</value>
+  </data>
+  <data name="EFLAGS_ZF_ZR" xml:space="preserve">
+    <value>z// ero flag (ZF) - zero (ZR)</value>
+  </data>
+  <data name="EFLAGS_ZF_NZ" xml:space="preserve">
+    <value>zero flag (ZF) - not zero (NZ)</value>
+  </data>
+  <data name="EFLAGS_SF_NG" xml:space="preserve">
+    <value>sign flag (SF) - negative (NG)</value>
+  </data>
+  <data name="EFLAGS_SF_PL" xml:space="preserve">
+    <value>sign flag (SF) - positive (PL)</value>
+  </data>
+  <data name="EFLAGS_TF" xml:space="preserve">
+    <value>trap flag (TF)</value>
+  </data>
+  <data name="EFLAGS_IF_EI" xml:space="preserve">
+    <value>interrupt enable flag (IF) - enable interrupt (EI)</value>
+  </data>
+  <data name="EFLAGS_IF_DI" xml:space="preserve">
+    <value>interrupt enable flag (IF) - disable interrupt (DI)</value>
+  </data>
+  <data name="EFLAGS_DF_DN" xml:space="preserve">
+    <value>direction flag (DF) - down (DN)</value>
+  </data>
+  <data name="EFLAGS_DF_UP" xml:space="preserve">
+    <value>direction flag (DF) - up (UP)</value>
+  </data>
+  <data name="EFLAGS_OF_OV" xml:space="preserve">
+    <value>overflow flag (OF) - overflow (OV)</value>
+  </data>
+  <data name="EFLAGS_OF_NV" xml:space="preserve">
+    <value>overflow flag (OF) - not overflow (NV)</value>
+  </data>
+  <data name="EFLAGS_IOPL" xml:space="preserve">
+    <value>i/o privilege level</value>
+  </data>
+  <data name="EFLAGS_NT" xml:space="preserve">
+    <value>nested task flag (NT)</value>
+  </data>
+  <data name="EFLAGS_VM" xml:space="preserve">
+    <value>virtual 8086 mode flag (VM)</value>
+  </data>
+  <data name="EFLAGS_AC" xml:space="preserve">
+    <value>alignment check (AC)</value>
+  </data>
+  <data name="EFLAGS_VIF" xml:space="preserve">
+    <value>virtual interrupt flag (VIF)</value>
+  </data>
+  <data name="EFLAGS_VIP" xml:space="preserve">
+    <value>virtual interrupt pending (VIP)</value>
+  </data>
+  <data name="EFLAGS_CPUID" xml:space="preserve">
+    <value>CPUID (ID)</value>
+  </data>
+  <data name="EFLAGS_AES" xml:space="preserve">
+    <value>AES key schedule loaded flag</value>
+  </data>
+  <data name="EFLAGS_AISE" xml:space="preserve">
+    <value>alternate instruction set enabled</value>
+  </data>
+  <data name="NPX_STATUS_IE" xml:space="preserve">
+    <value>invalid operation (IE)</value>
+  </data>
+  <data name="NPX_STATUS_DE" xml:space="preserve">
+    <value>denormalized operand (DE)</value>
+  </data>
+  <data name="NPX_STATUS_ZE" xml:space="preserve">
+    <value>zero divide (ZE)</value>
+  </data>
+  <data name="NPX_STATUS_OE" xml:space="preserve">
+    <value>overflow (OE)</value>
+  </data>
+  <data name="NPX_STATUS_UE" xml:space="preserve">
+    <value>underflow (UE)</value>
+  </data>
+  <data name="NPX_STATUS_PE" xml:space="preserve">
+    <value>precision (PE)</value>
+  </data>
+  <data name="NPX_STATUS_SF" xml:space="preserve">
+    <value>stack fault (SF)</value>
+  </data>
+  <data name="NPX_STATUS_ES" xml:space="preserve">
+    <value>error summary status (ES)</value>
+  </data>
+  <data name="NPX_STATUS_SU" xml:space="preserve">
+    <value>stack underflow</value>
+  </data>
+  <data name="NPX_STATUS_SO" xml:space="preserve">
+    <value>stack overflow</value>
+  </data>
+  <data name="NPX_STATUS_C0_0" xml:space="preserve">
+    <value>c0 - 0 (CF)</value>
+  </data>
+  <data name="NPX_STATUS_C0_1" xml:space="preserve">
+    <value>c0 - 1 (CF)</value>
+  </data>
+  <data name="NPX_STATUS_C1_0" xml:space="preserve">
+    <value>c1 - 0 (chopped)</value>
+  </data>
+  <data name="NPX_STATUS_C1_1" xml:space="preserve">
+    <value>c1 - 1 (rounded up)</value>
+  </data>
+  <data name="NPX_STATUS_C2_0" xml:space="preserve">
+    <value>c2 - 0 (PF - complete)</value>
+  </data>
+  <data name="NPX_STATUS_C2_1" xml:space="preserve">
+    <value>c2 - 1 (PF - incomplete)</value>
+  </data>
+  <data name="NPX_STATUS_C3_0" xml:space="preserve">
+    <value>c3 - 0 (ZF)</value>
+  </data>
+  <data name="NPX_STATUS_C3_1" xml:space="preserve">
+    <value>c3 - 1 (ZF)</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST0" xml:space="preserve">
+    <value>ST0 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST1" xml:space="preserve">
+    <value>ST1 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST2" xml:space="preserve">
+    <value>ST2 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST3" xml:space="preserve">
+    <value>ST3 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST4" xml:space="preserve">
+    <value>ST4 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST5" xml:space="preserve">
+    <value>ST5 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST6" xml:space="preserve">
+    <value>ST6 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_TOP_ST7" xml:space="preserve">
+    <value>ST7 is top of stack</value>
+  </data>
+  <data name="NPX_STATUS_BUSY" xml:space="preserve">
+    <value>busy</value>
+  </data>
+  <data name="NPX_CONTROL_IM" xml:space="preserve">
+    <value>invalid operation (IM)</value>
+  </data>
+  <data name="NPX_CONTROL_DM" xml:space="preserve">
+    <value>denormalized operand (DM)</value>
+  </data>
+  <data name="NPX_CONTROL_ZM" xml:space="preserve">
+    <value>zero divide (ZM)</value>
+  </data>
+  <data name="NPX_CONTROL_OM" xml:space="preserve">
+    <value>overflow (OM)</value>
+  </data>
+  <data name="NPX_CONTROL_UM" xml:space="preserve">
+    <value>underflow (UM)</value>
+  </data>
+  <data name="NPX_CONTROL_PM" xml:space="preserve">
+    <value>precision (PM)</value>
+  </data>
+  <data name="NPX_CONTROL_reserved" xml:space="preserve">
+    <value>reserved</value>
+  </data>
+  <data name="NPX_CONTROL_24BIT" xml:space="preserve">
+    <value>24 bits (single precision)</value>
+  </data>
+  <data name="NPX_CONTROL_reserved_precision" xml:space="preserve">
+    <value>reserved (precision)</value>
+  </data>
+  <data name="NPX_CONTROL_53BIT" xml:space="preserve">
+    <value>53 bits (double precision)</value>
+  </data>
+  <data name="NPX_CONTROL_64BIT" xml:space="preserve">
+    <value>64 bits (extended precision)</value>
+  </data>
+  <data name="NPX_CONTROL_round_to_nearest" xml:space="preserve">
+    <value>round to nearest or even</value>
+  </data>
+  <data name="NPX_CONTROL_round_down" xml:space="preserve">
+    <value>round down (toward -inf)</value>
+  </data>
+  <data name="NPX_CONTROL_round_up" xml:space="preserve">
+    <value>round up (toward +inf)</value>
+  </data>
+  <data name="NPX_CONTROL_chop" xml:space="preserve">
+    <value>chop (truncate toward zero)</value>
+  </data>
+  <data name="NPX_CONTROL_infinity_control" xml:space="preserve">
+    <value>infinity control</value>
+  </data>
+  <data name="NPX_ST0_valid" xml:space="preserve">
+    <value>ST0 valid</value>
+  </data>
+  <data name="NPX_ST0_zero" xml:space="preserve">
+    <value>ST0 zero</value>
+  </data>
+  <data name="NPX_ST0_invalid" xml:space="preserve">
+    <value>ST0 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST0_empty" xml:space="preserve">
+    <value>ST0 empty</value>
+  </data>
+  <data name="NPX_ST1_valid" xml:space="preserve">
+    <value>ST1 valid</value>
+  </data>
+  <data name="NPX_ST1_zero" xml:space="preserve">
+    <value>ST1 zero</value>
+  </data>
+  <data name="NPX_ST1_invalid" xml:space="preserve">
+    <value>ST1 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST1_empty" xml:space="preserve">
+    <value>ST1 empty</value>
+  </data>
+  <data name="NPX_ST2_valid" xml:space="preserve">
+    <value>ST2 valid</value>
+  </data>
+  <data name="NPX_ST2_zero" xml:space="preserve">
+    <value>ST2 zero</value>
+  </data>
+  <data name="NPX_ST2_invalid" xml:space="preserve">
+    <value>ST2 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST2_empty" xml:space="preserve">
+    <value>ST2 empty</value>
+  </data>
+  <data name="NPX_ST3_valid" xml:space="preserve">
+    <value>ST3 valid</value>
+  </data>
+  <data name="NPX_ST3_zero" xml:space="preserve">
+    <value>ST3 zero</value>
+  </data>
+  <data name="NPX_ST3_invalid" xml:space="preserve">
+    <value>ST3 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST3_empty" xml:space="preserve">
+    <value>ST3 empty</value>
+  </data>
+  <data name="NPX_ST4_valid" xml:space="preserve">
+    <value>ST4 valid</value>
+  </data>
+  <data name="NPX_ST4_zero" xml:space="preserve">
+    <value>ST4 zero</value>
+  </data>
+  <data name="NPX_ST4_invalid" xml:space="preserve">
+    <value>ST4 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST4_empty" xml:space="preserve">
+    <value>ST4 empty</value>
+  </data>
+  <data name="NPX_ST5_valid" xml:space="preserve">
+    <value>ST5 valid</value>
+  </data>
+  <data name="NPX_ST5_zero" xml:space="preserve">
+    <value>ST5 zero</value>
+  </data>
+  <data name="NPX_ST5_invalid" xml:space="preserve">
+    <value>ST5 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST5_empty" xml:space="preserve">
+    <value>ST5 empty</value>
+  </data>
+  <data name="NPX_ST6_valid" xml:space="preserve">
+    <value>ST6 valid</value>
+  </data>
+  <data name="NPX_ST6_zero" xml:space="preserve">
+    <value>ST6 zero</value>
+  </data>
+  <data name="NPX_ST6_invalid" xml:space="preserve">
+    <value>ST6 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST6_empty" xml:space="preserve">
+    <value>ST6 empty</value>
+  </data>
+  <data name="NPX_ST7_valid" xml:space="preserve">
+    <value>ST7 valid</value>
+  </data>
+  <data name="NPX_ST7_zero" xml:space="preserve">
+    <value>ST7 zero</value>
+  </data>
+  <data name="NPX_ST7_invalid" xml:space="preserve">
+    <value>ST7 invalid or infinity</value>
+  </data>
+  <data name="NPX_ST7_empty" xml:space="preserve">
+    <value>ST7 empty</value>
+  </data>
 </root>

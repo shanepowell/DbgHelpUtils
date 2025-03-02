@@ -147,6 +147,21 @@ namespace winrt::MiniDumpExplorer::implementation
             mxCsrList_.Append(flag);
         }
 
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_npx_status_word(context_.FltSave.StatusWord))
+        {
+            statusWordList_.Append(flag);
+        }
+
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_npx_control_word(context_.FltSave.ControlWord))
+        {
+            controlWordList_.Append(flag);
+        }
+
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_npx_tag_word(context_.FltSave.TagWord))
+        {
+            tagWordList_.Append(flag);
+        }
+
         for (size_t index = 0; index < std::size(context.Legacy); ++index)
         {
             floatRegisters_.Append(CreateM128A(std::format(L"ST{}", index), context.Legacy[index]));

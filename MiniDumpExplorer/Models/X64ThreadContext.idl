@@ -105,8 +105,11 @@ namespace MiniDumpExplorer
 
         Boolean HasFloatingPoint{ get; };
         UInt16 ControlWord{ get; };
+        IObservableVector<String> ControlWordList { get; };
         UInt16 StatusWord{ get; };
+        IObservableVector<String> StatusWordList { get; };
         UInt8 TagWord{ get; };
+        IObservableVector<String> TagWordList { get; };
         UInt16 ErrorOpcode{ get; };
         UInt32 ErrorOffset{ get; };
         UInt16 ErrorSelector{ get; };

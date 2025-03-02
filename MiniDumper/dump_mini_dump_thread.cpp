@@ -129,9 +129,9 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, stream_thread_context
     if((context.ContextFlags & X64_CONTEXT_FLOATING_POINT) == X64_CONTEXT_FLOATING_POINT)
     {
         log << L"    Floating Point:\n";
-        log << std::format(L"      ControlWord: {}\n", to_hex_full(context.FltSave.ControlWord));
-        log << std::format(L"      StatusWord: {}\n", to_hex_full(context.FltSave.StatusWord));
-        log << std::format(L"      TagWord: {}\n", to_hex_full(context.FltSave.TagWord));
+        log << std::format(L"      ControlWord: ({}) {}\n", to_hex_full(context.FltSave.ControlWord), context_utils::resources::get_npx_control_word_to_string(context.FltSave.ControlWord));
+        log << std::format(L"      StatusWord: ({}) {}\n", to_hex_full(context.FltSave.StatusWord), context_utils::resources::get_npx_status_word_to_string(context.FltSave.StatusWord));
+        log << std::format(L"      TagWord: ({}) {}\n", to_hex_full(context.FltSave.TagWord), context_utils::resources::get_npx_tag_word_to_string(context.FltSave.TagWord));
         log << std::format(L"      ErrorOpcode: {}\n", to_hex_full(context.FltSave.ErrorOpcode));
         log << std::format(L"      ErrorOffset (FPIP): {}\n", to_hex_full(context.FltSave.ErrorOffset));
         log << std::format(L"      ErrorSelector (FPCS): {}\n", to_hex_full(context.FltSave.ErrorSelector));
@@ -238,9 +238,9 @@ void dump_mini_dump_x86_thread_context(std::wostream& log, stream_thread_context
     if((context.ContextFlags & X86_CONTEXT_FLOATING_POINT) == X86_CONTEXT_FLOATING_POINT)
     {
         log << L"    FloatSave:\n";
-        log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
-        log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
-        log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
+        log << std::format(L"      ControlWord: ({}) {}\n", to_hex_full(context.FloatSave.ControlWord), context_utils::resources::get_npx_control_word_to_string(static_cast<uint16_t>(context.FloatSave.ControlWord)));
+        log << std::format(L"      StatusWord: ({}) {}\n", to_hex_full(context.FloatSave.StatusWord), context_utils::resources::get_npx_status_word_to_string(static_cast<uint16_t>(context.FloatSave.StatusWord)));
+        log << std::format(L"      TagWord: ({}) {}\n", to_hex_full(context.FloatSave.TagWord), context_utils::resources::get_npx_tag_word_to_string(static_cast<uint16_t>(context.FloatSave.TagWord)));
         log << std::format(L"      ErrorOffset (FPIP): {}\n", to_hex(context.FloatSave.ErrorOffset));
         log << std::format(L"      ErrorSelector (FPCS): {}\n", to_hex(context.FloatSave.ErrorSelector));
         log << std::format(L"      DataOffset (FPDO): {}\n", to_hex(context.FloatSave.DataOffset));
@@ -311,9 +311,9 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
     if((context.ContextFlags & WOW64_CONTEXT_FLOATING_POINT) == WOW64_CONTEXT_FLOATING_POINT)
     {
         log << L"    FloatSave:\n";
-        log << std::format(L"      ControlWord: {}\n", to_hex(context.FloatSave.ControlWord));
-        log << std::format(L"      StatusWord: {}\n", to_hex(context.FloatSave.StatusWord));
-        log << std::format(L"      TagWord: {}\n", to_hex(context.FloatSave.TagWord));
+        log << std::format(L"      ControlWord: ({}) {}\n", to_hex_full(context.FloatSave.ControlWord), context_utils::resources::get_npx_control_word_to_string(static_cast<uint16_t>(context.FloatSave.ControlWord)));
+        log << std::format(L"      StatusWord: ({}) {}\n", to_hex_full(context.FloatSave.StatusWord), context_utils::resources::get_npx_status_word_to_string(static_cast<uint16_t>(context.FloatSave.StatusWord)));
+        log << std::format(L"      TagWord: ({}) {}\n", to_hex_full(context.FloatSave.TagWord), context_utils::resources::get_npx_tag_word_to_string(static_cast<uint16_t>(context.FloatSave.TagWord)));
         log << std::format(L"      ErrorOffset (FPIP): {}\n", to_hex(context.FloatSave.ErrorOffset));
         log << std::format(L"      ErrorSelector (FPCS): {}\n", to_hex(context.FloatSave.ErrorSelector));
         log << std::format(L"      DataOffset (FPDO): {}\n", to_hex(context.FloatSave.DataOffset));

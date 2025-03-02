@@ -655,6 +655,9 @@
     <ClCompile Include="Models\Wow64ThreadContext.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="DlgHelpUtilsResource\context_utils_resources.cpp">
+      <Filter>DlgHelpUtilsResource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
