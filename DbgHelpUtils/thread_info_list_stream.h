@@ -23,7 +23,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] ULONG64 size() const { return thread_info_list_->NumberOfEntries; }
 
-        [[nodiscard]] dlg_help_utils::generator<stream_thread_info> list() const;
+        [[nodiscard]] generator<stream_thread_info> list() const;
 
     private:
         mini_dump const* dump_{nullptr};

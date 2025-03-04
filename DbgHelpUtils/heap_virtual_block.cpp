@@ -39,7 +39,7 @@ namespace dlg_help_utils::heap
         return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->heap_virtual_alloc_entry_commit_size_field_data, common_symbol_names::heap_virtual_alloc_entry_commit_size_field_symbol_name) };
     }
 
-    dlg_help_utils::generator<heap_entry> heap_virtual_block::entries() const
+    generator<heap_entry> heap_virtual_block::entries() const
     {
         auto const committed_size = committed();
         if(auto const reserved_size = reserved(); committed_size > size_units::base_16::bytes{0})

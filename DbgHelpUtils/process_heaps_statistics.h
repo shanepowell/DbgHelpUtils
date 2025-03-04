@@ -29,7 +29,7 @@ namespace dlg_help_utils::heap
     private:
         [[nodiscard]] std::map<uint64_t, process_heap_entry> get_allocated_entries() const;
         [[nodiscard]] std::map<uint64_t, process_heap_entry> get_free_entries() const;
-        [[nodiscard]] static std::map<uint64_t, process_heap_entry> get_all_entries(dlg_help_utils::generator<process_heap_entry> entries);
+        [[nodiscard]] static std::map<uint64_t, process_heap_entry> get_all_entries(generator<process_heap_entry> entries);
 
     private:
         process_heaps const& process_;

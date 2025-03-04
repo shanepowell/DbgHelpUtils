@@ -23,7 +23,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t native_descriptor_size() const { return size_of_native_descriptor_; }
         [[nodiscard]] void const* raw_function_table() const { return function_entry_table_; }
 
-        [[nodiscard]] dlg_help_utils::generator<stream_function_entry> list() const;
+        [[nodiscard]] generator<stream_function_entry> list() const;
 
     private:
         MINIDUMP_FUNCTION_TABLE_DESCRIPTOR const* header_{nullptr};

@@ -38,7 +38,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t entry_start_address() const { return entry_start_address_; }
         [[nodiscard]] uint16_t block_stride() const { return block_stride_; }
 
-        [[nodiscard]] dlg_help_utils::generator<heap_entry> entries() const;
+        [[nodiscard]] generator<heap_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_subsegment_symbol_type; }

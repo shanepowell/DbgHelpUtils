@@ -1,5 +1,4 @@
 ﻿#include "locale_number_formatting.h"
-#include <cctype>
 
 // ReSharper disable CppZeroConstantCanBeReplacedWithNullptr
 namespace locale_formatting

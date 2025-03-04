@@ -16,7 +16,7 @@ namespace dlg_help_utils::heap::statistic_views
         by_size_ranges_frequency_view(view_type view, allocation_stack_trace_helper const& helper, statistic_view_options const& statistic_view_options, process_heaps const& process, std::map<uint64_t, process_heap_entry> const& allocated_entries, std::map<uint64_t, process_heap_entry> const& free_entries);
 
         [[nodiscard]] bool is_range_single_value() const override { return false; }
-        [[nodiscard]] dlg_help_utils::generator<process_heaps_statistic_bucket_view> buckets() const override;
+        [[nodiscard]] generator<process_heaps_statistic_bucket_view> buckets() const override;
 
     private:
         struct bucket_entries

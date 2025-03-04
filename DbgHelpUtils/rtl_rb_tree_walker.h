@@ -26,7 +26,7 @@ namespace dlg_help_utils::ntdll_utilities
         [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return *walker_; }
 
-        [[nodiscard]] dlg_help_utils::generator<uint64_t> entries() const;
+        [[nodiscard]] generator<uint64_t> entries() const;
 
         static std::wstring const& symbol_name;
         static std::wstring const& node_symbol_name;

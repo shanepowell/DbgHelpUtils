@@ -44,7 +44,7 @@ namespace dlg_help_utils::heap
         return get_machine_size_field_value(*this, cache_data_->heap_lfh_affinity_slot_available_subsegment_count_field_data, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_count_field_symbol_name);
     }
 
-    dlg_help_utils::generator<heap_lfh_subsegment> heap_lfh_affinity_slot::subsegments() const
+    generator<heap_lfh_subsegment> heap_lfh_affinity_slot::subsegments() const
     {
         // enumerate available subsegment list
         for (ntdll_utilities::list_entry_walker const list_walker{heap().heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_->heap_lfh_affinity_slot_available_subsegment_list_field_data, common_symbol_names::heap_lfh_affinity_slot_available_subsegment_list_field_symbol_name), heap_lfh_subsegment::symbol_name, common_symbol_names::heap_lfh_subsegment_list_entry_field_symbol_name}; 

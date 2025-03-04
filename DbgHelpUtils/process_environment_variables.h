@@ -25,7 +25,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return *walker_; }
         [[nodiscard]] uint64_t process_parameters_address() const { return process_parameters_address_; }
 
-        [[nodiscard]] dlg_help_utils::generator<std::wstring> environment() const;
+        [[nodiscard]] generator<std::wstring> environment() const;
 
     private:
         struct cache_data

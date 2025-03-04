@@ -20,7 +20,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] ULONG64 size() const { return memory_info_list_->NumberOfEntries; }
 
-        [[nodiscard]] dlg_help_utils::generator<MINIDUMP_MEMORY_INFO const*> list() const;
+        [[nodiscard]] generator<MINIDUMP_MEMORY_INFO const*> list() const;
 
     private:
         bool found_{false};

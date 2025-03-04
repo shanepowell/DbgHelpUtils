@@ -239,7 +239,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         template<typename T>
-        dlg_help_utils::generator<dump_variable_symbol_data>  number_variable(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data>  number_variable(stream_stack_dump::mini_dump_memory_walker const& walker
             , uint64_t const variable_address
             , mini_dump_memory_stream variable_stream
             , [[maybe_unused]] uint64_t const bit_mask
@@ -754,7 +754,7 @@ namespace dlg_help_utils::symbol_type_utils
             return false;
         }
 
-        dlg_help_utils::generator<dump_variable_symbol_data> base_type_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data> base_type_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , uint64_t const variable_address
             , mini_dump_memory_stream const& variable_stream
@@ -926,7 +926,7 @@ namespace dlg_help_utils::symbol_type_utils
             return length_data.value_or(0) > 0 && max_size > 0;
         }
 
-        dlg_help_utils::generator<dump_variable_symbol_data> udt_array(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data> udt_array(stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , uint64_t variable_address
             , mini_dump_memory_stream variable_stream
@@ -1059,7 +1059,7 @@ namespace dlg_help_utils::symbol_type_utils
         }
 
         template<typename T>
-        dlg_help_utils::generator<dump_variable_symbol_data> pointer_memory_value(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, T const& pointer_value, size_t const visited_depth)
+        generator<dump_variable_symbol_data> pointer_memory_value(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, T const& pointer_value, size_t const visited_depth)
         {
             if(auto const pointer_type = type.type(); pointer_type.has_value())
             {
@@ -1225,7 +1225,7 @@ namespace dlg_help_utils::symbol_type_utils
             return false;
         }
 
-        dlg_help_utils::generator<dump_variable_symbol_data> pointer_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data> pointer_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , [[maybe_unused]] uint64_t variable_address
             , mini_dump_memory_stream& variable_stream
@@ -1426,7 +1426,7 @@ namespace dlg_help_utils::symbol_type_utils
             return false;
         }
 
-        dlg_help_utils::generator<dump_variable_symbol_data> array_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data> array_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , uint64_t const variable_address
             , [[maybe_unused]] mini_dump_memory_stream const& variable_stream
@@ -1533,7 +1533,7 @@ namespace dlg_help_utils::symbol_type_utils
             return false;
         }
 
-        dlg_help_utils::generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data> variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , [[maybe_unused]] symbol_type_info const& display_type
             , [[maybe_unused]] uint64_t variable_address
@@ -1644,7 +1644,7 @@ namespace dlg_help_utils::symbol_type_utils
             return false;
         }
 
-        dlg_help_utils::generator<dump_variable_symbol_data> data_at(stream_stack_dump::mini_dump_memory_walker const& walker
+        generator<dump_variable_symbol_data> data_at(stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_type_info const& type
             , uint64_t const variable_address
             , mini_dump_memory_stream& variable_stream
@@ -2255,7 +2255,7 @@ namespace dlg_help_utils::symbol_type_utils
 
     namespace
     {
-        dlg_help_utils::generator<dump_variable_symbol_data> children_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, mini_dump_memory_stream const& variable_stream, uint64_t const variable_address, size_t const visited_depth)
+        generator<dump_variable_symbol_data> children_variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker, symbol_type_info const& type, mini_dump_memory_stream const& variable_stream, uint64_t const variable_address, size_t const visited_depth)
         {
             for (auto const& child : type.children())
             {

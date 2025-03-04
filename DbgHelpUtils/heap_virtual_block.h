@@ -34,7 +34,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_units::base_16::bytes reserved() const;
         [[nodiscard]] size_units::base_16::bytes committed() const;
 
-        [[nodiscard]] dlg_help_utils::generator<heap_entry> entries() const;
+        [[nodiscard]] generator<heap_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return descriptor_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_virtual_block_symbol_type; }

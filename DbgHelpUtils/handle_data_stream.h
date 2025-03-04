@@ -30,7 +30,7 @@ namespace dlg_help_utils
             return handle_type_totals_;
         }
 
-        [[nodiscard]] dlg_help_utils::generator<stream_handle> list() const;
+        [[nodiscard]] generator<stream_handle> list() const;
 
     private:
         mini_dump const* dump_{nullptr};

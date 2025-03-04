@@ -26,7 +26,7 @@ namespace dlg_help_utils
         }
     }
 
-    dlg_help_utils::generator<AVRF_HANDLE_OPERATION const*> handle_operation_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    generator<AVRF_HANDLE_OPERATION const*> handle_operation_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         for (size_t index = 0; index < handle_operation_list_->NumberOfEntries; ++index)
         {

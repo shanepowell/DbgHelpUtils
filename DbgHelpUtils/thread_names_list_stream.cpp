@@ -18,7 +18,7 @@ namespace dlg_help_utils
         found_ = true;
     }
 
-    dlg_help_utils::generator<stream_thread_name> thread_names_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
+    generator<stream_thread_name> thread_names_list_stream::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         for (size_t index = 0; index < thread_name_list_->NumberOfThreadNames; ++index)
         {

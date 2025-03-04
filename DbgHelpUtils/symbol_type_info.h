@@ -61,7 +61,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] VARIANT const_value() const;
         [[nodiscard]] std::optional<calling_convention> calling_convention() const;
 
-        [[nodiscard]] dlg_help_utils::generator<symbol_type_info> children() const;
+        [[nodiscard]] generator<symbol_type_info> children() const;
 
         [[nodiscard]] std::optional<symbol_type_and_field_offset> find_field_in_type(std::wstring_view field_name) const;
         [[nodiscard]] symbol_type_and_field_offset get_field_in_type(std::wstring_view type_name, std::wstring_view field_name) const;

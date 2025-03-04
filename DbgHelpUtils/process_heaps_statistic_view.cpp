@@ -46,7 +46,7 @@ namespace dlg_help_utils::heap
         impl_->sort_order(value);
     }
 
-    dlg_help_utils::generator<process_heaps_statistic_bucket_view> process_heaps_statistic_view::buckets() const
+    generator<process_heaps_statistic_bucket_view> process_heaps_statistic_view::buckets() const
     {
         return impl_->buckets();
     }

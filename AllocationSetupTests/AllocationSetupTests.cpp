@@ -259,6 +259,7 @@ namespace
         size_t allocation_size = 0x1;
         size_t constexpr max_rounds = 6;
 
+        // ReSharper disable once CppTooWideScopeInitStatement
         std::array<void*, 0x1> zero_allocations{};
         std::array<std::array<void*, 0xF>, max_rounds> allocation_groups{};
         std::array<std::array<void*, 0xE>, max_rounds - 1> small_allocation_groups{};

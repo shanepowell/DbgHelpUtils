@@ -81,7 +81,7 @@ namespace dlg_help_utils::heap
         return size_units::base_16::bytes{get_machine_size_field_value(*this, cache_data_->dph_heap_root_free_allocations_bytes_committed_field_data, common_symbol_names::dph_heap_root_free_allocations_bytes_committed_field_symbol_name)};
     }
 
-    dlg_help_utils::generator<dph_heap> dph_heap::dph_heaps(cache_manager& cache, process::process_environment_block const& peb)
+    generator<dph_heap> dph_heap::dph_heaps(cache_manager& cache, process::process_environment_block const& peb)
     {
         auto const symbol = peb.walker().get_symbol_info(common_symbol_names::av_rfp_dph_page_heap_list_global_symbol_name);
         if(!symbol.has_value())
@@ -102,7 +102,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    dlg_help_utils::generator<dph_entry> dph_heap::busy_entries() const
+    generator<dph_entry> dph_heap::busy_entries() const
     {
         for(ntdll_utilities::rtl_balanced_links_walker const balanced_link_walker{cache(), walker(), address() + stream_utils::get_field_offset(cache_data_->dph_heap_root_busy_nodes_table_field_data, symbol_name, common_symbol_names::dph_heap_root_busy_nodes_table_field_symbol_name)};
             auto const entry_address : balanced_link_walker.entries())
@@ -111,7 +111,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    dlg_help_utils::generator<dph_entry> dph_heap::free_entries() const
+    generator<dph_entry> dph_heap::free_entries() const
     {
         auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_->dph_heap_root_free_allocations_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_free_allocations_list_head_field_symbol_name);
         if(head == 0)
@@ -131,7 +131,7 @@ namespace dlg_help_utils::heap
         }
     }
 
-    dlg_help_utils::generator<dph_entry> dph_heap::virtual_ranges() const
+    generator<dph_entry> dph_heap::virtual_ranges() const
     {
         auto const head = get_field_pointer_raw(walker(), dph_heap_address_, cache_data_->dph_heap_root_virtual_storage_list_head_field_data, symbol_name, common_symbol_names::dph_heap_root_virtual_storage_list_head_field_symbol_name);
         if(head == 0)
@@ -151,7 +151,7 @@ namespace dlg_help_utils::heap
         }
     }
     
-    dlg_help_utils::generator<dph_entry> dph_heap::walk_list(uint64_t const head, uint64_t const tail, dph_entry::is_virtual_allocation const is_virtual_allocation) const
+    generator<dph_entry> dph_heap::walk_list(uint64_t const head, uint64_t const tail, dph_entry::is_virtual_allocation const is_virtual_allocation) const
     {
         auto entry_address = head;
         while(entry_address != tail)

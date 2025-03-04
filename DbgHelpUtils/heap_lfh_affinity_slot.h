@@ -35,7 +35,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] size_t slot_index() const;
         [[nodiscard]] uint64_t available_subsegment_count() const;
 
-        [[nodiscard]] dlg_help_utils::generator<heap_lfh_subsegment> subsegments() const;
+        [[nodiscard]] generator<heap_lfh_subsegment> subsegments() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_lfh_affinity_slot_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_lfh_affinity_slot_symbol_type; }

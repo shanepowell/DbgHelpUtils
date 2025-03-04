@@ -23,7 +23,7 @@ namespace dlg_help_utils
         [[nodiscard]] size_t index() const { return index_; }
         [[nodiscard]] MINIDUMP_THREAD_NAME_LIST const& thread_names_list() const { return *thread_name_list_; }
 
-        [[nodiscard]] dlg_help_utils::generator<stream_thread_name> list() const;
+        [[nodiscard]] generator<stream_thread_name> list() const;
         [[nodiscard]] stream_thread_name get_thread_name_for_thread_id(uint32_t thread_id) const;
 
     private:

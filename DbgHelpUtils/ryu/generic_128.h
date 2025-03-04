@@ -24,9 +24,12 @@
 using uint128_t = std::_Unsigned128;
 using int128_t = std::_Signed128;
 
-#define FLOAT_128_POW5_INV_BITCOUNT 249
-#define FLOAT_128_POW5_BITCOUNT 249
-#define POW5_TABLE_SIZE 56
+enum  // NOLINT(performance-enum-size)
+{
+    FLOAT_128_POW5_INV_BITCOUNT = 249,
+    FLOAT_128_POW5_BITCOUNT = 249,
+    POW5_TABLE_SIZE = 56
+};
 
 // These tables are ~4.5 kByte total, compared to ~160 kByte for the full tables.
 
@@ -185,7 +188,7 @@ static const uint64_t GENERIC_POW5_SPLIT[89][4] = {
 
 // Unfortunately, the results are sometimes off by one or two. We use an additional
 // lookup table to store those cases and adjust the result.
-static const uint64_t POW5_ERRORS[156] = {
+static constexpr uint64_t POW5_ERRORS[156] = {
  0x0000000000000000u, 0x0000000000000000u, 0x0000000000000000u, 0x9555596400000000u,
  0x65a6569525565555u, 0x4415551445449655u, 0x5105015504144541u, 0x65a69969a6965964u,
  0x5054955969959656u, 0x5105154515554145u, 0x4055511051591555u, 0x5500514455550115u,
@@ -319,7 +322,7 @@ static const uint64_t GENERIC_POW5_INV_SPLIT[89][4] = {
  {  7184427196661305643u, 14332510582433188173u, 14230167953789677901u,   104649889046128358u }
 };
 
-static const uint64_t POW5_INV_ERRORS[154] = {
+static constexpr uint64_t POW5_INV_ERRORS[154] = {
  0x1144155514145504u, 0x0000541555401141u, 0x0000000000000000u, 0x0154454000000000u,
  0x4114105515544440u, 0x0001001111500415u, 0x4041411410011000u, 0x5550114515155014u,
  0x1404100041554551u, 0x0515000450404410u, 0x5054544401140004u, 0x5155501005555105u,
@@ -362,24 +365,24 @@ static const uint64_t POW5_INV_ERRORS[154] = {
 };
 
 // Returns e == 0 ? 1 : ceil(log_2(5^e)); requires 0 <= e <= 32768.
-static inline uint32_t pow5bits(const int32_t e) {
+static uint32_t pow5bits(const int32_t e) {
   assert(e >= 0);
   assert(e <= 1 << 15);
-  return (uint32_t) (((e * 163391164108059ull) >> 46) + 1);
+  return static_cast<uint32_t>(((e * 163391164108059ull) >> 46) + 1);
 }
 
-static inline void mul_128_256_shift(
+static void mul_128_256_shift(
     const uint64_t* const a, const uint64_t* const b, const uint32_t shift, const uint32_t corr, uint64_t* const result) {
   assert(shift > 0);
   assert(shift < 256);
-  const uint128_t b00 = ((uint128_t) a[0]) * b[0]; // 0
-  const uint128_t b01 = ((uint128_t) a[0]) * b[1]; // 64
-  const uint128_t b02 = ((uint128_t) a[0]) * b[2]; // 128
-  const uint128_t b03 = ((uint128_t) a[0]) * b[3]; // 196
-  const uint128_t b10 = ((uint128_t) a[1]) * b[0]; // 64
-  const uint128_t b11 = ((uint128_t) a[1]) * b[1]; // 128
-  const uint128_t b12 = ((uint128_t) a[1]) * b[2]; // 196
-  const uint128_t b13 = ((uint128_t) a[1]) * b[3]; // 256
+  const uint128_t b00 = static_cast<uint128_t>(a[0]) * b[0]; // 0
+  const uint128_t b01 = static_cast<uint128_t>(a[0]) * b[1]; // 64
+  const uint128_t b02 = static_cast<uint128_t>(a[0]) * b[2]; // 128
+  const uint128_t b03 = static_cast<uint128_t>(a[0]) * b[3]; // 196
+  const uint128_t b10 = static_cast<uint128_t>(a[1]) * b[0]; // 64
+  const uint128_t b11 = static_cast<uint128_t>(a[1]) * b[1]; // 128
+  const uint128_t b12 = static_cast<uint128_t>(a[1]) * b[2]; // 196
+  const uint128_t b13 = static_cast<uint128_t>(a[1]) * b[3]; // 256
 
   const uint128_t s0 = b00;       // 0   x
   const uint128_t s1 = b01 + b10; // 64  x
@@ -400,24 +403,24 @@ static inline void mul_128_256_shift(
   if (shift < 128) {
     const uint128_t r0 = corr + ((p0 >> shift) | (p1 << (128 - shift)));
     const uint128_t r1 = ((p1 >> shift) | (p2 << (128 - shift))) + (r0 < corr);
-    result[0] = (uint64_t) r0;
-    result[1] = (uint64_t) (r0 >> 64);
-    result[2] = (uint64_t) r1;
-    result[3] = (uint64_t) (r1 >> 64);
+    result[0] = static_cast<uint64_t>(r0);
+    result[1] = static_cast<uint64_t>(r0 >> 64);
+    result[2] = static_cast<uint64_t>(r1);
+    result[3] = static_cast<uint64_t>(r1 >> 64);
   } else if (shift == 128) {
     const uint128_t r0 = corr + p1;
     const uint128_t r1 = p2 + (r0 < corr);
-    result[0] = (uint64_t) r0;
-    result[1] = (uint64_t) (r0 >> 64);
-    result[2] = (uint64_t) r1;
-    result[3] = (uint64_t) (r1 >> 64);
+    result[0] = static_cast<uint64_t>(r0);
+    result[1] = static_cast<uint64_t>(r0 >> 64);
+    result[2] = static_cast<uint64_t>(r1);
+    result[3] = static_cast<uint64_t>(r1 >> 64);
   } else {
     const uint128_t r0 = corr + ((p1 >> (shift - 128)) | (p2 << (256 - shift)));
     const uint128_t r1 = (p2 >> (shift - 128)) + (r0 < corr);
-    result[0] = (uint64_t) r0;
-    result[1] = (uint64_t) (r0 >> 64);
-    result[2] = (uint64_t) r1;
-    result[3] = (uint64_t) (r1 >> 64);
+    result[0] = static_cast<uint64_t>(r0);
+    result[1] = static_cast<uint64_t>(r0 >> 64);
+    result[2] = static_cast<uint64_t>(r1);
+    result[3] = static_cast<uint64_t>(r1 >> 64);
   }
 }
 
@@ -434,8 +437,8 @@ static inline void generic_computePow5(const uint32_t i, uint64_t* const result)
   } else {
     const uint32_t offset = i - base2;
     const uint64_t* const m = GENERIC_POW5_TABLE[offset];
-    const uint32_t delta = pow5bits(i) - pow5bits(base2);
-    const uint32_t corr = (uint32_t) ((POW5_ERRORS[i / 32] >> (2 * (i % 32))) & 3);
+    const uint32_t delta = pow5bits(static_cast<int32_t>(i)) - pow5bits(static_cast<int32_t>(base2));
+    const uint32_t corr = static_cast<uint32_t>((POW5_ERRORS[i / 32] >> (2 * (i % 32))) & 3);
     mul_128_256_shift(m, mul, delta, corr, result);
   }
 }
@@ -453,8 +456,8 @@ static inline void generic_computeInvPow5(const uint32_t i, uint64_t* const resu
   } else {
     const uint32_t offset = base2 - i;
     const uint64_t* const m = GENERIC_POW5_TABLE[offset]; // 5^offset
-    const uint32_t delta = pow5bits(base2) - pow5bits(i);
-    const uint32_t corr = (uint32_t) ((POW5_INV_ERRORS[i / 32] >> (2 * (i % 32))) & 3) + 1;
+    const uint32_t delta = pow5bits(static_cast<int32_t>(base2)) - pow5bits(static_cast<int32_t>(i));
+    const uint32_t corr = static_cast<uint32_t>((POW5_INV_ERRORS[i / 32] >> (2 * (i % 32))) & 3) + 1;
     mul_128_256_shift(m, mul, delta, corr, result);
   }
 }
@@ -477,21 +480,21 @@ static inline bool multipleOfPowerOf5(const uint128_t value, const uint32_t p) {
 
 // Returns true if value is divisible by 2^p.
 static inline bool multipleOfPowerOf2(const uint128_t value, const uint32_t p) {
-  return (value & ((((uint128_t) 1) << p) - 1)) == 0;
+  return (value & ((static_cast<uint128_t>(1) << p) - 1)) == 0;
 }
 
 static inline uint128_t mulShift(const uint128_t m, const uint64_t* const mul, const int32_t j) {
   assert(j > 128);
   uint64_t a[2];
-  a[0] = (uint64_t) m;
-  a[1] = (uint64_t) (m >> 64);
+  a[0] = static_cast<uint64_t>(m);
+  a[1] = static_cast<uint64_t>(m >> 64);
   uint64_t result[4];
   mul_128_256_shift(a, mul, j, 0, result);
-  return (((uint128_t) result[1]) << 64) | result[0];
+  return (static_cast<uint128_t>(result[1]) << 64) | result[0];
 }
 
 static inline uint32_t decimalLength(const uint128_t v) {
-  static uint128_t LARGEST_POW10 = (((uint128_t) 5421010862427522170ull) << 64) | 687399551400673280ull;
+  static uint128_t LARGEST_POW10 = (static_cast<uint128_t>(5421010862427522170ull) << 64) | 687399551400673280ull;
   uint128_t p10 = LARGEST_POW10;
   for (uint32_t i = 39; i > 0; i--) {
     if (v >= p10) {
@@ -507,7 +510,7 @@ static inline uint32_t log10Pow2(const int32_t e) {
   // The first value this approximation fails for is 2^1651 which is just greater than 10^297.
   assert(e >= 0);
   assert(e <= 1 << 15);
-  return (uint32_t) ((((uint64_t) e) * 169464822037455ull) >> 49);
+  return static_cast<uint32_t>((static_cast<uint64_t>(e) * 169464822037455ull) >> 49);
 }
 
 // Returns floor(log_10(5^e)).
@@ -515,7 +518,7 @@ static inline uint32_t log10Pow5(const int32_t e) {
   // The first value this approximation fails for is 5^2621 which is just greater than 10^1832.
   assert(e >= 0);
   assert(e <= 1 << 15);
-  return (uint32_t) ((((uint64_t) e) * 196742565691928ull) >> 48);
+  return static_cast<uint32_t>((static_cast<uint64_t>(e) * 196742565691928ull) >> 48);
 }
 
 #endif // RYU_GENERIC128_H

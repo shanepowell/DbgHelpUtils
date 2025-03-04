@@ -56,7 +56,7 @@ namespace dlg_help_utils::symbol_type_utils
     struct dump_variable_symbol_data
     {
         std::wstring line;
-        std::function<dlg_help_utils::generator<dump_variable_symbol_data>()> sub_lines;
+        std::function<generator<dump_variable_symbol_data>()> sub_lines;
     };
 
     dump_variable_symbol_data variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker

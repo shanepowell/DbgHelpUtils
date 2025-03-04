@@ -33,8 +33,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t signature() const;
         [[nodiscard]] bool is_signature_valid() const;
 
-        [[nodiscard]] dlg_help_utils::generator<page_range_descriptor> all_entries() const;
-        [[nodiscard]] dlg_help_utils::generator<page_range_descriptor> entries() const;
+        [[nodiscard]] generator<page_range_descriptor> all_entries() const;
+        [[nodiscard]] generator<page_range_descriptor> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_page_segment_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_page_segment_symbol_type; }

@@ -70,7 +70,7 @@ namespace dlg_help_utils
             });
     }
 
-    dlg_help_utils::generator<std::pair<void const*, size_t>> mini_dump_memory_stream::ranges()
+    generator<std::pair<void const*, size_t>> mini_dump_memory_stream::ranges()
     {
         while(!eof())
         {

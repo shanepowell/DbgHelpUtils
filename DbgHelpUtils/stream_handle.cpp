@@ -16,7 +16,7 @@ namespace dlg_help_utils
         object_name_ = string_stream::to_string(dump, descriptor().ObjectNameRva);
     }
 
-    dlg_help_utils::generator<stream_handle_object_information> stream_handle::list() const  // NOLINT(bugprone-reserved-identifier)
+    generator<stream_handle_object_information> stream_handle::list() const  // NOLINT(bugprone-reserved-identifier)
     {
         if (handle_descriptor_version_ < 2)
         {

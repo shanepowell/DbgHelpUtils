@@ -1,4 +1,5 @@
 ﻿#pragma once
+// ReSharper disable once CppUnusedIncludeDirective
 #include <ostream>
 
 class null_stream : public std::wostream

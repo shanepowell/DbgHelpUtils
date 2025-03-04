@@ -44,8 +44,8 @@ namespace dlg_help_utils::heap
         void set_base_diff_filter(process_heaps& base_diff_filter);
         void clear_base_diff_filter();
 
-        [[nodiscard]] dlg_help_utils::generator<process_heap_entry> entries() const;
-        [[nodiscard]] dlg_help_utils::generator<process_heap_entry> free_entries() const;
+        [[nodiscard]] generator<process_heap_entry> entries() const;
+        [[nodiscard]] generator<process_heap_entry> free_entries() const;
 
         [[nodiscard]] bool is_address_filtered(uint64_t address, size_units::base_16::bytes size) const;
         [[nodiscard]] bool is_system_allocation(memory_range const& range) const;
@@ -68,10 +68,10 @@ namespace dlg_help_utils::heap
         void get_all_virtual_alloc_entities(std::map<uint64_t, process_heap_entry>& all_entries) const;
 
         [[nodiscard]] std::map<uint64_t, process_heap_entry> all_entries() const;
-        [[nodiscard]] dlg_help_utils::generator<process_heap_entry> all_free_entries() const;
+        [[nodiscard]] generator<process_heap_entry> all_free_entries() const;
 
-        [[nodiscard]] dlg_help_utils::generator<process_heap_entry> filter_entries() const;
-        [[nodiscard]] dlg_help_utils::generator<process_heap_entry> filter_free_entries() const;
+        [[nodiscard]] generator<process_heap_entry> filter_entries() const;
+        [[nodiscard]] generator<process_heap_entry> filter_free_entries() const;
 
         [[nodiscard]] std::tuple<crt_entry const*, bool> match_crt_entry(uint64_t user_address, size_units::base_16::bytes size, std::map<uint64_t, crt_entry> const& crt_entries, heap_node_type node_type) const;
 

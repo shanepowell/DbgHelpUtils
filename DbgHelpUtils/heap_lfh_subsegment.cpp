@@ -100,7 +100,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint8_t>(*this, cache_data_->heap_lfh_subsegment_commit_unit_count_field_data, common_symbol_names::heap_lfh_subsegment_commit_unit_count_field_symbol_name);
     }
 
-    dlg_help_utils::generator<heap_lfh_entry> heap_lfh_subsegment::entries() const
+    generator<heap_lfh_entry> heap_lfh_subsegment::entries() const
     {
         auto const block_count_data = block_count();
         auto const block_size_data = block_size();

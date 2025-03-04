@@ -25,7 +25,7 @@ namespace dlg_help_utils::ntdll_utilities
     {
     }
 
-    dlg_help_utils::generator<uint64_t> rtl_balanced_links_walker::entries() const
+    generator<uint64_t> rtl_balanced_links_walker::entries() const
     {
         if(head_node_address_ == 0)
         {

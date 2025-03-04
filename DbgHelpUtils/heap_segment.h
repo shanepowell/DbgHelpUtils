@@ -44,9 +44,9 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint32_t number_of_uncommitted_ranges() const;
         [[nodiscard]] uint16_t segment_allocator_back_trace_index() const;
 
-        [[nodiscard]] dlg_help_utils::generator<heap_entry> entries() const;
+        [[nodiscard]] generator<heap_entry> entries() const;
 
-        [[nodiscard]] dlg_help_utils::generator<heap_ucr_descriptor> uncommitted_ranges() const;
+        [[nodiscard]] generator<heap_ucr_descriptor> uncommitted_ranges() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_segment_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_segment_symbol_type; }

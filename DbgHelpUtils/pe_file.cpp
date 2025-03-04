@@ -221,7 +221,7 @@ namespace dlg_help_utils
     {
         auto const* entry = reinterpret_cast<IMAGE_RESOURCE_DIRECTORY_ENTRY const*>(dir + 1);
         auto min = dir->NumberOfNamedEntries;
-        auto max = min + dir->NumberOfIdEntries - 1;
+        auto max = static_cast<WORD>(min + dir->NumberOfIdEntries - 1);
 
         while (min <= max)
         {
@@ -237,7 +237,7 @@ namespace dlg_help_utils
 
             if (entry[pos].Id > id) 
             {
-                max = pos - 1;
+                max = static_cast<WORD>(pos - 1);
             }
             else
             {

@@ -17,7 +17,7 @@ namespace dlg_help_utils::ntdll_utilities
     {
     }
 
-    dlg_help_utils::generator<uint64_t> rtl_rb_tree_walker::entries() const
+    generator<uint64_t> rtl_rb_tree_walker::entries() const
     {
         auto const root_node = get_field_pointer_raw(walker(), rb_tree_address_, cache_data_->root_field_data, symbol_name, common_symbol_names::rtl_rb_tree_root_field_symbol_name);
         if(root_node == 0)

@@ -37,7 +37,7 @@ namespace dlg_help_utils::heap
         [[nodiscard]] bool is_signature_valid() const;
         [[nodiscard]] bool full_commit() const;
 
-        [[nodiscard]] dlg_help_utils::generator<heap_vs_entry> entries() const;
+        [[nodiscard]] generator<heap_vs_entry> entries() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_vs_subsegment_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_vs_subsegment_symbol_type; }

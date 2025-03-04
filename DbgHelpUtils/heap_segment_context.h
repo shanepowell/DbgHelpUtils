@@ -42,8 +42,8 @@ namespace dlg_help_utils::heap
         [[nodiscard]] uint64_t heap_key() const;
         [[nodiscard]] ust_address_stack_trace const& stack_trace() const;
 
-        [[nodiscard]] dlg_help_utils::generator<heap_page_segment> pages() const;
-        [[nodiscard]] dlg_help_utils::generator<page_range_descriptor> free_page_ranges() const;
+        [[nodiscard]] generator<heap_page_segment> pages() const;
+        [[nodiscard]] generator<page_range_descriptor> free_page_ranges() const;
 
         [[nodiscard]] uint64_t symbol_address() const { return heap_segment_context_address(); }
         [[nodiscard]] dbg_help::symbol_type_info const& symbol_type() const { return cache_data_->heap_seg_context_symbol_type; }

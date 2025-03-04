@@ -315,42 +315,42 @@ namespace dlg_help_utils::context_utils::resources
         return generate_flags_string(tag_word, npx_tag_word_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_x86_thread_context_flags(uint32_t const context_flags)
+    std::vector<std::wstring> get_x86_thread_context_flags(uint32_t const context_flags)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(context_flags, x86_thread_context_flag_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_x64_thread_context_flags(uint32_t const context_flags)
+    std::vector<std::wstring> get_x64_thread_context_flags(uint32_t const context_flags)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(context_flags, x64_thread_context_flag_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_wow64_thread_context_flags(uint32_t const context_flags)
+    std::vector<std::wstring> get_wow64_thread_context_flags(uint32_t const context_flags)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(context_flags, wow64_thread_context_flag_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_mx_csr_register(uint32_t const mx_csr)
+    std::vector<std::wstring> get_mx_csr_register(uint32_t const mx_csr)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(mx_csr, mx_csr_register_masks_map(), flags_string_utils::mask_used_flags_t{true});
     }
 
-    std::vector<std::wstring> get_flags_register(uint64_t const flags)
+    std::vector<std::wstring> get_flags_register(uint64_t const flags)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(flags, flags_register_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_npx_status_word(uint16_t const status_word)
+    std::vector<std::wstring> get_npx_status_word(uint16_t const status_word)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(status_word, npx_status_word_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_npx_control_word(uint16_t const control_word)
+    std::vector<std::wstring> get_npx_control_word(uint16_t const control_word)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(control_word, npx_control_word_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }
 
-    std::vector<std::wstring> get_npx_tag_word(uint16_t const tag_word)
+    std::vector<std::wstring> get_npx_tag_word(uint16_t const tag_word)  // NOLINT(misc-use-internal-linkage)
     {
         return generate_flags_strings(tag_word, npx_tag_word_masks_map(), flags_string_utils::mask_used_flags_t{false});
     }

@@ -461,7 +461,7 @@ namespace dlg_help_utils::dbg_help
         windows_error::throw_windows_api_error(L"SymGetTypeInfo"sv, function, ec);
     }
 
-    dlg_help_utils::generator<symbol_type_info> symbol_type_info::children() const  // NOLINT(bugprone-reserved-identifier)
+    generator<symbol_type_info> symbol_type_info::children() const  // NOLINT(bugprone-reserved-identifier)
     {
         if(!cache_info_->has_children())
         {

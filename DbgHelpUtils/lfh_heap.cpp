@@ -29,7 +29,7 @@ namespace dlg_help_utils::heap
         return heap().peb();
     }
 
-    dlg_help_utils::generator<lfh_segment> lfh_heap::lfh_segments() const
+    generator<lfh_segment> lfh_heap::lfh_segments() const
     {
         for (ntdll_utilities::list_entry_walker const list_walker{heap().cache(), walker(), stream_utils::get_field_address(*this, cache_data_->lfh_heap_sub_segment_zones_field_data, common_symbol_names::lfh_heap_sub_segment_zones_field_symbol_name), lfh_segment::symbol_name, common_symbol_names::lfh_block_zone_list_entry_field_symbol_name}; 
             auto const entry_address : list_walker.entries())

@@ -25,7 +25,7 @@ namespace dlg_help_utils
         MINIDUMP_FUNCTION_TABLE_STREAM const* operator->() const { return function_table_list_; }
         [[nodiscard]] ULONG32 size() const { return function_table_list_->NumberOfDescriptors; }
 
-        [[nodiscard]] dlg_help_utils::generator<stream_function_descriptor> list() const;
+        [[nodiscard]] generator<stream_function_descriptor> list() const;
 
     private:
         bool found_{false};

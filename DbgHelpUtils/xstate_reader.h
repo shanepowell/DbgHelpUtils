@@ -23,7 +23,7 @@ namespace dlg_help_utils
             PM128A xmm;
             PM128A ymm;
         };
-        [[nodiscard]] dlg_help_utils::generator<ymm_register> ymm_registers() const;
+        [[nodiscard]] generator<ymm_register> ymm_registers() const;
         [[nodiscard]] ymm_register get_ymm_register(uint32_t index) const;
 
     private:

@@ -54,7 +54,7 @@ namespace dlg_help_utils::heap
         return stream_utils::get_field_value<uint16_t>(*this, cache_data_->heap_subsegment_block_count_field_data, common_symbol_names::heap_subsegment_block_count_field_symbol_name);
     }
 
-    dlg_help_utils::generator<heap_entry> heap_subsegment::entries() const
+    generator<heap_entry> heap_subsegment::entries() const
     {
         auto const block_size_value = block_size_raw();
         auto const block_count_value = block_count();
