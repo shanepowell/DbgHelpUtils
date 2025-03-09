@@ -1,4 +1,6 @@
 import "Models\X64ThreadContext.idl";
+import "Models\Wow64ThreadContext.idl";
+import "Models\X86ThreadContext.idl";
 
 namespace MiniDumpExplorer
 {
@@ -12,7 +14,9 @@ namespace MiniDumpExplorer
         X64ThreadContext X64ThreadContext{ get; };
 
         Boolean HasX86ThreadContext{ get; };
+        X86ThreadContext X86ThreadContext{ get; };
 
         Boolean HasWow64ThreadContext{ get; };
+        Wow64ThreadContext Wow64ThreadContext{ get; };
     }
 }

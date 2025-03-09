@@ -5,9 +5,12 @@
 #include "DbgHelpUtils/stream_thread_context.h"
 #include "DbgHelpUtils/xstate_reader.h"
 #include "GlobalOptionsNotifyPropertyChangedBase.h"
- 
+#include "DbgHelpUtils/float80.h"
+
 namespace winrt::MiniDumpExplorer::implementation
 {
+    struct Float80;
+    struct Float80Register;
     struct M128A;
     struct XmmRegister;
     struct YmmRegister;
@@ -125,7 +128,7 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t MxCsr() const { return context_.FltSave.MxCsr; }
         Windows::Foundation::Collections::IObservableVector<hstring> MxCsrList() const { return mxCsrList_; }
         uint32_t MxCsrMask() const { return context_.FltSave.MxCsr_Mask; }
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> FloatRegisters() const { return floatRegisters_; }
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Float80Register> FloatRegisters() const { return floatRegisters_; }
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> XmmRegisters() const { return xmmRegisters_; }
 
         bool HasAvx() const { return xstate_reader_.is_supported(); }
@@ -136,6 +139,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     private:
         static MiniDumpExplorer::XmmRegister CreateM128A(std::wstring const& name, _M128A const& value);
+        static MiniDumpExplorer::Float80Register CreateFloat80(std::wstring const& name, dlg_help_utils::float80_t const& value);
 
     private:
         dlg_help_utils::stream_thread_context::context_x64 context_{};
@@ -145,7 +149,7 @@ namespace winrt::MiniDumpExplorer::implementation
         Windows::Foundation::Collections::IObservableVector<hstring> statusWordList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> tagWordList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> mxCsrList_{single_threaded_observable_vector<hstring>()};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> floatRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
+        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Float80Register> floatRegisters_{single_threaded_observable_vector<MiniDumpExplorer::Float80Register>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> xmmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::YmmRegister> ymmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::YmmRegister>()};
         dlg_help_utils::xstate_reader xstate_reader_{};

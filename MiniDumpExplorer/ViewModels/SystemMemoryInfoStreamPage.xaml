@@ -157,7 +157,7 @@
             <TextBlock Grid.Row="11" Grid.Column="0" Text="Highest Physical Page Number" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock Grid.Row="11" Grid.Column="1" Text="{x:Bind BasicInfo.HighestPhysicalPageNumber,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="12" Grid.Column="0" Text="Allocation Granularity" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="basicInfoAllocationGranularity"  Grid.Row="12" Grid.Column="1" Text="{x:Bind BasicInfo.AllocationGranularity,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="basicInfoAllocationGranularity" Grid.Row="12" Grid.Column="1" Text="{x:Bind BasicInfo.AllocationGranularity,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="13" Grid.Column="0" Text="Minimum User Mode Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock x:Name="basicInfoMinimumUserModeAddress" Grid.Row="13" Grid.Column="1" Text="{x:Bind BasicInfo.MinimumUserModeAddress,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="14" Grid.Column="0" Text="Maximum User Mode Address" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -170,15 +170,15 @@
             <TextBlock Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Text="File Cache Information" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontSize="13" FontWeight="Bold" Margin="0,10,0,0" />
 
             <TextBlock Grid.Row="18" Grid.Column="0" Text="Current Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoCurrentSize"  Grid.Row="18" Grid.Column="1" Text="{x:Bind FileCacheInfo.CurrentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="fileCacheInfoCurrentSize" Grid.Row="18" Grid.Column="1" Text="{x:Bind FileCacheInfo.CurrentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="19" Grid.Column="0" Text="Peak Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoPeakSize"  Grid.Row="29" Grid.Column="1" Text="{x:Bind FileCacheInfo.PeakSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="fileCacheInfoPeakSize" Grid.Row="29" Grid.Column="1" Text="{x:Bind FileCacheInfo.PeakSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="20" Grid.Column="0" Text="Page Fault Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock Grid.Row="20" Grid.Column="1" Text="{x:Bind FileCacheInfo.PageFaultCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="21" Grid.Column="0" Text="Minimum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoMinimumWorkingSet"  Grid.Row="21" Grid.Column="1" Text="{x:Bind FileCacheInfo.MinimumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="fileCacheInfoMinimumWorkingSet" Grid.Row="21" Grid.Column="1" Text="{x:Bind FileCacheInfo.MinimumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="22" Grid.Column="0" Text="Maximum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoMaximumWorkingSet"  Grid.Row="22" Grid.Column="1" Text="{x:Bind FileCacheInfo.MaximumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="fileCacheInfoMaximumWorkingSet" Grid.Row="22" Grid.Column="1" Text="{x:Bind FileCacheInfo.MaximumWorkingSet,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="23" Grid.Column="0" Text="Current Size Including Transition In Pages" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <StackPanel Grid.Row="23" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{x:Bind FileCacheInfo.CurrentSizeIncludingTransitionInPages,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
@@ -231,7 +231,7 @@
             </StackPanel>
             
             <TextBlock Grid.Row="33" Grid.Column="0" Text="Idle Process Time" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="perfInfoIdleProcessTime"  Grid.Row="33" Grid.Column="1" Text="{x:Bind PerfInfo.IdleProcessTime,Converter={StaticResource DurationConverter},ConverterParameter=filetime,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="perfInfoIdleProcessTime" Grid.Row="33" Grid.Column="1" Text="{x:Bind PerfInfo.IdleProcessTime,Converter={StaticResource DurationConverter},ConverterParameter=filetime,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="34" Grid.Column="0" Text="IO Read Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock Grid.Row="34" Grid.Column="1" Text="{x:Bind PerfInfo.IoReadTransferCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="35" Grid.Column="0" Text="IO Write Transfer Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />

@@ -13,6 +13,7 @@
 #include "Utility/InspectableUtility.h"
 
 #include "Models/M128A.h"
+#include "Models/Float80.h"
 
 #if __has_include("HexNumberConverter.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -31,7 +32,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         if (!value)
         {
-            return value;
+            return box_value(hstring{});
         }
         std::wstring parameterValue{unbox_value_or<hstring>(parameter, L"0")};
         std::streamsize width{0};
@@ -79,7 +80,25 @@ namespace winrt::MiniDumpExplorer::implementation
                 break;
             }
 
-            return value;
+            return box_value(hstring{});
+        }
+
+        if (auto float80 = value.try_as<Float80>();
+            float80)
+        {
+            switch(GlobalOptions::Options().NumberDisplayFormat())
+            {
+            case NumberDisplayFormatType::Hexadecimal:
+                return box_value(stream_hex_dump::to_hex(float80->Get()));
+
+            case NumberDisplayFormatType::Decimal:
+                return box_value(dlg_help_utils::to_wstring(float80->Get()));
+
+            default:
+                break;
+            }
+
+            return box_value(hstring{});
         }
 
         switch(GlobalOptions::Options().NumberDisplayFormat())
@@ -97,7 +116,7 @@ namespace winrt::MiniDumpExplorer::implementation
             break;
         }
 
-        return value;
+        return box_value(hstring{});
     }
 
     Windows::Foundation::IInspectable HexNumberConverter::ConvertBack(Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, [[maybe_unused]] Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)

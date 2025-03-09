@@ -6,9 +6,9 @@ namespace MiniDumpExplorer
 {
     [default_interface]
     [Windows.UI.Xaml.Data.Bindable]
-    runtimeclass Wow64ThreadContext : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    runtimeclass X86ThreadContext : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
-        Wow64ThreadContext();
+        X86ThreadContext();
 
         UInt32 ContextFlags { get; };
         IObservableVector<String> ContextFlagsList { get; };
@@ -71,14 +71,7 @@ namespace MiniDumpExplorer
         UInt32 ErrorSelector{ get; };
         UInt32 DataOffset{ get; };
         UInt32 DataSelector{ get; };
-        UInt32 Cr0NpxState { get; };
         IObservableVector<Float80Register> FloatRegisters { get; };
-
-        IObservableVector<XmmRegister> XmmRegisters { get; };
-
-        Boolean HasAvx{ get; };
-        Boolean HasAvxInInitState{ get; };
-        IObservableVector<YmmRegister> YmmRegisters{ get; };
 
         Boolean HasExtendedRegisters{ get; };
         String ExtendedRegistersHexDump{ get; };

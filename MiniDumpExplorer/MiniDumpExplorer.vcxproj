@@ -350,6 +350,14 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Helpers\SymbolEngineHelper.h" />
+    <ClInclude Include="Models\Float80.h">
+      <DependentUpon>Models\Float80.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\Float80Register.h">
+      <DependentUpon>Models\Float80Register.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\M128A.h">
       <DependentUpon>Models\M128A.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -588,6 +596,10 @@
     </ClInclude>
     <ClInclude Include="Utility\mini_dump_walker_store.h" />
     <ClInclude Include="Utility\run.h" />
+    <ClInclude Include="ViewModels\Float80RegisterView.xaml.h">
+      <DependentUpon>ViewModels\Float80RegisterView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\M128AView.xaml.h">
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -779,8 +791,20 @@
     <ClInclude Include="Helpers\ThemeHelper.h" />
     <ClInclude Include="Helpers\UIHelper.h" />
     <ClInclude Include="Helpers\WindowHelper.h" />
+    <ClInclude Include="ViewModels\Wow64ThreadContextView.xaml.h">
+      <DependentUpon>ViewModels\Wow64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\X64ThreadContextView.xaml.h">
       <DependentUpon>ViewModels\X64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Models\X86ThreadContext.h">
+      <DependentUpon>Models\X86ThreadContext.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\X86ThreadContextView.xaml.h">
+      <DependentUpon>ViewModels\X86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\YmmRegisterView.xaml.h">
@@ -791,6 +815,9 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Controls\DataGrid\DataGridTheme.xaml" />
+    <Page Include="ViewModels\Float80RegisterView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\M128AView.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -882,7 +909,13 @@
     </Page>
     <Page Include="Themes\Generic.xaml" />
     <Page Include="Controls\SettingsExpander\SettingsExpanderTheme.xaml" />
+    <Page Include="ViewModels\Wow64ThreadContextView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\X64ThreadContextView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\X86ThreadContextView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\YmmRegisterView.xaml">
@@ -1059,6 +1092,12 @@
     <ClCompile Include="DlgHelpUtilsResource\function_info_utils_resources.cpp" />
     <ClCompile Include="DlgHelpUtilsResource\time_utils_resources.cpp" />
     <ClCompile Include="Helpers\SymbolEngineHelper.cpp" />
+    <ClCompile Include="Models\Float80.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\Float80Register.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\M128A.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1248,6 +1287,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Utility\mini_dump_walker_store.cpp" />
+    <ClCompile Include="ViewModels\Float80RegisterView.xaml.cpp">
+      <DependentUpon>ViewModels\Float80RegisterView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\M128AView.xaml.cpp">
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1420,8 +1463,19 @@
     <ClCompile Include="Helpers\ThemeHelper.cpp" />
     <ClCompile Include="Helpers\UIHelper.cpp" />
     <ClCompile Include="Helpers\WindowHelper.cpp" />
+    <ClCompile Include="ViewModels\Wow64ThreadContextView.xaml.cpp">
+      <DependentUpon>ViewModels\Wow64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\X64ThreadContextView.xaml.cpp">
       <DependentUpon>ViewModels\X64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Models\X86ThreadContext.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\X86ThreadContextView.xaml.cpp">
+      <DependentUpon>ViewModels\X86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\YmmRegisterView.xaml.cpp">
@@ -1655,6 +1709,14 @@
       <DependentUpon>Converters\TimeStampNumberConverter.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\Float80.idl">
+      <DependentUpon>Models\Float80.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\Float80Register.idl">
+      <DependentUpon>Models\Float80Register.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\M128A.idl">
       <DependentUpon>Models\M128A.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -1883,6 +1945,10 @@
       <DependentUpon>Models\YmmRegister.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ViewModels\Float80RegisterView.idl">
+      <DependentUpon>ViewModels\Float80RegisterView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ViewModels\M128AView.idl">
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -2043,8 +2109,20 @@
       <DependentUpon>StyleExtension\StyleExtensions.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ViewModels\Wow64ThreadContextView.idl">
+      <DependentUpon>ViewModels\Wow64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ViewModels\X64ThreadContextView.idl">
       <DependentUpon>ViewModels\X64ThreadContextView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Models\X86ThreadContext.idl">
+      <DependentUpon>Models\X86ThreadContext.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\X86ThreadContextView.idl">
+      <DependentUpon>ViewModels\X86ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\YmmRegisterView.idl">

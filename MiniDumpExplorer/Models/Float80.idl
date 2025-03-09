@@ -1,0 +1,10 @@
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass Float80 : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        Float80();
+
+    }
+}

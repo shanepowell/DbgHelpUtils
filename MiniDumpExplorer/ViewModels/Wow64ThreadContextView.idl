@@ -1,0 +1,12 @@
+import "Models\Wow64ThreadContext.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass Wow64ThreadContextView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        Wow64ThreadContextView();
+
+        Wow64ThreadContext ThreadContext { get; set; };
+    }
+}

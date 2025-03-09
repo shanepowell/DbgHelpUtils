@@ -1,0 +1,12 @@
+import "Models\Float80Register.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass Float80RegisterView : Microsoft.UI.Xaml.Controls.UserControl, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        Float80RegisterView();
+
+        Float80Register Value{ get; set; };
+    }
+}

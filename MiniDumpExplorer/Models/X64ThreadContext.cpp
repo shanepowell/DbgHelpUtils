@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "X64ThreadContext.h"
 
-#include "DbgHelpUtils/context_utils.h"
+#include "Float80.h"
+#include "Float80Register.h"
 #include "M128A.h"
 #include "XmmRegister.h"
 #include "YmmRegister.h"
+
+#include "DbgHelpUtils/context_utils.h"
+#include "DbgHelpUtils/m128a_utils.h"
 
 #include <format>
 
@@ -164,7 +168,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
         for (size_t index = 0; index < std::size(context.Legacy); ++index)
         {
-            floatRegisters_.Append(CreateM128A(std::format(L"ST{}", index), context.Legacy[index]));
+            auto value = dlg_help_utils::m128a_utils::to_float80(context.Legacy[index]);
+            floatRegisters_.Append(CreateFloat80(std::format(L"ST{}", index), value));
         }
 
         xmmRegisters_.Append(CreateM128A(L"XMM0"s, context.Xmm0));
@@ -202,5 +207,15 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpExplorer::XmmRegister xmmRegister{};
         xmmRegister.as<XmmRegister>()->Set(name, m128a);
         return xmmRegister;
+    }
+
+    MiniDumpExplorer::Float80Register X64ThreadContext::CreateFloat80(std::wstring const& name, dlg_help_utils::float80_t const& value)
+    {
+        MiniDumpExplorer::Float80 float80{};
+        float80.as<Float80>()->Set(value);
+
+        MiniDumpExplorer::Float80Register float80Register{};
+        float80Register.as<Float80Register>()->Set(name, float80);
+        return float80Register;
     }
 }

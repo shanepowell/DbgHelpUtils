@@ -1,0 +1,14 @@
+import "Models\Float80.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass Float80Register : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        Float80Register();
+
+        String Name{ get; };
+        Float80 Value{ get; };
+    }
+}

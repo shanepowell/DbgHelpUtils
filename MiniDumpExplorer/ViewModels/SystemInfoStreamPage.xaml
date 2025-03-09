@@ -83,7 +83,7 @@
             <TextBlock Grid.Row="11" Grid.Column="1" Text="{x:Bind CsdVersion,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
 
             <TextBlock Grid.Row="12" Grid.Column="0" Text="Suite Mask" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="suiteMask"  Grid.Row="12" Grid.Column="1" Text="{x:Bind SuiteMask,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="suiteMask" Grid.Row="12" Grid.Column="1" Text="{x:Bind SuiteMask,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <ListBox Grid.Row="13" Grid.Column="1" ItemsSource="{x:Bind SuiteMaskList}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
             <TextBlock Grid.Row="14" Grid.Column="0" Text="Reserved2" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />

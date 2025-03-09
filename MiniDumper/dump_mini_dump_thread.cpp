@@ -330,13 +330,6 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
         log << L'\n';
     }
 
-    if((context.ContextFlags & WOW64_CONTEXT_EXTENDED_REGISTERS) == WOW64_CONTEXT_EXTENDED_REGISTERS)
-    {
-        log << L"    ExtendedRegisters:\n";
-        hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
-        log << L'\n';
-    }
-
     if (xstate_reader xstate_reader{ &context };
         xstate_reader.is_supported())
     {
@@ -351,6 +344,13 @@ void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const
             
             log << std::format(L"      Ymm{}: {} - {}\n", ymm.index, to_hex_full(*ymm.xmm), to_hex_full(*ymm.ymm));
         }
+    }
+
+    if((context.ContextFlags & WOW64_CONTEXT_EXTENDED_REGISTERS) == WOW64_CONTEXT_EXTENDED_REGISTERS)
+    {
+        log << L"    ExtendedRegisters:\n";
+        hex_dump::hex_dump(log, context.ExtendedRegisters, sizeof(context.ExtendedRegisters), 6);
+        log << L'\n';
     }
 }
 

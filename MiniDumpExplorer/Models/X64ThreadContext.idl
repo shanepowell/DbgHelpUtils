@@ -1,4 +1,4 @@
-import "Models\M128A.idl";
+import "Models\Float80Register.idl";
 import "Models\XmmRegister.idl";
 import "Models\YmmRegister.idl";
 
@@ -118,7 +118,7 @@ namespace MiniDumpExplorer
         UInt32 MxCsr { get; };
         IObservableVector<String> MxCsrList { get; };
         UInt32 MxCsrMask { get; };
-        IObservableVector<XmmRegister> FloatRegisters { get; };
+        IObservableVector<Float80Register> FloatRegisters { get; };
 
         IObservableVector<XmmRegister> XmmRegisters { get; };
 

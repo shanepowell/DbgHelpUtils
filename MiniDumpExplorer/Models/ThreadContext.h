@@ -8,6 +8,8 @@
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct X64ThreadContext;
+    struct X86ThreadContext;
+    struct Wow64ThreadContext;
 
     struct ThreadContext : ThreadContextT<ThreadContext>, NotifyPropertyChangedBase<ThreadContext>
     {
@@ -18,11 +20,16 @@ namespace winrt::MiniDumpExplorer::implementation
         bool HasX64ThreadContext() const { return x64ThreadContext_ != nullptr; }
         MiniDumpExplorer::X64ThreadContext X64ThreadContext() const { return x64ThreadContext_; }
 
-        bool HasX86ThreadContext() const { return x64ThreadContext_ != nullptr; }
-        bool HasWow64ThreadContext() const { return x64ThreadContext_ != nullptr; }
+        bool HasX86ThreadContext() const { return x86ThreadContext_ != nullptr; }
+        MiniDumpExplorer::X86ThreadContext X86ThreadContext() const { return x86ThreadContext_; }
+
+        bool HasWow64ThreadContext() const { return wow64ThreadContext_ != nullptr; }
+        MiniDumpExplorer::Wow64ThreadContext Wow64ThreadContext() const { return wow64ThreadContext_; }
 
     private:
         MiniDumpExplorer::X64ThreadContext x64ThreadContext_{nullptr};
+        MiniDumpExplorer::Wow64ThreadContext wow64ThreadContext_{nullptr};
+        MiniDumpExplorer::X86ThreadContext x86ThreadContext_{nullptr};
     };
 }
 

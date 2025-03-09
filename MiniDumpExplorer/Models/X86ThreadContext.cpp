@@ -1,27 +1,23 @@
 #include "pch.h"
-#include "Wow64ThreadContext.h"
+#include "X86ThreadContext.h"
 
 #include "Float80.h"
 #include "Float80Register.h"
-#include "M128A.h"
-#include "XmmRegister.h"
-#include "YmmRegister.h"
 
 #include "DbgHelpUtils/context_utils.h"
 #include "DbgHelpUtils/hex_dump.h"
 
-#if __has_include("Wow64ThreadContext.g.cpp")
+#if __has_include("X86ThreadContext.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
-#include "Wow64ThreadContext.g.cpp" // NOLINT(bugprone-suspicious-include)
+#include "X86ThreadContext.g.cpp" // NOLINT(bugprone-suspicious-include)
 #endif
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
-using namespace std::string_literals;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
-    Wow64ThreadContext::Wow64ThreadContext()
+    X86ThreadContext::X86ThreadContext()
         : GlobalOptionsNotifyPropertyChangedBase(
             {
                 L"ContextFlags",
@@ -70,7 +66,6 @@ namespace winrt::MiniDumpExplorer::implementation
                 L"ErrorSelector",
                 L"DataOffset",
                 L"DataSelector",
-                L"Cr0NpxState"
             },
             {
             }, 
@@ -85,11 +80,11 @@ namespace winrt::MiniDumpExplorer::implementation
     {
     }
 
-    void Wow64ThreadContext::Set(WOW64_CONTEXT const& context)
+    void X86ThreadContext::Set(dlg_help_utils::stream_thread_context::context_x86 const& context)
     {
         context_ = context;
 
-        for (auto const& flag : dlg_help_utils::context_utils::resources::get_wow64_thread_context_flags(context_.ContextFlags))
+        for (auto const& flag : dlg_help_utils::context_utils::resources::get_x86_thread_context_flags(context_.ContextFlags))
         {
             contextFlagsList_.Append(flag);
         }
@@ -120,16 +115,7 @@ namespace winrt::MiniDumpExplorer::implementation
             auto value = float_registers[index];
             floatRegisters_.Append(CreateFloat80(std::format(L"ST{}", index), value));
         }
-
-        xstate_reader_ = dlg_help_utils::xstate_reader{ &context };
-
-        for (auto const& ymm : xstate_reader_.ymm_registers())
-        {
-            MiniDumpExplorer::YmmRegister ymmRegister{};
-            ymmRegister.as<YmmRegister>()->Set(ymm);
-            ymmRegisters_.Append(ymmRegister);
-        }
-
+    
         if (HasExtendedRegisters())
         {
             std::wstringstream ss;
@@ -138,17 +124,7 @@ namespace winrt::MiniDumpExplorer::implementation
         }
     }
 
-    MiniDumpExplorer::XmmRegister Wow64ThreadContext::CreateM128A(std::wstring const& name, _M128A const& value)
-    {
-        MiniDumpExplorer::M128A m128a{};
-        m128a.as<M128A>()->Set(value);
-
-        MiniDumpExplorer::XmmRegister xmmRegister{};
-        xmmRegister.as<XmmRegister>()->Set(name, m128a);
-        return xmmRegister;
-    }
-
-    MiniDumpExplorer::Float80Register Wow64ThreadContext::CreateFloat80(std::wstring const& name, dlg_help_utils::float80_t const& value)
+    MiniDumpExplorer::Float80Register X86ThreadContext::CreateFloat80(std::wstring const& name, dlg_help_utils::float80_t const& value)
     {
         MiniDumpExplorer::Float80 float80{};
         float80.as<Float80>()->Set(value);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Wow64ThreadContext.g.h"
+#include "X86ThreadContext.g.h"
 
 #include "DbgHelpUtils/stream_thread_context.h"
 #include "DbgHelpUtils/xstate_reader.h"
@@ -11,13 +11,10 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct Float80;
     struct Float80Register;
-    struct M128A;
-    struct XmmRegister;
-    struct YmmRegister;
 
-    struct Wow64ThreadContext : Wow64ThreadContextT<Wow64ThreadContext>, GlobalOptionsNotifyPropertyChangedBase<Wow64ThreadContext>
+    struct X86ThreadContext : X86ThreadContextT<X86ThreadContext>, GlobalOptionsNotifyPropertyChangedBase<X86ThreadContext>
     {
-        Wow64ThreadContext();
+        X86ThreadContext();
 
         uint32_t ContextFlags() const { return context_.ContextFlags; }
         Windows::Foundation::Collections::IObservableVector<hstring> ContextFlagsList() const { return contextFlagsList_; }
@@ -80,33 +77,24 @@ namespace winrt::MiniDumpExplorer::implementation
         uint32_t ErrorSelector() const { return context_.FloatSave.ErrorSelector; }
         uint32_t DataOffset() const { return context_.FloatSave.DataOffset; }
         uint32_t DataSelector() const { return context_.FloatSave.DataSelector; }
-        uint32_t Cr0NpxState() const { return context_.FloatSave.Cr0NpxState; }
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Float80Register> FloatRegisters() const { return floatRegisters_; }
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> XmmRegisters() const { return xmmRegisters_; }
 
-        bool HasAvx() const { return xstate_reader_.is_supported(); }
-        bool HasAvxInInitState() const { return xstate_reader_.is_in_init_state(); }
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::YmmRegister> YmmRegisters() const { return ymmRegisters_; }
-
-        bool HasExtendedRegisters() const { return (context_.ContextFlags & WOW64_CONTEXT_EXTENDED_REGISTERS) == WOW64_CONTEXT_EXTENDED_REGISTERS; }
+        bool HasExtendedRegisters() const { return (context_.ContextFlags & X86_CONTEXT_EXTENDED_REGISTERS) == X86_CONTEXT_EXTENDED_REGISTERS; }
         hstring ExtendedRegistersHexDump() const { return extendedRegistersHexDump_; }
 
-        void Set(WOW64_CONTEXT const& context);
+        void Set(dlg_help_utils::stream_thread_context::context_x86 const& context);
 
     private:
-        static MiniDumpExplorer::XmmRegister CreateM128A(std::wstring const& name, _M128A const& value);
         static MiniDumpExplorer::Float80Register CreateFloat80(std::wstring const& name, dlg_help_utils::float80_t const& value);
 
     private:
-        WOW64_CONTEXT context_{};
+        dlg_help_utils::stream_thread_context::context_x86 context_{};
         Windows::Foundation::Collections::IObservableVector<hstring> contextFlagsList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> eFlagsList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> controlWordList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> statusWordList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<hstring> tagWordList_{single_threaded_observable_vector<hstring>()};
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::Float80Register> floatRegisters_{single_threaded_observable_vector<MiniDumpExplorer::Float80Register>()};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::XmmRegister> xmmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::XmmRegister>()};
-        Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::YmmRegister> ymmRegisters_{single_threaded_observable_vector<MiniDumpExplorer::YmmRegister>()};
         dlg_help_utils::xstate_reader xstate_reader_{};
         hstring extendedRegistersHexDump_{};
     };
@@ -114,7 +102,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
 namespace winrt::MiniDumpExplorer::factory_implementation
 {
-    struct Wow64ThreadContext : Wow64ThreadContextT<Wow64ThreadContext, implementation::Wow64ThreadContext>
+    struct X86ThreadContext : X86ThreadContextT<X86ThreadContext, implementation::X86ThreadContext>
     {
     };
 }
