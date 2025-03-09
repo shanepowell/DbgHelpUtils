@@ -13,7 +13,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
@@ -24,12 +24,12 @@ env:
   CMAKE_VERSION: 3.21.1
   BUILD_TYPE: Release
   MS_ARCH_TYPE: x64
-  CMAKE_COMPILER_TYPE: "Visual Studio 16 2019"
+  CMAKE_COMPILER_TYPE: "Visual Studio 17 2022"
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: windows-2019
+    runs-on: windows-2025
     permissions:
       actions: read
       contents: read
