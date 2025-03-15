@@ -1,4 +1,4 @@
-import "Controls\DataGrid\DataGridBoundColumn.idl";
+import "Controls/DataGrid/DataGridBoundColumn.idl";
 
 namespace MiniDumpExplorer
 {

@@ -1,6 +1,6 @@
-import  "Models/MiniDumpMemoryDescriptor.idl";
-import  "Models/ThreadStackEntry.idl";
-import  "Models/ThreadContext.idl";
+import "Models/MiniDumpMemoryDescriptor.idl";
+import "Models/ThreadContext.idl";
+import "Models/ThreadStackEntry.idl";
 
 namespace MiniDumpExplorer
 {

@@ -1,4 +1,4 @@
-import "Models\M128A.idl";
+import "Models/M128A.idl";
 
 namespace MiniDumpExplorer
 {

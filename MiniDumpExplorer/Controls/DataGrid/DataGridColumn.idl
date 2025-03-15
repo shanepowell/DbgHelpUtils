@@ -1,6 +1,6 @@
-import "Controls\DataGrid\DataGridSortDirection.idl";
-import "Controls\DataGrid\DataGridLength.idl";
-import "Controls\DataGrid\DataGridRow.idl";
+import "Controls/DataGrid/DataGridSortDirection.idl";
+import "Controls/DataGrid/DataGridLength.idl";
+import "Controls/DataGrid/DataGridRow.idl";
 
 namespace MiniDumpExplorer
 {

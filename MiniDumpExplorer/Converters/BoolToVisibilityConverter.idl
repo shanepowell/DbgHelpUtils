@@ -1,4 +1,4 @@
-import "Converters\BoolToObjectConverter.idl";
+import "Converters/BoolToObjectConverter.idl";
 
 namespace MiniDumpExplorer
 {

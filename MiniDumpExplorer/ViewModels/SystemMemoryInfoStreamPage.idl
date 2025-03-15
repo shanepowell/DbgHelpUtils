@@ -1,7 +1,7 @@
-import "Models\MiniDumpSystemBasicInformation.idl";
-import "Models\MiniDumpSystemFileCacheInformation.idl";
-import "Models\MiniDumpSystemBasicPerformanceInformation.idl";
-import "Models\MinidumpSystemPerformanceInformation.idl";
+import "Models/MiniDumpSystemBasicInformation.idl";
+import "Models/MiniDumpSystemFileCacheInformation.idl";
+import "Models/MiniDumpSystemBasicPerformanceInformation.idl";
+import "Models/MinidumpSystemPerformanceInformation.idl";
 
 namespace MiniDumpExplorer
 {

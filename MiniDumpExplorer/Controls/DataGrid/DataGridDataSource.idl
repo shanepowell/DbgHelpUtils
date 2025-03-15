@@ -1,6 +1,6 @@
-import "Controls\DataGrid\DataGrid.idl";
-import "Controls\DataGrid\DataGridColumnEventArgs.idl";
-import "Controls\DataGrid\DataGridDataSourcePropertyInfo.idl";
+import "Controls/DataGrid/DataGrid.idl";
+import "Controls/DataGrid/DataGridColumnEventArgs.idl";
+import "Controls/DataGrid/DataGridDataSourcePropertyInfo.idl";
 
 namespace MiniDumpExplorer
 {

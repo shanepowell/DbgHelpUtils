@@ -1,5 +1,5 @@
-import "Controls\DataGrid\DataGridRow.idl";
-import "Controls\DataGrid\DataGridEditAction.idl";
+import "Controls/DataGrid/DataGridRow.idl";
+import "Controls/DataGrid/DataGridEditAction.idl";
 
 namespace MiniDumpExplorer
 {

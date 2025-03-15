@@ -1,4 +1,4 @@
-import "Models\MiniDumpLocationDescriptor.idl";
+import "Models/MiniDumpLocationDescriptor.idl";
 
 namespace MiniDumpExplorer
 {

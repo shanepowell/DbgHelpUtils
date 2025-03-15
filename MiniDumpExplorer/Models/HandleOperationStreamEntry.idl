@@ -1,4 +1,4 @@
-import "Models\AvrfBackTraceInformation.idl";
+import "Models/AvrfBackTraceInformation.idl";
 
 namespace MiniDumpExplorer
 {

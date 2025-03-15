@@ -1,4 +1,4 @@
-import "Models\Float80Register.idl";
+import "Models/Float80Register.idl";
 
 namespace MiniDumpExplorer
 {

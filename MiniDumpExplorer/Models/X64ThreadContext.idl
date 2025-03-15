@@ -1,6 +1,6 @@
-import "Models\Float80Register.idl";
-import "Models\XmmRegister.idl";
-import "Models\YmmRegister.idl";
+import "Models/Float80Register.idl";
+import "Models/XmmRegister.idl";
+import "Models/YmmRegister.idl";
 
 namespace MiniDumpExplorer
 {

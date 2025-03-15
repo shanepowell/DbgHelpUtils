@@ -1,4 +1,4 @@
-import "ViewModels\MiniDumpPage.idl";
+import "ViewModels/MiniDumpPage.idl";
 
 namespace MiniDumpExplorer
 {

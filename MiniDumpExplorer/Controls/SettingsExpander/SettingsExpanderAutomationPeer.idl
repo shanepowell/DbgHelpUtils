@@ -1,4 +1,4 @@
-import "Controls\SettingsExpander\SettingsExpander.idl";
+import "Controls/SettingsExpander/SettingsExpander.idl";
 
 namespace MiniDumpExplorer
 {

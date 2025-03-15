@@ -1,4 +1,4 @@
-import "Models\DumpFileTimeStamp.idl";
+import "Models/DumpFileTimeStamp.idl";
 
 namespace MiniDumpExplorer
 {

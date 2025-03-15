@@ -1,5 +1,5 @@
-import "Controls\DataGrid\DataGridDataSource.idl";
-import "Models\MiniDumpException.idl";
+import "Controls/DataGrid/DataGridDataSource.idl";
+import "Models/MiniDumpException.idl";
 
 namespace MiniDumpExplorer
 {

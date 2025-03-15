@@ -1,6 +1,6 @@
-import "Models\VsFixedFileInfo.idl";
-import "Models\CvInfoPdb70.idl";
-import "Models\MiniDumpLocationDescriptor.idl";
+import "Models/VsFixedFileInfo.idl";
+import "Models/CvInfoPdb70.idl";
+import "Models/MiniDumpLocationDescriptor.idl";
 
 namespace MiniDumpExplorer
 {

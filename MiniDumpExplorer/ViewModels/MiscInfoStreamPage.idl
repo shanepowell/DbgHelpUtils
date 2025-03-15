@@ -1,6 +1,6 @@
-import "models\TimeZoneInformation.idl";
-import "models\DumpFileTimeStamp.idl";
-import "Controls\DataGrid\DataGridDataSource.idl";
+import "models/TimeZoneInformation.idl";
+import "models/DumpFileTimeStamp.idl";
+import "Controls/DataGrid/DataGridDataSource.idl";
 
 namespace MiniDumpExplorer
 {

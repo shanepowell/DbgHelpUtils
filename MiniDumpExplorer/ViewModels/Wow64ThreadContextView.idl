@@ -1,4 +1,4 @@
-import "Models\Wow64ThreadContext.idl";
+import "Models/Wow64ThreadContext.idl";
 
 namespace MiniDumpExplorer
 {

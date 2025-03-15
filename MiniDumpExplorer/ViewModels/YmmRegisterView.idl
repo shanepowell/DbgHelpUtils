@@ -1,4 +1,4 @@
-import "Models\YmmRegister.idl";
+import "Models/YmmRegister.idl";
 
 namespace MiniDumpExplorer
 {

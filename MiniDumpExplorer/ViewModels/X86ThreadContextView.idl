@@ -1,4 +1,4 @@
-import "Models\X86ThreadContext.idl";
+import "Models/X86ThreadContext.idl";
 
 namespace MiniDumpExplorer
 {

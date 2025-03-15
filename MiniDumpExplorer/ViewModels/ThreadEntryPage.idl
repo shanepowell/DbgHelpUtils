@@ -1,4 +1,4 @@
-import "Models\ThreadListStreamEntry.idl";
+import "Models/ThreadListStreamEntry.idl";
 
 namespace MiniDumpExplorer
 {

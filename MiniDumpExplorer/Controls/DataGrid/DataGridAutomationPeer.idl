@@ -1,4 +1,4 @@
-import "Controls\DataGrid\DataGrid.idl";
+import "Controls/DataGrid/DataGrid.idl";
 
 namespace MiniDumpExplorer
 {

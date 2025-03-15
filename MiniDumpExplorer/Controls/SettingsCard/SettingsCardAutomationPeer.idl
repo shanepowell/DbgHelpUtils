@@ -1,4 +1,4 @@
-import "Controls\SettingsCard\SettingsCard.idl";
+import "Controls/SettingsCard/SettingsCard.idl";
 
 namespace MiniDumpExplorer
 {

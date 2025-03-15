@@ -1,4 +1,4 @@
-import "Models\MiniDumpExceptionParameter.idl";
+import "Models/MiniDumpExceptionParameter.idl";
 
 namespace MiniDumpExplorer
 {

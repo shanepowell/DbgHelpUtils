@@ -1,6 +1,6 @@
-import "Models\RecentFileItem.idl";
-import "Models\DumpFileTimeStamp.idl";
-import "Models\FileCrc32.idl";
+import "Models/RecentFileItem.idl";
+import "Models/DumpFileTimeStamp.idl";
+import "Models/FileCrc32.idl";
 
 namespace MiniDumpExplorer
 {

@@ -1,4 +1,4 @@
-import "Controls\DataGrid\DataGridRowHeader.idl";
+import "Controls/DataGrid/DataGridRowHeader.idl";
 
 namespace MiniDumpExplorer
 {
