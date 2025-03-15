@@ -16,7 +16,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" /> <!-- 0 -->
                 <RowDefinition Height="10" />
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -25,13 +25,29 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 10 -->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> <!-- 12 -->
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Index,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Thread ID" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="threadId" Grid.Row="2" Grid.Column="1" Text="{x:Bind ThreadId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Thread ID" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" />
+            <Grid Grid.Row="2" Grid.Column="1" ColumnSpacing="5" RowSpacing="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> <!-- 0 -->
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="threadId" Grid.Row="0" Grid.Column="0" Text="{x:Bind ThreadId,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ThreadName,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                <Button Grid.Row="0" Grid.Column="2" Content="Thread Info" Click="ShowThreadPage" VerticalAlignment="Center" />
+            </Grid>
 
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Exception Code" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
@@ -83,6 +99,19 @@
                                               Tag="Parameter"/>
                 </local:DataGrid.Columns>
             </local:DataGrid>
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Call Stack" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+            <!--<TreeView 
+                x:Name="stackEntries"
+                Grid.Row="10"
+                Grid.Column="1"
+                SelectionMode="Single"
+                ItemsSource="{x:Bind Thread.StackEntries,Mode=OneWay}"
+                ItemTemplate="{StaticResource StackEntryViewTemplate}"
+                Expanding="OnTreeViewItemExpanding"
+                Margin="0,5,0,0"
+            />-->
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="Thread Context" VerticalAlignment="top"  Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+            <local:ThreadContextView Grid.Row="12" Grid.Column="1" ThreadContext="{x:Bind ThreadContext}" />
         </Grid>
     </ScrollViewer>
 </Page>

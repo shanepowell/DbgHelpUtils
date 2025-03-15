@@ -29,15 +29,20 @@ namespace winrt::MiniDumpExplorer::implementation
 
         void SelectThread(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
 
+        static void CreateNavigationViewItemEntriesForStream(Microsoft::UI::Xaml::Controls::NavigationViewItem const& item, MiniDumpExplorer::MiniDumpPageParameters const& parameters, dlg_help_utils::mini_dump const& miniDump);
+        static std::wstring CreateFindNavigationTag(size_t index, size_t sub_index);
+
     private:
         void OnRowDoubleTapped(Windows::Foundation::IInspectable const& sender, DataGridRowDetailsEventArgs const& e) const;
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
+        void SelectCurrentlySelectedEntry() const;
 
     private:
         event_token onRowDoubleTapped_;
         uint32_t index_{};
         uint32_t total_entries_{};
         MiniDumpExplorer::ThreadExListStreamEntriesDataSource threadsStreamEntriesDataSource_{};
+        MiniDumpExplorer::MiniDumpPage miniDumpPage_{nullptr};
     };
 }
 

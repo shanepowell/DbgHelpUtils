@@ -5,9 +5,13 @@
 
 namespace dlg_help_utils
 {
-    stream_thread_ex::stream_thread_ex(mini_dump const& dump, MINIDUMP_THREAD_EX const& thread,
-                                       thread_names_list_stream const& names_list)
-        : thread_{&thread}
+    stream_thread_ex::stream_thread_ex(
+        size_t const index,
+        mini_dump const& dump,
+        MINIDUMP_THREAD_EX const& thread,
+        thread_names_list_stream const& names_list)
+        : index_{ index }
+        , thread_{&thread}
         , thread_name_{names_list.get_thread_name_for_thread_id(thread.ThreadId)}
     {
         if (thread_->Stack.Memory.Rva != 0)

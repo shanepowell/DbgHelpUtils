@@ -29,7 +29,7 @@ namespace dlg_help_utils
         memory64_list_stream const memory64_list{*dump_};
         for (size_t index = 0; index < thread_list_->NumberOfThreads; ++index)
         {
-            co_yield stream_thread{*dump_, thread_list_->Threads[index], names_list, memory_list, memory64_list};
+            co_yield stream_thread{index, *dump_, thread_list_->Threads[index], names_list, memory_list, memory64_list};
         }
     }
 
@@ -42,7 +42,7 @@ namespace dlg_help_utils
         {
             if (thread_list_->Threads[index].ThreadId == thread_id)
             {
-                return stream_thread{*dump_, thread_list_->Threads[index], names_list, memory_list, memory64_list};
+                return stream_thread{index, *dump_, thread_list_->Threads[index], names_list, memory_list, memory64_list};
             }
         }
 
@@ -59,6 +59,6 @@ namespace dlg_help_utils
 
     stream_thread thread_list_stream::get_thread(size_t const index, thread_names_list_stream const& names_list, memory_list_stream const& memory_list, memory64_list_stream const& memory64_list) const
     {
-        return stream_thread{ *dump_, thread_list_->Threads[index], names_list, memory_list, memory64_list };
+        return stream_thread{index, *dump_, thread_list_->Threads[index], names_list, memory_list, memory64_list };
     }
 }

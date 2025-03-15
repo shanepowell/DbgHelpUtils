@@ -18,16 +18,22 @@ namespace dlg_help_utils
     {
     public:
         explicit stream_thread() = default;
-        explicit stream_thread(mini_dump const& dump, MINIDUMP_THREAD const& thread,
-                               thread_names_list_stream const& names_list, memory_list_stream const& memory_list,
-                               memory64_list_stream const& memory64_list);
+        explicit stream_thread(
+            size_t index,
+            mini_dump const& dump,
+            MINIDUMP_THREAD const& thread,
+            thread_names_list_stream const& names_list,
+            memory_list_stream const& memory_list,
+            memory64_list_stream const& memory64_list);
 
         MINIDUMP_THREAD const* operator->() const { return thread_; }
         [[nodiscard]] void const* stack() const { return stack_; }
         [[nodiscard]] stream_thread_context const& thread_context() const { return thread_context_; }
         [[nodiscard]] std::wstring_view const& thread_name() const { return thread_name_.name(); }
+        [[nodiscard]] size_t index() const { return index_; }
 
     private:
+        size_t index_{};
         MINIDUMP_THREAD const* thread_{nullptr};
         void const* stack_{nullptr};
         stream_thread_context thread_context_{};

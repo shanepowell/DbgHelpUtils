@@ -30,29 +30,6 @@ namespace winrt::MiniDumpExplorer::implementation
         SelectCurrentlySelectedEntry();
     }
 
-    void ThreadListStreamPage::CreateNavigationViewItemEntriesForStream(Controls::NavigationViewItem const& item, MiniDumpExplorer::MiniDumpPageParameters const& parameters, dlg_help_utils::mini_dump const& mini_dump)
-    {
-        dlg_help_utils::thread_list_stream const thread_list{mini_dump, parameters.StreamIndex()};
-
-        if(!thread_list.found())
-        {
-            logger::Log().LogMessage(log_level::error, std::format("failed to load mini dump thread list stream index:[{}]", parameters.StreamIndex()));
-            return;
-        }
-
-        for (uint32_t index = 0; index < thread_list.thread_list().NumberOfThreads; ++index)
-        {
-            const Controls::NavigationViewItem newItem;
-            newItem.Content(box_value(std::format(L"Thread: {}", index)));
-            MiniDumpExplorer::MiniDumpPageParameters subParameters{parameters.MiniDump(), CreateFindNavigationTag(parameters.StreamIndex(), index), MiniDumpPage::ThreadListEntryStreamTag, parameters.StreamIndex(), 0, index};
-            newItem.Tag(subParameters);
-            const Controls::SymbolIcon iconSource;
-            iconSource.Symbol(Controls::Symbol::Mail);
-            newItem.Icon(iconSource);
-            item.MenuItems().Append(newItem);
-        }
-    }
-
     void ThreadListStreamPage::OnRowDoubleTapped([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] DataGridRowDetailsEventArgs const& e) const
     {
         SelectCurrentlySelectedEntry();
@@ -98,7 +75,30 @@ namespace winrt::MiniDumpExplorer::implementation
         }
     }
 
-    std::wstring ThreadListStreamPage::CreateFindNavigationTag(uint32_t index, uint32_t sub_index)
+    void ThreadListStreamPage::CreateNavigationViewItemEntriesForStream(Controls::NavigationViewItem const& item, MiniDumpExplorer::MiniDumpPageParameters const& parameters, dlg_help_utils::mini_dump const& miniDump)
+    {
+        dlg_help_utils::thread_list_stream const thread_list{miniDump, parameters.StreamIndex()};
+
+        if(!thread_list.found())
+        {
+            logger::Log().LogMessage(log_level::error, std::format("failed to load mini dump thread list stream index:[{}]", parameters.StreamIndex()));
+            return;
+        }
+
+        for (uint32_t index = 0; index < thread_list.thread_list().NumberOfThreads; ++index)
+        {
+            const Controls::NavigationViewItem newItem;
+            newItem.Content(box_value(std::format(L"Thread: {}", index)));
+            MiniDumpExplorer::MiniDumpPageParameters subParameters{parameters.MiniDump(), CreateFindNavigationTag(parameters.StreamIndex(), index), MiniDumpPage::ThreadListEntryStreamTag, parameters.StreamIndex(), 0, index};
+            newItem.Tag(subParameters);
+            const Controls::SymbolIcon iconSource;
+            iconSource.Symbol(Controls::Symbol::Mail);
+            newItem.Icon(iconSource);
+            item.MenuItems().Append(newItem);
+        }
+    }
+
+    std::wstring ThreadListStreamPage::CreateFindNavigationTag(size_t const index, size_t const sub_index)
     {
         return std::format(L"ThreadListStreamPage_{}_{}", index, sub_index);
     }

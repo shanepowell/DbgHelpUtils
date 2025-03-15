@@ -20,6 +20,7 @@ namespace winrt::MiniDumpExplorer::implementation
     struct MiniDumpPage : MiniDumpPageT<MiniDumpPage>
     {
         static const std::wstring ThreadListEntryStreamTag;
+        static const std::wstring ThreadExListEntryStreamTag;
 
         MiniDumpPage(Windows::Storage::StorageFile const& file);
         ~MiniDumpPage() override;

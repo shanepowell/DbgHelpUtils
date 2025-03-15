@@ -119,10 +119,10 @@ namespace dlg_help_utils::process
 
     void process_environment_block::gather_system_area_addresses(std::set<uint64_t>& system_area_addresses) const
     {
-        common_symbol_utils::gather_system_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list(), system_area_addresses);
+        common_symbol_utils::gather_system_addresses(mini_dump(), system_area_addresses);
         std::map<uint64_t, symbol_type_utils::pointer_info> pointers;
 
-        for(auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list());
+        for(auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump());
             auto const teb_address : teb_addresses)
         {
             std::unordered_set<uint64_t> ignore_pointers;
@@ -150,7 +150,7 @@ namespace dlg_help_utils::process
 
     uint64_t process_environment_block::get_teb_address() const
     {
-        auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump(), names_list_, walker().memory_list(), walker().memory64_list());
+        auto const teb_addresses = common_symbol_utils::get_teb_addresses(mini_dump());
         if(teb_addresses.empty())
         {
             throw exceptions::wide_runtime_error{L"Error: No TEB address found"s};

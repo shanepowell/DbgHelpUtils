@@ -11,7 +11,9 @@ namespace MiniDumpExplorer
 
         UInt32 Index { get; };
         UInt32 ThreadId { get; };
+        String ThreadName { get; };
         MiniDumpException Exception { get; };
         IDataGridDataSource ExceptionParametersSource { get; };
+        ThreadContext ThreadContext { get; };
     }
 }

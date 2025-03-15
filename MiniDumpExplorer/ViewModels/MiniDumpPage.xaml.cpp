@@ -63,6 +63,7 @@ namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpPageParameters;
     const std::wstring MiniDumpPage::ThreadListEntryStreamTag = L"ThreadListEntryStream"s;
+    const std::wstring MiniDumpPage::ThreadExListEntryStreamTag = L"ThreadExListEntryStream"s;
 
 
     std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> MiniDumpPage::pageMap_ =  // NOLINT(misc-use-internal-linkage)
@@ -77,6 +78,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { mini_dump_stream_type::enum_names::ExceptionStream, xaml_typename<ExceptionStreamPage>() },
             { mini_dump_stream_type::enum_names::SystemInfoStream, xaml_typename<SystemInfoStreamPage>() },
             { mini_dump_stream_type::enum_names::ThreadExListStream, xaml_typename<ThreadExListStreamPage>() }, // no dmp examples to test against
+            // { ThreadExListEntryStreamTag, xaml_typename<ThreadExEntryPage>() },
             { mini_dump_stream_type::enum_names::Memory64ListStream, xaml_typename<Memory64ListStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamA, xaml_typename<CommentStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamW, xaml_typename<CommentStreamPage>() },

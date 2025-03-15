@@ -19,16 +19,20 @@ namespace dlg_help_utils
     {
     public:
         stream_thread_ex() = default;
-        explicit stream_thread_ex(mini_dump const& dump, MINIDUMP_THREAD_EX const& thread,
-                                  thread_names_list_stream const& names_list);
+        explicit stream_thread_ex(size_t index,
+            mini_dump const& dump,
+            MINIDUMP_THREAD_EX const& thread,
+            thread_names_list_stream const& names_list);
 
         MINIDUMP_THREAD_EX const* operator->() const { return thread_; }
         [[nodiscard]] void const* stack() const { return stack_; }
         [[nodiscard]] stream_thread_context const& thread_context() const { return thread_context_; }
         [[nodiscard]] void const* backing_store() const { return backing_store_; }
         [[nodiscard]] std::wstring_view const& thread_name() const { return thread_name_.name(); }
+        [[nodiscard]] size_t index() const { return index_; }
 
     private:
+        size_t index_{};
         MINIDUMP_THREAD_EX const* thread_{nullptr};
         void const* stack_{nullptr};
         stream_thread_context thread_context_{};

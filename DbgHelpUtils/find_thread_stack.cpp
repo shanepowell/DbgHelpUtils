@@ -21,7 +21,12 @@ namespace dlg_help_utils
             if (auto const thread = thread_list.find_thread(thread_id, names_list, memory_list, memory64_list); thread.has_value())
             {
                 return thread_stack{
-                    .stack= thread->stack(), .stack_size= (*thread)->Stack.Memory.DataSize, .stack_start_address= (*thread)->Stack.StartOfMemoryRange
+                    .list_stream_index = thread_list.index(),
+                    .stream_index = thread->index(),
+                    .stream_type = ThreadListStream,
+                    .stack = thread->stack(),
+                    .stack_size = (*thread)->Stack.Memory.DataSize,
+                    .stack_start_address = (*thread)->Stack.StartOfMemoryRange
                 };
             }
         }
@@ -31,7 +36,12 @@ namespace dlg_help_utils
             if (auto const thread = thread_ex_list.find_thread(thread_id, names_list); thread.has_value())
             {
                 return thread_stack{
-                    .stack= thread->stack(), .stack_size= (*thread)->Stack.Memory.DataSize, .stack_start_address= (*thread)->Stack.StartOfMemoryRange
+                    .list_stream_index = thread_ex_list.index(),
+                    .stream_index = thread->index(),
+                    .stream_type = ThreadExListStream,
+                    .stack = thread->stack(),
+                    .stack_size = (*thread)->Stack.Memory.DataSize,
+                    .stack_start_address = (*thread)->Stack.StartOfMemoryRange
                 };
             }
         }

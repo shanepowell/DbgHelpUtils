@@ -287,7 +287,7 @@ namespace dlg_help_utils::heap
         {
             if (thread_list_stream const thread_list{ *mini_dump_, std::get<size_t>(stream.value()) }; thread_list.found() && thread_list.thread_list().NumberOfThreads > 0)
             {
-                if (stream_thread const thread{ *mini_dump_, thread_list.thread_list().Threads[0], process_->peb().names_list(), process_->peb().memory_list(), process_->peb().memory64_list() }; thread->Teb != 0)
+                for (auto const& thread : thread_list.list())
                 {
                     generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers, mark_as_system_t{true});
                 }
@@ -298,7 +298,7 @@ namespace dlg_help_utils::heap
         {
             if (thread_ex_list_stream const thread_ex_list{ *mini_dump_, std::get<size_t>(stream.value()) }; thread_ex_list.found() && thread_ex_list.thread_list().NumberOfThreads > 0)
             {
-                if (stream_thread_ex const thread{ *mini_dump_, thread_ex_list.thread_list().Threads[0], process_->peb().names_list() }; thread->Teb != 0)
+                for (auto const& thread : thread_ex_list.list())
                 {
                     generate_specific_thread_context_references(heap_entries, pointer_size, thread, ignore_pointers, mark_as_system_t{true});
                 }
