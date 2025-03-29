@@ -2953,6 +2953,37 @@ const std::map<winrt::guid, ObjectData> InterfaceIdToDependencyProperties = []()
       }
     ));
   }
+  if constexpr (std::is_same_v<winrt::Microsoft::UI::Xaml::DependencyProperty, decltype(winrt::Microsoft::UI::Xaml::Controls::TitleBar::TitleProperty())>)
+  {
+    result.insert(std::make_pair(winrt::guid_of<winrt::Microsoft::UI::Xaml::Controls::TitleBar>(),
+      ObjectData {
+        ObjectType::Library, 
+        {
+          { L"title"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::TitleProperty(); } },
+          { L"subtitle"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::SubtitleProperty(); } },
+          { L"iconsource"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::IconSourceProperty(); } },
+          { L"leftheader"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::LeftHeaderProperty(); } },
+          { L"content"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::ContentProperty(); } },
+          { L"rightheader"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::RightHeaderProperty(); } },
+          { L"isbackbuttonvisible"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::IsBackButtonVisibleProperty(); } },
+          { L"isbackbuttonenabled"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::IsBackButtonEnabledProperty(); } },
+          { L"ispanetogglebuttonvisible"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::IsPaneToggleButtonVisibleProperty(); } },
+          { L"templatesettings"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBar::TemplateSettingsProperty(); } },
+        }
+      }
+    ));
+  }
+  if constexpr (std::is_same_v<winrt::Microsoft::UI::Xaml::DependencyProperty, decltype(winrt::Microsoft::UI::Xaml::Controls::TitleBarTemplateSettings::IconElementProperty())>)
+  {
+    result.insert(std::make_pair(winrt::guid_of<winrt::Microsoft::UI::Xaml::Controls::TitleBarTemplateSettings>(),
+      ObjectData {
+        ObjectType::Library, 
+        {
+          { L"iconelement"s, []() { return winrt::Microsoft::UI::Xaml::Controls::TitleBarTemplateSettings::IconElementProperty(); } },
+        }
+      }
+    ));
+  }
   if constexpr (std::is_same_v<winrt::Microsoft::UI::Xaml::DependencyProperty, decltype(winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem::IsCheckedProperty())>)
   {
     result.insert(std::make_pair(winrt::guid_of<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>(),
