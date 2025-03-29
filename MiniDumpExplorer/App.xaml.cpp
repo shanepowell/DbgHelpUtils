@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "App.xaml.h"
 
+#include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.System.h>
 
@@ -126,5 +127,9 @@ void App::OnLaunched([[maybe_unused]]LaunchActivatedEventArgs const& e)
     window = make<MainWindow>();
     ThemeHelper::SetDefaultTheme(window);
     WindowHelper::TrackWindow(window);
+
+    // Set the icon from the resource file
+    window.AppWindow().SetIcon(L"ms-appx:///Assets/MiniDumper.ico");
+
     window.Activate();
 }

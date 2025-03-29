@@ -10,42 +10,62 @@
 
     <Grid x:Name="Root" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="48" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid x:Name="AppTitleBar" Grid.Row="0">
+        <Grid x:Name="AppTitleBar"
+              Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="25" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
+                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
+                <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="MenuColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="TitleColumn" Width="*"/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Column="0"
-                   Source="/Assets/Square44x44Logo.png"
-                   Margin="8,0,0,0"/>
-            <TextBlock Grid.Column="1" Text="{StaticResource AppTitleName}" FontSize="15" VerticalAlignment="bottom" Margin="15,5,0,5" />
-            <TextBlock Grid.Column="2" Text="{x:Bind SelectedTabTitle, Mode=OneWay}" FontSize="13" VerticalAlignment="bottom" Margin="5,5,0,5" />
+            <Image x:Name="TitleBarIcon" 
+                   Source="ms-appx:///Assets/Square44x44Logo.png"
+                   Grid.Column="1"
+                   Width="16"
+                   Height="16"
+                   Margin="8,0,8,0"
+                   PointerPressed="TitleBarIcon_PointerPressed"
+                   DoubleTapped="TitleBarIcon_MouseDoubleClick"/>
+
+            <MenuBar x:Name="TitleMenuBar"
+                     Grid.Column="2"
+                     VerticalAlignment="Top">
+                <MenuBar.Items>
+                    <MenuBarItem Title="File" AccessKey="F">
+                        <MenuFlyoutItem Text="Open"
+                                        Icon="OpenFile"
+                                        Click="MenuFileOpen_Click">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="O"
+                                                     Modifiers="Control" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Exit"
+                                        Icon="Cancel"
+                                        Click="MenuFileOpen_Exit" />
+                    </MenuBarItem>
+                </MenuBar.Items>
+            </MenuBar>
+
+            <Grid x:Name="TitleBarTextArea" 
+                  Grid.Column="3"
+                  VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TitleBarTextBlock" Grid.Column="0" Text="{StaticResource AppTitleName}" FontSize="15" VerticalAlignment="bottom" Margin="15,5,0,5" />
+                <TextBlock x:Name="TabTitleBarTextBlock" Grid.Column="1" Text="{x:Bind SelectedTabTitle, Mode=OneWay}" FontSize="13" VerticalAlignment="bottom" Margin="5,5,0,5" />
+            </Grid>
         </Grid>
-        <MenuBar Grid.Row="1" VerticalAlignment="Top">
-            <MenuBar.Items>
-                <MenuBarItem Title="File" AccessKey="F">
-                    <MenuFlyoutItem Text="Open"
-                                    Icon="OpenFile"
-                                    Click="MenuFileOpen_Click">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="O"
-                                                 Modifiers="Control" />
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Text="Exit"
-                                    Icon="Cancel"
-                                    Click="MenuFileOpen_Exit" />
-                </MenuBarItem>
-            </MenuBar.Items>
-        </MenuBar>
         <TabView Grid.Row="2"
                  x:Name="TabView"
                  VerticalAlignment="Stretch"

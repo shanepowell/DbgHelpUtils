@@ -966,6 +966,9 @@
     <Image Include="Assets\Wide310x150Logo.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\MiniDumper.ico">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

@@ -24,10 +24,28 @@ namespace winrt::MiniDumpExplorer::implementation
 
         Windows::Foundation::IAsyncAction OpenFileInTab(Windows::Storage::StorageFile const& file);
 
+        fire_and_forget TitleBarIcon_PointerPressed(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+        void TitleBarIcon_MouseDoubleClick(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args) const;
+
     private:
+        void MainWindow_Activated(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::WindowActivatedEventArgs const& args);
+        void AppWindow_Changed(Microsoft::UI::Windowing::AppWindow const& sender, Microsoft::UI::Windowing::AppWindowChangedEventArgs const& args);
+        void AppTitleBar_OnLoaded(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void AppTitleBar_OnSizeChanged(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::SizeChangedEventArgs const& args);
+
         void OpenDefaultTab();
         Windows::Foundation::IAsyncAction OpenFileInNewTab();
+
+        void SetRegionsForCustomTitleBar();
+        void ShowSystemMenu() const;
+
         static Windows::Foundation::IAsyncOperation<Microsoft::UI::Xaml::Controls::TabViewItem> CreateNewTab(Windows::Storage::StorageFile file);
+
+    private:
+        event_token activatedEvent_{};
+        event_token appWindowChangedEvent_{};
+        event_token loadedEvent_{};
+        event_token sizeChangedEvent_{};
     };
 }
 

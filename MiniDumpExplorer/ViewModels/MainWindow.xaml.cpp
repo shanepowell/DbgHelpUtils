@@ -6,11 +6,18 @@
 #include <shobjidl.h>
 #include <Microsoft.Ui.Xaml.Window.h>
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+#include <winrt/Microsoft.UI.Input.h>
+#include <winrt/Microsoft.UI.Windowing.h>
+#include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Pickers.h>
+#include <winrt/Windows.System.h>
 
 #include "DefaultPage.xaml.h"
 #include "MiniDumpPage.xaml.h"
 #include "Utility/logger.h"
+#include "Helpers/WindowHelper.h"
+
+#include <chrono>
 
 #if __has_include("MainWindow.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -19,14 +26,31 @@
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
+using namespace std::chrono_literals;
 
 namespace winrt::MiniDumpExplorer::implementation
 {
+    namespace
+    {
+        Windows::Graphics::RectInt32 GetRect(Windows::Foundation::Rect const& bounds, double const scale)
+        {
+            return {
+                .X = static_cast<int>(std::lround(bounds.X * scale)),
+                .Y = static_cast<int>(std::lround(bounds.Y * scale)),
+                .Width = static_cast<int>(std::lround(bounds.Width * scale)),
+                .Height = static_cast<int>(std::lround(bounds.Height * scale))
+            };
+        }
+    }
+
+
     MainWindow::MainWindow()
     {
         logger::Log().LogMessage(log_level::debug, "MainWindow");
         ExtendsContentIntoTitleBar(true);
         SetTitleBar(AppTitleBar());
+        auto appTitleName = Application::Current().Resources().Lookup(box_value(L"AppTitleName")).as<hstring>();
+        Title(appTitleName);
     }
 
     void MainWindow::InitializeComponent()
@@ -34,6 +58,114 @@ namespace winrt::MiniDumpExplorer::implementation
         MainWindowT::InitializeComponent();
         OpenDefaultTab();
         logger::Log().LogMessage(log_level::debug, "MainWindow InitializeComponent complete");
+
+        activatedEvent_ = Activated({ this, &MainWindow::MainWindow_Activated });
+        appWindowChangedEvent_ = AppWindow().Changed({ this, &MainWindow::AppWindow_Changed });
+        loadedEvent_ = AppTitleBar().Loaded({ this, &MainWindow::AppTitleBar_OnLoaded });
+        sizeChangedEvent_ = AppTitleBar().SizeChanged({ this, &MainWindow::AppTitleBar_OnSizeChanged });
+
+        AppWindow().TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
+    }
+
+    void MainWindow::MainWindow_Activated([[maybe_unused]] Windows::Foundation::IInspectable const& sender, WindowActivatedEventArgs const& args)
+    {
+        if (args.WindowActivationState() == WindowActivationState::Deactivated)
+        {
+            auto brush = Application::Current().Resources().Lookup(box_value(L"WindowCaptionForegroundDisabled")).as<Media::SolidColorBrush>();
+            TitleBarTextBlock().Foreground(brush);
+            TabTitleBarTextBlock().Foreground(brush);
+        }
+        else
+        {
+            auto brush = Application::Current().Resources().Lookup(box_value(L"WindowCaptionForeground")).as<Media::SolidColorBrush>();
+            TitleBarTextBlock().Foreground(brush);
+            TabTitleBarTextBlock().Foreground(brush);
+        }
+    }
+
+    void MainWindow::AppWindow_Changed(Microsoft::UI::Windowing::AppWindow const& sender, Microsoft::UI::Windowing::AppWindowChangedEventArgs const& args)
+    {
+        if (args.DidPresenterChange())
+        {
+            using Microsoft::UI::Windowing::AppWindowPresenterKind;
+            switch (sender.Presenter().Kind())
+            {
+            case AppWindowPresenterKind::CompactOverlay:
+                // Compact overlay - hide custom title bar
+                // and use the default system title bar instead.
+                AppTitleBar().Visibility(Visibility::Collapsed);
+                sender.TitleBar().ResetToDefault();
+                break;
+
+            case AppWindowPresenterKind::FullScreen:
+                // Full screen - hide the custom title bar
+                // and the default system title bar.
+                AppTitleBar().Visibility(Visibility::Collapsed);
+                sender.TitleBar().ExtendsContentIntoTitleBar(true);
+                break;
+
+            case AppWindowPresenterKind::Overlapped:
+                // Normal - hide the system title bar
+                // and use the custom title bar instead.
+                AppTitleBar().Visibility(Visibility::Visible);
+                sender.TitleBar().ExtendsContentIntoTitleBar(true);
+                break;
+
+            default:
+                // Use the default system title bar.
+                sender.TitleBar().ResetToDefault();
+                break;
+            }
+        }
+    }
+
+    void MainWindow::AppTitleBar_OnLoaded([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& args)
+    {
+        if (ExtendsContentIntoTitleBar())
+        {
+            SetRegionsForCustomTitleBar();
+        }
+    }
+
+    void MainWindow::AppTitleBar_OnSizeChanged([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] SizeChangedEventArgs const& args)
+    {
+        if (ExtendsContentIntoTitleBar())
+        {
+            SetRegionsForCustomTitleBar();
+        }
+    }
+
+
+    fire_and_forget MainWindow::TitleBarIcon_PointerPressed([[maybe_unused]] Windows::Foundation::IInspectable const& sender, Input::PointerRoutedEventArgs const& args)
+    {
+        if (auto const ptr = args.Pointer();
+            ptr.PointerDeviceType() == Microsoft::UI::Input::PointerDeviceType::Mouse)
+        {
+            auto const ptrPt = args.GetCurrentPoint(TitleBarIcon());
+            if (auto const properties = ptrPt.Properties();
+                properties.IsLeftButtonPressed())
+            {
+                auto weak_self = get_weak();
+                apartment_context ui_thread;
+                co_await resume_after(500ms);
+                co_await ui_thread;
+
+                if(auto const anchor_self = weak_self.get();
+                    anchor_self && !WindowHelper::IsExiting())
+                {
+                    ShowSystemMenu();
+                }
+            }
+            else if (properties.IsRightButtonPressed())
+            {
+                ShowSystemMenu();
+            }
+        }
+    }
+
+    void MainWindow::TitleBarIcon_MouseDoubleClick([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& args) const
+    {
+        Close();
     }
 
     fire_and_forget MainWindow::MenuFileOpen_Click(Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -138,6 +270,85 @@ namespace winrt::MiniDumpExplorer::implementation
         }
 
         co_await OpenFileInTab(file);
+    }
+
+    void MainWindow::SetRegionsForCustomTitleBar()
+    {
+        // Specify the interactive regions of the title bar.
+
+        auto const scaleAdjustment = AppTitleBar().XamlRoot().RasterizationScale();
+
+        RightPaddingColumn().Width(GridLength(AppWindow().TitleBar().RightInset() / scaleAdjustment));
+        LeftPaddingColumn().Width(GridLength(AppWindow().TitleBar().LeftInset() / scaleAdjustment));
+
+        // Get the rectangle around the TitleBarTextArea grid.
+        auto transform = TitleBarTextArea().TransformToVisual(nullptr);
+        auto bounds = transform.TransformBounds(Windows::Foundation::Rect(
+                0,
+                0,
+                static_cast<float>(TitleBarTextArea().ActualWidth()),
+                static_cast<float>(TitleBarTextArea().ActualHeight())
+            ));
+        auto titleBarTextAreaRect = GetRect(bounds, scaleAdjustment);
+
+        AppWindow().TitleBar().SetDragRectangles({titleBarTextAreaRect});
+
+        // Get the rectangle around the TitleBarIcon control.
+        transform = TitleMenuBar().TransformToVisual(nullptr);
+        bounds = transform.TransformBounds(Windows::Foundation::Rect(
+                0,
+                0,
+                static_cast<float>(TitleBarIcon().ActualWidth()),
+                static_cast<float>(TitleBarIcon().ActualHeight())
+            ));
+        auto titleBarIconRect = GetRect(bounds, scaleAdjustment);
+
+        // Get the rectangle around the MenuBar control.
+        transform = TitleMenuBar().TransformToVisual(nullptr);
+        bounds = transform.TransformBounds(Windows::Foundation::Rect(
+                0,
+                0,
+                static_cast<float>(TitleMenuBar().ActualWidth()),
+                static_cast<float>(TitleMenuBar().ActualHeight())
+            ));
+        auto titleMenuBarRect = GetRect(bounds, scaleAdjustment);
+
+        auto nonClientInputSrc = Microsoft::UI::Input::InputNonClientPointerSource::GetForWindowId(AppWindow().Id());
+        nonClientInputSrc.SetRegionRects(Microsoft::UI::Input::NonClientRegionKind::Passthrough, { titleBarIconRect, titleMenuBarRect });
+    }
+
+    void MainWindow::ShowSystemMenu() const
+    {
+        const auto windowNative{ try_as<IWindowNative>() };
+        HWND hWnd{ nullptr };
+        windowNative->get_WindowHandle(&hWnd);
+
+        if (hWnd)
+        {
+            if (HMENU const hMenu = GetSystemMenu(hWnd, FALSE);
+                hMenu)
+            {
+                if (IsZoomed(hWnd))
+                {
+                    EnableMenuItem(hMenu, SC_MAXIMIZE, MF_GRAYED);
+                    EnableMenuItem(hMenu, SC_RESTORE, MF_ENABLED);
+                }
+                else
+                {
+                    EnableMenuItem(hMenu, SC_MAXIMIZE, MF_ENABLED);
+                    EnableMenuItem(hMenu, SC_RESTORE, MF_GRAYED);
+                }
+                POINT pt;
+                GetCursorPos(&pt);
+                int command = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, pt.x, pt.y, 0, hWnd, nullptr);  // NOLINT(misc-redundant-expression)
+                if (command == 0)
+                {
+                    return;
+                }
+
+                PostMessage(hWnd, WM_SYSCOMMAND, command, NULL);
+            }
+        }
     }
 
     Windows::Foundation::IAsyncOperation<Controls::TabViewItem> MainWindow::CreateNewTab(Windows::Storage::StorageFile const file)  // NOLINT(performance-unnecessary-value-param)

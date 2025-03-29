@@ -123,8 +123,8 @@
 #include "Models/XmmRegister.h"
 #include "Models/Wow64ThreadContext.h"
 #include "Models/X86ThreadContext.h"
-#include "Models\Float80.h"
-#include "Models\Float80Register.h"
+#include "Models/Float80.h"
+#include "Models/Float80Register.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation
