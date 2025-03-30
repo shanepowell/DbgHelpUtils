@@ -125,6 +125,7 @@
 #include "Models/X86ThreadContext.h"
 #include "Models/Float80.h"
 #include "Models/Float80Register.h"
+#include "Models/ThreadStack.h"
 
 
 namespace winrt::MiniDumpExplorer::implementation

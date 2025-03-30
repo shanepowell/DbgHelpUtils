@@ -27,8 +27,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <!-- 10 -->
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/> <!-- 12 -->
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Stream Index" />
@@ -99,19 +97,12 @@
                                               Tag="Parameter"/>
                 </local:DataGrid.Columns>
             </local:DataGrid>
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="Call Stack" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
-            <!--<TreeView 
-                x:Name="stackEntries"
-                Grid.Row="10"
-                Grid.Column="1"
-                SelectionMode="Single"
-                ItemsSource="{x:Bind Thread.StackEntries,Mode=OneWay}"
-                ItemTemplate="{StaticResource StackEntryViewTemplate}"
-                Expanding="OnTreeViewItemExpanding"
-                Margin="0,5,0,0"
-            />-->
-            <TextBlock Grid.Row="11" Grid.Column="0" Text="Thread Context" VerticalAlignment="top"  Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
-            <local:ThreadContextView Grid.Row="12" Grid.Column="1" ThreadContext="{x:Bind ThreadContext}" />
+
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Stack" VerticalAlignment="top" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+            <local:ThreadStackView Grid.Row="9" Grid.Column="1" Stack="{x:Bind Stack}" />
+
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Thread Context" VerticalAlignment="top" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+            <local:ThreadContextView Grid.Row="10" Grid.Column="1" ThreadContext="{x:Bind ThreadContext}" />
         </Grid>
     </ScrollViewer>
 </Page>

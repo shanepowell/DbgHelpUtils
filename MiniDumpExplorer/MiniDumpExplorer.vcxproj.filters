@@ -119,6 +119,9 @@
     <Page Include="ViewModels\Float80RegisterView.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ThreadStackView.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -676,6 +679,9 @@
     <ClCompile Include="Models\Float80Register.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="Models\ThreadStack.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1023,6 +1029,7 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

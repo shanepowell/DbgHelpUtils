@@ -1,0 +1,15 @@
+import "Models/MiniDumpMemoryDescriptor.idl";
+import "Models/ThreadStackEntry.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    [Windows.UI.Xaml.Data.Bindable]
+    runtimeclass ThreadStack : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadStack();
+
+        MiniDumpMemoryDescriptor Stack { get; };
+        IObservableVector<ThreadStackEntry> StackEntries { get; };
+    }
+}

@@ -23,8 +23,6 @@ namespace winrt::MiniDumpExplorer::implementation
 
         MiniDumpExplorer::ThreadListStreamEntry Thread() const { return thread_; }
 
-        static void OnTreeViewItemExpanding(Microsoft::UI::Xaml::Controls::TreeView const& sender, Microsoft::UI::Xaml::Controls::TreeViewExpandingEventArgs const& args);
-
     private:
         void SetupFlyoutMenus();
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;

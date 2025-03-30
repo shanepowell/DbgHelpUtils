@@ -542,6 +542,10 @@
       <DependentUpon>Models\ThreadNamesStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Models\ThreadStack.h">
+      <DependentUpon>Models\ThreadStack.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Models\ThreadStackEntry.h">
       <DependentUpon>Models\ThreadStackEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -679,6 +683,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\ThreadNamesStreamPage.xaml.h">
       <DependentUpon>ViewModels\ThreadNamesStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ThreadStackView.xaml.h">
+      <DependentUpon>ViewModels\ThreadStackView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\TokenStreamPage.xaml.h">
@@ -876,6 +884,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ThreadNamesStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\ThreadStackView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\TokenStreamPage.xaml">
@@ -1247,6 +1258,9 @@
     <ClCompile Include="Models\ThreadNamesStreamEntriesDataSource.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Models\ThreadStack.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Models\ThreadStackEntry.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -1370,6 +1384,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\ThreadNamesStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\ThreadNamesStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ThreadStackView.xaml.cpp">
+      <DependentUpon>ViewModels\ThreadStackView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\TokenStreamPage.xaml.cpp">
@@ -1893,6 +1911,10 @@
       <DependentUpon>Models\ThreadNamesStreamEntriesDataSource.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Models\ThreadStack.idl">
+      <DependentUpon>Models\ThreadStack.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Models\ThreadStackEntry.idl">
       <DependentUpon>Models\ThreadStackEntry.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -2027,6 +2049,10 @@
     </Midl>
     <Midl Include="ViewModels\ThreadNamesStreamPage.idl">
       <DependentUpon>ViewModels\ThreadNamesStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\ThreadStackView.idl">
+      <DependentUpon>ViewModels\ThreadStackView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\TokenStreamPage.idl">

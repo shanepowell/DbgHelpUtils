@@ -1,0 +1,12 @@
+import "Models/ThreadStack.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ThreadStackView : Microsoft.UI.Xaml.Controls.UserControl, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ThreadStackView();
+
+        ThreadStack Stack { get; set; };
+    }
+}

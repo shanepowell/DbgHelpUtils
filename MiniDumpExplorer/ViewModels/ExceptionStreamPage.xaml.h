@@ -12,7 +12,7 @@ namespace winrt::MiniDumpExplorer::implementation
     struct ExceptionParametersDataSource;
     struct MiniDumpException;
     struct ThreadContext;
-    struct ThreadListStreamEntry;
+    struct ThreadStack;
 
     struct ExceptionStreamPage : ExceptionStreamPageT<ExceptionStreamPage>, GlobalOptionsNotifyPropertyChangedBase<ExceptionStreamPage>, MiniDumpPageBase<ExceptionStreamPage>
     {
@@ -35,9 +35,10 @@ namespace winrt::MiniDumpExplorer::implementation
 
         [[nodiscard]] IDataGridDataSource ExceptionParametersSource() const noexcept { return exceptionParametersDataSource_; }
 
+        MiniDumpExplorer::ThreadStack Stack() const { return stack_; }
         MiniDumpExplorer::ThreadContext ThreadContext() const { return threadContext_; }
 
-        void ShowThreadPage(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ShowThreadPage(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e) const;
 
     private:
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
@@ -49,6 +50,7 @@ namespace winrt::MiniDumpExplorer::implementation
         hstring name_;
         MiniDumpExplorer::MiniDumpException exception_{};
         MiniDumpExplorer::ExceptionParametersDataSource exceptionParametersDataSource_{};
+        MiniDumpExplorer::ThreadStack stack_;
         MiniDumpExplorer::ThreadContext threadContext_{};
         std::optional<dlg_help_utils::thread_stack> stackInfo_;
         MiniDumpExplorer::MiniDumpPage miniDumpPage_{nullptr};

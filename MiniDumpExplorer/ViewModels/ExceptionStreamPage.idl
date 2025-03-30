@@ -1,6 +1,7 @@
 import "Controls/DataGrid/DataGridDataSource.idl";
 import "Models/MiniDumpException.idl";
 import "Models/ThreadContext.idl";
+import "Models/ThreadStack.idl";
 
 namespace MiniDumpExplorer
 {
@@ -14,6 +15,7 @@ namespace MiniDumpExplorer
         String ThreadName { get; };
         MiniDumpException Exception { get; };
         IDataGridDataSource ExceptionParametersSource { get; };
+        ThreadStack Stack { get; };
         ThreadContext ThreadContext { get; };
     }
 }

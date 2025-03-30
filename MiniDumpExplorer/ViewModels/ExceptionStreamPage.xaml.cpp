@@ -5,9 +5,12 @@
 #include "ThreadExListStreamPage.h"
 
 #include "DbgHelpUtils/find_thread_stack.h"
+#include "DbgHelpUtils/stream_stack_dump.h"
+#include "DbgHelpUtils/thread_list_stream.h"
 #include "DbgHelpUtils/thread_names_list_stream.h"
+#include "DbgHelpUtils/wide_runtime_error.h"
 #include "Models/ThreadContext.h"
-#include "Models/ThreadListStreamEntry.h"
+#include "Models/ThreadStack.h"
 #include "Models/MiniDumpException.h"
 #include "Helpers/UIHelper.h"
 
@@ -45,7 +48,7 @@ namespace winrt::MiniDumpExplorer::implementation
         SetupFlyoutMenus();
     }
 
-    void ExceptionStreamPage::ShowThreadPage([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e)
+    void ExceptionStreamPage::ShowThreadPage([[maybe_unused]] Windows::Foundation::IInspectable const& sender, [[maybe_unused]] RoutedEventArgs const& e) const
     {
         if (!stackInfo_.has_value())
         {
@@ -75,17 +78,27 @@ namespace winrt::MiniDumpExplorer::implementation
 
         threadContext_.as<implementation::ThreadContext>()->Set(exception_stream_.thread_context());
 
-        dlg_help_utils::thread_names_list_stream const thread_list{miniDump};
-        if (auto const name = thread_list.get_thread_name_for_thread_id(exception_stream_.exception().ThreadId);
+        dlg_help_utils::thread_names_list_stream const thread_names_list_stream{miniDump};
+        if (auto const name = thread_names_list_stream.get_thread_name_for_thread_id(exception_stream_.exception().ThreadId);
             name.is_valid())
         {
             name_ = name.name();
         }
+
         stackInfo_ = find_thread_stack(miniDump, exception_stream_.exception().ThreadId);
+
+        if (stackInfo_.has_value() && stackInfo_->stream_type == ThreadListStream)
+        {
+            dlg_help_utils::thread_list_stream const thread_list{ miniDump, stackInfo_->list_stream_index };
+            auto thread = thread_list.get_thread(stackInfo_->stream_index);
+            stack_.as<ThreadStack>()->Set(std::move(thread));
+            stack_.as<ThreadStack>()->LoadStack(miniDump);
+        }
 
         RaisePropertyChanged(L"ThreadId");
         RaisePropertyChanged(L"Exception");
         RaisePropertyChanged(L"ThreadContext");
+        RaisePropertyChanged(L"Stack");
     }
 
     void ExceptionStreamPage::SetupFlyoutMenus()
@@ -97,7 +110,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         switch (stackInfo_->stream_type)
         {
-            case ThreadListStream:
+            case ThreadListStream:  // NOLINT(bugprone-branch-clone)
                 return ThreadListStreamPage::CreateFindNavigationTag(stackInfo_->list_stream_index, stackInfo_->stream_index);
 
             case ThreadExListStream:
@@ -106,6 +119,5 @@ namespace winrt::MiniDumpExplorer::implementation
             default:
                 throw std::invalid_argument("Unknown thread list type");
         }
-        
     }
 }

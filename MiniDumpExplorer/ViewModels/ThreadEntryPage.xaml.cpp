@@ -4,7 +4,6 @@
 #include "DbgHelpUtils/thread_list_stream.h"
 #include "Helpers/UIHelper.h"
 #include "Models/ThreadListStreamEntry.h"
-#include "Models/ThreadStackEntry.h"
 
 #if __has_include("ThreadEntryPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -25,27 +24,12 @@ namespace winrt::MiniDumpExplorer::implementation
         SetupFlyoutMenus();
     }
 
-    void ThreadEntryPage::OnTreeViewItemExpanding([[maybe_unused]] Controls::TreeView const& sender, Controls::TreeViewExpandingEventArgs const& args)
-    {
-        if (auto const item = args.Item().as<ThreadStackEntry>();
-            item && !item->AreChildrenLoaded())
-        {
-            item->LoadChildren();
-        }
-    }
-
     void ThreadEntryPage::SetupFlyoutMenus()
     {
         UIHelper::CreateStandardHexNumberMenu(
             threadId(),
             threadPriority(),
-            threadTEB(),
-            stackStartOfMemoryRange(),
-            stackEndOfMemoryRange()
-        );
-
-        UIHelper::CreateStandardSizeNumberMenu(
-            stackDataSize()
+            threadTEB()
         );
     }
 
