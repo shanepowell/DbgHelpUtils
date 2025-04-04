@@ -9,7 +9,6 @@
 #include "Helpers/SymbolEngineHelper.h"
 #include "Helpers/WindowHelper.h"
 #include "Models/ThreadStackEntry.h"
-#include "Models/ThreadContext.h"
 #include "Utility/logger.h"
 
 #if __has_include("ThreadStack.g.cpp")

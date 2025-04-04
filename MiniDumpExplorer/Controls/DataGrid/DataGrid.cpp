@@ -22,6 +22,7 @@
 #include "DataGridRowsPresenter.h"
 #include "DbgHelpUtils/double_utils.h"
 #include "DbgHelpUtils/exit_scope.h"
+#include "DbgHelpUtils/generator.h"
 #include "Helpers/ControlHelpers.h"
 #include "Helpers/TypeHelper.h"
 #include "Helpers/UIHelper.h"
@@ -7567,7 +7568,7 @@ namespace winrt::MiniDumpExplorer::implementation
     bool DataGrid::ValidateEditingRow(bool const scrollIntoView, bool const wireEvents)
     {
         std::vector<Utility::ValidationResult> validationResults;
-        if (initializingNewItem_)
+        if (initializingNewItem_)  // NOLINT(bugprone-branch-clone)
         {
             // We only want to run property validation if we're initializing a new item. Instead of
             // clearing all the errors, we will only remove those associated with the current column.

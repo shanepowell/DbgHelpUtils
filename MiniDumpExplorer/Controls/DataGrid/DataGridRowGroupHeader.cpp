@@ -2,7 +2,6 @@
 #include "DataGridRowGroupHeader.h"
 
 #include <winrt/Microsoft.UI.Xaml.Input.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.Primitives.h>
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
 #include "DataGrid.h"

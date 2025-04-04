@@ -7,6 +7,7 @@
 #include <format>
 #include <ranges>
 #include <unordered_set>
+#include <utility>
 
 // ReSharper disable once CommentTypo
 // Found in "$(VSINSTALLDIR)\DIA SDK\include"
@@ -2505,19 +2506,21 @@ namespace
                 return false;
             }
 
-            if ((symbol_info->Flags & (SYMFLAG_REGREL | SYMFLAG_REGISTER)) != 0 && 
+            auto const is_relative = (symbol_info->Flags & (SYMFLAG_REGREL | SYMFLAG_FRAMEREL)) != 0;
+            if (is_relative && 
                 (!variable.registry_value.has_value() || static_cast<CV_HREG_e>(symbol_info->Register) != variable.registry_value.value().register_type))
             {
                 return false;
             }
 
 
-            if ((symbol_info->Flags & (SYMFLAG_REGREL | SYMFLAG_FRAMEREL)) != 0 && 
-                (!variable.frame_data.has_value() || variable.frame_data.value().data_offset != static_cast<int>(symbol_info->Address)))
+            if (is_relative && 
+                (!variable.frame_data.has_value() || std::cmp_not_equal(variable.frame_data.value().data_offset, symbol_info->Address)))
             {
                 return false;
             }
 
+            // ReSharper disable once CppUnreachableCode
             return true;
         });
     }

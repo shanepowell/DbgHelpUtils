@@ -52,7 +52,7 @@ namespace winrt::MiniDumpExplorer::implementation
         stack_.as<ThreadStack>()->Set(thread_);
     }
 
-    void ThreadListStreamEntry::LoadStack(dlg_help_utils::mini_dump const& mini_dump)
+    void ThreadListStreamEntry::LoadStack(dlg_help_utils::mini_dump const& mini_dump) const
     {
         stack_.as<ThreadStack>()->LoadStack(mini_dump);
     }

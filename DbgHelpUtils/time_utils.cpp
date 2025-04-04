@@ -1,5 +1,7 @@
 ﻿#include "time_utils.h"
 
+#include <utility>
+
 #include "time_units.h"
 #include "wide_runtime_error.h"
 #include "windows_error.h"
@@ -167,7 +169,7 @@ namespace dlg_help_utils::time_utils
                 st_time_zone = &localTzi;
             }
 
-            switch(locale_info.time_zone_id_year_ == st.wYear ? locale_info.time_zone_id_ : calculate_timezone_id(st, *st_time_zone))
+            switch(std::cmp_equal(locale_info.time_zone_id_year_, st.wYear) ? locale_info.time_zone_id_ : calculate_timezone_id(st, *st_time_zone))
             {
             case TIME_ZONE_ID_DAYLIGHT:
                 return to_timezone_name(st_time_zone->DaylightName, *st_time_zone);
@@ -188,7 +190,7 @@ namespace dlg_help_utils::time_utils
                 throw exceptions::wide_runtime_error{L"time zone information can't be null"};
             }
 
-            switch(locale_info.time_zone_id_year_ == st.wYear ? locale_info.time_zone_id_ : calculate_timezone_id(st, *locale_info.time_zone_))
+            switch(std::cmp_equal(locale_info.time_zone_id_year_, st.wYear) ? locale_info.time_zone_id_ : calculate_timezone_id(st, *locale_info.time_zone_))
             {
             case TIME_ZONE_ID_DAYLIGHT:
                 return locale_info.time_zone_->Bias + locale_info.time_zone_->DaylightBias;

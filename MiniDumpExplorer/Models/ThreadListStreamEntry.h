@@ -15,7 +15,7 @@ namespace winrt::MiniDumpExplorer::implementation
         ThreadListStreamEntry();
 
         void Set(uint32_t index, dlg_help_utils::stream_thread thread);
-        void LoadStack(dlg_help_utils::mini_dump const& mini_dump);
+        void LoadStack(dlg_help_utils::mini_dump const& mini_dump) const;
 
         uint32_t Index() const { return index_; }
         uint32_t Id() const { return thread_->ThreadId; }

@@ -78,7 +78,7 @@ namespace winrt::MiniDumpExplorer::implementation
             { mini_dump_stream_type::enum_names::ExceptionStream, xaml_typename<ExceptionStreamPage>() },
             { mini_dump_stream_type::enum_names::SystemInfoStream, xaml_typename<SystemInfoStreamPage>() },
             { mini_dump_stream_type::enum_names::ThreadExListStream, xaml_typename<ThreadExListStreamPage>() }, // no dmp examples to test against
-            // { ThreadExListEntryStreamTag, xaml_typename<ThreadExEntryPage>() },
+            // { ThreadExListEntryStreamTag, xaml_typename<ThreadExEntryPage>() }, // no dmp examples to test against
             { mini_dump_stream_type::enum_names::Memory64ListStream, xaml_typename<Memory64ListStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamA, xaml_typename<CommentStreamPage>() },
             { mini_dump_stream_type::enum_names::CommentStreamW, xaml_typename<CommentStreamPage>() },

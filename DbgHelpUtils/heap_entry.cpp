@@ -2,6 +2,7 @@
 
 #include <array>
 #include <format>
+#include <utility>
 
 #include "cache_manager.h"
 #include "common_symbol_names.h"
@@ -185,7 +186,7 @@ namespace dlg_help_utils::heap
     {
         auto const size_data = buffer_.get() + cache_data_->heap_entry_size_field_data.field_offset;
         if(auto const checksum = size_data[0] ^ size_data[1] ^ size_data[2];
-            small_tag_index() != checksum)
+            std::cmp_not_equal(small_tag_index(), checksum))
         {
             return false;
         }
@@ -261,7 +262,7 @@ namespace dlg_help_utils::heap
                 ust_end_gap_length = bytes{end_gap_length.value()};
             }
 
-            if(end_gap_length.has_value() && end_gap_length.value() >= end_gap_offset)
+            if(end_gap_length.has_value() && std::cmp_greater_equal(end_gap_length.value(), end_gap_offset))
             {
                 auto const gap = end_gap_length.value() - end_gap_offset;
                 unused_bytes_method = unused_bytes_type::unused_bytes_ust_header_gap;
