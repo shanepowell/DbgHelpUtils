@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "SubPageNavigationEntries.h"
 
+#include "ThreadExListStreamPage.h"
 #include "ThreadListStreamPage.h"
 
 using namespace winrt;
@@ -12,6 +13,7 @@ namespace
     std::unordered_map<MINIDUMP_STREAM_TYPE, std::function<void (Controls::NavigationViewItem const&, MiniDumpExplorer::MiniDumpPageParameters const&, mini_dump const&)>> StreamTypeToSubNavigationItems =
         {
             {ThreadListStream, MiniDumpExplorer::implementation::ThreadListStreamPage::CreateNavigationViewItemEntriesForStream},
+            {ThreadExListStream, MiniDumpExplorer::implementation::ThreadExListStreamPage::CreateNavigationViewItemEntriesForStream},
         };
 }
 

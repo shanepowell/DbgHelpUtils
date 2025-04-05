@@ -35,20 +35,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- 0 -->
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/> <!-- 3 -->
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Start" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-        <TextBlock x:Name="stackStartOfMemoryRange" Grid.Row="0" Grid.Column="1" Text="{x:Bind Stack.Stack.StartOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="End" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-        <TextBlock x:Name="stackEndOfMemoryRange" Grid.Row="1" Grid.Column="1" Text="{x:Bind Stack.Stack.EndOfMemoryRange,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-        <TextBlock x:Name="stackDataSize" Grid.Row="2" Grid.Column="1" Text="{x:Bind Stack.Stack.DataSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Call Stack" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Stack Memory" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind Stack.HasStackMemoryRange,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+        <local:MiniDumpMemoryDescriptorView Grid.Row="0" Grid.Column="1" Value="{x:Bind Stack.StackMemoryRange}" Visibility="{x:Bind Stack.HasStackMemoryRange,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Call Stack" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,15,0,0" />
         <TreeView 
             x:Name="stackEntries"
-            Grid.Row="3"
+            Grid.Row="1"
             Grid.Column="1"
             SelectionMode="Single"
             ItemsSource="{x:Bind Stack.StackEntries,Mode=OneWay}"

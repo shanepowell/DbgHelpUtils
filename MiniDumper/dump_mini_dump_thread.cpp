@@ -501,7 +501,8 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
                     , mini_dump
                     , symbol_engine
                     , thread->Stack.StartOfMemoryRange
-                    , thread.stack(), thread->Stack.Memory.DataSize
+                    , thread.stack()
+                    , thread->Stack.Memory.DataSize
                     , thread.thread_context()
                     , 5
                     , options.display_stack_options());
@@ -533,7 +534,7 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
             {
                 hex_dump::hex_dump(log
                     , thread.backing_store()
-                    , options.hex_dump_memory_size(thread->BackingStore.Memory.DataSize)
+                    , options.hex_dump_memory_size(thread.backing_store_size())
                     , 5
                     , write_header_t{true}
                     , 16

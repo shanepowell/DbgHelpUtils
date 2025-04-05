@@ -122,6 +122,12 @@
     <Page Include="ViewModels\ThreadStackView.xaml">
       <Filter>ViewModels</Filter>
     </Page>
+    <Page Include="ViewModels\ThreadExEntryPage.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
+    <Page Include="ViewModels\MiniDumpMemoryDescriptorView.xaml">
+      <Filter>ViewModels</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />

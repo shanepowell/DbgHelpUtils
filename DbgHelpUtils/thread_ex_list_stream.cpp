@@ -41,4 +41,15 @@ namespace dlg_help_utils
 
         return std::nullopt;
     }
+
+    stream_thread_ex thread_ex_list_stream::get_thread(size_t const index) const
+    {
+        thread_names_list_stream const names_list{*dump_};
+        return get_thread(index, names_list);
+    }
+
+    stream_thread_ex thread_ex_list_stream::get_thread(size_t const index, thread_names_list_stream const& names_list) const
+    {
+        return stream_thread_ex{index, *dump_, thread_list_->Threads[index], names_list };
+    }
 }

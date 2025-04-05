@@ -1,4 +1,8 @@
-    namespace MiniDumpExplorer
+import "Models/MiniDumpMemoryDescriptor.idl";
+import "Models/ThreadContext.idl";
+import "Models/ThreadStack.idl";
+
+namespace MiniDumpExplorer
 {
     [default_interface]
     [Windows.UI.Xaml.Data.Bindable]
@@ -14,5 +18,10 @@
         String PriorityClassType { get; };
         UInt32 SuspendCount { get; };
         UInt64 TEB { get; };
+        Boolean HasBackingStore{ get; };
+        MiniDumpMemoryDescriptor BackingStore { get; };
+        String BackingStoreHexDump { get; };
+        ThreadStack Stack { get; };
+        ThreadContext ThreadContext{ get; };
     }
 }

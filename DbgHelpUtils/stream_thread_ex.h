@@ -28,6 +28,7 @@ namespace dlg_help_utils
         [[nodiscard]] void const* stack() const { return stack_; }
         [[nodiscard]] stream_thread_context const& thread_context() const { return thread_context_; }
         [[nodiscard]] void const* backing_store() const { return backing_store_; }
+        [[nodiscard]] auto backing_store_size() const { return thread_->BackingStore.Memory.DataSize; }
         [[nodiscard]] std::wstring_view const& thread_name() const { return thread_name_.name(); }
         [[nodiscard]] size_t index() const { return index_; }
 

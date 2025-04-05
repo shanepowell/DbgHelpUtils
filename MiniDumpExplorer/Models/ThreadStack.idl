@@ -9,7 +9,8 @@ namespace MiniDumpExplorer
     {
         ThreadStack();
 
-        MiniDumpMemoryDescriptor Stack { get; };
+        Boolean HasStackMemoryRange { get; };
+        MiniDumpMemoryDescriptor StackMemoryRange { get; };
         IObservableVector<ThreadStackEntry> StackEntries { get; };
     }
 }

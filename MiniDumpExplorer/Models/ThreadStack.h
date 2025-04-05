@@ -3,6 +3,7 @@
 #include "ThreadStack.g.h"
 
 #include "GlobalOptionsNotifyPropertyChangedBase.h"
+#include "DbgHelpUtils/stream_thread_ex.h"
 #include "Utility/mini_dump_walker_store.h"
 
 namespace dlg_help_utils::dbg_help
@@ -20,14 +21,21 @@ namespace winrt::MiniDumpExplorer::implementation
         ThreadStack();
 
         void Set(dlg_help_utils::stream_thread thread);
-        fire_and_forget LoadStack(dlg_help_utils::mini_dump const& mini_dump);
+        void Set(dlg_help_utils::stream_thread_ex thread);
+        void LoadStack(dlg_help_utils::mini_dump const& mini_dump);
 
-        MiniDumpExplorer::MiniDumpMemoryDescriptor Stack() const { return stack_; }
+        bool HasStackMemoryRange() const { return stackMemoryRange_ != nullptr; }
+        MiniDumpExplorer::MiniDumpMemoryDescriptor StackMemoryRange() const { return stackMemoryRange_; }
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::ThreadStackEntry> StackEntries() const { return stackEntries_; }
 
     private:
+        fire_and_forget LoadThreadStack(dlg_help_utils::mini_dump const& mini_dump);
+        fire_and_forget LoadThreadExStack(dlg_help_utils::mini_dump const& mini_dump);
+
+    private:
         dlg_help_utils::stream_thread thread_{};
-        MiniDumpExplorer::MiniDumpMemoryDescriptor stack_;
+        dlg_help_utils::stream_thread_ex threadEx_{};
+        MiniDumpExplorer::MiniDumpMemoryDescriptor stackMemoryRange_;
         Windows::Foundation::Collections::IObservableVector<MiniDumpExplorer::ThreadStackEntry> stackEntries_{single_threaded_observable_vector<MiniDumpExplorer::ThreadStackEntry>()};
         bool stackLoading_{false};
     };

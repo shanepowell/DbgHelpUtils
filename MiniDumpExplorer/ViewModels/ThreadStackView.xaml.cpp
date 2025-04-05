@@ -34,13 +34,5 @@ namespace winrt::MiniDumpExplorer::implementation
 
     void ThreadStackView::SetupFlyoutMenus()
     {
-        UIHelper::CreateStandardHexNumberMenu(
-            stackStartOfMemoryRange(),
-            stackEndOfMemoryRange()
-        );
-
-        UIHelper::CreateStandardSizeNumberMenu(
-            stackDataSize()
-        );
     }
 }

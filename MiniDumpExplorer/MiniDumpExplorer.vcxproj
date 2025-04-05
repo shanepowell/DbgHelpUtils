@@ -608,6 +608,10 @@
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\MiniDumpMemoryDescriptorView.xaml.h">
+      <DependentUpon>ViewModels\MiniDumpMemoryDescriptorView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\SubPageNavigationEntries.h" />
     <ClInclude Include="ViewModels\ThreadContextView.xaml.h">
       <DependentUpon>ViewModels\ThreadContextView.xaml</DependentUpon>
@@ -667,6 +671,10 @@
     </ClInclude>
     <ClInclude Include="ViewModels\SystemMemoryInfoStreamPage.xaml.h">
       <DependentUpon>ViewModels\SystemMemoryInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ThreadExEntryPage.xaml.h">
+      <DependentUpon>ViewModels\ThreadExEntryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModels\ThreadExListStreamPage.h">
@@ -829,6 +837,9 @@
     <Page Include="ViewModels\M128AView.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ViewModels\MiniDumpMemoryDescriptorView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ViewModels\ThreadContextView.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -872,6 +883,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\SystemMemoryInfoStreamPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewModels\ThreadExEntryPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewModels\ThreadExListStreamPage.xaml">
@@ -1309,6 +1323,10 @@
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\MiniDumpMemoryDescriptorView.xaml.cpp">
+      <DependentUpon>ViewModels\MiniDumpMemoryDescriptorView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\SubPageNavigationEntries.cpp" />
     <ClCompile Include="ViewModels\ThreadContextView.xaml.cpp">
       <DependentUpon>ViewModels\ThreadContextView.xaml</DependentUpon>
@@ -1368,6 +1386,10 @@
     </ClCompile>
     <ClCompile Include="ViewModels\SystemMemoryInfoStreamPage.xaml.cpp">
       <DependentUpon>ViewModels\SystemMemoryInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ThreadExEntryPage.xaml.cpp">
+      <DependentUpon>ViewModels\ThreadExEntryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\ThreadExListStreamPage.cpp">
@@ -1975,6 +1997,10 @@
       <DependentUpon>ViewModels\M128AView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ViewModels\MiniDumpMemoryDescriptorView.idl">
+      <DependentUpon>ViewModels\MiniDumpMemoryDescriptorView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ViewModels\ThreadContextView.idl">
       <DependentUpon>ViewModels\ThreadContextView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -2033,6 +2059,10 @@
     </Midl>
     <Midl Include="ViewModels\SystemMemoryInfoStreamPage.idl">
       <DependentUpon>ViewModels\SystemMemoryInfoStreamPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\ThreadExEntryPage.idl">
+      <DependentUpon>ViewModels\ThreadExEntryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\ThreadExListStreamPage.idl">

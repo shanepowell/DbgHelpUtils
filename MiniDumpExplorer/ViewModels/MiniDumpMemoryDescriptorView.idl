@@ -1,0 +1,12 @@
+import "Models/MiniDumpMemoryDescriptor.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass MiniDumpMemoryDescriptorView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        MiniDumpMemoryDescriptorView();
+
+        MiniDumpMemoryDescriptor Value{ get; set; };
+    }
+}

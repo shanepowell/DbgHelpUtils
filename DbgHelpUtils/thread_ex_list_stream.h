@@ -29,6 +29,10 @@ namespace dlg_help_utils
         [[nodiscard]] std::optional<stream_thread_ex> find_thread(ULONG32 thread_id,
                                                                   thread_names_list_stream const& names_list) const;
 
+        [[nodiscard]] stream_thread_ex get_thread(size_t index) const;
+        [[nodiscard]] stream_thread_ex get_thread(size_t index,
+                                               thread_names_list_stream const& names_list) const;
+
     private:
         mini_dump const* dump_{nullptr};
         bool found_{false};

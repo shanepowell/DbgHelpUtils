@@ -1,0 +1,12 @@
+import "Models/ThreadExListStreamEntry.idl";
+
+namespace MiniDumpExplorer
+{
+    [default_interface]
+    runtimeclass ThreadExEntryPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ThreadExEntryPage();
+
+        ThreadExListStreamEntry Thread { get; };
+    }
+}
