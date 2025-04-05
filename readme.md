@@ -11,11 +11,11 @@
 
 DbgHelp Utilities Library is a simple wrapper around the windows dbghelp.dll library to help break down the structures in a user mode dump file. Specifically it helps in being able to list all the heap allocated memory areas in a dump file.
 
-The library is compiled with VS 2019 16.11.3 or the pre-release version of VS 2022 v17 preview 4.1 and using the C++ latest compiler flag.
+The library is compiled with VS 2022 v17.13 and using the C++ latest compiler flag.
 The main library has no dependencies other than the VS c++ runtime.
-The sample application MiniDumper (and the test applications) has a submodule dependency on lyra for command line support and json_struct for loading json files.
+The sample application MiniDumper/MiniDumpExplorer (winui 3 desktop) (and the test applications) has vcpkg dependenies on bfgroup-lyra for command line support and glaze for loading json files.
 
-The is sample application MiniDumper, build with the DbgHelp Utilities Library can dump:
+There is sample application MiniDumper/MiniDumpExplorer, build with the DbgHelp Utilities Library can dump:
 * most stream types of a user mini dump file
 * stack trace dumping (exceptions, threads, UST heap allocations)
 * dump NT Heap allocations (frontend, backend and LFH heaps)
