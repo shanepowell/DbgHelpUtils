@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
-#include "generator.h"
 
+#include "generator.h"
 #include "sym_tag_enum.h"
 
 namespace dlg_help_utils::dbg_help

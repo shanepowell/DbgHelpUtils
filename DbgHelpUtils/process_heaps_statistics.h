@@ -1,8 +1,8 @@
 ﻿#pragma once
 // ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
 #include <map>
-#include "generator.h"
 
+#include "generator.h"
 #include "allocation_stack_trace_helper.h"
 
 namespace dlg_help_utils::heap

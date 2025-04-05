@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "generator.h"
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
+#include "generator.h"
 #include "stream_thread_context.h"
 
 namespace dlg_help_utils

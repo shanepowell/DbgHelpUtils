@@ -42,10 +42,6 @@ namespace dlg_help_utils::stream_stack_dump
         , dbg_help::symbol_engine& symbol_engine
         , stream_thread_context const& thread_context
         , size_t indent);
-    generator<stack_function_call_entry> dump_stack(mini_dump_memory_walker& walker
-        , dbg_help::symbol_engine& symbol_engine
-        , stream_thread_context const& thread_context
-        , size_t indent);
     generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack
         , is_x86_target_t is_x86_target

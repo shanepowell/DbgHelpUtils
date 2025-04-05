@@ -5,9 +5,9 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <optional>
-#include "generator.h"
 #include <limits>
 
+#include "generator.h"
 #include "stream_thread_ex.h"
 
 namespace dlg_help_utils

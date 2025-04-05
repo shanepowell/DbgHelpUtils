@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "MiniDumpMemoryDescriptorView.xaml.h"
 
-#include "Helpers/GlobalOptions.h"
 #include "Helpers/UIHelper.h"
 
 #if __has_include("MiniDumpMemoryDescriptorView.g.cpp")

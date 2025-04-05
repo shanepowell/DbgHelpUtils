@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "generator.h"
 
+#include "DbgHelpUtils/generator.h"
 #include "BindingInfo.h"
 
 namespace ValidationUtil

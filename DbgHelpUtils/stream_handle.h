@@ -6,8 +6,8 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include <string_view>
-#include "generator.h"
 
+#include "generator.h"
 #include "stream_handle_object_information.h"
 
 namespace dlg_help_utils

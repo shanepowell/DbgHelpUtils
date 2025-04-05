@@ -3,8 +3,9 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <avrfsdk.h>
-#include "generator.h"
 #include <limits>
+
+#include "generator.h"
 
 namespace dlg_help_utils
 {

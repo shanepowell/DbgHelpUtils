@@ -5,7 +5,6 @@
 #include <DbgHelp.h>
 
 #include "generator.h"
-
 #include "stream_function_entry.h"
 #include "function_table_entry_type.h"
 

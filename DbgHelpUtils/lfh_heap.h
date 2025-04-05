@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
-#include "generator.h"
 
+#include "generator.h"
 #include "nt_heap.h"
 #include "symbol_type_info.h"
 

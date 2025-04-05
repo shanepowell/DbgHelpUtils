@@ -4,9 +4,9 @@
 #include "windows_setup.h"
 #include <DbgHelp.h>
 #include <map>
-#include "generator.h"
 #include <limits>
 
+#include "generator.h"
 #include "stream_handle.h"
 
 namespace dlg_help_utils

@@ -2,9 +2,9 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include "generator.h"
 #include <limits>
 
+#include "generator.h"
 #include "stream_function_descriptor.h"
 #include "function_table_entry_type.h"
 

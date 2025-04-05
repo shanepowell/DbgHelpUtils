@@ -7,8 +7,8 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include "generator.h"
 
+#include "generator.h"
 #include "basic_type.h"
 #include "call_convention.h"
 #include "data_kind.h"

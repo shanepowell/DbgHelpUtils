@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include "generator.h"
 #include <functional>
+
+#include "DbgHelpUtils/generator.h"
 
 namespace winrt::MiniDumpExplorer
 {

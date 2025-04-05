@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <cstdint>
 #include <vector>
-#include "generator.h"
 
+#include "generator.h"
 #include "stream_utils.h"
 #include "symbol_type_info.h"
 

@@ -9,8 +9,8 @@
 #include <optional>
 #include <set>
 #include <string>
-#include "generator.h"
 
+#include "generator.h"
 #include "i_stack_walk_callback.h"
 #include "i_symbol_load_callback.h"
 #include "stream_module_name.h"

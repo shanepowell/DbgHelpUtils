@@ -2,8 +2,9 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "windows_setup.h"
 #include <DbgHelp.h>
-#include "generator.h"
 #include <limits>
+
+#include "generator.h"
 
 namespace dlg_help_utils
 {

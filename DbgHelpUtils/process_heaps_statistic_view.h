@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <map>
 #include <string>
-#include "generator.h"
 
+#include "generator.h"
 #include "size_units.h"
 
 namespace dlg_help_utils::heap

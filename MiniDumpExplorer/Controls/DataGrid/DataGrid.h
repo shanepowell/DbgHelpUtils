@@ -2,7 +2,6 @@
 
 #include "DataGrid.g.h"
 
-#include "generator.h"
 #include <functional>
 
 #include "DataGridCellCoordinates.h"
@@ -13,6 +12,7 @@
 #include "DataGridRowGroupInfo.h"
 #include "DataGridSelectedItemsCollection.h"
 #include "DataGridSelectionAction.h"
+#include "DbgHelpUtils/generator.h"
 #include "Utility/IndexToValueTable.h"
 #include "Utility/ValidationResult.h"
 #include "Utility/WeakEventListener.h"

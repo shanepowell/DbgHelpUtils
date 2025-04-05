@@ -2,8 +2,8 @@
 // ReSharper disable CppClangTidyCppcoreguidelinesAvoidConstOrRefDataMembers
 #include <cstdint>
 #include <optional>
-#include "generator.h"
 
+#include "generator.h"
 #include "i_stack_walk_callback.h"
 #include "mini_dump_memory_stream.h"
 #include "symbol_type_info.h"

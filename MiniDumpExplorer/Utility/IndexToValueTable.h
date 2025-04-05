@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "generator.h"
 #include <numeric>
 #include <vector>
 
+#include "DbgHelpUtils/generator.h"
 #include "range.h"
 
 namespace Utility
@@ -505,7 +505,7 @@ namespace Utility
             else
             {
                 auto lowerRangeIndex = startRangeIndex.value_or(FindRangeIndex(startIndex));
-                if (lowerRangeIndex < 0)
+                if (lowerRangeIndex < 0)  // NOLINT(bugprone-branch-clone)
                 {
                     if (lowerRangeIndex < 0)
                     {
@@ -632,7 +632,7 @@ namespace Utility
         {
             // Same as AddRange after we fix the indices affected by the insertion
             auto const startRangeIndex = lowerRangeIndex != InvalidIndex ? lowerRangeIndex : 0;
-            for (auto i = startRangeIndex; i < values_.size(); i++)
+            for (auto i = startRangeIndex; i < static_cast<int32_t>(values_.size()); i++)
             {
                 auto& range = values_[i];
                 if (range.LowerBound() >= startIndex)

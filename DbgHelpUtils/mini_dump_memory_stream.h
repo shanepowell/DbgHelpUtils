@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <cstdint>
 #include <functional>
-#include "generator.h"
 
+#include "generator.h"
 #include "enable_module_loading.h"
 #include "tagged_bool.h"
 

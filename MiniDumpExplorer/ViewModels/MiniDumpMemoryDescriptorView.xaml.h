@@ -8,6 +8,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
     struct MiniDumpMemoryDescriptorView : MiniDumpMemoryDescriptorViewT<MiniDumpMemoryDescriptorView>
     {
+        // ReSharper disable once CppDefaultedSpecialMemberFunctionIsImplicitlyDeleted
         MiniDumpMemoryDescriptorView() = default;
 
         // ReSharper disable once CppHidingFunction
