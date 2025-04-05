@@ -34,4 +34,9 @@ namespace Utility
     {
         return std::format(" for stream index: {0}", index);
     }
+
+    inline std::string for_thread_id(uint32_t const thread_id)
+    {
+        return std::format(" for thread id: {0:0x}", thread_id);
+    }
 }
