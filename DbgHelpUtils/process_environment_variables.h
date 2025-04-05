@@ -38,9 +38,9 @@ namespace dlg_help_utils::process
 
     private:
         cache_manager* cache_manager_;
-        cache_data const* cache_data_{&setup_globals()};
         stream_stack_dump::mini_dump_memory_walker const* walker_;
         uint64_t process_parameters_address_;
+        cache_data const* cache_data_{&setup_globals()};
     };
 
 }
