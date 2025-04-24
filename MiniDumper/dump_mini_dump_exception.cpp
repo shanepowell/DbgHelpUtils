@@ -14,8 +14,13 @@ using namespace std;
 using namespace dlg_help_utils::stream_hex_dump;
 using namespace dlg_help_utils;
 
-void dump_mini_dump_exception_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
-                                          dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_exception_stream_data(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , size_t const index
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     exception_stream const exception_stream{mini_dump, index};
 
@@ -45,9 +50,17 @@ void dump_mini_dump_exception_stream_data(std::wostream& log, mini_dump const& m
         if (auto const stack_info = find_thread_stack(mini_dump, exception.ThreadId))
         {
             log << L"  Stack:\n";
-            dump_stack_to_stream(log, mini_dump, symbol_engine, stack_info->stack_start_address,
-                                              stack_info->stack, stack_info->stack_size,
-                                              exception_stream.thread_context(), 5, options.display_stack_options());
+            dump_stack_to_stream(
+                log
+                , mini_dump
+                , symbol_engine
+                , custom_registers
+                , stack_info->stack_start_address
+                , stack_info->stack
+                , stack_info->stack_size
+                , exception_stream.thread_context()
+                , 5
+                , options.display_stack_options());
         }
     }
 }

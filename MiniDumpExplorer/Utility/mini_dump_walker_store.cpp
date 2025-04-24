@@ -3,7 +3,11 @@
 
 namespace Utility
 {
-    mini_dump_walker_store::mini_dump_walker_store(dlg_help_utils::mini_dump const& mini_dump, dlg_help_utils::stream_thread const& thread, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
+    mini_dump_walker_store::mini_dump_walker_store(
+        dlg_help_utils::mini_dump const& mini_dump
+        , dlg_help_utils::stream_thread const& thread
+        , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
+        , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
         : memory_list_{ mini_dump }
         , memory64_list_{ mini_dump }
         , function_table_{ mini_dump }
@@ -22,10 +26,15 @@ namespace Utility
             pe_file_memory_mappings_,
             symbol_engine
         }
+        , symbol_data_dumper_{symbol_data_dumper}
     {
     }
 
-    mini_dump_walker_store::mini_dump_walker_store(dlg_help_utils::mini_dump const& mini_dump, dlg_help_utils::stream_thread_ex const& thread, dlg_help_utils::dbg_help::symbol_engine& symbol_engine)
+    mini_dump_walker_store::mini_dump_walker_store(
+        dlg_help_utils::mini_dump const& mini_dump
+        , dlg_help_utils::stream_thread_ex const& thread
+        , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
+        , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
         : memory_list_{ mini_dump }
         , memory64_list_{ mini_dump }
         , function_table_{ mini_dump }
@@ -44,6 +53,7 @@ namespace Utility
             pe_file_memory_mappings_,
             symbol_engine
         }
+        , symbol_data_dumper_{symbol_data_dumper}
     {
     }
 }

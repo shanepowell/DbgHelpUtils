@@ -123,17 +123,45 @@ namespace winrt::MiniDumpExplorer::implementation
                 if(auto stream = walker_store->walker_.get_process_memory_stream(variable_.frame_data->data_address, variable_.frame_data->data_size);  // NOLINT(bugprone-branch-clone)
                     stream.eof())
                 {
-                    os << std::format(L"({}){}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), stream_hex_dump::to_hex_full(variable_.frame_data->data_address), resources::get_failed_to_find_address_postfix());
+                    os << std::format(
+                        L"({}){}{}[{}]{}\n"
+                        , resources::get_failed_to_find_address_prefix()
+                        , name
+                        , resources::get_failed_to_find_address_name_address_separator()
+                        , stream_hex_dump::to_hex_full(variable_.frame_data->data_address)
+                        , resources::get_failed_to_find_address_postfix());
                     line_ = std::move(os).str();
                 }
                 else
                 {
-                    Set(walker_store, symbol_type_utils::variable_symbol_at(walker_store->walker_, std::move(os).str(), variable_.symbol_info, variable_.symbol_info, variable_.frame_data->data_address, stream));
+                    std::unordered_set<uint64_t> visited_pointers;
+                    Set(walker_store
+                        , walker_store->symbol_data_dumper_.variable_symbol_at(
+                            walker_store->walker_
+                            , symbol_type_utils::symbol_visit_flags::none
+                            , std::move(os).str()
+                            , variable_.symbol_info
+                            , variable_.symbol_info
+                            , variable_.frame_data->data_address
+                            , stream
+                            , {}
+                            , visited_pointers));
                 }
             }
             else if(variable_.registry_value)
             {
-                Set(walker_store, symbol_type_utils::variable_symbol_at(walker_store->walker_, std::move(os).str(), variable_.symbol_info, variable_.symbol_info, 0, dbg_help::to_stream(variable.registry_value->value)));
+                std::unordered_set<uint64_t> visited_pointers;
+                Set(walker_store
+                    , walker_store->symbol_data_dumper_.variable_symbol_at(
+                        walker_store->walker_
+                        , symbol_type_utils::symbol_visit_flags::none
+                        , std::move(os).str()
+                        , variable_.symbol_info
+                        , variable_.symbol_info
+                        , 0
+                        , dbg_help::to_stream(variable.registry_value->value)
+                        , {}
+                        , visited_pointers));
             }
         }
         else

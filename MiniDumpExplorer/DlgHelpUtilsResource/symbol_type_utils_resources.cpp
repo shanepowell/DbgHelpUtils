@@ -377,4 +377,9 @@ namespace dlg_help_utils::symbol_type_utils::resources
     {
         return Utility::GetResourceValue(L"Resources/SymbolFields");
     }
+
+    std::wstring get_pointer_cycle_detected_title()
+    {
+        return Utility::GetResourceValue(L"Resources/PointerCycleDetected");
+    }
 }

@@ -3783,6 +3783,9 @@
   <data name="SymbolFields" xml:space="preserve">
     <value>fields</value>
   </data>
+  <data name="PointerCycleDetected" xml:space="preserve">
+    <value>*** cycle detected ***</value>
+  </data>
   <data name="workstation" xml:space="preserve">
     <value>workstation</value>
   </data>

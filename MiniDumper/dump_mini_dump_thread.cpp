@@ -375,11 +375,13 @@ void dump_mini_dump_thread_names_stream_data(std::wostream& log, mini_dump const
     log << L'\n';
 }
 
-void dump_mini_dump_thread_list_stream_data(std::wostream& log
+void dump_mini_dump_thread_list_stream_data(
+    std::wostream& log
     , mini_dump const& mini_dump
     , size_t const index
     , dump_file_options const& options
-    , dbg_help::symbol_engine& symbol_engine)
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     thread_list_stream const thread_list{mini_dump, index};
 
@@ -411,7 +413,12 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log
         log << std::format(L"   SuspendCount: {}\n", locale_formatting::to_wstring(thread->SuspendCount));
         log << std::format(L"   TEB: {}\n", to_hex_full(thread->Teb));
 
-        load_and_dump_teb(log, mini_dump, symbol_engine, thread->Teb);
+        load_and_dump_teb(
+            log
+            , mini_dump
+            , symbol_engine
+            , custom_registers
+            , thread->Teb);
 
         dump_mini_dump_thread_context(log, thread.thread_context(), options);
 
@@ -426,13 +433,22 @@ void dump_mini_dump_thread_list_stream_data(std::wostream& log
         {
             if (options.display_symbols())
             {
-                dump_stack_to_stream(log, mini_dump, symbol_engine, thread->Stack.StartOfMemoryRange,
-                                                  thread.stack(), thread->Stack.Memory.DataSize,
-                                                  thread.thread_context(), 5, options.display_stack_options());
+                dump_stack_to_stream(
+                    log
+                    , mini_dump
+                    , symbol_engine
+                    , custom_registers
+                    , thread->Stack.StartOfMemoryRange
+                    , thread.stack()
+                    , thread->Stack.Memory.DataSize
+                    , thread.thread_context()
+                    , 5
+                    , options.display_stack_options());
             }
             else if (options.hex_dump_memory_data())
             {
-                hex_dump::hex_dump(log
+                hex_dump::hex_dump(
+                    log
                     , thread.stack()
                     , options.hex_dump_memory_size(thread->Stack.Memory.DataSize)
                     , 5
@@ -453,7 +469,8 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
     , mini_dump const& mini_dump
     , size_t const index
     , dump_file_options const& options
-    , dbg_help::symbol_engine& symbol_engine)
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     thread_ex_list_stream const thread_ex_list{mini_dump, index};
 
@@ -485,7 +502,12 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
         log << std::format(L"   SuspendCount: {}\n", locale_formatting::to_wstring(thread->SuspendCount));
         log << std::format(L"   TEB: {}\n", to_hex_full(thread->Teb));
 
-        load_and_dump_teb(log, mini_dump, symbol_engine, thread->Teb);
+        load_and_dump_teb(
+            log
+            , mini_dump
+            , symbol_engine
+            , custom_registers
+            , thread->Teb);
 
         using namespace size_units::base_16;
         log << std::format(L"   Stack: {0} - {1} ({2}) ({3})\n"
@@ -497,9 +519,11 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
         {
             if (options.display_symbols())
             {
-                dump_stack_to_stream(log
+                dump_stack_to_stream(
+                    log
                     , mini_dump
                     , symbol_engine
+                    , custom_registers
                     , thread->Stack.StartOfMemoryRange
                     , thread.stack()
                     , thread->Stack.Memory.DataSize
@@ -607,8 +631,20 @@ void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump c
     log << L'\n';
 }
 
-void load_and_dump_teb(std::wostream& log, mini_dump const& mini_dump, dbg_help::symbol_engine& symbol_engine, ULONG64 const teb_address)
+void load_and_dump_teb(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers
+    , ULONG64 const teb_address)
 {
-    symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_engine, common_symbol_names::teb_structure_symbol_name, teb_address);
+    symbol_type_utils::dump_variable_type_at(
+        log
+        , mini_dump
+        , symbol_type_utils::symbol_visit_flags::detect_pointer_cycles
+        , custom_registers
+        , symbol_engine
+        , common_symbol_names::teb_structure_symbol_name
+        , teb_address);
     log << "\n";
 }

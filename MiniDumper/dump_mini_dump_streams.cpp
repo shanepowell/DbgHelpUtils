@@ -51,8 +51,13 @@ void dump_mini_dump_streams(std::wostream& log, mini_dump const& dump_file)
     }
 }
 
-void dump_mini_dump_stream_index(std::wostream& log, mini_dump const& dump_file, size_t const index, dump_file_options const& options,
-                                 dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stream_index(
+    std::wostream& log
+    , mini_dump const& dump_file
+    , size_t const index
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     auto const* header = dump_file.header();
     if (header == nullptr)
@@ -72,11 +77,16 @@ void dump_mini_dump_stream_index(std::wostream& log, mini_dump const& dump_file,
     }
 
     auto const& entry = directory[index];
-    dump_mini_dump_stream_data(log, dump_file, index, entry, options, symbol_engine);
+    dump_mini_dump_stream_data(log, dump_file, index, entry, options, symbol_engine, custom_registers);
 }
 
-void dump_mini_dump_stream_type(std::wostream& log, mini_dump const& dump_file, MINIDUMP_STREAM_TYPE const type,
-                                dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stream_type(
+    std::wostream& log
+    , mini_dump const& dump_file
+    , MINIDUMP_STREAM_TYPE const type
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     auto const stream = stream_utils::find_stream_for_type(dump_file, type);
     if(!stream.has_value())
@@ -85,10 +95,15 @@ void dump_mini_dump_stream_type(std::wostream& log, mini_dump const& dump_file, 
     }
 
     auto const& [index, entry] = stream.value();
-    dump_mini_dump_stream_data(log, dump_file, index, *entry, options, symbol_engine);
+    dump_mini_dump_stream_data(log, dump_file, index, *entry, options, symbol_engine, custom_registers);
 }
 
-void dump_mini_dump_all_stream_indexes(std::wostream& log, mini_dump const& dump_file, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_all_stream_indexes(
+    std::wostream& log
+    , mini_dump const& dump_file
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     auto const* header = dump_file.header();
     if (header == nullptr)
@@ -112,12 +127,18 @@ void dump_mini_dump_all_stream_indexes(std::wostream& log, mini_dump const& dump
             , locale_formatting::to_wstring(entry.Location.Rva)
             , to_hex(entry.Location.DataSize)
             , to_wstring(bytes{entry.Location.DataSize}));
-        dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine);
+        dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine, custom_registers);
     }
 }
 
-void dump_mini_dump_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index, MINIDUMP_DIRECTORY const& entry,
-                                dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stream_data(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , size_t const index
+    , MINIDUMP_DIRECTORY const& entry
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     auto hex_dump_stream = false;
     auto const type = static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType);
@@ -147,7 +168,7 @@ void dump_mini_dump_stream_data(std::wostream& log, mini_dump const& mini_dump, 
         log << L"Unsupported data type\n";
         break;
     case ThreadListStream:
-        dump_mini_dump_thread_list_stream_data(log, mini_dump, index, options, symbol_engine);
+        dump_mini_dump_thread_list_stream_data(log, mini_dump, index, options, symbol_engine, custom_registers);
         break;
     case ModuleListStream:
         dump_mini_dump_module_list_stream_data(log, mini_dump, index, options);
@@ -156,13 +177,13 @@ void dump_mini_dump_stream_data(std::wostream& log, mini_dump const& mini_dump, 
         dump_mini_dump_memory_list_stream_data(log, mini_dump, index, options);
         break;
     case ExceptionStream:
-        dump_mini_dump_exception_stream_data(log, mini_dump, index, options, symbol_engine);
+        dump_mini_dump_exception_stream_data(log, mini_dump, index, options, symbol_engine, custom_registers);
         break;
     case SystemInfoStream:
         dump_mini_dump_system_info_stream_data(log, mini_dump, index);
         break;
     case ThreadExListStream:
-        dump_mini_dump_thread_list_ex_stream_data(log, mini_dump, index, options, symbol_engine);
+        dump_mini_dump_thread_list_ex_stream_data(log, mini_dump, index, options, symbol_engine, custom_registers);
         break;
     case Memory64ListStream:
         dump_mini_dump_memory64_list_stream_data(log, mini_dump, index, options);

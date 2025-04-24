@@ -504,6 +504,9 @@
     <ClCompile Include="float80.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="symbol_data_dumper.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1066,6 +1069,12 @@
     </ClInclude>
     <ClInclude Include="generator.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_data_dumper.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_custom_formatter.h">
+      <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

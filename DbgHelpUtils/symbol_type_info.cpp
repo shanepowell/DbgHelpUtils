@@ -140,6 +140,7 @@ namespace dlg_help_utils::dbg_help
     : process_{process}
     , module_base_{module_base}
     , type_index_{type_index}
+    , address_string_{ make_address_string(module_base, type_index) }
     , cache_info_{std::make_shared<cache_type_info>(cache)}
     {
         if(!export_name.empty())
@@ -158,6 +159,7 @@ namespace dlg_help_utils::dbg_help
     : process_{process}
     , module_base_{module_base}
     , type_index_{type_index}
+    , address_string_{ make_address_string(module_base, type_index) }
     {
     }
 
@@ -461,6 +463,11 @@ namespace dlg_help_utils::dbg_help
         windows_error::throw_windows_api_error(L"SymGetTypeInfo"sv, function, ec);
     }
 
+    std::wstring symbol_type_info::make_address_string(DWORD64 const module_base, ULONG const type_index)
+    {
+        return std::format(L"[0x{0:X}:0x{1:X}]", module_base, type_index);
+    }
+
     generator<symbol_type_info> symbol_type_info::children() const  // NOLINT(bugprone-reserved-identifier)
     {
         if(!cache_info_->has_children())
@@ -559,9 +566,9 @@ namespace dlg_help_utils::dbg_help
         return rv.value();
     }
 
-    std::wstring symbol_type_info::to_address_string() const
+    std::wstring_view symbol_type_info::to_address_string() const
     {
-        return std::format(L"[0x{0:X}:0x{1:X}]", module_base_, type_index_);
+        return address_string_;
     }
 
     // ReSharper disable once CppParameterMayBeConst
@@ -611,5 +618,22 @@ namespace dlg_help_utils::dbg_help
     std::wstring const& symbol_type_info::export_name() const
     {
         return cache_info_->export_name();
+    }
+
+    std::wstring_view symbol_type_info::best_name() const
+    {
+        if (auto const& value = export_name();
+            !value.empty())
+        {
+            return value;
+        }
+
+        if (auto const& value = name();
+            value.has_value() && !value.value().empty())
+        {
+            return value.value();
+        }
+
+        return to_address_string();
     }
 }

@@ -49,7 +49,14 @@ namespace
         return stream_utils::read_machine_size_field_value(peb, address.value()).value_or(0);
     }
 
-    void do_dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, module_list_stream const& module_list, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent, std::unordered_set<unsigned long>& visited_types)
+    void do_dump_symbol_type(
+        std::wostream& log
+        , dbg_help::symbol_type_info const& type
+        , module_list_stream const& module_list
+        , [[maybe_unused]] dump_file_options const& options
+        , size_t const base_offset
+        , size_t const indent
+        , std::unordered_set<unsigned long>& visited_types)
     {
         if(visited_types.contains(type.sym_index()))
         {
@@ -307,7 +314,12 @@ namespace
     }
 }
 
-void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, std::wstring const& type_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_symbol_type(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , std::wstring const& type_name
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -354,7 +366,13 @@ void dump_mini_dump_symbol_type(std::wostream& log, mini_dump const& mini_dump, 
     log << std::format(L"Symbol Type [{}] not found\n", type_name);
 }
 
-void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, std::wstring const& symbol_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_symbol_name(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , std::wstring const& symbol_name
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -392,7 +410,7 @@ void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, 
         auto const address = variable.symbol_type().address();
         if(auto const type = variable.symbol_type().type(); type.has_value() && address.has_value())
         {
-            symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_engine, type.value(), address.value());
+            symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_type_utils::symbol_visit_flags::detect_pointer_cycles, custom_registers, symbol_engine, type.value(), name, address.value());
         }
         else if(auto stream = variable.stream(); !stream.eof())
         {
@@ -410,7 +428,12 @@ void dump_mini_dump_symbol_name(std::wostream& log, mini_dump const& mini_dump, 
     }
 }
 
-void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& mini_dump, std::wstring const& module_name, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_module_symbol_types(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , std::wstring const& module_name
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -441,7 +464,15 @@ void dump_mini_dump_module_symbol_types(std::wostream& log, mini_dump const& min
 namespace
 {
     template<typename T>
-    void dump_address_type_array(std::wostream& log, std::wstring const& dt, mini_dump_memory_stream& variable_stream, uint64_t const memory_size, size_t const elements_per_line, size_t const element_width, size_t const indent, dump_hex_t const dump_hex)
+    void dump_address_type_array(
+        std::wostream& log
+        , std::wstring const& dt
+        , mini_dump_memory_stream& variable_stream
+        , uint64_t const memory_size
+        , size_t const elements_per_line
+        , size_t const element_width
+        , size_t const indent
+        , dump_hex_t const dump_hex)
     {
         log << std::format(L"{0} array @ [{1}] for [{2}] elements:\n"
             , dt
@@ -452,7 +483,13 @@ namespace
     }
 }
 
-void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std::wstring const& address, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_address(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , std::wstring const& address
+    , [[maybe_unused]] dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -467,7 +504,7 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
 
     if(auto [memory_pointer, symbol_type, memory_size, dt] = symbol_type_utils::parse_address(address); !symbol_type.empty())
     {
-        symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_engine, symbol_type, memory_pointer);
+        symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_type_utils::symbol_visit_flags::detect_pointer_cycles, custom_registers, symbol_engine, symbol_type, memory_pointer);
     }
     else
     {
@@ -568,19 +605,28 @@ void dump_mini_dump_address(std::wostream& log, mini_dump const& mini_dump, std:
 }
 
 
-void dump_symbol_type(std::wostream& log, dbg_help::symbol_type_info const& type, module_list_stream const& module_list, [[maybe_unused]] dump_file_options const& options, size_t const base_offset, size_t const indent)
+void dump_symbol_type(
+    std::wostream& log
+    , dbg_help::symbol_type_info const& type
+    , module_list_stream const& module_list
+    , [[maybe_unused]] dump_file_options const& options
+    , size_t const base_offset
+    , size_t const indent)
 {
     std::unordered_set<unsigned long> visited_types;
     do_dump_symbol_type(log, type, module_list, options, base_offset, indent, visited_types);
 }
 
-void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_peb(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , cache_manager& cache
+    , [[maybe_unused]] dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
-    [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), common_symbol_names::peb_structure_symbol_name, peb.peb_address());
-
-    log << L'\n';
     const auto values = dump_gflags_to_strings(peb.nt_global_flag());
     log << std::format(L"NtGlobalFlag: ({})\n", stream_hex_dump::to_hex_full(static_cast<uint32_t>(peb.nt_global_flag())));
     for (auto const& value : values)
@@ -588,16 +634,19 @@ void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_ma
         log << std::format(L"  {}\n", value);
     }
 
+    [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::peb_structure_symbol_name, peb.peb_address());
+
+    log << L'\n';
     if(auto const ldr_address = peb.ldr_address(); ldr_address != 0)
     {
         log << L'\n';
-        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
+        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
     }
 
     if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {
         log << L'\n';
-        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), common_symbol_names::rtl_user_process_parameters_structure_symbol_name, environment_variables.value().process_parameters_address());
+        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::rtl_user_process_parameters_structure_symbol_name, environment_variables.value().process_parameters_address());
 
         log << L"\nProcess Environment Variables:\n";
         for(auto const& value : environment_variables.value().environment())
@@ -609,7 +658,13 @@ void dump_mini_dump_peb(std::wostream& log, mini_dump const& mini_dump, cache_ma
     }
 }
 
-void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, [[maybe_unused]] dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_stack_trace_database(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , cache_manager& cache
+    , [[maybe_unused]] dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , symbol_type_utils::symbol_data_dumper const& custom_registers)
 {
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
@@ -619,5 +674,5 @@ void dump_mini_dump_stack_trace_database(std::wostream& log, mini_dump const& mi
         log << L"No Stack Database in DMP\n";
     }
 
-    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(log, peb.walker(), common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address);
+    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address);
 }

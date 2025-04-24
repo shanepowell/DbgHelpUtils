@@ -15,6 +15,7 @@
 #include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/symbol_engine.h"
+#include "DbgHelpUtils/symbol_data_dumper.h"
 #include "DbgHelpUtils/system_info_utils.h"
 #include "DbgHelpUtils/time_utils.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
@@ -117,6 +118,8 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     cache_manager cache;
     symbol_engine_ui ui{options};
     dbg_help::symbol_engine symbol_engine{ui};
+    symbol_type_utils::symbol_data_dumper custom_registers{};
+
     if (options.dump_header())
     {
         dump_mini_dump_header(log, dump_file, options);
@@ -129,7 +132,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.dump_all_stream_indexes())
     {
-        dump_mini_dump_all_stream_indexes(log, dump_file, options, symbol_engine);
+        dump_mini_dump_all_stream_indexes(log, dump_file, options, symbol_engine, custom_registers);
     }
     else
     {
@@ -137,7 +140,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
         {
             try
             {
-                dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine);
+                dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine, custom_registers);
             }
             catch (wide_runtime_error const& e)
             {
@@ -153,7 +156,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
         {
             try
             {
-                dump_mini_dump_stream_type(log, dump_file, type, options, symbol_engine);
+                dump_mini_dump_stream_type(log, dump_file, type, options, symbol_engine, custom_registers);
             }
             catch (wide_runtime_error const& e)
             {
@@ -168,7 +171,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.display_peb())
     {
-        dump_mini_dump_peb(log, dump_file, cache, options, symbol_engine);
+        dump_mini_dump_peb(log, dump_file, cache, options, symbol_engine, custom_registers);
     }
 
     if(options.display_heap())
@@ -198,7 +201,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.display_stack_trace_database())
     {
-        dump_mini_dump_stack_trace_database(log, dump_file, cache, options, symbol_engine);
+        dump_mini_dump_stack_trace_database(log, dump_file, cache, options, symbol_engine, custom_registers);
     }
 
     for (auto const& module_name : options.dump_types_modules())
@@ -237,7 +240,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     {
         try
         {
-            dump_mini_dump_symbol_name(log, dump_file, symbol_name, options, symbol_engine);
+            dump_mini_dump_symbol_name(log, dump_file, symbol_name, options, symbol_engine, custom_registers);
         }
         catch (wide_runtime_error const& e)
         {
@@ -253,7 +256,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     {
         try
         {
-            dump_mini_dump_address(log, dump_file, address_type, options, symbol_engine);
+            dump_mini_dump_address(log, dump_file, address_type, options, symbol_engine, custom_registers);
         }
         catch (wide_runtime_error const& e)
         {

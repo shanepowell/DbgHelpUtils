@@ -66,10 +66,11 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<symbol_type_and_field_offset> find_field_in_type(std::wstring_view field_name) const;
         [[nodiscard]] symbol_type_and_field_offset get_field_in_type(std::wstring_view type_name, std::wstring_view field_name) const;
 
-        [[nodiscard]] std::wstring to_address_string() const;
+        [[nodiscard]] std::wstring_view to_address_string() const;
         static [[nodiscard]] std::optional<symbol_type_info> from_address_string(symbol_type_info_cache& cache, HANDLE process, std::wstring_view address);
 
         [[nodiscard]] std::wstring const& export_name() const;
+        [[nodiscard]] std::wstring_view best_name() const;
 
         [[nodiscard]] bool operator==(symbol_type_info const& other) const
         {
@@ -98,6 +99,7 @@ namespace dlg_help_utils::dbg_help
         [[nodiscard]] std::optional<ULONG64> get_unlong64_type(IMAGEHLP_SYMBOL_TYPE_INFO type, std::wstring_view const& function, optional_type optional) const;
         [[nodiscard]] std::optional<bool> get_bool_type(IMAGEHLP_SYMBOL_TYPE_INFO type, std::wstring_view const& function, optional_type optional) const;
         static void throw_sym_get_type_info_error(std::wstring_view const& function, optional_type optional);
+        static std::wstring make_address_string(DWORD64 module_base, ULONG type_index);
 
     private:
         class cache_type_info;
@@ -106,6 +108,7 @@ namespace dlg_help_utils::dbg_help
         HANDLE process_{};
         DWORD64 module_base_{};
         ULONG type_index_{};
+        std::wstring address_string_;
         std::shared_ptr<cache_type_info> cache_info_{};
     };
 

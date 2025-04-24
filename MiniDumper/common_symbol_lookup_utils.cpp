@@ -61,7 +61,11 @@ std::optional<uint64_t> find_field_pointer(std::wostream& log, stream_stack_dump
     return find_field_pointer(log, walker, type_symbol_info.value(), symbol_type_name, address, field_name);
 }
 
-std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log, stream_stack_dump::mini_dump_memory_walker const& walker, std::wstring const& symbol_type_name, uint64_t const address)
+std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log
+    , stream_stack_dump::mini_dump_memory_walker const& walker
+    , symbol_type_utils::symbol_data_dumper const& custom_registers
+    , std::wstring const& symbol_type_name
+    , uint64_t const address)
 {
     auto type_symbol_info = get_type_info(log, walker, symbol_type_name);
     if(!type_symbol_info.has_value())
@@ -82,6 +86,6 @@ std::optional<dbg_help::symbol_type_info> dump_field(std::wostream& log, stream_
         log << std::format(L"Failed to find {0} address [{1}] in dump file\n", symbol_type_name, stream_hex_dump::to_hex_full(address));
         return std::nullopt;
     }
-    symbol_type_utils::dump_variable_symbol_at(log, walker, type_symbol_info.value(), type_symbol_info.value(), address, stream);
+    symbol_type_utils::dump_variable_symbol_at(log, walker, symbol_type_utils::symbol_visit_flags::detect_pointer_cycles, custom_registers, type_symbol_info.value(), type_symbol_info.value(), symbol_type_name, address, stream);
     return type_symbol_info;
 }

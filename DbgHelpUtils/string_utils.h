@@ -41,4 +41,22 @@ namespace dlg_help_utils::string_utils
     {
         return trim_end(ch, trim_start(ch, str));
     }
+
+    inline void indent_string(std::wstring& str, size_t const indent, wchar_t const ch = L' ')
+    {
+        if(str.empty() || indent == 0)
+        {
+            return;
+        }
+
+        std::wstring indentStr(indent, ch);
+        str.insert(0, indentStr);
+
+        auto position = str.find_first_of('\n', indent);
+        while(position != std::wstring::npos && position < str.size() - 1)
+        {
+            str.insert(position + 1, indentStr);
+            position = str.find_first_of('\n', position + 1 + indent);
+        }
+    }
 }

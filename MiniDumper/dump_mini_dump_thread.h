@@ -8,6 +8,11 @@ class dump_file_options;
 
 namespace dlg_help_utils
 {
+    namespace symbol_type_utils
+    {
+        class symbol_data_dumper;
+    }
+
     namespace dbg_help
     {
         class symbol_engine;
@@ -22,18 +27,24 @@ void dump_mini_dump_x64_thread_context(std::wostream& log, dlg_help_utils::strea
 void dump_mini_dump_wow64_thread_context(std::wostream& log, WOW64_CONTEXT const& context);
 void dump_mini_dump_x86_thread_context(std::wostream& log, dlg_help_utils::stream_thread_context::context_x86 const& context);
 void dump_mini_dump_thread_names_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
-void dump_mini_dump_thread_list_stream_data(std::wostream& log
+void dump_mini_dump_thread_list_stream_data(
+    std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
     , size_t index
     , dump_file_options const& options
-    , dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
-void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
+    , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers);
+void dump_mini_dump_thread_list_ex_stream_data(
+    std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
     , size_t index
     , dump_file_options const& options
-    , dlg_help_utils::dbg_help::symbol_engine& symbol_engine);
+    , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers);
 void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
-void load_and_dump_teb(std::wostream& log
+void load_and_dump_teb(
+    std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers
     , ULONG64 teb_address);

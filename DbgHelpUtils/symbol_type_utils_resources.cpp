@@ -341,4 +341,9 @@ namespace dlg_help_utils::symbol_type_utils::resources
     {
         return L"fields"s;
     }
+
+    std::wstring get_pointer_cycle_detected_title()
+    {
+        return L"*** cycle detected ***"s;
+    }
 }

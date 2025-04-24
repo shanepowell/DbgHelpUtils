@@ -86,7 +86,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
 
                 {
-                    auto walker_store = std::make_shared<Utility::mini_dump_walker_store>(mini_dump, thread_, symbolEngineHelper.symbol_engine());
+                    auto walker_store = std::make_shared<Utility::mini_dump_walker_store>(mini_dump, thread_, symbolEngineHelper.symbol_engine(), symbolEngineHelper.symbol_data_dumper());
                     dlg_help_utils::scope_exit release_handle{[&walker_store]{ walker_store->walker_.release_handle(); } };
                     logger::Log().LogMessage(log_level::debug, std::format("LoadStack start for thread [{}]", threadId));
 
@@ -153,7 +153,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 if (threadEx_.stack() != nullptr)
                 {
                     {
-                        auto walker_store = std::make_shared<Utility::mini_dump_walker_store>(mini_dump, threadEx_, symbolEngineHelper.symbol_engine());
+                        auto walker_store = std::make_shared<Utility::mini_dump_walker_store>(mini_dump, threadEx_, symbolEngineHelper.symbol_engine(), symbolEngineHelper.symbol_data_dumper());
                         dlg_help_utils::scope_exit release_handle{[&walker_store]{ walker_store->walker_.release_handle(); } };
                         logger::Log().LogMessage(log_level::debug, std::format("LoadStack start for thread [{}]", threadId));
 

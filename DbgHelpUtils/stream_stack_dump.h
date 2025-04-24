@@ -7,6 +7,11 @@
 
 namespace dlg_help_utils
 {
+    namespace symbol_type_utils
+    {
+        class symbol_data_dumper;
+    }
+
     class stream_thread_context;
     class unloaded_module_list_stream;
     class module_list_stream;
@@ -56,6 +61,7 @@ namespace dlg_help_utils::stream_stack_dump
     void dump_stack_to_stream(std::wostream& os
         , mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
+        , symbol_type_utils::symbol_data_dumper const& custom_registers
         , uint64_t stack_start_address
         , void const* stack
         , size_t stack_size

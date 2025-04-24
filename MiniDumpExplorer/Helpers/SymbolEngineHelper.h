@@ -4,6 +4,7 @@
 
 #include "DbgHelpUtils/i_symbol_load_callback.h"
 #include "DbgHelpUtils/symbol_engine.h"
+#include "DbgHelpUtils/symbol_data_dumper.h"
 
 class SymbolEngineHelper : dlg_help_utils::dbg_help::i_symbol_load_callback
 {
@@ -24,6 +25,11 @@ public:
         return symbol_engine_;
     }
 
+    dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper() const
+    {
+        return symbol_data_dumper_;
+    }
+
 private:
     [[nodiscard]] bool deferred_symbol_load_cancel(std::wstring_view const& module_name) override;
     void deferred_symbol_load_partial(std::wstring_view const& module_name) override;
@@ -38,5 +44,6 @@ private:
 private:
     winrt::Windows::System::DispatcherQueueController dbg_help_queue_;
     dlg_help_utils::dbg_help::symbol_engine symbol_engine_;
+    dlg_help_utils::symbol_type_utils::symbol_data_dumper symbol_data_dumper_;
     mutable std::wostringstream log_;
 };

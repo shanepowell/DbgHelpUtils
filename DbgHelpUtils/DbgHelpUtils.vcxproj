@@ -283,6 +283,7 @@
     <ClCompile Include="string_stream.cpp" />
     <ClCompile Include="symbol_engine.cpp" />
     <ClCompile Include="symbol_info_buffer.cpp" />
+    <ClCompile Include="symbol_data_dumper.cpp" />
     <ClCompile Include="symbol_type_info_cache.cpp" />
     <ClCompile Include="symbol_type_utils.cpp" />
     <ClCompile Include="symbol_type_utils_resources.cpp" />
@@ -369,6 +370,8 @@
     <ClInclude Include="mini_dump_memory_walker_release_handle.h" />
     <ClInclude Include="ryu\generic_128.h" />
     <ClInclude Include="ryu\ryu_generic_128.h" />
+    <ClInclude Include="symbol_type_custom_formatter.h" />
+    <ClInclude Include="symbol_data_dumper.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />

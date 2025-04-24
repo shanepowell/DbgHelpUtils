@@ -7,6 +7,7 @@
 #include "call_convention.h"
 #include "data_kind.h"
 #include "basic_type.h"
+#include "symbol_data_dumper.h"
 #include "symbol_type_info.h"
 #include "sym_tag_enum.h"
 #include "udt_kind_type.h"
@@ -31,51 +32,37 @@ namespace dlg_help_utils::dbg_help
 namespace dlg_help_utils::symbol_type_utils
 {
     std::wstring get_symbol_type_friendly_name(dbg_help::symbol_type_info const& value);
-    void dump_variable_type_at(std::wostream& os
+    void dump_variable_type_at(
+        std::wostream& os
         , mini_dump const& mini_dump
+        , symbol_visit_flags::flags options
+        , symbol_data_dumper const& symbol_data_dumper
         , dbg_help::symbol_engine& symbol_engine
         , std::wstring const& symbol_type_name
         , uint64_t variable_address
-        , size_t indent = 0
-        , size_t visited_depth = 0);
-    void dump_variable_type_at(std::wostream& os
+        , size_t indent = 0);
+    void dump_variable_type_at(
+        std::wostream& os
         , mini_dump const& mini_dump
+        , symbol_visit_flags::flags options
+        , symbol_data_dumper const& symbol_data_dumper
         , dbg_help::symbol_engine& symbol_engine
         , dbg_help::symbol_type_info const& symbol_info
+        , std::wstring const& symbol_type_name
         , uint64_t variable_address
-        , size_t indent = 0
-        , size_t visited_depth = 0);
+        , size_t indent = 0);
 
-    enum class dump_variable_symbol_options : uint8_t
-    {
-        NoHeader,
-        ForceHeader,
-        AutoHeader
-    };
-
-    struct dump_variable_symbol_data
-    {
-        std::wstring line;
-        std::function<generator<dump_variable_symbol_data>()> sub_lines;
-    };
-
-    dump_variable_symbol_data variable_symbol_at(stream_stack_dump::mini_dump_memory_walker const& walker
-        , std::wstring_view const& prefix
-        , dbg_help::symbol_type_info const& type
-        , dbg_help::symbol_type_info const& display_type
-        , uint64_t variable_address
-        , mini_dump_memory_stream const& variable_stream
-        , size_t visited_depth = 0);
-
-    void dump_variable_symbol_at(std::wostream& os
+    void dump_variable_symbol_at(
+        std::wostream& os
         , stream_stack_dump::mini_dump_memory_walker const& walker
+        , symbol_visit_flags::flags options
+        , symbol_data_dumper const& symbol_data_dumper
         , dbg_help::symbol_type_info const& type
         , dbg_help::symbol_type_info const& display_type
+        , std::wstring const& symbol_type_name
         , uint64_t variable_address
         , mini_dump_memory_stream const& variable_stream
-        , size_t indent = 0
-        , size_t visited_depth = 0
-        , dump_variable_symbol_options options = dump_variable_symbol_options::AutoHeader);
+        , size_t indent = 0);
     std::tuple<uint64_t, std::wstring, uint64_t, std::wstring> parse_address(std::wstring const& address);
 
     struct pointer_info
@@ -140,5 +127,6 @@ namespace dlg_help_utils::symbol_type_utils
         std::wstring get_is_zero_length_string();
         std::wstring get_memory_address_in_range_string();
         std::wstring get_fields_string();
+        std::wstring get_pointer_cycle_detected_title();
     }
 }
