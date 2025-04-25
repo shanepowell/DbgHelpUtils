@@ -172,7 +172,7 @@
             <TextBlock Grid.Row="18" Grid.Column="0" Text="Current Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock x:Name="fileCacheInfoCurrentSize" Grid.Row="18" Grid.Column="1" Text="{x:Bind FileCacheInfo.CurrentSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="19" Grid.Column="0" Text="Peak Size" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-            <TextBlock x:Name="fileCacheInfoPeakSize" Grid.Row="29" Grid.Column="1" Text="{x:Bind FileCacheInfo.PeakSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
+            <TextBlock x:Name="fileCacheInfoPeakSize" Grid.Row="19" Grid.Column="1" Text="{x:Bind FileCacheInfo.PeakSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="20" Grid.Column="0" Text="Page Fault Count" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
             <TextBlock Grid.Row="20" Grid.Column="1" Text="{x:Bind FileCacheInfo.PageFaultCount,Converter={StaticResource LocalNumberConverter},Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" />
             <TextBlock Grid.Row="21" Grid.Column="0" Text="Minimum Working Set" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />

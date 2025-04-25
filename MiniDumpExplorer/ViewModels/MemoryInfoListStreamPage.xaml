@@ -72,7 +72,7 @@
                                           Binding="{Binding RegionSize,Converter={StaticResource SizeNumberConverter},Mode=OneWay}"
                                           Tag="RegionSize" />
                 <local:DataGridTextColumn Header="Protect" 
-                                          Binding="{Binding ProtectListString,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
+                                          Binding="{Binding ProtectListString,Mode=OneWay}"
                                           Tag="ProtectListString" />
                 <local:DataGridTextColumn Header="State" 
                                           Binding="{Binding StateString,Mode=OneWay}"
@@ -84,7 +84,7 @@
                                           Binding="{Binding AllocationBase,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
                                           Tag="AllocationBase" />
                 <local:DataGridTextColumn Header="Allocation Protect" 
-                                          Binding="{Binding AllocationProtectListString,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}"
+                                          Binding="{Binding AllocationProtectListString,Mode=OneWay}"
                                           Tag="AllocationProtectListString" />
             </local:DataGrid.Columns>
         </local:DataGrid>

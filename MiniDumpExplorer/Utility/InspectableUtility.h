@@ -6,6 +6,8 @@
 #include <format>
 #include <optional>
 
+#include "logger.h"
+
 namespace InspectableUtility
 {
     template<typename T, typename ...Args>
@@ -40,7 +42,9 @@ namespace InspectableUtility
         }
         else
         {
-            throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"not supported type {}", static_cast<std::wstring_view>(winrt::get_class_name(value)))};
+            auto errorMessage = std::format(L"not supported type {}", static_cast<std::wstring_view>(winrt::get_class_name(value)));
+            logger::Log().LogMessage(log_level::error, errorMessage);
+            throw dlg_help_utils::exceptions::wide_runtime_error{std::move(errorMessage)};
         }
     }
 
