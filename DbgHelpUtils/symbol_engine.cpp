@@ -2965,9 +2965,10 @@ namespace dlg_help_utils::dbg_help
         image_hlp_frame.Virtual = frame.Virtual;
 
         SymSetContext(process_, &image_hlp_frame, nullptr);
+        auto got_local_variables = true;
         if(auto const ec = GetLastError(); ec == ERROR_SUCCESS)
         {
-            local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context);
+            got_local_variables = false;
         }
         else if(ec != ERROR_NOT_SUPPORTED)
         {
@@ -2993,6 +2994,7 @@ namespace dlg_help_utils::dbg_help
             if (SymSetScopeFromInlineContext(process_, address, frame.InlineFrameContext))
             {
                 local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context, {}, symbol_walk_options::inline_variables);
+                got_local_variables = true;
             }
         }
         else
@@ -3008,6 +3010,12 @@ namespace dlg_help_utils::dbg_help
                 info.line_number = line_.LineNumber;
                 info.file_name = line_.FileName;
             }
+        }
+
+
+        if (!got_local_variables)
+        {
+            local_variables_walk(info.local_variables, info.parameters, type, frame.AddrFrame.Offset, thread_context);
         }
 
         return std::move(info);
@@ -3130,6 +3138,9 @@ namespace dlg_help_utils::dbg_help
         , std::wstring const& find_mask
         , symbol_walk_options const option)
     {
+        locals.clear();
+        parameters.clear();
+
         std::optional<std::exception> failure;
         local_variable_info info{process_, type, frame_address_offset, thread_context, locals, parameters, symbol_cache_, failure};
         if(!SymEnumSymbolsExW(process_, 0, find_mask.empty() ? L"*" : find_mask.c_str(), find_local_variable_callback, &info, setup_enum_symbol_options(option)))
