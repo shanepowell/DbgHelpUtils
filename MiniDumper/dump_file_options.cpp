@@ -247,7 +247,7 @@ void dump_file_options::process_raw_options()
 
     if (!max_symbol_dump_depth_raw_.empty())
     {
-        max_symbol_dump_depth_ = strtoull(max_symbol_dump_depth_raw_.c_str(), nullptr, 10);
+        max_symbol_dump_depth_ = static_cast<size_t>(strtoull(max_symbol_dump_depth_raw_.c_str(), nullptr, 10));
         max_symbol_dump_depth_raw_.clear();
     }
 }
