@@ -5,11 +5,15 @@
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_type.h"
 #include "DbgHelpUtils/misc_info_stream.h"
+#include "DbgHelpUtils/process_environment_block.h"
 #include "DbgHelpUtils/system_info_utils.h"
+#include "Helpers/SymbolEngineHelper.h"
 #include "Helpers/UIHelper.h"
 #include "Models/RecentFileItem.h"
 #include "Models/DumpFileTimeStamp.h"
 #include "Utility/logger.h"
+
+#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
 #if __has_include("HeaderPage.g.cpp")
 // ReSharper disable once CppUnusedIncludeDirective
@@ -175,7 +179,7 @@ namespace winrt::MiniDumpExplorer::implementation
     {
         auto const miniDumpPage = parameters.MiniDump().as<MiniDumpPage>();
 
-        SetupMinidumpHeader(miniDumpPage->MiniDumpInstance(), miniDumpPage->File().Path(), miniDumpPage->DumpFileCrc32());
+        SetupMinidumpHeader(miniDumpPage->MiniDumpInstance(), miniDumpPage->Helper(), miniDumpPage->File().Path(), miniDumpPage->DumpFileCrc32());
         RaisePropertyChanged(L"DumpType");
         RaisePropertyChanged(L"Signature");
         RaisePropertyChanged(L"IsValid");
@@ -192,9 +196,16 @@ namespace winrt::MiniDumpExplorer::implementation
         RaisePropertyChanged(L"FlagsList");
         RaisePropertyChanged(L"FileItem");
         RaisePropertyChanged(L"DumpFileCrc32");
+        RaisePropertyChanged(L"ProcessTarget");
+        RaisePropertyChanged(L"IsProcessWow64");
+        RaisePropertyChanged(L"IsProcessX64");
+        RaisePropertyChanged(L"IsProcessX86");
+        RaisePropertyChanged(L"IsProcessUnknown");
+        RaisePropertyChanged(L"UserStackDbEnabledString");
+        RaisePropertyChanged(L"UserStackDbEnabled");
     }
 
-    void HeaderPage::SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32)  // NOLINT(performance-unnecessary-value-param)
+    void HeaderPage::SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, SymbolEngineHelper& symbolEngineHelper, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32)  // NOLINT(performance-unnecessary-value-param)
     {
         mini_dump_ = miniDump;
         fileCrc32_ = std::move(fileCrc32);
@@ -205,6 +216,36 @@ namespace winrt::MiniDumpExplorer::implementation
 
         fileItem_ = MiniDumpExplorer::RecentFileItem{0, path};
         timeDateStamp_.as<DumpFileTimeStamp>()->Set(mini_dump_->header()->TimeDateStamp, dlg_help_utils::misc_info_stream::get_dump_file_timezone_info(*mini_dump_));
+
+        if (IsUserDump() && IsValid())
+        {
+            Microsoft::Windows::ApplicationModel::Resources::ResourceManager const rm{};
+            dlg_help_utils::process::process_environment_block const peb{*mini_dump_, symbolEngineHelper.cache(), symbolEngineHelper.symbol_engine()};
+
+            if (peb.is_wow64_target())
+            {
+                processTarget_ = rm.MainResourceMap().GetValue(L"Resources/ProcessTargetWow64").ValueAsString();
+                isProcessWow64_ = true;
+            }
+            else if (peb.is_x64_target())
+            {
+                processTarget_ = rm.MainResourceMap().GetValue(L"Resources/ProcessTargetX64").ValueAsString();
+                isProcessX64_ = true;
+            }
+            else if (peb.is_x86_target())
+            {
+                processTarget_ = rm.MainResourceMap().GetValue(L"Resources/ProcessTargetX86").ValueAsString();
+                isProcessX86_ = true;
+            }
+            else
+            {
+                processTarget_ = rm.MainResourceMap().GetValue(L"Resources/ProcessTargetUnknown").ValueAsString();
+                isProcessUnknown_ = true;
+            }
+
+            userStackDbEnabled_ = peb.user_stack_db_enabled();
+            userStackDbEnabledString_ = rm.MainResourceMap().GetValue(userStackDbEnabled_ ? L"Resources/Enabled" : L"Resources/Disabled").ValueAsString();
+        }
 
         // ReSharper disable once CppExpressionWithoutSideEffects
         LoadFileItemIcon();

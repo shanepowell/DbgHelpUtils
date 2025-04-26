@@ -8,6 +8,8 @@ class dump_file_options;
 
 namespace dlg_help_utils
 {
+    class cache_manager;
+
     namespace symbol_type_utils
     {
         class symbol_data_dumper;
@@ -33,18 +35,21 @@ void dump_mini_dump_thread_list_stream_data(
     , size_t index
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool x86);
 void dump_mini_dump_thread_list_ex_stream_data(
     std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
     , size_t index
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool x86);
 void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
 void load_and_dump_teb(
     std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers
-    , ULONG64 teb_address);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , ULONG64 teb_address
+    , bool x86);

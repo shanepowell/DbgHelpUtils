@@ -10,6 +10,11 @@
 #include "DbgHelpUtils/stream_thread.h"
 #include "DbgHelpUtils/stream_thread_ex.h"
 
+namespace dlg_help_utils
+{
+    class cache_manager;
+}
+
 namespace dlg_help_utils::symbol_type_utils
 {
     class symbol_data_dumper;
@@ -28,12 +33,16 @@ namespace Utility
             dlg_help_utils::mini_dump const& mini_dump
             , dlg_help_utils::stream_thread const& thread
             , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-            , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
+            , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+            , dlg_help_utils::cache_manager& cache
+            , winrt::Windows::System::DispatcherQueueController& dbg_help_queue);
         mini_dump_walker_store(
             dlg_help_utils::mini_dump const& mini_dump
             , dlg_help_utils::stream_thread_ex const& thread
             , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-            , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
+            , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+            , dlg_help_utils::cache_manager& cache
+            , winrt::Windows::System::DispatcherQueueController& dbg_help_queue);
 
         dlg_help_utils::memory_list_stream memory_list_;
         dlg_help_utils::memory64_list_stream memory64_list_;
@@ -43,5 +52,8 @@ namespace Utility
         dlg_help_utils::pe_file_memory_mapping pe_file_memory_mappings_{};
         dlg_help_utils::stream_stack_dump::mini_dump_memory_walker walker_;
         dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper_;
+        dlg_help_utils::cache_manager& cache_;
+        winrt::Windows::System::DispatcherQueueController& dbg_help_queue_;
+        bool x86_{};
     };
 }

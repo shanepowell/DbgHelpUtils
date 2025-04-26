@@ -6,7 +6,7 @@
 
 using namespace winrt;
 
-SymbolEngineHelper::SymbolEngineHelper(Key)
+SymbolEngineHelper::SymbolEngineHelper()
     : dbg_help_queue_{Windows::System::DispatcherQueueController::CreateOnDedicatedThread()}
     , symbol_engine_{*this}
 {
@@ -54,8 +54,3 @@ void SymbolEngineHelper::log_complete() const
     log_.clear();
 }
 
-SymbolEngineHelper& SymbolEngineHelper::Instance()
-{
-    static auto const instance{std::make_unique<SymbolEngineHelper>(Key{})};
-    return *instance;
-}

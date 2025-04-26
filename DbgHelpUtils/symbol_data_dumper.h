@@ -5,13 +5,9 @@
 #include <unordered_set>
 
 #include "dump_hex.h"
+#include "mini_dump_memory_stream.h"
 #include "symbol_type_custom_formatter.h"
 #include "tagged_bool.h"
-
-namespace dlg_help_utils
-{
-    class mini_dump_memory_stream;
-}
 
 namespace dlg_help_utils::dbg_help
 {
@@ -34,7 +30,8 @@ namespace dlg_help_utils::symbol_type_utils
         {
             none = 0x0,
             detect_pointer_cycles = 0x1,
-            no_header = 0x2
+            no_header = 0x2,
+            x86 = 0x4
         };
     };
 
@@ -60,9 +57,18 @@ namespace dlg_help_utils::symbol_type_utils
         static bool can_dump_tag(dbg_help::sym_tag_enum tag);
 
     private:
+        struct pointer_data_t
+        {
+            uint64_t pointer_value;
+            std::streamsize pointer_size;
+            dbg_help::symbol_type_info pointer_type;
+            mini_dump_memory_stream variable_stream;
+        };
+
         [[nodiscard]] std::optional<dump_variable_symbol_data> dump_data_at(
             std::wstringstream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_visit_flags::flags options
             , dbg_help::symbol_type_info const& type
             , dbg_help::sym_tag_enum tag
             , uint64_t variable_address
@@ -76,6 +82,7 @@ namespace dlg_help_utils::symbol_type_utils
         [[nodiscard]] std::optional<dump_variable_symbol_data> dump_pointer_variable_symbol_at(
             std::wstringstream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_visit_flags::flags options
             , dbg_help::symbol_type_info const& type
             , dbg_help::sym_tag_enum tag
             , uint64_t variable_address
@@ -129,6 +136,7 @@ namespace dlg_help_utils::symbol_type_utils
         [[nodiscard]] std::optional<dump_variable_symbol_data> dump_pointer_type_at(
             std::wstringstream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_visit_flags::flags options
             , dbg_help::symbol_type_info const& type
             , dbg_help::sym_tag_enum tag
             , uint64_t variable_address
@@ -140,6 +148,7 @@ namespace dlg_help_utils::symbol_type_utils
         void do_dump_pointer_variable_symbol_at(
             std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_visit_flags::flags options
             , dbg_help::symbol_type_info const& type
             , mini_dump_memory_stream& variable_stream) const;
 
@@ -157,7 +166,6 @@ namespace dlg_help_utils::symbol_type_utils
             std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , dbg_help::symbol_type_info const& type
-            , uint64_t variable_address
             , mini_dump_memory_stream variable_stream) const;
 
         void do_dump_array_variable_symbol_at(
@@ -194,19 +202,13 @@ namespace dlg_help_utils::symbol_type_utils
         void dump_number_variable(
             std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
-            , uint64_t variable_address
             , mini_dump_memory_stream& variable_stream
-            , uint64_t bit_mask
-            , is_pointer_t is_pointer
-            , size_t max_size
-            , dump_hex_t dump_hex) const;
+            , uint64_t bit_mask) const;
 
-        template<typename T>
         void dump_pointer_memory_value(
             std::wostream& os
             , stream_stack_dump::mini_dump_memory_walker const& walker
-            , dbg_help::symbol_type_info const& type
-            , T const& pointer_value) const;
+            , pointer_data_t const& pointer_data) const;
 
         [[nodiscard]] std::optional<dump_variable_symbol_data> process_dump_value(
             std::wstringstream& os
@@ -257,7 +259,7 @@ namespace dlg_help_utils::symbol_type_utils
             , dbg_help::symbol_type_info const& type
             , [[maybe_unused]] dbg_help::symbol_type_info const& display_type
             , uint64_t variable_address
-            , [[maybe_unused]] mini_dump_memory_stream& variable_stream
+            , [[maybe_unused]] mini_dump_memory_stream const& variable_stream
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
             , std::vector<dbg_help::symbol_type_info> const& parents) const;
@@ -311,12 +313,13 @@ namespace dlg_help_utils::symbol_type_utils
             , std::unordered_set<uint64_t>& visited_pointers
             , std::vector<dbg_help::symbol_type_info> parents) const;
 
-        template<typename T>
         generator<dump_variable_symbol_data> pointer_memory_value(
             stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_visit_flags::flags options
             , dbg_help::symbol_type_info const& type
-            , T const& pointer_value
+            , uint64_t pointer_value
+            , dbg_help::symbol_type_info const& pointer_type
+            , mini_dump_memory_stream const& variable_stream
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
             , std::vector<dbg_help::symbol_type_info> parents) const;
@@ -332,12 +335,21 @@ namespace dlg_help_utils::symbol_type_utils
             , std::unordered_set<uint64_t>& visited_pointers
             );
 
+        static std::optional<pointer_data_t> get_pointer(stream_stack_dump::mini_dump_memory_walker const& walker
+                , symbol_visit_flags::flags options
+                , dbg_help::symbol_type_info const& type
+                , mini_dump_memory_stream& variable_stream);
+
         static bool any_udt_array(dbg_help::symbol_type_info const& type, size_t max_size);
 
         static bool any_variable_symbol_at(dbg_help::symbol_type_info const& type);
 
-        template<typename T>
-        static bool any_pointer_memory_value(stream_stack_dump::mini_dump_memory_walker const& walker, dbg_help::symbol_type_info const& type, T const& pointer_value);
+        static bool any_pointer_memory_value(
+            stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_visit_flags::flags options
+            , dbg_help::symbol_type_info const& pointer_type
+            , uint64_t pointer_value
+            , mini_dump_memory_stream& variable_stream);
 
         static bool any_pointer_variable_symbol_at(
             std::wostream& os
@@ -374,7 +386,8 @@ namespace dlg_help_utils::symbol_type_utils
             , uint64_t pointer
             , std::unordered_set<uint64_t>& visited_pointers
             );
-        static void fix_system_pointer(uint64_t& value);
+        [[nodiscard]] static bool fix_wow64_pointer(symbol_visit_flags::flags options, uint64_t& value);
+        [[nodiscard]] static std::streamsize get_pointer_size(symbol_visit_flags::flags options);
 
     private:
         std::vector<std::unique_ptr<symbol_type_custom_formatter>> custom_formatters_;

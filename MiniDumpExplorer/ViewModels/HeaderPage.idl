@@ -25,5 +25,12 @@ namespace MiniDumpExplorer
         DumpFileTimeStamp TimeDateStamp { get; };
         UInt64 Flags { get; };
         IObservableVector<String> FlagsList { get; };
+        String ProcessTarget { get; };
+        Boolean IsProcessWow64 { get; };
+        Boolean IsProcessX64 { get; };
+        Boolean IsProcessX86 { get; };
+        Boolean IsProcessUnknown { get; };
+        String UserStackDbEnabledString { get; };
+        Boolean UserStackDbEnabled { get; };
     }
 }

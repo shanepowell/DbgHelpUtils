@@ -8,11 +8,11 @@
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/symbol_type_utils.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
-#include "Helpers/SymbolEngineHelper.h"
 #include "Helpers/WindowHelper.h"
 #include "Utility/mini_dump_walker_store.h"
 
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+#include <winrt/Windows.System.h>
 #include <format>
 
 #include "Utility/logger.h"
@@ -105,6 +105,12 @@ namespace winrt::MiniDumpExplorer::implementation
         children_.Clear();
         areChildrenLoaded_ = true;
 
+        auto options = symbol_type_utils::symbol_visit_flags::none;
+        if (walker_store->x86_)
+        {
+            options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(options | symbol_type_utils::symbol_visit_flags::x86);
+        }
+
         auto const name = symbol_type_utils::get_symbol_type_friendly_name(variable_.symbol_info);
         if(variable_.registry_value.has_value() || variable_.frame_data.has_value())
         {
@@ -138,7 +144,7 @@ namespace winrt::MiniDumpExplorer::implementation
                     Set(walker_store
                         , walker_store->symbol_data_dumper_.variable_symbol_at(
                             walker_store->walker_
-                            , symbol_type_utils::symbol_visit_flags::none
+                            , options
                             , std::move(os).str()
                             , variable_.symbol_info
                             , variable_.symbol_info
@@ -154,7 +160,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 Set(walker_store
                     , walker_store->symbol_data_dumper_.variable_symbol_at(
                         walker_store->walker_
-                        , symbol_type_utils::symbol_visit_flags::none
+                        , options
                         , std::move(os).str()
                         , variable_.symbol_info
                         , variable_.symbol_info
@@ -228,8 +234,7 @@ namespace winrt::MiniDumpExplorer::implementation
                 // ReSharper disable once CppTooWideScope
                 apartment_context ui_thread;
 
-                auto& symbolEngineHelper = SymbolEngineHelper::Instance();
-                co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+                co_await resume_foreground(walker_store->dbg_help_queue_.DispatcherQueue());
 
                 std::wstring const currentLine{line_};
 
@@ -267,11 +272,11 @@ namespace winrt::MiniDumpExplorer::implementation
                             {
                                 // it's been removed while loading the items
                                 // need to switch QueueController thread to avoid symbol_engine callback fault
-                                co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+                                co_await resume_foreground(walker_store->dbg_help_queue_.DispatcherQueue());
                                 co_return;
                             }
 
-                            co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+                            co_await resume_foreground(walker_store->dbg_help_queue_.DispatcherQueue());
                             logger::Log().LogMessage(log_level::debug, std::format(L"LoadSubLinesChildren end UI update for line [{}]", currentLine));
                         }
                     }

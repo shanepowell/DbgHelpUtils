@@ -5196,4 +5196,22 @@
   <data name="NPX_ST7_empty" xml:space="preserve">
     <value>ST7 empty</value>
   </data>
+  <data name="ProcessTargetWow64" xml:space="preserve">
+    <value>WOW64</value>
+  </data>
+  <data name="ProcessTargetX64" xml:space="preserve">
+    <value>x64</value>
+  </data>
+  <data name="ProcessTargetX86" xml:space="preserve">
+    <value>x86</value>
+  </data>
+  <data name="ProcessTargetUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
 </root>

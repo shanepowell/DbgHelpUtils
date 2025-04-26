@@ -7,6 +7,8 @@
 
 namespace dlg_help_utils
 {
+    class cache_manager;
+
     namespace symbol_type_utils
     {
         class symbol_data_dumper;
@@ -61,13 +63,14 @@ namespace dlg_help_utils::stream_stack_dump
     void dump_stack_to_stream(std::wostream& os
         , mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
-        , symbol_type_utils::symbol_data_dumper const& custom_registers
+        , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
         , uint64_t stack_start_address
         , void const* stack
         , size_t stack_size
         , stream_thread_context const& thread_context
         , size_t indent
-        , dump_stack_options options);
+        , dump_stack_options options
+        , bool x86);
     void dump_stack_to_stream(std::wostream& os
         , mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack

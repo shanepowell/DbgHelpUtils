@@ -20,7 +20,8 @@ void dump_mini_dump_exception_stream_data(
     , size_t const index
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool const x86)
 {
     exception_stream const exception_stream{mini_dump, index};
 
@@ -54,13 +55,14 @@ void dump_mini_dump_exception_stream_data(
                 log
                 , mini_dump
                 , symbol_engine
-                , custom_registers
+                , symbol_data_dumper
                 , stack_info->stack_start_address
                 , stack_info->stack
                 , stack_info->stack_size
                 , exception_stream.thread_context()
                 , 5
-                , options.display_stack_options());
+                , options.display_stack_options()
+                , x86);
         }
     }
 }

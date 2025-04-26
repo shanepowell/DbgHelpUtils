@@ -92,7 +92,7 @@ namespace winrt::MiniDumpExplorer::implementation
             dlg_help_utils::thread_list_stream const thread_list{ miniDump, stackInfo_->list_stream_index };
             auto thread = thread_list.get_thread(stackInfo_->stream_index);
             stack_.as<ThreadStack>()->Set(std::move(thread));
-            stack_.as<ThreadStack>()->LoadStack(miniDump);
+            stack_.as<ThreadStack>()->LoadStack(miniDump, miniDumpPage->Helper());
         }
 
         RaisePropertyChanged(L"ThreadId");

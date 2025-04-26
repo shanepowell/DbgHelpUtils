@@ -36,6 +36,13 @@ namespace winrt::MiniDumpExplorer::implementation
         [[nodiscard]] bool IsUserDump() const;
         [[nodiscard]] bool IsKernelDump() const;
         [[nodiscard]] bool IsUnknownDump() const;
+        [[nodiscard]] hstring ProcessTarget() const { return processTarget_; }
+        [[nodiscard]] bool IsProcessWow64() const { return isProcessWow64_; }
+        [[nodiscard]] bool IsProcessX64() const { return isProcessX64_; }
+        [[nodiscard]] bool IsProcessX86() const { return isProcessX86_; }
+        [[nodiscard]] bool IsProcessUnknown() const { return isProcessUnknown_; }
+        [[nodiscard]] hstring UserStackDbEnabledString() const { return userStackDbEnabledString_; }
+        [[nodiscard]] bool UserStackDbEnabled() const { return userStackDbEnabled_; }
         [[nodiscard]] uint16_t Version() const;
         [[nodiscard]] uint16_t InternalVersion() const;
         [[nodiscard]] uint32_t NumberOfStreams() const;
@@ -49,7 +56,7 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         void SetupFlyoutMenus();
         void MiniDumpLoaded(MiniDumpExplorer::MiniDumpPageParameters const& parameters) override;
-        void SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32);
+        void SetupMinidumpHeader(std::shared_ptr<dlg_help_utils::mini_dump> const& miniDump, SymbolEngineHelper& symbolEngineHelper, hstring const& path, MiniDumpExplorer::FileCrc32 fileCrc32);
         fire_and_forget LoadFileItemIcon() const;
 
     private:
@@ -58,6 +65,13 @@ namespace winrt::MiniDumpExplorer::implementation
         MiniDumpExplorer::DumpFileTimeStamp timeDateStamp_{};
         Windows::Foundation::Collections::IObservableVector<hstring> flagsList_{single_threaded_observable_vector<hstring>()};
         MiniDumpExplorer::FileCrc32 fileCrc32_{};
+        hstring  processTarget_{};
+        bool isProcessWow64_{};
+        bool isProcessX64_{};
+        bool isProcessX86_{};
+        bool isProcessUnknown_{};
+        hstring  userStackDbEnabledString_{};
+        bool userStackDbEnabled_{};
     };
 }
 

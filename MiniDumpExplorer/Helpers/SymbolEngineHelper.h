@@ -2,18 +2,15 @@
 
 #include <winrt/Windows.System.h>
 
+#include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/i_symbol_load_callback.h"
 #include "DbgHelpUtils/symbol_engine.h"
 #include "DbgHelpUtils/symbol_data_dumper.h"
 
 class SymbolEngineHelper : dlg_help_utils::dbg_help::i_symbol_load_callback
 {
-private:
-    struct Key {};
-
 public:
-    SymbolEngineHelper(Key);
-    static SymbolEngineHelper& Instance();
+    SymbolEngineHelper();
 
     winrt::Windows::System::DispatcherQueueController& QueueController()
     {
@@ -23,6 +20,11 @@ public:
     dlg_help_utils::dbg_help::symbol_engine& symbol_engine()
     {
         return symbol_engine_;
+    }
+
+    dlg_help_utils::cache_manager& cache()
+    {
+        return cache_;
     }
 
     dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper() const
@@ -43,6 +45,7 @@ private:
 
 private:
     winrt::Windows::System::DispatcherQueueController dbg_help_queue_;
+    dlg_help_utils::cache_manager cache_;
     dlg_help_utils::dbg_help::symbol_engine symbol_engine_;
     dlg_help_utils::symbol_type_utils::symbol_data_dumper symbol_data_dumper_;
     mutable std::wostringstream log_;

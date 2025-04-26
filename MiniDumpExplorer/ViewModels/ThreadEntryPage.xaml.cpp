@@ -54,6 +54,6 @@ namespace winrt::MiniDumpExplorer::implementation
 
         auto thread = thread_.as<ThreadListStreamEntry>();
         thread->Set(parameters.StreamSubIndex(), thread_list.get_thread(parameters.StreamSubIndex()));
-        thread->LoadStack(miniDump);
+        thread->LoadStack(miniDump, miniDumpPage->Helper());
     }
 }

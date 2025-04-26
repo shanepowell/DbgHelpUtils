@@ -56,8 +56,8 @@ namespace winrt::MiniDumpExplorer::implementation
         }
     }
 
-    void ThreadExListStreamEntry::LoadStack(dlg_help_utils::mini_dump const& mini_dump) const
+    void ThreadExListStreamEntry::LoadStack(dlg_help_utils::mini_dump const& mini_dump, SymbolEngineHelper& symbolEngineHelper) const
     {
-        stack_.as<ThreadStack>()->LoadStack(mini_dump);
+        stack_.as<ThreadStack>()->LoadStack(mini_dump, symbolEngineHelper);
     }
 }

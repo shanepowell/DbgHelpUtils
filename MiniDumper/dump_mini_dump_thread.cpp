@@ -7,6 +7,7 @@
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/m128a_utils.h"
 #include "DbgHelpUtils/misc_info_stream.h"
+#include "DbgHelpUtils/process_environment_block.h"
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_stack_dump.h"
@@ -381,7 +382,8 @@ void dump_mini_dump_thread_list_stream_data(
     , size_t const index
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool const x86)
 {
     thread_list_stream const thread_list{mini_dump, index};
 
@@ -417,8 +419,9 @@ void dump_mini_dump_thread_list_stream_data(
             log
             , mini_dump
             , symbol_engine
-            , custom_registers
-            , thread->Teb);
+            , symbol_data_dumper
+            , thread->Teb
+            , x86);
 
         dump_mini_dump_thread_context(log, thread.thread_context(), options);
 
@@ -437,13 +440,14 @@ void dump_mini_dump_thread_list_stream_data(
                     log
                     , mini_dump
                     , symbol_engine
-                    , custom_registers
+                    , symbol_data_dumper
                     , thread->Stack.StartOfMemoryRange
                     , thread.stack()
                     , thread->Stack.Memory.DataSize
                     , thread.thread_context()
                     , 5
-                    , options.display_stack_options());
+                    , options.display_stack_options()
+                    , x86);
             }
             else if (options.hex_dump_memory_data())
             {
@@ -470,7 +474,8 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
     , size_t const index
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool const x86)
 {
     thread_ex_list_stream const thread_ex_list{mini_dump, index};
 
@@ -506,8 +511,9 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
             log
             , mini_dump
             , symbol_engine
-            , custom_registers
-            , thread->Teb);
+            , symbol_data_dumper
+            , thread->Teb
+            , x86);
 
         using namespace size_units::base_16;
         log << std::format(L"   Stack: {0} - {1} ({2}) ({3})\n"
@@ -523,13 +529,14 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
                     log
                     , mini_dump
                     , symbol_engine
-                    , custom_registers
+                    , symbol_data_dumper
                     , thread->Stack.StartOfMemoryRange
                     , thread.stack()
                     , thread->Stack.Memory.DataSize
                     , thread.thread_context()
                     , 5
-                    , options.display_stack_options());
+                    , options.display_stack_options()
+                    , x86);
             }
             else if (options.hex_dump_memory_data())
             {
@@ -635,14 +642,21 @@ void load_and_dump_teb(
     std::wostream& log
     , mini_dump const& mini_dump
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers
-    , ULONG64 const teb_address)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , ULONG64 const teb_address
+    , bool const x86)
 {
+    auto options = symbol_type_utils::symbol_visit_flags::detect_pointer_cycles;
+    if (x86)
+    {
+        options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(options | symbol_type_utils::symbol_visit_flags::x86);
+    }
+
     symbol_type_utils::dump_variable_type_at(
         log
         , mini_dump
-        , symbol_type_utils::symbol_visit_flags::detect_pointer_cycles
-        , custom_registers
+        , options
+        , symbol_data_dumper
         , symbol_engine
         , common_symbol_names::teb_structure_symbol_name
         , teb_address);

@@ -6,6 +6,8 @@ class dump_file_options;
 
 namespace dlg_help_utils
 {
+    class cache_manager;
+
     namespace symbol_type_utils
     {
         class symbol_data_dumper;
@@ -25,4 +27,5 @@ void dump_mini_dump_exception_stream_data(
     , size_t index
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& custom_registers);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool x86);

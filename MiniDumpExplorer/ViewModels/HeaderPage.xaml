@@ -28,6 +28,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -78,6 +80,12 @@
             <TextBlock Grid.Row="10" Grid.Column="0" Text="Flags" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
             <TextBlock x:Name="headerFlags" Grid.Row="10" Grid.Column="1" Text="{x:Bind Flags,Converter={StaticResource HexNumberConverter},ConverterParameter=full,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" IsTextSelectionEnabled="True" />
             <ListBox Grid.Row="11" Grid.Column="1" ItemsSource="{x:Bind FlagsList,Mode=OneWay}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" Margin="0,5,0,0" />
+
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="Process" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="12" Grid.Column="1" Text="{x:Bind ProcessTarget,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+
+            <TextBlock Grid.Row="13" Grid.Column="0" Text="User Stack DB" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
+            <TextBlock Grid.Row="13" Grid.Column="1" Text="{x:Bind UserStackDbEnabledString,Mode=OneWay}" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" IsTextSelectionEnabled="True" Visibility="{x:Bind IsUserDump,Converter={StaticResource BoolToVisibilityConverter},Mode=OneWay}" />
         </Grid>
     </ScrollViewer>
 </Page>

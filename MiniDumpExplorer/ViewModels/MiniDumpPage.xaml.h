@@ -4,6 +4,8 @@
 
 #include "DbgHelpUtils/mini_dump.h"
 
+#include "Helpers/SymbolEngineHelper.h"
+
 #include <functional>
 #include <memory>
 
@@ -38,6 +40,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
         [[nodiscard]] dlg_help_utils::mini_dump const& MiniDump() const { return *miniDump_; }
         [[nodiscard]] std::shared_ptr<dlg_help_utils::mini_dump> const& MiniDumpInstance() const { return miniDump_; }
+        [[nodiscard]] SymbolEngineHelper& Helper() const { return *symbolEngineHelper_; }
         [[nodiscard]] bool MiniDumpOpened() const { return miniDump_ != nullptr; }
         [[nodiscard]] Windows::Storage::StorageFile File() const { return file_; }
         [[nodiscard]] MiniDumpExplorer::FileCrc32 DumpFileCrc32() const { return fileCrc32_; }
@@ -57,6 +60,7 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         Windows::Storage::StorageFile file_{ nullptr };
         std::shared_ptr<dlg_help_utils::mini_dump> miniDump_;
+        std::shared_ptr<SymbolEngineHelper> symbolEngineHelper_;
         std::wstring openError_;
         MiniDumpExplorer::FileCrc32 fileCrc32_;
         static std::unordered_map<std::wstring, Windows::UI::Xaml::Interop::TypeName> pageMap_;

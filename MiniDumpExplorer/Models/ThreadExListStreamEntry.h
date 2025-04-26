@@ -5,6 +5,8 @@
 #include "GlobalOptionsNotifyPropertyChangedBase.h"
 #include "DbgHelpUtils/stream_thread_ex.h"
 
+class SymbolEngineHelper;
+
 namespace winrt::MiniDumpExplorer::implementation
 {
     struct MiniDumpMemoryDescriptor;
@@ -16,7 +18,7 @@ namespace winrt::MiniDumpExplorer::implementation
         ThreadExListStreamEntry();
 
         void Set(uint32_t index, dlg_help_utils::stream_thread_ex thread);
-        void LoadStack(dlg_help_utils::mini_dump const& mini_dump) const;
+        void LoadStack(dlg_help_utils::mini_dump const& mini_dump, SymbolEngineHelper& symbolEngineHelper) const;
 
         uint32_t Index() const { return index_; }
         uint32_t Id() const { return thread_->ThreadId; }

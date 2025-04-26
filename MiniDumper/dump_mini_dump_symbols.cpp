@@ -372,7 +372,8 @@ void dump_mini_dump_symbol_name(
     , std::wstring const& symbol_name
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool const x86)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -384,6 +385,12 @@ void dump_mini_dump_symbol_name(
         0, nullptr, 0, memory_list, memory64_list, function_table, module_list,
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
+
+    auto dump_options = symbol_type_utils::symbol_visit_flags::detect_pointer_cycles;
+    if (x86)
+    {
+        dump_options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(dump_options | symbol_type_utils::symbol_visit_flags::x86);
+    }
 
     auto processed_any{false};
     for (process::global_symbols variables{walker, symbol_name};
@@ -410,7 +417,7 @@ void dump_mini_dump_symbol_name(
         auto const address = variable.symbol_type().address();
         if(auto const type = variable.symbol_type().type(); type.has_value() && address.has_value())
         {
-            symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_type_utils::symbol_visit_flags::detect_pointer_cycles, custom_registers, symbol_engine, type.value(), name, address.value());
+            symbol_type_utils::dump_variable_type_at(log, mini_dump, dump_options, symbol_data_dumper, symbol_engine, type.value(), name, address.value());
         }
         else if(auto stream = variable.stream(); !stream.eof())
         {
@@ -489,7 +496,8 @@ void dump_mini_dump_address(
     , std::wstring const& address
     , [[maybe_unused]] dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
+    , bool const x86)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -502,9 +510,15 @@ void dump_mini_dump_address(
         unloaded_module_list, pe_file_memory_mappings, symbol_engine
     };
 
+    auto dump_options = symbol_type_utils::symbol_visit_flags::detect_pointer_cycles;
+    if (x86)
+    {
+        dump_options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(dump_options | symbol_type_utils::symbol_visit_flags::x86);
+    }
+
     if(auto [memory_pointer, symbol_type, memory_size, dt] = symbol_type_utils::parse_address(address); !symbol_type.empty())
     {
-        symbol_type_utils::dump_variable_type_at(log, mini_dump, symbol_type_utils::symbol_visit_flags::detect_pointer_cycles, custom_registers, symbol_engine, symbol_type, memory_pointer);
+        symbol_type_utils::dump_variable_type_at(log, mini_dump, dump_options, symbol_data_dumper, symbol_engine, symbol_type, memory_pointer);
     }
     else
     {
@@ -623,7 +637,7 @@ void dump_mini_dump_peb(
     , cache_manager& cache
     , [[maybe_unused]] dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
@@ -634,19 +648,19 @@ void dump_mini_dump_peb(
         log << std::format(L"  {}\n", value);
     }
 
-    [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::peb_structure_symbol_name, peb.peb_address());
+    [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::peb_structure_symbol_name, peb.peb_address(), peb.is_wow64_target() || peb.is_x86_target());
 
     log << L'\n';
     if(auto const ldr_address = peb.ldr_address(); ldr_address != 0)
     {
         log << L'\n';
-        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::peb_ldr_structure_symbol_name, ldr_address);
+        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::peb_ldr_structure_symbol_name, ldr_address, peb.is_wow64_target() || peb.is_x86_target());
     }
 
     if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {
         log << L'\n';
-        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::rtl_user_process_parameters_structure_symbol_name, environment_variables.value().process_parameters_address());
+        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::rtl_user_process_parameters_structure_symbol_name, environment_variables.value().process_parameters_address(), peb.is_wow64_target() || peb.is_x86_target());
 
         log << L"\nProcess Environment Variables:\n";
         for(auto const& value : environment_variables.value().environment())
@@ -664,7 +678,7 @@ void dump_mini_dump_stack_trace_database(
     , cache_manager& cache
     , [[maybe_unused]] dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& custom_registers)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
@@ -674,5 +688,5 @@ void dump_mini_dump_stack_trace_database(
         log << L"No Stack Database in DMP\n";
     }
 
-    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(log, peb.walker(), custom_registers, common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address);
+    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address, peb.is_wow64_target());
 }

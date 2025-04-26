@@ -147,11 +147,11 @@ namespace winrt::MiniDumpExplorer::implementation
 
             apartment_context ui_thread;
 
-            auto& symbolEngineHelper = SymbolEngineHelper::Instance();
-            co_await resume_foreground(symbolEngineHelper.QueueController().DispatcherQueue());
+            symbolEngineHelper_ = std::make_shared<SymbolEngineHelper>();
+            co_await resume_foreground(symbolEngineHelper_->QueueController().DispatcherQueue());
 
             std::filesystem::path fullPath{static_cast<std::wstring>(file_.Path())};
-            symbolEngineHelper.symbol_engine().add_symbol_path(fullPath.parent_path());
+            symbolEngineHelper_->symbol_engine().add_symbol_path(fullPath.parent_path());
 
             co_await resume_background();
 

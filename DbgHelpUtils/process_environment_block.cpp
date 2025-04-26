@@ -1,5 +1,6 @@
 #include "process_environment_block.h"
 
+#include <algorithm>
 #include <format>
 #include <ranges>
 
@@ -15,6 +16,7 @@
 #include "wide_runtime_error.h"
 
 using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 namespace dlg_help_utils::process
 {
@@ -45,8 +47,14 @@ namespace dlg_help_utils::process
             throw exceptions::wide_runtime_error{L"Error: No pointer length found!"s};
         }
 
+        // is there a better way to do this?
+        is_wow64_process_ = find_wow64_modules(module_list());
+
         machine_pointer_size_ = static_cast<std::streamsize>(pointer_length.value());
+        process_pointer_size_ = is_wow64_target() ? static_cast<std::streamsize>(sizeof(uint32_t)) : machine_pointer_size_;
+
         machine_hex_printable_length_ = machine_pointer_size_ * 2;
+        process_hex_printable_length_ = process_pointer_size_ * 2;
     }
 
     std::optional<process_environment_variables> process_environment_block::process_environment_variables() const
@@ -99,12 +107,12 @@ namespace dlg_help_utils::process
 
     bool process_environment_block::is_x86_target() const
     {
-        return machine_pointer_size_ == 0x04;
+        return machine_pointer_size_ == sizeof(uint32_t);
     }
 
     bool process_environment_block::is_x64_target() const
     {
-        return machine_pointer_size_ == 0x08;
+        return machine_pointer_size_ == sizeof(uint64_t);
     }
 
     bool process_environment_block::user_stack_db_enabled() const
@@ -234,5 +242,17 @@ namespace dlg_help_utils::process
         }
 
         return cache_manager_->get_cache<cache_data>();
+    }
+
+    bool process_environment_block::find_wow64_modules(module_list_stream const& module_list)
+    {
+        static std::unordered_set wow64_modules
+            {
+                L"wow64.dll"sv,
+                L"wow64win.dll"sv,
+                L"wow64cpu.dll"sv
+            };
+
+        return std::ranges::any_of(wow64_modules, [&module_list](auto const& wow64_module) { return module_list.find_module(wow64_module) != nullptr; });
     }
 }

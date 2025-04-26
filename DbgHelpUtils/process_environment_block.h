@@ -44,6 +44,7 @@ namespace dlg_help_utils::process
         [[nodiscard]] uint32_t number_of_heaps() const { return number_of_heaps_; }
         [[nodiscard]] uint64_t ldr_address() const { return ldr_address_; }
         [[nodiscard]] std::streamsize machine_hex_printable_length() const { return machine_hex_printable_length_; }
+        [[nodiscard]] std::streamsize process_hex_printable_length() const { return process_hex_printable_length_; }
 
         [[nodiscard]] std::optional<process_environment_variables> process_environment_variables() const;
 
@@ -54,11 +55,13 @@ namespace dlg_help_utils::process
 
         [[nodiscard]] bool is_x86_target() const;
         [[nodiscard]] bool is_x64_target() const;
+        [[nodiscard]] bool is_wow64_target() const { return is_wow64_process_; }
 
         [[nodiscard]] bool user_stack_db_enabled() const;
         [[nodiscard]] bool heap_page_alloc_enabled() const;
 
         [[nodiscard]] std::streamsize machine_pointer_size() const { return machine_pointer_size_; }
+        [[nodiscard]] std::streamsize process_pointer_size() const { return process_pointer_size_; }
 
         [[nodiscard]] uint64_t page_size() const { return system_memory_info_.system_memory_misc_info().BasicInfo.PageSize; }
 
@@ -74,6 +77,8 @@ namespace dlg_help_utils::process
 
         [[nodiscard]] dbg_help::symbol_type_info const& peb_symbol() const;
         [[nodiscard]] dbg_help::symbol_type_info const& teb_symbol() const;
+
+        static bool find_wow64_modules(module_list_stream const& module_list);
 
     private:
         [[nodiscard]] uint64_t get_teb_address() const;
@@ -122,6 +127,9 @@ namespace dlg_help_utils::process
         dbg_help::symbol_type_info process_heaps_pointer_type_{};
         uint64_t process_heaps_address_{};
         std::streamsize machine_pointer_size_{};
+        std::streamsize process_pointer_size_{};
         std::streamsize machine_hex_printable_length_{};
+        std::streamsize process_hex_printable_length_{};
+        bool is_wow64_process_{};
     };
 }
