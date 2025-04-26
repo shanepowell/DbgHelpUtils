@@ -1836,6 +1836,11 @@ namespace dlg_help_utils::symbol_type_utils
                 return true;
             }
         }
+        else if (visited_pointers.contains(pointer))
+        {
+            os << L' ' << resources::get_pointer_cycle_detected_title();
+            return false;
+        }
 
         visited_pointers.insert(pointer);
         return false;
