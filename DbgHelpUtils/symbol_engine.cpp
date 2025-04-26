@@ -5,6 +5,7 @@
 #include <array>
 #include <filesystem>
 #include <format>
+#include <mutex>
 #include <ranges>
 #include <unordered_set>
 #include <utility>
@@ -55,7 +56,21 @@ namespace
     auto constexpr downloading_xml_start = L"<Activity name=\"Downloading file "sv;
     auto constexpr downloading_xml_end = L"\" details=\""sv;
 
-    i_stack_walk_callback* g_callback{nullptr};
+    std::mutex g_mutex;
+    std::unordered_map<HANDLE, i_stack_walk_callback*> g_callbacks{};
+
+    i_stack_walk_callback* get_callback(HANDLE const process)
+    {
+        std::scoped_lock lock{g_mutex};
+        if (auto it = g_callbacks.find(process);
+            it != g_callbacks.end())
+        {
+            return it->second;
+        }
+
+        throw dlg_help_utils::exceptions::wide_runtime_error{std::format(L"No i_stack_walk_callback registered for process handle [{}]", process)};
+    }
+
 
 #pragma pack(push, 1)
     struct symbol_load_w64
@@ -87,22 +102,23 @@ namespace
 #pragma pack(pop)
 
     // ReSharper disable CppParameterMayBeConst
-    BOOL CALLBACK read_process_memory_routine([[maybe_unused]] HANDLE h_process, DWORD64 lp_base_address, PVOID lp_buffer, DWORD n_size, PDWORD lp_number_of_bytes_read)
+    BOOL CALLBACK read_process_memory_routine(HANDLE h_process, DWORD64 lp_base_address, PVOID lp_buffer, DWORD n_size, PDWORD lp_number_of_bytes_read)
     {
-        return g_callback->read_process_memory(lp_base_address, lp_buffer, n_size, lp_number_of_bytes_read);
+        return get_callback(h_process)->read_process_memory(lp_base_address, lp_buffer, n_size, lp_number_of_bytes_read);
     }
-
     // ReSharper restore CppParameterMayBeConst
 
-    DWORD64 CALLBACK get_module_base_routine([[maybe_unused]] HANDLE h_process, DWORD64 const address)
+    // ReSharper disable CppParameterMayBeConst
+    DWORD64 CALLBACK get_module_base_routine(HANDLE h_process, DWORD64 const address)
     {
-        return g_callback->get_module_base_routine(address);
+        return get_callback(h_process)->get_module_base_routine(address);
     }
+    // ReSharper restore CppParameterMayBeConst
 
     // ReSharper disable CppParameterMayBeConst
     PVOID CALLBACK function_table_access_routine(HANDLE h_process, DWORD64 const address_base)
     {
-        auto* result = g_callback->function_table_access(address_base);
+        auto* result = get_callback(h_process)->function_table_access(address_base);
         if (result != nullptr) return result;
 
         result = SymFunctionTableAccess64AccessRoutines(h_process, address_base, read_process_memory_routine, get_module_base_routine);
@@ -112,9 +128,9 @@ namespace
     // ReSharper restore CppParameterMayBeConst
 
     // ReSharper disable CppParameterMayBeConst
-    DWORD64 CALLBACK translate_address([[maybe_unused]] _In_ HANDLE h_process, _In_ HANDLE h_thread, _In_ LPADDRESS64 lp_address)
+    DWORD64 CALLBACK translate_address(_In_ HANDLE h_process, _In_ HANDLE h_thread, _In_ LPADDRESS64 lp_address)
     {
-        return g_callback->translate_address(h_thread, lp_address);
+        return get_callback(h_process)->translate_address(h_thread, lp_address);
     }
 
     // ReSharper restore CppParameterMayBeConst
@@ -250,10 +266,12 @@ namespace
         }
     }
 
-    BOOL CALLBACK sym_register_callback_proc64([[maybe_unused]] __in HANDLE h_process
+    // ReSharper disable CppParameterMayBeConst
+    BOOL CALLBACK sym_register_callback_proc64(__in HANDLE h_process
         , __in ULONG const action_code
         , __in_opt ULONG64 const callback_data
         , __in_opt ULONG64 const user_context)
+    // ReSharper restore CppParameterMayBeConst
     {
         auto& symbol_engine = *reinterpret_cast<i_symbol_callback*>(user_context);
         auto& callback = symbol_engine.load_callback();
@@ -359,10 +377,10 @@ namespace
                 callback.log_stream().log() << std::format(L"DlgHelp: {0}:address[{1}]:bytes:[{2}]\n", action_code_to_string(action_code), to_hex(evt->addr), to_hex(evt->bytes));
             }
 
-            if (g_callback != nullptr && callback_data != 0)
+            if (callback_data != 0)
             {
                 auto const* evt = reinterpret_cast<IMAGEHLP_CBA_READ_MEMORY const*>(callback_data);
-                return g_callback->read_process_memory(evt->addr
+                return get_callback(h_process)->read_process_memory(evt->addr
                     , evt->buf
                     , evt->bytes
                     , evt->bytesread
@@ -3206,7 +3224,7 @@ namespace dlg_help_utils::dbg_help
         }
 
         // force the loading of the IP module
-        std::ignore = g_callback->get_module_base_routine(frame.AddrPC.Offset);
+        std::ignore = get_callback(process_)->get_module_base_routine(frame.AddrPC.Offset);
 
         // StackWalkEx modifies the thread context passed in so always take a copy for it to work with
         auto const thread_context_copy = std::make_unique<uint8_t[]>(thread_context.size());
@@ -3224,7 +3242,7 @@ namespace dlg_help_utils::dbg_help
             }
 
             auto const pc = frame.AddrPC.Offset;
-            auto info = g_callback->find_symbol_info(type, frame, thread_context_copy.get());
+            auto info = get_callback(process_)->find_symbol_info(type, frame, thread_context_copy.get());
             if (!info)
             {
                 symbol_address_info rv{};
@@ -3396,21 +3414,29 @@ namespace dlg_help_utils::dbg_help
         return std::make_tuple(type_name.substr(0, pos), type_name.substr(pos+1));
     }
 
-    callback_handle symbol_engine::set_walk_callback(i_stack_walk_callback& callback)
+    callback_handle symbol_engine::set_walk_callback(i_stack_walk_callback& callback) const
     {
-        if(g_callback != nullptr)
         {
-            throw exceptions::wide_runtime_error{ L"Only one i_stack_walk_callback can be set at a time" };
+            std::scoped_lock lock{g_mutex};
+            if (auto it = g_callbacks.find(process_);
+                it != g_callbacks.end())
+            {
+                throw exceptions::wide_runtime_error{ L"Only one i_stack_walk_callback can be set at a time" };
+            }
+
+            g_callbacks.insert(std::make_pair(process_, &callback));
         }
 
-        g_callback = &callback;
-        return callback_handle{[]()
+        return callback_handle{[this]()
         {
-            if (g_callback == nullptr)
+            std::scoped_lock lock{g_mutex};
+            auto it = g_callbacks.find(process_);
+            if (it  == g_callbacks.end())
             {
                 throw exceptions::wide_runtime_error{ L"i_stack_walk_callback already cleared" };
             }
-            g_callback = nullptr;
+
+            g_callbacks.erase(it);
         }};
     }
 

@@ -42,7 +42,7 @@ namespace dlg_help_utils::stream_stack_dump
         , pe_file_memory_mappings_{ pe_file_memory_mappings }
         , symbol_engine_{ symbol_engine }
         , callback_{ symbol_engine.load_callback() }
-        , handle_{ dbg_help::symbol_engine::set_walk_callback(*this) }
+        , handle_{ symbol_engine.set_walk_callback(*this) }
     {
     }
 
@@ -147,7 +147,7 @@ namespace dlg_help_utils::stream_stack_dump
 
     void mini_dump_memory_walker::create_handle()
     {
-        handle_ = dbg_help::symbol_engine::set_walk_callback(*this);
+        handle_ = symbol_engine().set_walk_callback(*this);
     }
 
     void const* mini_dump_memory_walker::get_process_memory_range(DWORD64 const base_address, DWORD64& size, enable_module_loading_t const enable_module_loading) const

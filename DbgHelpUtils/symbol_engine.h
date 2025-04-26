@@ -158,7 +158,7 @@ namespace dlg_help_utils::dbg_help
 
         [[nodiscard]] static std::tuple<std::wstring, std::wstring> parse_type_info(std::wstring const& type_name);
 
-        static callback_handle set_walk_callback(i_stack_walk_callback& callback);
+        [[nodiscard]] callback_handle set_walk_callback(i_stack_walk_callback& callback) const;
 
     private:
         [[nodiscard]] DWORD loading_module_check_sum() const override { return loading_module_check_sum_; }
