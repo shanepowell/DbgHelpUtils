@@ -118,8 +118,8 @@ namespace winrt::MiniDumpExplorer::implementation
 
             os << (variable_.registry_value 
                     ? (variable_.frame_data 
-                        ? std::format(L" [{0}{1:+}]", register_names::get_register_name(variable_.registry_value->register_type), variable_.frame_data->data_offset)
-                        : std::format(L" [{}]", register_names::get_register_name(variable_.registry_value->register_type))
+                        ? std::format(L" [{0}{1:+}] ", register_names::get_register_name(variable_.registry_value->register_type), variable_.frame_data->data_offset)
+                        : std::format(L" [{}] ", register_names::get_register_name(variable_.registry_value->register_type))
                       )
                     : L""
                   );

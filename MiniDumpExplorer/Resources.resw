@@ -3327,6 +3327,9 @@
   <data name="CV_AMD64_MM7" xml:space="preserve">
     <value>MM7</value>
   </data>
+  <data name="CV_ALLREG_VFRAME" xml:space="preserve">
+    <value>Stack Variable</value>
+  </data>
   <data name="StreamStackDumpInline" xml:space="preserve">
     <value>Inline</value>
   </data>
