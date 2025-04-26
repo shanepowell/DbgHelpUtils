@@ -55,6 +55,7 @@ std::optional<uint64_t> find_field_pointer(
 std::optional<dlg_help_utils::dbg_help::symbol_type_info> dump_field(
     std::wostream& log
     , dlg_help_utils::stream_stack_dump::mini_dump_memory_walker const& walker
+    , size_t max_symbol_dump_depth
     , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
     , std::wstring const& symbol_type_name
     , uint64_t address

@@ -95,6 +95,8 @@ lyra::cli dump_file_options::generate_options()
         | lyra::opt(symbol_types_raw_, "type" )["-p"]["--type"]("dump symbol type information")
         | lyra::opt(symbol_names_raw_, "symbol" )["--symbol"]("dump symbol information")
         // ReSharper disable once StringLiteralTypo
+        | lyra::opt(max_symbol_dump_depth_raw_, "10")["--symboldepth"]("max dump symbol depth")
+        // ReSharper disable once StringLiteralTypo
         | lyra::opt(list_symbol_names_)["--listsymbol"]("only dump symbol names and not full information")
         | lyra::opt(dump_types_modules_raw_, "moduletype" )["--moduletypes"]("dump module symbol types")
         | lyra::opt(dump_address_types_raw_, "address" )["--address"]("dump address with type")
@@ -241,6 +243,12 @@ void dump_file_options::process_raw_options()
     {
         process_heaps_options().segment_heap_front_padding_options() = g_segment_heap_front_padding_options.at(segment_heap_front_padding_options_raw_);
         segment_heap_front_padding_options_raw_.clear();
+    }
+
+    if (!max_symbol_dump_depth_raw_.empty())
+    {
+        max_symbol_dump_depth_ = strtoull(max_symbol_dump_depth_raw_.c_str(), nullptr, 10);
+        max_symbol_dump_depth_raw_.clear();
     }
 }
 

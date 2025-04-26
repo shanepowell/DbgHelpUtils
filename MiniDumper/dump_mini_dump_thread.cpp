@@ -418,6 +418,7 @@ void dump_mini_dump_thread_list_stream_data(
         load_and_dump_teb(
             log
             , mini_dump
+            , options.max_symbol_dump_depth()
             , symbol_engine
             , symbol_data_dumper
             , thread->Teb
@@ -439,6 +440,7 @@ void dump_mini_dump_thread_list_stream_data(
                 dump_stack_to_stream(
                     log
                     , mini_dump
+                    , options.max_symbol_dump_depth()
                     , symbol_engine
                     , symbol_data_dumper
                     , thread->Stack.StartOfMemoryRange
@@ -510,6 +512,7 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
         load_and_dump_teb(
             log
             , mini_dump
+            , options.max_symbol_dump_depth()
             , symbol_engine
             , symbol_data_dumper
             , thread->Teb
@@ -528,6 +531,7 @@ void dump_mini_dump_thread_list_ex_stream_data(std::wostream& log
                 dump_stack_to_stream(
                     log
                     , mini_dump
+                    , options.max_symbol_dump_depth()
                     , symbol_engine
                     , symbol_data_dumper
                     , thread->Stack.StartOfMemoryRange
@@ -641,6 +645,7 @@ void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, mini_dump c
 void load_and_dump_teb(
     std::wostream& log
     , mini_dump const& mini_dump
+    , size_t const max_symbol_dump_depth
     , dbg_help::symbol_engine& symbol_engine
     , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
     , ULONG64 const teb_address
@@ -656,6 +661,7 @@ void load_and_dump_teb(
         log
         , mini_dump
         , options
+        , max_symbol_dump_depth
         , symbol_data_dumper
         , symbol_engine
         , common_symbol_names::teb_structure_symbol_name

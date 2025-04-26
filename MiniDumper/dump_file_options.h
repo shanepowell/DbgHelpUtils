@@ -67,6 +67,7 @@ public:
     [[nodiscard]] bool display_heap_graph() const { return display_heap_graph_; }
     [[nodiscard]] bool display_loaded_modules() const { return display_loaded_modules_; }
     [[nodiscard]] size_t display_heap_graph_to_reference_limit() const { return display_heap_graph_to_reference_limit_; }
+    [[nodiscard]] size_t max_symbol_dump_depth() const { return max_symbol_dump_depth_; }
     [[nodiscard]] dlg_help_utils::stream_stack_dump::dump_stack_options display_stack_options() const;
     [[nodiscard]] std::vector<std::wstring> const& filter_values(std::wstring const& option) const;
     [[nodiscard]] std::vector<std::wstring> const& symbol_types() const { return symbol_types_; }
@@ -119,6 +120,8 @@ private:
     bool display_loaded_modules_{false};
     std::string display_heap_graph_to_reference_limit_raw_;
     size_t display_heap_graph_to_reference_limit_{10};
+    std::string max_symbol_dump_depth_raw_;
+    size_t max_symbol_dump_depth_{10};
     uint16_t heap_statistics_views_{0};
     std::vector<std::string> filter_values_raw_;
     std::unordered_map<std::wstring, std::vector<std::wstring>> filter_values_;

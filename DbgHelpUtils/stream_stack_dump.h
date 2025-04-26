@@ -62,6 +62,7 @@ namespace dlg_help_utils::stream_stack_dump
         , size_t indent);
     void dump_stack_to_stream(std::wostream& os
         , mini_dump const& mini_dump
+        , size_t max_symbol_dump_depth
         , dbg_help::symbol_engine& symbol_engine
         , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
         , uint64_t stack_start_address

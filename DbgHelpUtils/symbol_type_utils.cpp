@@ -498,6 +498,7 @@ namespace dlg_help_utils::symbol_type_utils
         std::wostream& os
         , mini_dump const& mini_dump
         , symbol_visit_flags::flags const options
+        , size_t const max_symbol_dump_depth
         , symbol_data_dumper const& symbol_data_dumper
         , symbol_engine& symbol_engine
         , std::wstring const& symbol_type_name
@@ -536,13 +537,14 @@ namespace dlg_help_utils::symbol_type_utils
             return;
         }
 
-        dump_variable_symbol_at(os, walker, options, symbol_data_dumper, symbol_info.value(), symbol_info.value(), symbol_type_name, variable_address, stream, indent);
+        dump_variable_symbol_at(os, walker, options, max_symbol_dump_depth, symbol_data_dumper, symbol_info.value(), symbol_info.value(), symbol_type_name, variable_address, stream, indent);
     }
 
     void dump_variable_type_at(
         std::wostream& os
         , mini_dump const& mini_dump
         , symbol_visit_flags::flags const options
+        , size_t const max_symbol_dump_depth
         , symbol_data_dumper const& symbol_data_dumper
         , symbol_engine& symbol_engine
         , symbol_type_info const& symbol_info
@@ -575,13 +577,14 @@ namespace dlg_help_utils::symbol_type_utils
             return;
         }
 
-        dump_variable_symbol_at(os, walker, options, symbol_data_dumper, symbol_info, symbol_info, symbol_type_name, variable_address, stream, indent);
+        dump_variable_symbol_at(os, walker, options, max_symbol_dump_depth, symbol_data_dumper, symbol_info, symbol_info, symbol_type_name, variable_address, stream, indent);
     }
 
     void dump_variable_symbol_at(
         std::wostream& os
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
+        , size_t const max_symbol_dump_depth
         , symbol_data_dumper const& symbol_data_dumper
         , symbol_type_info const& type
         , symbol_type_info const& display_type
@@ -600,7 +603,8 @@ namespace dlg_help_utils::symbol_type_utils
             , variable_address
             , variable_stream
             , symbol_type_name
-            , visited_pointers);
+            , visited_pointers
+            , max_symbol_dump_depth);
 
         string_utils::indent_string(data.line, indent);
         os << data.line << '\n';

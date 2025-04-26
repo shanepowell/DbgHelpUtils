@@ -54,6 +54,7 @@ void dump_mini_dump_exception_stream_data(
             dump_stack_to_stream(
                 log
                 , mini_dump
+                , options.max_symbol_dump_depth()
                 , symbol_engine
                 , symbol_data_dumper
                 , stack_info->stack_start_address

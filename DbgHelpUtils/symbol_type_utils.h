@@ -36,6 +36,7 @@ namespace dlg_help_utils::symbol_type_utils
         std::wostream& os
         , mini_dump const& mini_dump
         , symbol_visit_flags::flags options
+        , size_t max_symbol_dump_depth
         , symbol_data_dumper const& symbol_data_dumper
         , dbg_help::symbol_engine& symbol_engine
         , std::wstring const& symbol_type_name
@@ -45,6 +46,7 @@ namespace dlg_help_utils::symbol_type_utils
         std::wostream& os
         , mini_dump const& mini_dump
         , symbol_visit_flags::flags options
+        , size_t max_symbol_dump_depth
         , symbol_data_dumper const& symbol_data_dumper
         , dbg_help::symbol_engine& symbol_engine
         , dbg_help::symbol_type_info const& symbol_info
@@ -56,6 +58,7 @@ namespace dlg_help_utils::symbol_type_utils
         std::wostream& os
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags options
+        , size_t max_symbol_dump_depth
         , symbol_data_dumper const& symbol_data_dumper
         , dbg_help::symbol_type_info const& type
         , dbg_help::symbol_type_info const& display_type

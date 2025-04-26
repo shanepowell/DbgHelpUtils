@@ -417,7 +417,7 @@ void dump_mini_dump_symbol_name(
         auto const address = variable.symbol_type().address();
         if(auto const type = variable.symbol_type().type(); type.has_value() && address.has_value())
         {
-            symbol_type_utils::dump_variable_type_at(log, mini_dump, dump_options, symbol_data_dumper, symbol_engine, type.value(), name, address.value());
+            symbol_type_utils::dump_variable_type_at(log, mini_dump, dump_options, options.max_symbol_dump_depth(), symbol_data_dumper, symbol_engine, type.value(), name, address.value());
         }
         else if(auto stream = variable.stream(); !stream.eof())
         {
@@ -518,7 +518,7 @@ void dump_mini_dump_address(
 
     if(auto [memory_pointer, symbol_type, memory_size, dt] = symbol_type_utils::parse_address(address); !symbol_type.empty())
     {
-        symbol_type_utils::dump_variable_type_at(log, mini_dump, dump_options, symbol_data_dumper, symbol_engine, symbol_type, memory_pointer);
+        symbol_type_utils::dump_variable_type_at(log, mini_dump, dump_options, options.max_symbol_dump_depth(), symbol_data_dumper, symbol_engine, symbol_type, memory_pointer);
     }
     else
     {
@@ -648,19 +648,40 @@ void dump_mini_dump_peb(
         log << std::format(L"  {}\n", value);
     }
 
-    [[maybe_unused]] auto const peb_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::peb_structure_symbol_name, peb.peb_address(), peb.is_wow64_target() || peb.is_x86_target());
+    [[maybe_unused]] auto const peb_symbol_info = dump_field(
+        log, 
+        peb.walker(), 
+        options.max_symbol_dump_depth(), 
+        symbol_data_dumper, 
+        common_symbol_names::peb_structure_symbol_name, 
+        peb.peb_address(), 
+        peb.is_wow64_target() || peb.is_x86_target());
 
     log << L'\n';
     if(auto const ldr_address = peb.ldr_address(); ldr_address != 0)
     {
         log << L'\n';
-        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::peb_ldr_structure_symbol_name, ldr_address, peb.is_wow64_target() || peb.is_x86_target());
+        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(
+            log, 
+            peb.walker(),
+            options.max_symbol_dump_depth(),
+            symbol_data_dumper, 
+            common_symbol_names::peb_ldr_structure_symbol_name, 
+            ldr_address, 
+            peb.is_wow64_target() || peb.is_x86_target());
     }
 
     if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {
         log << L'\n';
-        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::rtl_user_process_parameters_structure_symbol_name, environment_variables.value().process_parameters_address(), peb.is_wow64_target() || peb.is_x86_target());
+        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(
+            log, 
+            peb.walker(), 
+            options.max_symbol_dump_depth(),
+            symbol_data_dumper,
+            common_symbol_names::rtl_user_process_parameters_structure_symbol_name, 
+            environment_variables.value().process_parameters_address(), 
+            peb.is_wow64_target() || peb.is_x86_target());
 
         log << L"\nProcess Environment Variables:\n";
         for(auto const& value : environment_variables.value().environment())
@@ -688,5 +709,12 @@ void dump_mini_dump_stack_trace_database(
         log << L"No Stack Database in DMP\n";
     }
 
-    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(log, peb.walker(), symbol_data_dumper, common_symbol_names::stack_trace_database_structure_symbol_name, stack_database_address, peb.is_wow64_target());
+    [[maybe_unused]] auto const stack_database_symbol_info = dump_field(
+        log, 
+        peb.walker(),
+        options.max_symbol_dump_depth(),
+        symbol_data_dumper, 
+        common_symbol_names::stack_trace_database_structure_symbol_name, 
+        stack_database_address, 
+        peb.is_wow64_target() || peb.is_x86_target());
 }

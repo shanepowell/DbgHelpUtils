@@ -25,6 +25,16 @@ namespace dlg_help_utils::range_utils
     template <typename T>
     bool range_contains(T start_range, uint64_t range_length, T start, uint64_t length)
     {
+        if (start_range + range_length < start_range)
+        {
+            return false;
+        }
+
+        if (start + length < start)
+        {
+            return false;
+        }
+
         return start >= start_range && start + length <= start_range + range_length;
     }
 

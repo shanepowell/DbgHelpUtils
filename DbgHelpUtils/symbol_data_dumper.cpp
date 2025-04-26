@@ -101,16 +101,17 @@ namespace dlg_help_utils::symbol_type_utils
     }
 
     dump_variable_symbol_data symbol_data_dumper::variable_symbol_at(
-        stream_stack_dump::mini_dump_memory_walker const& walker, 
-        symbol_visit_flags::flags options, 
-        std::wstring_view const& prefix, 
-        symbol_type_info const& type, 
-        symbol_type_info const& display_type, 
-        uint64_t variable_address, 
-        mini_dump_memory_stream const& variable_stream, 
-        std::wstring_view const& name, 
-        std::unordered_set<uint64_t>& visited_pointers, 
-        std::vector<symbol_type_info> const& parents) const
+        stream_stack_dump::mini_dump_memory_walker const& walker
+        , symbol_visit_flags::flags options
+        , std::wstring_view const& prefix
+        , symbol_type_info const& type
+        , symbol_type_info const& display_type
+        , uint64_t variable_address
+        , mini_dump_memory_stream const& variable_stream
+        , std::wstring_view const& name
+        , std::unordered_set<uint64_t>& visited_pointers
+        , size_t const max_symbol_dump_depth
+        , std::vector<symbol_type_info> const& parents) const
     {
         auto const data_type = type.type();
         auto const data_type_tag = data_type.has_value() ? data_type.value().sym_tag() : std::nullopt;
@@ -167,16 +168,17 @@ namespace dlg_help_utils::symbol_type_utils
                     .sub_lines= [this,
                         &walker,
                         options,
-                        &type,
+                        type = type,
                         variable_address,
-                        data_type,
-                        data_type_tag,
-                        copy_variable_stream = variable_stream,
-                        name,
-                        visited_pointers,
-                        parents]() mutable
+                        data_type = data_type,
+                        data_type_tag = data_type_tag,
+                        variable_stream = variable_stream,
+                        name = std::wstring{name},
+                        visited_pointers = visited_pointers,
+                        max_symbol_dump_depth,
+                        parents = parents]() mutable
                     {
-                        return data_at(walker, options, type, variable_address, copy_variable_stream, data_type, data_type_tag, name, visited_pointers, parents);
+                        return data_at(walker, options, type, variable_address, std::move(variable_stream), data_type, data_type_tag, std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents));
                     }
                 };
             }
@@ -207,14 +209,15 @@ namespace dlg_help_utils::symbol_type_utils
                     .sub_lines= [this,
                         &walker,
                         options,
-                        &type,
+                        type = type,
                         variable_address,
-                        copy_variable_stream = variable_stream,
-                        name,
-                        visited_pointers,
-                        parents]() mutable
+                        variable_stream = variable_stream,
+                        name = std::wstring{name},
+                        visited_pointers = visited_pointers,
+                        max_symbol_dump_depth,
+                        parents = parents]() mutable
                     {
-                        return array_variable_symbol_at(walker, options, type, variable_address, copy_variable_stream, name, visited_pointers, parents);
+                        return array_variable_symbol_at(walker, options, type, variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents));
                     }
                 };
             }
@@ -243,14 +246,15 @@ namespace dlg_help_utils::symbol_type_utils
                     .sub_lines= [this,
                         &walker,
                         options,
-                        &type,
+                        type = type,
                         variable_address,
-                        copy_variable_stream = variable_stream,
-                        name,
-                        visited_pointers,
-                        parents]() mutable
+                        variable_stream = variable_stream,
+                        name = std::wstring{name},
+                        visited_pointers = visited_pointers,
+                        max_symbol_dump_depth,
+                        parents = parents]() mutable
                     {
-                        return pointer_variable_symbol_at(walker, options, type, variable_address, copy_variable_stream, name, visited_pointers, parents);
+                        return pointer_variable_symbol_at(walker, options, type, variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents));
                     }
                 };
             }
@@ -267,15 +271,16 @@ namespace dlg_help_utils::symbol_type_utils
                         .sub_lines= [this,
                             &walker,
                             options,
-                            &type,
+                            type = type,
                             variable_address,
-                            data_type,
-                            copy_variable_stream = variable_stream,
-                            name,
-                            visited_pointers,
-                            parents]() mutable
+                            data_type = data_type.value(),
+                            variable_stream = variable_stream,
+                            name = std::wstring{name},
+                            visited_pointers = visited_pointers,
+                            max_symbol_dump_depth,
+                            parents = parents]() mutable
                         {
-                            return variable_symbol_udt_at(walker, options, type, data_type.value(), variable_address, copy_variable_stream, name, visited_pointers, parents);
+                            return variable_symbol_udt_at(walker, options, type, data_type, variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents));
                         }
                     };
                 }
@@ -291,7 +296,8 @@ namespace dlg_help_utils::symbol_type_utils
             break;
         }
 
-        if(anyFields)
+        if(anyFields && 
+            (max_symbol_dump_depth == 0 || parents.size() < max_symbol_dump_depth))
         {
             std::vector child_parents{parents};
             child_parents.push_back(type);
@@ -306,9 +312,10 @@ namespace dlg_help_utils::symbol_type_utils
                     &variable_stream,
                     variable_address,
                     visited_pointers,
+                    max_symbol_dump_depth,
                     child_parents]() mutable 
                 {
-                    return children_variable_symbol_at(walker, options, type, variable_stream, variable_address, visited_pointers, child_parents);
+                    return children_variable_symbol_at(walker, options, type, variable_stream, variable_address, visited_pointers, max_symbol_dump_depth, child_parents);
                 }
             };
         }
@@ -766,14 +773,15 @@ namespace dlg_help_utils::symbol_type_utils
     generator<dump_variable_symbol_data> symbol_data_dumper::data_at(
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
-        , symbol_type_info const& type
+        , symbol_type_info const type  // NOLINT(performance-unnecessary-value-param)
         , uint64_t const variable_address
-        , mini_dump_memory_stream& variable_stream
-        , std::optional<symbol_type_info> const& data_type
+        , mini_dump_memory_stream variable_stream
+        , std::optional<symbol_type_info> const data_type  // NOLINT(performance-unnecessary-value-param)
         , std::optional<sym_tag_enum> const data_type_tag
-        , std::wstring_view const& name
-        , std::unordered_set<uint64_t>& visited_pointers
-        , std::vector<symbol_type_info> const& parents) const
+        , std::wstring name
+        , std::unordered_set<uint64_t> visited_pointers
+        , size_t const max_symbol_dump_depth
+        , std::vector<symbol_type_info> parents) const
     {
         // data member, type the data member type and print based on that type
         if(data_type.has_value())
@@ -781,7 +789,7 @@ namespace dlg_help_utils::symbol_type_utils
             switch(auto const tag = data_type_tag.value_or(sym_tag_enum::Null); tag)  // NOLINT(clang-diagnostic-switch-enum)
             {
             case sym_tag_enum::UDT:
-                for (auto&& data : variable_symbol_udt_at(walker, options, type, data_type.value(), variable_address, variable_stream, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                for (auto&& data : variable_symbol_udt_at(walker, options, type, data_type.value(), variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents)))  // NOLINT(performance-for-range-copy)
                 {
                     co_yield std::move(data);
                 }
@@ -791,21 +799,21 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case sym_tag_enum::PointerType:
-                for(auto&& data : pointer_variable_symbol_at(walker, options, data_type.value(), variable_address, variable_stream, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                for(auto&& data : pointer_variable_symbol_at(walker, options, data_type.value(), variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents)))  // NOLINT(performance-for-range-copy)
                 {
                     co_yield std::move(data);
                 }
                 break;
 
             case sym_tag_enum::ArrayType:
-                for(auto&& data : array_variable_symbol_at(walker, options, data_type.value(), variable_address, variable_stream, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                for(auto&& data : array_variable_symbol_at(walker, options, data_type.value(), variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents)))  // NOLINT(performance-for-range-copy)
                 {
                     co_yield std::move(data);
                 }
                 break;
 
             case sym_tag_enum::BaseType:
-                for(auto&& data : base_type_variable_symbol_at(walker, options, data_type.value(), tag, variable_address, variable_stream, is_pointer_t{false}, 0, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                for(auto&& data : base_type_variable_symbol_at(walker, options, data_type.value(), tag, variable_address, variable_stream, is_pointer_t{false}, 0, name, visited_pointers, max_symbol_dump_depth, parents))  // NOLINT(performance-for-range-copy)
                 {
                     co_yield std::move(data);
                 }
@@ -820,22 +828,26 @@ namespace dlg_help_utils::symbol_type_utils
     generator<dump_variable_symbol_data> symbol_data_dumper::array_variable_symbol_at(
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
-        , symbol_type_info const& type
+        , symbol_type_info const type  // NOLINT(performance-unnecessary-value-param)
         , uint64_t const variable_address
-        , [[maybe_unused]] mini_dump_memory_stream const& variable_stream
-        , std::wstring_view const& name
-        , std::unordered_set<uint64_t>& visited_pointers
+        , [[maybe_unused]] mini_dump_memory_stream const variable_stream  // NOLINT(performance-unnecessary-value-param)
+        , std::wstring const name  // NOLINT(performance-unnecessary-value-param)
+        , std::unordered_set<uint64_t> visited_pointers
+        , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> parents) const
     {
-        if(auto const data_type = type.type(); data_type.has_value())
+        if(auto const data_type = type.type(); 
+            data_type.has_value())
         {
-            if(auto const data_type_tag = data_type.value().sym_tag(); data_type.has_value())
+            if(auto const data_type_tag = data_type.value().sym_tag(); 
+                data_type.has_value() &&
+                (max_symbol_dump_depth == 0 || parents.size() < max_symbol_dump_depth))
             {
                 parents.push_back(type);
                 switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
                 {
                     case sym_tag_enum::BaseType:
-                        for (auto&& data : base_type_variable_symbol_at(walker, options, data_type.value(), data_type_tag.value(), variable_address, variable_stream, is_pointer_t{ true }, static_cast<size_t>(type.array_count().value_or(0)), name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : base_type_variable_symbol_at(walker, options, data_type.value(), data_type_tag.value(), variable_address, variable_stream, is_pointer_t{ true }, static_cast<size_t>(type.array_count().value_or(0)), name, visited_pointers, max_symbol_dump_depth, parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
@@ -859,6 +871,7 @@ namespace dlg_help_utils::symbol_type_utils
                                     dump_hex_t{true},
                                     name,
                                     visited_pointers,
+                                    max_symbol_dump_depth,
                                     parents))  // NOLINT(performance-for-range-copy)
                                 {
                                     co_yield std::move(data);
@@ -878,6 +891,7 @@ namespace dlg_help_utils::symbol_type_utils
                                     dump_hex_t{true}, 
                                     name,
                                     visited_pointers,
+                                    max_symbol_dump_depth,
                                     parents))  // NOLINT(performance-for-range-copy)
                                 {
                                     co_yield std::move(data);
@@ -891,7 +905,7 @@ namespace dlg_help_utils::symbol_type_utils
                         break;
 
                 case sym_tag_enum::UDT:
-                        for (auto&& data : dump_udt_array(walker, options, data_type.value(), variable_address, variable_stream, static_cast<size_t>(type.array_count().value_or(0)), name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : dump_udt_array(walker, options, data_type.value(), variable_address, variable_stream, static_cast<size_t>(type.array_count().value_or(0)), name, visited_pointers, max_symbol_dump_depth, parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
@@ -907,12 +921,13 @@ namespace dlg_help_utils::symbol_type_utils
     generator<dump_variable_symbol_data> symbol_data_dumper::pointer_variable_symbol_at(
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
-        , symbol_type_info const& type
+        , symbol_type_info type
         , [[maybe_unused]] uint64_t variable_address
-        , mini_dump_memory_stream& variable_stream
-        , std::wstring_view const& name
-        , std::unordered_set<uint64_t>& visited_pointers
-        , std::vector<symbol_type_info> const& parents) const
+        , mini_dump_memory_stream variable_stream
+        , std::wstring name
+        , std::unordered_set<uint64_t> visited_pointers
+        , size_t const max_symbol_dump_depth
+        , std::vector<symbol_type_info> parents) const
     {
         if (auto pointer_data = get_pointer(walker, options, type, variable_stream);
             pointer_data.has_value())
@@ -924,7 +939,8 @@ namespace dlg_help_utils::symbol_type_utils
                 pointer_data.value().pointer_type, 
                 pointer_data.value().variable_stream, 
                 name, 
-                visited_pointers, 
+                visited_pointers,
+                max_symbol_dump_depth,
                 parents))  // NOLINT(performance-for-range-copy)
             {
                 co_yield data;
@@ -935,15 +951,16 @@ namespace dlg_help_utils::symbol_type_utils
     generator<dump_variable_symbol_data> symbol_data_dumper::variable_symbol_udt_at(
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
-        , symbol_type_info const& type
-        , [[maybe_unused]] symbol_type_info const& display_type
+        , symbol_type_info const type  // NOLINT(performance-unnecessary-value-param)
+        , [[maybe_unused]] symbol_type_info const display_type  // NOLINT(performance-unnecessary-value-param)
         , uint64_t const variable_address
-        , mini_dump_memory_stream const& variable_stream
-        , std::wstring_view const& name
-        , std::unordered_set<uint64_t>& visited_pointers
-        , std::vector<symbol_type_info> const& parents) const
+        , mini_dump_memory_stream const variable_stream  // NOLINT(performance-unnecessary-value-param)
+        , std::wstring const name  // NOLINT(performance-unnecessary-value-param)
+        , std::unordered_set<uint64_t> visited_pointers
+        , size_t const max_symbol_dump_depth
+        , std::vector<symbol_type_info> parents) const
     {
-        for(auto&& data : pointer_memory_value(walker, options, type, variable_address, display_type, variable_stream, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+        for(auto&& data : pointer_memory_value(walker, options, type, variable_address, display_type, variable_stream, name, visited_pointers, max_symbol_dump_depth, parents))  // NOLINT(performance-for-range-copy)
         {
             co_yield std::move(data);
         }
@@ -956,6 +973,7 @@ namespace dlg_help_utils::symbol_type_utils
         , mini_dump_memory_stream const& variable_stream
         , uint64_t const variable_address
         , std::unordered_set<uint64_t>& visited_pointers
+        , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> const& parents) const
     {
         for (auto const& child : type.children())
@@ -966,7 +984,7 @@ namespace dlg_help_utils::symbol_type_utils
                 {
                     mini_dump_memory_stream copy_stream{ variable_stream };
                     copy_stream.skip(offset_data.value());
-                    co_yield variable_symbol_at(walker, options, {}, child, child, variable_address + offset_data.value(), copy_stream, child.best_name(), visited_pointers, parents);
+                    co_yield variable_symbol_at(walker, options, {}, child, child, variable_address + offset_data.value(), copy_stream, child.best_name(), visited_pointers, max_symbol_dump_depth, parents);
                 }
             }
         }
@@ -983,6 +1001,7 @@ namespace dlg_help_utils::symbol_type_utils
         , size_t const max_size
         , std::wstring_view const& name
         , std::unordered_set<uint64_t>& visited_pointers
+        , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> const& parents) const
     {
         if(auto const base_type_data = type.base_type(); base_type_data.has_value())
@@ -1000,28 +1019,84 @@ namespace dlg_help_utils::symbol_type_utils
                     switch(length.value())
                     {
                     case 1:
-                        for (auto&& data : variable_pointer_array<int8_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<int8_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 2:
-                        for (auto&& data : variable_pointer_array<int16_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<int16_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 4:
-                        for (auto&& data : variable_pointer_array<int32_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<int32_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 8:
-                        for (auto&& data : variable_pointer_array<int64_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<int64_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
@@ -1040,28 +1115,84 @@ namespace dlg_help_utils::symbol_type_utils
                     switch(length.value())
                     {
                     case 1:
-                        for (auto&& data : variable_pointer_array<uint8_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<uint8_t>(
+                                                        walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 2:
-                        for (auto&& data : variable_pointer_array<uint16_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<uint16_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 4:
-                        for (auto&& data : variable_pointer_array<uint32_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<uint32_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 8:
-                        for (auto&& data : variable_pointer_array<uint64_t>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<uint64_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
@@ -1079,14 +1210,42 @@ namespace dlg_help_utils::symbol_type_utils
                     switch(length.value())
                     {
                     case 4:
-                        for (auto&& data : variable_pointer_array<float>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<float>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
                         break;
 
                     case 8:
-                        for (auto&& data : variable_pointer_array<double>(walker, options, type, variable_address, variable_stream, is_pointer, type, tag, max_size, dump_hex_t{false}, name, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                        for (auto&& data : variable_pointer_array<double>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
                         {
                             co_yield std::move(data);
                         }
@@ -1132,6 +1291,7 @@ namespace dlg_help_utils::symbol_type_utils
         , dump_hex_t const dump_hex
         , std::wstring_view const& name
         , std::unordered_set<uint64_t>& visited_pointers
+        , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> parents) const
     {
         if(is_pointer)
@@ -1179,16 +1339,17 @@ namespace dlg_help_utils::symbol_type_utils
                             [this,
                             &walker,
                             options,
-                            type,
+                            type = type,
                             variable_address,
-                            data_type,
-                            data_type_tag,
-                            copy_variable_stream = variable_stream,
-                            visited_pointers,
-                            name = std ::move(indexName),
-                            parents]() mutable
+                            data_type = data_type,
+                            data_type_tag = data_type_tag,
+                            variable_stream = variable_stream,
+                            visited_pointers = visited_pointers,
+                            name = std::move(indexName),
+                            max_symbol_dump_depth,
+                            parents = parents]() mutable
                             {
-                                return data_at(walker, options, type, variable_address, copy_variable_stream, data_type, data_type_tag, name, visited_pointers, parents);
+                                return data_at(walker, options, type, variable_address, std::move(variable_stream), data_type, data_type_tag, std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents));
                             }
                         }
                     };
@@ -1206,9 +1367,12 @@ namespace dlg_help_utils::symbol_type_utils
         , size_t const max_size
         , std::wstring_view const& name
         , std::unordered_set<uint64_t>& visited_pointers
+        , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> parents) const
     {
-        if(auto const length_data = type.length(); length_data.value_or(0) > 0)
+        if(auto const length_data = type.length(); 
+            length_data.value_or(0) > 0 && 
+            (max_symbol_dump_depth == 0 || parents.size() < max_symbol_dump_depth))
         {
             parents.push_back(type);
             auto const length = static_cast<size_t>(length_data.value());
@@ -1228,6 +1392,7 @@ namespace dlg_help_utils::symbol_type_utils
                         variable_stream, 
                         indexName,
                         visited_pointers,
+                        max_symbol_dump_depth,
                         parents);
                 }
                 else
@@ -1249,27 +1414,41 @@ namespace dlg_help_utils::symbol_type_utils
         , mini_dump_memory_stream const& variable_stream
         , std::wstring_view const& name
         , std::unordered_set<uint64_t>& visited_pointers
-        , std::vector<symbol_type_info> parents) const
+        , size_t const max_symbol_dump_depth
+        , std::vector<symbol_type_info>& parents) const
     {
-        if(auto const data_type_tag = pointer_type.sym_tag(); data_type_tag.has_value())
+        if(auto const data_type_tag = pointer_type.sym_tag(); 
+            data_type_tag.has_value() && 
+            (max_symbol_dump_depth == 0 || parents.size() < max_symbol_dump_depth))
         {
             parents.push_back(type);
             auto indexName = std::format(L"*{}", name);
             switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
             {
                 case sym_tag_enum::UDT:
-                    co_yield variable_symbol_at(walker, options, {}, pointer_type, pointer_type, pointer_value, variable_stream, indexName, visited_pointers, parents);
+                    co_yield variable_symbol_at(walker, options, {}, pointer_type, pointer_type, pointer_value, variable_stream, indexName, visited_pointers, max_symbol_dump_depth, parents);
                     break;
 
                 case sym_tag_enum::BaseType:
-                    for (auto data : base_type_variable_symbol_at(walker, options, pointer_type, data_type_tag.value(), pointer_value, variable_stream, is_pointer_t{ true }, 0, indexName, visited_pointers, parents))  // NOLINT(performance-for-range-copy)
+                    for (auto data : base_type_variable_symbol_at(
+                        walker, 
+                        options, 
+                        pointer_type, 
+                        data_type_tag.value(), 
+                        pointer_value, variable_stream, 
+                        is_pointer_t{ true }, 
+                        0, 
+                        indexName, 
+                        visited_pointers,
+                        max_symbol_dump_depth,
+                        parents))  // NOLINT(performance-for-range-copy)
                     {
                         co_yield std::move(data);
                     }
                     break;
 
                 case sym_tag_enum::PointerType:
-                    co_yield variable_symbol_at(walker, options, {}, pointer_type, pointer_type, pointer_value, variable_stream, indexName, visited_pointers, parents);
+                    co_yield variable_symbol_at(walker, options, {}, pointer_type, pointer_type, pointer_value, variable_stream, indexName, visited_pointers, max_symbol_dump_depth, parents);
                     break;
 
                 default:

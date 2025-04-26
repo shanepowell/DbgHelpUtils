@@ -49,6 +49,7 @@ namespace dlg_help_utils::symbol_type_utils
             , mini_dump_memory_stream const& variable_stream
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth = 0
             , std::vector<dbg_help::symbol_type_info> const& parents = {}
             ) const;
 
@@ -224,45 +225,49 @@ namespace dlg_help_utils::symbol_type_utils
         generator<dump_variable_symbol_data> data_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_visit_flags::flags options
-            , dbg_help::symbol_type_info const& type
+            , dbg_help::symbol_type_info type
             , uint64_t variable_address
-            , mini_dump_memory_stream& variable_stream
-            , std::optional<dbg_help::symbol_type_info> const& data_type
+            , mini_dump_memory_stream variable_stream
+            , std::optional<dbg_help::symbol_type_info> data_type
             , std::optional<dbg_help::sym_tag_enum> data_type_tag
-            , std::wstring_view const& name
-            , std::unordered_set<uint64_t>& visited_pointers
-            , std::vector<dbg_help::symbol_type_info> const& parents) const;
+            , std::wstring name
+            , std::unordered_set<uint64_t> visited_pointers
+            , size_t max_symbol_dump_depth
+            , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> array_variable_symbol_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_visit_flags::flags options
-            , dbg_help::symbol_type_info const& type
+            , dbg_help::symbol_type_info type
             , uint64_t variable_address
-            , [[maybe_unused]] mini_dump_memory_stream const& variable_stream
-            , std::wstring_view const& name
-            , std::unordered_set<uint64_t>& visited_pointers
+            , [[maybe_unused]] mini_dump_memory_stream variable_stream
+            , std::wstring name
+            , std::unordered_set<uint64_t> visited_pointers
+            , size_t max_symbol_dump_depth
             , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> pointer_variable_symbol_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_visit_flags::flags options
-            , dbg_help::symbol_type_info const& type
+            , dbg_help::symbol_type_info type
             , [[maybe_unused]] uint64_t variable_address
-            , mini_dump_memory_stream& variable_stream
-            , std::wstring_view const& name
-            , std::unordered_set<uint64_t>& visited_pointers
-            , std::vector<dbg_help::symbol_type_info> const& parents) const;
+            , mini_dump_memory_stream variable_stream
+            , std::wstring name
+            , std::unordered_set<uint64_t> visited_pointers
+            , size_t max_symbol_dump_depth
+            , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> variable_symbol_udt_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_visit_flags::flags options
-            , dbg_help::symbol_type_info const& type
-            , [[maybe_unused]] dbg_help::symbol_type_info const& display_type
+            , dbg_help::symbol_type_info type
+            , [[maybe_unused]] dbg_help::symbol_type_info display_type
             , uint64_t variable_address
-            , [[maybe_unused]] mini_dump_memory_stream const& variable_stream
-            , std::wstring_view const& name
-            , std::unordered_set<uint64_t>& visited_pointers
-            , std::vector<dbg_help::symbol_type_info> const& parents) const;
+            , [[maybe_unused]] mini_dump_memory_stream variable_stream
+            , std::wstring name
+            , std::unordered_set<uint64_t> visited_pointers
+            , size_t max_symbol_dump_depth
+            , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> children_variable_symbol_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
@@ -271,6 +276,7 @@ namespace dlg_help_utils::symbol_type_utils
             , mini_dump_memory_stream const& variable_stream
             , uint64_t variable_address
             , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth
             , std::vector<dbg_help::symbol_type_info> const& parents) const;
 
         generator<dump_variable_symbol_data> base_type_variable_symbol_at(
@@ -284,6 +290,7 @@ namespace dlg_help_utils::symbol_type_utils
             , size_t max_size
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth
             , std::vector<dbg_help::symbol_type_info> const& parents) const;
 
         template<typename T>
@@ -300,6 +307,7 @@ namespace dlg_help_utils::symbol_type_utils
             , dump_hex_t dump_hex
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth
             , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> dump_udt_array(
@@ -311,6 +319,7 @@ namespace dlg_help_utils::symbol_type_utils
             , size_t max_size
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth
             , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> pointer_memory_value(
@@ -322,7 +331,8 @@ namespace dlg_help_utils::symbol_type_utils
             , mini_dump_memory_stream const& variable_stream
             , std::wstring_view const& name
             , std::unordered_set<uint64_t>& visited_pointers
-            , std::vector<dbg_help::symbol_type_info> parents) const;
+            , size_t max_symbol_dump_depth
+            , std::vector<dbg_help::symbol_type_info>& parents) const;
 
         static bool any_data_at(
             std::wostream& os
