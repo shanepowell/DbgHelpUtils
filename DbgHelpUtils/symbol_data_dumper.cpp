@@ -308,14 +308,14 @@ namespace dlg_help_utils::symbol_type_utils
                     this,
                     &walker,
                     options,
-                    &type,
-                    &variable_stream,
+                    type = type,
+                    variable_stream = variable_stream,
                     variable_address,
-                    visited_pointers,
+                    visited_pointers = visited_pointers,
                     max_symbol_dump_depth,
-                    child_parents]() mutable 
+                    child_parents = std::move(child_parents)]() mutable 
                 {
-                    return children_variable_symbol_at(walker, options, type, variable_stream, variable_address, visited_pointers, max_symbol_dump_depth, child_parents);
+                    return children_variable_symbol_at(walker, options, type, std::move(variable_stream), variable_address, std::move(visited_pointers), max_symbol_dump_depth, std::move(child_parents));
                 }
             };
         }
@@ -969,12 +969,12 @@ namespace dlg_help_utils::symbol_type_utils
     generator<dump_variable_symbol_data> symbol_data_dumper::children_variable_symbol_at(
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
-        , symbol_type_info const& type
-        , mini_dump_memory_stream const& variable_stream
+        , symbol_type_info const type
+        , mini_dump_memory_stream const variable_stream
         , uint64_t const variable_address
-        , std::unordered_set<uint64_t>& visited_pointers
+        , std::unordered_set<uint64_t> visited_pointers
         , size_t const max_symbol_dump_depth
-        , std::vector<symbol_type_info> const& parents) const
+        , std::vector<symbol_type_info> const parents) const
     {
         for (auto const& child : type.children())
         {

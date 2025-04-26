@@ -272,12 +272,12 @@ namespace dlg_help_utils::symbol_type_utils
         generator<dump_variable_symbol_data> children_variable_symbol_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
             , symbol_visit_flags::flags options
-            , dbg_help::symbol_type_info const& type
-            , mini_dump_memory_stream const& variable_stream
+            , dbg_help::symbol_type_info type
+            , mini_dump_memory_stream variable_stream
             , uint64_t variable_address
-            , std::unordered_set<uint64_t>& visited_pointers
+            , std::unordered_set<uint64_t> visited_pointers
             , size_t max_symbol_dump_depth
-            , std::vector<dbg_help::symbol_type_info> const& parents) const;
+            , std::vector<dbg_help::symbol_type_info> parents) const;
 
         generator<dump_variable_symbol_data> base_type_variable_symbol_at(
             stream_stack_dump::mini_dump_memory_walker const& walker
