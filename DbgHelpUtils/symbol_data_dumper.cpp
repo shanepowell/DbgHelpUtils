@@ -359,6 +359,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case sym_tag_enum::ArrayType:
+                do_dump_array_variable_symbol_at(ss, walker, data_type.value(), variable_address, variable_stream);
                 break;
 
             case sym_tag_enum::BaseType:
@@ -508,6 +509,10 @@ namespace dlg_help_utils::symbol_type_utils
         {
             dump_pointer_memory_value(os, walker, pointer_data.value());
         }
+        else
+        {
+            os << std::format(L": {}", resources::get_variable_unknown());
+        }
     }
 
     void symbol_data_dumper::do_dump_base_type_variable_symbol_at(
@@ -520,6 +525,7 @@ namespace dlg_help_utils::symbol_type_utils
         , is_pointer_t const is_pointer
         , size_t const max_size) const
     {
+        auto dump_value = !is_pointer || max_size == 0;
         if(auto const base_type_data = type.base_type(); base_type_data.has_value())
         {
             switch(base_type_data.value())
@@ -534,7 +540,7 @@ namespace dlg_help_utils::symbol_type_utils
 
             case basic_type::Int:
             case basic_type::Long:
-                if(auto const length = type.length(); length.has_value())
+                if(auto const length = type.length(); length.has_value() && dump_value)
                 {
                     switch(length.value())
                     {
@@ -562,7 +568,7 @@ namespace dlg_help_utils::symbol_type_utils
 
             case basic_type::UInt:
             case basic_type::ULong:
-                if(auto const length = type.length(); length.has_value())
+                if(auto const length = type.length(); length.has_value() && dump_value)
                 {
                     switch(length.value())
                     {
@@ -589,7 +595,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::Float:
-                if(auto const length = type.length(); length.has_value())
+                if(auto const length = type.length(); length.has_value() && dump_value)
                 {
                     switch(length.value())
                     {
@@ -612,7 +618,10 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::Bool:
-                dump_number_variable<uint8_t>(os, walker, variable_stream, bit_mask);
+                if (dump_value)
+                {
+                    dump_number_variable<uint8_t>(os, walker, variable_stream, bit_mask);
+                }
                 break;
 
             case basic_type::Currency:
@@ -632,7 +641,10 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case basic_type::Bit:
-                dump_number_variable<uint8_t>(os, walker, variable_stream, bit_mask);
+                if (dump_value)
+                {
+                    dump_number_variable<uint8_t>(os, walker, variable_stream, bit_mask);
+                }
                 break;
 
             case basic_type::BSTR:
@@ -799,7 +811,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case sym_tag_enum::PointerType:
-                for(auto&& data : pointer_variable_symbol_at(walker, options, data_type.value(), variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents)))  // NOLINT(performance-for-range-copy)
+                for(auto&& data :pointer_variable_symbol_at(walker, options, data_type.value(), variable_address, std::move(variable_stream), std::move(name), std::move(visited_pointers), max_symbol_dump_depth, std::move(parents)))  // NOLINT(performance-for-range-copy)
                 {
                     co_yield std::move(data);
                 }
@@ -935,7 +947,7 @@ namespace dlg_help_utils::symbol_type_utils
             for(auto&& data : pointer_memory_value(walker, 
                 options, 
                 type, 
-                pointer_data.value().pointer_value, 
+                pointer_data.value().pointer_value,
                 pointer_data.value().pointer_type, 
                 pointer_data.value().variable_stream, 
                 name, 
@@ -969,12 +981,12 @@ namespace dlg_help_utils::symbol_type_utils
     generator<dump_variable_symbol_data> symbol_data_dumper::children_variable_symbol_at(
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
-        , symbol_type_info const type
-        , mini_dump_memory_stream const variable_stream
+        , symbol_type_info const type  // NOLINT(performance-unnecessary-value-param)
+        , mini_dump_memory_stream const variable_stream // NOLINT(performance-unnecessary-value-param)
         , uint64_t const variable_address
         , std::unordered_set<uint64_t> visited_pointers
         , size_t const max_symbol_dump_depth
-        , std::vector<symbol_type_info> const parents) const
+        , std::vector<symbol_type_info> const parents) const  // NOLINT(performance-unnecessary-value-param)
     {
         for (auto const& child : type.children())
         {
@@ -1010,6 +1022,56 @@ namespace dlg_help_utils::symbol_type_utils
             {
             case basic_type::Char:
             case basic_type::WChar:
+                if(auto const length = type.length(); length.has_value())
+                {
+                    switch(length.value())
+                    {
+                    case 1:
+                        for (auto&& data : variable_pointer_array<char>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
+                        {
+                            co_yield std::move(data);
+                        }
+                        break;
+
+                    case 2:
+                        for (auto&& data : variable_pointer_array<wchar_t>(
+                            walker, 
+                            options, 
+                            type, 
+                            variable_address, 
+                            variable_stream, 
+                            is_pointer, 
+                            type, 
+                            tag, 
+                            max_size, 
+                            dump_hex_t{false}, 
+                            name, 
+                            visited_pointers,
+                            max_symbol_dump_depth,
+                            parents))  // NOLINT(performance-for-range-copy)
+                        {
+                            co_yield std::move(data);
+                        }
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
                 break;
 
             case basic_type::Int:
@@ -1330,6 +1392,20 @@ namespace dlg_help_utils::symbol_type_utils
                         {
                             ss << indexPrefix << std::to_wstring(value);
                         }
+
+                        if constexpr (std::is_same_v<T, char> || std::is_same_v<T, wchar_t>)
+                        {
+                            ss << L" (";
+                            if(print_utils::is_printable_char(value))
+                            {
+                                ss << print_utils::to_printable_char(value);
+                            }
+                            else
+                            {
+                                ss << '?';
+                            }
+                            ss << L")";
+                        }
                     }
 
                     co_yield dump_variable_symbol_data{
@@ -1426,7 +1502,13 @@ namespace dlg_help_utils::symbol_type_utils
             switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
             {
                 case sym_tag_enum::UDT:
-                    co_yield variable_symbol_at(walker, options, {}, pointer_type, pointer_type, pointer_value, variable_stream, indexName, visited_pointers, max_symbol_dump_depth, parents);
+                    if (auto&& variable = variable_symbol_at(walker, options, {}, pointer_type, pointer_type, pointer_value, variable_stream, indexName, visited_pointers, max_symbol_dump_depth, parents); variable.sub_lines)
+                    {
+                        for (auto data : variable.sub_lines())
+                        {
+                            co_yield std::move(data);
+                        }
+                    }
                     break;
 
                 case sym_tag_enum::BaseType:
@@ -1435,7 +1517,8 @@ namespace dlg_help_utils::symbol_type_utils
                         options, 
                         pointer_type, 
                         data_type_tag.value(), 
-                        pointer_value, variable_stream, 
+                        pointer_value,
+                        variable_stream, 
                         is_pointer_t{ true }, 
                         0, 
                         indexName, 
@@ -1502,6 +1585,7 @@ namespace dlg_help_utils::symbol_type_utils
         , symbol_type_info const& type
         , mini_dump_memory_stream& variable_stream)
     {
+        auto got_pointer_value{false};
         uint64_t pointer_value{0};
         std::streamsize pointer_size{0};
 
@@ -1514,6 +1598,7 @@ namespace dlg_help_utils::symbol_type_utils
                 if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
                 {
                     pointer_value = static_cast<uint64_t>(value);
+                    got_pointer_value = true;
                 }
                 break;
 
@@ -1525,6 +1610,7 @@ namespace dlg_help_utils::symbol_type_utils
                         pointer_size = 4;
                     }
                     pointer_value = value;
+                    got_pointer_value = true;
                 }
                 break;
 
@@ -1533,7 +1619,7 @@ namespace dlg_help_utils::symbol_type_utils
             }
         }
 
-        if (pointer_value > 0)
+        if (got_pointer_value)
         {
             if(auto const pointer_type = type.type(); pointer_type.has_value())
             {
@@ -1550,6 +1636,14 @@ namespace dlg_help_utils::symbol_type_utils
                             };
                     }
                 }
+
+                return pointer_data_t
+                    {
+                        .pointer_value = pointer_value,
+                        .pointer_size = pointer_size,
+                        .pointer_type = pointer_type.value(),
+                        .variable_stream = {}
+                    };
             }
         }
 
@@ -1610,6 +1704,19 @@ namespace dlg_help_utils::symbol_type_utils
             {
             case basic_type::Char:
             case basic_type::WChar:
+                if(auto const length = type.length(); length.has_value())
+                {
+                    switch(length.value())
+                    {
+                    case 1:
+                    case 2:
+                    case 4:
+                        return any_number_variable(walker, variable_address, is_pointer, static_cast<size_t>(length.value()), max_size);
+
+                    default:
+                        break;
+                    }
+                }
                 break;
 
             case basic_type::Int:
