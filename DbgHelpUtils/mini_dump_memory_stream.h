@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 #include <functional>
+#include <string>
 
 #include "generator.h"
 #include "enable_module_loading.h"
@@ -8,6 +9,8 @@
 
 namespace dlg_help_utils
 {
+    using stop_at_null_t = tagged_bool<struct stop_at_null_type>;
+
     class mini_dump_memory_stream
     {
     public:
@@ -83,9 +86,63 @@ namespace dlg_help_utils
             return is_found(index);
         }
 
+
+        template<typename T>
+        [[nodiscard]] std::basic_string_view<T, std::char_traits<T>> read_string_view(uint64_t const max_size, stop_at_null_t const stop_at_null)
+        {
+            if (eof())
+            {
+                return {};
+            }
+
+            T const* start = reinterpret_cast<T const*>(memory_);
+            auto const length = process_data(sizeof(T), [max_size, stop_at_null](uint8_t const* memory, size_t const amount)
+            {
+                T const* current = reinterpret_cast<T const*>(memory);
+                return  (stop_at_null ? *current != 0 : true) && amount < max_size;
+            });
+
+            if (length < max_size)
+            {
+                // move past the null terminator
+                skip(sizeof(T));
+            }
+
+            return { start, length / sizeof(T) };
+        }
+
     private:
         template<typename T>
-        [[nodiscard]] size_t process_data(size_t length, T op);
+        [[nodiscard]] size_t process_data(size_t length, T op)
+        {
+            if(eof()) return 0;
+
+            size_t read_length{0};
+            while(length > 0 && !eof())
+            {
+                auto const copy_length = std::min(length, static_cast<size_t>(end_memory_ - memory_));
+                auto const continue_op = op(memory_, copy_length);
+
+                length -= copy_length;
+                current_address_ += copy_length;
+                memory_ += copy_length;
+                read_length += copy_length;
+
+                if (!continue_op)
+                {
+                    break;
+                }
+
+                if(!eof() && memory_ == end_memory_)
+                {
+                    uint64_t size = end_address_ - current_address_;
+                    memory_ = static_cast<uint8_t const*>(get_process_memory_range_(current_address_, size, enable_module_loading_));
+                    end_memory_ = memory_ + size;
+                }
+            }
+
+            return read_length;
+        }
 
     private:
         std::function<void const*(uint64_t base_address, uint64_t& size, enable_module_loading_t enable_module_loading)> get_process_memory_range_;

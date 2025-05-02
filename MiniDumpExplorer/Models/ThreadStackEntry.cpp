@@ -151,6 +151,7 @@ namespace winrt::MiniDumpExplorer::implementation
                             , variable_.frame_data->data_address
                             , stream
                             , {}
+                            , {}
                             , visited_pointers));
                 }
             }
@@ -167,6 +168,7 @@ namespace winrt::MiniDumpExplorer::implementation
                         , 0
                         , dbg_help::to_stream(variable.registry_value->value)
                         , {}
+                        , {}
                         , visited_pointers));
             }
         }
@@ -180,7 +182,8 @@ namespace winrt::MiniDumpExplorer::implementation
     void ThreadStackEntry::Set(std::shared_ptr<Utility::mini_dump_walker_store> const& walker_store, symbol_type_utils::dump_variable_symbol_data data)  // NOLINT(performance-unnecessary-value-param)
     // ReSharper restore CppParameterMayBeConst
     {
-        line_ = data.line;
+        render_line_ = std::move(data.render_line);
+        line_ = render_line_();
 
         if(data.sub_lines)
         {

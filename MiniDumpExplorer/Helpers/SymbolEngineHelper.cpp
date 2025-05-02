@@ -9,6 +9,7 @@ using namespace winrt;
 SymbolEngineHelper::SymbolEngineHelper()
     : dbg_help_queue_{Windows::System::DispatcherQueueController::CreateOnDedicatedThread()}
     , symbol_engine_{*this}
+    , symbol_data_dumper_{formatter_}
 {
 }
 

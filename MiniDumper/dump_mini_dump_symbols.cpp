@@ -522,7 +522,7 @@ void dump_mini_dump_address(
     }
     else
     {
-        auto const find_limit = print_utils::stop_at_null_t{memory_size == 0};
+        auto const find_limit = stop_at_null_t{memory_size == 0};
         if(find_limit)
         {
             memory_size = std::numeric_limits<uint64_t>::max();
@@ -541,13 +541,13 @@ void dump_mini_dump_address(
         else if(string_utils::iequals(dt, L"str"sv))
         {
             log << std::format(L"string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
-            print_utils::print_stream_str<char>(log, stream, memory_size, find_limit);
+            log << print_utils::to_c_string(stream.read_string_view<char>(memory_size, find_limit));
             log << L'\n';
         }
         else if(string_utils::iequals(dt, L"wstr"sv))
         {
             log << std::format(L"unicode string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
-            print_utils::print_stream_str<wchar_t>(log, stream, memory_size / sizeof(wchar_t), find_limit);
+            log << print_utils::to_c_string(stream.read_string_view<wchar_t>(memory_size, find_limit));
             log << L'\n';
         }
         else if(string_utils::iequals(dt, L"astr"sv))
@@ -687,8 +687,46 @@ void dump_mini_dump_peb(
         for(auto const& value : environment_variables.value().environment())
         {
             log << L"  ";
-            print_str(log, value.data(), value.size(), print_utils::stop_at_null_t{false});
-            log << L'\n';
+
+            std::wstring_view value_view{ value };
+            if(auto value_pos = value_view.find_first_of(L'='); 
+                value_pos != std::wstring_view::npos)
+            {
+                print_utils::print_str(log, value_view.data(), value_pos, stop_at_null_t{false});  // NOLINT(bugprone-suspicious-stringview-data-usage)
+                log << L" = ";
+                value_view = value_view.substr(value_pos + 1);
+
+                value_pos = value_view.find_first_of(L';');
+                if(value_pos != std::wstring_view::npos)
+                {
+                    log << L'\n';
+                    while (value_pos != std::wstring_view::npos)
+                    {
+                        log << L"    ";
+                        print_utils::print_str(log, value_view.data(), value_pos + 1, stop_at_null_t{false});  // NOLINT(bugprone-suspicious-stringview-data-usage)
+                        log << L'\n';
+                        value_view = value_view.substr(value_pos + 1);
+                        value_pos = value_view.find_first_of(L';');
+                    }
+
+                    if (!value_view.empty())
+                    {
+                        log << L"    ";
+                        print_utils::print_str(log, value_view.data(), value_view.size(), stop_at_null_t{false});
+                        log << L'\n';
+                    }
+                }
+                else
+                {
+                    print_utils::print_str(log, value_view.data(), value_view.size(), stop_at_null_t{false});
+                    log << L'\n';
+                }
+            }
+            else
+            {
+                print_utils::print_str(log, value.data(), value.size(), stop_at_null_t{false});
+                log << L'\n';
+            }
         }
     }
 }

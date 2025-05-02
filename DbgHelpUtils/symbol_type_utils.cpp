@@ -202,6 +202,13 @@ namespace dlg_help_utils::symbol_type_utils
             }
         }
 
+        void dump_render_line(std::wostream& os, size_t const indent, dump_variable_symbol_data const& data)
+        {
+            auto line = data.render_line();
+            string_utils::indent_string(line, indent);
+            os << line << '\n';
+        }
+
         void dump_sub_lines(std::wostream& os, std::function<generator<dump_variable_symbol_data>()> const& sub_lines, size_t const indent)
         {
             if (!sub_lines)
@@ -209,11 +216,9 @@ namespace dlg_help_utils::symbol_type_utils
                 return;
             }
 
-            for (auto data : sub_lines())
+            for (const auto& data : sub_lines())
             {
-                string_utils::indent_string(data.line, indent);
-                os << data.line << '\n';
-
+                dump_render_line(os, indent, data);
                 dump_sub_lines(os, data.sub_lines, indent + 1);
             }
         }
@@ -603,12 +608,11 @@ namespace dlg_help_utils::symbol_type_utils
             , variable_address
             , variable_stream
             , symbol_type_name
+            , symbol_type_name
             , visited_pointers
             , max_symbol_dump_depth);
 
-        string_utils::indent_string(data.line, indent);
-        os << data.line << '\n';
-
+        dump_render_line(os, indent, data);
         dump_sub_lines(os, data.sub_lines, indent + 1);
     }
 

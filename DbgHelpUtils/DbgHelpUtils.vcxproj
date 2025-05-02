@@ -372,6 +372,7 @@
     <ClInclude Include="ryu\ryu_generic_128.h" />
     <ClInclude Include="symbol_type_custom_formatter.h" />
     <ClInclude Include="symbol_data_dumper.h" />
+    <ClInclude Include="value_type_formatter.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />

@@ -81,6 +81,9 @@
     <ClCompile Include="dump_mini_dump_heap_graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="value_type_formatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dump_file_options.h">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="common_symbol_lookup_utils.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="value_type_formatter.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

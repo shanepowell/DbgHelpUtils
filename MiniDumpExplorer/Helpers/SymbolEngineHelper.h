@@ -6,6 +6,7 @@
 #include "DbgHelpUtils/i_symbol_load_callback.h"
 #include "DbgHelpUtils/symbol_engine.h"
 #include "DbgHelpUtils/symbol_data_dumper.h"
+#include "Utility\value_type_formatter.h"
 
 class SymbolEngineHelper : dlg_help_utils::dbg_help::i_symbol_load_callback
 {
@@ -47,6 +48,7 @@ private:
     winrt::Windows::System::DispatcherQueueController dbg_help_queue_;
     dlg_help_utils::cache_manager cache_;
     dlg_help_utils::dbg_help::symbol_engine symbol_engine_;
+    value_type_formatter formatter_;
     dlg_help_utils::symbol_type_utils::symbol_data_dumper symbol_data_dumper_;
     mutable std::wostringstream log_;
 };

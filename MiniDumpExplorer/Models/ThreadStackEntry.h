@@ -64,6 +64,7 @@ namespace winrt::MiniDumpExplorer::implementation
         bool isStackFrame_{};
         bool isParameter_{};
         bool isLocalVariable_{};
+        std::function<std::wstring()> render_line_{};
         hstring line_{};
         std::atomic_bool areChildrenLoaded_{};
         bool loadingChildren_{};

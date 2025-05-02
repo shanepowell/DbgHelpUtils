@@ -216,6 +216,7 @@
     <ClCompile Include="dump_mini_dump_thread.cpp" />
     <ClCompile Include="MiniDumper.cpp" />
     <ClCompile Include="symbol_engine_ui.cpp" />
+    <ClCompile Include="value_type_formatter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DbgHelpUtils\DbgHelpUtils.vcxproj">
@@ -238,6 +239,7 @@
     <ClInclude Include="dump_mini_dump_thread.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="symbol_engine_ui.h" />
+    <ClInclude Include="value_type_formatter.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="MiniDumper.exe.manifest" />

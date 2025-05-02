@@ -636,6 +636,7 @@
     </ClInclude>
     <ClInclude Include="Utility\mini_dump_walker_store.h" />
     <ClInclude Include="Utility\run.h" />
+    <ClInclude Include="Utility\value_type_formatter.h" />
     <ClInclude Include="ViewModels\Float80RegisterView.xaml.h">
       <DependentUpon>ViewModels\Float80RegisterView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1351,6 +1352,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Utility\mini_dump_walker_store.cpp" />
+    <ClCompile Include="Utility\value_type_formatter.cpp" />
     <ClCompile Include="ViewModels\Float80RegisterView.xaml.cpp">
       <DependentUpon>ViewModels\Float80RegisterView.xaml</DependentUpon>
       <SubType>Code</SubType>

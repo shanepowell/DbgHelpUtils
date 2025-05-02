@@ -6,6 +6,7 @@
 #include "dump_mini_dump_streams.h"
 #include "dump_mini_dump_symbols.h"
 #include "symbol_engine_ui.h"
+#include "value_type_formatter.h"
 #include "DbgHelpUtils/cache_manager.h"
 #include "DbgHelpUtils/file_version_info.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
@@ -132,7 +133,8 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     cache_manager cache;
     symbol_engine_ui ui{options};
     dbg_help::symbol_engine symbol_engine{ui};
-    symbol_type_utils::symbol_data_dumper symbol_data_dumper{};
+    value_type_formatter formatter{};
+    symbol_type_utils::symbol_data_dumper symbol_data_dumper{formatter};
     auto const x86 = is_wow64_process(dump_file) || is_x86_process(dump_file);
 
     if (options.dump_header())

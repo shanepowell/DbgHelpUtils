@@ -1076,5 +1076,8 @@
     <ClInclude Include="symbol_type_custom_formatter.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
+    <ClInclude Include="value_type_formatter.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

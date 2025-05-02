@@ -29,6 +29,37 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
+    std::wstring to_c_string_char(T ch)
+    {
+        auto tch = static_cast<wchar_t>(to_printable_char(ch));
+
+        static const std::unordered_map<wchar_t, std::wstring> escape_map = {
+            {L'\0', L"\\0"},
+            {L'\a', L"\\a"},
+            {L'\b', L"\\b"},
+            {L'\t', L"\\t"},
+            {L'\n', L"\\n"},
+            {L'\v', L"\\v"},
+            {L'\f', L"\\f"},
+            {L'\r', L"\\r"},
+        };
+
+        if (auto it = escape_map.find(tch);
+            it != escape_map.end())
+        {
+            return it->second;
+        }
+
+        if (tch <= 31 
+            || tch == 127)
+        {
+            return std::format(L"\\x{:03x}", tch);
+        }
+
+        return std::to_wstring(tch);
+    }
+
+    template<typename T>
     bool is_printable_char(T ch)
     {
         if(static_cast<int>(ch) < -1 || static_cast<int>(ch) > 255)
@@ -38,8 +69,6 @@ namespace dlg_help_utils::print_utils
 
         return std::isprint(ch) != 0;
     }
-
-    using stop_at_null_t = tagged_bool<struct stop_at_null_type>;
 
     template<typename T>
     void print_str(std::wostream& os, T const* str, size_t const max_size, stop_at_null_t const stop_at_null)
@@ -63,30 +92,15 @@ namespace dlg_help_utils::print_utils
     }
 
     template<typename T>
-    void print_stream_str(std::wostream& os, mini_dump_memory_stream& stream, uint64_t const max_size, stop_at_null_t const stop_at_null)
+    std::wstring to_c_string(std::basic_string_view<T> const value)
     {
-        for(uint64_t i = 0; i < max_size; ++i)
+        std::wostringstream os;
+        for(auto const ch : value)
         {
-            T ch;
-            if(stream.read(&ch, sizeof(T)) != sizeof(T))
-            {
-                return;
-            }
-
-            if(stop_at_null && ch == NULL)
-            {
-                return;
-            }
-
-            if(is_printable_char(ch))
-            {
-                os << print_utils::to_printable_char(ch);
-            }
-            else
-            {
-                os << '?';
-            }
+            os << print_utils::to_c_string_char(ch);
         }
+
+        return std::move(os).str();
     }
 
     template<typename T>
