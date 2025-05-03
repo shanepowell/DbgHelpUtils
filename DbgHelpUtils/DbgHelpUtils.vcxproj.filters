@@ -64,6 +64,9 @@
     <Filter Include="ryu">
       <UniqueIdentifier>{95e60be2-1c8a-44fa-9c4b-9861e28c3c95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SymbolUtilities">
+      <UniqueIdentifier>{17360b91-8ff7-4e0f-b504-316e710ded25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comment_stream_a.cpp">
@@ -165,9 +168,6 @@
     <ClCompile Include="exception_utils.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="system_info_utils.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
     <ClCompile Include="memory_info_utils_resources.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
@@ -243,19 +243,7 @@
     <ClCompile Include="module_match.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="symbol_type_utils.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
     <ClCompile Include="stream_utils.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
-    <ClCompile Include="common_symbol_names.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
-    <ClCompile Include="gflags_utils_resources.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
-    <ClCompile Include="common_symbol_utils.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="ust_address_stack_trace.cpp">
@@ -402,17 +390,11 @@
     <ClCompile Include="global_symbol.cpp">
       <Filter>Process</Filter>
     </ClCompile>
-    <ClCompile Include="register_names_resources.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
     <ClCompile Include="stream_module_name.cpp">
       <Filter>Streams</Filter>
     </ClCompile>
     <ClCompile Include="heap_match_utils.cpp">
       <Filter>Heap</Filter>
-    </ClCompile>
-    <ClCompile Include="symbol_type_walker.cpp">
-      <Filter>StreamUtilities</Filter>
     </ClCompile>
     <ClCompile Include="system_module_list.cpp">
       <Filter>Heap\ProcessHeaps</Filter>
@@ -477,12 +459,6 @@
     <ClCompile Include="stream_stack_dump_resources.cpp">
       <Filter>StreamUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="symbol_type_utils_resources.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
-    <ClCompile Include="system_info_utils_resources.cpp">
-      <Filter>StreamUtilities</Filter>
-    </ClCompile>
     <ClCompile Include="time_utils_resources.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
@@ -505,7 +481,40 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="symbol_data_dumper.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_type_utils.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_type_utils_resources.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_type_walker.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="system_info_utils.cpp">
       <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="system_info_utils_resources.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="register_names_resources.cpp">
+      <Filter>StreamUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="gflags_utils_resources.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="common_symbol_names.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="common_symbol_utils.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="gflags_custom_formatter.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="register_custom_formatters.cpp">
+      <Filter>NtdllUtilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -620,9 +629,6 @@
     <ClInclude Include="memory_info_list_stream.h">
       <Filter>Streams</Filter>
     </ClInclude>
-    <ClInclude Include="system_info_utils.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
     <ClInclude Include="cv_info_pdb70.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
@@ -731,9 +737,6 @@
     <ClInclude Include="module_match.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
-    <ClInclude Include="symbol_type_utils.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
     <ClInclude Include="basic_type.h">
       <Filter>DbgHelp</Filter>
     </ClInclude>
@@ -753,15 +756,6 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="stream_utils.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
-    <ClInclude Include="common_symbol_names.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
-    <ClInclude Include="gflags_utils.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
-    <ClInclude Include="common_symbol_utils.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="hash_combine.h">
@@ -926,9 +920,6 @@
     <ClInclude Include="variable.h">
       <Filter>DbgHelp</Filter>
     </ClInclude>
-    <ClInclude Include="register_names.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
     <ClInclude Include="stream_module_name.h">
       <Filter>Streams</Filter>
     </ClInclude>
@@ -943,9 +934,6 @@
     </ClInclude>
     <ClInclude Include="memory_range.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="symbol_type_walker.h">
-      <Filter>StreamUtilities</Filter>
     </ClInclude>
     <ClInclude Include="overload.h">
       <Filter>Utility</Filter>
@@ -1034,9 +1022,6 @@
     <ClInclude Include="get_label_type_from_labels.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="system_info_utils_resources.h">
-      <Filter>StreamUtilities</Filter>
-    </ClInclude>
     <ClInclude Include="function_info_utils.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
@@ -1070,13 +1055,46 @@
     <ClInclude Include="generator.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="i_value_type_formatter.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
     <ClInclude Include="symbol_data_dumper.h">
-      <Filter>StreamUtilities</Filter>
+      <Filter>SymbolUtilities</Filter>
     </ClInclude>
     <ClInclude Include="symbol_type_custom_formatter.h">
+      <Filter>SymbolUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_utils.h">
+      <Filter>SymbolUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_type_walker.h">
+      <Filter>SymbolUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="system_info_utils_resources.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
-    <ClInclude Include="value_type_formatter.h">
+    <ClInclude Include="system_info_utils.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="register_names.h">
+      <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="gflags_utils.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="common_symbol_utils.h">
+      <Filter>SymbolUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="common_symbol_names.h">
+      <Filter>SymbolUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="gflags_custom_formatter.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="register_custom_formatters.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="mini_dump_string_stream.h">
       <Filter>StreamUtilities</Filter>
     </ClInclude>
   </ItemGroup>

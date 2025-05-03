@@ -187,6 +187,7 @@
     <ClCompile Include="function_info_utils_resources.cpp" />
     <ClCompile Include="function_table_stream.cpp" />
     <ClCompile Include="get_last_address.h" />
+    <ClCompile Include="gflags_custom_formatter.cpp" />
     <ClCompile Include="gflags_utils_resources.cpp" />
     <ClCompile Include="global_symbol.cpp" />
     <ClCompile Include="global_symbols.cpp" />
@@ -253,6 +254,7 @@
     <ClCompile Include="process_heap_graph_thread_context_entry.cpp" />
     <ClCompile Include="process_heap_graph_thread_stack_entry.cpp" />
     <ClCompile Include="process_vm_counters_stream.cpp" />
+    <ClCompile Include="register_custom_formatters.cpp" />
     <ClCompile Include="register_names_resources.cpp" />
     <ClCompile Include="rtl_balanced_links_walker.cpp" />
     <ClCompile Include="rtl_rb_tree_walker.cpp" />
@@ -335,6 +337,7 @@
     <ClInclude Include="function_info_utils.h" />
     <ClInclude Include="generator.h" />
     <ClInclude Include="get_label_type_from_labels.h" />
+    <ClInclude Include="gflags_custom_formatter.h" />
     <ClInclude Include="gflags_utils.h" />
     <ClInclude Include="global_symbol.h" />
     <ClInclude Include="global_symbols.h" />
@@ -368,11 +371,13 @@
     <ClInclude Include="m128a_utils.h" />
     <ClInclude Include="mini_dump_memory_walker_create_handle.h" />
     <ClInclude Include="mini_dump_memory_walker_release_handle.h" />
+    <ClInclude Include="mini_dump_string_stream.h" />
+    <ClInclude Include="register_custom_formatters.h" />
     <ClInclude Include="ryu\generic_128.h" />
     <ClInclude Include="ryu\ryu_generic_128.h" />
     <ClInclude Include="symbol_type_custom_formatter.h" />
     <ClInclude Include="symbol_data_dumper.h" />
-    <ClInclude Include="value_type_formatter.h" />
+    <ClInclude Include="i_value_type_formatter.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="memory_range.h" />
     <ClInclude Include="mini_dump_memory_stream.h" />

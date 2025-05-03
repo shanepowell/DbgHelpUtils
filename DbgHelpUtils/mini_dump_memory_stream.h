@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
 #include <functional>
-#include <string>
 
 #include "generator.h"
 #include "enable_module_loading.h"
@@ -31,6 +30,9 @@ namespace dlg_help_utils
 
         [[nodiscard]] void const* start_memory_raw() const { return memory_; }
         [[nodiscard]] void const* end_memory_raw() const { return end_memory_; }
+
+
+        [[nodiscard]] mini_dump_memory_stream sub_range(size_t offset, size_t length) const;
 
         template<typename T>
         [[nodiscard]] bool find_pattern(std::function<bool(T, size_t, size_t&)> const& check_data, std::function<bool(size_t)> const& is_found)
@@ -84,31 +86,6 @@ namespace dlg_help_utils
             }
 
             return is_found(index);
-        }
-
-
-        template<typename T>
-        [[nodiscard]] std::basic_string_view<T, std::char_traits<T>> read_string_view(uint64_t const max_size, stop_at_null_t const stop_at_null)
-        {
-            if (eof())
-            {
-                return {};
-            }
-
-            T const* start = reinterpret_cast<T const*>(memory_);
-            auto const length = process_data(sizeof(T), [max_size, stop_at_null](uint8_t const* memory, size_t const amount)
-            {
-                T const* current = reinterpret_cast<T const*>(memory);
-                return  (stop_at_null ? *current != 0 : true) && amount < max_size;
-            });
-
-            if (length < max_size)
-            {
-                // move past the null terminator
-                skip(sizeof(T));
-            }
-
-            return { start, length / sizeof(T) };
         }
 
     private:

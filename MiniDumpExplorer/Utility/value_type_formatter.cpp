@@ -59,27 +59,27 @@ std::wstring value_type_formatter::format_value(double const value) const
     return std::to_wstring(value);
 }
 
-std::wstring value_type_formatter::format_value(std::string_view const value) const
+std::wstring value_type_formatter::format_value(mini_dump_string_stream<char> const value) const
 {
     return print_utils::to_c_string(value);
 }
 
-std::wstring value_type_formatter::format_value(std::wstring_view const value) const
+std::wstring value_type_formatter::format_value(mini_dump_string_stream<wchar_t> const value) const
 {
     return print_utils::to_c_string(value);
 }
 
-std::wstring value_type_formatter::format_value(std::basic_string_view<char8_t> const value) const
+std::wstring value_type_formatter::format_value(mini_dump_string_stream<char8_t> const value) const
 {
     return print_utils::to_c_string(value);
 }
 
-std::wstring value_type_formatter::format_value(std::basic_string_view<char16_t> const value) const
+std::wstring value_type_formatter::format_value(mini_dump_string_stream<char16_t> const value) const
 {
     return print_utils::to_c_string(value);
 }
 
-std::wstring value_type_formatter::format_value(std::basic_string_view<char32_t> const value) const
+std::wstring value_type_formatter::format_value(mini_dump_string_stream<char32_t> const value) const
 {
     return print_utils::to_c_string(value);
 }

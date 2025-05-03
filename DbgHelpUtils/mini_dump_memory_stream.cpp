@@ -1,8 +1,11 @@
 ﻿#include "mini_dump_memory_stream.h"
 
+#include <algorithm>
+
 namespace dlg_help_utils
 {
-    mini_dump_memory_stream::mini_dump_memory_stream(std::function<void const*(uint64_t base_address, uint64_t& size, enable_module_loading_t enable_module_loading)> get_process_memory_range
+    mini_dump_memory_stream::mini_dump_memory_stream(
+        std::function<void const*(uint64_t base_address, uint64_t& size, enable_module_loading_t enable_module_loading)> get_process_memory_range
         , uint64_t const base_address
         , uint64_t size
         , enable_module_loading_t const enable_module_loading)
@@ -63,5 +66,17 @@ namespace dlg_help_utils
                 end_memory_ = memory_ + size;
             }
         }
+    }
+
+    mini_dump_memory_stream mini_dump_memory_stream::sub_range(size_t const offset, size_t const length) const
+    {
+        if (get_process_memory_range_)
+        {
+            uint64_t const start_address = std::min(current_address_ + offset, end_address_);
+            return {get_process_memory_range_, start_address, std::min(static_cast<uint64_t>(length), end_address_ - start_address), enable_module_loading_};
+        }
+
+        auto const start_memory = std::min(memory_ + offset, end_memory_);
+        return {start_memory, std::min(static_cast<uint64_t>(length), static_cast<uint64_t>(end_memory_ - start_memory))};
     }
 }

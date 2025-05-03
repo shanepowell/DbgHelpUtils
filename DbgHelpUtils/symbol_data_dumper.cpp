@@ -2,13 +2,14 @@
 
 #include <format>
 
+#include "i_value_type_formatter.h"
 #include "locale_number_formatting.h"
 #include "mini_dump_memory_stream.h"
 #include "mini_dump_memory_walker.h"
+#include "mini_dump_string_stream.h"
 #include "print_utils.h"
 #include "stream_hex_dump.h"
 #include "symbol_type_utils.h"
-#include "value_type_formatter.h"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -32,7 +33,7 @@ namespace dlg_help_utils::symbol_type_utils
                 max_size = static_cast<size_t>(walker.find_memory_range_if(variable_address, sizeof(T), 256, [](void const* ptr) { return *static_cast<T const*>(ptr) == NULL; }));
             }
 
-            render_line = [this, render_line, value = variable_stream.read_string_view<T>(max_size, stop_at_null_t{false})]
+            render_line = [this, render_line, value = mini_dump_string_stream<T>{variable_stream, max_size, stop_at_null_t{true}}]
             {
                 return std::format(L"{}: {}", render_line(), formatter_->format_value(value));
             };
@@ -478,7 +479,7 @@ namespace dlg_help_utils::symbol_type_utils
             type, 
             tag, 
             variable_address, 
-            variable_stream, 
+            copy_variable_stream, 
             path, 
             name, 
             parents, 
@@ -952,12 +953,10 @@ namespace dlg_help_utils::symbol_type_utils
         // if we have a custom formatter, use that
         for (auto& formatter : custom_formatters_)
         {
-            if (formatter->is_custom_type(type))
+            if (formatter->is_custom_type(type, path, name, parents))
             {
                 auto copy_variable_stream = variable_stream;
-                rv = formatter->format(
-                    render_line,
-                    sub_lines, 
+                auto result = formatter->format(
                     original_value, 
                     walker, 
                     type, 
@@ -968,6 +967,20 @@ namespace dlg_help_utils::symbol_type_utils
                     name, 
                     parents,
                     *formatter_);
+
+                rv = result.result;
+
+                if (result.sub_lines)
+                {
+                    sub_lines = std::move(result.sub_lines);
+                }
+                if (result.render_line)
+                {
+                    render_line = [render_line, custom_render_line = std::move(result.render_line)]
+                    {
+                      return std::format(L"{}{}", render_line(), custom_render_line());
+                    };
+                }
 
                 if (rv != symbol_type_custom_formatter_result::process)
                 {
@@ -1917,26 +1930,29 @@ namespace dlg_help_utils::symbol_type_utils
         {
             if(auto const pointer_type = type.type(); pointer_type.has_value())
             {
+                uint64_t element_size = 1;
                 if(auto const length = pointer_type.value().length(); length.has_value() && length.value() > 0)
                 {
-                    if(auto pointer_variable_stream = walker.get_process_memory_stream(pointer_value, length.value()); !pointer_variable_stream.eof())
-                    {
-                        return pointer_data_t
-                            {
-                                .pointer_value = pointer_value,
-                                .pointer_size = pointer_size,
-                                .pointer_type = pointer_type.value(),
-                                .variable_stream = std::move(pointer_variable_stream)
-                            };
-                    }
+                    element_size = length.value();
+                }
+
+                auto max_size = static_cast<size_t>(walker.find_memory_range(pointer_value, element_size, std::numeric_limits<uint64_t>::max() / element_size));
+                if(auto pointer_variable_stream = walker.get_process_memory_stream(pointer_value, max_size); !pointer_variable_stream.eof())
+                {
+                    return pointer_data_t
+                        {
+                            .pointer_value = pointer_value,
+                            .pointer_size = pointer_size,
+                            .pointer_type = pointer_type.value(),
+                            .variable_stream = std::move(pointer_variable_stream)
+                        };
                 }
 
                 return pointer_data_t
                     {
                         .pointer_value = pointer_value,
                         .pointer_size = pointer_size,
-                        .pointer_type = pointer_type.value(),
-                        .variable_stream = {}
+                        .pointer_type = pointer_type.value()
                     };
             }
         }
@@ -1992,6 +2008,11 @@ namespace dlg_help_utils::symbol_type_utils
         , is_pointer_t const is_pointer
         , size_t const max_size)
     {
+        if (is_pointer && max_size == 0)
+        {
+            return false;
+        }
+
         if(auto const base_type_data = type.base_type(); base_type_data.has_value())
         {
             switch(base_type_data.value())

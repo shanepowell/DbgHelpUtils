@@ -18,6 +18,14 @@ namespace dlg_help_utils::ntdll_utilities
     {
     }
 
+    list_entry_walker::list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const start_address)
+    : cache_manager_{&cache}
+    , walker_{&walker}
+    , start_address_{start_address}
+    , list_entry_entry_offset_{0}
+    {
+    }
+
     generator<uint64_t> list_entry_walker::entries() const
     {
         auto const& flink_field = common_symbol_names::list_entry_flink_field_symbol_name;

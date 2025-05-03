@@ -15,6 +15,7 @@
 #include "DbgHelpUtils/mini_dump_type.h"
 #include "DbgHelpUtils/misc_info_stream.h"
 #include "DbgHelpUtils/process_environment_block.h"
+#include "DbgHelpUtils/register_custom_formatters.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/symbol_engine.h"
 #include "DbgHelpUtils/symbol_data_dumper.h"
@@ -135,6 +136,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     dbg_help::symbol_engine symbol_engine{ui};
     value_type_formatter formatter{};
     symbol_type_utils::symbol_data_dumper symbol_data_dumper{formatter};
+    ntdll_utilities::register_custom_formatters(symbol_data_dumper);
     auto const x86 = is_wow64_process(dump_file) || is_x86_process(dump_file);
 
     if (options.dump_header())

@@ -2,6 +2,7 @@
 #include "SymbolEngineHelper.h"
 
 #include "GlobalOptions.h"
+#include "DbgHelpUtils/register_custom_formatters.h"
 #include "Utility/logger.h"
 
 using namespace winrt;
@@ -11,6 +12,7 @@ SymbolEngineHelper::SymbolEngineHelper()
     , symbol_engine_{*this}
     , symbol_data_dumper_{formatter_}
 {
+    dlg_help_utils::ntdll_utilities::register_custom_formatters(symbol_data_dumper_);
 }
 
 bool SymbolEngineHelper::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module_name)

@@ -16,6 +16,7 @@
 #include "DbgHelpUtils/memory64_list_stream.h"
 #include "DbgHelpUtils/memory_list_stream.h"
 #include "DbgHelpUtils/mini_dump_memory_walker.h"
+#include "DbgHelpUtils/mini_dump_string_stream.h"
 #include "DbgHelpUtils/module_list_stream.h"
 #include "DbgHelpUtils/pe_file_memory_mapping.h"
 #include "DbgHelpUtils/process_environment_block.h"
@@ -541,13 +542,13 @@ void dump_mini_dump_address(
         else if(string_utils::iequals(dt, L"str"sv))
         {
             log << std::format(L"string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
-            log << print_utils::to_c_string(stream.read_string_view<char>(memory_size, find_limit));
+            log << print_utils::to_c_string(mini_dump_string_stream<char>{stream, memory_size, find_limit});
             log << L'\n';
         }
         else if(string_utils::iequals(dt, L"wstr"sv))
         {
             log << std::format(L"unicode string @ [{}]:\n", stream_hex_dump::to_hex_full(memory_pointer));
-            log << print_utils::to_c_string(stream.read_string_view<wchar_t>(memory_size, find_limit));
+            log << print_utils::to_c_string(mini_dump_string_stream<wchar_t>{stream, memory_size, find_limit});
             log << L'\n';
         }
         else if(string_utils::iequals(dt, L"astr"sv))
@@ -641,13 +642,6 @@ void dump_mini_dump_peb(
 {
     process::process_environment_block const peb{mini_dump, cache, symbol_engine};
 
-    const auto values = dump_gflags_to_strings(peb.nt_global_flag());
-    log << std::format(L"NtGlobalFlag: ({})\n", stream_hex_dump::to_hex_full(static_cast<uint32_t>(peb.nt_global_flag())));
-    for (auto const& value : values)
-    {
-        log << std::format(L"  {}\n", value);
-    }
-
     [[maybe_unused]] auto const peb_symbol_info = dump_field(
         log, 
         peb.walker(), 
@@ -656,20 +650,6 @@ void dump_mini_dump_peb(
         common_symbol_names::peb_structure_symbol_name, 
         peb.peb_address(), 
         peb.is_wow64_target() || peb.is_x86_target());
-
-    log << L'\n';
-    if(auto const ldr_address = peb.ldr_address(); ldr_address != 0)
-    {
-        log << L'\n';
-        [[maybe_unused]] auto const ldr_data_symbol_info = dump_field(
-            log, 
-            peb.walker(),
-            options.max_symbol_dump_depth(),
-            symbol_data_dumper, 
-            common_symbol_names::peb_ldr_structure_symbol_name, 
-            ldr_address, 
-            peb.is_wow64_target() || peb.is_x86_target());
-    }
 
     if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {

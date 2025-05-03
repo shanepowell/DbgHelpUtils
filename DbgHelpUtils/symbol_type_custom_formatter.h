@@ -6,6 +6,7 @@
 namespace dlg_help_utils
 {
     class mini_dump_memory_stream;
+    class i_value_type_formatter;
 }
 
 namespace dlg_help_utils::stream_stack_dump
@@ -15,8 +16,6 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::symbol_type_utils
 {
-    class i_value_type_formatter;
-
     enum class symbol_type_custom_formatter_result : uint8_t
     {
         process,
@@ -30,16 +29,26 @@ namespace dlg_help_utils::symbol_type_utils
         std::function<generator<dump_variable_symbol_data>()> sub_lines;
     };
 
+    struct dump_variable_symbol_data_result
+    {
+        symbol_type_custom_formatter_result result{symbol_type_custom_formatter_result::process};
+        std::function<std::wstring()> render_line{};
+        std::function<generator<dump_variable_symbol_data>()> sub_lines{};
+    };
+
     class symbol_type_custom_formatter  // NOLINT(cppcoreguidelines-special-member-functions)
     {
     public:
         virtual ~symbol_type_custom_formatter() = default;
 
-        virtual bool is_custom_type(dbg_help::symbol_type_info const& type) = 0;
-        virtual symbol_type_custom_formatter_result format(
-            std::function<std::wstring()>& render_line
-            , std::function<generator<dump_variable_symbol_data>()>& sub_lines
-            , std::function<std::wstring()> original_render_line
+        virtual bool is_custom_type(
+            dbg_help::symbol_type_info const& type
+            , std::wstring_view const& path
+            , std::wstring_view const& name
+            , std::vector<dbg_help::symbol_type_info> const& parents) = 0;
+
+        virtual dump_variable_symbol_data_result format(
+            std::function<std::wstring()> original_render_line
             , stream_stack_dump::mini_dump_memory_walker const& walker
             , dbg_help::symbol_type_info const& type
             , dbg_help::sym_tag_enum tag

@@ -7,31 +7,37 @@
 
 #include "dump_hex.h"
 #include "mini_dump_memory_stream.h"
+#include "mini_dump_string_stream.h"
 #include "stream_hex_dump.h"
 
 namespace dlg_help_utils::print_utils
 {
     template<typename T>
-    auto to_printable_char(T ch)
+    // ReSharper disable once CppNotAllPathsReturnValue
+    wchar_t to_printable_char(T ch)
     {
         if constexpr (std::is_same_v<T, char> || std::is_same_v<T, wchar_t>)
-        {
-            return ch;
+        {  // NOLINT(bugprone-branch-clone)
+            return static_cast<unsigned char>(ch);
         }
         else if constexpr (std::is_same_v<T, char8_t>)
         {
-            return static_cast<char>(ch);
+            return static_cast<unsigned char>(ch);
         }
         else if constexpr (std::is_same_v<T, char16_t> || std::is_same_v<T, char32_t>)
         {
             return static_cast<wchar_t>(ch);
+        }
+        else
+        {
+            static_assert(false, "unsupported char type");
         }
     }
 
     template<typename T>
     std::wstring to_c_string_char(T ch)
     {
-        auto tch = static_cast<wchar_t>(to_printable_char(ch));
+        auto tch = to_printable_char(ch);
 
         static const std::unordered_map<wchar_t, std::wstring> escape_map = {
             {L'\0', L"\\0"},
@@ -56,7 +62,7 @@ namespace dlg_help_utils::print_utils
             return std::format(L"\\x{:03x}", tch);
         }
 
-        return std::to_wstring(tch);
+        return {tch};
     }
 
     template<typename T>
@@ -93,6 +99,18 @@ namespace dlg_help_utils::print_utils
 
     template<typename T>
     std::wstring to_c_string(std::basic_string_view<T> const value)
+    {
+        std::wostringstream os;
+        for(auto const ch : value)
+        {
+            os << print_utils::to_c_string_char(ch);
+        }
+
+        return std::move(os).str();
+    }
+
+    template<typename T>
+    std::wstring to_c_string(mini_dump_string_stream<T> const& value)
     {
         std::wostringstream os;
         for(auto const ch : value)

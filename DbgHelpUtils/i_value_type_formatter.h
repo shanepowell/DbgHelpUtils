@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include <string>
 
-namespace dlg_help_utils::symbol_type_utils
+#include "mini_dump_string_stream.h"
+
+namespace dlg_help_utils
 {
     class  i_value_type_formatter  // NOLINT(cppcoreguidelines-special-member-functions)
     {
@@ -14,11 +16,11 @@ namespace dlg_help_utils::symbol_type_utils
         virtual std::wstring format_value(float value) const = 0;
         virtual std::wstring format_value(double value) const = 0;
 
-        virtual std::wstring format_value(std::string_view value) const = 0;
-        virtual std::wstring format_value(std::wstring_view value) const = 0;
-        virtual std::wstring format_value(std::basic_string_view<char8_t> value) const = 0;
-        virtual std::wstring format_value(std::basic_string_view<char16_t> value) const = 0;
-        virtual std::wstring format_value(std::basic_string_view<char32_t> value) const = 0;
+        virtual std::wstring format_value(mini_dump_string_stream<char> value) const = 0;
+        virtual std::wstring format_value(mini_dump_string_stream<wchar_t> value) const = 0;
+        virtual std::wstring format_value(mini_dump_string_stream<char8_t> value) const = 0;
+        virtual std::wstring format_value(mini_dump_string_stream<char16_t> value) const = 0;
+        virtual std::wstring format_value(mini_dump_string_stream<char32_t> value) const = 0;
 
         virtual std::wstring format_value(int8_t value) const = 0;
         virtual std::wstring format_value(int16_t value) const = 0;
