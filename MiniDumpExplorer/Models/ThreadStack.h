@@ -33,7 +33,6 @@ namespace winrt::MiniDumpExplorer::implementation
     private:
         fire_and_forget LoadThreadStack(dlg_help_utils::mini_dump const& mini_dump, SymbolEngineHelper& symbolEngineHelper);
         fire_and_forget LoadThreadExStack(dlg_help_utils::mini_dump const& mini_dump, SymbolEngineHelper& symbolEngineHelper);
-        static bool IsX86Process(std::shared_ptr<Utility::mini_dump_walker_store> const& walker_store, dlg_help_utils::mini_dump const& mini_dump);
 
     private:
         dlg_help_utils::stream_thread thread_{};

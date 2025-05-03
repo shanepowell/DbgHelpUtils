@@ -15,6 +15,7 @@
 #include "DbgHelpUtils/size_units.h"
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/stream_utils.h"
+#include "DbgHelpUtils/symbol_data_dumper.h"
 #include "DbgHelpUtils/system_info_utils.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 
@@ -57,8 +58,7 @@ void dump_mini_dump_stream_index(
     , size_t const index
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool const x86)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     auto const* header = dump_file.header();
     if (header == nullptr)
@@ -78,7 +78,7 @@ void dump_mini_dump_stream_index(
     }
 
     auto const& entry = directory[index];
-    dump_mini_dump_stream_data(log, dump_file, index, entry, options, symbol_engine, symbol_data_dumper, x86);
+    dump_mini_dump_stream_data(log, dump_file, index, entry, options, symbol_engine, symbol_data_dumper);
 }
 
 void dump_mini_dump_stream_type(
@@ -87,8 +87,7 @@ void dump_mini_dump_stream_type(
     , MINIDUMP_STREAM_TYPE const type
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool const x86)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     auto const stream = stream_utils::find_stream_for_type(dump_file, type);
     if(!stream.has_value())
@@ -97,7 +96,7 @@ void dump_mini_dump_stream_type(
     }
 
     auto const& [index, entry] = stream.value();
-    dump_mini_dump_stream_data(log, dump_file, index, *entry, options, symbol_engine, symbol_data_dumper, x86);
+    dump_mini_dump_stream_data(log, dump_file, index, *entry, options, symbol_engine, symbol_data_dumper);
 }
 
 void dump_mini_dump_all_stream_indexes(
@@ -105,8 +104,7 @@ void dump_mini_dump_all_stream_indexes(
     , mini_dump const& dump_file
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool const x86)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     auto const* header = dump_file.header();
     if (header == nullptr)
@@ -130,7 +128,7 @@ void dump_mini_dump_all_stream_indexes(
             , locale_formatting::to_wstring(entry.Location.Rva)
             , to_hex(entry.Location.DataSize)
             , to_wstring(bytes{entry.Location.DataSize}));
-        dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine, symbol_data_dumper, x86);
+        dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine, symbol_data_dumper);
     }
 }
 
@@ -141,8 +139,7 @@ void dump_mini_dump_stream_data(
     , MINIDUMP_DIRECTORY const& entry
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool const x86)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     auto hex_dump_stream = false;
     auto const type = static_cast<MINIDUMP_STREAM_TYPE>(entry.StreamType);
@@ -172,7 +169,7 @@ void dump_mini_dump_stream_data(
         log << L"Unsupported data type\n";
         break;
     case ThreadListStream:
-        dump_mini_dump_thread_list_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper, x86);
+        dump_mini_dump_thread_list_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper);
         break;
     case ModuleListStream:
         dump_mini_dump_module_list_stream_data(log, mini_dump, index, options);
@@ -181,13 +178,13 @@ void dump_mini_dump_stream_data(
         dump_mini_dump_memory_list_stream_data(log, mini_dump, index, options);
         break;
     case ExceptionStream:
-        dump_mini_dump_exception_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper, x86);
+        dump_mini_dump_exception_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper);
         break;
     case SystemInfoStream:
         dump_mini_dump_system_info_stream_data(log, mini_dump, index);
         break;
     case ThreadExListStream:
-        dump_mini_dump_thread_list_ex_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper, x86);
+        dump_mini_dump_thread_list_ex_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper);
         break;
     case Memory64ListStream:
         dump_mini_dump_memory64_list_stream_data(log, mini_dump, index, options);
@@ -217,7 +214,7 @@ void dump_mini_dump_stream_data(
         dump_mini_dump_thread_info_list_stream_data(log, mini_dump, index);
         break;
     case HandleOperationListStream:
-        dump_mini_dump_handle_operation_list_stream_data(log, mini_dump, index, options, symbol_engine);
+        dump_mini_dump_handle_operation_list_stream_data(log, mini_dump, index, options, symbol_engine, symbol_data_dumper.formatter());
         break;
     case TokenStream:
         dump_mini_dump_token_stream_data(log, mini_dump, index, options);

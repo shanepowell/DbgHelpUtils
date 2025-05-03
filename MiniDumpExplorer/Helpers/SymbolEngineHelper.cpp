@@ -7,12 +7,13 @@
 
 using namespace winrt;
 
-SymbolEngineHelper::SymbolEngineHelper()
+SymbolEngineHelper::SymbolEngineHelper(dlg_help_utils::is_x86_target_t const is_x86_target)
     : dbg_help_queue_{Windows::System::DispatcherQueueController::CreateOnDedicatedThread()}
     , symbol_engine_{*this}
+    , formatter_{is_x86_target}
     , symbol_data_dumper_{formatter_}
 {
-    dlg_help_utils::ntdll_utilities::register_custom_formatters(symbol_data_dumper_);
+    dlg_help_utils::ntdll_utilities::register_custom_formatters(symbol_data_dumper_, cache_);
 }
 
 bool SymbolEngineHelper::deferred_symbol_load_cancel([[maybe_unused]] std::wstring_view const& module_name)

@@ -7,6 +7,7 @@
 #include "mini_dump_memory_stream.h"
 #include "mini_dump_memory_walker.h"
 #include "mini_dump_string_stream.h"
+#include "module_list_stream.h"
 #include "print_utils.h"
 #include "stream_hex_dump.h"
 #include "symbol_type_utils.h"
@@ -35,7 +36,7 @@ namespace dlg_help_utils::symbol_type_utils
 
             render_line = [this, render_line, value = mini_dump_string_stream<T>{variable_stream, max_size, stop_at_null_t{true}}]
             {
-                return std::format(L"{}: {}", render_line(), formatter_->format_value(value));
+                return std::format(L"{}: {}", render_line(), formatter().format_value(value));
             };
         }
         else
@@ -45,7 +46,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 render_line = [this, render_line, ch]
                 {
-                    return std::format(L"{}: {}", render_line(), formatter_->format_value(ch));
+                    return std::format(L"{}: {}", render_line(), formatter().format_value(ch));
                 };
             }
         }
@@ -65,7 +66,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 render_line = [this, render_line, value]
                 {
-                    return std::format(L"{}: {}", render_line(), formatter_->format_value(value));
+                    return std::format(L"{}: {}", render_line(), formatter().format_value(value));
                 };
             }
             else
@@ -73,7 +74,7 @@ namespace dlg_help_utils::symbol_type_utils
                 value &= static_cast<T>(bit_mask);
                 render_line = [this, render_line, value]
                 {
-                    return std::format(L"{}: {}", render_line(), formatter_->format_value(value));
+                    return std::format(L"{}: {}", render_line(), formatter().format_value(value));
                 };
             }
         }
@@ -91,9 +92,9 @@ namespace dlg_help_utils::symbol_type_utils
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , pointer_data_t const& pointer_data) const
     {
-        render_line = [render_line, pointer_value = pointer_data.pointer_value, width = pointer_data.pointer_size * 2]
+        render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
         {
-            return std::format(L"{}: {}", render_line(), stream_hex_dump::to_hex(pointer_value, width));
+            return std::format(L"{}: {}", render_line(), formatter().format_pointer_value(pointer_value));
         };
 
         if(auto const data_type_tag = pointer_data.pointer_type.sym_tag(); data_type_tag.has_value())
@@ -137,9 +138,9 @@ namespace dlg_help_utils::symbol_type_utils
             }
             else
             {
-                render_line = [prefix, display_type, variable_address, base_symbol = parents.empty(), pointer_size = get_pointer_size(options)]
+                render_line = [this, prefix, display_type, variable_address, base_symbol = parents.empty()]
                 {
-                    return std::format(L"{0}{1}{2} {3}", prefix, base_symbol ? L"" : L"+", stream_hex_dump::to_hex(variable_address, pointer_size), get_symbol_type_friendly_name(display_type));
+                    return std::format(L"{0}{1}{2} {3}", prefix, base_symbol ? L"" : L"+", formatter().format_pointer_value(variable_address), get_symbol_type_friendly_name(display_type));
                 };
             }
         }
@@ -168,7 +169,6 @@ namespace dlg_help_utils::symbol_type_utils
             if (auto rv = dump_data_at(
                     render_line, 
                     walker, 
-                    options, 
                     type, 
                     tag, 
                     variable_address, 
@@ -291,7 +291,6 @@ namespace dlg_help_utils::symbol_type_utils
             if (auto rv = dump_pointer_type_at(
                     render_line, 
                     walker, 
-                    options, 
                     type, 
                     tag, 
                     variable_address, 
@@ -306,7 +305,7 @@ namespace dlg_help_utils::symbol_type_utils
             }
 
             copy_variable_stream = variable_stream;
-            if (any_pointer_memory_value(walker, options, type, variable_address, copy_variable_stream))
+            if (any_pointer_memory_value(walker, type, variable_address, copy_variable_stream))
             {
                 return dump_variable_symbol_data{
                     .render_line = std::move(render_line),
@@ -426,7 +425,6 @@ namespace dlg_help_utils::symbol_type_utils
     std::optional<dump_variable_symbol_data> symbol_data_dumper::dump_data_at(
         std::function<std::wstring()>& render_line
         , stream_stack_dump::mini_dump_memory_walker const& walker
-        , symbol_visit_flags::flags const options
         , symbol_type_info const& type
         , sym_tag_enum tag
         , uint64_t const variable_address
@@ -456,7 +454,7 @@ namespace dlg_help_utils::symbol_type_utils
                 break;
 
             case sym_tag_enum::PointerType:
-                do_dump_pointer_variable_symbol_at(original_render_line, walker, options, data_type.value(), variable_stream);
+                do_dump_pointer_variable_symbol_at(original_render_line, walker, data_type.value(), variable_stream);
                 break;
 
             case sym_tag_enum::ArrayType:
@@ -489,7 +487,6 @@ namespace dlg_help_utils::symbol_type_utils
     std::optional<dump_variable_symbol_data> symbol_data_dumper::dump_pointer_variable_symbol_at(
         std::function<std::wstring()>& render_line
         , stream_stack_dump::mini_dump_memory_walker const& walker
-        , symbol_visit_flags::flags const options
         , symbol_type_info const& type
         , sym_tag_enum const tag
         , uint64_t const variable_address
@@ -501,7 +498,7 @@ namespace dlg_help_utils::symbol_type_utils
         auto copy_variable_stream = variable_stream;
         std::function<std::wstring()> original_render_line = [] { return std::wstring{}; };
 
-        do_dump_pointer_variable_symbol_at(original_render_line, walker, options, type, variable_stream);
+        do_dump_pointer_variable_symbol_at(original_render_line, walker, type, variable_stream);
 
         return process_dump_value(
             render_line, 
@@ -636,7 +633,6 @@ namespace dlg_help_utils::symbol_type_utils
     std::optional<dump_variable_symbol_data> symbol_data_dumper::dump_pointer_type_at(
         std::function<std::wstring()>& render_line
         , stream_stack_dump::mini_dump_memory_walker const& walker
-        , symbol_visit_flags::flags const options
         , symbol_type_info const& type
         , sym_tag_enum const tag
         , uint64_t const variable_address
@@ -651,7 +647,7 @@ namespace dlg_help_utils::symbol_type_utils
         dump_bitmask(original_render_line, type, bit_mask);
 
         mini_dump_memory_stream copy_stream{variable_stream};
-        do_dump_pointer_variable_symbol_at(original_render_line, walker, options, type, copy_stream);
+        do_dump_pointer_variable_symbol_at(original_render_line, walker, type, copy_stream);
 
         return process_dump_value(
             render_line, 
@@ -677,11 +673,10 @@ namespace dlg_help_utils::symbol_type_utils
     void symbol_data_dumper::do_dump_pointer_variable_symbol_at(
         std::function<std::wstring()>& render_line
         , stream_stack_dump::mini_dump_memory_walker const& walker
-        , symbol_visit_flags::flags const options
         , symbol_type_info const& type
         , mini_dump_memory_stream& variable_stream) const
     {
-        if (auto pointer_data = get_pointer(walker, options, type, variable_stream);
+        if (auto pointer_data = get_pointer(walker, type, variable_stream);
             pointer_data.has_value())
         {
             dump_pointer_memory_value(render_line, walker, pointer_data.value());
@@ -951,12 +946,12 @@ namespace dlg_help_utils::symbol_type_utils
         std::function<generator<dump_variable_symbol_data>()> sub_lines;
 
         // if we have a custom formatter, use that
-        for (auto& formatter : custom_formatters_)
+        for (auto& custom_formatter : custom_formatters_)
         {
-            if (formatter->is_custom_type(type, path, name, parents))
+            if (custom_formatter->is_custom_type(walker, type, path, name, parents))
             {
                 auto copy_variable_stream = variable_stream;
-                auto result = formatter->format(
+                auto result = custom_formatter->format(
                     original_value, 
                     walker, 
                     type, 
@@ -966,7 +961,7 @@ namespace dlg_help_utils::symbol_type_utils
                     path,
                     name, 
                     parents,
-                    *formatter_);
+                    formatter());
 
                 rv = result.result;
 
@@ -1216,7 +1211,7 @@ namespace dlg_help_utils::symbol_type_utils
         , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> parents) const
     {
-        if (auto pointer_data = get_pointer(walker, options, type, variable_stream);
+        if (auto pointer_data = get_pointer(walker, type, variable_stream);
             pointer_data.has_value())
         {
             for(auto&& data : pointer_memory_value(walker, 
@@ -1656,13 +1651,12 @@ namespace dlg_help_utils::symbol_type_utils
 
                     auto indexName = std::format(L"{}[{}] ", name, i);
                     auto indexPath = std::format(L"{}[{}] ", path, i);
-                    auto const pointer_size = get_pointer_size(options);
-                    auto indexPrefix = std::format(L"+{} [{}] ", stream_hex_dump::to_hex(sizeof(T) * i, pointer_size), i);
+                    auto indexPrefix = std::format(L"+{} [{}] ", formatter().format_index_value(static_cast<size_t>(sizeof(T) * i)), i);
                     std::function<std::wstring()> render_line;
 
                     render_line = [this, indexPrefix, value]
                     {
-                        return std::format(L"{}{}", indexPrefix, formatter_->format_value(value));
+                        return std::format(L"{}{}", indexPrefix, formatter().format_value(value));
                     };
 
                     co_yield dump_variable_symbol_data{
@@ -1729,8 +1723,7 @@ namespace dlg_help_utils::symbol_type_utils
                 {
                     auto indexName = std::format(L"{}[{}] ", name, index);
                     auto indexPath = std::format(L"{}[{}] ", path, index);
-                    auto const pointer_size = get_pointer_size(options);
-                    auto indexPrefix = std::format(L"+{} [{}] ", stream_hex_dump::to_hex(sizeof(length) * index, pointer_size), index);
+                    auto indexPrefix = std::format(L"+{} [{}] ", formatter().format_index_value(sizeof(length) * index), index);
                     co_yield variable_symbol_at(walker,
                         options,
                         indexPrefix, 
@@ -1857,7 +1850,7 @@ namespace dlg_help_utils::symbol_type_utils
         , std::optional<symbol_type_info> const& data_type
         , std::optional<sym_tag_enum> const data_type_tag
         , std::unordered_set<uint64_t>& visited_pointers
-        )
+        ) const
     {
         // data member, type the data member type and print based on that type
         if (data_type.has_value())
@@ -1869,7 +1862,7 @@ namespace dlg_help_utils::symbol_type_utils
             
             case sym_tag_enum::Enum:
                 break;
-
+                
             case sym_tag_enum::PointerType:
                 return any_pointer_variable_symbol_at(render_line, walker, options, data_type.value(), variable_stream, visited_pointers);
 
@@ -1888,18 +1881,15 @@ namespace dlg_help_utils::symbol_type_utils
 
     std::optional<symbol_data_dumper::pointer_data_t> symbol_data_dumper::get_pointer(
         stream_stack_dump::mini_dump_memory_walker const& walker
-        , symbol_visit_flags::flags const options
         , symbol_type_info const& type
-        , mini_dump_memory_stream& variable_stream)
+        , mini_dump_memory_stream& variable_stream) const
     {
         auto got_pointer_value{false};
         uint64_t pointer_value{0};
-        std::streamsize pointer_size{0};
 
         if(auto const length = type.length(); length.has_value())
         {
-            pointer_size = static_cast<std::streamsize>(length.value());
-            switch(pointer_size)
+            switch(length.value())
             {
             case 4:
                 if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
@@ -1912,10 +1902,7 @@ namespace dlg_help_utils::symbol_type_utils
             case 8:
                 if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
                 {
-                    if (fix_wow64_pointer(options, value))
-                    {
-                        pointer_size = 4;
-                    }
+                    fix_wow64_pointer(value);
                     pointer_value = value;
                     got_pointer_value = true;
                 }
@@ -1942,7 +1929,6 @@ namespace dlg_help_utils::symbol_type_utils
                     return pointer_data_t
                         {
                             .pointer_value = pointer_value,
-                            .pointer_size = pointer_size,
                             .pointer_type = pointer_type.value(),
                             .variable_stream = std::move(pointer_variable_stream)
                         };
@@ -1951,8 +1937,8 @@ namespace dlg_help_utils::symbol_type_utils
                 return pointer_data_t
                     {
                         .pointer_value = pointer_value,
-                        .pointer_size = pointer_size,
-                        .pointer_type = pointer_type.value()
+                        .pointer_type = pointer_type.value(),
+                        .variable_stream = {}
                     };
             }
         }
@@ -2120,10 +2106,9 @@ namespace dlg_help_utils::symbol_type_utils
 
     bool symbol_data_dumper::any_pointer_memory_value(
         stream_stack_dump::mini_dump_memory_walker const& walker
-        , symbol_visit_flags::flags const options
         , symbol_type_info const& pointer_type
         , uint64_t const pointer_value
-        , mini_dump_memory_stream& variable_stream)
+        , mini_dump_memory_stream& variable_stream) const
     {
         if(auto const data_type_tag = pointer_type.sym_tag(); data_type_tag.has_value())
         {
@@ -2136,7 +2121,7 @@ namespace dlg_help_utils::symbol_type_utils
                     return any_base_type_variable_symbol_at(walker, pointer_type, pointer_value, is_pointer_t{ true }, 0);
 
                 case sym_tag_enum::PointerType:
-                    if (auto pointer_data = get_pointer(walker, options, pointer_type, variable_stream);
+                    if (auto pointer_data = get_pointer(walker, pointer_type, variable_stream);
                         pointer_data.has_value())
                     {
                         return true;
@@ -2158,9 +2143,9 @@ namespace dlg_help_utils::symbol_type_utils
         , symbol_type_info const& type
         , mini_dump_memory_stream& variable_stream
         , std::unordered_set<uint64_t>& visited_pointers
-        )
+        ) const
     {
-        if (auto pointer_data = get_pointer(walker, options, type, variable_stream);
+        if (auto pointer_data = get_pointer(walker, type, variable_stream);
             pointer_data.has_value())
         {
             if (detect_pointer_cycle(render_line, options, pointer_data.value().pointer_value, visited_pointers))
@@ -2168,7 +2153,7 @@ namespace dlg_help_utils::symbol_type_utils
                 return false;
             }
 
-            return any_pointer_memory_value(walker, options, pointer_data.value().pointer_type, pointer_data.value().pointer_value, pointer_data.value().variable_stream);
+            return any_pointer_memory_value(walker, pointer_data.value().pointer_type, pointer_data.value().pointer_value, pointer_data.value().variable_stream);
         }
 
         return false;
@@ -2280,29 +2265,17 @@ namespace dlg_help_utils::symbol_type_utils
         return false;
     }
 
-    bool symbol_data_dumper::fix_wow64_pointer(symbol_visit_flags::flags const options, uint64_t& value)
+    void symbol_data_dumper::fix_wow64_pointer(uint64_t& value) const
     {
-        if ((options & symbol_visit_flags::x86) ==symbol_visit_flags::x86)
+        if (!formatter().is_x86_target())
         {
-            if ((value & 0xffffffff00000000) != 0x0000000000000000)
-            {
-                value = value & 0x00000000ffffffff;
-            }
-
-            return true;
+            return;
         }
 
-        return false;
-    }
-
-    std::streamsize symbol_data_dumper::get_pointer_size(const symbol_visit_flags::flags options)
-    {
-        if ((options & symbol_visit_flags::x86) ==symbol_visit_flags::x86)
+        if ((value & 0xffffffff00000000) != 0x0000000000000000)
         {
-            return sizeof(uint32_t) * 2;
+            value = value & 0x00000000ffffffff;
         }
-
-        return sizeof(uint64_t) * 2;
     }
 
     std::wstring_view symbol_data_dumper::remove_leaf(std::wstring_view const& path)

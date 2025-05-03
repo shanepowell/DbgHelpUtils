@@ -42,7 +42,8 @@ namespace dlg_help_utils::symbol_type_utils
         virtual ~symbol_type_custom_formatter() = default;
 
         virtual bool is_custom_type(
-            dbg_help::symbol_type_info const& type
+            stream_stack_dump::mini_dump_memory_walker const& walker
+            , dbg_help::symbol_type_info const& type
             , std::wstring_view const& path
             , std::wstring_view const& name
             , std::vector<dbg_help::symbol_type_info> const& parents) = 0;
@@ -58,5 +59,14 @@ namespace dlg_help_utils::symbol_type_utils
             , std::wstring_view const& name
             , std::vector<dbg_help::symbol_type_info> const& parents
             , i_value_type_formatter const& formatter) = 0;
+
+    protected:
+        bool is_type_equal(
+            stream_stack_dump::mini_dump_memory_walker const& walker
+            , dbg_help::symbol_type_info const& type
+            , std::wstring_view const& path
+            , std::wstring_view const& name
+            , std::vector<dbg_help::symbol_type_info> const& parents
+            , dbg_help::symbol_type_info const& equal_to_type);
     };
 }

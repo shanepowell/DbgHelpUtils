@@ -10,6 +10,7 @@
 #include "DbgHelpUtils/mini_dump.h"
 #include "DbgHelpUtils/mini_dump_stream_type.h"
 #include "DbgHelpUtils/string_compare.h"
+#include "DbgHelpUtils/system_info_utils.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
 #include "Helpers/GlobalOptions.h"
 #include "Helpers/SymbolEngineHelper.h"
@@ -147,11 +148,7 @@ namespace winrt::MiniDumpExplorer::implementation
 
             apartment_context ui_thread;
 
-            symbolEngineHelper_ = std::make_shared<SymbolEngineHelper>();
-            co_await resume_foreground(symbolEngineHelper_->QueueController().DispatcherQueue());
-
             std::filesystem::path fullPath{static_cast<std::wstring>(file_.Path())};
-            symbolEngineHelper_->symbol_engine().add_symbol_path(fullPath.parent_path());
 
             co_await resume_background();
 
@@ -169,6 +166,11 @@ namespace winrt::MiniDumpExplorer::implementation
                 openError_ = rm.MainResourceMap().GetValue(L"Resources/InvalidMinidumpFile").ValueAsString();
             }
             logger::Log().LogMessage(log_level::debug, L"MiniDump Opened: {}");
+
+            auto const x86 = is_x86_target_t{system_info_utils::is_wow64_process(*miniDump_) || system_info_utils::is_x86_process(*miniDump_)};
+            symbolEngineHelper_ = std::make_shared<SymbolEngineHelper>(x86);
+            co_await resume_foreground(symbolEngineHelper_->QueueController().DispatcherQueue());
+            symbolEngineHelper_->symbol_engine().add_symbol_path(fullPath.parent_path());
 
             co_await ui_thread;
 

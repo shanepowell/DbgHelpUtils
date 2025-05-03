@@ -3,6 +3,7 @@
 #include "dump_file_options.h"
 #include "dump_mini_dump_heap.h"
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/i_value_type_formatter.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heap_entry.h"
@@ -26,10 +27,16 @@ namespace detail
         return base_diff_heaps;
     }
 
-    void print_process_entry(std::wostream& log, heap::process_heap_entry const& entry, process::process_environment_block const& peb, std::streamsize const hex_length, dump_file_options const& options, size_t const indent)
+    void print_process_entry(
+        std::wostream& log
+        , heap::process_heap_entry const& entry
+        , process::process_environment_block const& peb
+        , i_value_type_formatter const& formatter
+        , dump_file_options const& options
+        , size_t const indent)
     {
         using namespace size_units::base_16;
-        log << std::format(L"{0:{1}}{2} size({3}) overhead({4})", L' ', indent, stream_hex_dump::to_hex(entry.user_address(), hex_length), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
+        log << std::format(L"{0:{1}}{2} size({3}) overhead({4})", L' ', indent, formatter.format_pointer_value(entry.user_address()), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
         if(!entry.filename().empty())
         {
             log << std::format(L" {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));
@@ -47,7 +54,7 @@ namespace detail
         if(options.display_symbols() && !entry.allocation_stack_trace().empty())
         {
             log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-            dump_stack_to_stream(log, peb.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{peb.is_x86_target()}, indent + 4);
+            dump_stack_to_stream(log, peb.walker(), entry.allocation_stack_trace(), formatter, indent + 4);
             log << L'\n';
         }
 

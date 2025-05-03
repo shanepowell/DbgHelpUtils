@@ -35,16 +35,14 @@ void dump_mini_dump_thread_list_stream_data(
     , size_t index
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool x86);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
 void dump_mini_dump_thread_list_ex_stream_data(
     std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
     , size_t index
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool x86);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
 void dump_mini_dump_thread_info_list_stream_data(std::wostream& log, dlg_help_utils::mini_dump const& mini_dump, size_t index);
 void load_and_dump_teb(
     std::wostream& log
@@ -52,5 +50,4 @@ void load_and_dump_teb(
     , size_t max_symbol_dump_depth
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
     , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , ULONG64 teb_address
-    , bool x86);
+    , ULONG64 teb_address);

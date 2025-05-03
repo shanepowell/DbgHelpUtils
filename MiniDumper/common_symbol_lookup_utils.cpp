@@ -67,8 +67,7 @@ std::optional<dbg_help::symbol_type_info> dump_field(
     , size_t const max_symbol_dump_depth
     , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
     , std::wstring const& symbol_type_name
-    , uint64_t const address
-    , bool const x86)
+    , uint64_t const address)
 {
     auto type_symbol_info = get_type_info(log, walker, symbol_type_name);
     if(!type_symbol_info.has_value())
@@ -91,10 +90,6 @@ std::optional<dbg_help::symbol_type_info> dump_field(
     }
 
     auto options = symbol_type_utils::symbol_visit_flags::detect_pointer_cycles;
-    if (x86)
-    {
-        options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(options | symbol_type_utils::symbol_visit_flags::x86);
-    }
 
     symbol_type_utils::dump_variable_symbol_at(log, walker, options, max_symbol_dump_depth, symbol_data_dumper, type_symbol_info.value(), type_symbol_info.value(), symbol_type_name, address, stream);
     return type_symbol_info;

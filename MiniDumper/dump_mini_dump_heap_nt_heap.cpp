@@ -6,6 +6,7 @@
 #include "DbgHelpUtils/heap_ucr_descriptor.h"
 #include "DbgHelpUtils/heap_virtual_block.h"
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/i_value_type_formatter.h"
 #include "DbgHelpUtils/lfh_heap.h"
 #include "DbgHelpUtils/lfh_segment.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
@@ -46,16 +47,26 @@ namespace detail
         };
 
 
-        void print_nt_heap_segment_line(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, std::wstring const& indent_str)
+        void print_nt_heap_segment_line(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , size_t const segment_index
+            , heap::heap_segment const& segment
+            , std::wstring const& indent_str)
         {
             auto const first_entry = segment.first_entry();
             auto const last_entry = segment.last_entry();
             using namespace size_units::base_16;
             auto const total_size_bytes = bytes{ last_entry - first_entry };
-            log << std::format(L"{0}Segment {1} {2}-{3} {4}\n", indent_str, locale_formatting::to_wstring(segment_index), stream_hex_dump::to_hex(first_entry, hex_length), stream_hex_dump::to_hex(last_entry, hex_length), to_wstring(total_size_bytes));
+            log << std::format(L"{0}Segment {1} {2}-{3} {4}\n", indent_str, locale_formatting::to_wstring(segment_index), formatter.format_pointer_value(first_entry), formatter.format_pointer_value(last_entry), to_wstring(total_size_bytes));
         }
 
-        void print_lfh_heap_segment_line(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::lfh_segment const& segment, std::wstring const& indent_str)
+        void print_lfh_heap_segment_line(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , size_t const segment_index
+            , heap::lfh_segment const& segment
+            , std::wstring const& indent_str)
         {
             using namespace size_units::base_16;
             bytes segment_total{ 0 };
@@ -67,13 +78,18 @@ namespace detail
                 }
             }
 
-            log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}\n", indent_str, locale_formatting::to_wstring(segment_index), stream_hex_dump::to_hex(segment.address(), hex_length), locale_formatting::to_wstring(segment.subsegments_count()), to_wstring(segment_total));
+            log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}\n", indent_str, locale_formatting::to_wstring(segment_index), formatter.format_pointer_value(segment.address()), locale_formatting::to_wstring(segment.subsegments_count()), to_wstring(segment_total));
         }
 
-        void print_nt_heap_header(std::wostream& log, std::streamsize const hex_length, std::wstring_view const& process_heap_marker, heap::nt_heap const& nt_heap, size_t const indent)
+        void print_nt_heap_header(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , std::wstring_view const& process_heap_marker
+            , heap::nt_heap const& nt_heap
+            , size_t const indent)
         {
             std::wstring const indent_str(indent, L' ');
-            log << std::format(L"{0}NT Heap: {1} {2}\n", indent_str, stream_hex_dump::to_hex(nt_heap.nt_heap_address(), hex_length), process_heap_marker);
+            log << std::format(L"{0}NT Heap: {1} {2}\n", indent_str, formatter.format_pointer_value(nt_heap.nt_heap_address()), process_heap_marker);
             log << std::format(L"{0}  Flags: {1}\n", indent_str, stream_hex_dump::to_hex_full(nt_heap.flags()));
             using namespace size_units::base_16;
             log << std::format(L"{0}  Total Reserved: {1} ({2})\n", indent_str, to_wstring(nt_heap.reserved()), stream_hex_dump::to_hex(nt_heap.reserved()));
@@ -143,10 +159,14 @@ namespace detail
             }
         }
 
-        void print_dump_entry_single_line(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
+        void print_dump_entry_single_line(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , heap::heap_entry const& entry
+            , size_t const indent)
         {
             using namespace size_units::base_16;
-            log << std::format(L"{0:{1}}{2} Size({3})", L' ', indent, stream_hex_dump::to_hex(entry.address(), hex_length), to_wstring(entry.size()));
+            log << std::format(L"{0:{1}}{2} Size({3})", L' ', indent, formatter.format_pointer_value(entry.address()), to_wstring(entry.size()));
             if (entry.is_uncommitted())
             {
                 log << L" - Uncommitted\n";
@@ -166,7 +186,7 @@ namespace detail
                     }
                     if (entry.user_address() != 0)
                     {
-                        log << std::format(L" UsrPtr({})", stream_hex_dump::to_hex(entry.user_address(), hex_length));
+                        log << std::format(L" UsrPtr({})", formatter.format_pointer_value(entry.user_address()));
                     }
                 }
 
@@ -215,23 +235,27 @@ namespace detail
             return L"unknown"s;
         }
 
-        void print_dump_entry_debug(std::wostream& log, std::streamsize const hex_length, heap::heap_entry const& entry, size_t const indent)
+        void print_dump_entry_debug(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , heap::heap_entry const& entry
+            , size_t const indent)
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
             if (entry.is_uncommitted())
             {
-                log << std::format(L"{0}Uncommitted Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.address(), hex_length));
+                log << std::format(L"{0}Uncommitted Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.address()));
                 log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
             }
             else if (entry.is_unknown())
             {
-                log << std::format(L"{0}Unknown Range Entry: {1}\n", indent_str, stream_hex_dump::to_hex(entry.address(), hex_length));
+                log << std::format(L"{0}Unknown Range Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.address()));
                 log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
             }
             else
             {
-                log << std::format(L"{0}{1}{2} Entry: {3}\n", indent_str, entry.is_lfh_entry() ? L"LFH "sv : L""sv, entry.is_busy() ? L"Busy"sv : L"Free"sv, stream_hex_dump::to_hex(entry.address(), hex_length));
+                log << std::format(L"{0}{1}{2} Entry: {3}\n", indent_str, entry.is_lfh_entry() ? L"LFH "sv : L""sv, entry.is_busy() ? L"Busy"sv : L"Free"sv, formatter.format_pointer_value(entry.address()));
                 log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
                 if (entry.is_busy())
                 {
@@ -259,7 +283,7 @@ namespace detail
                     }
                     if(entry.ust_header_address() != 0)
                     {
-                        log << std::format(L"{0}  UST Header Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_header_address(), hex_length));
+                        log << std::format(L"{0}  UST Header Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_header_address()));
                     }
                     if(auto const& ust_end_gap_length = entry.ust_end_gap_length();
                         ust_end_gap_length.has_value())
@@ -280,11 +304,11 @@ namespace detail
                     }
                     if (entry.user_address() != 0)
                     {
-                        log << std::format(L"{0}  User Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.user_address(), hex_length));
+                        log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
                     }
                     if (entry.ust_address() != 0)
                     {
-                        log << std::format(L"{0}  UST Address: {1}\n", indent_str, stream_hex_dump::to_hex(entry.ust_address(), hex_length));
+                        log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
                     }
                 }
 
@@ -300,7 +324,7 @@ namespace detail
         using entry_contains_lfh_subsegments_t = tagged_bool<struct entry_contains_lfh_subsegments_type>;
 
         void print_dump_entry(std::wostream& log
-            , std::streamsize const hex_length
+            , i_value_type_formatter const& formatter
             , heap::heap_entry const& entry
             , entry_contains_lfh_subsegments_t const entry_contains_lfh_subsegments
             , dump_file_options const& options
@@ -308,11 +332,11 @@ namespace detail
         {
             if(options.debug_heap_data())
             {
-                print_dump_entry_debug(log, hex_length, entry, indent);
+                print_dump_entry_debug(log, formatter, entry, indent);
             }
             else
             {
-                print_dump_entry_single_line(log, hex_length, entry, indent);
+                print_dump_entry_single_line(log, formatter, entry, indent);
             }
 
             if (entry.is_unknown())
@@ -332,7 +356,7 @@ namespace detail
                 if(options.display_symbols() && entry.is_busy() && !entry.allocation_stack_trace().empty())
                 {
                     log << std::format(L"{0:{1}}Allocation Stack Trace:\n", L' ', indent + 2);
-                    dump_stack_to_stream(log, entry.walker(), entry.allocation_stack_trace(), stream_stack_dump::is_x86_target_t{entry.peb().is_x86_target()}, indent + 2);
+                    dump_stack_to_stream(log, entry.walker(), entry.allocation_stack_trace(), formatter, indent + 2);
                     log << L'\n';
                 }
 
@@ -348,7 +372,11 @@ namespace detail
             }
         }
 
-        void print_lfh_heap_segment_single_line(std::wostream& log, std::streamsize const hex_length, LfhSubsegmentData& data, size_t const indent)
+        void print_lfh_heap_segment_single_line(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , LfhSubsegmentData& data
+            , size_t const indent)
         {
             using namespace size_units::base_16;
 
@@ -357,42 +385,51 @@ namespace detail
             log << std::format(L"{0:{1}}LFH Segment {2} Subsegment {3}, block count {4}, block size {5}, entry data {6}, total {7}\n"
                 , L' ', indent
                 , locale_formatting::to_wstring(data.segment->segment_index)
-                , stream_hex_dump::to_hex(data.subsegment.address(), hex_length)
+                , formatter.format_pointer_value(data.subsegment.address())
                 , locale_formatting::to_wstring(data.subsegment.block_count())
                 , to_wstring(data.subsegment.block_size())
-                , stream_hex_dump::to_hex(data.subsegment.entry_start_address(), hex_length)
+                , formatter.format_pointer_value(data.subsegment.entry_start_address())
                 , to_wstring(total));
         }
 
-        void print_lfh_heap_segment_debug(std::wostream& log, std::streamsize const hex_length, LfhSubsegmentData& data, size_t const indent)
+        void print_lfh_heap_segment_debug(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , LfhSubsegmentData& data
+            , size_t const indent)
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
 
             data.printed_subsegment = true;
             bytes const total{ data.subsegment.address() ? data.subsegment.block_count() * data.subsegment.block_stride() : 0 };
-            log << std::format(L"{0}LFH Segment: {1} @ {2}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index), stream_hex_dump::to_hex(data.segment->segment.address(), hex_length));
-            log << std::format(L"{0}  Subsegment: {1}\n", indent_str, stream_hex_dump::to_hex(data.subsegment.address(), hex_length));
+            log << std::format(L"{0}LFH Segment: {1} @ {2}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index), formatter.format_pointer_value(data.segment->segment.address()));
+            log << std::format(L"{0}  Subsegment: {1}\n", indent_str, formatter.format_pointer_value(data.subsegment.address()));
             log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(data.subsegment.block_count()));
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(data.subsegment.block_size()), stream_hex_dump::to_hex(data.subsegment.block_size()));
-            log << std::format(L"{0}  Entry Data: {1}\n", indent_str, stream_hex_dump::to_hex(data.subsegment.entry_start_address(), hex_length));
+            log << std::format(L"{0}  Entry Data: {1}\n", indent_str, formatter.format_pointer_value(data.subsegment.entry_start_address()));
             log << std::format(L"{0}  Total: {1} ({2})\n", indent_str, to_wstring(total), stream_hex_dump::to_hex(total));
         }
 
-        void print_lfh_heap_segment(std::wostream& log, std::streamsize const hex_length, LfhSubsegmentData& data, dump_file_options const& options, size_t const indent)
+        void print_lfh_heap_segment(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , LfhSubsegmentData& data
+            , dump_file_options const& options
+            , size_t const indent)
         {
             if(options.debug_heap_data())
             {
-                print_lfh_heap_segment_debug(log, hex_length, data, indent);
+                print_lfh_heap_segment_debug(log, formatter, data, indent);
             }
             else
             {
-                print_lfh_heap_segment_single_line(log, hex_length, data, indent);
+                print_lfh_heap_segment_single_line(log, formatter, data, indent);
             }
 
             for (auto const& entry : data.subsegment.entries())
             {
-                print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments_t{false}, options, indent + 2);
+                print_dump_entry(log, formatter, entry, entry_contains_lfh_subsegments_t{false}, options, indent + 2);
             }
         }
 
@@ -402,11 +439,18 @@ namespace detail
             return !data.printed_subsegment && is_internal_entry && data.subsegment.entry_start_address() > entry.address() && data.subsegment.entry_start_address() < entry.address() + entry.size().count();
         }
 
-        void print_heap_segment(std::wostream& log, std::streamsize const hex_length, size_t const segment_index, heap::heap_segment const& segment, vector<LfhSubsegmentData>& lfh_data, dump_file_options const& options, size_t const indent)
+        void print_heap_segment(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , size_t const segment_index
+            , heap::heap_segment const& segment
+            , vector<LfhSubsegmentData>& lfh_data
+            , dump_file_options const& options
+            , size_t const indent)
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
-            print_nt_heap_segment_line(log, hex_length, segment_index, segment, indent_str);
+            print_nt_heap_segment_line(log, formatter, segment_index, segment, indent_str);
             log << std::format(L"{0}   Flags: {1}\n", indent_str, stream_hex_dump::to_hex(segment.segment_flags()));
             log << std::format(L"{0}   Number of Pages: {1}\n", indent_str, stream_hex_dump::to_hex(segment.number_of_pages()));
             log << std::format(L"{0}   Number of Uncommitted Pages: {1}\n", indent_str, stream_hex_dump::to_hex(segment.number_of_uncommitted_pages()));
@@ -416,39 +460,48 @@ namespace detail
             log << std::format(L"{0}Uncommitted Ranges\n", indent_str);
             for (auto const& uncommitted_range : segment.uncommitted_ranges())
             {
-                log << std::format(L"{0}    Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address(), hex_length), to_wstring(uncommitted_range.size()));
+                log << std::format(L"{0}    Range {1} for {2}\n", indent_str, formatter.format_pointer_value(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
             }
 
             log << std::format(L"\n{}Heap Entries\n", indent_str);
             for (auto const& entry : segment.entries())
             {
                 auto const entry_contains_lfh_subsegments = entry_contains_lfh_subsegments_t{ranges::any_of(lfh_data, [&entry](LfhSubsegmentData const& data) { return is_lfh_subsegment_in_entry(entry, data); })};
-                print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments, options, indent + 4);
+                print_dump_entry(log, formatter, entry, entry_contains_lfh_subsegments, options, indent + 4);
 
                 for (auto& data : lfh_data)
                 {
                     if (is_lfh_subsegment_in_entry(entry, data))
                     {
-                        print_lfh_heap_segment(log, hex_length, data, options, indent + 6);
+                        print_lfh_heap_segment(log, formatter, data, options, indent + 6);
                     }
                 }
             }
             log << L'\n';
         }
 
-        void print_nt_heap_uncommitted_ranges(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
+        void print_nt_heap_uncommitted_ranges(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , heap::nt_heap const& nt_heap
+            , size_t const indent)
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
             log << std::format(L"{}Heap Uncommitted ranges\n", indent_str);
             for (auto const& uncommitted_range : nt_heap.uncommitted_ranges())
             {
-                log << std::format(L"{0}  Range {1} for {2}\n", indent_str, stream_hex_dump::to_hex(uncommitted_range.address(), hex_length), to_wstring(uncommitted_range.size()));
+                log << std::format(L"{0}  Range {1} for {2}\n", indent_str, formatter.format_pointer_value(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
             }
             log << L'\n';
         }
 
-        void print_nt_heap_virtual_allocated_blocks(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, dump_file_options const& options, size_t const indent)
+        void print_nt_heap_virtual_allocated_blocks(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , heap::nt_heap const& nt_heap
+            , dump_file_options const& options
+            , size_t const indent)
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
@@ -457,24 +510,29 @@ namespace detail
             {
                 log << std::format(L"{0}  Entry {1} data {2} reversed {3} committed {4}\n"
                     , indent_str
-                    , stream_hex_dump::to_hex(virtual_block.descriptor_address(), hex_length)
-                    , stream_hex_dump::to_hex(virtual_block.address(), hex_length)
+                    , formatter.format_pointer_value(virtual_block.descriptor_address())
+                    , formatter.format_pointer_value(virtual_block.address())
                     , to_wstring(virtual_block.reserved())
                     , to_wstring(virtual_block.committed()));
                 for (auto const& entry : virtual_block.entries())
                 {
-                    print_dump_entry(log, hex_length, entry, entry_contains_lfh_subsegments_t{false}, options, indent + 4);
+                    print_dump_entry(log, formatter, entry, entry_contains_lfh_subsegments_t{false}, options, indent + 4);
                 }
             }
             log << L'\n';
         }
 
-        void print_nt_heap_free_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, dump_file_options const& options, size_t const indent)
+        void print_nt_heap_free_list(
+            std::wostream& log
+            , i_value_type_formatter const& formatter
+            , heap::nt_heap const& nt_heap
+            , dump_file_options const& options
+            , size_t const indent)
         {
             log << std::format(L"{0:{1}}Free List Entries\n", ' ', indent);
             for (auto const& free_entry : nt_heap.free_entries())
             {
-                print_dump_entry(log, hex_length, free_entry, entry_contains_lfh_subsegments_t{false}, options, indent + 4);
+                print_dump_entry(log, formatter, free_entry, entry_contains_lfh_subsegments_t{false}, options, indent + 4);
             }
             log << L'\n';
         }
@@ -499,9 +557,14 @@ namespace detail
         );
     }
 
-    void print_nt_heap(std::wostream& log, std::streamsize const hex_length, dump_file_options const& options, heap::nt_heap const& nt_heap, process::process_environment_block const& peb)
+    void print_nt_heap(
+        std::wostream& log
+        , i_value_type_formatter const& formatter
+        , dump_file_options const& options
+        , heap::nt_heap const& nt_heap
+        , process::process_environment_block const& peb)
     {
-        print_nt_heap_header(log, hex_length, get_process_marker(is_process_heap_t{nt_heap.is_process_heap(peb.process_heap())}), nt_heap, 0);
+        print_nt_heap_header(log, formatter, get_process_marker(is_process_heap_t{nt_heap.is_process_heap(peb.process_heap())}), nt_heap, 0);
 
         vector<LfhSubsegmentData> lfh_data;
         if(auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())
@@ -520,7 +583,7 @@ namespace detail
 
         for(size_t segment_index = 0; auto const& segment : nt_heap.segments())
         {
-            print_heap_segment(log, hex_length, segment_index, segment, lfh_data, options, 4);
+            print_heap_segment(log, formatter, segment_index, segment, lfh_data, options, 4);
             ++segment_index;
         }
 
@@ -541,7 +604,7 @@ namespace detail
                         if(is_lfh_subsegment_in_entry(entry, data, true))
                         {
                             found = true;
-                            log << std::format(L"ERROR: LFH Segment found in heap invalid entry: {0}\n", stream_hex_dump::to_hex(entry.address(), hex_length));
+                            log << std::format(L"ERROR: LFH Segment found in heap invalid entry: {0}\n", formatter.format_pointer_value(entry.address()));
                             break;
                         }
                     }
@@ -552,7 +615,7 @@ namespace detail
                     }
                 }
 
-                print_lfh_heap_segment(log, hex_length, data, options, 4);
+                print_lfh_heap_segment(log, formatter, data, options, 4);
                 printed_lfh_output = true;
             }
         }
@@ -562,31 +625,39 @@ namespace detail
             log << L'\n';
         }
 
-        print_nt_heap_uncommitted_ranges(log, hex_length, nt_heap, 2);
+        print_nt_heap_uncommitted_ranges(log, formatter, nt_heap, 2);
 
-        print_nt_heap_virtual_allocated_blocks(log, hex_length, nt_heap, options, 2);
+        print_nt_heap_virtual_allocated_blocks(log, formatter, nt_heap, options, 2);
 
-        print_nt_heap_free_list(log, hex_length, nt_heap, options, 2);
+        print_nt_heap_free_list(log, formatter, nt_heap, options, 2);
     }
 
-    void print_nt_heap_segments_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
+    void print_nt_heap_segments_list(
+        std::wostream& log
+        , i_value_type_formatter const& formatter
+        , heap::nt_heap const& nt_heap
+        , size_t const indent)
     {
         std::wstring const indent_str(indent, L' ');
         for (size_t segment_index = 0; auto const& segment : nt_heap.segments())
         {
-            print_nt_heap_segment_line(log, hex_length, segment_index, segment, indent_str);
+            print_nt_heap_segment_line(log, formatter, segment_index, segment, indent_str);
             ++segment_index;
         }
     }
 
-    void print_nt_heap_lfh_segments_list(std::wostream& log, std::streamsize const hex_length, heap::nt_heap const& nt_heap, size_t const indent)
+    void print_nt_heap_lfh_segments_list(
+        std::wostream& log
+        , i_value_type_formatter const& formatter
+        , heap::nt_heap const& nt_heap
+        , size_t const indent)
     {
         if (auto const lfh_heap = nt_heap.lfh_heap(); lfh_heap.has_value())
         {
             std::wstring const indent_str(indent, L' ');
             for (size_t segment_index = 0; auto const& segment : lfh_heap.value().lfh_segments())
             {
-                print_lfh_heap_segment_line(log, hex_length, segment_index, segment, indent_str);
+                print_lfh_heap_segment_line(log, formatter, segment_index, segment, indent_str);
                 ++segment_index;
             }
         }

@@ -31,23 +31,20 @@ void dump_mini_dump_stream_index(
     , size_t index
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool x86);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
 void dump_mini_dump_stream_type(
     std::wostream& log
     , dlg_help_utils::mini_dump const& dump_file
     , MINIDUMP_STREAM_TYPE type
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool x86);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
 void dump_mini_dump_all_stream_indexes(
     std::wostream& log
     , dlg_help_utils::mini_dump const& dump_file
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool x86);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);
 void dump_mini_dump_stream_data(
     std::wostream& log
     , dlg_help_utils::mini_dump const& mini_dump
@@ -55,5 +52,4 @@ void dump_mini_dump_stream_data(
     , MINIDUMP_DIRECTORY const& entry
     , dump_file_options const& options
     , dlg_help_utils::dbg_help::symbol_engine& symbol_engine
-    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool x86);
+    , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper);

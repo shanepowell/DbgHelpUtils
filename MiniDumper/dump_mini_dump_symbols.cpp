@@ -35,7 +35,7 @@ namespace
 {
     uint64_t get_stack_database_address(process::process_environment_block const& peb)
     {
-        auto const symbol = peb.walker().get_symbol_info(common_symbol_names::rtl_stack_trace_database);
+        auto const symbol = peb.walker().get_symbol_info(common_symbol_names::rtl_stack_trace_database_symbol_name);
         if(!symbol.has_value())
         {
             return 0;
@@ -373,8 +373,7 @@ void dump_mini_dump_symbol_name(
     , std::wstring const& symbol_name
     , dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool const x86)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -388,10 +387,6 @@ void dump_mini_dump_symbol_name(
     };
 
     auto dump_options = symbol_type_utils::symbol_visit_flags::detect_pointer_cycles;
-    if (x86)
-    {
-        dump_options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(dump_options | symbol_type_utils::symbol_visit_flags::x86);
-    }
 
     auto processed_any{false};
     for (process::global_symbols variables{walker, symbol_name};
@@ -497,8 +492,7 @@ void dump_mini_dump_address(
     , std::wstring const& address
     , [[maybe_unused]] dump_file_options const& options
     , dbg_help::symbol_engine& symbol_engine
-    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
-    , bool const x86)
+    , symbol_type_utils::symbol_data_dumper const& symbol_data_dumper)
 {
     memory_list_stream const memory_list{mini_dump};
     memory64_list_stream const memory64_list{ mini_dump };
@@ -512,10 +506,6 @@ void dump_mini_dump_address(
     };
 
     auto dump_options = symbol_type_utils::symbol_visit_flags::detect_pointer_cycles;
-    if (x86)
-    {
-        dump_options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(dump_options | symbol_type_utils::symbol_visit_flags::x86);
-    }
 
     if(auto [memory_pointer, symbol_type, memory_size, dt] = symbol_type_utils::parse_address(address); !symbol_type.empty())
     {
@@ -648,8 +638,7 @@ void dump_mini_dump_peb(
         options.max_symbol_dump_depth(), 
         symbol_data_dumper, 
         common_symbol_names::peb_structure_symbol_name, 
-        peb.peb_address(), 
-        peb.is_wow64_target() || peb.is_x86_target());
+        peb.peb_address());
 
     if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {
@@ -660,8 +649,7 @@ void dump_mini_dump_peb(
             options.max_symbol_dump_depth(),
             symbol_data_dumper,
             common_symbol_names::rtl_user_process_parameters_structure_symbol_name, 
-            environment_variables.value().process_parameters_address(), 
-            peb.is_wow64_target() || peb.is_x86_target());
+            environment_variables.value().process_parameters_address());
 
         log << L"\nProcess Environment Variables:\n";
         for(auto const& value : environment_variables.value().environment())
@@ -733,6 +721,5 @@ void dump_mini_dump_stack_trace_database(
         options.max_symbol_dump_depth(),
         symbol_data_dumper, 
         common_symbol_names::stack_trace_database_structure_symbol_name, 
-        stack_database_address, 
-        peb.is_wow64_target() || peb.is_x86_target());
+        stack_database_address);
 }

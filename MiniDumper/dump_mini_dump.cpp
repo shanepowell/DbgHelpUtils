@@ -19,7 +19,6 @@
 #include "DbgHelpUtils/stream_hex_dump.h"
 #include "DbgHelpUtils/symbol_engine.h"
 #include "DbgHelpUtils/symbol_data_dumper.h"
-#include "DbgHelpUtils/system_info_stream.h"
 #include "DbgHelpUtils/system_info_utils.h"
 #include "DbgHelpUtils/time_utils.h"
 #include "DbgHelpUtils/wide_runtime_error.h"
@@ -55,18 +54,6 @@ namespace
         }
 
         return dump_file;
-    }
-
-    bool is_wow64_process(mini_dump const& dump_file)
-    {
-        module_list_stream module_list{dump_file};
-        return process::process_environment_block::find_wow64_modules(module_list);
-    }
-
-    bool is_x86_process(mini_dump const& dump_file)
-    {
-        system_info_stream const system_info{dump_file};
-        return system_info.is_x86();
     }
 }
 
@@ -134,10 +121,10 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     cache_manager cache;
     symbol_engine_ui ui{options};
     dbg_help::symbol_engine symbol_engine{ui};
-    value_type_formatter formatter{};
+    auto const x86 = is_x86_target_t{system_info_utils::is_wow64_process(dump_file) || system_info_utils::is_x86_process(dump_file)};
+    value_type_formatter formatter{x86};
     symbol_type_utils::symbol_data_dumper symbol_data_dumper{formatter};
-    ntdll_utilities::register_custom_formatters(symbol_data_dumper);
-    auto const x86 = is_wow64_process(dump_file) || is_x86_process(dump_file);
+    ntdll_utilities::register_custom_formatters(symbol_data_dumper, cache);
 
     if (options.dump_header())
     {
@@ -152,7 +139,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.dump_all_stream_indexes())
     {
-        dump_mini_dump_all_stream_indexes(log, dump_file, options, symbol_engine, symbol_data_dumper, x86);
+        dump_mini_dump_all_stream_indexes(log, dump_file, options, symbol_engine, symbol_data_dumper);
     }
     else
     {
@@ -160,7 +147,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
         {
             try
             {
-                dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine, symbol_data_dumper, x86);
+                dump_mini_dump_stream_index(log, dump_file, index, options, symbol_engine, symbol_data_dumper);
             }
             catch (wide_runtime_error const& e)
             {
@@ -176,7 +163,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
         {
             try
             {
-                dump_mini_dump_stream_type(log, dump_file, type, options, symbol_engine, symbol_data_dumper, x86);
+                dump_mini_dump_stream_type(log, dump_file, type, options, symbol_engine, symbol_data_dumper);
             }
             catch (wide_runtime_error const& e)
             {
@@ -196,12 +183,12 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.display_heap())
     {
-        dump_mini_dump_heap(log, dump_file, cache, options, symbol_engine);
+        dump_mini_dump_heap(log, dump_file, cache, options, symbol_engine, formatter);
     }
 
     if(options.display_heap_entries())
     {
-        dump_mini_dump_heap_entries(log, dump_file, cache, base_diff_dump, options, symbol_engine);
+        dump_mini_dump_heap_entries(log, dump_file, cache, base_diff_dump, options, symbol_engine, formatter);
     }
 
     if(options.display_crtheap())
@@ -211,7 +198,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
 
     if(options.display_heap_statistic_views())
     {
-        dump_mini_dump_heap_statistics(log, dump_file, cache, base_diff_dump, options, symbol_engine);
+        dump_mini_dump_heap_statistics(log, dump_file, cache, base_diff_dump, options, symbol_engine, formatter);
     }
 
     if(options.display_heap_graph())
@@ -260,7 +247,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     {
         try
         {
-            dump_mini_dump_symbol_name(log, dump_file, symbol_name, options, symbol_engine, symbol_data_dumper, x86);
+            dump_mini_dump_symbol_name(log, dump_file, symbol_name, options, symbol_engine, symbol_data_dumper);
         }
         catch (wide_runtime_error const& e)
         {
@@ -276,7 +263,7 @@ void process_user_mode_dump(std::wostream& log, mini_dump const& dump_file, std:
     {
         try
         {
-            dump_mini_dump_address(log, dump_file, address_type, options, symbol_engine, symbol_data_dumper, x86);
+            dump_mini_dump_address(log, dump_file, address_type, options, symbol_engine, symbol_data_dumper);
         }
         catch (wide_runtime_error const& e)
         {

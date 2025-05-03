@@ -51,7 +51,7 @@ namespace dlg_help_utils::heap
 
     uint64_t crt_heap::get_crt_first_block() const
     {
-        auto const symbol = walker().get_symbol_info(common_symbol_names::acrt_first_block);
+        auto const symbol = walker().get_symbol_info(common_symbol_names::acrt_first_block_symbol_name);
         if(!symbol.has_value())
         {
             return 0;

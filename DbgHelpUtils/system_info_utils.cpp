@@ -9,7 +9,9 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include <compare>
 
+#include "process_environment_block.h"
 #include "stream_hex_dump.h"
+#include "system_info_stream.h"
 #include "system_info_utils_resources.h"
 
 
@@ -23,12 +25,6 @@ namespace dlg_help_utils::system_info_utils::resources
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 using namespace dlg_help_utils::system_info_utils::resources;
-
-
-
-namespace
-{
-}
 
 
 namespace dlg_help_utils::system_info_utils
@@ -64,6 +60,18 @@ namespace dlg_help_utils::system_info_utils
 
             return {};
         }
+    }
+
+    bool is_wow64_process(mini_dump const& dump_file)
+    {
+        module_list_stream module_list{dump_file};
+        return process::process_environment_block::find_wow64_modules(module_list);
+    }
+
+    bool is_x86_process(mini_dump const& dump_file)
+    {
+        system_info_stream const system_info{dump_file};
+        return system_info.is_x86();
     }
 
     std::wstring version_info_to_string(uint32_t const version)

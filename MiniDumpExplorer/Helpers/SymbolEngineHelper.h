@@ -11,7 +11,7 @@
 class SymbolEngineHelper : dlg_help_utils::dbg_help::i_symbol_load_callback
 {
 public:
-    SymbolEngineHelper();
+    SymbolEngineHelper(dlg_help_utils::is_x86_target_t is_x86_target);
 
     winrt::Windows::System::DispatcherQueueController& QueueController()
     {

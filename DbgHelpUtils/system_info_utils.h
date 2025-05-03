@@ -6,10 +6,14 @@
 namespace dlg_help_utils
 {
     enum class dump_file_type : uint8_t;
+    class mini_dump;
 }
 
 namespace dlg_help_utils::system_info_utils
 {
+    bool is_wow64_process(mini_dump const& dump_file);
+    bool is_x86_process(mini_dump const& dump_file);
+
     std::wstring mini_dump_type_to_string(dump_file_type type);
     std::wstring processor_architecture_to_string(unsigned short processor_architecture);
     std::wstring product_type_to_string(unsigned char product_type);

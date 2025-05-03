@@ -508,7 +508,7 @@ namespace dlg_help_utils::stream_utils
 
     void throw_cant_get_symbol_field(std::wstring_view const symbol_name)
     {
-        throw exceptions::wide_runtime_error{std::format(L"Error: WNo {} symbol field found", symbol_name)};
+        throw exceptions::wide_runtime_error{std::format(L"Error: No {} symbol field found", symbol_name)};
     }
 }
 

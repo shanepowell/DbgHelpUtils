@@ -161,9 +161,13 @@ void dump_mini_dump_function_table_stream_data(std::wostream& log, mini_dump con
     log << L'\n';
 }
 
-void dump_mini_dump_handle_operation_list_stream_data(std::wostream& log, mini_dump const& mini_dump, size_t const index,
-                                                      dump_file_options const& options,
-                                                      dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_handle_operation_list_stream_data(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , size_t const index
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , i_value_type_formatter const& formatter)
 {
     handle_operation_list_stream const handle_operation_list{mini_dump, index};
 
@@ -195,13 +199,14 @@ void dump_mini_dump_handle_operation_list_stream_data(std::wostream& log, mini_d
 
         if (options.display_symbols())
         {
-            dump_stack_to_stream_raw(log
+            stream_stack_dump::dump_stack_to_stream_raw(
+                log
                 , mini_dump
                 , symbol_engine
                 , 0
                 , entry->BackTraceInformation.ReturnAddresses
                 , entry->BackTraceInformation.Depth
-                , stream_stack_dump::is_x86_target_t{system_info.is_x86()}
+                , formatter 
                 , 6);
         }
         else

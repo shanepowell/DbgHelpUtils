@@ -88,11 +88,10 @@ namespace winrt::MiniDumpExplorer::implementation
 
                 {
                     auto walker_store = std::make_shared<Utility::mini_dump_walker_store>(mini_dump, thread_, symbolEngineHelper.symbol_engine(), symbolEngineHelper.symbol_data_dumper(), symbolEngineHelper.cache(), symbolEngineHelper.QueueController());
-                    walker_store->x86_ = IsX86Process(walker_store, mini_dump);
                     dlg_help_utils::scope_exit release_handle{[&walker_store]{ walker_store->walker_.release_handle(); } };
                     logger::Log().LogMessage(log_level::debug, std::format("LoadStack start for thread [{}]", threadId));
 
-                    for(auto stackCallEntry : dump_stack(walker_store->walker_, symbolEngineHelper.symbol_engine(), thread_.thread_context(), 0))
+                    for(auto stackCallEntry : dump_stack(walker_store->walker_, symbolEngineHelper.symbol_engine(), symbolEngineHelper.symbol_data_dumper().formatter(), thread_.thread_context(), 0))
                     {
                         // ReSharper disable once CppAssignedValueIsNeverUsed
                         anchor_self = {};
@@ -155,11 +154,10 @@ namespace winrt::MiniDumpExplorer::implementation
                 {
                     {
                         auto walker_store = std::make_shared<Utility::mini_dump_walker_store>(mini_dump, threadEx_, symbolEngineHelper.symbol_engine(), symbolEngineHelper.symbol_data_dumper(), symbolEngineHelper.cache(), symbolEngineHelper.QueueController());
-                        walker_store->x86_ = IsX86Process(walker_store, mini_dump);
                         dlg_help_utils::scope_exit release_handle{[&walker_store]{ walker_store->walker_.release_handle(); } };
                         logger::Log().LogMessage(log_level::debug, std::format("LoadStack start for thread [{}]", threadId));
 
-                        for(auto stackCallEntry : dump_stack(walker_store->walker_, symbolEngineHelper.symbol_engine(), threadEx_.thread_context(), 0))
+                        for(auto stackCallEntry : dump_stack(walker_store->walker_, symbolEngineHelper.symbol_engine(), symbolEngineHelper.symbol_data_dumper().formatter(), threadEx_.thread_context(), 0))
                         {
                             // ReSharper disable once CppAssignedValueIsNeverUsed
                             anchor_self = {};
@@ -201,16 +199,5 @@ namespace winrt::MiniDumpExplorer::implementation
                 }
                 logger::Log().LogMessage(log_level::debug, std::format("LoadThreadExStack end for thread [{}]", threadId));
             }, [threadId] { return Utility::for_thread_id(threadId); });
-    }
-
-    bool ThreadStack::IsX86Process(std::shared_ptr<Utility::mini_dump_walker_store> const& walker_store, dlg_help_utils::mini_dump const& mini_dump)
-    {
-        if (dlg_help_utils::process::process_environment_block::find_wow64_modules(walker_store->module_list_))
-        {
-            return true;
-        }
-
-        dlg_help_utils::system_info_stream const system_info{mini_dump};
-        return system_info.is_x86();
     }
 }

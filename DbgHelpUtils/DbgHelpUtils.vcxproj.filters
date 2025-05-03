@@ -516,6 +516,15 @@
     <ClCompile Include="register_custom_formatters.cpp">
       <Filter>NtdllUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="unicode_string_custom_formatter.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_type_custom_formatter.cpp">
+      <Filter>SymbolUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="string_custom_formatter.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1096,6 +1105,12 @@
     </ClInclude>
     <ClInclude Include="mini_dump_string_stream.h">
       <Filter>StreamUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="unicode_string_custom_formatter.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="string_custom_formatter.h">
+      <Filter>NtdllUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

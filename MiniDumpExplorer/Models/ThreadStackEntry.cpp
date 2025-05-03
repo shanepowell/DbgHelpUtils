@@ -106,11 +106,6 @@ namespace winrt::MiniDumpExplorer::implementation
         areChildrenLoaded_ = true;
 
         auto options = symbol_type_utils::symbol_visit_flags::none;
-        if (walker_store->x86_)
-        {
-            options = static_cast<symbol_type_utils::symbol_visit_flags::flags>(options | symbol_type_utils::symbol_visit_flags::x86);
-        }
-
         auto const name = symbol_type_utils::get_symbol_type_friendly_name(variable_.symbol_info);
         if(variable_.registry_value.has_value() || variable_.frame_data.has_value())
         {

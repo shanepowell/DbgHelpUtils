@@ -54,6 +54,5 @@ namespace Utility
         dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper_;
         dlg_help_utils::cache_manager& cache_;
         winrt::Windows::System::DispatcherQueueController& dbg_help_queue_;
-        bool x86_{};
     };
 }

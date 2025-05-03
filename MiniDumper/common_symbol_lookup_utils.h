@@ -58,5 +58,4 @@ std::optional<dlg_help_utils::dbg_help::symbol_type_info> dump_field(
     , size_t max_symbol_dump_depth
     , dlg_help_utils::symbol_type_utils::symbol_data_dumper const& symbol_data_dumper
     , std::wstring const& symbol_type_name
-    , uint64_t address
-    , bool x86);
+    , uint64_t address);

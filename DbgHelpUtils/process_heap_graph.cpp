@@ -55,7 +55,7 @@ namespace dlg_help_utils::heap
         {
             static constexpr std::array g_ignored_system_symbols
             {
-                &common_symbol_names::acrt_first_block,
+                &common_symbol_names::acrt_first_block_symbol_name,
             };
 
             symbol_type_info_set rv;

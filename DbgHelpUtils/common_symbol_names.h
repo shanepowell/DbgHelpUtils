@@ -44,12 +44,15 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const crt_mem_block_header_structure_symbol_name;
     extern std::wstring const stack_trace_database_structure_symbol_name;
 
+    extern std::wstring const unicode_string_symbol_name;
+    extern std::wstring const string_symbol_name;
+
     extern std::wstring const rtl_p_lfh_key_global_symbol_name;
     extern std::wstring const av_rfp_dph_page_heap_list_global_symbol_name;
     extern std::wstring const rtl_p_heap_key_global_symbol_name;
     extern std::wstring const rtl_p_hp_heap_globals_global_symbol_name;
-    extern std::wstring const rtl_stack_trace_database;
-    extern std::wstring const acrt_first_block;
+    extern std::wstring const rtl_stack_trace_database_symbol_name;
+    extern std::wstring const acrt_first_block_symbol_name;
 
     extern std::wstring const peb_structure_ldr_field_symbol_name;
     extern std::wstring const peb_structure_process_parameters_field_symbol_name;
@@ -245,4 +248,10 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const crt_mem_block_header_gap_field_symbol_name;
     extern std::wstring const stack_trace_database_entry_index_array_field_symbol_name;
     extern std::wstring const stack_trace_database_number_of_entries_allocated_field_symbol_name;
+    extern std::wstring const unicode_string_length_field_symbol_name;
+    extern std::wstring const unicode_string_maximum_length_field_symbol_name;
+    extern std::wstring const unicode_string_buffer_field_symbol_name;
+    extern std::wstring const string_length_field_symbol_name;
+    extern std::wstring const string_maximum_length_field_symbol_name;
+    extern std::wstring const string_buffer_field_symbol_name;
 }

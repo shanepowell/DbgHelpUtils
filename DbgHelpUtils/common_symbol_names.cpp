@@ -45,12 +45,15 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const crt_mem_block_header_structure_symbol_name = L"ucrtbased!_CrtMemBlockHeader"s;
     std::wstring const stack_trace_database_structure_symbol_name = L"ntdll!_STACK_TRACE_DATABASE"s;
 
+    std::wstring const unicode_string_symbol_name = L"ntdll!_UNICODE_STRING"s;
+    std::wstring const string_symbol_name = L"ntdll!_STRING"s;
+
     std::wstring const rtl_p_lfh_key_global_symbol_name = L"ntdll!RtlpLFHKey"s;
     std::wstring const av_rfp_dph_page_heap_list_global_symbol_name = L"verifier!AVrfpDphPageHeapList"s;
     std::wstring const rtl_p_heap_key_global_symbol_name = L"ntdll!RtlpHeapKey"s;
     std::wstring const rtl_p_hp_heap_globals_global_symbol_name = L"ntdll!RtlpHpHeapGlobals"s;
-    std::wstring const rtl_stack_trace_database = L"ntdll!RtlpStackTraceDatabase"s;
-    std::wstring const acrt_first_block = L"ucrtbased!__acrt_first_block"s;
+    std::wstring const rtl_stack_trace_database_symbol_name = L"ntdll!RtlpStackTraceDatabase"s;
+    std::wstring const acrt_first_block_symbol_name = L"ucrtbased!__acrt_first_block"s;
 
     std::wstring const peb_structure_ldr_field_symbol_name = L"ldr"s;
     std::wstring const peb_structure_process_parameters_field_symbol_name = L"ProcessParameters"s;
@@ -245,5 +248,11 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const crt_mem_block_header_gap_field_symbol_name = L"_gap"s;
     std::wstring const stack_trace_database_entry_index_array_field_symbol_name = L"EntryIndexArray"s;
     std::wstring const stack_trace_database_number_of_entries_allocated_field_symbol_name = L"NumberOfEntriesAllocated"s;
+    std::wstring const unicode_string_length_field_symbol_name = L"Length"s;
+    std::wstring const unicode_string_maximum_length_field_symbol_name = L"MaximumLength"s;
+    std::wstring const unicode_string_buffer_field_symbol_name = L"Buffer"s;
+    std::wstring const string_length_field_symbol_name = L"Length"s;
+    std::wstring const string_maximum_length_field_symbol_name = L"MaximumLength"s;
+    std::wstring const string_buffer_field_symbol_name = L"Buffer"s;
 
 }

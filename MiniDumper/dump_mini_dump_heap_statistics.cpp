@@ -5,6 +5,7 @@
 #include "DbgHelpUtils/crt_heap.h"
 // ReSharper disable once CppUnusedIncludeDirective
 #include "DbgHelpUtils/hex_dump.h"
+#include "DbgHelpUtils/i_value_type_formatter.h"
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/process_heaps.h"
 #include "DbgHelpUtils/process_heaps_statistics.h"
@@ -21,11 +22,16 @@ using namespace dlg_help_utils;
 
 namespace
 {
-    void dump_mini_dump_heap_statistics_view(std::wostream& log, process::process_environment_block const& peb, heap::process_heaps_statistic_view const& view_by_size_frequency, dump_file_options const& options, stream_stack_dump::is_x86_target_t const is_x86_target, streamsize const hex_length)
+    void dump_mini_dump_heap_statistics_view(
+        std::wostream& log
+        , process::process_environment_block const& peb
+        , heap::process_heaps_statistic_view const& view_by_size_frequency
+        , dump_file_options const& options
+        , i_value_type_formatter const& formatter)
     {
         using namespace size_units::base_16;
         log << std::format(L"  {}:\n", heap::process_heaps_statistic_view::to_wstring(view_by_size_frequency.view()));
-        auto const single_line_range_title_length = 2 + hex_length;
+        auto const single_line_range_title_length = 2 + formatter.pointer_format_width();
 
         if (view_by_size_frequency.is_range_single_value())
         {
@@ -109,14 +115,14 @@ namespace
             if (auto const& common_allocation_callsite = bucket.common_allocation_callsite();
                 common_allocation_callsite.has_value())
             {
-                log << std::format(L" {0}", dump_stack_frame(common_allocation_callsite.value(), is_x86_target));
+                log << std::format(L" {0}", stream_stack_dump::dump_stack_frame(common_allocation_callsite.value(), formatter));
             }
             log << L'\n';
 
             if (options.display_symbols() && !bucket.allocation_stack_trace().empty())
             {
                 log << L"  Allocation Stack Trace:\n";
-                dump_stack_to_stream(log, peb.walker(), bucket.allocation_stack_trace(), is_x86_target, 2);
+                dump_stack_to_stream(log, peb.walker(), bucket.allocation_stack_trace(), formatter, 2);
                 log << L'\n';
             }
 
@@ -125,13 +131,13 @@ namespace
                 log << L"  Entries:\n";
                 for (auto const& entry : bucket.entries())
                 {
-                    detail::print_process_entry(log, entry, peb, hex_length, options, 4);
+                    detail::print_process_entry(log, entry, peb, formatter, options, 4);
                 }
 
                 log << L"  Free Entries:\n";
                 for (auto const& entry : bucket.free_entries())
                 {
-                    detail::print_process_entry(log, entry, peb, hex_length, options, 4);
+                    detail::print_process_entry(log, entry, peb, formatter, options, 4);
                 }
             }
         }
@@ -176,7 +182,14 @@ namespace
 
 }
 
-void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_dump, cache_manager& cache, std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump, dump_file_options const& options, dbg_help::symbol_engine& symbol_engine)
+void dump_mini_dump_heap_statistics(
+    std::wostream& log
+    , mini_dump const& mini_dump
+    , cache_manager& cache
+    , std::unique_ptr<dlg_help_utils::mini_dump> const& base_diff_dump
+    , dump_file_options const& options
+    , dbg_help::symbol_engine& symbol_engine
+    , i_value_type_formatter const& formatter)
 {
     heap::process_heaps heaps{mini_dump, cache, symbol_engine, options.process_heaps_options(), options.system_module_list(), options.statistic_view_options()};
     cache_manager base_cache;
@@ -190,8 +203,6 @@ void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_du
         std::wcerr << loading_heap_statistics;
     }
 
-    auto const hex_length = heaps.peb().machine_hex_printable_length();
-    auto const is_x86_target = stream_stack_dump::is_x86_target_t{heaps.peb().is_x86_target()};
     auto const statistics = heaps.statistics();
 
     if(options.verbose_output())
@@ -204,22 +215,22 @@ void dump_mini_dump_heap_statistics(std::wostream& log, mini_dump const& mini_du
     log << L"Heap Statistics:\n";
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_size_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_size_frequency(), options, formatter);
         log << L'\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_size_ranges_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_size_ranges_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_size_ranges_frequency(), options, formatter);
         log << L'\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_stacktrace_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_stacktrace_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_stacktrace_frequency(), options, formatter);
         log << L'\n';
     }
     if(options.display_heap_statistic_view(heap_statistics_view::by_application_callsite_frequency_view))
     {
-        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_application_callsite_frequency(), options, is_x86_target, hex_length);
+        dump_mini_dump_heap_statistics_view(log, heaps.peb(), statistics.view_by_application_callsite_frequency(), options, formatter);
         log << L'\n';
     }
 }

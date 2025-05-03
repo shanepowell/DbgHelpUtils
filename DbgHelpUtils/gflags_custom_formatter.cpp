@@ -6,14 +6,14 @@
 #include "mini_dump_memory_stream.h"
 #include "string_compare.h"
 
-
 namespace dlg_help_utils::ntdll_utilities
 {
     bool gflags_custom_formatter::is_custom_type(
-        [[maybe_unused]] dbg_help::symbol_type_info const& type, 
-        std::wstring_view const& path, 
-        [[maybe_unused]] std::wstring_view const& name, 
-        [[maybe_unused]] std::vector<dbg_help::symbol_type_info> const& parents)
+        [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker
+        , [[maybe_unused]] dbg_help::symbol_type_info const& type 
+        , std::wstring_view const& path
+        , [[maybe_unused]] std::wstring_view const& name
+        , [[maybe_unused]] std::vector<dbg_help::symbol_type_info> const& parents)
     {
         return string_utils::equals(path, L"ntdll!_PEB/NtGlobalFlag");
     }

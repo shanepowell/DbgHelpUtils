@@ -5,6 +5,8 @@
 class value_type_formatter : public dlg_help_utils::i_value_type_formatter
 {
 public:
+    value_type_formatter(dlg_help_utils::is_x86_target_t is_x86_target);
+
     std::wstring format_value(char value) const override;
     std::wstring format_value(wchar_t value) const override;
 
@@ -26,4 +28,11 @@ public:
     std::wstring format_value(uint16_t value) const override;
     std::wstring format_value(uint32_t value) const override;
     std::wstring format_value(uint64_t value) const override;
+
+    std::wstring format_pointer_value(uint64_t value) const override;
+    std::wstring format_index_value(size_t index) const override;
+    std::streamsize pointer_format_width() const override;
+
+private:
+    std::streamsize pointer_width_;
 };

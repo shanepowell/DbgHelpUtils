@@ -3,10 +3,10 @@
 #include <vector>
 
 #include "symbol_address_info.h"
-#include "tagged_bool.h"
 
 namespace dlg_help_utils
 {
+    class i_value_type_formatter;
     class cache_manager;
 
     namespace symbol_type_utils
@@ -36,8 +36,6 @@ namespace dlg_help_utils::stream_stack_dump
         DisplayStackParameters = 0x02
     };
 
-    using is_x86_target_t = tagged_bool<struct is_x86_target_type>;
-
     struct stack_function_call_entry
     {
         size_t index;
@@ -45,22 +43,27 @@ namespace dlg_help_utils::stream_stack_dump
         std::wstring line;
     };
 
-    generator<stack_function_call_entry> dump_stack(mini_dump_memory_walker& walker
+    generator<stack_function_call_entry> dump_stack(
+        mini_dump_memory_walker& walker
         , dbg_help::symbol_engine& symbol_engine
+        , i_value_type_formatter const& formatter
         , stream_thread_context const& thread_context
         , size_t indent);
-    generator<std::wstring> dump_stack(mini_dump_memory_walker const& walker
+    generator<std::wstring> dump_stack(
+        mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack
-        , is_x86_target_t is_x86_target
+        , i_value_type_formatter const& formatter
         , size_t indent);
-    generator<std::wstring> dump_stack_raw(mini_dump const& mini_dump
+    generator<std::wstring> dump_stack_raw(
+        mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
         , uint64_t stack_start_address
         , uint64_t const* stack
         , size_t stack_size
-        , is_x86_target_t is_x86_target
+        , i_value_type_formatter const& formatter
         , size_t indent);
-    void dump_stack_to_stream(std::wostream& os
+    void dump_stack_to_stream(
+        std::wostream& os
         , mini_dump const& mini_dump
         , size_t max_symbol_dump_depth
         , dbg_help::symbol_engine& symbol_engine
@@ -70,29 +73,34 @@ namespace dlg_help_utils::stream_stack_dump
         , size_t stack_size
         , stream_thread_context const& thread_context
         , size_t indent
-        , dump_stack_options options
-        , bool x86);
-    void dump_stack_to_stream(std::wostream& os
+        , dump_stack_options options);
+    void dump_stack_to_stream(
+        std::wostream& os
         , mini_dump_memory_walker const& walker
         , std::vector<uint64_t> const& stack
-        , is_x86_target_t is_x86_target
+        , i_value_type_formatter const& formatter
         , size_t indent);
-    void dump_stack_to_stream_raw(std::wostream& os
+    void dump_stack_to_stream_raw(
+        std::wostream& os
         , mini_dump const& mini_dump
         , dbg_help::symbol_engine& symbol_engine
         , uint64_t stack_start_address
         , uint64_t const* stack
         , size_t stack_size
-        , is_x86_target_t is_x86_target
+        , i_value_type_formatter const& formatter
         , size_t indent);
-    void dump_address_to_stream(std::wostream& os
+    void dump_address_to_stream(
+        std::wostream& os
         , mini_dump const& mini_dump
         , module_list_stream const& module_list
         , unloaded_module_list_stream const& unloaded_module_list
         , dbg_help::symbol_engine& symbol_engine
+        , i_value_type_formatter const& formatter
         , uint64_t address
         , size_t indent);
-    std::wstring dump_stack_frame(dbg_help::symbol_address_info const& info, is_x86_target_t is_x86_address);
+    std::wstring dump_stack_frame(
+        dbg_help::symbol_address_info const& info
+        , i_value_type_formatter const& formatter);
 
     namespace resources
     {
