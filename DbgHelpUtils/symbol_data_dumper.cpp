@@ -1902,7 +1902,7 @@ namespace dlg_help_utils::symbol_type_utils
             case 8:
                 if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
                 {
-                    fix_wow64_pointer(value);
+                    fix_wow64_pointer(value, walker);
                     pointer_value = value;
                     got_pointer_value = true;
                 }
@@ -2265,16 +2265,25 @@ namespace dlg_help_utils::symbol_type_utils
         return false;
     }
 
-    void symbol_data_dumper::fix_wow64_pointer(uint64_t& value) const
+    void symbol_data_dumper::fix_wow64_pointer(uint64_t& value, stream_stack_dump::mini_dump_memory_walker const& walker) const
     {
         if (!formatter().is_x86_target())
         {
             return;
         }
 
+        if (walker.find_memory_range(value, 1,1)  != 0)
+        {
+            return;
+        }
+
         if ((value & 0xffffffff00000000) != 0x0000000000000000)
         {
-            value = value & 0x00000000ffffffff;
+            if (auto const fixed_value = value & 0x00000000ffffffff;
+                walker.find_memory_range(fixed_value, 1,1)  != 0)
+            {
+                value = fixed_value;
+            }
         }
     }
 

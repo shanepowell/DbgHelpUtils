@@ -404,7 +404,7 @@ namespace dlg_help_utils::symbol_type_utils
             , uint64_t pointer
             , std::unordered_set<uint64_t>& visited_pointers
             );
-        void fix_wow64_pointer(uint64_t& value) const;
+        void fix_wow64_pointer(uint64_t& value, stream_stack_dump::mini_dump_memory_walker const& walker) const;
 
         [[nodiscard]] static std::wstring_view remove_leaf(std::wstring_view const& path);
 
