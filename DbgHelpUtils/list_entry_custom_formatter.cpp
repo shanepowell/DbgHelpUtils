@@ -81,7 +81,7 @@ namespace dlg_help_utils::ntdll_utilities
                     // ReSharper disable once StringLiteralTypo
                     return std::format(L"{}: [{}]", original_render_line(), formatter.format_value(count));
                 },
-                .sub_lines = [list_entry_walker, &dumper, &walker, options, path, name, visited_pointers, max_symbol_dump_depth, parents] mutable 
+                .sub_lines = [list_entry_walker, &dumper, &walker, options, path, name, visited_pointers, max_symbol_dump_depth, parents] () mutable 
                 {
                     return generate_list_children_of_type(
                         list_entry_walker, 
