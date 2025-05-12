@@ -145,6 +145,7 @@ namespace winrt::MiniDumpExplorer::implementation
                             , variable_.symbol_info
                             , variable_.frame_data->data_address
                             , stream
+                            , symbol_type_utils::is_head_t{true}
                             , {}
                             , {}
                             , visited_pointers));
@@ -162,6 +163,7 @@ namespace winrt::MiniDumpExplorer::implementation
                         , variable_.symbol_info
                         , 0
                         , dbg_help::to_stream(variable.registry_value->value)
+                        , symbol_type_utils::is_head_t{true}
                         , {}
                         , {}
                         , visited_pointers));

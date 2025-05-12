@@ -28,7 +28,10 @@ namespace dlg_help_utils::ntdll_utilities
         [[nodiscard]] cache_manager& cache() const { return *cache_manager_; }
         [[nodiscard]] stream_stack_dump::mini_dump_memory_walker const& walker() const { return *walker_; }
 
+        [[nodiscard]] uint64_t size() const;
         [[nodiscard]] generator<uint64_t> entries() const;
+
+        dbg_help::symbol_type_info const& entry_type() const { return entry_symbol_type_; }
 
         static std::wstring const& symbol_name;
 
@@ -46,6 +49,7 @@ namespace dlg_help_utils::ntdll_utilities
         stream_stack_dump::mini_dump_memory_walker const* walker_;
         uint64_t start_address_;
         std::function<uint64_t (uint64_t, uint64_t)> address_decoder_;
+        dbg_help::symbol_type_info entry_symbol_type_{};
         uint64_t list_entry_entry_offset_;
         cache_data const* cache_data_{&setup_globals()};
     };

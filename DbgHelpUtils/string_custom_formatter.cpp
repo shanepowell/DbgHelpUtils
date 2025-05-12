@@ -8,7 +8,7 @@
 #include "mini_dump_memory_stream.h"
 #include "mini_dump_memory_walker.h"
 #include "module_list_stream.h"
-#include "stream_hex_dump.h"
+#include "symbol_data_dumper.h"
 
 namespace dlg_help_utils::ntdll_utilities
 {
@@ -31,16 +31,21 @@ namespace dlg_help_utils::ntdll_utilities
 
     symbol_type_utils::dump_variable_symbol_data_result string_custom_formatter::format(
         std::function<std::wstring()> original_render_line
-        , [[maybe_unused]] stream_stack_dump::mini_dump_memory_walker const& walker
-        , [[maybe_unused]] dbg_help::symbol_type_info const& type
+        , stream_stack_dump::mini_dump_memory_walker const& walker
+        , [[maybe_unused]] symbol_type_utils::symbol_visit_flags::flags const options
+        , dbg_help::symbol_type_info const& type
         , [[maybe_unused]] dbg_help::sym_tag_enum const tag
-        , uint64_t const variable_address
-        , [[maybe_unused]] mini_dump_memory_stream& variable_stream
+        , uint64_t variable_address
+        , mini_dump_memory_stream& variable_stream
         , [[maybe_unused]] std::wstring_view const& path
         , [[maybe_unused]] std::wstring_view const& name
+        , [[maybe_unused]] std::unordered_set<uint64_t>& visited_pointers
+        , [[maybe_unused]] size_t const max_symbol_dump_depth
         , [[maybe_unused]] std::vector<dbg_help::symbol_type_info> const& parents
-        , [[maybe_unused]] i_value_type_formatter const& formatter)
+        , symbol_type_utils::symbol_data_dumper const& dumper)
     {
+        variable_address = get_address(walker, type, variable_address, variable_stream, dumper.formatter());
+
         auto const length = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker, cache_data_->length_field_data, variable_address);
         auto const maximum_length = stream_utils::find_basic_type_field_value_in_type<uint16_t>(walker, cache_data_->maximum_length_field_data, variable_address);
         auto const address_value = stream_utils::find_field_pointer_type_and_value_in_type(walker, cache_data_->buffer_field_data, variable_address);
@@ -56,7 +61,7 @@ namespace dlg_help_utils::ntdll_utilities
         return
         {
             .result = symbol_type_utils::symbol_type_custom_formatter_result::stop,
-            .render_line = [original_render_line = std::move(original_render_line), length = length.value(), maximum_length = maximum_length.value(), address_value = address_value.value().value, string = std::move(string), &formatter]
+            .render_line = [original_render_line = std::move(original_render_line), length = length.value(), maximum_length = maximum_length.value(), address_value = address_value.value().value, string = std::move(string), &formatter = dumper.formatter()]
             {
                 // ReSharper disable once StringLiteralTypo
                 return std::format(L"{}: Addr:{}:MaxLen:{}:Len:{}:[{}]", original_render_line(), formatter.format_pointer_value(address_value), formatter.format_value(maximum_length), formatter.format_value(length), formatter.format_value(string));

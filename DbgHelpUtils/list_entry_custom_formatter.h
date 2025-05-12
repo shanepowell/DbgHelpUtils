@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "list_entry_walker.h"
 #include "stream_utils.h"
 #include "symbol_type_custom_formatter.h"
 
@@ -9,10 +11,10 @@ namespace dlg_help_utils
 
 namespace dlg_help_utils::ntdll_utilities
 {
-    class unicode_string_custom_formatter : public symbol_type_utils::symbol_type_custom_formatter
+    class list_entry_custom_formatter : public symbol_type_utils::symbol_type_custom_formatter
     {
     public:
-        unicode_string_custom_formatter(cache_manager& cache);
+        list_entry_custom_formatter(cache_manager& cache);
 
         bool is_custom_type(
             stream_stack_dump::mini_dump_memory_walker const& walker
@@ -41,12 +43,21 @@ namespace dlg_help_utils::ntdll_utilities
         static std::wstring const& symbol_name;
 
     private:
+        static generator<symbol_type_utils::dump_variable_symbol_data> generate_list_children_of_type(
+            list_entry_walker const& list_entry_walker
+            , symbol_type_utils::symbol_data_dumper const& dumper
+            , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_type_utils::symbol_visit_flags::flags options
+            , std::wstring_view const& path
+            , std::wstring_view const& name
+            , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth
+            , std::vector<dbg_help::symbol_type_info> const& parents);
+        static generator<symbol_type_utils::dump_variable_symbol_data> generate_list_children(list_entry_walker const& list_entry_walker, i_value_type_formatter const& formatter);
+
         struct cache_data
         {
-            dbg_help::symbol_type_info unicode_string_symbol_type;
-            stream_utils::symbol_type_and_base_type_field_offset length_field_data;
-            stream_utils::symbol_type_and_base_type_field_offset maximum_length_field_data;
-            stream_utils::symbol_type_and_base_type_field_offset buffer_field_data;
+            dbg_help::symbol_type_info list_entry_symbol_type;
         };
 
         [[nodiscard]] cache_data const& get_cache_data(stream_stack_dump::mini_dump_memory_walker const& walker) const;
@@ -55,5 +66,13 @@ namespace dlg_help_utils::ntdll_utilities
     private:
         cache_manager* cache_manager_;
         mutable cache_data const* cache_data_{nullptr};
+
+        struct known_name_type
+        {
+            std::wstring symbol_name;
+            std::wstring field_name;
+        };
+
+        static const std::unordered_map<std::wstring_view, known_name_type> g_known_names;
     };
 }

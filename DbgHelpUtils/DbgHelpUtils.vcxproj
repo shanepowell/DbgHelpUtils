@@ -217,6 +217,7 @@
     <ClCompile Include="lfh_segment.cpp" />
     <ClCompile Include="heap_subsegment.cpp" />
     <ClCompile Include="lfh_subsegment_location_utils_resources.cpp" />
+    <ClCompile Include="list_entry_custom_formatter.cpp" />
     <ClCompile Include="list_entry_walker.cpp" />
     <ClCompile Include="locale_number_formatting.cpp" />
     <ClCompile Include="memory64_list_stream.cpp" />
@@ -370,6 +371,7 @@
     <ClInclude Include="lfh_segment.h" />
     <ClInclude Include="heap_subsegment.h" />
     <ClInclude Include="lfh_subsegment_location_utils.h" />
+    <ClInclude Include="list_entry_custom_formatter.h" />
     <ClInclude Include="list_entry_walker.h" />
     <ClInclude Include="m128a_utils.h" />
     <ClInclude Include="mini_dump_memory_walker_create_handle.h" />
@@ -382,6 +384,7 @@
     <ClInclude Include="symbol_type_custom_formatter.h" />
     <ClInclude Include="symbol_data_dumper.h" />
     <ClInclude Include="i_value_type_formatter.h" />
+    <ClInclude Include="symbol_visit_flags.h" />
     <ClInclude Include="unicode_string_custom_formatter.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="memory_range.h" />

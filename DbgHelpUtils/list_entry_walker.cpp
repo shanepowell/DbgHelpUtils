@@ -14,7 +14,8 @@ namespace dlg_help_utils::ntdll_utilities
     , walker_{&walker}
     , start_address_{start_address}
     , address_decoder_{std::move(address_decoder)}
-    , list_entry_entry_offset_{stream_utils::get_field_offset_from_type(stream_utils::get_type(walker, entry_symbol_name), entry_symbol_name, entry_field_name)}
+    , entry_symbol_type_{ stream_utils::get_type(walker, entry_symbol_name) }
+    , list_entry_entry_offset_{stream_utils::get_field_offset_from_type(entry_symbol_type_, entry_symbol_name, entry_field_name)}
     {
     }
 
@@ -26,6 +27,35 @@ namespace dlg_help_utils::ntdll_utilities
     {
     }
 
+    uint64_t list_entry_walker::size() const
+    {
+        auto const& flink_field = common_symbol_names::list_entry_flink_field_symbol_name;
+        auto flink = get_field_pointer_raw(walker(), start_address_, cache_data_->flink_field_data, symbol_name, flink_field);
+        if(address_decoder_)
+        {
+            flink = address_decoder_(flink, start_address_);
+        }
+
+        if(flink == 0)
+        {
+            return 0;
+        }
+
+        uint64_t count = 0;
+        while(flink != start_address_)
+        {
+            ++count;
+            auto const parent = flink;
+            flink = get_field_pointer(walker(), parent, cache_data_->flink_field_data, symbol_name, flink_field);
+            if(address_decoder_)
+            {
+                flink = address_decoder_(flink, parent);
+            }
+        }
+
+        return count;
+    }
+
     generator<uint64_t> list_entry_walker::entries() const
     {
         auto const& flink_field = common_symbol_names::list_entry_flink_field_symbol_name;
@@ -34,6 +64,7 @@ namespace dlg_help_utils::ntdll_utilities
         {
             flink = address_decoder_(flink, start_address_);
         }
+
         if(flink == 0)
         {
             co_return;

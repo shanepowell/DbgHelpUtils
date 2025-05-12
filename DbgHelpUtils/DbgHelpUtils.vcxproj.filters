@@ -525,6 +525,9 @@
     <ClCompile Include="string_custom_formatter.cpp">
       <Filter>NtdllUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="list_entry_custom_formatter.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1111,6 +1114,12 @@
     </ClInclude>
     <ClInclude Include="string_custom_formatter.h">
       <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="list_entry_custom_formatter.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_visit_flags.h">
+      <Filter>SymbolUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

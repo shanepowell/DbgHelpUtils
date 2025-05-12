@@ -607,6 +607,7 @@ namespace dlg_help_utils::symbol_type_utils
             , display_type
             , variable_address
             , variable_stream
+            , is_head_t{true}
             , symbol_type_name
             , symbol_type_name
             , visited_pointers

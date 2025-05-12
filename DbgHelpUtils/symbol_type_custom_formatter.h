@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include <functional>
+#include <unordered_set>
 
 #include "symbol_type_info.h"
+#include "symbol_visit_flags.h"
 
 namespace dlg_help_utils
 {
@@ -16,6 +18,8 @@ namespace dlg_help_utils::stream_stack_dump
 
 namespace dlg_help_utils::symbol_type_utils
 {
+    class symbol_data_dumper;
+
     enum class symbol_type_custom_formatter_result : uint8_t
     {
         process,
@@ -51,14 +55,17 @@ namespace dlg_help_utils::symbol_type_utils
         virtual dump_variable_symbol_data_result format(
             std::function<std::wstring()> original_render_line
             , stream_stack_dump::mini_dump_memory_walker const& walker
+            , symbol_visit_flags::flags options
             , dbg_help::symbol_type_info const& type
             , dbg_help::sym_tag_enum tag
             , uint64_t variable_address
             , mini_dump_memory_stream& variable_stream
             , std::wstring_view const& path
             , std::wstring_view const& name
+            , std::unordered_set<uint64_t>& visited_pointers
+            , size_t max_symbol_dump_depth
             , std::vector<dbg_help::symbol_type_info> const& parents
-            , i_value_type_formatter const& formatter) = 0;
+            , symbol_data_dumper const& dumper) = 0;
 
     protected:
         bool is_type_equal(
@@ -68,5 +75,13 @@ namespace dlg_help_utils::symbol_type_utils
             , std::wstring_view const& name
             , std::vector<dbg_help::symbol_type_info> const& parents
             , dbg_help::symbol_type_info const& equal_to_type);
+
+        static uint64_t get_address(
+            stream_stack_dump::mini_dump_memory_walker const& walker
+            , dbg_help::symbol_type_info const& type
+            , uint64_t variable_address
+            , mini_dump_memory_stream& variable_stream
+            , i_value_type_formatter const& formatter);
+
     };
 }

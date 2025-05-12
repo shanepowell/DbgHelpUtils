@@ -642,15 +642,6 @@ void dump_mini_dump_peb(
 
     if(auto const environment_variables = peb.process_environment_variables(); environment_variables.has_value())
     {
-        log << L'\n';
-        [[maybe_unused]] const auto user_process_parameters_symbol_info = dump_field(
-            log, 
-            peb.walker(), 
-            options.max_symbol_dump_depth(),
-            symbol_data_dumper,
-            common_symbol_names::rtl_user_process_parameters_structure_symbol_name, 
-            environment_variables.value().process_parameters_address());
-
         log << L"\nProcess Environment Variables:\n";
         for(auto const& value : environment_variables.value().environment())
         {
