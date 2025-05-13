@@ -528,6 +528,12 @@
     <ClCompile Include="list_entry_custom_formatter.cpp">
       <Filter>NtdllUtilities</Filter>
     </ClCompile>
+    <ClCompile Include="single_list_entry_custom_formatter.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
+    <ClCompile Include="single_list_entry_walker.cpp">
+      <Filter>NtdllUtilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comment_stream_a.h">
@@ -1120,6 +1126,12 @@
     </ClInclude>
     <ClInclude Include="symbol_visit_flags.h">
       <Filter>SymbolUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="single_list_entry_custom_formatter.h">
+      <Filter>NtdllUtilities</Filter>
+    </ClInclude>
+    <ClInclude Include="single_list_entry_walker.h">
+      <Filter>NtdllUtilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

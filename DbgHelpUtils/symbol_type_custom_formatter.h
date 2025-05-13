@@ -78,7 +78,7 @@ namespace dlg_help_utils::symbol_type_utils
 
         static uint64_t get_address(
             stream_stack_dump::mini_dump_memory_walker const& walker
-            , dbg_help::symbol_type_info const& type
+            , dbg_help::symbol_type_info type
             , uint64_t variable_address
             , mini_dump_memory_stream& variable_stream
             , i_value_type_formatter const& formatter);

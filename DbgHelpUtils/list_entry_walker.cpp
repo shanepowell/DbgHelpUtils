@@ -2,7 +2,6 @@
 
 #include "cache_manager.h"
 #include "common_symbol_names.h"
-#include "rtl_rb_tree_walker.h"
 #include "stream_utils.h"
 
 namespace dlg_help_utils::ntdll_utilities

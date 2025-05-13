@@ -14,6 +14,7 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const heap_ucr_descriptor_structure_symbol_name;
     extern std::wstring const heap_virtual_alloc_entry_structure_symbol_name;
     extern std::wstring const list_entry_structure_symbol_name;
+    extern std::wstring const single_list_entry_structure_symbol_name;
     extern std::wstring const lfh_heap_structure_symbol_name;
     extern std::wstring const lfh_block_zone_structure_symbol_name;
     extern std::wstring const heap_subsegment_structure_symbol_name;
@@ -84,6 +85,7 @@ namespace dlg_help_utils::common_symbol_names
     extern std::wstring const heap_front_end_heap_type_field_symbol_name;
     extern std::wstring const heap_front_end_heap_field_symbol_name;
     extern std::wstring const list_entry_flink_field_symbol_name;
+    extern std::wstring const single_list_entry_next_field_symbol_name;
     extern std::wstring const heap_entry_previous_block_private_data_field_symbol_name;
     extern std::wstring const heap_entry_small_tag_index_field_symbol_name;
     extern std::wstring const heap_entry_size_field_symbol_name;

@@ -12,6 +12,11 @@ namespace dlg_help_utils::symbol_type_utils
         , std::vector<dbg_help::symbol_type_info> const& parents
         , dbg_help::symbol_type_info const& equal_to_type)
     {
+        if (type == equal_to_type)
+        {
+            return true;
+        }
+
         if (auto data_type = type.type();
             data_type.has_value())
         {
@@ -21,7 +26,11 @@ namespace dlg_help_utils::symbol_type_utils
                 switch (tag.value())  // NOLINT(clang-diagnostic-switch-enum)
                 {
                 case dbg_help::sym_tag_enum::Data:
-                    return data_type.value() == equal_to_type;
+                    if (data_type.value() == equal_to_type)
+                    {
+                        return true;
+                    }
+                    return is_custom_type(walker, data_type.value(), path, name, parents);
 
                 case dbg_help::sym_tag_enum::PointerType:
                     return is_custom_type(walker, data_type.value(), path, name, parents);
@@ -37,50 +46,57 @@ namespace dlg_help_utils::symbol_type_utils
 
     uint64_t symbol_type_custom_formatter::get_address(
         stream_stack_dump::mini_dump_memory_walker const& walker
-        , dbg_help::symbol_type_info const& type
+        , dbg_help::symbol_type_info type
         , uint64_t const variable_address
         , mini_dump_memory_stream& variable_stream
         , i_value_type_formatter const& formatter)
     {
-        if (auto data_type = type.type();
-            data_type.has_value())
+        auto done = false;
+        while (!done)
         {
-            if (auto tag = type.sym_tag();
-                tag.has_value())
+            done = true;
+            if (auto data_type = type.type();
+                data_type.has_value())
             {
-                switch (tag.value())  // NOLINT(clang-diagnostic-switch-enum)
+                if (auto tag = type.sym_tag();
+                    tag.has_value())
                 {
-                case dbg_help::sym_tag_enum::Data:
-                    break;
-
-                case dbg_help::sym_tag_enum::PointerType:
-                    if(auto const length = type.length(); length.has_value())
+                    switch (tag.value())  // NOLINT(clang-diagnostic-switch-enum)
                     {
-                        switch(length.value())
+                    case dbg_help::sym_tag_enum::Data:
+                        type = type.type().value();
+                        done = false;
+                        break;
+
+                    case dbg_help::sym_tag_enum::PointerType:
+                        if(auto const length = type.length(); length.has_value())
                         {
-                        case 4:
-                            if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                            switch(length.value())
                             {
-                                return static_cast<uint64_t>(value);
-                            }
-                            break;
+                            case 4:
+                                if(uint32_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                                {
+                                    return static_cast<uint64_t>(value);
+                                }
+                                break;
 
-                        case 8:
-                            if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
-                            {
-                                symbol_data_dumper::fix_wow64_pointer(value, walker, formatter);
-                                return value;
-                            }
-                            break;
+                            case 8:
+                                if(uint64_t value; variable_stream.read(&value, sizeof value) == sizeof value)
+                                {
+                                    symbol_data_dumper::fix_wow64_pointer(value, walker, formatter);
+                                    return value;
+                                }
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                    }
                 }
             }
         }

@@ -263,6 +263,8 @@
     <ClCompile Include="segment_heap.cpp" />
     <ClCompile Include="segment_heap_options.cpp" />
     <ClCompile Include="segment_heap_utils.cpp" />
+    <ClCompile Include="single_list_entry_custom_formatter.cpp" />
+    <ClCompile Include="single_list_entry_walker.cpp" />
     <ClCompile Include="size_units.cpp" />
     <ClCompile Include="size_units_resources.cpp" />
     <ClCompile Include="stream_function_descriptor.cpp" />
@@ -380,6 +382,8 @@
     <ClInclude Include="register_custom_formatters.h" />
     <ClInclude Include="ryu\generic_128.h" />
     <ClInclude Include="ryu\ryu_generic_128.h" />
+    <ClInclude Include="single_list_entry_custom_formatter.h" />
+    <ClInclude Include="single_list_entry_walker.h" />
     <ClInclude Include="string_custom_formatter.h" />
     <ClInclude Include="symbol_type_custom_formatter.h" />
     <ClInclude Include="symbol_data_dumper.h" />

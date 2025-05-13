@@ -1,0 +1,96 @@
+﻿#include "single_list_entry_walker.h"
+
+#include "cache_manager.h"
+#include "common_symbol_names.h"
+#include "stream_utils.h"
+
+namespace dlg_help_utils::ntdll_utilities
+{
+    std::wstring const& single_list_entry_walker::symbol_name = common_symbol_names::single_list_entry_structure_symbol_name;
+
+    single_list_entry_walker::single_list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const start_address, std::wstring const& entry_symbol_name, std::wstring const& entry_field_name, std::function<uint64_t (uint64_t, uint64_t)> address_decoder)
+    : cache_manager_{&cache}
+    , walker_{&walker}
+    , start_address_{start_address}
+    , address_decoder_{std::move(address_decoder)}
+    , entry_symbol_type_{ stream_utils::get_type(walker, entry_symbol_name) }
+    , list_entry_entry_offset_{stream_utils::get_field_offset_from_type(entry_symbol_type_, entry_symbol_name, entry_field_name)}
+    {
+    }
+
+    single_list_entry_walker::single_list_entry_walker(cache_manager& cache, stream_stack_dump::mini_dump_memory_walker const& walker, uint64_t const start_address)
+    : cache_manager_{&cache}
+    , walker_{&walker}
+    , start_address_{start_address}
+    , list_entry_entry_offset_{0}
+    {
+    }
+
+    uint64_t single_list_entry_walker::size() const
+    {
+        auto const& flink_field = common_symbol_names::single_list_entry_next_field_symbol_name;
+        auto flink = get_field_pointer_raw(walker(), start_address_, cache_data_->next_field_data, symbol_name, flink_field);
+        if(address_decoder_)
+        {
+            flink = address_decoder_(flink, start_address_);
+        }
+
+        if(flink == 0)
+        {
+            return 0;
+        }
+
+        uint64_t count = 0;
+        while(flink != start_address_)
+        {
+            ++count;
+            auto const parent = flink;
+            flink = get_field_pointer(walker(), parent, cache_data_->next_field_data, symbol_name, flink_field);
+            if(address_decoder_)
+            {
+                flink = address_decoder_(flink, parent);
+            }
+        }
+
+        return count;
+    }
+
+    generator<uint64_t> single_list_entry_walker::entries() const
+    {
+        auto const& flink_field = common_symbol_names::single_list_entry_next_field_symbol_name;
+        auto flink = get_field_pointer_raw(walker(), start_address_, cache_data_->next_field_data, symbol_name, flink_field);
+        if(address_decoder_)
+        {
+            flink = address_decoder_(flink, start_address_);
+        }
+
+        if(flink == 0)
+        {
+            co_return;
+        }
+
+        while(flink != start_address_)
+        {
+            co_yield flink - list_entry_entry_offset_;
+
+            auto const parent = flink;
+            flink = get_field_pointer(walker(), parent, cache_data_->next_field_data, symbol_name, flink_field);
+            if(address_decoder_)
+            {
+                flink = address_decoder_(flink, parent);
+            }
+        }
+    }
+
+    single_list_entry_walker::cache_data const& single_list_entry_walker::setup_globals() const
+    {
+        if(!cache().has_cache<cache_data>())
+        {
+            auto& data = cache().get_cache<cache_data>();
+            data.single_list_entry_symbol_type = stream_utils::get_type(walker(), symbol_name);
+            data.next_field_data = stream_utils::get_field_type_and_offset_in_type(data.single_list_entry_symbol_type, symbol_name, common_symbol_names::single_list_entry_next_field_symbol_name, dbg_help::sym_tag_enum::PointerType);
+        }
+
+        return cache().get_cache<cache_data>();
+    }
+}

@@ -15,6 +15,7 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const heap_ucr_descriptor_structure_symbol_name = L"ntdll!_HEAP_UCR_DESCRIPTOR"s;
     std::wstring const heap_virtual_alloc_entry_structure_symbol_name = L"ntdll!_HEAP_VIRTUAL_ALLOC_ENTRY"s;
     std::wstring const list_entry_structure_symbol_name = L"ntdll!_LIST_ENTRY"s;
+    std::wstring const single_list_entry_structure_symbol_name = L"ntdll!_SINGLE_LIST_ENTRY"s;
     std::wstring const lfh_heap_structure_symbol_name = L"ntdll!_LFH_HEAP"s;
     std::wstring const lfh_block_zone_structure_symbol_name = L"ntdll!_LFH_BLOCK_ZONE"s;
     std::wstring const heap_subsegment_structure_symbol_name = L"ntdll!_HEAP_SUBSEGMENT"s;
@@ -85,6 +86,7 @@ namespace dlg_help_utils::common_symbol_names
     std::wstring const heap_front_end_heap_type_field_symbol_name = L"FrontEndHeapType"s;
     std::wstring const heap_front_end_heap_field_symbol_name = L"FrontEndHeap"s;
     std::wstring const list_entry_flink_field_symbol_name = L"Flink"s;
+    std::wstring const single_list_entry_next_field_symbol_name = L"Next"s;
     std::wstring const heap_entry_previous_block_private_data_field_symbol_name = L"PreviousBlockPrivateData"s;
     std::wstring const heap_entry_small_tag_index_field_symbol_name = L"SmallTagIndex"s;
     std::wstring const heap_entry_size_field_symbol_name = L"Size"s;

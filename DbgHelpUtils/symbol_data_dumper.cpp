@@ -92,6 +92,28 @@ namespace dlg_help_utils::symbol_type_utils
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , pointer_data_t const& pointer_data) const
     {
+        if (pointer_data.variable_stream.eof())
+        {
+            if (pointer_data.pointer_value == 0 || 
+                pointer_data.pointer_value == std::numeric_limits<uint64_t>::max() ||
+                pointer_data.pointer_value == std::numeric_limits<uint32_t>::max())
+            {
+                render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
+                {
+                    return std::format(L"{}: {}", render_line(), formatter().format_pointer_value(pointer_value));
+                };
+            }
+            else
+            {
+                render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
+                {
+                    return std::format(L"{}: {} - {}", render_line(), formatter().format_pointer_value(pointer_value), resources::get_variable_unknown());
+                };
+            }
+
+            return;
+        }
+
         render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
         {
             return std::format(L"{}: {}", render_line(), formatter().format_pointer_value(pointer_value));
@@ -1950,6 +1972,11 @@ namespace dlg_help_utils::symbol_type_utils
         , std::unordered_set<uint64_t>& visited_pointers
         ) const
     {
+        if (variable_stream.eof())
+        {
+            return false;
+        }
+
         // data member, type the data member type and print based on that type
         if (data_type.has_value())
         {
@@ -2208,6 +2235,11 @@ namespace dlg_help_utils::symbol_type_utils
         , uint64_t const pointer_value
         , mini_dump_memory_stream& variable_stream) const
     {
+        if (variable_stream.eof())
+        {
+            return false;
+        }
+
         if(auto const data_type_tag = pointer_type.sym_tag(); data_type_tag.has_value())
         {
             switch(data_type_tag.value())  // NOLINT(clang-diagnostic-switch-enum)
