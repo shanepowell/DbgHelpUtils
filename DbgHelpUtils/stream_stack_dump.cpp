@@ -35,10 +35,10 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 if (stack_address > 0)
                 {
-                    os << formatter.format_pointer_value(stack_address) << L": ";
+                    os << formatter.format_pointer_value(stack_address, true) << L": ";
                 }
 
-                os << formatter.format_pointer_value(address);
+                os << formatter.format_pointer_value(address, true);
             }
 
             if (info && info->found)
@@ -56,7 +56,7 @@ namespace dlg_help_utils::stream_stack_dump
                     os << std::format(L"{}{}", resources::get_symbol_name_prefix(), info->symbol_name);
                     if (info->symbol_displacement > 0)
                     {
-                        os << std::format(L"{}{}", resources::get_symbol_displacement_prefix(), formatter.format_pointer_value(info->symbol_displacement));
+                        os << std::format(L"{}{}", resources::get_symbol_displacement_prefix(), formatter.format_pointer_value(info->symbol_displacement, true));
                     }
                     if (!info->file_name.empty())
                     {
@@ -65,7 +65,7 @@ namespace dlg_help_utils::stream_stack_dump
                 }
                 else
                 {
-                    os << resources::get_module_displacement_prefix() << formatter.format_pointer_value(info->module_displacement);
+                    os << resources::get_module_displacement_prefix() << formatter.format_pointer_value(info->module_displacement, true);
                 }
             }
         }
@@ -136,10 +136,10 @@ namespace dlg_help_utils::stream_stack_dump
             {
                 os << (variable.registry_value 
                         ? (variable.frame_data 
-                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(variable.registry_value->register_type), variable.frame_data->data_offset, symbol_data_dumper.formatter().format_pointer_value(variable.frame_data->data_address))
+                            ? std::format(L" [{0}{1:+}]({2})", register_names::get_register_name(variable.registry_value->register_type), variable.frame_data->data_offset, symbol_data_dumper.formatter().format_pointer_value(variable.frame_data->data_address, true))
                             : std::format(L" [{}]", register_names::get_register_name(variable.registry_value->register_type))
                           )
-                        : std::format(L" ({})", symbol_data_dumper.formatter().format_pointer_value(variable.frame_data->data_address))
+                        : std::format(L" ({})", symbol_data_dumper.formatter().format_pointer_value(variable.frame_data->data_address, true))
                       );
 
                 if(variable.frame_data)
@@ -147,7 +147,7 @@ namespace dlg_help_utils::stream_stack_dump
                     auto const stream = walker.get_process_memory_stream(variable.frame_data->data_address, variable.frame_data->data_size);
                     if(stream.eof())
                     {
-                        os << std::format(L"{}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), symbol_data_dumper.formatter().format_pointer_value(variable.frame_data->data_address), resources::get_failed_to_find_address_postfix());return;
+                        os << std::format(L"{}{}[{}]{}\n", resources::get_failed_to_find_address_prefix(), name, resources::get_failed_to_find_address_name_address_separator(), symbol_data_dumper.formatter().format_pointer_value(variable.frame_data->data_address, true), resources::get_failed_to_find_address_postfix());return;
                     }
                     dump_variable_symbol_at(os, walker, options, max_symbol_dump_depth,  symbol_data_dumper, variable.symbol_info, variable.symbol_info, name, variable.frame_data->data_address, stream, 12);
                 }

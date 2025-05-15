@@ -4,7 +4,6 @@
 #include "common_symbol_names.h"
 #include "i_value_type_formatter.h"
 #include "single_list_entry_walker.h"
-#include "string_compare.h"
 #include "symbol_type_utils.h"
 
 using namespace std::literals;
@@ -148,7 +147,7 @@ namespace dlg_help_utils::ntdll_utilities
                 .render_line = [index, entry_address, &formatter]
                 {
                     // ReSharper disable once StringLiteralTypo
-                    return std::format(L"[{}]: {}", index, formatter.format_pointer_value(entry_address));
+                    return std::format(L"[{}]: {}", index, formatter.format_pointer_value(entry_address, true));
                 },
                 .sub_lines = {}
             };

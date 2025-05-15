@@ -92,32 +92,16 @@ namespace dlg_help_utils::symbol_type_utils
         , stream_stack_dump::mini_dump_memory_walker const& walker
         , pointer_data_t const& pointer_data) const
     {
+
+        render_line = [this, render_line, pointer_value = pointer_data.pointer_value, valid = !pointer_data.variable_stream.eof()]
+        {
+            return std::format(L"{}: {}", render_line(), formatter().format_pointer_value(pointer_value, valid));
+        };
+
         if (pointer_data.variable_stream.eof())
         {
-            if (pointer_data.pointer_value == 0 || 
-                pointer_data.pointer_value == std::numeric_limits<uint64_t>::max() ||
-                pointer_data.pointer_value == std::numeric_limits<uint32_t>::max())
-            {
-                render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
-                {
-                    return std::format(L"{}: {}", render_line(), formatter().format_pointer_value(pointer_value));
-                };
-            }
-            else
-            {
-                render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
-                {
-                    return std::format(L"{}: {} - {}", render_line(), formatter().format_pointer_value(pointer_value), resources::get_variable_unknown());
-                };
-            }
-
             return;
         }
-
-        render_line = [this, render_line, pointer_value = pointer_data.pointer_value]
-        {
-            return std::format(L"{}: {}", render_line(), formatter().format_pointer_value(pointer_value));
-        };
 
         if(auto const data_type_tag = pointer_data.pointer_type.sym_tag(); data_type_tag.has_value())
         {
@@ -163,7 +147,7 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 render_line = [this, prefix = std::wstring{prefix}, display_type, variable_address, is_head = is_head]
                 {
-                    return std::format(L"{0}{1}{2} {3}", prefix, is_head ? L"" : L"+", formatter().format_pointer_value(variable_address), get_symbol_type_friendly_name(display_type));
+                    return std::format(L"{0}{1}{2} {3}", prefix, is_head ? L"" : L"+", formatter().format_pointer_value(variable_address, true), get_symbol_type_friendly_name(display_type));
                 };
             }
         }
@@ -2402,7 +2386,7 @@ namespace dlg_help_utils::symbol_type_utils
             return;
         }
 
-        if (walker.find_memory_range(value, 1,1)  != 0)
+        if (walker.is_memory_valid(value))
         {
             return;
         }
@@ -2410,7 +2394,7 @@ namespace dlg_help_utils::symbol_type_utils
         if ((value & 0xffffffff00000000) != 0x0000000000000000)
         {
             if (auto const fixed_value = value & 0x00000000ffffffff;
-                walker.find_memory_range(fixed_value, 1,1)  != 0)
+                walker.is_memory_valid(fixed_value))
             {
                 value = fixed_value;
             }

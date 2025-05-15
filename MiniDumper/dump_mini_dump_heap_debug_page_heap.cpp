@@ -26,11 +26,11 @@ namespace detail
             using namespace size_units::base_16;
             log << std::format(L"{0:{1}}{2} @ {3} {4} BlockPtr({5}) BlockSize({6}) UserPtr({7}) ReqSize({8})\n", ' ', indent
                 , locale_formatting::to_wstring(index)
-                , formatter.format_pointer_value(entry.entry_address())
+                , formatter.format_pointer_value(entry.entry_address(), true)
                 , entry.is_allocated() ? L"Busy"sv : L"Free"sv
-                , formatter.format_pointer_value(entry.virtual_block_address())
+                , formatter.format_pointer_value(entry.virtual_block_address(), true)
                 , to_wstring(entry.virtual_block_size())
-                , formatter.format_pointer_value(entry.user_address())
+                , formatter.format_pointer_value(entry.user_address(), true)
                 , to_wstring(entry.user_requested_size()));
         }
 
@@ -43,13 +43,13 @@ namespace detail
         {
             using namespace size_units::base_16;
             std::wstring const indent_str(indent, L' ');
-            log << std::format(L"{0}{1} @ {2}\n", indent_str, locale_formatting::to_wstring(index), formatter.format_pointer_value(entry.entry_address()));
+            log << std::format(L"{0}{1} @ {2}\n", indent_str, locale_formatting::to_wstring(index), formatter.format_pointer_value(entry.entry_address(), entry.walker().is_memory_valid(entry.entry_address())));
             log << std::format(L"{0}  Is Allocated: {1}\n", indent_str, entry.is_allocated());
-            log << std::format(L"{0}  Virtual Block: {1}\n", indent_str, formatter.format_pointer_value(entry.virtual_block_address()));
+            log << std::format(L"{0}  Virtual Block: {1}\n", indent_str, formatter.format_pointer_value(entry.virtual_block_address(), entry.walker().is_memory_valid(entry.virtual_block_address())));
             log << std::format(L"{0}  Virtual Block Size: {1} ({2})\n", indent_str, to_wstring(entry.virtual_block_size()), stream_hex_dump::to_hex(entry.virtual_block_size().count()));
-            log << std::format(L"{0}  User Allocation: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
+            log << std::format(L"{0}  User Allocation: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address(), entry.walker().is_memory_valid(entry.user_address())));
             log << std::format(L"{0}  User Requested Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size().count()));
-            log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
+            log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address(), entry.walker().is_memory_valid(entry.ust_address())));
         }
 
         void print_debug_page_heap_entry(
@@ -98,11 +98,11 @@ namespace detail
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        log << std::format(L"{0}Debug Page Heap: {1}\n", indent_str, formatter.format_pointer_value(heap.address()));
+        log << std::format(L"{0}Debug Page Heap: {1}\n", indent_str, formatter.format_pointer_value(heap.address(), heap.walker().is_memory_valid(heap.address())));
         log << std::format(L"{0}  Flags: {1}\n", indent_str, stream_hex_dump::to_hex(heap.flags()));
         log << std::format(L"{0}  Extra Flags: {1}\n", indent_str, stream_hex_dump::to_hex(heap.extra_flags()));
         log << std::format(L"{0}  Seed: {1}\n", indent_str, stream_hex_dump::to_hex(heap.seed()));
-        log << std::format(L"{0}  Normal Heap: {1}\n", indent_str, formatter.format_pointer_value(heap.normal_heap()));
+        log << std::format(L"{0}  Normal Heap: {1}\n", indent_str, formatter.format_pointer_value(heap.normal_heap(), heap.walker().is_memory_valid(heap.normal_heap())));
         log << std::format(L"{0}  Busy Allocations: {1}\n", indent_str, locale_formatting::to_wstring(heap.busy_allocations()));
         log << std::format(L"{0}  Busy Allocations Committed Total: {1} ({2})\n", indent_str, to_wstring(heap.busy_allocations_committed()), stream_hex_dump::to_hex(heap.busy_allocations_committed()));
         log << std::format(L"{0}  Virtual Ranges: {1}\n", indent_str, locale_formatting::to_wstring(heap.virtual_storage_ranges()));

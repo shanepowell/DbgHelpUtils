@@ -49,6 +49,7 @@ namespace dlg_help_utils::stream_stack_dump
         [[nodiscard]] mini_dump_memory_stream get_process_memory_stream(DWORD64 base_address, DWORD64 size, enable_module_loading_t enable_module_loading = enable_module_loading_t{true}) const;
         [[nodiscard]] DWORD64 find_memory_range(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, enable_module_loading_t enable_module_loading = enable_module_loading_t{true}) const;
         [[nodiscard]] DWORD64 find_memory_range_if(DWORD64 base_address, DWORD64 element_size, DWORD64 max_elements, std::function<bool(void const*)> const& pred, enable_module_loading_t enable_module_loading = enable_module_loading_t{true}) const;
+        [[nodiscard]] bool is_memory_valid(DWORD64 base_address, enable_module_loading_t enable_module_loading = enable_module_loading_t{true}) const;
 
         [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(dbg_help::thread_context_type type, STACKFRAME_EX const& frame, void const* thread_context) const override;
         static [[nodiscard]] std::optional<dbg_help::symbol_address_info> find_symbol_info(uint64_t address, module_list_stream const& module_list, unloaded_module_list_stream const& unloaded_module_list, dbg_help::symbol_engine& symbol_engine);

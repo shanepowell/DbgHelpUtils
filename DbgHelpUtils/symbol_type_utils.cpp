@@ -57,7 +57,7 @@ namespace dlg_help_utils::symbol_type_utils
                     && !ignore_pointers.contains(value) 
                     && !pointers.contains(value)
                     && !work.contains(value)
-                    && walker.find_memory_range(value, 1, 1) == 1)
+                    && walker.is_memory_valid(value))
                 {
                     info.pointer_address = value;
                     pointers.insert(std::make_pair(value, info));

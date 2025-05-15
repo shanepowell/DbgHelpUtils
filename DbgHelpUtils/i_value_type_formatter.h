@@ -36,7 +36,7 @@ namespace dlg_help_utils
         virtual std::wstring format_value(uint32_t value) const = 0;
         virtual std::wstring format_value(uint64_t value) const = 0;
 
-        virtual std::wstring format_pointer_value(uint64_t value) const = 0;
+        virtual std::wstring format_pointer_value(uint64_t value, bool valid) const = 0;
         virtual std::wstring format_index_value(size_t index) const = 0;
         virtual std::streamsize pointer_format_width() const = 0;
 

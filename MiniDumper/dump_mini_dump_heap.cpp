@@ -44,7 +44,7 @@ void dump_mini_dump_heap(
     for(uint32_t heap_index = 0; heap_index < peb.number_of_heaps(); ++heap_index)
     {
         auto const heap_address = peb.heap_address(heap_index);
-        log << ' ' << formatter.format_pointer_value(heap_address);
+        log << ' ' << formatter.format_pointer_value(heap_address, peb.walker().is_memory_valid(heap_address));
 
         if(auto const segment_signature = peb.segment_signature(heap_index); segment_signature == heap::SegmentSignatureNtHeap)
         {
@@ -92,7 +92,11 @@ void dump_mini_dump_heap(
     using namespace size_units::base_16;
     for(auto const& range : peb.walker().memory_ranges())
     {
-        log << std::format(L" {0} {1} {2} ({3})\n", formatter.format_pointer_value(range.start_range), formatter.format_pointer_value(range.end_range), formatter.format_pointer_value(range.end_range - range.start_range), to_wstring(bytes{range.end_range - range.start_range}));
+        log << std::format(L" {0} {1} {2} ({3})\n", 
+            formatter.format_pointer_value(range.start_range, peb.walker().is_memory_valid(range.start_range)), 
+            formatter.format_pointer_value(range.end_range, peb.walker().is_memory_valid(range.end_range)), 
+            formatter.format_value(range.end_range - range.start_range), 
+            to_wstring(bytes{range.end_range - range.start_range}));
     }
 
     log << L'\n';

@@ -280,11 +280,16 @@ namespace dlg_help_utils::stream_stack_dump
         return 0;
     }
 
+    bool mini_dump_memory_walker::is_memory_valid(DWORD64 base_address, enable_module_loading_t enable_module_loading) const
+    {
+        return find_memory_range(base_address, 1, 1, enable_module_loading) != 0;
+    }
+
     bool mini_dump_memory_walker::do_read_process_memory(DWORD64 const base_address
-        , PVOID buffer
-        , DWORD const size
-        , LPDWORD number_of_bytes_read
-        , enable_module_loading_t const enable_module_loading) const
+                                                         , PVOID buffer
+                                                         , DWORD const size
+                                                         , LPDWORD number_of_bytes_read
+                                                         , enable_module_loading_t const enable_module_loading) const
     {
         if (read_stack_memory(base_address, buffer, size, number_of_bytes_read))
         {

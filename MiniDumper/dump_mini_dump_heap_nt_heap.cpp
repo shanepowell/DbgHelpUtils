@@ -58,7 +58,12 @@ namespace detail
             auto const last_entry = segment.last_entry();
             using namespace size_units::base_16;
             auto const total_size_bytes = bytes{ last_entry - first_entry };
-            log << std::format(L"{0}Segment {1} {2}-{3} {4}\n", indent_str, locale_formatting::to_wstring(segment_index), formatter.format_pointer_value(first_entry), formatter.format_pointer_value(last_entry), to_wstring(total_size_bytes));
+            log << std::format(L"{0}Segment {1} {2}-{3} {4}\n", 
+                indent_str, 
+                locale_formatting::to_wstring(segment_index), 
+                formatter.format_pointer_value(first_entry, true), 
+                formatter.format_pointer_value(last_entry, true), 
+                to_wstring(total_size_bytes));
         }
 
         void print_lfh_heap_segment_line(
@@ -78,7 +83,12 @@ namespace detail
                 }
             }
 
-            log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}\n", indent_str, locale_formatting::to_wstring(segment_index), formatter.format_pointer_value(segment.address()), locale_formatting::to_wstring(segment.subsegments_count()), to_wstring(segment_total));
+            log << std::format(L"{0}LFH Segment {1} {2} - subsegments {3} - total {4}\n", 
+                indent_str, 
+                locale_formatting::to_wstring(segment_index), 
+                formatter.format_pointer_value(segment.address(), true), 
+                locale_formatting::to_wstring(segment.subsegments_count()), 
+                to_wstring(segment_total));
         }
 
         void print_nt_heap_header(
@@ -89,7 +99,7 @@ namespace detail
             , size_t const indent)
         {
             std::wstring const indent_str(indent, L' ');
-            log << std::format(L"{0}NT Heap: {1} {2}\n", indent_str, formatter.format_pointer_value(nt_heap.nt_heap_address()), process_heap_marker);
+            log << std::format(L"{0}NT Heap: {1} {2}\n", indent_str, formatter.format_pointer_value(nt_heap.nt_heap_address(), nt_heap.walker().is_memory_valid(nt_heap.nt_heap_address())), process_heap_marker);
             log << std::format(L"{0}  Flags: {1}\n", indent_str, stream_hex_dump::to_hex_full(nt_heap.flags()));
             using namespace size_units::base_16;
             log << std::format(L"{0}  Total Reserved: {1} ({2})\n", indent_str, to_wstring(nt_heap.reserved()), stream_hex_dump::to_hex(nt_heap.reserved()));
@@ -166,7 +176,10 @@ namespace detail
             , size_t const indent)
         {
             using namespace size_units::base_16;
-            log << std::format(L"{0:{1}}{2} Size({3})", L' ', indent, formatter.format_pointer_value(entry.address()), to_wstring(entry.size()));
+            log << std::format(L"{0:{1}}{2} Size({3})", L' ', 
+                indent, 
+                formatter.format_pointer_value(entry.address(), true),
+                to_wstring(entry.size()));
             if (entry.is_uncommitted())
             {
                 log << L" - Uncommitted\n";
@@ -186,7 +199,7 @@ namespace detail
                     }
                     if (entry.user_address() != 0)
                     {
-                        log << std::format(L" UsrPtr({})", formatter.format_pointer_value(entry.user_address()));
+                        log << std::format(L" UsrPtr({})", formatter.format_pointer_value(entry.user_address(), true));
                     }
                 }
 
@@ -245,17 +258,17 @@ namespace detail
             std::wstring const indent_str(indent, L' ');
             if (entry.is_uncommitted())
             {
-                log << std::format(L"{0}Uncommitted Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.address()));
+                log << std::format(L"{0}Uncommitted Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.address(), entry.walker().is_memory_valid(entry.address())));
                 log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
             }
             else if (entry.is_unknown())
             {
-                log << std::format(L"{0}Unknown Range Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.address()));
+                log << std::format(L"{0}Unknown Range Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.address(), entry.walker().is_memory_valid(entry.address())));
                 log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
             }
             else
             {
-                log << std::format(L"{0}{1}{2} Entry: {3}\n", indent_str, entry.is_lfh_entry() ? L"LFH "sv : L""sv, entry.is_busy() ? L"Busy"sv : L"Free"sv, formatter.format_pointer_value(entry.address()));
+                log << std::format(L"{0}{1}{2} Entry: {3}\n", indent_str, entry.is_lfh_entry() ? L"LFH "sv : L""sv, entry.is_busy() ? L"Busy"sv : L"Free"sv, formatter.format_pointer_value(entry.address(), entry.walker().is_memory_valid(entry.address())));
                 log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
                 if (entry.is_busy())
                 {
@@ -283,7 +296,7 @@ namespace detail
                     }
                     if(entry.ust_header_address() != 0)
                     {
-                        log << std::format(L"{0}  UST Header Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_header_address()));
+                        log << std::format(L"{0}  UST Header Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_header_address(), entry.walker().is_memory_valid(entry.ust_header_address())));
                     }
                     if(auto const& ust_end_gap_length = entry.ust_end_gap_length();
                         ust_end_gap_length.has_value())
@@ -304,11 +317,11 @@ namespace detail
                     }
                     if (entry.user_address() != 0)
                     {
-                        log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
+                        log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address(), entry.walker().is_memory_valid(entry.user_address())));
                     }
                     if (entry.ust_address() != 0)
                     {
-                        log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
+                        log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address(), entry.walker().is_memory_valid(entry.ust_address())));
                     }
                 }
 
@@ -385,10 +398,10 @@ namespace detail
             log << std::format(L"{0:{1}}LFH Segment {2} Subsegment {3}, block count {4}, block size {5}, entry data {6}, total {7}\n"
                 , L' ', indent
                 , locale_formatting::to_wstring(data.segment->segment_index)
-                , formatter.format_pointer_value(data.subsegment.address())
+                , formatter.format_pointer_value(data.subsegment.address(), true)
                 , locale_formatting::to_wstring(data.subsegment.block_count())
                 , to_wstring(data.subsegment.block_size())
-                , formatter.format_pointer_value(data.subsegment.entry_start_address())
+                , formatter.format_pointer_value(data.subsegment.entry_start_address(), true)
                 , to_wstring(total));
         }
 
@@ -403,11 +416,11 @@ namespace detail
 
             data.printed_subsegment = true;
             bytes const total{ data.subsegment.address() ? data.subsegment.block_count() * data.subsegment.block_stride() : 0 };
-            log << std::format(L"{0}LFH Segment: {1} @ {2}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index), formatter.format_pointer_value(data.segment->segment.address()));
-            log << std::format(L"{0}  Subsegment: {1}\n", indent_str, formatter.format_pointer_value(data.subsegment.address()));
+            log << std::format(L"{0}LFH Segment: {1} @ {2}\n", indent_str, locale_formatting::to_wstring(data.segment->segment_index), formatter.format_pointer_value(data.segment->segment.address(), data.subsegment.walker().is_memory_valid(data.segment->segment.address())));
+            log << std::format(L"{0}  Subsegment: {1}\n", indent_str, formatter.format_pointer_value(data.subsegment.address(), data.subsegment.walker().is_memory_valid(data.subsegment.address())));
             log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(data.subsegment.block_count()));
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(data.subsegment.block_size()), stream_hex_dump::to_hex(data.subsegment.block_size()));
-            log << std::format(L"{0}  Entry Data: {1}\n", indent_str, formatter.format_pointer_value(data.subsegment.entry_start_address()));
+            log << std::format(L"{0}  Entry Data: {1}\n", indent_str, formatter.format_pointer_value(data.subsegment.entry_start_address(), data.subsegment.walker().is_memory_valid(data.subsegment.entry_start_address())));
             log << std::format(L"{0}  Total: {1} ({2})\n", indent_str, to_wstring(total), stream_hex_dump::to_hex(total));
         }
 
@@ -460,7 +473,7 @@ namespace detail
             log << std::format(L"{0}Uncommitted Ranges\n", indent_str);
             for (auto const& uncommitted_range : segment.uncommitted_ranges())
             {
-                log << std::format(L"{0}    Range {1} for {2}\n", indent_str, formatter.format_pointer_value(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
+                log << std::format(L"{0}    Range {1} for {2}\n", indent_str, formatter.format_pointer_value(uncommitted_range.address(), uncommitted_range.walker().is_memory_valid(uncommitted_range.address())), to_wstring(uncommitted_range.size()));
             }
 
             log << std::format(L"\n{}Heap Entries\n", indent_str);
@@ -491,7 +504,7 @@ namespace detail
             log << std::format(L"{}Heap Uncommitted ranges\n", indent_str);
             for (auto const& uncommitted_range : nt_heap.uncommitted_ranges())
             {
-                log << std::format(L"{0}  Range {1} for {2}\n", indent_str, formatter.format_pointer_value(uncommitted_range.address()), to_wstring(uncommitted_range.size()));
+                log << std::format(L"{0}  Range {1} for {2}\n", indent_str, formatter.format_pointer_value(uncommitted_range.address(), uncommitted_range.walker().is_memory_valid(uncommitted_range.address())), to_wstring(uncommitted_range.size()));
             }
             log << L'\n';
         }
@@ -510,8 +523,8 @@ namespace detail
             {
                 log << std::format(L"{0}  Entry {1} data {2} reversed {3} committed {4}\n"
                     , indent_str
-                    , formatter.format_pointer_value(virtual_block.descriptor_address())
-                    , formatter.format_pointer_value(virtual_block.address())
+                    , formatter.format_pointer_value(virtual_block.descriptor_address(), virtual_block.walker().is_memory_valid(virtual_block.descriptor_address()))
+                    , formatter.format_pointer_value(virtual_block.address(), virtual_block.walker().is_memory_valid(virtual_block.address()))
                     , to_wstring(virtual_block.reserved())
                     , to_wstring(virtual_block.committed()));
                 for (auto const& entry : virtual_block.entries())
@@ -604,7 +617,7 @@ namespace detail
                         if(is_lfh_subsegment_in_entry(entry, data, true))
                         {
                             found = true;
-                            log << std::format(L"ERROR: LFH Segment found in heap invalid entry: {0}\n", formatter.format_pointer_value(entry.address()));
+                            log << std::format(L"ERROR: LFH Segment found in heap invalid entry: {0}\n", formatter.format_pointer_value(entry.address(), entry.walker().is_memory_valid(entry.address())));
                             break;
                         }
                     }

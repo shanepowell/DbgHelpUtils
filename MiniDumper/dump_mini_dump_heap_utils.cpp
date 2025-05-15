@@ -36,7 +36,7 @@ namespace detail
         , size_t const indent)
     {
         using namespace size_units::base_16;
-        log << std::format(L"{0:{1}}{2} size({3}) overhead({4})", L' ', indent, formatter.format_pointer_value(entry.user_address()), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
+        log << std::format(L"{0:{1}}{2} size({3}) overhead({4})", L' ', indent, formatter.format_pointer_value(entry.user_address(), true), to_wstring(entry.user_requested_size()), to_wstring(entry.overhead_size()));
         if(!entry.filename().empty())
         {
             log << std::format(L" {0}:{1}", entry.filename(), locale_formatting::to_wstring(entry.line_number()));

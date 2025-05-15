@@ -9,6 +9,7 @@
 #include "mini_dump_memory_walker.h"
 #include "module_list_stream.h"
 #include "symbol_data_dumper.h"
+#include "symbol_type_utils.h"
 
 namespace dlg_help_utils::ntdll_utilities
 {
@@ -56,6 +57,32 @@ namespace dlg_help_utils::ntdll_utilities
         }
 
         auto string_stream = walker.get_process_memory_stream(address_value.value().value, length.value());
+        if (string_stream.eof())
+        {
+            if (address_value.value().value == 0)
+            {
+                return
+                {
+                    .result = symbol_type_utils::symbol_type_custom_formatter_result::stop,
+                    .render_line = [original_render_line = std::move(original_render_line), length = length.value(), maximum_length = maximum_length.value(), address_value = address_value.value().value, &formatter = dumper.formatter()]
+                    {
+                        // ReSharper disable once StringLiteralTypo
+                        return std::format(L"{}: Addr:{}:MaxLen:{}:Len:{}", original_render_line(), formatter.format_pointer_value(address_value, true), formatter.format_value(maximum_length), formatter.format_value(length));
+                    }
+                };
+            }
+
+            return
+            {
+                .result = symbol_type_utils::symbol_type_custom_formatter_result::stop,
+                .render_line = [original_render_line = std::move(original_render_line), length = length.value(), maximum_length = maximum_length.value(), address_value = address_value.value().value, &formatter = dumper.formatter()]
+                {
+                    // ReSharper disable once StringLiteralTypo
+                    return std::format(L"{}: Addr:{}:MaxLen:{}:Len:{} - {}", original_render_line(), formatter.format_pointer_value(address_value, true), formatter.format_value(maximum_length), formatter.format_value(length), symbol_type_utils::resources::get_variable_unknown());
+                }
+            };
+        }
+
         auto string = mini_dump_string_stream<char>{string_stream, length.value() / sizeof(char), stop_at_null_t{false}};
 
         return
@@ -64,7 +91,7 @@ namespace dlg_help_utils::ntdll_utilities
             .render_line = [original_render_line = std::move(original_render_line), length = length.value(), maximum_length = maximum_length.value(), address_value = address_value.value().value, string = std::move(string), &formatter = dumper.formatter()]
             {
                 // ReSharper disable once StringLiteralTypo
-                return std::format(L"{}: Addr:{}:MaxLen:{}:Len:{}:[{}]", original_render_line(), formatter.format_pointer_value(address_value), formatter.format_value(maximum_length), formatter.format_value(length), formatter.format_value(string));
+                return std::format(L"{}: Addr:{}:MaxLen:{}:Len:{}:[{}]", original_render_line(), formatter.format_pointer_value(address_value, true), formatter.format_value(maximum_length), formatter.format_value(length), formatter.format_value(string));
             }
         };
     }

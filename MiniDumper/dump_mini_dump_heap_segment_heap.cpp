@@ -35,11 +35,11 @@ namespace detail
         {
             using namespace size_units::base_16;
             log << std::format(L"{0:{1}}Large Entry: {2} Size({3}) VirtualPtr({4}) UnusedBytes({5}) UserPtr({6}) ReqSize({7})\n", L' ', indent
-                , formatter.format_pointer_value(entry.large_alloc_entry_address())
+                , formatter.format_pointer_value(entry.large_alloc_entry_address(), true)
                 , to_wstring(entry.size())
-                , formatter.format_pointer_value(entry.virtual_address())
+                , formatter.format_pointer_value(entry.virtual_address(), true)
                 , to_wstring(entry.unused_bytes())
-                , formatter.format_pointer_value(entry.user_address())
+                , formatter.format_pointer_value(entry.user_address(), true)
                 , to_wstring(entry.user_requested_size()));
         }
 
@@ -51,16 +51,16 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}Large Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.large_alloc_entry_address()));
+            log << std::format(L"{0}Large Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.large_alloc_entry_address(), entry.walker().is_memory_valid(entry.large_alloc_entry_address())));
             log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
-            log << std::format(L"{0}  Virtual Address: {1}\n", indent_str, formatter.format_pointer_value(entry.virtual_address()));
+            log << std::format(L"{0}  Virtual Address: {1}\n", indent_str, formatter.format_pointer_value(entry.virtual_address(), entry.walker().is_memory_valid(entry.virtual_address())));
             log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
             log << std::format(L"{0}  Spare: {1}\n", indent_str, stream_hex_dump::to_hex(entry.spare()));
             log << std::format(L"{0}  Extra Present: {1}\n", indent_str, entry.extra_present());
             log << std::format(L"{0}  Guard Page Count: {1}\n", indent_str, locale_formatting::to_wstring(entry.guard_page_count()));
             log << std::format(L"{0}  Guard Page Alignment: {1}\n", indent_str, locale_formatting::to_wstring(entry.guard_page_alignment()));
             log << std::format(L"{0}  Allocated Pages: {1}\n", indent_str, locale_formatting::to_wstring(entry.allocated_pages()));
-            log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
+            log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address(), entry.walker().is_memory_valid(entry.user_address())));
             log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
             log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
             if(auto const& front_padding_size = entry.front_padding_size();
@@ -68,7 +68,7 @@ namespace detail
             {
                 log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
             }
-            log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
+            log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address(), entry.walker().is_memory_valid(entry.ust_address())));
         }
 
         void print_heap_large_entry(
@@ -114,10 +114,10 @@ namespace detail
             using namespace size_units::base_16;
             log << std::format(L"{0:{1}}{2} LFH Entry: {3} BlockSize({4}){5} UserPtr({6}) ReqSize({7})\n", L' ', indent
                 , entry.allocated() ? L"Busy"sv : L"Free"sv
-                , formatter.format_pointer_value(entry.heap_lfh_entry_address())
+                , formatter.format_pointer_value(entry.heap_lfh_entry_address(), true)
                 , to_wstring(entry.block_size())
                 , entry.has_unused_bytes() ? std::format(L" UnusedBytes({})", to_wstring(entry.unused_bytes())) : L""s
-                , formatter.format_pointer_value(entry.user_address())
+                , formatter.format_pointer_value(entry.user_address(), true)
                 , to_wstring(entry.user_requested_size()));
         }
 
@@ -129,7 +129,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}LFH Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.heap_lfh_entry_address()));
+            log << std::format(L"{0}LFH Entry: {1}\n", indent_str, formatter.format_pointer_value(entry.heap_lfh_entry_address(), entry.walker().is_memory_valid(entry.heap_lfh_entry_address())));
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(entry.block_size()), stream_hex_dump::to_hex(entry.block_size()));
             log << std::format(L"{0}  Allocated: {1}\n", indent_str, entry.allocated());
             log << std::format(L"{0}  Has Unused Bytes: {1}\n", indent_str, entry.has_unused_bytes());
@@ -137,7 +137,7 @@ namespace detail
             {
                 log << std::format(L"{0}  Unused Bytes: {1} ({2})\n", indent_str, to_wstring(entry.unused_bytes()), stream_hex_dump::to_hex(entry.unused_bytes()));
             }
-            log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
+            log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address(), entry.walker().is_memory_valid(entry.user_address())));
             log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
             log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
             if(auto const& front_padding_size = entry.front_padding_size();
@@ -147,7 +147,7 @@ namespace detail
             }
             if(entry.ust_address() != 0)
             {
-                log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
+                log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address(), entry.walker().is_memory_valid(entry.ust_address())));
             }
         }
 
@@ -194,7 +194,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}LFH Subsegment: {1}\n", indent_str, formatter.format_pointer_value(subsegment.heap_lfh_subsegment_address()));
+            log << std::format(L"{0}LFH Subsegment: {1}\n", indent_str, formatter.format_pointer_value(subsegment.heap_lfh_subsegment_address(), subsegment.walker().is_memory_valid(subsegment.heap_lfh_subsegment_address())));
             log << std::format(L"{0}  Free Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.free_count()));
             log << std::format(L"{0}  Block Count: {1}\n", indent_str, locale_formatting::to_wstring(subsegment.block_count()));
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(subsegment.block_size()), stream_hex_dump::to_hex(subsegment.block_size()));
@@ -222,7 +222,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}LFH Affinity Slot: {1}\n", indent_str, formatter.format_pointer_value(affinity_slot.heap_lfh_affinity_slot_address()));
+            log << std::format(L"{0}LFH Affinity Slot: {1}\n", indent_str, formatter.format_pointer_value(affinity_slot.heap_lfh_affinity_slot_address(), affinity_slot.walker().is_memory_valid(affinity_slot.heap_lfh_affinity_slot_address())));
             log << std::format(L"{0}  Slot Index: {1}\n", indent_str, locale_formatting::to_wstring(affinity_slot.slot_index()));
             log << std::format(L"{0}  Bucket Index: {1}\n", indent_str, locale_formatting::to_wstring(affinity_slot.bucket_index()));
             log << std::format(L"{0}  Available Subsegment Count: {1}\n", indent_str, locale_formatting::to_wstring(affinity_slot.available_subsegment_count()));
@@ -243,7 +243,7 @@ namespace detail
             std::wstring bucket_address;
             if(lfh_bucket.is_enabled())
             {
-                bucket_address = std::format(L"{} @ ", formatter.format_pointer_value(lfh_bucket.heap_lfh_bucket_address()));
+                bucket_address = std::format(L"{} @ ", formatter.format_pointer_value(lfh_bucket.heap_lfh_bucket_address(), lfh_bucket.walker().is_memory_valid(lfh_bucket.heap_lfh_bucket_address())));
             }
 
             log << std::format(L"{0:{1}}LFH Bucket: {2}{3} {4} Granularity({5}) MaxAllocationSize({6})"
@@ -277,7 +277,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}LFH Bucket: {1}\n", indent_str, lfh_bucket.is_enabled() ? formatter.format_pointer_value(lfh_bucket.heap_lfh_bucket_address()) : std::wstring{});
+            log << std::format(L"{0}LFH Bucket: {1}\n", indent_str, lfh_bucket.is_enabled() ? formatter.format_pointer_value(lfh_bucket.heap_lfh_bucket_address(), lfh_bucket.walker().is_memory_valid(lfh_bucket.heap_lfh_bucket_address())) : std::wstring{});
             log << std::format(L"{0}  Bucket Index: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.bucket_index()));
             log << std::format(L"{0}  Bucket Enabled: {1}\n", indent_str, lfh_bucket.is_enabled());
             log << std::format(L"{0}  Granularity: {1} ({2})\n", indent_str, to_wstring(lfh_bucket.bucket_granularity()), stream_hex_dump::to_hex(lfh_bucket.bucket_granularity()));
@@ -300,7 +300,7 @@ namespace detail
             else
             {
                 log << std::format(L"{0}  Usage Count: {1}\n", indent_str, locale_formatting::to_wstring(lfh_bucket.usage_count()));
-                log << std::format(L"{0}  Bucket Raw Data: {1}\n", indent_str, formatter.format_pointer_value(lfh_bucket.heap_lfh_bucket_address_raw()));
+                log << std::format(L"{0}  Bucket Raw Data: {1}\n", indent_str, formatter.format_pointer_value(lfh_bucket.heap_lfh_bucket_address_raw(), lfh_bucket.walker().is_memory_valid(lfh_bucket.heap_lfh_bucket_address_raw())));
             }
         }
 
@@ -338,7 +338,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}LFH Context: {1}\n", indent_str, formatter.format_pointer_value(lfh_context.heap_lfh_context_address()));
+            log << std::format(L"{0}LFH Context: {1}\n", indent_str, formatter.format_pointer_value(lfh_context.heap_lfh_context_address(), lfh_context.walker().is_memory_valid(lfh_context.heap_lfh_context_address())));
             log << std::format(L"{0}  Max Affinity: {1}\n", indent_str, locale_formatting::to_wstring(lfh_context.max_affinity()));
             log << std::format(L"{0}  Max Block Size: {1} ({2})\n", indent_str, to_wstring(lfh_context.max_block_size()), stream_hex_dump::to_hex(lfh_context.max_block_size()));
             log << std::format(L"{0}  With Old Page Crossing Blocks: {1}\n", indent_str, lfh_context.with_old_page_crossing_blocks());
@@ -364,7 +364,7 @@ namespace detail
             using namespace size_units::base_16;
             log << std::format(L"{0:{1}}VS {2} Entry: {3} size({4} - {5})", L' ', indent
                 , get_vs_entry_title(entry)
-                , formatter.format_pointer_value(entry.heap_vs_entry_address())
+                , formatter.format_pointer_value(entry.heap_vs_entry_address(), true)
                 , to_wstring(entry.size())
                 , stream_hex_dump::to_hex(entry.size()));
 
@@ -376,7 +376,7 @@ namespace detail
                     log << std::format(L" UnusedBytes({})", to_wstring(entry.unused_bytes()));
                 }
                 log << std::format(L" UserPtr({0}) ReqSize({1})"
-                    , formatter.format_pointer_value(entry.user_address())
+                    , formatter.format_pointer_value(entry.user_address(), true)
                     , to_wstring(entry.user_requested_size()));
                 if(!entry.is_valid())
                 {
@@ -397,7 +397,7 @@ namespace detail
             using namespace size_units::base_16;
             log << std::format(L"{0}VS {1} Entry: {2}\n", indent_str
                 , get_vs_entry_title(entry)
-                , formatter.format_pointer_value(entry.heap_vs_entry_address()));
+                , formatter.format_pointer_value(entry.heap_vs_entry_address(), entry.walker().is_memory_valid(entry.heap_vs_entry_address())));
             log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(entry.size()), stream_hex_dump::to_hex(entry.size()));
 
             if(!entry.uncommitted_range())
@@ -421,9 +421,9 @@ namespace detail
                 {
                     log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
                 }
-                log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
+                log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address(), entry.walker().is_memory_valid(entry.user_address())));
                 log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
-                log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
+                log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address(), entry.walker().is_memory_valid(entry.ust_address())));
             }
         }
 
@@ -473,7 +473,7 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}VS Subsegment: {1}\n", indent_str, formatter.format_pointer_value(subsegment.heap_vs_subsegment_address()));
+            log << std::format(L"{0}VS Subsegment: {1}\n", indent_str, formatter.format_pointer_value(subsegment.heap_vs_subsegment_address(), subsegment.walker().is_memory_valid(subsegment.heap_vs_subsegment_address())));
             log << std::format(L"{0}  Size: {1} ({2})\n", indent_str, to_wstring(subsegment.size()), stream_hex_dump::to_hex(subsegment.size()));
             log << std::format(L"{0}  Signature: {1}{2}\n", indent_str, stream_hex_dump::to_hex(subsegment.signature()), subsegment.is_signature_valid() ? L" (valid)"sv : L" (invalid)"sv);
             log << std::format(L"{0}  Full Commit: {1}\n", indent_str, subsegment.full_commit());
@@ -492,7 +492,7 @@ namespace detail
             , size_t const indent)
         {
             std::wstring const indent_str(indent, L' ');
-            log << std::format(L"{0}VS Context: {1}\n", indent_str, formatter.format_pointer_value(vs_context.heap_vs_context_address()));
+            log << std::format(L"{0}VS Context: {1}\n", indent_str, formatter.format_pointer_value(vs_context.heap_vs_context_address(), vs_context.walker().is_memory_valid(vs_context.heap_vs_context_address())));
             log << std::format(L"{0}  Total Committed Units: {1}\n", indent_str, vs_context.total_committed_units());
             log << std::format(L"{0}  Free Committed Units: {1}\n", indent_str, vs_context.free_committed_units());
 
@@ -518,11 +518,11 @@ namespace detail
             auto const range_flags = entry.range_flags();
             log << std::format(L"{0:{1}}Page Entry: {2} : {3} Extra({4}) BlockPtr({5}) BlockSize({6}) UserPtr({7}) ReqSize({8}) Flags({9}) {10}\n", ' ', indent
                 , locale_formatting::to_wstring(entry.index())
-                , formatter.format_pointer_value(entry.page_range_descriptor_address())
+                , formatter.format_pointer_value(entry.page_range_descriptor_address(), true)
                 , to_wstring(entry.extra_bytes())
-                , formatter.format_pointer_value(entry.block_address())
+                , formatter.format_pointer_value(entry.block_address(), true)
                 , to_wstring(entry.block_size())
-                , formatter.format_pointer_value(entry.user_address())
+                , formatter.format_pointer_value(entry.user_address(), true)
                 , to_wstring(entry.user_requested_size())
                 , stream_hex_dump::to_hex(static_cast<uint32_t>(range_flags))
                 , dump_page_range_to_string(range_flags));
@@ -537,16 +537,16 @@ namespace detail
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
             auto const range_flags = entry.range_flags();
-            log << std::format(L"{0}Page Entry: {1} : {2}\n", indent_str, locale_formatting::to_wstring(entry.index()), formatter.format_pointer_value(entry.page_range_descriptor_address()));
+            log << std::format(L"{0}Page Entry: {1} : {2}\n", indent_str, locale_formatting::to_wstring(entry.index()), formatter.format_pointer_value(entry.page_range_descriptor_address(), entry.walker().is_memory_valid(entry.page_range_descriptor_address())));
             log << std::format(L"{0}  Extra Present: {1}\n", indent_str, entry.extra_present());
             log << std::format(L"{0}  Range Flags: {1} ({2}) - {3}\n", indent_str, stream_hex_dump::to_hex(static_cast<uint32_t>(range_flags)), dump_page_range_flags_to_string(range_flags), dump_page_range_to_string(range_flags));
             log << std::format(L"{0}  Extra Bytes: {1} ({2})\n", indent_str, to_wstring(entry.extra_bytes()), stream_hex_dump::to_hex(entry.extra_bytes()));
             log << std::format(L"{0}  Committed Page Count: {1}\n", indent_str, locale_formatting::to_wstring(entry.committed_page_count()));
             log << std::format(L"{0}  Unit Offset: {1}\n", indent_str, locale_formatting::to_wstring(entry.unit_offset()));
             log << std::format(L"{0}  Unit Size: {1} ({2})\n", indent_str, to_wstring(entry.unit_size()), stream_hex_dump::to_hex(entry.unit_size()));
-            log << std::format(L"{0}  Block Address: {1}\n", indent_str, formatter.format_pointer_value(entry.block_address()));
+            log << std::format(L"{0}  Block Address: {1}\n", indent_str, formatter.format_pointer_value(entry.block_address(), entry.walker().is_memory_valid(entry.block_address())));
             log << std::format(L"{0}  Block Size: {1} ({2})\n", indent_str, to_wstring(entry.block_size()), stream_hex_dump::to_hex(entry.block_size()));
-            log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address()));
+            log << std::format(L"{0}  User Address: {1}\n", indent_str, formatter.format_pointer_value(entry.user_address(), entry.walker().is_memory_valid(entry.user_address())));
             log << std::format(L"{0}  Requested User Size: {1} ({2})\n", indent_str, to_wstring(entry.user_requested_size()), stream_hex_dump::to_hex(entry.user_requested_size()));
             log << std::format(L"{0}  Has Front Padding: {1}\n", indent_str, entry.front_padding_size().has_value());
             if(auto const& front_padding_size = entry.front_padding_size();
@@ -554,7 +554,7 @@ namespace detail
             {
                 log << std::format(L"{0}  Front Padding Size: {1} ({2})\n", indent_str, locale_formatting::to_wstring(front_padding_size.value()), stream_hex_dump::to_hex(front_padding_size.value()));
             }
-            log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address()));
+            log << std::format(L"{0}  UST Address: {1}\n", indent_str, formatter.format_pointer_value(entry.ust_address(), entry.walker().is_memory_valid(entry.ust_address())));
         }
 
         void print_segment_heap_page_entry(
@@ -601,8 +601,8 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}Segment Page: {1} : {2}\n" , indent_str, locale_formatting::to_wstring(page_index), formatter.format_pointer_value(page.heap_page_segment_address()));
-            log << std::format(L"{0}  Signature: {1}{2}\n", indent_str, formatter.format_pointer_value(page.signature()), page.is_signature_valid() ? L" (valid)"sv : L""sv);
+            log << std::format(L"{0}Segment Page: {1} : {2}\n" , indent_str, locale_formatting::to_wstring(page_index), formatter.format_pointer_value(page.heap_page_segment_address(), page.walker().is_memory_valid(page.heap_page_segment_address())));
+            log << std::format(L"{0}  Signature: {1}{2}\n", indent_str, formatter.format_value(page.signature()), page.is_signature_valid() ? L" (valid)"sv : L""sv);
 
             if(options.debug_heap_data())
             {
@@ -630,8 +630,8 @@ namespace detail
         {
             std::wstring const indent_str(indent, L' ');
             using namespace size_units::base_16;
-            log << std::format(L"{0}Segment Context: {1} : {2}\n", indent_str, locale_formatting::to_wstring(segment_context_index), formatter.format_pointer_value(segment_context.heap_segment_context_address()));
-            log << std::format(L"{0}  Segment Mask: {1}\n", indent_str, formatter.format_pointer_value(segment_context.segment_mask()));
+            log << std::format(L"{0}Segment Context: {1} : {2}\n", indent_str, locale_formatting::to_wstring(segment_context_index), formatter.format_pointer_value(segment_context.heap_segment_context_address(), segment_context.walker().is_memory_valid(segment_context.heap_segment_context_address())));
+            log << std::format(L"{0}  Segment Mask: {1}\n", indent_str, formatter.format_value(segment_context.segment_mask()));
             log << std::format(L"{0}  Max Allocation Size: {1} ({2})\n", indent_str, to_wstring(segment_context.max_allocation_size()), stream_hex_dump::to_hex(segment_context.max_allocation_size()));
             log << std::format(L"{0}  Unit Shift: {1}\n", indent_str, stream_hex_dump::to_hex(segment_context.unit_shift()));
             log << std::format(L"{0}  Pages Per Unit Shift: {1}\n", indent_str, locale_formatting::to_wstring(segment_context.pages_per_unit_shift()));
@@ -680,7 +680,7 @@ namespace detail
     {
         std::wstring const indent_str(indent, L' ');
         using namespace size_units::base_16;
-        log << std::format(L"{0}Segment Heap: {1} {2}\n", indent_str, formatter.format_pointer_value(segment_heap.segment_heap_address()), process_heap_marker);
+        log << std::format(L"{0}Segment Heap: {1} {2}\n", indent_str, formatter.format_pointer_value(segment_heap.segment_heap_address(), segment_heap.walker().is_memory_valid(segment_heap.segment_heap_address())), process_heap_marker);
         log << std::format(L"{0}  Global Flags: {1}\n", indent_str, stream_hex_dump::to_hex_full(segment_heap.global_flags()));
         log << std::format(L"{0}  Total Reserved: {1} ({2})\n", indent_str, to_wstring(segment_heap.reserved()), stream_hex_dump::to_hex(segment_heap.reserved()));
         log << std::format(L"{0}  Total Committed: {1} ({2})\n", indent_str, to_wstring(segment_heap.committed()), stream_hex_dump::to_hex(segment_heap.committed()));
@@ -694,7 +694,7 @@ namespace detail
         log << std::format(L"{0}  LFH Free Committed Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.lfh_free_committed_pages()));
         log << std::format(L"{0}  Large Reserved Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.large_reserved_pages()));
         log << std::format(L"{0}  Large Committed Pages: {1}\n", indent_str, locale_formatting::to_wstring(segment_heap.large_committed_pages()));
-        log << std::format(L"{0}  Heap Key: {1}\n", indent_str, formatter.format_pointer_value(segment_heap.heap_key()));
+        log << std::format(L"{0}  Heap Key: {1}\n", indent_str, formatter.format_value(segment_heap.heap_key()));
         log << L'\n';
 
         size_t index{0};

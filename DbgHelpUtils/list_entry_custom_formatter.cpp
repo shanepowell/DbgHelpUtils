@@ -62,7 +62,7 @@ namespace dlg_help_utils::ntdll_utilities
                 .render_line = [original_render_line = std::move(original_render_line), variable_address, &formatter = dumper.formatter()]
                 {
                     // ReSharper disable once StringLiteralTypo
-                    return std::format(L"{}: {} - {}", original_render_line(), formatter.format_pointer_value(variable_address), symbol_type_utils::resources::get_variable_unknown());
+                    return std::format(L"{}: {} - {}", original_render_line(), formatter.format_pointer_value(variable_address, false), symbol_type_utils::resources::get_variable_unknown());
                 },
                 .sub_lines = {}
             };
@@ -156,7 +156,7 @@ namespace dlg_help_utils::ntdll_utilities
                 .render_line = [index, entry_address, &formatter]
                 {
                     // ReSharper disable once StringLiteralTypo
-                    return std::format(L"[{}]: {}", index, formatter.format_pointer_value(entry_address));
+                    return std::format(L"[{}]: {}", index, formatter.format_pointer_value(entry_address, true));
                 },
                 .sub_lines = {}
             };

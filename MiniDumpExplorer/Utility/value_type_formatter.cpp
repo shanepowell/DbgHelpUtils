@@ -3,6 +3,7 @@
 
 #include "DbgHelpUtils/locale_number_formatting.h"
 #include "DbgHelpUtils/print_utils.h"
+#include "DbgHelpUtils/symbol_type_utils.h"
 
 #include "Helpers/GlobalOptions.h"
 
@@ -129,9 +130,17 @@ std::wstring value_type_formatter::format_value(uint64_t const value) const
     return format_number_value_impl(value);
 }
 
-std::wstring value_type_formatter::format_pointer_value(uint64_t const value) const
+std::wstring value_type_formatter::format_pointer_value(uint64_t const value, bool const valid) const
 {
-    return stream_hex_dump::to_hex(value, pointer_width_);
+    if (valid ||
+        value == 0 || 
+        value == std::numeric_limits<uint64_t>::max() ||
+        value == std::numeric_limits<uint32_t>::max())
+    {
+        return stream_hex_dump::to_hex(value, pointer_width_);
+    }
+
+    return std::format(L"{} - {}", stream_hex_dump::to_hex(value, pointer_width_), symbol_type_utils::resources::get_variable_unknown());
 }
 
 std::wstring value_type_formatter::format_index_value(size_t const index) const

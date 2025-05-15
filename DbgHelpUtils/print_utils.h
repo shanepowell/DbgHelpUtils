@@ -57,9 +57,10 @@ namespace dlg_help_utils::print_utils
         }
 
         if (tch <= 31 
-            || tch == 127)
+            || tch == 127
+            || !isprint(tch))
         {
-            return std::format(L"\\x{:03x}", tch);
+            return std::format(L"\\x{:02x}", tch);
         }
 
         return {tch};

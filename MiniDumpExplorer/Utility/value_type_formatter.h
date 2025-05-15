@@ -29,7 +29,7 @@ public:
     std::wstring format_value(uint32_t value) const override;
     std::wstring format_value(uint64_t value) const override;
 
-    std::wstring format_pointer_value(uint64_t value) const override;
+    std::wstring format_pointer_value(uint64_t value, bool valid) const override;
     std::wstring format_index_value(size_t index) const override;
     std::streamsize pointer_format_width() const override;
 

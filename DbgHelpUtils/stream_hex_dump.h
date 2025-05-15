@@ -18,7 +18,27 @@ namespace dlg_help_utils::stream_hex_dump
         template<typename T>
         [[nodiscard]] auto constexpr to_printable_value(T const& value)
         {
-            if constexpr (std::is_same_v<T, char> || std::is_same_v<T, int8_t> || std::is_same_v<T, char8_t> || std::is_same_v<T, char16_t> || std::is_same_v<T, wchar_t> || std::is_same_v<T, unsigned char> || std::is_same_v<T, uint8_t>)
+            if constexpr (std::is_same_v<T, char> || std::is_same_v<T, wchar_t>)
+            {  // NOLINT(bugprone-branch-clone)
+                return static_cast<uint16_t>(static_cast<unsigned char>(value));
+            }
+            else if constexpr (std::is_same_v<T, char8_t>)
+            {
+                return static_cast<uint16_t>(static_cast<unsigned char>(value));
+            }
+            else if constexpr (std::is_same_v<T, char16_t> || std::is_same_v<T, char32_t>)
+            {
+                return static_cast<uint16_t>(static_cast<wchar_t>(value));
+            }
+            else if constexpr (std::is_same_v<T, int8_t>)
+            {
+                return static_cast<uint16_t>(static_cast<uint8_t>(value));
+            }
+            else if constexpr (std::is_same_v<T, unsigned char>)
+            {
+                return static_cast<uint16_t>(value);
+            }
+            else if constexpr (std::is_same_v<T, uint8_t>)
             {
                 return static_cast<uint16_t>(value);
             }
@@ -35,6 +55,8 @@ namespace dlg_help_utils::stream_hex_dump
                 return value;
             }
         }
+
+        static_assert(to_printable_value('\xcc') == 0xcc);
 
         template<typename T>
         std::wstring to_hex(T const& value, std::streamsize const width, wchar_t const fill_char = L'0', write_header_t const write_header = write_header_t{true})
