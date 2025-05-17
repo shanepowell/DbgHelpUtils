@@ -72,25 +72,9 @@ namespace
 
         auto const bit_position_data = type.bit_position();
 
+        if(offset_data.has_value())
         {
-            std::wostringstream ss;
-            if(offset_data.has_value())
-            {
-                ss << std::format(L"+{}", stream_hex_dump::to_hex_full(base_offset + offset_data.value()));
-            }
-
-            if(auto const str = std::move(ss).str(); !bit_position_data.has_value())
-            {
-                log << str;
-            }
-            else if(options.debug_type_data())
-            {
-                log << std::format(L"{} ", str);
-            }
-            else
-            {
-                log << std::wstring(str.size() + 1, ' ');
-            }
+            log << std::format(L"+{}", stream_hex_dump::to_hex_full(base_offset + offset_data.value()));
         }
 
         auto name = symbol_type_utils::get_symbol_type_friendly_name(type);

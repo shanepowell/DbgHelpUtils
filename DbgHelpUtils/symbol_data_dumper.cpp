@@ -10,6 +10,7 @@
 #include "module_list_stream.h"
 #include "print_utils.h"
 #include "stream_hex_dump.h"
+#include "string_compare.h"
 #include "symbol_type_utils.h"
 
 using namespace std::string_literals;
@@ -1104,6 +1105,11 @@ namespace dlg_help_utils::symbol_type_utils
         , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info> parents) const
     {
+        if (variable_stream.eof())
+        {
+            co_return;
+        }
+
         // data member, type the data member type and print based on that type
         if(data_type.has_value())
         {
@@ -1721,7 +1727,7 @@ namespace dlg_help_utils::symbol_type_utils
         stream_stack_dump::mini_dump_memory_walker const& walker
         , symbol_visit_flags::flags const options
         , symbol_type_info const& type
-        , uint64_t const variable_address
+        , uint64_t variable_address
         , mini_dump_memory_stream variable_stream
         , is_pointer_t const is_pointer
         , std::optional<symbol_type_info> const& data_type
@@ -1744,6 +1750,8 @@ namespace dlg_help_utils::symbol_type_utils
             {
                 for(uint64_t i = 0; i < max_size; ++i)
                 {
+                    variable_address = variable_stream.current_address();
+                    auto var_variable_stream = variable_stream.sub_range(0, sizeof(T));
                     T value{};
                     if(variable_stream.read(&value, sizeof(T)) != sizeof(T))
                     {
@@ -1771,7 +1779,7 @@ namespace dlg_help_utils::symbol_type_utils
                             variable_address,
                             data_type = data_type,
                             data_type_tag = data_type_tag,
-                            variable_stream = variable_stream,
+                            variable_stream = std::move(var_variable_stream),
                             visited_pointers = visited_pointers,
                             path = std::move(indexPath),
                             name = std::move(indexName),
@@ -1868,6 +1876,11 @@ namespace dlg_help_utils::symbol_type_utils
         , size_t const max_symbol_dump_depth
         , std::vector<symbol_type_info>& parents) const
     {
+        if (variable_stream.eof())
+        {
+            co_return;
+        }
+
         if(auto const data_type_tag = pointer_type.sym_tag(); 
             data_type_tag.has_value() && 
             (max_symbol_dump_depth == 0 || parents.size() < max_symbol_dump_depth))
